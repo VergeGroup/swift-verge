@@ -26,17 +26,17 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-public enum NoState {}
-public enum NoActivity {}
-public enum NoMutation {}
-public enum NoAction {}
+public struct NoState {}
+public struct NoActivity {}
+public struct NoMutation {}
+public struct NoAction {}
 
-public protocol CycleViewModel : class {
+public protocol Cycler : class {
 
   associatedtype State
   associatedtype Activity
   associatedtype Action
-  associatedtype Mutation
+  associatedtype Mutation = Action
 
   var activity: Signal<Activity> { get }
   var state: StateStorage<State> { get }
@@ -44,36 +44,41 @@ public protocol CycleViewModel : class {
   func reduce(_ mutation: Mutation)
 }
 
-extension CycleViewModel where Action == Mutation {
+extension Cycler where Action == Mutation {
+
   public func mutate(_ action: Action) -> Mutation {
     return action
   }
 }
 
-extension CycleViewModel where Activity == NoActivity {
+extension Cycler where Activity == NoActivity {
+
   public var activity: Signal<Activity> {
-    preconditionFailure("\(self) does not have Activity")
+    assertionFailure("\(self) does not have Activity")
+    return .empty()
   }
 }
 
-extension CycleViewModel where State == NoState {
+extension Cycler where State == NoState {
+
   public var state: StateStorage<State> {
-    preconditionFailure("\(self) does not have State")
+    assertionFailure("\(self) does not have State")
+    return .init(.init(NoState()))
   }
 }
 
-extension CycleViewModel where Action == NoAction, Mutation == NoMutation {
-
+extension Cycler where Action == NoAction, Mutation == NoMutation {
   public func mutate(_ action: Action) -> Mutation {
-    preconditionFailure("\(self) does not have Action")
+    assertionFailure("\(self) does not have Action")
+    return .init()
   }
 
   public func reduce(_ mutation: Mutation) {
-    preconditionFailure("\(self) does not have Mutation")
+    assertionFailure("\(self) does not have Mutation")
   }
 }
 
-extension CycleViewModel {
+extension Cycler {
 
   public var action: Binder<Action> {
     return Binder<Action>.init(self) { (t, a) in
@@ -124,7 +129,11 @@ public final class MutableStateStorage<T> {
     self.source = .init(value: value)
   }
 
-  public func mutate<Source: ObservableType>(_ execute: @escaping (inout T, Source.E) -> Void) -> (Source) -> Disposable {
+  public func mutate(_ execute: @escaping (inout T) -> Void) {
+    execute(&value)
+  }
+
+  public func mutateBinder<Source: ObservableType>(_ execute: @escaping (inout T, Source.E) -> Void) -> (Source) -> Disposable {
     return { source in
       source
         .do(onNext: { [weak self] e in
