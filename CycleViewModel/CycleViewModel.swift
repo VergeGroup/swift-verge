@@ -20,38 +20,78 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+//
+//  ViewModel.swift
+//  RxExtension
+//
+//  Created by muukii on 9/5/17.
+//  Copyright © 2017 eure. All rights reserved.
+//
 
 import Foundation
+import ObjectiveC
 
 import RxSwift
 import RxCocoa
 
 public struct NoState {}
 public struct NoActivity {}
-public struct NoMutation {}
 public struct NoAction {}
 
-public protocol Cycler : class {
+public protocol CyclerType : class {
 
   associatedtype State
   associatedtype Activity
   associatedtype Action
-  associatedtype Mutation = Action
 
   var activity: Signal<Activity> { get }
   var state: StateStorage<State> { get }
-  func mutate(_ action: Action) -> Mutation
-  func reduce(_ mutation: Mutation)
+  func mutate(_ action: Action) -> Observable<Void>
 }
 
-extension Cycler where Action == Mutation {
+private var _queue: Void?
+private var _disposeBag: Void?
 
-  public func mutate(_ action: Action) -> Mutation {
-    return action
+extension CyclerType {
+
+  fileprivate var __disposeBag: DisposeBag {
+    if let disposeBag = objc_getAssociatedObject(self, &_disposeBag) as? DisposeBag {
+      return disposeBag
+    } else {
+      let disposeBag = DisposeBag()
+      objc_setAssociatedObject(self, &_disposeBag, disposeBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+      return disposeBag
+    }
+  }
+
+  var __queue: PublishRelay<Observable<Void>> {
+    if let queue = objc_getAssociatedObject(self, &_queue) as? PublishRelay<Observable<Void>> {
+      return queue
+    } else {
+
+      let queue = PublishRelay<Observable<Void>>()
+      queue
+        .observeOn(MainScheduler.instance)
+        .map { $0.materialize() }
+        .merge()
+        .observeOn(MainScheduler.instance)
+        .subscribe()
+        .disposed(by: __disposeBag)
+
+      objc_setAssociatedObject(self, &_queue, queue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+      return queue
+    }
   }
 }
 
-extension Cycler where Activity == NoActivity {
+extension CyclerType where Action == NoAction {
+
+  public func mutate(_ action: Action) -> Observable<Void> {
+    return .empty()
+  }
+}
+
+extension CyclerType where Activity == NoActivity {
 
   public var activity: Signal<Activity> {
     assertionFailure("\(self) does not have Activity")
@@ -59,7 +99,7 @@ extension Cycler where Activity == NoActivity {
   }
 }
 
-extension Cycler where State == NoState {
+extension CyclerType where State == NoState {
 
   public var state: StateStorage<State> {
     assertionFailure("\(self) does not have State")
@@ -67,27 +107,17 @@ extension Cycler where State == NoState {
   }
 }
 
-extension Cycler where Action == NoAction, Mutation == NoMutation {
-  public func mutate(_ action: Action) -> Mutation {
-    assertionFailure("\(self) does not have Action")
-    return .init()
-  }
-
-  public func reduce(_ mutation: Mutation) {
-    assertionFailure("\(self) does not have Mutation")
-  }
-}
-
-extension Cycler {
+extension CyclerType {
 
   public var action: Binder<Action> {
     return Binder<Action>.init(self) { (t, a) in
-      t.reduce(self.mutate(a))
+      t.run(a)
     }
   }
 
   public func run(_ action: Action) {
-    self.reduce(self.mutate(action))
+
+    __queue.accept(mutate(action))
   }
 }
 
@@ -133,7 +163,7 @@ public final class MutableStateStorage<T> {
     execute(&value)
   }
 
-  public func mutateBinder<Source: ObservableType>(_ execute: @escaping (inout T, Source.E) -> Void) -> (Source) -> Disposable {
+  public func binder<Source: ObservableType>(_ execute: @escaping (inout T, Source.E) -> Void) -> (Source) -> Disposable {
     return { source in
       source
         .do(onNext: { [weak self] e in
