@@ -13,82 +13,56 @@ import RxCocoa
 
 class ViewController: UIViewController {
 
+  @IBOutlet weak var label: UILabel!
+  @IBOutlet weak var decrementButton: UIButton!
+  @IBOutlet weak var incrementButton: UIButton!
+
+  private let viewModel: ViewModel = .init() // Should be injected
+
+  private let disposeBag: DisposeBag = .init()
+
   override func viewDidLoad() {
     super.viewDidLoad()
-    // Do any additional setup after loading the view, typically from a nib.
 
-    let vm = NoViewModel()
-  }
+    bind: do {
 
-  override func didReceiveMemoryWarning() {
-    super.didReceiveMemoryWarning()
-    // Dispose of any resources that can be recreated.
-  }
+      viewModel
+        .state
+        .asDriver(keyPath: \.count)
+        .map { $0.description }
+        .drive(label.rx.text)
+        .disposed(by: disposeBag)
 
+      viewModel
+        .activity
+        .emit(onNext: { [weak self] activity in
 
-}
+          guard let `self` = self else { return }
 
-import RxSwift
-import CycleViewModel
+          switch activity {
+          case .didReachBigNumber:
 
-class NoViewModel : Cycler {
+            let a = UIAlertController.init(title: "Whoa🚀", message: nil, preferredStyle: .alert)
+            a.addAction(UIAlertAction.init(title: "OK", style: .default, handler: nil))
+            self.present(a, animated: true, completion: nil)
+          }
+        })
+        .disposed(by: disposeBag)
 
-  typealias State = NoState
-  typealias Action = NoAction
-  typealias Mutation = NoMutation
-  typealias Activity = NoActivity
+      decrementButton
+        .rx
+        .tap
+        .map { .decrement(number: 1) }
+        .bind(to: viewModel.action)
+        .disposed(by: disposeBag)
 
-  init() {
+      incrementButton
+        .rx
+        .tap
+        .map { .increment(number: 1) }
+        .bind(to: viewModel.action)
+        .disposed(by: disposeBag)
 
-  }
-  
-//  func mutate(_ action: NoViewModel.Action) -> NoViewModel.Mutation {
-//    fatalError()
-//  }
-//
-//  func reduce(_ mutation: NoViewModel.Mutation) {
-//
-//  }
-}
-
-class MyViewModel : Cycler {
-
-  class State {
-    var fetchedPartners: [String] = []
-    var likedCount: Int = 0
-  }
-
-  enum Activity {
-    case didSendLike
-  }
-
-  enum Action {
-    case sendLike(targetPartner: String)
-  }
-
-  typealias Mutation = Action
-
-  var activity: Signal<MyViewModel.Activity> {
-    return _activity.asSignal()
-  }
-
-  lazy var state: StateStorage<MyViewModel.State> = .init(_state)
-  private let _state: MutableStateStorage<State> = .init(.init())
-  private let _activity = PublishRelay<Activity>()
-
-  func reduce(_ mutation: Mutation) {
-
-    switch mutation {
-    case .sendLike(_):
-
-      _activity.accept(.didSendLike)
-
-      _state.mutate { s in
-        s.likedCount += 1
-      }
-
-      break
     }
   }
 }
-

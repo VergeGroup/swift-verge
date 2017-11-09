@@ -7,8 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B86A48B1F969AD6002D54FE /* CycleViewModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B86A4891F969AD6002D54FE /* CycleViewModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4B86A4921F969BF3002D54FE /* CycleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4911F969BF3002D54FE /* CycleViewModel.swift */; };
+		4B65F8EF1FB4C0DC00A90A67 /* CyclerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8EE1FB4C0DC00A90A67 /* CyclerTests.swift */; };
+		4B65F8F11FB4C0DC00A90A67 /* Cycler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Cycler.framework */; };
+		4B65F8F71FB4C25100A90A67 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4AA1F969C92002D54FE /* RxCocoa.framework */; };
+		4B65F8F81FB4C25300A90A67 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4AB1F969C92002D54FE /* RxSwift.framework */; };
+		4B65F8FA1FB4C75800A90A67 /* CycleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8F91FB4C75800A90A67 /* CycleViewModel.swift */; };
+		4B86A48B1F969AD6002D54FE /* Cycler.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B86A4891F969AD6002D54FE /* Cycler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B86A4921F969BF3002D54FE /* Cycler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4911F969BF3002D54FE /* Cycler.swift */; };
 		4B86A49A1F969C7D002D54FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4991F969C7D002D54FE /* AppDelegate.swift */; };
 		4B86A49C1F969C7D002D54FE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A49B1F969C7D002D54FE /* ViewController.swift */; };
 		4B86A49F1F969C7D002D54FE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A49D1F969C7D002D54FE /* Main.storyboard */; };
@@ -22,11 +27,18 @@
 		4B86A4B31F969CA8002D54FE /* RxCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4AA1F969C92002D54FE /* RxCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B86A4B41F969CA8002D54FE /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4AB1F969C92002D54FE /* RxSwift.framework */; };
 		4B86A4B51F969CA8002D54FE /* RxSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4AB1F969C92002D54FE /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B86A4B61F969D74002D54FE /* CycleViewModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* CycleViewModel.framework */; };
-		4B86A4B71F969D74002D54FE /* CycleViewModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* CycleViewModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B86A4B61F969D74002D54FE /* Cycler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Cycler.framework */; };
+		4B86A4B71F969D74002D54FE /* Cycler.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Cycler.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4B65F8F21FB4C0DC00A90A67 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B86A4851F969AD5002D54FE;
+			remoteInfo = CycleViewModel;
+		};
 		4B86A4B81F969D74002D54FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -43,7 +55,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4B86A4B71F969D74002D54FE /* CycleViewModel.framework in Embed Frameworks */,
+				4B86A4B71F969D74002D54FE /* Cycler.framework in Embed Frameworks */,
 				4B86A4B31F969CA8002D54FE /* RxCocoa.framework in Embed Frameworks */,
 				4B86A4B01F969CA2002D54FE /* EasyPeasy.framework in Embed Frameworks */,
 				4B86A4B51F969CA8002D54FE /* RxSwift.framework in Embed Frameworks */,
@@ -54,11 +66,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4B86A4861F969AD5002D54FE /* CycleViewModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CycleViewModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B86A4891F969AD6002D54FE /* CycleViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CycleViewModel.h; sourceTree = "<group>"; };
+		4B65F8EC1FB4C0DC00A90A67 /* CyclerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CyclerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B65F8EE1FB4C0DC00A90A67 /* CyclerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyclerTests.swift; sourceTree = "<group>"; };
+		4B65F8F01FB4C0DC00A90A67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B65F8F91FB4C75800A90A67 /* CycleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CycleViewModel.swift; sourceTree = "<group>"; };
+		4B86A4861F969AD5002D54FE /* Cycler.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Cycler.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B86A4891F969AD6002D54FE /* Cycler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Cycler.h; sourceTree = "<group>"; };
 		4B86A48A1F969AD6002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B86A4911F969BF3002D54FE /* CycleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CycleViewModel.swift; sourceTree = "<group>"; };
-		4B86A4971F969C7D002D54FE /* CycleViewModel-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CycleViewModel-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B86A4911F969BF3002D54FE /* Cycler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cycler.swift; sourceTree = "<group>"; };
+		4B86A4971F969C7D002D54FE /* Cycler-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cycler-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B86A4991F969C7D002D54FE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B86A49B1F969C7D002D54FE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4B86A49E1F969C7D002D54FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -71,6 +87,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4B65F8E91FB4C0DC00A90A67 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B65F8F81FB4C25300A90A67 /* RxSwift.framework in Frameworks */,
+				4B65F8F11FB4C0DC00A90A67 /* Cycler.framework in Frameworks */,
+				4B65F8F71FB4C25100A90A67 /* RxCocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B86A4821F969AD5002D54FE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -84,7 +110,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B86A4B61F969D74002D54FE /* CycleViewModel.framework in Frameworks */,
+				4B86A4B61F969D74002D54FE /* Cycler.framework in Frameworks */,
 				4B86A4B21F969CA8002D54FE /* RxCocoa.framework in Frameworks */,
 				4B86A4AF1F969CA2002D54FE /* EasyPeasy.framework in Frameworks */,
 				4B86A4B41F969CA8002D54FE /* RxSwift.framework in Frameworks */,
@@ -94,14 +120,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B65F8ED1FB4C0DC00A90A67 /* CyclerTests */ = {
+			isa = PBXGroup;
+			children = (
+				4B65F8EE1FB4C0DC00A90A67 /* CyclerTests.swift */,
+				4B65F8F01FB4C0DC00A90A67 /* Info.plist */,
+			);
+			path = CyclerTests;
+			sourceTree = "<group>";
+		};
 		4B86A47C1F969AD5002D54FE = {
 			isa = PBXGroup;
 			children = (
 				4B86A4A91F969C92002D54FE /* EasyPeasy.framework */,
 				4B86A4AA1F969C92002D54FE /* RxCocoa.framework */,
 				4B86A4AB1F969C92002D54FE /* RxSwift.framework */,
-				4B86A4881F969AD5002D54FE /* CycleViewModel */,
+				4B86A4881F969AD5002D54FE /* Cycler */,
 				4B86A4981F969C7D002D54FE /* CycleViewModel-Demo */,
+				4B65F8ED1FB4C0DC00A90A67 /* CyclerTests */,
 				4B86A4871F969AD5002D54FE /* Products */,
 				4B86A4AC1F969C98002D54FE /* Frameworks */,
 			);
@@ -110,20 +146,21 @@
 		4B86A4871F969AD5002D54FE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4B86A4861F969AD5002D54FE /* CycleViewModel.framework */,
-				4B86A4971F969C7D002D54FE /* CycleViewModel-Demo.app */,
+				4B86A4861F969AD5002D54FE /* Cycler.framework */,
+				4B86A4971F969C7D002D54FE /* Cycler-Demo.app */,
+				4B65F8EC1FB4C0DC00A90A67 /* CyclerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		4B86A4881F969AD5002D54FE /* CycleViewModel */ = {
+		4B86A4881F969AD5002D54FE /* Cycler */ = {
 			isa = PBXGroup;
 			children = (
-				4B86A4891F969AD6002D54FE /* CycleViewModel.h */,
-				4B86A4911F969BF3002D54FE /* CycleViewModel.swift */,
+				4B86A4891F969AD6002D54FE /* Cycler.h */,
+				4B86A4911F969BF3002D54FE /* Cycler.swift */,
 				4B86A48A1F969AD6002D54FE /* Info.plist */,
 			);
-			path = CycleViewModel;
+			path = Cycler;
 			sourceTree = "<group>";
 		};
 		4B86A4981F969C7D002D54FE /* CycleViewModel-Demo */ = {
@@ -131,6 +168,7 @@
 			children = (
 				4B86A4991F969C7D002D54FE /* AppDelegate.swift */,
 				4B86A49B1F969C7D002D54FE /* ViewController.swift */,
+				4B65F8F91FB4C75800A90A67 /* CycleViewModel.swift */,
 				4B86A49D1F969C7D002D54FE /* Main.storyboard */,
 				4B86A4A01F969C7D002D54FE /* Assets.xcassets */,
 				4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */,
@@ -153,16 +191,34 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B86A48B1F969AD6002D54FE /* CycleViewModel.h in Headers */,
+				4B86A48B1F969AD6002D54FE /* Cycler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		4B86A4851F969AD5002D54FE /* CycleViewModel */ = {
+		4B65F8EB1FB4C0DC00A90A67 /* CyclerTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4B86A48E1F969AD6002D54FE /* Build configuration list for PBXNativeTarget "CycleViewModel" */;
+			buildConfigurationList = 4B65F8F41FB4C0DC00A90A67 /* Build configuration list for PBXNativeTarget "CyclerTests" */;
+			buildPhases = (
+				4B65F8E81FB4C0DC00A90A67 /* Sources */,
+				4B65F8E91FB4C0DC00A90A67 /* Frameworks */,
+				4B65F8EA1FB4C0DC00A90A67 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4B65F8F31FB4C0DC00A90A67 /* PBXTargetDependency */,
+			);
+			name = CyclerTests;
+			productName = CyclerTests;
+			productReference = 4B65F8EC1FB4C0DC00A90A67 /* CyclerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4B86A4851F969AD5002D54FE /* Cycler */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B86A48E1F969AD6002D54FE /* Build configuration list for PBXNativeTarget "Cycler" */;
 			buildPhases = (
 				4B86A4811F969AD5002D54FE /* Sources */,
 				4B86A4821F969AD5002D54FE /* Frameworks */,
@@ -173,14 +229,14 @@
 			);
 			dependencies = (
 			);
-			name = CycleViewModel;
+			name = Cycler;
 			productName = CycleViewModel;
-			productReference = 4B86A4861F969AD5002D54FE /* CycleViewModel.framework */;
+			productReference = 4B86A4861F969AD5002D54FE /* Cycler.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		4B86A4961F969C7D002D54FE /* CycleViewModel-Demo */ = {
+		4B86A4961F969C7D002D54FE /* Cycler-Demo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4B86A4A61F969C7D002D54FE /* Build configuration list for PBXNativeTarget "CycleViewModel-Demo" */;
+			buildConfigurationList = 4B86A4A61F969C7D002D54FE /* Build configuration list for PBXNativeTarget "Cycler-Demo" */;
 			buildPhases = (
 				4B86A4931F969C7D002D54FE /* Sources */,
 				4B86A4941F969C7D002D54FE /* Frameworks */,
@@ -192,9 +248,9 @@
 			dependencies = (
 				4B86A4B91F969D74002D54FE /* PBXTargetDependency */,
 			);
-			name = "CycleViewModel-Demo";
+			name = "Cycler-Demo";
 			productName = "CycleViewModel-Demo";
-			productReference = 4B86A4971F969C7D002D54FE /* CycleViewModel-Demo.app */;
+			productReference = 4B86A4971F969C7D002D54FE /* Cycler-Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -203,10 +259,14 @@
 		4B86A47D1F969AD5002D54FE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0900;
+				LastSwiftUpdateCheck = 0910;
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = muukii;
 				TargetAttributes = {
+					4B65F8EB1FB4C0DC00A90A67 = {
+						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Automatic;
+					};
 					4B86A4851F969AD5002D54FE = {
 						CreatedOnToolsVersion = 9.0;
 						LastSwiftMigration = 0900;
@@ -218,7 +278,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 4B86A4801F969AD5002D54FE /* Build configuration list for PBXProject "CycleViewModel" */;
+			buildConfigurationList = 4B86A4801F969AD5002D54FE /* Build configuration list for PBXProject "Cycler" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -231,13 +291,21 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4B86A4851F969AD5002D54FE /* CycleViewModel */,
-				4B86A4961F969C7D002D54FE /* CycleViewModel-Demo */,
+				4B86A4851F969AD5002D54FE /* Cycler */,
+				4B86A4961F969C7D002D54FE /* Cycler-Demo */,
+				4B65F8EB1FB4C0DC00A90A67 /* CyclerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4B65F8EA1FB4C0DC00A90A67 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B86A4841F969AD5002D54FE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -258,11 +326,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4B65F8E81FB4C0DC00A90A67 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B65F8EF1FB4C0DC00A90A67 /* CyclerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B86A4811F969AD5002D54FE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B86A4921F969BF3002D54FE /* CycleViewModel.swift in Sources */,
+				4B86A4921F969BF3002D54FE /* Cycler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,6 +346,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B65F8FA1FB4C75800A90A67 /* CycleViewModel.swift in Sources */,
 				4B86A49C1F969C7D002D54FE /* ViewController.swift in Sources */,
 				4B86A49A1F969C7D002D54FE /* AppDelegate.swift in Sources */,
 			);
@@ -278,9 +355,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4B65F8F31FB4C0DC00A90A67 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B86A4851F969AD5002D54FE /* Cycler */;
+			targetProxy = 4B65F8F21FB4C0DC00A90A67 /* PBXContainerItemProxy */;
+		};
 		4B86A4B91F969D74002D54FE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B86A4851F969AD5002D54FE /* CycleViewModel */;
+			target = 4B86A4851F969AD5002D54FE /* Cycler */;
 			targetProxy = 4B86A4B81F969D74002D54FE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -305,6 +387,42 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4B65F8F51FB4C0DC00A90A67 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = CyclerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(SRCROOT)/Carthage/Build/iOS";
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.CyclerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B65F8F61FB4C0DC00A90A67 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = CyclerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(SRCROOT)/Carthage/Build/iOS";
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.CyclerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		4B86A48C1F969AD6002D54FE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -354,7 +472,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -408,7 +526,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -432,7 +550,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = CycleViewModel/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Cycler/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.CycleViewModel;
@@ -458,7 +576,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = CycleViewModel/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Cycler/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.CycleViewModel;
@@ -480,6 +598,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = "CycleViewModel-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "me.muukii.CycleViewModel-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -499,6 +618,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = "CycleViewModel-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "me.muukii.CycleViewModel-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -510,7 +630,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4B86A4801F969AD5002D54FE /* Build configuration list for PBXProject "CycleViewModel" */ = {
+		4B65F8F41FB4C0DC00A90A67 /* Build configuration list for PBXNativeTarget "CyclerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B65F8F51FB4C0DC00A90A67 /* Debug */,
+				4B65F8F61FB4C0DC00A90A67 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B86A4801F969AD5002D54FE /* Build configuration list for PBXProject "Cycler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4B86A48C1F969AD6002D54FE /* Debug */,
@@ -519,7 +648,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4B86A48E1F969AD6002D54FE /* Build configuration list for PBXNativeTarget "CycleViewModel" */ = {
+		4B86A48E1F969AD6002D54FE /* Build configuration list for PBXNativeTarget "Cycler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4B86A48F1F969AD6002D54FE /* Debug */,
@@ -528,7 +657,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4B86A4A61F969C7D002D54FE /* Build configuration list for PBXNativeTarget "CycleViewModel-Demo" */ = {
+		4B86A4A61F969C7D002D54FE /* Build configuration list for PBXNativeTarget "Cycler-Demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4B86A4A71F969C7D002D54FE /* Debug */,
