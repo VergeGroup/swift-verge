@@ -99,7 +99,7 @@ extension CyclerType {
 
 extension CyclerType where Action == NoAction {
 
-  public func mutate(_ action: Action) -> Observable<Void> {
+  func reduce(state: MutableStateStorage<State>, action: Action) -> Observable<Void> {
     return .empty()
   }
 }
@@ -235,23 +235,23 @@ public final class MutableStateStorage<T> {
     writableValue[keyPath: keyPath] = value
   }
 
-  public func updateIfChanged<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, compare: (E?, E?) -> Bool) {
-    guard compare(writableValue[keyPath: keyPath], value) == false else { return }
+  public func updateIfChanged<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, comparer: (E?, E?) -> Bool) {
+    guard comparer(writableValue[keyPath: keyPath], value) == false else { return }
     writableValue[keyPath: keyPath] = value
   }
 
-  public func updateIfChanged<E: Comparable>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, compare: (E?, E?) -> Bool = { $0 == $1 }) {
-    guard compare(writableValue[keyPath: keyPath], value) == false else { return }
+  public func updateIfChanged<E: Equatable>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, comparer: (E?, E?) -> Bool = { $0 == $1 }) {
+    guard comparer(writableValue[keyPath: keyPath], value) == false else { return }
     writableValue[keyPath: keyPath] = value
   }
 
-  public func updateIfChanged<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>, compare: (E, E) -> Bool) {
-    guard compare(writableValue[keyPath: keyPath], value) == false else { return }
+  public func updateIfChanged<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>, comparer: (E, E) -> Bool) {
+    guard comparer(writableValue[keyPath: keyPath], value) == false else { return }
     writableValue[keyPath: keyPath] = value
   }
 
-  public func updateIfChanged<E : Comparable>(_ value: E, _ keyPath: WritableKeyPath<T, E>, compare: (E, E) -> Bool = { $0 == $1 }) {
-    guard compare(writableValue[keyPath: keyPath], value) == false else { return }
+  public func updateIfChanged<E : Equatable>(_ value: E, _ keyPath: WritableKeyPath<T, E>, comparer: (E, E) -> Bool = { $0 == $1 }) {
+    guard comparer(writableValue[keyPath: keyPath], value) == false else { return }
     writableValue[keyPath: keyPath] = value
   }
 
@@ -301,17 +301,17 @@ extension Observable {
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, compare: @escaping  (E?, E?) -> Bool) -> Observable<E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool) -> Observable<E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, compare: @escaping  (E, E) -> Bool) -> Observable<E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool) -> Observable<E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
@@ -325,19 +325,19 @@ extension Observable {
   }
 }
 
-extension Observable where E : Comparable {
+extension Observable where E : Equatable {
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, compare: @escaping  (E, E) -> Bool = { $0 == $1 }) -> Observable<E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool = { $0 == $1 }) -> Observable<E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, compare: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> Observable<E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> Observable<E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 }
@@ -358,17 +358,17 @@ extension PrimitiveSequence where Trait == SingleTrait {
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, compare: @escaping  (E?, E?) -> Bool) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, compare: @escaping  (E, E) -> Bool) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
@@ -382,19 +382,19 @@ extension PrimitiveSequence where Trait == SingleTrait {
   }
 }
 
-extension PrimitiveSequence where Trait == SingleTrait, Element : Comparable {
+extension PrimitiveSequence where Trait == SingleTrait, Element : Equatable {
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, compare: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, compare: @escaping  (E, E) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 }
@@ -415,17 +415,17 @@ extension PrimitiveSequence where Trait == MaybeTrait {
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, compare: @escaping  (E?, E?) -> Bool) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, compare: @escaping  (E, E) -> Bool) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
@@ -439,19 +439,19 @@ extension PrimitiveSequence where Trait == MaybeTrait {
   }
 }
 
-extension PrimitiveSequence where Trait == MaybeTrait, Element : Comparable {
+extension PrimitiveSequence where Trait == MaybeTrait, Element : Equatable {
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, compare: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, compare: @escaping  (E, E) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
-      state.updateIfChanged(e, keyPath, compare: compare)
+      state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 }
