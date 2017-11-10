@@ -99,7 +99,7 @@ extension CyclerType {
 
 extension CyclerType where Action == NoAction {
 
-  func reduce(state: MutableStateStorage<State>, action: Action) -> Observable<Void> {
+  public func reduce(state: MutableStateStorage<State>, action: Action) -> Observable<Void> {
     return .empty()
   }
 }
