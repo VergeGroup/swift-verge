@@ -227,6 +227,10 @@ public final class MutableStateStorage<T> {
       .map { $0[keyPath: keyPath] }
   }
 
+  public func replace(_ value: T) {
+    writableValue = value
+  }
+
   public func update(_ execute: @escaping (inout T) throws -> Void) rethrows {
     try execute(&writableValue)
   }
