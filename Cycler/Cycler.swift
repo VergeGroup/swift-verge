@@ -79,7 +79,7 @@ extension CyclerType {
       let queue = PublishRelay<Observable<Void>>()
       queue
         .observeOn(MainScheduler.instance)
-        .map {
+        .map { [weak self] in
           $0
             .do(onError: { [weak self] error in
               self?.receiveError(error: error)
