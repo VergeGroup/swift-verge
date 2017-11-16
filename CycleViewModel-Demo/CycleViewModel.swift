@@ -35,16 +35,16 @@ class ViewModel : CyclerType {
     return _activity.asSignal()
   }
 
-  lazy var state: StateStorage<State> = _state.asStateStorage()
+  lazy var state: Storage<State> = _state.asStateStorage()
 
-  private let _state: MutableStateStorage<State> = .init(.init())
+  private let _state: MutableStorage<State> = .init(.init())
   private let _activity = PublishRelay<Activity>()
 
   func receiveError(error: Error) {
 
   }
     
-  func reduce(state: MutableStateStorage<State>, action: Action) -> Observable<Void> {
+  func reduce(state: MutableStorage<State>, action: Action) -> ReduceSequence {
     switch action {
     case .increment(let number):
 
@@ -56,14 +56,12 @@ class ViewModel : CyclerType {
             self?._activity.accept(.didReachBigNumber)
           }
         })
-        .map { _ in }
 
     case .decrement(let number):
 
       return Observable.just(number)
         .map { state.value.count - $0 }
         .applyIfChanged(on: state, keyPath: \.count)
-        .map { _ in }
 
     }
   }

@@ -45,8 +45,8 @@ public protocol CyclerType : class {
   associatedtype Action
 
   var activity: Signal<Activity> { get }
-  var state: StateStorage<State> { get }
-  func reduce(state: MutableStateStorage<State>, action: Action) -> Observable<Void>
+  var state: Storage<State> { get }
+  func reduce(state: MutableStorage<State>, action: Action) -> ReduceSequence
   func receiveError(error: Error)
 }
 
@@ -99,8 +99,8 @@ extension CyclerType {
 
 extension CyclerType where Action == NoAction {
 
-  public func reduce(state: MutableStateStorage<State>, action: Action) -> Observable<Void> {
-    return .empty()
+  public func reduce(state: MutableStorage<State>, action: Action) -> ReduceSequence {
+    return Observable<Void>.empty()
   }
 }
 
@@ -114,7 +114,7 @@ extension CyclerType where Activity == NoActivity {
 
 extension CyclerType where State == NoState {
 
-  public var state: StateStorage<State> {
+  public var state: Storage<State> {
     assertionFailure("\(self) does not have State")
     return .init(.init(NoState()))
   }
@@ -130,20 +130,26 @@ extension CyclerType {
 
   public func run(_ action: Action) {
 
-    __queue.accept(reduce(state: state.asMutableStateStorage(), action: action))
+    __queue.accept(reduce(state: state.asMutableStateStorage(), action: action).__asVoidObservable())
   }
 }
 
-public final class StateStorage<T> {
+@available(*, deprecated: 1.1.0, renamed: "Storage")
+public typealias StateStorage<T> = Storage<T>
+
+@available(*, deprecated: 1.1.0, renamed: "MutableStorage")
+public typealias MutableStateStorage<T> = MutableStorage<T>
+
+public final class Storage<T> {
 
   public var value: T {
     return source.value
   }
 
-  private let source: MutableStateStorage<T>
+  private let source: MutableStorage<T>
   private let disposeBag: DisposeBag = .init()
 
-  public init(_ variable: MutableStateStorage<T>) {
+  public init(_ variable: MutableStorage<T>) {
     self.source = variable
   }
 
@@ -165,9 +171,9 @@ public final class StateStorage<T> {
       .map { $0[keyPath: keyPath] }
   }
 
-  public func map<U>(_ closure: @escaping (T) -> U) -> StateStorage<U> {
+  public func map<U>(_ closure: @escaping (T) -> U) -> Storage<U> {
 
-    let m_state = MutableStateStorage.init(closure(value))
+    let m_state = MutableStorage.init(closure(value))
 
     let state = m_state.asStateStorage()
 
@@ -181,12 +187,12 @@ public final class StateStorage<T> {
     return state
   }
 
-  fileprivate func asMutableStateStorage() -> MutableStateStorage<T> {
+  fileprivate func asMutableStateStorage() -> MutableStorage<T> {
     return source
   }
 }
 
-public final class MutableStateStorage<T> {
+public final class MutableStorage<T> {
 
   public var value: T {
     get {
@@ -284,42 +290,42 @@ public final class MutableStateStorage<T> {
     }
   }
 
-  public func asStateStorage() -> StateStorage<T> {
+  public func asStateStorage() -> Storage<T> {
     return .init(self)
   }
 }
 
 extension Observable {
 
-  public func apply<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>) -> Observable<E> {
+  public func apply<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E?>) -> Observable<E> {
 
     return self.do(onNext: { e in
       state.update(e, keyPath)
     })
   }
 
-  public func apply<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>) -> Observable<E> {
+  public func apply<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E>) -> Observable<E> {
 
     return self.do(onNext: { e in
       state.update(e, keyPath)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool) -> Observable<E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool) -> Observable<E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool) -> Observable<E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool) -> Observable<E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func batch<S>(on state: MutableStateStorage<S>, apply: @escaping (inout S, E) -> Void) -> Observable<E> {
+  public func batch<S>(on state: MutableStorage<S>, apply: @escaping (inout S, E) -> Void) -> Observable<E> {
 
     return self.do(onNext: { e in
       state.update { s in
@@ -331,14 +337,14 @@ extension Observable {
 
 extension Observable where E : Equatable {
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool = { $0 == $1 }) -> Observable<E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool = { $0 == $1 }) -> Observable<E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> Observable<E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> Observable<E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
@@ -348,35 +354,35 @@ extension Observable where E : Equatable {
 
 extension PrimitiveSequence where Trait == SingleTrait {
 
-  public func apply<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>) -> PrimitiveSequence<Trait, E> {
+  public func apply<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E?>) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.update(e, keyPath)
     })
   }
 
-  public func apply<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>) -> PrimitiveSequence<Trait, E> {
+  public func apply<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E>) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.update(e, keyPath)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func batch<S>(on state: MutableStateStorage<S>, apply: @escaping (inout S, E) -> Void) -> PrimitiveSequence<Trait, E> {
+  public func batch<S>(on state: MutableStorage<S>, apply: @escaping (inout S, E) -> Void) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.update { s in
@@ -388,14 +394,14 @@ extension PrimitiveSequence where Trait == SingleTrait {
 
 extension PrimitiveSequence where Trait == SingleTrait, Element : Equatable {
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
@@ -405,35 +411,35 @@ extension PrimitiveSequence where Trait == SingleTrait, Element : Equatable {
 
 extension PrimitiveSequence where Trait == MaybeTrait {
 
-  public func apply<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>) -> PrimitiveSequence<Trait, E> {
+  public func apply<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E?>) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.update(e, keyPath)
     })
   }
 
-  public func apply<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>) -> PrimitiveSequence<Trait, E> {
+  public func apply<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E>) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.update(e, keyPath)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func batch<S>(on state: MutableStateStorage<S>, apply: @escaping (inout S, E) -> Void) -> PrimitiveSequence<Trait, E> {
+  public func batch<S>(on state: MutableStorage<S>, apply: @escaping (inout S, E) -> Void) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.update { s in
@@ -445,17 +451,40 @@ extension PrimitiveSequence where Trait == MaybeTrait {
 
 extension PrimitiveSequence where Trait == MaybeTrait, Element : Equatable {
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E?>, comparer: @escaping  (E?, E?) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 
-  public func applyIfChanged<S>(on state: MutableStateStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
+  public func applyIfChanged<S>(on state: MutableStorage<S>, keyPath: WritableKeyPath<S, E>, comparer: @escaping  (E, E) -> Bool = { $0 == $1 }) -> PrimitiveSequence<Trait, E> {
 
     return self.do(onNext: { e in
       state.updateIfChanged(e, keyPath, comparer: comparer)
     })
   }
 }
+
+public protocol ReduceSequence {
+  func __asVoidObservable() -> Observable<Void>
+}
+
+extension Observable : ReduceSequence {
+  public func __asVoidObservable() -> Observable<Void> {
+    return self.map { _ in }
+  }
+}
+
+extension SharedSequence : ReduceSequence {
+  public func __asVoidObservable() -> Observable<Void> {
+    return self.asObservable().__asVoidObservable()
+  }
+}
+
+extension PrimitiveSequence : ReduceSequence {
+  public func __asVoidObservable() -> Observable<Void> {
+    return self.asObservable().__asVoidObservable()
+  }
+}
+
