@@ -81,6 +81,7 @@ extension CyclerType {
         .observeOn(MainScheduler.instance)
         .map { [weak self] in
           $0
+            .observeOn(MainScheduler.instance)
             .do(onError: { [weak self] error in
               self?.receiveError(error: error)
             })
