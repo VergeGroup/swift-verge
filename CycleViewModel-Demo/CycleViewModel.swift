@@ -24,45 +24,32 @@ class ViewModel : CyclerType {
     case didReachBigNumber
   }
 
-  enum Action {
-    case increment(number: Int)
-    case decrement(number: Int)
-  }
-
-  typealias Mutation = Action
+  typealias Mutation = AnyMutation<State>
 
   var activity: Signal<Activity> {
     return _activity.asSignal()
   }
 
-  lazy var state: Storage<State> = _state.asStateStorage()
+  let state: Storage<State> = .init(.init())
 
-  private let _state: MutableStorage<State> = .init(.init())
   private let _activity = PublishRelay<Activity>()
 
   func receiveError(error: Error) {
-
+    print(error)
   }
-    
-  func reduce(state: MutableStorage<State>, action: Action) -> ReduceSequence {
-    switch action {
-    case .increment(let number):
 
-      return Observable.just(number)
-        .map { state.value.count + $0 }
-        .applyIfChanged(on: state, keyPath: \.count)
-        .do(onNext: { [weak self] _ in
-          if state.value.count > 10 {
-            self?._activity.accept(.didReachBigNumber)
-          }
-        })
+  func increment(number: Int) {
+    commit("increment") { (state) in
+      state.updateIfChanged(state.value.count + number, \.count)
+    }
+    if state.value.count > 10 {
+      self._activity.accept(.didReachBigNumber)
+    }
+  }
 
-    case .decrement(let number):
-
-      return Observable.just(number)
-        .map { state.value.count - $0 }
-        .applyIfChanged(on: state, keyPath: \.count)
-
+  func decrement(number: Int) {
+    commit("decrement") { (state) in
+      state.updateIfChanged(state.value.count - number, \.count)
     }
   }
   

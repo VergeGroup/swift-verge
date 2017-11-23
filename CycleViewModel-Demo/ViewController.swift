@@ -52,15 +52,17 @@ class ViewController: UIViewController {
       decrementButton
         .rx
         .tap
-        .map { .decrement(number: 1) }
-        .bind(to: viewModel.action)
+        .bind { [weak self] in
+          self?.viewModel.decrement(number: 1)
+        }
         .disposed(by: disposeBag)
 
       incrementButton
         .rx
         .tap
-        .map { .increment(number: 1) }
-        .bind(to: viewModel.action)
+        .bind { [weak self] in
+          self?.viewModel.increment(number: 1)
+        }
         .disposed(by: disposeBag)
 
     }
