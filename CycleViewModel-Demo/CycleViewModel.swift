@@ -24,19 +24,12 @@ class ViewModel : CyclerType {
     case didReachBigNumber
   }
 
-  var activity: Signal<Activity> {
-    return _activity.asSignal()
-  }
-
-  private let _activity = PublishRelay<Activity>()
-
   private let disposeBag = DisposeBag()
 
-  let initialState: State
+  let state: Storage<State> = .init(.init(count: 0, countOfActions: 0))
 
   init() {
 
-    initialState = .init(count: 0, countOfActions: 0)
     set(logger: CyclerLogger.instance)
   }
 
@@ -53,7 +46,7 @@ class ViewModel : CyclerType {
             }
 
             if c.currentState.count > 10 {
-                self._activity.accept(.didReachBigNumber)
+              c.emit(.didReachBigNumber)
             }
           }
         })

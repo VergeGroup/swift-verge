@@ -18,6 +18,10 @@ final class CyclerLogger : CycleLogging {
 
   }
 
+  func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {
+    print("\(cycler) => DidEmit", activity)
+  }
+
   func didChange(value: Any, for keyPath: AnyKeyPath, root: Any) {
     print("\(root) => DidChange", value, keyPath)
   }

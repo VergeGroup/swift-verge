@@ -34,6 +34,8 @@ import ObjectiveC
 import RxSwift
 import RxCocoa
 
+public enum NoActivity {}
+
 public protocol MutableStorageLogging {
 
   func didChange(value: Any, for keyPath: AnyKeyPath, root: Any)
@@ -43,6 +45,7 @@ public protocol MutableStorageLogging {
 
 public protocol CycleLogging : MutableStorageLogging {
 
+  func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
   func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
   func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
   func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
@@ -61,6 +64,7 @@ public struct EmptyCyclerLogger : CycleLogging {
   public func didChange(value: Any, for keyPath: AnyKeyPath, root: Any) {}
   public func didChange(root: Any) {}
   public func didReplace(root: Any) {}
+  public func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on: AnyCyclerType) {}
   public func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
   public func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
   public func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
@@ -72,19 +76,19 @@ public protocol AnyCyclerType : class {
 
 public protocol CyclerType : AnyCyclerType {
   associatedtype State
+  associatedtype Activity
   var state: Storage<State> { get }
-  var initialState: State { get }
 }
 
 private var _associated: Void?
 
 extension CyclerType {
 
-  var associated: Associate<State> {
-    if let associated = objc_getAssociatedObject(self, &_associated) as? Associate<State> {
+  var associated: Associate<Activity> {
+    if let associated = objc_getAssociatedObject(self, &_associated) as? Associate<Activity> {
       return associated
     } else {
-      let associated = Associate<State>(initialSate: initialState)
+      let associated = Associate<Activity>()
       objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
       return associated
     }
@@ -96,10 +100,11 @@ extension CyclerType {
 
   public func set(logger: CycleLogging) {
     associated.logger = logger
+    state.asMutableStateStorage().loggers = [logger]
   }
 
-  public var state: Storage<State> {
-    return associated.state
+  public var activity: Signal<Activity> {
+    return associated.activity.asSignal()
   }
 
   public var lock: NSRecursiveLock {
@@ -122,7 +127,6 @@ extension CyclerType {
       lock.unlock()
     }
 
-    _ = associated
     logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
 
     let mstorage = state.asMutableStateStorage()
@@ -143,10 +147,20 @@ extension CyclerType {
       lock.unlock()
     }
 
-    _ = associated
     logger.willDispatch(name: name, description: description, file: file, function: function, line: line, on: self)
 
     return try action(.init(source: self))
+  }
+
+  func emit(
+    _ activity: Activity,
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+    ) {
+
+    associated.activity.accept(activity)
+    logger.didEmit(activity: activity, file: file, function: function, line: line, on: self)
   }
 }
 
@@ -166,6 +180,27 @@ public struct CyclerWeakContext<T : CyclerType> {
   public func retained() -> CyclerContext<T>? {
     guard let source = self.source else { return nil }
     return .init(source: source)
+  }
+
+  public func emit(
+    _ activity: T.Activity,
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+    ) {
+    source?.emit(activity, file: file, function: function, line: line)
+  }
+
+  public func commit(
+    _ name: String = "",
+    _ description: String = "",
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line,
+    _ mutate: @escaping (MutableStorage<T.State>) throws -> Void
+    ) rethrows {
+
+    try source?.commit(name, description, file: file, function: function, line: line, mutate)
   }
 }
 
@@ -192,23 +227,27 @@ public struct CyclerContext<T : CyclerType> {
 
     try source.commit(name, description, file: file, function: function, line: line, mutate)
   }
+
+  public func emit(
+    _ activity: T.Activity,
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+    ) {
+    source.emit(activity, file: file, function: function, line: line)
+  }
 }
 
-final class Associate<State> {
+final class Associate<Activity> {
 
   let lock: NSRecursiveLock = .init()
-  let state: Storage<State>
 
-  var logger: CycleLogging? {
-    didSet {
-      if let logger = logger {
-        self.state.asMutableStateStorage().loggers = [logger]
-      }
-    }
-  }
+  var logger: CycleLogging?
 
-  init(initialSate: State) {
-    self.state = .init(initialSate)
+  let activity: PublishRelay<Activity> = .init()
+
+  init() {
+
   }
 }
 
