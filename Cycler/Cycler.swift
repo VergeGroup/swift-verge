@@ -34,119 +34,181 @@ import ObjectiveC
 import RxSwift
 import RxCocoa
 
-public struct NoState {}
-public struct NoActivity {}
-public struct NoAction {}
+public protocol MutableStorageLogging {
 
-public struct AnyMutation<State> {
+  func didChange(value: Any, for keyPath: AnyKeyPath, root: Any)
+  func didChange(root: Any)
+  func didReplace(root: Any)
+}
 
-  public let name: String
-  public let mutate: (MutableStorage<State>) throws -> Void
+public protocol CycleLogging : MutableStorageLogging {
 
-  public init(_ name: String, _ mutate: @escaping (MutableStorage<State>) throws -> Void) {
-    self.name = name
-    self.mutate = mutate
+  func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
+  func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
+  func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
+}
+
+extension CycleLogging {
+  static func empty() -> EmptyCyclerLogger {
+    return .init()
   }
 }
 
-public protocol CyclerCoreType : class {
+public struct EmptyCyclerLogger : CycleLogging {
 
+  public init() {}
+
+  public func didChange(value: Any, for keyPath: AnyKeyPath, root: Any) {}
+  public func didChange(root: Any) {}
+  public func didReplace(root: Any) {}
+  public func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
+  public func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
+  public func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
+}
+
+public protocol AnyCyclerType : class {
+
+}
+
+public protocol CyclerType : AnyCyclerType {
   associatedtype State
-  associatedtype Mutation
-
   var state: Storage<State> { get }
-  func commit(_ mutation: Mutation)
+  var initialState: State { get }
 }
 
-public protocol CyclerType : CyclerCoreType {
-
-  associatedtype Activity
-
-  var activity: Signal<Activity> { get }
-  func receiveError(error: Error)
-}
-
-extension CyclerType {
-  public func receiveError(error: Error) {
-
-  }
-
-  public func add<T: ObservableConvertibleType>(action: T) {
-    __queue.accept(action.asObservable().map { _ in })
-  }
-}
-
-extension CyclerType where Self.Mutation == AnyMutation<Self.State> {
-
-  public func commit(_ mutation: Mutation) {
-    do {
-      let mstorage = state.asMutableStateStorage()
-      try mutation.mutate(mstorage)
-    } catch {
-      receiveError(error: error)
-    }
-  }
-
-  public func commit(_ name: String, _ mutate: @escaping (MutableStorage<State>) throws -> Void) {
-    commit(.init(name, mutate))
-  }
-}
-
-private var _queue: Void?
-private var _disposeBag: Void?
+private var _associated: Void?
 
 extension CyclerType {
 
-  fileprivate var __disposeBag: DisposeBag {
-    if let disposeBag = objc_getAssociatedObject(self, &_disposeBag) as? DisposeBag {
-      return disposeBag
+  var associated: Associate<State> {
+    if let associated = objc_getAssociatedObject(self, &_associated) as? Associate<State> {
+      return associated
     } else {
-      let disposeBag = DisposeBag()
-      objc_setAssociatedObject(self, &_disposeBag, disposeBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-      return disposeBag
+      let associated = Associate<State>(initialSate: initialState)
+      objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+      return associated
     }
   }
 
-  var __queue: PublishRelay<Observable<Void>> {
-    if let queue = objc_getAssociatedObject(self, &_queue) as? PublishRelay<Observable<Void>> {
-      return queue
-    } else {
-
-      let queue = PublishRelay<Observable<Void>>()
-      queue
-        .observeOn(MainScheduler.instance)
-        .map { [weak self] in
-          $0
-            .observeOn(MainScheduler.instance)
-            .do(onError: { [weak self] error in
-              self?.receiveError(error: error)
-            })
-            .materialize()
-        }
-        .merge()
-        .observeOn(MainScheduler.instance)
-        .subscribe()
-        .disposed(by: __disposeBag)
-
-      objc_setAssociatedObject(self, &_queue, queue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-      return queue
-    }
+  var logger: CycleLogging {
+    return associated.logger ?? EmptyCyclerLogger.init()
   }
-}
 
-extension CyclerType where Activity == NoActivity {
-
-  public var activity: Signal<Activity> {
-    assertionFailure("\(self) does not have Activity")
-    return .empty()
+  public func set(logger: CycleLogging) {
+    associated.logger = logger
   }
-}
-
-extension CyclerCoreType where State == NoState {
 
   public var state: Storage<State> {
-    assertionFailure("\(self) does not have State")
-    return .init(.init(NoState()))
+    return associated.state
+  }
+
+  public var lock: NSRecursiveLock {
+    return associated.lock
+  }
+
+  public func commit(
+    _ name: String = "",
+    _ description: String = "",
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line,
+    _ mutate: @escaping (MutableStorage<State>) throws -> Void
+    ) rethrows {
+
+    lock.lock()
+
+    defer {
+      logger.didMutate(name: name, description: description, file: file, function: function, line: line, on: self)
+      lock.unlock()
+    }
+
+    _ = associated
+    logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
+
+    let mstorage = state.asMutableStateStorage()
+    try mutate(mstorage)
+  }
+
+  public func dispatch<T>(
+    _ name: String = "",
+    _ description: String = "",
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line,
+    _ action: (CyclerWeakContext<Self>) throws -> T
+    ) rethrows -> T {
+
+    lock.lock()
+    defer {
+      lock.unlock()
+    }
+
+    _ = associated
+    logger.willDispatch(name: name, description: description, file: file, function: function, line: line, on: self)
+
+    return try action(.init(source: self))
+  }
+}
+
+public struct CyclerWeakContext<T : CyclerType> {
+
+  weak var source: T?
+
+  init(source: T) {
+    self.source = source
+  }
+
+  public func retain(_ retainedContext: (CyclerContext<T>) -> Void) {
+    guard let source = self.source else { return }
+    retainedContext(.init(source: source))
+  }
+
+  public func retained() -> CyclerContext<T>? {
+    guard let source = self.source else { return nil }
+    return .init(source: source)
+  }
+}
+
+public struct CyclerContext<T : CyclerType> {
+
+  let source: T
+
+  public var currentState: T.State {
+    return source.state.value
+  }
+
+  init(source: T) {
+    self.source = source
+  }
+
+  public func commit(
+    _ name: String = "",
+    _ description: String = "",
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line,
+    _ mutate: @escaping (MutableStorage<T.State>) throws -> Void
+    ) rethrows {
+
+    try source.commit(name, description, file: file, function: function, line: line, mutate)
+  }
+}
+
+final class Associate<State> {
+
+  let lock: NSRecursiveLock = .init()
+  let state: Storage<State>
+
+  var logger: CycleLogging? {
+    didSet {
+      if let logger = logger {
+        self.state.asMutableStateStorage().loggers = [logger]
+      }
+    }
+  }
+
+  init(initialSate: State) {
+    self.state = .init(initialSate)
   }
 }
 
@@ -208,6 +270,8 @@ public final class Storage<T> {
 
 public final class MutableStorage<T> {
 
+  public var loggers: [MutableStorageLogging] = []
+
   public var value: T {
     get {
       return source.value
@@ -249,49 +313,54 @@ public final class MutableStorage<T> {
 
   public func replace(_ value: T) {
     writableValue = value
+
+    loggers.forEach { $0.didReplace(root: writableValue) }
   }
 
   public func update(_ execute: @escaping (inout T) throws -> Void) rethrows {
     try execute(&writableValue)
+
+    loggers.forEach { $0.didChange(root: writableValue) }
   }
 
   public func update<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>) {
     writableValue[keyPath: keyPath] = value
+
+    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: writableValue) }
+  }
+
+  public func update<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>) {
+    writableValue[keyPath: keyPath] = value
+
+    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: writableValue) }
   }
 
   public func updateIfChanged<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, comparer: (E?, E?) -> Bool) {
     guard comparer(writableValue[keyPath: keyPath], value) == false else { return }
     writableValue[keyPath: keyPath] = value
+
+    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: writableValue) }
   }
 
   public func updateIfChanged<E: Equatable>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, comparer: (E?, E?) -> Bool = { $0 == $1 }) {
     guard comparer(writableValue[keyPath: keyPath], value) == false else { return }
     writableValue[keyPath: keyPath] = value
+
+    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: writableValue) }
   }
 
   public func updateIfChanged<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>, comparer: (E, E) -> Bool) {
     guard comparer(writableValue[keyPath: keyPath], value) == false else { return }
     writableValue[keyPath: keyPath] = value
+
+    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: writableValue) }
   }
 
   public func updateIfChanged<E : Equatable>(_ value: E, _ keyPath: WritableKeyPath<T, E>, comparer: (E, E) -> Bool = { $0 == $1 }) {
     guard comparer(writableValue[keyPath: keyPath], value) == false else { return }
     writableValue[keyPath: keyPath] = value
-  }
 
-  public func update<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>) {
-    writableValue[keyPath: keyPath] = value
-  }
-
-  public func binder<Source: ObservableType>(_ execute: @escaping (inout T, Source.E) -> Void) -> (Source) -> Disposable {
-    return { source in
-      source
-        .do(onNext: { [weak self] e in
-          guard let `self` = self else { return }
-          execute(&self.writableValue, e)
-        })
-        .subscribe()
-    }
+    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: writableValue) }
   }
 
   public func asStateStorage() -> Storage<T> {

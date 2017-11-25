@@ -16,41 +16,60 @@ import Cycler
 class ViewModel : CyclerType {
 
   struct State {
-    fileprivate(set) var count: Int = 0
-    fileprivate(set) var countOfActions: Int = 0
+    private(set) var count: Int = 0
+    private(set) var countOfActions: Int = 0
   }
 
   enum Activity {
     case didReachBigNumber
   }
 
-  typealias Mutation = AnyMutation<State>
-
   var activity: Signal<Activity> {
     return _activity.asSignal()
   }
 
-  let state: Storage<State> = .init(.init())
-
   private let _activity = PublishRelay<Activity>()
 
-  func receiveError(error: Error) {
-    print(error)
+  private let disposeBag = DisposeBag()
+
+  let initialState: State
+
+  init() {
+
+    initialState = .init(count: 0, countOfActions: 0)
+    set(logger: CyclerLogger.instance)
   }
 
   func increment(number: Int) {
-    commit("increment") { (state) in
-      state.updateIfChanged(state.value.count + number, \.count)
-    }
-    if state.value.count > 10 {
-      self._activity.accept(.didReachBigNumber)
-    }
+
+    dispatch("increment") { (context) in
+      Observable.just(())
+        .delay(0.1, scheduler: MainScheduler.instance)
+        .do(onNext: {
+
+          context.retain { c in
+            c.commit { (state) in
+              state.updateIfChanged(state.value.count + number, \.count)
+            }
+
+            if c.currentState.count > 10 {
+                self._activity.accept(.didReachBigNumber)
+            }
+          }
+        })
+        .subscribe()
+      }
+      .disposed(by: disposeBag)
   }
 
   func decrement(number: Int) {
-    commit("decrement") { (state) in
-      state.updateIfChanged(state.value.count - number, \.count)
+
+    dispatch("decrement") { _ in
+      commit { (state) in
+        state.updateIfChanged(state.value.count - number, \.count)
+      }
     }
+
   }
   
 }
