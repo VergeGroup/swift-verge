@@ -29,6 +29,7 @@
 		4B86A4B51F969CA8002D54FE /* RxSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4AB1F969C92002D54FE /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B86A4B61F969D74002D54FE /* Cycler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Cycler.framework */; };
 		4B86A4B71F969D74002D54FE /* Cycler.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Cycler.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,7 @@
 		4B86A4A91F969C92002D54FE /* EasyPeasy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EasyPeasy.framework; path = Carthage/Build/iOS/EasyPeasy.framework; sourceTree = "<group>"; };
 		4B86A4AA1F969C92002D54FE /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		4B86A4AB1F969C92002D54FE /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
+		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +171,7 @@
 				4B86A4991F969C7D002D54FE /* AppDelegate.swift */,
 				4B86A49B1F969C7D002D54FE /* ViewController.swift */,
 				4B65F8F91FB4C75800A90A67 /* CycleViewModel.swift */,
+				4BAD4FDC1FC80B0100C841FA /* Logger.swift */,
 				4B86A49D1F969C7D002D54FE /* Main.storyboard */,
 				4B86A4A01F969C7D002D54FE /* Assets.xcassets */,
 				4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */,
@@ -349,6 +352,7 @@
 				4B65F8FA1FB4C75800A90A67 /* CycleViewModel.swift in Sources */,
 				4B86A49C1F969C7D002D54FE /* ViewController.swift in Sources */,
 				4B86A49A1F969C7D002D54FE /* AppDelegate.swift in Sources */,
+				4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

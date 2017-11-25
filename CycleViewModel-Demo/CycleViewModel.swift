@@ -16,54 +16,60 @@ import Cycler
 class ViewModel : CyclerType {
 
   struct State {
-    fileprivate(set) var count: Int = 0
-    fileprivate(set) var countOfActions: Int = 0
+    private(set) var count: Int = 0
+    private(set) var countOfActions: Int = 0
   }
 
   enum Activity {
     case didReachBigNumber
   }
 
-  enum Action {
-    case increment(number: Int)
-    case decrement(number: Int)
-  }
-
-  typealias Mutation = Action
-
   var activity: Signal<Activity> {
     return _activity.asSignal()
   }
 
-  lazy var state: Storage<State> = _state.asStateStorage()
-
-  private let _state: MutableStorage<State> = .init(.init())
   private let _activity = PublishRelay<Activity>()
 
-  func receiveError(error: Error) {
+  private let disposeBag = DisposeBag()
 
+  let initialState: State
+
+  init() {
+
+    initialState = .init(count: 0, countOfActions: 0)
+    set(logger: CyclerLogger.instance)
   }
-    
-  func reduce(state: MutableStorage<State>, action: Action) -> ReduceSequence {
-    switch action {
-    case .increment(let number):
 
-      return Observable.just(number)
-        .map { state.value.count + $0 }
-        .applyIfChanged(on: state, keyPath: \.count)
-        .do(onNext: { [weak self] _ in
-          if state.value.count > 10 {
-            self?._activity.accept(.didReachBigNumber)
+  func increment(number: Int) {
+
+    dispatch("increment") { (context) in
+      Observable.just(())
+        .delay(0.1, scheduler: MainScheduler.instance)
+        .do(onNext: {
+
+          context.retain { c in
+            c.commit { (state) in
+              state.updateIfChanged(state.value.count + number, \.count)
+            }
+
+            if c.currentState.count > 10 {
+                self._activity.accept(.didReachBigNumber)
+            }
           }
         })
+        .subscribe()
+      }
+      .disposed(by: disposeBag)
+  }
 
-    case .decrement(let number):
+  func decrement(number: Int) {
 
-      return Observable.just(number)
-        .map { state.value.count - $0 }
-        .applyIfChanged(on: state, keyPath: \.count)
-
+    dispatch("decrement") { _ in
+      commit { (state) in
+        state.updateIfChanged(state.value.count - number, \.count)
+      }
     }
+
   }
   
 }
