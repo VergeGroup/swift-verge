@@ -251,7 +251,7 @@ public final class Storage<T> {
 
     let m_state = MutableStorage.init(closure(value))
 
-    let state = m_state.asStateStorage()
+    let state = m_state.asStorage()
 
     asObservable()
       .map(closure)
@@ -363,7 +363,7 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: writableValue) }
   }
 
-  public func asStateStorage() -> Storage<T> {
+  public func asStorage() -> Storage<T> {
     return .init(self)
   }
 }
