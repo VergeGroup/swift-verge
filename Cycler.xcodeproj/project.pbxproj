@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B54E2791FE3646B001736D2 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E2781FE3646B001736D2 /* Storage.swift */; };
+		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B65F8EF1FB4C0DC00A90A67 /* CyclerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8EE1FB4C0DC00A90A67 /* CyclerTests.swift */; };
 		4B65F8F11FB4C0DC00A90A67 /* Cycler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Cycler.framework */; };
 		4B65F8F71FB4C25100A90A67 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4AA1F969C92002D54FE /* RxCocoa.framework */; };
@@ -67,6 +69,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B54E2781FE3646B001736D2 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
+		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B65F8EC1FB4C0DC00A90A67 /* CyclerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CyclerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B65F8EE1FB4C0DC00A90A67 /* CyclerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyclerTests.swift; sourceTree = "<group>"; };
 		4B65F8F01FB4C0DC00A90A67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -160,6 +164,8 @@
 			children = (
 				4B86A4891F969AD6002D54FE /* Cycler.h */,
 				4B86A4911F969BF3002D54FE /* Cycler.swift */,
+				4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */,
+				4B54E2781FE3646B001736D2 /* Storage.swift */,
 				4B86A48A1F969AD6002D54FE /* Info.plist */,
 			);
 			path = Cycler;
@@ -341,7 +347,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */,
 				4B86A4921F969BF3002D54FE /* Cycler.swift in Sources */,
+				4B54E2791FE3646B001736D2 /* Storage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
