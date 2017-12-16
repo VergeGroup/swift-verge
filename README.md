@@ -7,7 +7,7 @@
 This is one of the ideas for ViewModel layer.
 Mainly it's inspired by Flux architecture.
 
-<img src="Cycler@2x.png" style="width: 50%;">
+<img src="Cycler@2x.png" style="width: 541px;">
 
 ## CyclerType
 
