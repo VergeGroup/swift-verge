@@ -126,7 +126,7 @@ public protocol CycleLogging : MutableStorageLogging {
 
 ## Actual Code
 
-**Define ViewModel**
+### Define ViewModel
 
 ```swift
 
@@ -206,7 +206,7 @@ class ViewModel : CyclerType {
 
 ```
 
-**Use outside**
+### Subscribe State
 
 ```swift
 let viewModel = ViewModel()
@@ -224,6 +224,7 @@ viewModel
 viewModel
   .state
   .asObservable(keyPath: \.countText)
+  .distinctUntilChanged()
 ```
 
 **distinctUntilChanged** is very important.
@@ -231,6 +232,8 @@ viewModel
 Mutation will mutate whole of the State.
 Observable from the State will send event whenever updating the State.
 This behavior will cause unnecessary operations.
+
+### Subscribe Activity
 
 ```swift
   
