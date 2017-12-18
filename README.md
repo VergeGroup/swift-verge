@@ -75,7 +75,7 @@ So, We call them `Activity`.
 
 This is Storage that used for current **State**.
 
-```
+```swift
 public class Storage<T> {
   public var value: T { get }
   public func add(subscriber: @escaping (T) -> Void) -> Token
@@ -97,7 +97,7 @@ We can use `Storage` as standalone.
 
 ### It updates value by KeyPath
 
-```
+```swift
 let state: MutableStorage<State>
 state.update("some-value", \State.content.name)
 ```
@@ -106,7 +106,7 @@ state.update("some-value", \State.content.name)
 
 We can log event about Cycler.
 
-```
+```swift
 public protocol MutableStorageLogging {
 
   func didChange(value: Any, for keyPath: AnyKeyPath, root: Any)
@@ -122,10 +122,125 @@ public protocol CycleLogging : MutableStorageLogging {
 }
 ```
 
+# Usage
+
+## Actual Code
+
+**Define ViewModel**
+
+```swift
+
+import Cycler
+
+class ViewModel : CyclerType {
+
+  enum Activity {
+    case didReachBigNumber
+  }
+
+  struct State {
+
+    // - Data
+    fileprivate var count: Int = 0
+    
+    // - Computed
+    // It will be subscribed whole of this State, so, we can use computed property.
+    var countText: String {
+      return count.description
+    }
+  }
+
+  private let disposeBag = DisposeBag()
+
+  let state: Storage<State> = .init(.init(count: 0))
+
+  init() {
+  
+  }
+
+  func increment(number: Int) {
+
+    // Dispatch Action
+    // Action can contain async operation.
+    dispatch("increment") { (context) in
+      
+      // Context references self weakly.
+      
+      Observable.just(())
+        .delay(0.1, scheduler: MainScheduler.instance)
+        .do(onNext: {
+
+          // Retain references of context
+          // So, run operation completely in this scope.
+          context.retain { c in
+            
+            // Mutation
+            // Transaction for mutating.
+            c.commit { (state) in
+              // State is MutableStorage.
+              state.updateIfChanged(state.value.count + number, \.count)
+            }
+          
+            if c.currentState.count > 10 {
+              // Emit Activity.
+              // Activity just an event that does not need to store to State.
+              c.emit(.didReachBigNumber)
+            }
+          }
+        })
+        .subscribe()
+      }
+      .disposed(by: disposeBag)
+  }
+
+  func decrement(number: Int) {
+
+    dispatch("decrement") { _ in
+      commit { (state) in
+        state.updateIfChanged(state.value.count - number, \.count)
+      }
+    }
+
+  }
+}
+
+```
+
+**Use outside**
+
+```swift
+let viewModel = ViewModel()
+
+// Subscribe one property of the State.
+
+viewModel
+  .state
+  .asObservable()
+  .map { $0.countText }
+  .distinctUntilChanged()
+    
+// Or, subscribe one property of the State by KeyPath.
+  
+viewModel
+  .state
+  .asObservable(keyPath: \.countText)
+```
+
+**distinctUntilChanged** is very important.
+
+Mutation will mutate whole of the State.
+Observable from the State will send event whenever updating the State.
+This behavior will cause unnecessary operations.
+
+```swift
+  
+// Subscribe activity.
+viewModel
+  .activity
+  .emit(...)
+  
+```
+
 # Basically Demo
 
 ![](demo.gif)
-
-# Arch
-
-![](arch.jpg)

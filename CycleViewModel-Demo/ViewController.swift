@@ -28,7 +28,7 @@ class ViewController: UIViewController {
 
       viewModel
         .state
-        .asDriver(keyPath: \.count)
+        .asDriver(keyPath: \.countText)
         .map { $0.description }
         .drive(label.rx.text)
         .disposed(by: disposeBag)

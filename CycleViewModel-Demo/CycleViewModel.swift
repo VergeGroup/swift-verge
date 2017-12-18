@@ -15,18 +15,22 @@ import Cycler
 
 class ViewModel : CyclerType {
 
-  struct State {
-    private(set) var count: Int = 0
-    private(set) var countOfActions: Int = 0
-  }
-
   enum Activity {
     case didReachBigNumber
   }
 
+  struct State {
+
+    fileprivate var count: Int = 0
+    
+    var countText: String {
+      return count.description
+    }
+  }
+
   private let disposeBag = DisposeBag()
 
-  let state: Storage<State> = .init(.init(count: 0, countOfActions: 0))
+  let state: Storage<State> = .init(.init(count: 0))
 
   init() {
 
@@ -64,5 +68,4 @@ class ViewModel : CyclerType {
     }
 
   }
-  
 }
