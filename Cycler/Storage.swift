@@ -14,45 +14,82 @@ public protocol MutableStorageLogging {
   func didReplace(root: Any)
 }
 
+public struct StorageSubscribeToken : Hashable {
+
+  public static func == (lhs: StorageSubscribeToken, rhs: StorageSubscribeToken) -> Bool {
+    return lhs.identifier == rhs.identifier
+  }
+
+  public var hashValue: Int {
+    return identifier.hashValue
+  }
+
+  private let identifier = UUID().uuidString
+}
+
+
 public class Storage<T> {
 
-  public struct Token : Hashable {
-
-    public static func == (lhs: Token, rhs: Token) -> Bool {
-      return lhs.identifier == rhs.identifier
-    }
-
-    public var hashValue: Int {
-      return identifier.hashValue
-    }
-
-    private let identifier = UUID().uuidString
+  public var value: T {
+    return source.value
   }
+
+  private let source: MutableStorage<T>
+
+  public convenience init(_ value: T) {
+    self.init(MutableStorage.init(value))
+  }
+
+  public init(_ source: MutableStorage<T>) {
+    self.source = source
+  }
+
+  @discardableResult
+  public func add(subscriber: @escaping (T) -> Void) -> StorageSubscribeToken {
+    return source.add(subscriber: subscriber)
+  }
+
+  public func remove(subscriber token: StorageSubscribeToken) {
+    source.remove(subscriber: token)
+  }
+
+  func asMutableStateStorage() -> MutableStorage<T> {
+    return source
+  }
+}
+
+public final class MutableStorage<T> {
+
+  public typealias Source = T
+
+  private var subscribers: [StorageSubscribeToken : (T) -> Void] = [:]
+
+  public var loggers: [MutableStorageLogging] = []
 
   private let lock: NSRecursiveLock = .init()
 
-  private var subscribers: [Token : (T) -> Void] = [:]
+  private var isInBatchUpdating: Bool = false
 
   public var value: T {
     lock.lock(); defer { lock.unlock() }
     return _value
   }
 
-  fileprivate var _value: T
+  private var _value: T
 
   public init(_ value: T) {
     self._value = value
   }
 
   @discardableResult
-  public func add(subscriber: @escaping (T) -> Void) -> Token {
+  public func add(subscriber: @escaping (T) -> Void) -> StorageSubscribeToken {
     lock.lock(); defer { lock.unlock() }
-    let token = Token()
+    let token = StorageSubscribeToken()
     subscribers[token] = subscriber
     return token
   }
 
-  public func remove(subscriber: Token) {
+  public func remove(subscriber: StorageSubscribeToken) {
     lock.lock(); defer { lock.unlock() }
     subscribers.removeValue(forKey: subscriber)
   }
@@ -61,21 +98,6 @@ public class Storage<T> {
     lock.lock(); defer { lock.unlock() }
     subscribers.forEach { $0.value(_value) }
   }
-
-  func asMutableStateStorage() -> MutableStorage<T> {
-    return self as! MutableStorage<T>
-  }
-}
-
-public final class MutableStorage<T> : Storage<T> {
-
-  public typealias Source = T
-
-  public var loggers: [MutableStorageLogging] = []
-
-  private let lock: NSRecursiveLock = .init()
-
-  private var isInBatchUpdating: Bool = false
 
   public func replace(_ value: T) {
     lock.lock(); defer { lock.unlock() }
@@ -90,7 +112,7 @@ public final class MutableStorage<T> : Storage<T> {
     leaveBatchUpdating()
     notifyIfNotBatchUpdating()
 
-    loggers.forEach { $0.didReplace(root: value as Any) }
+    loggers.forEach { $0.didReplace(root: _value as Any) }
   }
 
   public func update<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>) {
@@ -164,7 +186,7 @@ public final class MutableStorage<T> : Storage<T> {
   }
 
   public func asStorage() -> Storage<T> {
-    return self as Storage<T>
+    return Storage.init(self)
   }
 
   private func enterBatchUpdating() {
