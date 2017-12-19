@@ -105,10 +105,10 @@ public final class MutableStorage<T> {
     notifyIfNotBatchUpdating()
   }
 
-  public func batchUpdate(_ update: (MutableStorage<T>) -> Void) {
+  public func batchUpdate(_ update: (MutableStorage<T>) throws -> Void) rethrows {
     lock.lock(); defer { lock.unlock() }
     enterBatchUpdating()
-    update(self)
+    try update(self)
     leaveBatchUpdating()
     notifyIfNotBatchUpdating()
 
