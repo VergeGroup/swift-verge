@@ -1,13 +1,13 @@
 Pod::Spec.new do |s|
   s.name         = "Cycler"
-  s.version      = "0.1.0"
+  s.version      = "2.3.0"
   s.summary      = "Cycling Event Flow"
   s.description  = <<-DESC
   Event Flow like Flux and Redux
                    DESC
   s.license      = "MIT"
   s.author             = { "Muukii" => "m@muukii.me" }
-  s.social_media_url   = "http://twitter.com/Muukii"
+  s.social_media_url   = "http://twitter.com/muukii0803"
   s.platform     = :ios
   # s.platform     = :ios, "5.0"
 

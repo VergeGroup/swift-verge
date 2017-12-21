@@ -5,6 +5,7 @@
 ## What is Cycler?
 
 This is one of the ideas for ViewModel layer.
+
 Mainly it's inspired by Flux architecture.
 
 <img src="Cycler@2x.png" style="width: 541px;">
@@ -12,6 +13,7 @@ Mainly it's inspired by Flux architecture.
 ## CyclerType
 
 CyclerType just defines clean data-flow.
+
 So, We are free that how we use Cycler.
 
 One of the usages, CyclerType adapts ViewModel of MVVM architecture.
@@ -93,10 +95,6 @@ public final class MutableStorage<T> : Storage<T> {
 }
 ```
 
-### It can use without RxSwift
-
-We can use `Storage` as standalone.
-
 ### It updates value by KeyPath
 
 ```swift
@@ -104,9 +102,25 @@ let state: MutableStorage<State>
 state.update("some-value", \State.content.name)
 ```
 
+**Why?**
+
+We can know what is updated by updating by KeyPath.
+
+That will be helpful for logging.
+
+### It can use without RxSwift
+
+We can use `Storage` as standalone.
+
 ## Logging
 
 We can log event about Cycler.
+
+- Logs are
+  - Changes state
+  - Receives mutations
+  - Receives actions
+  - Emits activities
 
 ```swift
 public protocol MutableStorageLogging {
