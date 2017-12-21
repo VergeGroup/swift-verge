@@ -11,8 +11,23 @@ Mainly it's inspired by Flux architecture.
 
 ## CyclerType
 
-ViewController should have one instance that is implementing `CyclerType`.
-It likes ViewModel.
+CyclerType just defines clean data-flow.
+So, We are free that how we use Cycler.
+
+One of the usages, CyclerType adapts ViewModel of MVVM architecture.
+
+### It has State that is observable
+
+### It updates State by receiving Mutation or Action
+
+Receive **Mutation** as **Commit**
+
+Receive **Action** as **Dispatch**
+
+### It emits Activity by receiving Mutation or Action
+
+Sometimes, There are some events that don't need store to State by Action or Mutation.
+So, We call them `Activity`.
 
 **Protocol**
 
@@ -57,19 +72,6 @@ extension CyclerType {
     )
 }
 ```
-
-### It has State that is observable
-
-### It updates State by receiving Mutation or Action
-
-Receive **Mutation** by **Commit**
-
-Receive **Action** by **Dispatch**
-
-### It emits Activity by receiving Mutation or Action
-
-Sometimes, There are some events that don't need store to State by Action or Mutation.
-So, We call them `Activity`.
 
 ## Storage
 
