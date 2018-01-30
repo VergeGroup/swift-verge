@@ -69,18 +69,18 @@ extension Storage {
     return subject.asObservable()
   }
 
-  @available(*, deprecated, message: "Use changed()")
+//  @available(*, deprecated, message: "Use changed()")
   public func asObservable<S>(keyPath: KeyPath<T, S>) -> Observable<S> {
     return asObservable()
       .map { $0[keyPath: keyPath] }
   }
 
-  @available(*, deprecated)
+//  @available(*, deprecated)
   public func asDriver() -> Driver<T> {
     return subject.asDriver()
   }
 
-  @available(*, deprecated, message: "Use changedDriver()")
+//  @available(*, deprecated, message: "Use changedDriver()")
   public func asDriver<S>(keyPath: KeyPath<T, S>) -> Driver<S> {
     return asDriver()
       .map { $0[keyPath: keyPath] }
