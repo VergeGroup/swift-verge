@@ -159,7 +159,7 @@ extension CyclerType {
 
 extension CyclerType {
 
-  public func binder<S>(target: WritableKeyPath<State, S>) -> Binder<S> {
+  public func commitBinder<S>(target: WritableKeyPath<State, S>) -> Binder<S> {
     return Binder<S>(self) { t, e in
       t.commit { s in
         s.update(e, target)
@@ -167,7 +167,7 @@ extension CyclerType {
     }
   }
 
-  public func binder<S>(target: WritableKeyPath<State, S?>) -> Binder<S?> {
+  public func commitBinder<S>(target: WritableKeyPath<State, S?>) -> Binder<S?> {
     return Binder<S?>(self) { t, e in
       t.commit { s in
         s.update(e, target)
@@ -175,7 +175,7 @@ extension CyclerType {
     }
   }
 
-  public func binderIfChanged<S>(target: WritableKeyPath<State, S>, comparer: @escaping ((S, S) -> Bool)) -> Binder<S> {
+  public func commitIfChangedBinder<S>(target: WritableKeyPath<State, S>, comparer: @escaping ((S, S) -> Bool)) -> Binder<S> {
     return Binder<S>(self) { t, e in
       t.commit { s in
         s.updateIfChanged(e, target, comparer: comparer)
@@ -183,7 +183,7 @@ extension CyclerType {
     }
   }
 
-  public func binderIfChanged<S>(target: WritableKeyPath<State, S?>, comparer: @escaping ((S?, S?) -> Bool)) -> Binder<S?> {
+  public func commitIfChangedBinder<S>(target: WritableKeyPath<State, S?>, comparer: @escaping ((S?, S?) -> Bool)) -> Binder<S?> {
     return Binder<S?>(self) { t, e in
       t.commit { s in
         s.updateIfChanged(e, target, comparer: comparer)
@@ -191,7 +191,7 @@ extension CyclerType {
     }
   }
 
-  public func binderIfChanged<S: Equatable>(target: WritableKeyPath<State, S>, comparer: @escaping ((S, S) -> Bool) = (==)) -> Binder<S> {
+  public func commitIfChangedBinder<S: Equatable>(target: WritableKeyPath<State, S>, comparer: @escaping ((S, S) -> Bool) = (==)) -> Binder<S> {
     return Binder<S>(self) { t, e in
       t.commit { s in
         s.updateIfChanged(e, target, comparer: comparer)
@@ -199,7 +199,7 @@ extension CyclerType {
     }
   }
 
-  public func binderIfChanged<S: Equatable>(target: WritableKeyPath<State, S?>, comparer: @escaping ((S?, S?) -> Bool) = (==)) -> Binder<S?> {
+  public func commitIfChangedBinder<S: Equatable>(target: WritableKeyPath<State, S?>, comparer: @escaping ((S?, S?) -> Bool) = (==)) -> Binder<S?> {
     return Binder<S?>(self) { t, e in
       t.commit { s in
         s.updateIfChanged(e, target, comparer: comparer)
