@@ -46,7 +46,7 @@ class ViewModel : CyclerType {
 
           context.retain { c in
             c.commit { (state) in
-              state.updateIfChanged(state.value.count + number, \.count)
+              state.update(state.value.count, \.count, ifChanged: ==)
             }
 
             if c.currentState.count > 10 {
@@ -63,7 +63,8 @@ class ViewModel : CyclerType {
 
     dispatch("decrement") { _ in
       commit { (state) in
-        state.updateIfChanged(state.value.count - number, \.count)
+        state.update(state.value.count - number, \.count, ifChanged: ==)
+
       }
     }
 

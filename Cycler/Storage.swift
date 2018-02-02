@@ -27,7 +27,6 @@ public struct StorageSubscribeToken : Hashable {
   private let identifier = UUID().uuidString
 }
 
-
 public class Storage<T> {
 
   public var value: T {
@@ -106,6 +105,7 @@ public final class MutableStorage<T> {
   }
 
   public func batchUpdate(_ update: (MutableStorage<T>) throws -> Void) rethrows {
+
     lock.lock(); defer { lock.unlock() }
     enterBatchUpdating()
     try update(self)
@@ -115,9 +115,13 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didReplace(root: _value as Any) }
   }
 
-  public func update<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>) {
+  public func update<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, ifChanged comparer: ((E?, E?) -> Bool)? = nil) {
 
     lock.lock(); defer { lock.unlock() }
+
+    if let comparer = comparer, comparer(_value[keyPath: keyPath], value) {
+      return
+    }
 
     _value[keyPath: keyPath] = value
 
@@ -126,9 +130,13 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
   }
 
-  public func update<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>) {
+  public func update<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>, ifChanged comparer: ((E, E) -> Bool)? = nil) {
 
     lock.lock(); defer { lock.unlock() }
+
+    if let comparer = comparer, comparer(_value[keyPath: keyPath], value) {
+      return
+    }
 
     _value[keyPath: keyPath] = value
 
@@ -137,6 +145,7 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
   }
 
+  @available(*, deprecated, message: "Use update(_ value, _ keyPath, ifChanged)")
   public func updateIfChanged<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, comparer: (E?, E?) -> Bool) {
 
     lock.lock(); defer { lock.unlock() }
@@ -149,6 +158,7 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
   }
 
+  @available(*, deprecated, message: "Use update(_ value, _ keyPath, ifChanged)")
   public func updateIfChanged<E: Equatable>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, comparer: (E?, E?) -> Bool = { $0 == $1 }) {
 
     lock.lock(); defer { lock.unlock() }
@@ -161,6 +171,7 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
   }
 
+  @available(*, deprecated, message: "Use update(_ value, _ keyPath, ifChanged)")
   public func updateIfChanged<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>, comparer: (E, E) -> Bool) {
 
     lock.lock(); defer { lock.unlock() }
@@ -173,6 +184,7 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
   }
 
+  @available(*, deprecated, message: "Use update(_ value, _ keyPath, ifChanged)")
   public func updateIfChanged<E : Equatable>(_ value: E, _ keyPath: WritableKeyPath<T, E>, comparer: (E, E) -> Bool = { $0 == $1 }) {
 
     lock.lock(); defer { lock.unlock() }

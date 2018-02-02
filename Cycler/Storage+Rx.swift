@@ -50,6 +50,12 @@ extension Storage {
     }
   }
 
+  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
+  ///
+  /// - Parameters:
+  ///   - target: KeyPath to property
+  ///   - comparer: 
+  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
   public func changed<S>(_ target: KeyPath<T, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
     return
       asObservable()
@@ -57,6 +63,12 @@ extension Storage {
         .distinctUntilChanged(comparer)
   }
 
+  /// Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
+  ///
+  /// - Parameters:
+  ///   - target: KeyPath to property
+  ///   - comparer:
+  /// - Returns: Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
   public func changedDriver<S>(_ target: KeyPath<T, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
     return
       asObservable()
@@ -65,27 +77,34 @@ extension Storage {
         .asDriver(onErrorRecover: { _ in .empty() })
   }
 
+  /// Returns an observable sequence
+  ///
+  /// - Returns: Returns an observable sequence
   public func asObservable() -> Observable<T> {
     return subject.asObservable()
   }
 
-//  @available(*, deprecated, message: "Use changed()")
   public func asObservable<S>(keyPath: KeyPath<T, S>) -> Observable<S> {
     return asObservable()
       .map { $0[keyPath: keyPath] }
   }
 
-//  @available(*, deprecated)
+  /// Returns an observable sequence as Driver
+  ///
+  /// - Returns: Returns an observable sequence as Driver
   public func asDriver() -> Driver<T> {
     return subject.asDriver()
   }
 
-//  @available(*, deprecated, message: "Use changedDriver()")
   public func asDriver<S>(keyPath: KeyPath<T, S>) -> Driver<S> {
     return asDriver()
       .map { $0[keyPath: keyPath] }
   }
 
+  /// Projects each property of Value into a new form.
+  ///
+  /// - Parameter keyPath:
+  /// - Returns:
   public func map<U>(_ keyPath: KeyPath<T, U>) -> Storage<U> {
     return
       map {
@@ -93,6 +112,10 @@ extension Storage {
     }
   }
 
+  /// Projects each property of Value into a new form.
+  ///
+  /// - Parameter keyPath:
+  /// - Returns: 
   public func map<U>(_ closure: @escaping (T) -> U) -> Storage<U> {
 
     let m_state = MutableStorage.init(closure(value))

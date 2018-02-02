@@ -157,6 +157,26 @@ extension CyclerType {
   }
 }
 
+extension CyclerType {
+
+  public func binder<S>(_ target: WritableKeyPath<State, S>, ifChanged comparer: ((S, S) -> Bool)? = nil) -> Binder<S> {
+    return Binder<S>(self) { t, e in
+      t.commit { s in
+        s.update(e, target, ifChanged: comparer)
+      }
+    }
+  }
+
+  public func binder<S>(_ target: WritableKeyPath<State, S?>, ifChanged comparer: ((S?, S?) -> Bool)? = nil) -> Binder<S> {
+    return Binder<S>(self) { t, e in
+      t.commit { s in
+        s.update(e, target, ifChanged: comparer)
+      }
+    }
+  }
+
+}
+
 public struct CyclerWeakContext<T : CyclerType> {
 
   weak var source: T?
