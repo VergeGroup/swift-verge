@@ -159,49 +159,137 @@ extension CyclerType {
 
 extension CyclerType {
 
-  public func commitBinder<S>(target: WritableKeyPath<State, S>) -> Binder<S> {
+  public func commitBinder<S>(
+    name: String = "",
+    description: String = "",
+    target: WritableKeyPath<State, S>,
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+    ) -> Binder<S> {
+
     return Binder<S>(self) { t, e in
-      t.commit { s in
+      t.commit(
+        name,
+        description,
+        file: file,
+        function: function,
+        line: line
+      ) { s in
         s.update(e, target)
       }
     }
   }
 
-  public func commitBinder<S>(target: WritableKeyPath<State, S?>) -> Binder<S?> {
+  public func commitBinder<S>(
+    name: String = "",
+    description: String = "",
+    target: WritableKeyPath<State, S?>,
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+    ) -> Binder<S?> {
+
     return Binder<S?>(self) { t, e in
-      t.commit { s in
+      t.commit(
+        name,
+        description,
+        file: file,
+        function: function,
+        line: line
+      ) { s in
         s.update(e, target)
       }
     }
   }
 
-  public func commitIfChangedBinder<S>(target: WritableKeyPath<State, S>, comparer: @escaping ((S, S) -> Bool)) -> Binder<S> {
+  public func commitIfChangedBinder<S>(
+    name: String = "",
+    description: String = "",
+    target: WritableKeyPath<State, S>,
+    comparer: @escaping ((S, S) -> Bool),
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+    ) -> Binder<S> {
+
     return Binder<S>(self) { t, e in
-      t.commit { s in
+      t.commit(
+        name,
+        description,
+        file: file,
+        function: function,
+        line: line
+      ) { s in
         s.updateIfChanged(e, target, comparer: comparer)
       }
     }
   }
 
-  public func commitIfChangedBinder<S>(target: WritableKeyPath<State, S?>, comparer: @escaping ((S?, S?) -> Bool)) -> Binder<S?> {
+  public func commitIfChangedBinder<S>(
+    name: String = "",
+    description: String = "",
+    target: WritableKeyPath<State, S?>,
+    comparer: @escaping ((S?, S?) -> Bool),
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+    ) -> Binder<S?> {
+
     return Binder<S?>(self) { t, e in
-      t.commit { s in
+      t.commit(
+        name,
+        description,
+        file: file,
+        function: function,
+        line: line
+      ) { s in
         s.updateIfChanged(e, target, comparer: comparer)
       }
     }
   }
 
-  public func commitIfChangedBinder<S: Equatable>(target: WritableKeyPath<State, S>, comparer: @escaping ((S, S) -> Bool) = (==)) -> Binder<S> {
+  public func commitIfChangedBinder<S: Equatable>(
+    name: String = "",
+    description: String = "",
+    target: WritableKeyPath<State, S>,
+    comparer: @escaping ((S, S) -> Bool) = (==),
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+    ) -> Binder<S> {
+
     return Binder<S>(self) { t, e in
-      t.commit { s in
+      t.commit(
+        name,
+        description,
+        file: file,
+        function: function,
+        line: line
+      ) { s in
         s.updateIfChanged(e, target, comparer: comparer)
       }
     }
   }
 
-  public func commitIfChangedBinder<S: Equatable>(target: WritableKeyPath<State, S?>, comparer: @escaping ((S?, S?) -> Bool) = (==)) -> Binder<S?> {
+  public func commitIfChangedBinder<S: Equatable>(
+    name: String = "",
+    description: String = "",
+    target: WritableKeyPath<State, S?>,
+    comparer: @escaping ((S?, S?) -> Bool) = (==),
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+    ) -> Binder<S?> {
+
     return Binder<S?>(self) { t, e in
-      t.commit { s in
+      t.commit(
+        name,
+        description,
+        file: file,
+        function: function,
+        line: line
+      ) { s in
         s.updateIfChanged(e, target, comparer: comparer)
       }
     }
@@ -212,6 +300,10 @@ extension CyclerType {
 public struct CyclerWeakContext<T : CyclerType> {
 
   weak var source: T?
+
+  public var currentState: T.State? {
+    return source?.state.value
+  }
 
   init(source: T) {
     self.source = source
