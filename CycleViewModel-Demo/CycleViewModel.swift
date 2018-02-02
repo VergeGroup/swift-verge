@@ -21,8 +21,10 @@ class ViewModel : CyclerType {
 
   struct State {
 
+    // Stored
     fileprivate var count: Int = 0
-    
+
+    // Computed
     var countText: String {
       return count.description
     }
@@ -46,7 +48,7 @@ class ViewModel : CyclerType {
 
           context.retain { c in
             c.commit { (state) in
-              state.update(state.value.count, \.count, ifChanged: ==)
+              state.updateIfChanged(state.value.count, \.count)
             }
 
             if c.currentState.count > 10 {
@@ -63,7 +65,7 @@ class ViewModel : CyclerType {
 
     dispatch("decrement") { _ in
       commit { (state) in
-        state.update(state.value.count - number, \.count, ifChanged: ==)
+        state.updateIfChanged(state.value.count - number, \.count)
 
       }
     }

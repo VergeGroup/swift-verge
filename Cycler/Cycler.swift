@@ -110,7 +110,7 @@ extension CyclerType {
     file: StaticString = #file,
     function: StaticString = #function,
     line: UInt = #line,
-    _ mutate: @escaping (MutableStorage<State>) throws -> Void
+    _ mutate: (MutableStorage<State>) throws -> Void
     ) rethrows {
 
     lock.lock()
@@ -159,18 +159,50 @@ extension CyclerType {
 
 extension CyclerType {
 
-  public func binder<S>(_ target: WritableKeyPath<State, S>, ifChanged comparer: ((S, S) -> Bool)? = nil) -> Binder<S> {
+  public func binder<S>(target: WritableKeyPath<State, S>) -> Binder<S> {
     return Binder<S>(self) { t, e in
       t.commit { s in
-        s.update(e, target, ifChanged: comparer)
+        s.update(e, target)
       }
     }
   }
 
-  public func binder<S>(_ target: WritableKeyPath<State, S?>, ifChanged comparer: ((S?, S?) -> Bool)? = nil) -> Binder<S> {
+  public func binder<S>(target: WritableKeyPath<State, S?>) -> Binder<S?> {
+    return Binder<S?>(self) { t, e in
+      t.commit { s in
+        s.update(e, target)
+      }
+    }
+  }
+
+  public func binderIfChanged<S>(target: WritableKeyPath<State, S>, comparer: @escaping ((S, S) -> Bool)) -> Binder<S> {
     return Binder<S>(self) { t, e in
       t.commit { s in
-        s.update(e, target, ifChanged: comparer)
+        s.updateIfChanged(e, target, comparer: comparer)
+      }
+    }
+  }
+
+  public func binderIfChanged<S>(target: WritableKeyPath<State, S?>, comparer: @escaping ((S?, S?) -> Bool)) -> Binder<S?> {
+    return Binder<S?>(self) { t, e in
+      t.commit { s in
+        s.updateIfChanged(e, target, comparer: comparer)
+      }
+    }
+  }
+
+  public func binderIfChanged<S: Equatable>(target: WritableKeyPath<State, S>, comparer: @escaping ((S, S) -> Bool) = (==)) -> Binder<S> {
+    return Binder<S>(self) { t, e in
+      t.commit { s in
+        s.updateIfChanged(e, target, comparer: comparer)
+      }
+    }
+  }
+
+  public func binderIfChanged<S: Equatable>(target: WritableKeyPath<State, S?>, comparer: @escaping ((S?, S?) -> Bool) = (==)) -> Binder<S?> {
+    return Binder<S?>(self) { t, e in
+      t.commit { s in
+        s.updateIfChanged(e, target, comparer: comparer)
       }
     }
   }
