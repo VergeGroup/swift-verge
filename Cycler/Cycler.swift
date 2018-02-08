@@ -67,6 +67,7 @@ public protocol AnyCyclerType : class {
 
 }
 
+/// The protocol is core of Cycler
 public protocol CyclerType : AnyCyclerType {
   associatedtype State
   associatedtype Activity
@@ -77,7 +78,7 @@ private var _associated: Void?
 
 extension CyclerType {
 
-  var associated: Associate<Activity> {
+  private var associated: Associate<Activity> {
     if let associated = objc_getAssociatedObject(self, &_associated) as? Associate<Activity> {
       return associated
     } else {
@@ -87,7 +88,7 @@ extension CyclerType {
     }
   }
 
-  var logger: CycleLogging {
+  private var logger: CycleLogging {
     return associated.logger ?? EmptyCyclerLogger.init()
   }
 
@@ -145,7 +146,7 @@ extension CyclerType {
     return try action(.init(source: self))
   }
 
-  func emit(
+  fileprivate func emit(
     _ activity: Activity,
     file: StaticString = #file,
     function: StaticString = #function,
@@ -253,7 +254,6 @@ extension CyclerType {
     name: String = "",
     description: String = "",
     target: WritableKeyPath<State, S>,
-    comparer: @escaping ((S, S) -> Bool) = (==),
     file: StaticString = #file,
     function: StaticString = #function,
     line: UInt = #line
@@ -267,7 +267,7 @@ extension CyclerType {
         function: function,
         line: line
       ) { s in
-        s.updateIfChanged(e, target, comparer: comparer)
+        s.updateIfChanged(e, target, comparer: ==)
       }
     }
   }
@@ -276,7 +276,6 @@ extension CyclerType {
     name: String = "",
     description: String = "",
     target: WritableKeyPath<State, S?>,
-    comparer: @escaping ((S?, S?) -> Bool) = (==),
     file: StaticString = #file,
     function: StaticString = #function,
     line: UInt = #line
@@ -290,7 +289,7 @@ extension CyclerType {
         function: function,
         line: line
       ) { s in
-        s.updateIfChanged(e, target, comparer: comparer)
+        s.updateIfChanged(e, target, comparer: ==)
       }
     }
   }
@@ -343,7 +342,7 @@ public struct CyclerWeakContext<T : CyclerType> {
 
 public struct CyclerContext<T : CyclerType> {
 
-  let source: T
+  private let source: T
 
   public var currentState: T.State {
     return source.state.value

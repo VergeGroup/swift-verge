@@ -63,6 +63,10 @@ extension Storage {
         .distinctUntilChanged(comparer)
   }
 
+  public func changed<S : Equatable>(_ target: KeyPath<T, S>) -> Observable<S> {
+    return changed(target, ==)
+  }
+
   /// Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
   ///
   /// - Parameters:
@@ -75,6 +79,10 @@ extension Storage {
         .map { $0[keyPath: target] }
         .distinctUntilChanged(comparer)
         .asDriver(onErrorRecover: { _ in .empty() })
+  }
+  
+  public func changedDriver<S : Equatable>(_ target: KeyPath<T, S>) -> Driver<S> {
+    return changedDriver(target, ==)
   }
 
   /// Returns an observable sequence

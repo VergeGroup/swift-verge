@@ -45,9 +45,9 @@ public protocol CyclerType {
 
 ```swift
 extension CyclerType {
-  
+
   public var activity: Signal<Activity>
-  
+
   public func commit(
       _ name: String = "",
       _ description: String = "",
@@ -65,13 +65,6 @@ extension CyclerType {
     line: UInt = #line,
     _ action: (CyclerWeakContext<Self>) throws -> T
     ) rethrows -> T
-    
-  public func emit(
-    _ activity: Activity,
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-    )
 }
 ```
 
@@ -158,7 +151,7 @@ class ViewModel : CyclerType {
 
     // - Data
     fileprivate var count: Int = 0
-    
+
     // - Computed
     // It will be subscribed whole of this State, so, we can use computed property.
     var countText: String {
@@ -171,7 +164,7 @@ class ViewModel : CyclerType {
   let state: Storage<State> = .init(.init(count: 0))
 
   init() {
-  
+
   }
 
   func increment(number: Int) {
@@ -179,9 +172,9 @@ class ViewModel : CyclerType {
     // Dispatch Action
     // Action can contain async operation.
     dispatch("increment") { (context) in
-      
+
       // Context references self weakly.
-      
+
       Observable.just(())
         .delay(0.1, scheduler: MainScheduler.instance)
         .do(onNext: {
@@ -189,14 +182,14 @@ class ViewModel : CyclerType {
           // Retain references of context
           // So, run operation completely in this scope.
           context.retain { c in
-            
+
             // Mutation
             // Transaction for mutating.
             c.commit { (state) in
               // State is MutableStorage.
               state.updateIfChanged(state.value.count + number, \.count)
             }
-          
+
             if c.currentState.count > 10 {
               // Emit Activity.
               // Activity just an event that does not need to store to State.
@@ -234,13 +227,19 @@ viewModel
   .asObservable()
   .map { $0.countText }
   .distinctUntilChanged()
-    
+
 // Or, subscribe one property of the State by KeyPath.
-  
+
 viewModel
   .state
   .asObservable(keyPath: \.countText)
   .distinctUntilChanged()
+
+// Or,
+
+viewModel
+  .state
+  .changed(\.countText) // This includes `distinctUntilChanged`
 ```
 
 **distinctUntilChanged** is very important.
@@ -252,12 +251,12 @@ This behavior will cause unnecessary operations.
 ### Subscribe Activity
 
 ```swift
-  
+
 // Subscribe activity.
 viewModel
   .activity
   .emit(...)
-  
+
 ```
 
 # Basically Demo

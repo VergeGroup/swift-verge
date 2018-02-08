@@ -107,9 +107,11 @@ public final class MutableStorage<T> {
   public func batchUpdate(_ update: (MutableStorage<T>) throws -> Void) rethrows {
 
     lock.lock(); defer { lock.unlock() }
+
     enterBatchUpdating()
     try update(self)
     leaveBatchUpdating()
+    
     notifyIfNotBatchUpdating()
 
     loggers.forEach { $0.didReplace(root: _value as Any) }
@@ -124,6 +126,7 @@ public final class MutableStorage<T> {
     notifyIfNotBatchUpdating()
 
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
+
   }
 
   public func update<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>) {
@@ -149,16 +152,8 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
   }
 
-  public func updateIfChanged<E: Equatable>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, comparer: (E?, E?) -> Bool = { $0 == $1 }) {
-
-    lock.lock(); defer { lock.unlock() }
-
-    guard comparer(_value[keyPath: keyPath], value) == false else { return }
-    _value[keyPath: keyPath] = value
-
-    notifyIfNotBatchUpdating()
-
-    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
+  public func updateIfChanged<E: Equatable>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>) {
+    updateIfChanged(value, keyPath, comparer: ==)
   }
 
   public func updateIfChanged<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>, comparer: (E, E) -> Bool) {
@@ -173,30 +168,27 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
   }
 
-  public func updateIfChanged<E : Equatable>(_ value: E, _ keyPath: WritableKeyPath<T, E>, comparer: (E, E) -> Bool = { $0 == $1 }) {
+  public func updateIfChanged<E : Equatable>(_ value: E, _ keyPath: WritableKeyPath<T, E>) {
 
-    lock.lock(); defer { lock.unlock() }
+    updateIfChanged(value, keyPath, comparer: ==)
 
-    guard comparer(_value[keyPath: keyPath], value) == false else { return }
-    _value[keyPath: keyPath] = value
-
-    notifyIfNotBatchUpdating()
-
-    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
   }
 
   public func asStorage() -> Storage<T> {
     return Storage.init(self)
   }
 
+  @inline(__always)
   private func enterBatchUpdating() {
     isInBatchUpdating = true
   }
 
+  @inline(__always)
   private func leaveBatchUpdating() {
     isInBatchUpdating = false
   }
 
+  @inline(__always)
   private func notifyIfNotBatchUpdating() {
 
     guard isInBatchUpdating == false else { return }
