@@ -333,7 +333,7 @@ public struct CyclerWeakContext<T : CyclerType> {
     file: StaticString = #file,
     function: StaticString = #function,
     line: UInt = #line,
-    _ mutate: @escaping (MutableStorage<T.State>) throws -> Void
+    _ mutate: (MutableStorage<T.State>) throws -> Void
     ) rethrows {
 
     try source?.commit(name, description, file: file, function: function, line: line, mutate)
