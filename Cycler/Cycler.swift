@@ -83,7 +83,7 @@ extension CyclerType {
       return associated
     } else {
       let associated = Associate<Activity>()
-      objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+      objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN)
       return associated
     }
   }
@@ -93,6 +93,7 @@ extension CyclerType {
   }
 
   public func set(logger: CycleLogging) {
+    lock.lock(); defer { lock.unlock() }
     associated.logger = logger
     state.asMutableStateStorage().loggers = [logger]
   }
