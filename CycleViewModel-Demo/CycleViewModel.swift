@@ -42,21 +42,21 @@ class ViewModel : CyclerType {
   func increment(number: Int) {
 
     dispatch("increment") { (context) in
+
       Observable.just(())
         .delay(0.1, scheduler: MainScheduler.instance)
         .do(onNext: {
 
-          context.retain { c in
-            c.commit { (state) in
+            context.commit { (state) in
               state.updateIfChanged(state.value.count, \.count)
             }
 
-            if c.currentState.count > 10 {
-              c.emit(.didReachBigNumber)
+            if context.currentState.count > 10 {
+              context.emit(.didReachBigNumber)
             }
-          }
         })
         .subscribe()
+
       }
       .disposed(by: disposeBag)
   }

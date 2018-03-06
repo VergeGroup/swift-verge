@@ -134,7 +134,7 @@ extension CyclerType {
     file: StaticString = #file,
     function: StaticString = #function,
     line: UInt = #line,
-    _ action: (CyclerWeakContext<Self>) throws -> T
+    _ action: (CyclerContext<Self>) throws -> T
     ) rethrows -> T {
 
     lock.lock()
@@ -294,7 +294,6 @@ extension CyclerType {
       }
     }
   }
-
 }
 
 public struct CyclerWeakContext<T : CyclerType> {
@@ -372,6 +371,10 @@ public struct CyclerContext<T : CyclerType> {
     line: UInt = #line
     ) {
     source.emit(activity, file: file, function: function, line: line)
+  }
+
+  public func weakify() -> CyclerWeakContext<T> {
+    return .init(source: source)
   }
 }
 
