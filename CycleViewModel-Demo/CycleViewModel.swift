@@ -48,7 +48,7 @@ class ViewModel : CyclerType {
         .do(onNext: {
 
             context.commit { (state) in
-              state.updateIfChanged(state.value.count, \.count)
+              state.updateIfChanged(state.value.count + number, \.count)
             }
 
             if context.currentState.count > 10 {

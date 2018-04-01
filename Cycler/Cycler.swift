@@ -296,35 +296,18 @@ extension CyclerType {
   }
 }
 
-public struct CyclerWeakContext<T : CyclerType> {
+public struct CyclerContext<T : CyclerType> {
 
-  weak var source: T?
+  private weak var source: T?
+  private let state: Storage<T.State>
 
-  public var currentState: T.State? {
-    return source?.state.value
+  public var currentState: T.State {
+    return state.value
   }
 
   init(source: T) {
     self.source = source
-  }
-
-  public func retain(_ retainedContext: (CyclerContext<T>) -> Void) {
-    guard let source = self.source else { return }
-    retainedContext(.init(source: source))
-  }
-
-  public func retained() -> CyclerContext<T>? {
-    guard let source = self.source else { return nil }
-    return .init(source: source)
-  }
-
-  public func emit(
-    _ activity: T.Activity,
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-    ) {
-    source?.emit(activity, file: file, function: function, line: line)
+    self.state = source.state
   }
 
   public func commit(
@@ -338,31 +321,6 @@ public struct CyclerWeakContext<T : CyclerType> {
 
     try source?.commit(name, description, file: file, function: function, line: line, mutate)
   }
-}
-
-public struct CyclerContext<T : CyclerType> {
-
-  private let source: T
-
-  public var currentState: T.State {
-    return source.state.value
-  }
-
-  init(source: T) {
-    self.source = source
-  }
-
-  public func commit(
-    _ name: String = "",
-    _ description: String = "",
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line,
-    _ mutate: (MutableStorage<T.State>) throws -> Void
-    ) rethrows {
-
-    try source.commit(name, description, file: file, function: function, line: line, mutate)
-  }
 
   public func emit(
     _ activity: T.Activity,
@@ -370,11 +328,7 @@ public struct CyclerContext<T : CyclerType> {
     function: StaticString = #function,
     line: UInt = #line
     ) {
-    source.emit(activity, file: file, function: function, line: line)
-  }
-
-  public func weakify() -> CyclerWeakContext<T> {
-    return .init(source: source)
+    source?.emit(activity, file: file, function: function, line: line)
   }
 }
 
