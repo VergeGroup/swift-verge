@@ -13,7 +13,33 @@ import RxCocoa
 
 import Cycler
 
-class ViewModel : CyclerType {
+class RootViewModel : CyclerType {
+
+  enum Activity {
+  }
+
+  struct State {
+
+  }
+
+  let state: Storage<State> = .init(.init())
+
+  init() {
+
+  }
+
+  func hey() {
+
+    dispatch { c in
+      print("hey")
+    }
+  }
+
+}
+
+class ViewModel : ModularCyclerType {
+
+  typealias Parent = RootViewModel
 
   enum Activity {
     case didReachBigNumber
@@ -37,9 +63,14 @@ class ViewModel : CyclerType {
   init() {
 
     set(logger: CyclerLogger.instance)
+    set(parent: RootViewModel(), retain: true)
   }
 
   func increment(number: Int) {
+
+    forward { (parent) in
+      parent.hey()
+    }
 
     dispatch("increment") { (context) in
 

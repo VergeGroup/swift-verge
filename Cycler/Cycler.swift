@@ -35,6 +35,7 @@ import RxSwift
 import RxCocoa
 
 public enum NoActivity {}
+public struct NoState {}
 
 public protocol CycleLogging : MutableStorageLogging {
 
@@ -74,15 +75,21 @@ public protocol CyclerType : AnyCyclerType {
   var state: Storage<State> { get }
 }
 
+public protocol ModularCyclerType : CyclerType {
+  associatedtype Parent : CyclerType
+}
+
 private var _associated: Void?
+private var _modularAssociated: Void?
+
 
 extension CyclerType {
 
-  private var associated: Associate<Activity> {
-    if let associated = objc_getAssociatedObject(self, &_associated) as? Associate<Activity> {
+  private var associated: CyclerAssociated<Activity> {
+    if let associated = objc_getAssociatedObject(self, &_associated) as? CyclerAssociated<Activity> {
       return associated
     } else {
-      let associated = Associate<Activity>()
+      let associated = CyclerAssociated<Activity>()
       objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN)
       return associated
     }
@@ -296,6 +303,35 @@ extension CyclerType {
   }
 }
 
+extension ModularCyclerType {
+
+  fileprivate var modularAssociated: ModularCyclerAssociated<Parent> {
+    if let associated = objc_getAssociatedObject(self, &_modularAssociated) as? ModularCyclerAssociated<Parent> {
+      return associated
+    } else {
+      let associated = ModularCyclerAssociated<Parent>()
+      objc_setAssociatedObject(self, &_modularAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
+      return associated
+    }
+  }
+
+  public func forward(_ c: (_ parent: Parent) -> Void) {
+    guard let parent = modularAssociated.parent ?? modularAssociated.retainedParent else {
+      assertionFailure("\(String(describing: self)) is not set parent. `should call set(parent: Parent)`")
+      return
+    }
+    c(parent)
+  }
+
+  public func set(parent: Parent, retain: Bool = false) {
+    if retain {
+      modularAssociated.retainedParent = parent
+    } else {
+      modularAssociated.parent = parent
+    }
+  }
+}
+
 public struct CyclerContext<T : CyclerType> {
 
   private weak var source: T?
@@ -332,13 +368,24 @@ public struct CyclerContext<T : CyclerType> {
   }
 }
 
-final class Associate<Activity> {
+final class CyclerAssociated<Activity> {
 
   let lock: NSRecursiveLock = .init()
 
   var logger: CycleLogging?
 
   let activity: PublishRelay<Activity> = .init()
+
+  init() {
+
+  }
+}
+
+final class ModularCyclerAssociated<Cycler : CyclerType> {
+
+  weak var parent: Cycler?
+
+  var retainedParent: Cycler?
 
   init() {
 
