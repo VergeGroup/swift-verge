@@ -10,7 +10,7 @@ import XCTest
 
 import RxSwift
 import RxCocoa
-@testable import CycleViewModel
+@testable import Cycler
 
 class CyclerTests: XCTestCase {
 
@@ -34,8 +34,8 @@ class CyclerTests: XCTestCase {
 
     XCTContext.runActivity(named: "Set changed value, target is non-optional") { _ in
 
-      let _state: MutableStateStorage<State> = .init(.init())
-      let state: StateStorage<State> = _state.asStateStorage()
+      let _state: MutableStorage<State> = .init(.init())
+      let state: Storage<State> = _state.asStorage()
 
       var updated: Bool = false
 
@@ -56,8 +56,8 @@ class CyclerTests: XCTestCase {
 
     XCTContext.runActivity(named: "Set same value, target is non-optional") { _ in
 
-      let _state: MutableStateStorage<State> = .init(.init())
-      let state: StateStorage<State> = _state.asStateStorage()
+      let _state: MutableStorage<State> = .init(.init())
+      let state: Storage<State> = _state.asStorage()
 
       var updated: Bool = false
 
@@ -77,8 +77,8 @@ class CyclerTests: XCTestCase {
 
     XCTContext.runActivity(named: "Set changed value, target is optional") { _ in
 
-      let _state: MutableStateStorage<State> = .init(.init())
-      let state: StateStorage<State> = _state.asStateStorage()
+      let _state: MutableStorage<State> = .init(.init())
+      let state: Storage<State> = _state.asStorage()
 
       var updated: Bool = false
 
@@ -96,8 +96,8 @@ class CyclerTests: XCTestCase {
 
     XCTContext.runActivity(named: "Set same value, target is optional") { _ in
 
-      let _state: MutableStateStorage<State> = .init(.init())
-      let state: StateStorage<State> = _state.asStateStorage()
+      let _state: MutableStorage<State> = .init(.init())
+      let state: Storage<State> = _state.asStorage()
 
       var updated: Bool = false
 
@@ -122,4 +122,48 @@ class CyclerTests: XCTestCase {
     }
   }
 
+  func testPerformanceDispatchCommit() {
+
+    let vm = ViewModel()
+
+    self.measure {
+      vm.increment()
+    }
+  }
+
+}
+
+extension CyclerTests {
+
+  final class ViewModel : CyclerType {
+
+    final class State {
+      var count: Int = 0
+    }
+
+    enum Activity {
+
+    }
+
+    let state: Storage<State> = .init(.init())
+
+    init() {
+
+    }
+
+    func increment() {
+
+      dispatch { c in
+        c.commit { s in
+          s.updateIfChanged(s.value.count + 1, \.count)
+        }
+//        c.commit { s in
+//          s.update{ s in
+//            s.count += 1
+//          }
+//        }
+      }
+    }
+
+  }
 }
