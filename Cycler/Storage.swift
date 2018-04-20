@@ -10,7 +10,9 @@ import Foundation
 
 public protocol MutableStorageLogging {
 
+  @available(*, deprecated: 3.0.0)
   func didChange(value: Any, for keyPath: AnyKeyPath, root: Any)
+  func didChange(root: Any)
   func didReplace(root: Any)
 }
 
@@ -52,7 +54,7 @@ public class Storage<T> {
     source.remove(subscriber: token)
   }
 
-  func asMutableStateStorage() -> MutableStorage<T> {
+  var mutableStateStorage: MutableStorage<T> {
     return source
   }
 }
@@ -67,6 +69,7 @@ public final class MutableStorage<T> {
 
   private let lock: NSRecursiveLock = .init()
 
+  @available(*, deprecated: 3.0.0)
   private var isInBatchUpdating: Bool = false
 
   public var value: T {
@@ -93,6 +96,12 @@ public final class MutableStorage<T> {
     subscribers.removeValue(forKey: subscriber)
   }
 
+  public func update(_ update: (inout T) throws -> Void) rethrows {
+    lock.lock(); defer { lock.unlock() }
+    try update(&_value)
+    notify()
+  }
+
   fileprivate func notify() {
     lock.lock(); defer { lock.unlock() }
     subscribers.forEach { $0.value(_value) }
@@ -101,9 +110,39 @@ public final class MutableStorage<T> {
   public func replace(_ value: T) {
     lock.lock(); defer { lock.unlock() }
     _value = value
-    notifyIfNotBatchUpdating()
+    notify()
   }
 
+  public func asStorage() -> Storage<T> {
+    return Storage.init(self)
+  }
+
+}
+
+// deprecated
+extension MutableStorage {
+
+  @available(*, deprecated: 3.0.0)
+  @inline(__always)
+  private func enterBatchUpdating() {
+    isInBatchUpdating = true
+  }
+
+  @available(*, deprecated: 3.0.0)
+  @inline(__always)
+  private func leaveBatchUpdating() {
+    isInBatchUpdating = false
+  }
+
+  @available(*, deprecated: 3.0.0)
+  @inline(__always)
+  private func notifyIfNotBatchUpdating() {
+
+    guard isInBatchUpdating == false else { return }
+    notify()
+  }
+
+  @available(*, deprecated: 3.0.0, message: "Use update()")
   public func batchUpdate(_ update: (MutableStorage<T>) throws -> Void) rethrows {
 
     lock.lock(); defer { lock.unlock() }
@@ -111,12 +150,13 @@ public final class MutableStorage<T> {
     enterBatchUpdating()
     try update(self)
     leaveBatchUpdating()
-    
+
     notifyIfNotBatchUpdating()
 
     loggers.forEach { $0.didReplace(root: _value as Any) }
   }
 
+  @available(*, deprecated: 3.0.0, message: "Use update()")
   public func update<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>) {
 
     lock.lock(); defer { lock.unlock() }
@@ -129,6 +169,7 @@ public final class MutableStorage<T> {
 
   }
 
+  @available(*, deprecated: 3.0.0, message: "Use update()")
   public func update<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>) {
 
     lock.lock(); defer { lock.unlock() }
@@ -140,6 +181,7 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
   }
 
+  @available(*, deprecated: 3.0.0, message: "Use update()")
   public func updateIfChanged<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, comparer: (E?, E?) -> Bool) {
 
     lock.lock(); defer { lock.unlock() }
@@ -152,10 +194,12 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
   }
 
+  @available(*, deprecated: 3.0.0, message: "Use update()")
   public func updateIfChanged<E: Equatable>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>) {
     updateIfChanged(value, keyPath, comparer: ==)
   }
 
+  @available(*, deprecated: 3.0.0, message: "Use update()")
   public func updateIfChanged<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>, comparer: (E, E) -> Bool) {
 
     lock.lock(); defer { lock.unlock() }
@@ -168,30 +212,10 @@ public final class MutableStorage<T> {
     loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
   }
 
+  @available(*, deprecated: 3.0.0, message: "Use update()")
   public func updateIfChanged<E : Equatable>(_ value: E, _ keyPath: WritableKeyPath<T, E>) {
 
     updateIfChanged(value, keyPath, comparer: ==)
 
-  }
-
-  public func asStorage() -> Storage<T> {
-    return Storage.init(self)
-  }
-
-  @inline(__always)
-  private func enterBatchUpdating() {
-    isInBatchUpdating = true
-  }
-
-  @inline(__always)
-  private func leaveBatchUpdating() {
-    isInBatchUpdating = false
-  }
-
-  @inline(__always)
-  private func notifyIfNotBatchUpdating() {
-
-    guard isInBatchUpdating == false else { return }
-    notify()
   }
 }

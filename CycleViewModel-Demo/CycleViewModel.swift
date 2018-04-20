@@ -74,30 +74,28 @@ class ViewModel : ModularCyclerType {
 
     dispatch("increment") { (context) in
 
-      Observable.just(())
-        .delay(0.1, scheduler: MainScheduler.instance)
+      Single.just(())
+        .delay(0.5, scheduler: MainScheduler.instance)
         .do(onNext: {
 
             context.commit { (state) in
-              state.updateIfChanged(state.value.count + number, \.count)
+              state.count += number
             }
 
             if context.currentState.count > 10 {
               context.emit(.didReachBigNumber)
             }
         })
-        .subscribe()
+        .subscribe(with: context)
 
       }
-      .disposed(by: disposeBag)
   }
 
   func decrement(number: Int) {
 
-    dispatch("decrement") { _ in
-      commit { (state) in
-        state.updateIfChanged(state.value.count - number, \.count)
-
+    dispatch("decrement") { context in
+      context.commit { (state) in
+        state.count -= number
       }
     }
 

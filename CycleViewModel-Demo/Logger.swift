@@ -22,12 +22,12 @@ final class CyclerLogger : CycleLogging {
     print("\(cycler) => DidEmit", activity)
   }
 
-  func didChange(value: Any, for keyPath: AnyKeyPath, root: Any) {
-    print("\(root) => DidChange", value, keyPath)
-  }
-
   func didChange(root: Any) {
     print("\(root) => DidChange")
+  }
+
+  func didChange(value: Any, for keyPath: AnyKeyPath, root: Any) {
+
   }
 
   func didReplace(root: Any) {
@@ -37,6 +37,11 @@ final class CyclerLogger : CycleLogging {
   func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {
     print("\(cycler) => WillDispatch \(name)", file, function, line)
   }
+
+  func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, result: DispatchResult, on cycler: AnyCyclerType) {
+    print("\(cycler) => DidDispatch \(name), \(result)", file, function, line)
+  }
+
 
   func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {
     print("\(cycler) => WillMutate \(name)", file, function, line)

@@ -41,6 +41,7 @@ public protocol CycleLogging : MutableStorageLogging {
 
   func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
   func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
+  func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, result: DispatchResult, on cycler: AnyCyclerType)
   func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
   func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
 }
@@ -60,6 +61,7 @@ public struct EmptyCyclerLogger : CycleLogging {
   public func didReplace(root: Any) {}
   public func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on: AnyCyclerType) {}
   public func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
+  public func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, result: DispatchResult, on cycler: AnyCyclerType) {}
   public func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
   public func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
 }
@@ -82,6 +84,25 @@ public protocol ModularCyclerType : CyclerType {
 private var _associated: Void?
 private var _modularAssociated: Void?
 
+public final class DeinitBox {
+
+  private let onDeinit: () -> Void
+
+  init<T>(_ value: T, _ onDeinit: @escaping (T) -> Void) {
+    self.onDeinit = {
+      onDeinit(value)
+    }
+  }
+
+  deinit {
+    onDeinit()
+  }
+}
+
+public enum DispatchResult {
+  case success
+  case error(Error)
+}
 
 extension CyclerType {
 
@@ -95,6 +116,11 @@ extension CyclerType {
     }
   }
 
+  func append(deinitBox: DeinitBox) {
+    lock.lock(); defer { lock.unlock() }
+    associated.deinitBoxes.append(deinitBox)
+  }
+
   private var logger: CycleLogging {
     return associated.logger ?? EmptyCyclerLogger.init()
   }
@@ -102,7 +128,7 @@ extension CyclerType {
   public func set(logger: CycleLogging) {
     lock.lock(); defer { lock.unlock() }
     associated.logger = logger
-    state.asMutableStateStorage().loggers = [logger]
+    state.mutableStateStorage.loggers = [logger]
   }
 
   public var activity: Signal<Activity> {
@@ -114,6 +140,28 @@ extension CyclerType {
   }
 
   public func commit(
+    _ name: String = "",
+    _ description: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ mutate: (inout State) throws -> Void
+    ) rethrows {
+
+    lock.lock()
+
+    defer {
+      logger.didMutate(name: name, description: description, file: file, function: function, line: line, on: self)
+      lock.unlock()
+    }
+
+    logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
+
+    try state.mutableStateStorage.update(mutate)
+  }
+
+  @available(*, deprecated: 3.0.0)
+  public func legacy_commit(
     _ name: String = "",
     _ description: String = "",
     file: StaticString = #file,
@@ -131,7 +179,7 @@ extension CyclerType {
 
     logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
 
-    let mstorage = state.asMutableStateStorage()
+    let mstorage = state.mutableStateStorage
     try mutate(mstorage)
   }
 
@@ -141,17 +189,61 @@ extension CyclerType {
     file: StaticString = #file,
     function: StaticString = #function,
     line: UInt = #line,
-    _ action: (CyclerContext<Self>) throws -> T
+    _ action: (DispatchContext<Self>) throws -> T
     ) rethrows -> T {
 
-    lock.lock()
-    defer {
-      lock.unlock()
-    }
+    lock.lock(); defer { lock.unlock() }
 
-    logger.willDispatch(name: name, description: description, file: file, function: function, line: line, on: self)
+    logger.willDispatch(
+      name: name,
+      description: description,
+      file: file,
+      function: function,
+      line: line,
+      on: self
+    )
 
-    return try action(.init(source: self))
+    return try action(
+      .init(
+        actionName: name,
+        source: self,
+        completion: { [weak self] result in
+          guard let `self` = self else { return }
+          self.logger.didDispatch(
+            name: name,
+            description: description,
+            file: file,
+            function: function,
+            line: line,
+            result: result,
+            on: self
+          )
+      })
+    )
+  }
+
+  @available(*, deprecated: 3.0.0)
+  public func legacy_dispatch<T>(
+    _ name: String = "",
+    _ description: String = "",
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line,
+    _ action: (DispatchContext<Self>) throws -> T
+    ) rethrows -> T {
+
+    lock.lock(); defer { lock.unlock() }
+
+    logger.willDispatch(
+      name: name,
+      description: description,
+      file: file,
+      function: function,
+      line: line,
+      on: self
+    )
+
+    return try action(.init(actionName: name, source: self, completion: { _ in }))
   }
 
   fileprivate func emit(
@@ -163,143 +255,6 @@ extension CyclerType {
 
     associated.activity.accept(activity)
     logger.didEmit(activity: activity, file: file, function: function, line: line, on: self)
-  }
-}
-
-extension CyclerType {
-
-  public func commitBinder<S>(
-    name: String = "",
-    description: String = "",
-    target: WritableKeyPath<State, S>,
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-    ) -> Binder<S> {
-
-    return Binder<S>(self) { t, e in
-      t.commit(
-        name,
-        description,
-        file: file,
-        function: function,
-        line: line
-      ) { s in
-        s.update(e, target)
-      }
-    }
-  }
-
-  public func commitBinder<S>(
-    name: String = "",
-    description: String = "",
-    target: WritableKeyPath<State, S?>,
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-    ) -> Binder<S?> {
-
-    return Binder<S?>(self) { t, e in
-      t.commit(
-        name,
-        description,
-        file: file,
-        function: function,
-        line: line
-      ) { s in
-        s.update(e, target)
-      }
-    }
-  }
-
-  public func commitIfChangedBinder<S>(
-    name: String = "",
-    description: String = "",
-    target: WritableKeyPath<State, S>,
-    comparer: @escaping ((S, S) -> Bool),
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-    ) -> Binder<S> {
-
-    return Binder<S>(self) { t, e in
-      t.commit(
-        name,
-        description,
-        file: file,
-        function: function,
-        line: line
-      ) { s in
-        s.updateIfChanged(e, target, comparer: comparer)
-      }
-    }
-  }
-
-  public func commitIfChangedBinder<S>(
-    name: String = "",
-    description: String = "",
-    target: WritableKeyPath<State, S?>,
-    comparer: @escaping ((S?, S?) -> Bool),
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-    ) -> Binder<S?> {
-
-    return Binder<S?>(self) { t, e in
-      t.commit(
-        name,
-        description,
-        file: file,
-        function: function,
-        line: line
-      ) { s in
-        s.updateIfChanged(e, target, comparer: comparer)
-      }
-    }
-  }
-
-  public func commitIfChangedBinder<S: Equatable>(
-    name: String = "",
-    description: String = "",
-    target: WritableKeyPath<State, S>,
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-    ) -> Binder<S> {
-
-    return Binder<S>(self) { t, e in
-      t.commit(
-        name,
-        description,
-        file: file,
-        function: function,
-        line: line
-      ) { s in
-        s.updateIfChanged(e, target, comparer: ==)
-      }
-    }
-  }
-
-  public func commitIfChangedBinder<S: Equatable>(
-    name: String = "",
-    description: String = "",
-    target: WritableKeyPath<State, S?>,
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-    ) -> Binder<S?> {
-
-    return Binder<S?>(self) { t, e in
-      t.commit(
-        name,
-        description,
-        file: file,
-        function: function,
-        line: line
-      ) { s in
-        s.updateIfChanged(e, target, comparer: ==)
-      }
-    }
   }
 }
 
@@ -332,21 +287,39 @@ extension ModularCyclerType {
   }
 }
 
-public struct CyclerContext<T : CyclerType> {
+public struct DispatchContext<T : CyclerType> {
 
   private weak var source: T?
   private let state: Storage<T.State>
+  private let completion: (DispatchResult) -> Void
+  private let lock: NSLock = .init()
+  private let actionName: String
 
   public var currentState: T.State {
     return state.value
   }
 
-  init(source: T) {
+  init(actionName: String, source: T, completion: @escaping (DispatchResult) -> Void) {
     self.source = source
     self.state = source.state
+    self.completion = completion
+    self.actionName = actionName
   }
 
   public func commit(
+    _ name: String = "",
+    _ description: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ mutate: (inout T.State) throws -> Void
+    ) rethrows {
+
+    try source?.commit(name, description, file, function, line, mutate)
+  }
+
+  @available(*, deprecated: 3.0.0)
+  public func legacy_commit(
     _ name: String = "",
     _ description: String = "",
     file: StaticString = #file,
@@ -355,7 +328,7 @@ public struct CyclerContext<T : CyclerType> {
     _ mutate: (MutableStorage<T.State>) throws -> Void
     ) rethrows {
 
-    try source?.commit(name, description, file: file, function: function, line: line, mutate)
+    try source?.legacy_commit(name, description, file: file, function: function, line: line, mutate)
   }
 
   public func emit(
@@ -366,6 +339,15 @@ public struct CyclerContext<T : CyclerType> {
     ) {
     source?.emit(activity, file: file, function: function, line: line)
   }
+
+  public func complete(_ result: DispatchResult) {
+    lock.lock(); defer { lock.unlock() }
+    completion(result)
+  }
+
+  func retainUntilDeinitCycler(box: DeinitBox) {
+    source?.append(deinitBox: box)
+  }
 }
 
 final class CyclerAssociated<Activity> {
@@ -375,6 +357,8 @@ final class CyclerAssociated<Activity> {
   var logger: CycleLogging?
 
   let activity: PublishRelay<Activity> = .init()
+
+  var deinitBoxes: [DeinitBox] = []
 
   init() {
 
@@ -389,5 +373,23 @@ final class ModularCyclerAssociated<Cycler : CyclerType> {
 
   init() {
 
+  }
+}
+
+extension PrimitiveSequence {
+
+  public func subscribe<C>(with context: DispatchContext<C>, untilDeinit: Bool = true) {
+
+    let subscription = self.asObservable()
+      .do(onError: { error in
+        context.complete(.error(error))
+      }, onCompleted: {
+        context.complete(.success)
+      })
+      .subscribe()
+
+    if untilDeinit {
+      context.retainUntilDeinitCycler(box: .init(subscription, { $0.dispose() }))
+    }
   }
 }

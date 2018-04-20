@@ -32,6 +32,7 @@
 		4B86A4B61F969D74002D54FE /* Cycler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Cycler.framework */; };
 		4B86A4B71F969D74002D54FE /* Cycler.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Cycler.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
+		4BDEB9CD208A52840075EF1F /* Cycler+deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDEB9CC208A52840075EF1F /* Cycler+deprecated.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,6 +91,7 @@
 		4B86A4AA1F969C92002D54FE /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		4B86A4AB1F969C92002D54FE /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		4BDEB9CC208A52840075EF1F /* Cycler+deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Cycler+deprecated.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +166,7 @@
 			children = (
 				4B86A4891F969AD6002D54FE /* Cycler.h */,
 				4B86A4911F969BF3002D54FE /* Cycler.swift */,
+				4BDEB9CC208A52840075EF1F /* Cycler+deprecated.swift */,
 				4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */,
 				4B54E2781FE3646B001736D2 /* Storage.swift */,
 				4B86A48A1F969AD6002D54FE /* Info.plist */,
@@ -347,6 +350,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BDEB9CD208A52840075EF1F /* Cycler+deprecated.swift in Sources */,
 				4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */,
 				4B86A4921F969BF3002D54FE /* Cycler.swift in Sources */,
 				4B54E2791FE3646B001736D2 /* Storage.swift in Sources */,
