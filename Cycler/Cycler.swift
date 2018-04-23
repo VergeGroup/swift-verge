@@ -183,6 +183,7 @@ extension CyclerType {
     try mutate(mstorage)
   }
 
+  @discardableResult
   public func dispatch<T>(
     _ name: String = "",
     _ description: String = "",
@@ -220,30 +221,6 @@ extension CyclerType {
           )
       })
     )
-  }
-
-  @available(*, deprecated: 3.0.0)
-  public func legacy_dispatch<T>(
-    _ name: String = "",
-    _ description: String = "",
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line,
-    _ action: (DispatchContext<Self>) throws -> T
-    ) rethrows -> T {
-
-    lock.lock(); defer { lock.unlock() }
-
-    logger.willDispatch(
-      name: name,
-      description: description,
-      file: file,
-      function: function,
-      line: line,
-      on: self
-    )
-
-    return try action(.init(actionName: name, source: self, completion: { _ in }))
   }
 
   fileprivate func emit(
@@ -287,13 +264,14 @@ extension ModularCyclerType {
   }
 }
 
-public struct DispatchContext<T : CyclerType> {
+public final class DispatchContext<T : CyclerType> {
 
   private weak var source: T?
   private let state: Storage<T.State>
   private let completion: (DispatchResult) -> Void
   private let lock: NSLock = .init()
   private let actionName: String
+  private var isCompleted: Bool = false
 
   public var currentState: T.State {
     return state.value
@@ -306,6 +284,14 @@ public struct DispatchContext<T : CyclerType> {
     self.actionName = actionName
   }
 
+  deinit {
+    #if DEBUG
+    if isCompleted == false {
+      print("DispatchContext is released without completion")
+    }
+    #endif
+  }
+
   public func commit(
     _ name: String = "",
     _ description: String = "",
@@ -315,6 +301,7 @@ public struct DispatchContext<T : CyclerType> {
     _ mutate: (inout T.State) throws -> Void
     ) rethrows {
 
+    precondition(isCompleted == false, "Context has already been completed.")
     try source?.commit(name, description, file, function, line, mutate)
   }
 
@@ -328,6 +315,7 @@ public struct DispatchContext<T : CyclerType> {
     _ mutate: (MutableStorage<T.State>) throws -> Void
     ) rethrows {
 
+    precondition(isCompleted == false, "Context has already been completed.")
     try source?.legacy_commit(name, description, file: file, function: function, line: line, mutate)
   }
 
@@ -337,11 +325,14 @@ public struct DispatchContext<T : CyclerType> {
     function: StaticString = #function,
     line: UInt = #line
     ) {
+    precondition(isCompleted == false, "Context has already been completed.")
     source?.emit(activity, file: file, function: function, line: line)
   }
 
   public func complete(_ result: DispatchResult) {
     lock.lock(); defer { lock.unlock() }
+    precondition(isCompleted == false, "Context has already been completed.")
+    isCompleted = true
     completion(result)
   }
 
@@ -376,20 +367,62 @@ final class ModularCyclerAssociated<Cycler : CyclerType> {
   }
 }
 
-extension PrimitiveSequence {
+extension PrimitiveSequence where Trait == SingleTrait {
 
-  public func subscribe<C>(with context: DispatchContext<C>, untilDeinit: Bool = true) {
+  /// Subscribe observable by Cycler, and return shared observable
+  ///
+  /// - Parameters:
+  ///   - context:
+  ///   - untilDeinit:
+  /// - Returns: Shared observable.
+  public func subscribe<C>(with context: DispatchContext<C>, untilDeinit: Bool = true) -> Single<Element> {
 
-    let subscription = self.asObservable()
-      .do(onError: { error in
-        context.complete(.error(error))
-      }, onCompleted: {
+    let source = self.asObservable()
+      .share(replay: 1, scope: .whileConnected)
+      .asSingle()
+
+    let subscription = source
+      .do(onNext: { _ in
         context.complete(.success)
+      }, onError: { error in
+        context.complete(.error(error))
       })
       .subscribe()
 
     if untilDeinit {
       context.retainUntilDeinitCycler(box: .init(subscription, { $0.dispose() }))
     }
+
+    return source
+  }
+}
+
+extension PrimitiveSequence where Trait == MaybeTrait {
+
+  /// Subscribe observable by Cycler, and return shared observable
+  ///
+  /// - Parameters:
+  ///   - context:
+  ///   - untilDeinit:
+  /// - Returns: Shared observable.
+  public func subscribe<C>(with context: DispatchContext<C>, untilDeinit: Bool = true) -> Maybe<Element> {
+
+    let source = self.asObservable()
+      .share(replay: 1, scope: .whileConnected)
+      .asMaybe()
+
+    let subscription = source
+      .do(onNext: { _ in
+        context.complete(.success)
+      }, onError: { error in
+        context.complete(.error(error))
+      })
+      .subscribe()
+
+    if untilDeinit {
+      context.retainUntilDeinitCycler(box: .init(subscription, { $0.dispose() }))
+    }
+
+    return source
   }
 }

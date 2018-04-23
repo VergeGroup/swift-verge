@@ -30,9 +30,9 @@ class RootViewModel : CyclerType {
 
   func hey() {
 
-    dispatch { c in
+//    dispatch { c in
       print("hey")
-    }
+//    }
   }
 
 }
@@ -97,6 +97,7 @@ class ViewModel : ModularCyclerType {
       context.commit { (state) in
         state.count -= number
       }
+      context.complete(.success)
     }
 
   }
