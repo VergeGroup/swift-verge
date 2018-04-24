@@ -396,6 +396,7 @@ extension PrimitiveSequence where Trait == SingleTrait {
   ///   - context:
   ///   - untilDeinit:
   /// - Returns: Shared observable.
+  @discardableResult
   public func subscribe<C>(with context: DispatchContext<C>, untilDeinit: Bool = true) -> Single<Element> {
 
     let source = self.asObservable()
@@ -426,6 +427,7 @@ extension PrimitiveSequence where Trait == MaybeTrait {
   ///   - context:
   ///   - untilDeinit:
   /// - Returns: Shared observable.
+  @discardableResult
   public func subscribe<C>(with context: DispatchContext<C>, untilDeinit: Bool = true) -> Maybe<Element> {
 
     let source = self.asObservable()
