@@ -88,19 +88,6 @@ public final class MutableStorage<T> : Storage<T> {
 }
 ```
 
-### It updates value by KeyPath
-
-```swift
-let state: MutableStorage<State>
-state.update("some-value", \State.content.name)
-```
-
-**Why?**
-
-We can know what is updated by updating by KeyPath.
-
-That will be helpful for logging.
-
 ### It can use without RxSwift
 
 We can use `Storage` as standalone.

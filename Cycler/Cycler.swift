@@ -160,6 +160,27 @@ extension CyclerType {
     try state.mutableStateStorage.update(mutate)
   }
 
+  public func commit(
+    _ name: String = "",
+    _ description: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    replace newState: State
+    ) {
+
+    lock.lock()
+
+    defer {
+      logger.didMutate(name: name, description: description, file: file, function: function, line: line, on: self)
+      lock.unlock()
+    }
+
+    logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
+
+    state.mutableStateStorage.replace(newState)
+  }
+
   @available(*, deprecated: 3.0.0)
   public func legacy_commit(
     _ name: String = "",
