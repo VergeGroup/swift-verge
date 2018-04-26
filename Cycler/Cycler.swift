@@ -181,29 +181,6 @@ extension CyclerType {
     state.mutableStateStorage.replace(newState)
   }
 
-  @available(*, deprecated: 3.0.0)
-  public func legacy_commit(
-    _ name: String = "",
-    _ description: String = "",
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line,
-    _ mutate: (MutableStorage<State>) throws -> Void
-    ) rethrows {
-
-    lock.lock()
-
-    defer {
-      logger.didMutate(name: name, description: description, file: file, function: function, line: line, on: self)
-      lock.unlock()
-    }
-
-    logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
-
-    let mstorage = state.mutableStateStorage
-    try mutate(mstorage)
-  }
-
   @discardableResult
   public func dispatch<T>(
     _ name: String = "",
@@ -253,6 +230,73 @@ extension CyclerType {
 
     associated.activity.accept(activity)
     logger.didEmit(activity: activity, file: file, function: function, line: line, on: self)
+  }
+}
+
+extension CyclerType {
+
+  public func commitBinder<S>(
+    name: String = "",
+    description: String = "",
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line,
+    mutate: @escaping (inout State, S) -> Void
+    ) -> Binder<S> {
+
+    return Binder<S>(self) { t, e in
+      t.commit { s in
+        mutate(&s, e)
+      }
+    }
+  }
+
+  public func commitBinder<S>(
+    name: String = "",
+    description: String = "",
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line,
+    mutate: @escaping (inout State, S?) -> Void
+    ) -> Binder<S?> {
+
+    return Binder<S?>(self) { t, e in
+      t.commit { s in
+        mutate(&s, e)
+      }
+    }
+  }
+
+  public func commitBinder<S>(
+    name: String = "",
+    description: String = "",
+    target: WritableKeyPath<State, S>,
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+    ) -> Binder<S> {
+
+    return Binder<S>(self) { t, e in
+      t.commit { s in
+        s[keyPath: target] = e
+      }
+    }
+  }
+
+  public func commitBinder<S>(
+    name: String = "",
+    description: String = "",
+    target: WritableKeyPath<State, S?>,
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+    ) -> Binder<S?> {
+
+    return Binder<S?>(self) { t, e in
+      t.commit { s in
+        s[keyPath: target] = e
+      }
+    }
   }
 }
 
@@ -324,20 +368,6 @@ public final class DispatchContext<T : CyclerType> {
 
     precondition(isCompleted == false, "Context has already been completed.")
     try source?.commit(name, description, file, function, line, mutate)
-  }
-
-  @available(*, deprecated: 3.0.0)
-  public func legacy_commit(
-    _ name: String = "",
-    _ description: String = "",
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line,
-    _ mutate: (MutableStorage<T.State>) throws -> Void
-    ) rethrows {
-
-    precondition(isCompleted == false, "Context has already been completed.")
-    try source?.legacy_commit(name, description, file: file, function: function, line: line, mutate)
   }
 
   public func emit(
