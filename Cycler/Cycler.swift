@@ -360,7 +360,7 @@ public final class DispatchContext<T : CyclerType> {
     _ mutate: (inout T.State) throws -> Void
     ) rethrows {
 
-    precondition(isCompleted == false, "Context has already been completed.")
+    assert(isCompleted == false, "Context has already been completed.")
     try source?.commit(name, description, file, function, line, mutate)
   }
 
@@ -370,13 +370,13 @@ public final class DispatchContext<T : CyclerType> {
     function: StaticString = #function,
     line: UInt = #line
     ) {
-    precondition(isCompleted == false, "Context has already been completed.")
+    assert(isCompleted == false, "Context has already been completed.")
     source?.emit(activity, file: file, function: function, line: line)
   }
 
   public func complete() {
     lock.lock(); defer { lock.unlock() }
-    precondition(isCompleted == false, "Context has already been completed.")
+    assert(isCompleted == false, "Context has already been completed.")
     isCompleted = true
     completion()
   }
