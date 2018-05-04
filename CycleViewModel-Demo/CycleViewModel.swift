@@ -97,7 +97,7 @@ class ViewModel : ModularCyclerType {
       context.commit { (state) in
         state.count -= number
       }
-      context.complete(.success)
+      context.complete()
     }
 
   }

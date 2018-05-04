@@ -41,7 +41,7 @@ public protocol CycleLogging : MutableStorageLogging {
 
   func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
   func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
-  func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, result: DispatchResult, on cycler: AnyCyclerType)
+  func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
   func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
   func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
 }
@@ -61,7 +61,7 @@ public struct EmptyCyclerLogger : CycleLogging {
   public func didReplace(root: Any) {}
   public func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on: AnyCyclerType) {}
   public func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
-  public func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, result: DispatchResult, on cycler: AnyCyclerType) {}
+  public func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
   public func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
   public func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
 }
@@ -97,11 +97,6 @@ public final class DeinitBox {
   deinit {
     onDeinit()
   }
-}
-
-public enum DispatchResult {
-  case success
-  case error(Error)
 }
 
 extension CyclerType {
@@ -206,7 +201,7 @@ extension CyclerType {
       .init(
         actionName: name,
         source: self,
-        completion: { [weak self] result in
+        completion: { [weak self] in
           guard let `self` = self else { return }
           self.logger.didDispatch(
             name: name,
@@ -214,7 +209,6 @@ extension CyclerType {
             file: file,
             function: function,
             line: line,
-            result: result,
             on: self
           )
       })
@@ -333,7 +327,7 @@ public final class DispatchContext<T : CyclerType> {
 
   private weak var source: T?
   private let state: Storage<T.State>
-  private let completion: (DispatchResult) -> Void
+  private let completion: () -> Void
   private let lock: NSLock = .init()
   private let actionName: String
   private var isCompleted: Bool = false
@@ -342,7 +336,7 @@ public final class DispatchContext<T : CyclerType> {
     return state.value
   }
 
-  init(actionName: String, source: T, completion: @escaping (DispatchResult) -> Void) {
+  init(actionName: String, source: T, completion: @escaping () -> Void) {
     self.source = source
     self.state = source.state
     self.completion = completion
@@ -380,11 +374,11 @@ public final class DispatchContext<T : CyclerType> {
     source?.emit(activity, file: file, function: function, line: line)
   }
 
-  public func complete(_ result: DispatchResult) {
+  public func complete() {
     lock.lock(); defer { lock.unlock() }
     precondition(isCompleted == false, "Context has already been completed.")
     isCompleted = true
-    completion(result)
+    completion()
   }
 
   func retainUntilDeinitCycler(box: DeinitBox) {
@@ -434,10 +428,8 @@ extension PrimitiveSequence where Trait == SingleTrait {
       .asSingle()
 
     let subscription = source
-      .do(onNext: { _ in
-        context.complete(.success)
-      }, onError: { error in
-        context.complete(.error(error))
+      .do(onDispose: {
+        context.complete()
       })
       .subscribe()
 
@@ -465,10 +457,8 @@ extension PrimitiveSequence where Trait == MaybeTrait {
       .asMaybe()
 
     let subscription = source
-      .do(onNext: { _ in
-        context.complete(.success)
-      }, onError: { error in
-        context.complete(.error(error))
+      .do(onDispose: {
+        context.complete()
       })
       .subscribe()
 

@@ -38,8 +38,8 @@ final class CyclerLogger : CycleLogging {
     print("\(cycler) => WillDispatch \(name)", file, function, line)
   }
 
-  func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, result: DispatchResult, on cycler: AnyCyclerType) {
-    print("\(cycler) => DidDispatch \(name), \(result)", file, function, line)
+  func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {
+    print("\(cycler) => DidDispatch \(name)", file, function, line)
   }
 
 
