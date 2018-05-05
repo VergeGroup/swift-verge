@@ -63,14 +63,9 @@ class ViewModel : ModularCyclerType {
   init() {
 
     set(logger: CyclerLogger.instance)
-    set(parent: RootViewModel(), retain: true)
   }
 
   func increment(number: Int) {
-
-    forward { (parent) in
-      parent.hey()
-    }
 
     dispatch("increment") { (context) in
 

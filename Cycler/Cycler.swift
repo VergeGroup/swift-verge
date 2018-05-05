@@ -134,6 +134,16 @@ extension CyclerType {
     return associated.lock
   }
 
+  /// Commit
+  ///
+  /// - Parameters:
+  ///   - name:
+  ///   - description:
+  ///   - file:
+  ///   - function:
+  ///   - line:
+  ///   - mutate:
+  /// - Throws: 
   public func commit(
     _ name: String = "",
     _ description: String = "",
@@ -155,6 +165,15 @@ extension CyclerType {
     try state.mutableStateStorage.update(mutate)
   }
 
+  /// Commit
+  ///
+  /// - Parameters:
+  ///   - name:
+  ///   - description:
+  ///   - file:
+  ///   - function:
+  ///   - line:
+  ///   - newState:
   public func commit(
     _ name: String = "",
     _ description: String = "",
@@ -176,6 +195,17 @@ extension CyclerType {
     state.mutableStateStorage.replace(newState)
   }
 
+  /// Dispatch
+  ///
+  /// - Parameters:
+  ///   - name:
+  ///   - description:
+  ///   - file:
+  ///   - function:
+  ///   - line:
+  ///   - action:
+  /// - Returns:
+  /// - Throws:
   @discardableResult
   public func dispatch<T>(
     _ name: String = "",
@@ -213,6 +243,19 @@ extension CyclerType {
           )
       })
     )
+  }
+
+  /// Add modular Cycler
+  ///
+  /// - Parameters:
+  ///   - module: CyclerType
+  ///   - retainParent: Indicates retain parent
+  public func add<M: ModularCyclerType>(module: M, retainParent: Bool = false) where M.Parent == Self {
+    if retainParent {
+      module.modularAssociated.retainedParent = self
+    } else {
+      module.modularAssociated.parent = self
+    }
   }
 
   fileprivate func emit(
@@ -312,14 +355,6 @@ extension ModularCyclerType {
       return
     }
     c(parent)
-  }
-
-  public func set(parent: Parent, retain: Bool = false) {
-    if retain {
-      modularAssociated.retainedParent = parent
-    } else {
-      modularAssociated.parent = parent
-    }
   }
 }
 
