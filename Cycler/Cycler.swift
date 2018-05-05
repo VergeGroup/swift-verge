@@ -78,7 +78,7 @@ public protocol CyclerType : AnyCyclerType {
 }
 
 public protocol ModularCyclerType : CyclerType {
-  associatedtype Parent : AnyCyclerType
+  associatedtype Parent : CyclerType
 }
 
 private var _associated: Void?
@@ -436,7 +436,7 @@ final class CyclerAssociated<Activity> {
   }
 }
 
-final class ModularCyclerAssociated<Parent : AnyCyclerType> {
+final class ModularCyclerAssociated<Parent : CyclerType> {
 
   weak var parent: Parent?
 
