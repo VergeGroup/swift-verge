@@ -459,7 +459,7 @@ extension PrimitiveSequence where Trait == SingleTrait {
   public func subscribe<C>(with context: DispatchContext<C>, untilDeinit: Bool = true) -> Single<Element> {
 
     let source = self.asObservable()
-      .share(replay: 1, scope: .whileConnected)
+      .share(replay: 1, scope: .forever)
       .asSingle()
 
     let subscription = source
@@ -488,7 +488,7 @@ extension PrimitiveSequence where Trait == MaybeTrait {
   public func subscribe<C>(with context: DispatchContext<C>, untilDeinit: Bool = true) -> Maybe<Element> {
 
     let source = self.asObservable()
-      .share(replay: 1, scope: .whileConnected)
+      .share(replay: 1, scope: .forever)
       .asMaybe()
 
     let subscription = source
