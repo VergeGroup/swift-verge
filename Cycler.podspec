@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Cycler"
-  s.version      = "2.5.0"
+  s.version      = "3.0.0"
   s.summary      = "Cycling Event Flow"
   s.description  = <<-DESC
   The unidirectional design pattern inspired with Flux
@@ -9,5 +9,11 @@ Pod::Spec.new do |s|
   s.author             = { "Muukii" => "m@muukii.me" }
   s.social_media_url   = "http://twitter.com/muukii0803"
   s.platform     = :ios
+  s.ios.deployment_target = '8.0'
+  s.source       = { :git => "https://github.com/muukii/Cycler.git", :tag => s.version }
+  s.source_files  = "Cycler/*.swift"
+  s.homepage     = "https://github.com/muukii/Cycler"
 
+  s.dependency 'RxSwift', '~> 3.0.0'
+  s.dependency 'RxCocoa', '~> 3.0.0'
 end
