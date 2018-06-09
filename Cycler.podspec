@@ -14,6 +14,6 @@ Pod::Spec.new do |s|
   s.source_files  = "Cycler/*.swift"
   s.homepage     = "https://github.com/muukii/Cycler"
 
-  s.dependency 'RxSwift', '~> 3.4.0'
-  s.dependency 'RxCocoa', '~> 3.4.0'
+  s.dependency 'RxSwift', '~> 4.2.0'
+  s.dependency 'RxCocoa', '~> 4.2.0'
 end
