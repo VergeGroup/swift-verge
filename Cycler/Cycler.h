@@ -6,7 +6,7 @@
 //  Copyright © 2017 muukii. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for CycleViewModel.
 FOUNDATION_EXPORT double CycleViewModelVersionNumber;
