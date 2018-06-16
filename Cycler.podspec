@@ -8,8 +8,8 @@ Pod::Spec.new do |s|
   s.license      = "MIT"
   s.author             = { "Muukii" => "m@muukii.me" }
   s.social_media_url   = "http://twitter.com/muukii0803"
-  s.platform     = :ios
   s.ios.deployment_target = '8.0'
+  s.osx.deployment_target = '10.13'
   s.source       = { :git => "https://github.com/muukii/Cycler.git", :tag => s.version }
   s.source_files  = "Cycler/*.swift"
   s.homepage     = "https://github.com/muukii/Cycler"
