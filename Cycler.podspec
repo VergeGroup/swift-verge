@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Cycler"
-  s.version      = "3.0.0"
+  s.version      = "3.0.1"
   s.summary      = "Cycling Event Flow"
   s.description  = <<-DESC
   The unidirectional design pattern inspired with Flux
