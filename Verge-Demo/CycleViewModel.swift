@@ -1,6 +1,6 @@
 //
 //  CycleViewModel.swift
-//  Cycler-Demo
+//  Verge-Demo
 //
 //  Created by muukii on 11/10/17.
 //  Copyright © 2017 muukii. All rights reserved.
@@ -11,9 +11,9 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-import Cycler
+import Verge
 
-class RootViewModel : CyclerType {
+class RootViewModel : VergeType {
 
   enum Activity {
   }
@@ -37,7 +37,7 @@ class RootViewModel : CyclerType {
 
 }
 
-class ViewModel : ModularCyclerType {
+class ViewModel : ModularVergeType {
 
   typealias Parent = RootViewModel
 
@@ -62,7 +62,7 @@ class ViewModel : ModularCyclerType {
 
   init() {
 
-    set(logger: CyclerLogger.instance)
+    set(logger: VergeLogger.instance)
   }
 
   func increment(number: Int) {
@@ -71,7 +71,7 @@ class ViewModel : ModularCyclerType {
 
       Single.just(())
         .delay(0.5, scheduler: MainScheduler.instance)
-        .do(onNext: {
+        .do(onSuccess: {
 
             context.commit { (state) in
               state.count += number

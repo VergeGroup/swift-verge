@@ -1,5 +1,5 @@
 //
-// Cycler
+// Verge
 //
 // Copyright (c) 2017 muukii
 //
@@ -37,48 +37,57 @@ import RxCocoa
 public enum NoActivity {}
 public struct NoState {}
 
-public protocol CycleLogging : MutableStorageLogging {
+@available(*, deprecated, renamed: "VergeType")
+typealias CyclerType = VergeType
 
-  func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
-  func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
-  func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
-  func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
-  func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
+@available(*, deprecated, renamed: "AnyVergeType")
+typealias AnyCyclerType = AnyVergeType
+
+@available(*, deprecated, renamed: "VergeLogging")
+typealias CycleLogging = VergeLogging
+
+public protocol VergeLogging : MutableStorageLogging {
+
+  func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
+  func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
+  func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
+  func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
+  func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
 }
 
-extension CycleLogging {
-  static func empty() -> EmptyCyclerLogger {
+extension VergeLogging {
+  static func empty() -> EmptyVergeLogger {
     return .init()
   }
 }
 
-public struct EmptyCyclerLogger : CycleLogging {
+public struct EmptyVergeLogger : VergeLogging {
 
   public init() {}
 
   public func didChange(value: Any, for keyPath: AnyKeyPath, root: Any) {}
   public func didChange(root: Any) {}
   public func didReplace(root: Any) {}
-  public func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on: AnyCyclerType) {}
-  public func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
-  public func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
-  public func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
-  public func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType) {}
+  public func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on: AnyVergeType) {}
+  public func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType) {}
+  public func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType) {}
+  public func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType) {}
+  public func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType) {}
 }
 
-public protocol AnyCyclerType : class {
+public protocol AnyVergeType : class {
 
 }
 
 /// The protocol is core of Cycler
-public protocol CyclerType : AnyCyclerType {
+public protocol VergeType : AnyVergeType {
   associatedtype State
   associatedtype Activity
   var state: Storage<State> { get }
 }
 
-public protocol ModularCyclerType : CyclerType {
-  associatedtype Parent : CyclerType
+public protocol ModularVergeType : VergeType {
+  associatedtype Parent : VergeType
 }
 
 private var _associated: Void?
@@ -99,13 +108,13 @@ public final class DeinitBox {
   }
 }
 
-extension CyclerType {
+extension VergeType {
 
-  private var associated: CyclerAssociated<Activity> {
-    if let associated = objc_getAssociatedObject(self, &_associated) as? CyclerAssociated<Activity> {
+  private var associated: VergeAssociated<Activity> {
+    if let associated = objc_getAssociatedObject(self, &_associated) as? VergeAssociated<Activity> {
       return associated
     } else {
-      let associated = CyclerAssociated<Activity>()
+      let associated = VergeAssociated<Activity>()
       objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN)
       return associated
     }
@@ -116,11 +125,11 @@ extension CyclerType {
     associated.deinitBoxes.append(deinitBox)
   }
 
-  private var logger: CycleLogging {
-    return associated.logger ?? EmptyCyclerLogger.init()
+  private var logger: VergeLogging {
+    return associated.logger ?? EmptyVergeLogger.init()
   }
 
-  public func set(logger: CycleLogging) {
+  public func set(logger: VergeLogging) {
     lock.lock(); defer { lock.unlock() }
     associated.logger = logger
     state.mutableStateStorage.loggers = [logger]
@@ -250,7 +259,7 @@ extension CyclerType {
   /// - Parameters:
   ///   - module: CyclerType
   ///   - retainParent: Indicates retain parent
-  public func add<M: ModularCyclerType>(module: M, retainParent: Bool = false) where M.Parent == Self {
+  public func add<M: ModularVergeType>(module: M, retainParent: Bool = false) where M.Parent == Self {
     if retainParent {
       module.modularAssociated.retainedParent = self
     } else {
@@ -270,7 +279,7 @@ extension CyclerType {
   }
 }
 
-extension CyclerType {
+extension VergeType {
 
   public func commitBinder<S>(
     name: String = "",
@@ -337,13 +346,13 @@ extension CyclerType {
   }
 }
 
-extension ModularCyclerType {
+extension ModularVergeType {
 
-  fileprivate var modularAssociated: ModularCyclerAssociated<Parent> {
-    if let associated = objc_getAssociatedObject(self, &_modularAssociated) as? ModularCyclerAssociated<Parent> {
+  fileprivate var modularAssociated: ModularVergeAssociated<Parent> {
+    if let associated = objc_getAssociatedObject(self, &_modularAssociated) as? ModularVergeAssociated<Parent> {
       return associated
     } else {
-      let associated = ModularCyclerAssociated<Parent>()
+      let associated = ModularVergeAssociated<Parent>()
       objc_setAssociatedObject(self, &_modularAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
       return associated
     }
@@ -358,7 +367,7 @@ extension ModularCyclerType {
   }
 }
 
-public final class DispatchContext<T : CyclerType> {
+public final class DispatchContext<T : VergeType> {
 
   private weak var source: T?
   private let state: Storage<T.State>
@@ -416,16 +425,16 @@ public final class DispatchContext<T : CyclerType> {
     completion()
   }
 
-  func retainUntilDeinitCycler(box: DeinitBox) {
+  func retainUntilDeinitVerge(box: DeinitBox) {
     source?.append(deinitBox: box)
   }
 }
 
-final class CyclerAssociated<Activity> {
+final class VergeAssociated<Activity> {
 
   let lock: NSRecursiveLock = .init()
 
-  var logger: CycleLogging?
+  var logger: VergeLogging?
 
   let activity: PublishRelay<Activity> = .init()
 
@@ -436,7 +445,7 @@ final class CyclerAssociated<Activity> {
   }
 }
 
-final class ModularCyclerAssociated<Parent : CyclerType> {
+final class ModularVergeAssociated<Parent : VergeType> {
 
   weak var parent: Parent?
 
@@ -449,7 +458,7 @@ final class ModularCyclerAssociated<Parent : CyclerType> {
 
 extension PrimitiveSequence where Trait == SingleTrait {
 
-  /// Subscribe observable by Cycler, and return shared observable
+  /// Subscribe observable by Verge, and return shared observable
   ///
   /// - Parameters:
   ///   - context:
@@ -469,7 +478,7 @@ extension PrimitiveSequence where Trait == SingleTrait {
       .subscribe()
 
     if untilDeinit {
-      context.retainUntilDeinitCycler(box: .init(subscription, { $0.dispose() }))
+      context.retainUntilDeinitVerge(box: .init(subscription, { $0.dispose() }))
     }
 
     return source
@@ -478,7 +487,7 @@ extension PrimitiveSequence where Trait == SingleTrait {
 
 extension PrimitiveSequence where Trait == MaybeTrait {
 
-  /// Subscribe observable by Cycler, and return shared observable
+  /// Subscribe observable by Verge, and return shared observable
   ///
   /// - Parameters:
   ///   - context:
@@ -498,7 +507,7 @@ extension PrimitiveSequence where Trait == MaybeTrait {
       .subscribe()
 
     if untilDeinit {
-      context.retainUntilDeinitCycler(box: .init(subscription, { $0.dispose() }))
+      context.retainUntilDeinitVerge(box: .init(subscription, { $0.dispose() }))
     }
 
     return source

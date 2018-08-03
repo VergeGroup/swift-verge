@@ -1,6 +1,6 @@
 //
-//  CyclerTests.swift
-//  CyclerTests
+//  VergeTests.swift
+//  VergeTests
 //
 //  Created by muukii on 11/10/17.
 //  Copyright © 2017 muukii. All rights reserved.
@@ -10,9 +10,9 @@ import XCTest
 
 import RxSwift
 import RxCocoa
-@testable import Cycler
+@testable import Verge
 
-class CyclerTests: XCTestCase {
+class VergeTests: XCTestCase {
 
   override func setUp() {
     super.setUp()
@@ -133,9 +133,9 @@ class CyclerTests: XCTestCase {
 
 }
 
-extension CyclerTests {
+extension VergeTests {
 
-  final class ViewModel : CyclerType {
+  final class ViewModel : VergeType {
 
     final class State {
       var count: Int = 0

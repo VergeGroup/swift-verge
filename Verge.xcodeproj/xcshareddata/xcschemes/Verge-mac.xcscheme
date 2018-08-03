@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4B463D6720D4C4690053A4FF"
                BuildableName = "Cycler.framework"
-               BlueprintName = "Cycler-macOS"
-               ReferencedContainer = "container:Cycler.xcodeproj">
+               BlueprintName = "Verge-macOS"
+               ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,8 +47,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4B463D6720D4C4690053A4FF"
             BuildableName = "Cycler.framework"
-            BlueprintName = "Cycler-macOS"
-            ReferencedContainer = "container:Cycler.xcodeproj">
+            BlueprintName = "Verge-macOS"
+            ReferencedContainer = "container:Verge.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -65,8 +65,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4B463D6720D4C4690053A4FF"
             BuildableName = "Cycler.framework"
-            BlueprintName = "Cycler-macOS"
-            ReferencedContainer = "container:Cycler.xcodeproj">
+            BlueprintName = "Verge-macOS"
+            ReferencedContainer = "container:Verge.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
