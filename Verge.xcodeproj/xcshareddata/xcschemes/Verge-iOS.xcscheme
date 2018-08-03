@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4B86A4851F969AD5002D54FE"
-               BuildableName = "Verge_iOS.framework"
+               BuildableName = "Verge.framework"
                BlueprintName = "Verge-iOS"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4B86A4851F969AD5002D54FE"
-            BuildableName = "Verge_iOS.framework"
+            BuildableName = "Verge.framework"
             BlueprintName = "Verge-iOS"
             ReferencedContainer = "container:Verge.xcodeproj">
          </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4B86A4851F969AD5002D54FE"
-            BuildableName = "Verge_iOS.framework"
+            BuildableName = "Verge.framework"
             BlueprintName = "Verge-iOS"
             ReferencedContainer = "container:Verge.xcodeproj">
          </BuildableReference>
@@ -83,7 +83,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4B86A4851F969AD5002D54FE"
-            BuildableName = "Verge_iOS.framework"
+            BuildableName = "Verge.framework"
             BlueprintName = "Verge-iOS"
             ReferencedContainer = "container:Verge.xcodeproj">
          </BuildableReference>
