@@ -1,22 +1,24 @@
-# Cycler
+# Verge
 
 *This readme is working in progress*
 
-## What is Cycler?
+## What is Verge?
 
 This is one of the ideas for ViewModel layer.
 
 Mainly it's inspired by Flux architecture.
 
-<img src="Cycler@2x.png" style="width: 541px;">
+<img src="Verge@2x.png" width=816>
 
-## CyclerType
+https://whimsical.co/6vgPs6dsjsatAMyZ6oHDsq
 
-CyclerType just defines clean data-flow.
+## VergeType
 
-So, We are free that how we use Cycler.
+VergeType just defines clean data-flow.
 
-One of the usages, CyclerType adapts ViewModel of MVVM architecture.
+So, We are free that how we use Verge.
+
+One of the usages, VergeType adapts ViewModel of MVVM architecture.
 
 ### It has State that is observable
 
@@ -34,7 +36,7 @@ So, We call them `Activity`.
 **Protocol**
 
 ```swift
-public protocol CyclerType {
+public protocol VergeType {
   associatedtype State
   associatedtype Activity
   var state: Storage<State> { get }
@@ -44,18 +46,18 @@ public protocol CyclerType {
 **Extension-Methods**
 
 ```swift
-extension CyclerType {
+extension VergeType {
 
   public var activity: Signal<Activity>
 
   public func commit(
-      _ name: String = "",
-      _ description: String = "",
-      file: StaticString = #file,
-      function: StaticString = #function,
-      line: UInt = #line,
-      _ mutate: @escaping (MutableStorage<State>) throws -> Void
-      ) rethrows
+    _ name: String = "",
+    _ description: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ mutate: (inout State) throws -> Void
+    ) rethrows
 
   public func dispatch<T>(
     _ name: String = "",
@@ -63,7 +65,7 @@ extension CyclerType {
     file: StaticString = #file,
     function: StaticString = #function,
     line: UInt = #line,
-    _ action: (CyclerWeakContext<Self>) throws -> T
+    _ action: (DispatchContext<Self>) throws -> T
     ) rethrows -> T
 }
 ```
@@ -75,15 +77,20 @@ This is Storage that used for current **State**.
 ```swift
 public class Storage<T> {
   public var value: T { get }
-  public func add(subscriber: @escaping (T) -> Void) -> Token
-  public func remove(subscriber: Token)
+  public convenience init(_ value: T)
+  public init(_ source: MutableStorage<T>)
+  public func add(subscriber: @escaping (T) -> Void) -> StorageSubscribeToken
+  public func remove(subscriber token: StorageSubscribeToken)
 }
 
-public final class MutableStorage<T> : Storage<T> {
+public final class MutableStorage<T> {
+  public var loggers: [MutableStorageLogging]
+  public var value: T { get }
+  public init(_ value: T)
+  public func add(subscriber: @escaping (T) -> Void) -> StorageSubscribeToken
+  public func remove(subscriber: StorageSubscribeToken)
+  public func update(_ update: (inout T) throws -> Void) rethrows
   public func replace(_ value: T)
-  public func batchUpdate(_ update: (MutableStorage<T>) -> Void)
-  public func update<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>)
-  public func updateIfChanged<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>, comparer: (E, E) -> Bool)
   public func asStorage() -> Storage<T>
 }
 ```
@@ -94,7 +101,7 @@ We can use `Storage` as standalone.
 
 ## Logging
 
-We can log event about Cycler.
+We can log event about Actions and Commits in Verge.
 
 - Logs are
   - Changes state
@@ -102,149 +109,13 @@ We can log event about Cycler.
   - Receives actions
   - Emits activities
 
-```swift
-public protocol MutableStorageLogging {
+Use `VergeLogging`
 
-  func didChange(value: Any, for keyPath: AnyKeyPath, root: Any)
-  func didReplace(root: Any)
-}
-
-public protocol CycleLogging : MutableStorageLogging {
-
-  func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
-  func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
-  func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
-  func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on cycler: AnyCyclerType)
-}
-```
-
-# Usage
-
-## Actual Code
-
-### Define ViewModel
-
-```swift
-
-import Cycler
-
-class ViewModel : CyclerType {
-
-  enum Activity {
-    case didReachBigNumber
-  }
-
-  struct State {
-
-    // - Data
-    fileprivate var count: Int = 0
-
-    // - Computed
-    // It will be subscribed whole of this State, so, we can use computed property.
-    var countText: String {
-      return count.description
-    }
-  }
-
-  private let disposeBag = DisposeBag()
-
-  let state: Storage<State> = .init(.init(count: 0))
-
-  init() {
-
-  }
-
-  func increment(number: Int) {
-
-    // Dispatch Action
-    // Action can contain async operation.
-    dispatch("increment") { (context) in
-
-      // Context references self weakly.
-
-      Observable.just(())
-        .delay(0.1, scheduler: MainScheduler.instance)
-        .do(onNext: {
-
-          // Retain references of context
-          // So, run operation completely in this scope.
-          context.retain { c in
-
-            // Mutation
-            // Transaction for mutating.
-            c.commit { (state) in
-              // State is MutableStorage.
-              state.updateIfChanged(state.value.count + number, \.count)
-            }
-
-            if c.currentState.count > 10 {
-              // Emit Activity.
-              // Activity just an event that does not need to store to State.
-              c.emit(.didReachBigNumber)
-            }
-          }
-        })
-        .subscribe()
-      }
-      .disposed(by: disposeBag)
-  }
-
-  func decrement(number: Int) {
-
-    dispatch("decrement") { _ in
-      commit { (state) in
-        state.updateIfChanged(state.value.count - number, \.count)
-      }
-    }
-
-  }
-}
-
-```
-
-### Subscribe State
-
-```swift
-let viewModel = ViewModel()
-
-// Subscribe one property of the State.
-
-viewModel
-  .state
-  .asObservable()
-  .map { $0.countText }
-  .distinctUntilChanged()
-
-// Or, subscribe one property of the State by KeyPath.
-
-viewModel
-  .state
-  .asObservable(keyPath: \.countText)
-  .distinctUntilChanged()
-
-// Or,
-
-viewModel
-  .state
-  .changed(\.countText) // This includes `distinctUntilChanged`
-```
-
-**distinctUntilChanged** is very important.
+## `distinctUntilChanged` is very important.
 
 Mutation will mutate whole of the State.
 Observable from the State will send event whenever updating the State.
 This behavior will cause unnecessary operations.
-
-### Subscribe Activity
-
-```swift
-
-// Subscribe activity.
-viewModel
-  .activity
-  .emit(...)
-
-```
 
 # Basically Demo
 
