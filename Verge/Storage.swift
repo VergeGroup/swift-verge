@@ -10,8 +10,6 @@ import Foundation
 
 public protocol MutableStorageLogging {
 
-  @available(*, deprecated: 3.0.0)
-  func didChange(value: Any, for keyPath: AnyKeyPath, root: Any)
   func didChange(root: Any)
   func didReplace(root: Any)
 }
@@ -69,12 +67,11 @@ public final class MutableStorage<T> {
 
   private let lock: NSRecursiveLock = .init()
 
-  @available(*, deprecated: 3.0.0)
-  private var isInBatchUpdating: Bool = false
-
   public var value: T {
-    lock.lock(); defer { lock.unlock() }
-    return _value
+    lock.lock()
+    let v = _value
+    lock.unlock()
+    return v
   }
 
   private var _value: T
@@ -102,120 +99,19 @@ public final class MutableStorage<T> {
     notify()
   }
 
-  fileprivate func notify() {
-    lock.lock(); defer { lock.unlock() }
-    subscribers.forEach { $0.value(_value) }
-  }
-
   public func replace(_ value: T) {
     lock.lock(); defer { lock.unlock() }
     _value = value
     notify()
   }
 
+  @inline(__always)
+  fileprivate func notify() {
+    subscribers.forEach { $0.value(_value) }
+  }
+
   public func asStorage() -> Storage<T> {
     return Storage.init(self)
   }
 
-}
-
-// deprecated
-extension MutableStorage {
-
-  @available(*, deprecated: 3.0.0)
-  @inline(__always)
-  private func enterBatchUpdating() {
-    isInBatchUpdating = true
-  }
-
-  @available(*, deprecated: 3.0.0)
-  @inline(__always)
-  private func leaveBatchUpdating() {
-    isInBatchUpdating = false
-  }
-
-  @available(*, deprecated: 3.0.0)
-  @inline(__always)
-  private func notifyIfNotBatchUpdating() {
-
-    guard isInBatchUpdating == false else { return }
-    notify()
-  }
-
-  @available(*, deprecated: 3.0.0, message: "Use update()")
-  public func batchUpdate(_ update: (MutableStorage<T>) throws -> Void) rethrows {
-
-    lock.lock(); defer { lock.unlock() }
-
-    enterBatchUpdating()
-    try update(self)
-    leaveBatchUpdating()
-
-    notifyIfNotBatchUpdating()
-
-    loggers.forEach { $0.didReplace(root: _value as Any) }
-  }
-
-  @available(*, deprecated: 3.0.0, message: "Use update()")
-  public func update<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>) {
-
-    lock.lock(); defer { lock.unlock() }
-
-    _value[keyPath: keyPath] = value
-
-    notifyIfNotBatchUpdating()
-
-    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
-
-  }
-
-  @available(*, deprecated: 3.0.0, message: "Use update()")
-  public func update<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>) {
-
-    lock.lock(); defer { lock.unlock() }
-
-    _value[keyPath: keyPath] = value
-
-    notifyIfNotBatchUpdating()
-
-    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
-  }
-
-  @available(*, deprecated: 3.0.0, message: "Use update()")
-  public func updateIfChanged<E>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>, comparer: (E?, E?) -> Bool) {
-
-    lock.lock(); defer { lock.unlock() }
-
-    guard comparer(_value[keyPath: keyPath], value) == false else { return }
-    _value[keyPath: keyPath] = value
-
-    notifyIfNotBatchUpdating()
-
-    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
-  }
-
-  @available(*, deprecated: 3.0.0, message: "Use update()")
-  public func updateIfChanged<E: Equatable>(_ value: E?, _ keyPath: WritableKeyPath<T, E?>) {
-    updateIfChanged(value, keyPath, comparer: ==)
-  }
-
-  @available(*, deprecated: 3.0.0, message: "Use update()")
-  public func updateIfChanged<E>(_ value: E, _ keyPath: WritableKeyPath<T, E>, comparer: (E, E) -> Bool) {
-
-    lock.lock(); defer { lock.unlock() }
-
-    guard comparer(_value[keyPath: keyPath], value) == false else { return }
-    _value[keyPath: keyPath] = value
-
-    notifyIfNotBatchUpdating()
-
-    loggers.forEach { $0.didChange(value: value as Any, for: keyPath, root: _value) }
-  }
-
-  @available(*, deprecated: 3.0.0, message: "Use update()")
-  public func updateIfChanged<E : Equatable>(_ value: E, _ keyPath: WritableKeyPath<T, E>) {
-
-    updateIfChanged(value, keyPath, comparer: ==)
-
-  }
 }

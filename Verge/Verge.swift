@@ -37,15 +37,6 @@ import RxCocoa
 public enum NoActivity {}
 public struct NoState {}
 
-@available(*, deprecated, renamed: "VergeType")
-typealias CyclerType = VergeType
-
-@available(*, deprecated, renamed: "AnyVergeType")
-typealias AnyCyclerType = AnyVergeType
-
-@available(*, deprecated, renamed: "VergeLogging")
-typealias CycleLogging = VergeLogging
-
 public protocol VergeLogging : MutableStorageLogging {
 
   func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
@@ -65,7 +56,6 @@ public struct EmptyVergeLogger : VergeLogging {
 
   public init() {}
 
-  public func didChange(value: Any, for keyPath: AnyKeyPath, root: Any) {}
   public func didChange(root: Any) {}
   public func didReplace(root: Any) {}
   public func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on: AnyVergeType) {}
