@@ -14,6 +14,7 @@ import RxCocoa
 class ViewController: UIViewController {
 
   @IBOutlet weak var label: UILabel!
+  @IBOutlet weak var subLabel: UILabel!
   @IBOutlet weak var decrementButton: UIButton!
   @IBOutlet weak var incrementButton: UIButton!
 
@@ -28,8 +29,14 @@ class ViewController: UIViewController {
 
       viewModel
         .state
-        .changedDriver(\.countText.description)
+        .changedDriver(\.countText)
         .drive(label.rx.text)
+        .disposed(by: disposeBag)
+
+      viewModel
+        .state
+        .changedDriver(\.subCount.description)
+        .drive(subLabel.rx.text)
         .disposed(by: disposeBag)
 
       viewModel

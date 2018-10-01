@@ -48,7 +48,13 @@ class ViewModel : ModularVergeType {
   struct State {
 
     // Stored
-    fileprivate var count: Int = 0
+    fileprivate var count: Int = 0 {
+      didSet {
+        subCount = count + 1
+      }
+    }
+
+    fileprivate(set) var subCount: Int = 0
 
     // Computed
     var countText: String {
@@ -58,7 +64,7 @@ class ViewModel : ModularVergeType {
 
   private let disposeBag = DisposeBag()
 
-  let state: Storage<State> = .init(.init(count: 0))
+  let state: Storage<State> = .init(.init())
 
   init() {
 
