@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Verge"
-  s.version      = "4.2.1"
+  s.version      = "4.2.2"
   s.summary      = "The Architecture for building UI"
   s.description  = <<-DESC
   The unidirectional design pattern inspired with Flux
@@ -14,6 +14,6 @@ Pod::Spec.new do |s|
   s.source_files  = "Verge/*.swift"
   s.homepage     = "https://github.com/muukii/Verge"
 
-  s.dependency 'RxSwift', '~> 4.3.0'
-  s.dependency 'RxCocoa', '~> 4.3.0'
+  s.dependency 'RxSwift', '~> 4.4'
+  s.dependency 'RxCocoa', '~> 4.4'
 end
