@@ -84,7 +84,7 @@ public final class MutableStorage<T> {
   public func add(subscriber: @escaping (T) -> Void) -> StorageSubscribeToken {
     lock.lock(); defer { lock.unlock() }
     let token = StorageSubscribeToken()
-    subscribers[token] = subscriber    
+    subscribers[token] = subscriber
     return token
   }
 
@@ -96,23 +96,25 @@ public final class MutableStorage<T> {
   public func update(_ update: (inout T) throws -> Void) rethrows {
     lock.lock()
     try update(&_value)
+    let currentValue = _value
     lock.unlock()
-    notify()
+    notify(value: currentValue)
   }
 
   public func replace(_ value: T) {
     lock.lock()
     _value = value
+    let currentValue = _value
     lock.unlock()
-    notify()
+    notify(value: currentValue)
   }
 
   @inline(__always)
-  fileprivate func notify() {
+  fileprivate func notify(value: T) {
     lock.lock()
     let subscribers: [StorageSubscribeToken : (T) -> Void] = self.subscribers
     lock.unlock()
-    subscribers.forEach { $0.value(_value) }
+    subscribers.forEach { $0.value(value) }
   }
 
   public func asStorage() -> Storage<T> {
@@ -120,3 +122,4 @@ public final class MutableStorage<T> {
   }
 
 }
+
