@@ -1,4 +1,6 @@
 # Verge
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmuukii%2FVerge.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmuukii%2FVerge?ref=badge_shield)
+
 
 *This readme is working in progress*
 
@@ -120,3 +122,7 @@ This behavior will cause unnecessary operations.
 # Basically Demo
 
 ![](demo.gif)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmuukii%2FVerge.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmuukii%2FVerge?ref=badge_large)
