@@ -31,8 +31,13 @@
 import Foundation
 import ObjectiveC
 
+import RxFuture
 import RxSwift
 import RxCocoa
+
+public enum VergeInternalError : Error {
+  case vergeObjectWasDeallocated
+}
 
 public enum NoActivity {}
 public struct NoState {}
@@ -193,7 +198,7 @@ extension VergeType {
 
     state.mutableStateStorage.replace(newState)
   }
-
+  
   /// Dispatch
   ///
   /// - Parameters:
@@ -209,14 +214,14 @@ extension VergeType {
   public func dispatch<T>(
     _ name: String = "",
     _ description: String = "",
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line,
-    _ action: (DispatchContext<Self>) throws -> T
-    ) rethrows -> T {
-
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: (DispatchingContext<Self>) throws -> RxFuture<T>
+    ) rethrows -> RxFuture<T> {
+    
     lock.lock(); defer { lock.unlock() }
-
+    
     logger.willDispatch(
       name: name,
       description: description,
@@ -225,7 +230,7 @@ extension VergeType {
       line: line,
       on: self
     )
-
+    
     return try action(
       .init(
         actionName: name,
@@ -269,73 +274,6 @@ extension VergeType {
   }
 }
 
-extension VergeType {
-
-  public func commitBinder<S>(
-    name: String = "",
-    description: String = "",
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line,
-    mutate: @escaping (inout State, S) -> Void
-    ) -> Binder<S> {
-
-    return Binder<S>(self) { t, e in
-      t.commit { s in
-        mutate(&s, e)
-      }
-    }
-  }
-
-  public func commitBinder<S>(
-    name: String = "",
-    description: String = "",
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line,
-    mutate: @escaping (inout State, S?) -> Void
-    ) -> Binder<S?> {
-
-    return Binder<S?>(self) { t, e in
-      t.commit { s in
-        mutate(&s, e)
-      }
-    }
-  }
-
-  public func commitBinder<S>(
-    name: String = "",
-    description: String = "",
-    target: WritableKeyPath<State, S>,
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-    ) -> Binder<S> {
-
-    return Binder<S>(self) { t, e in
-      t.commit { s in
-        s[keyPath: target] = e
-      }
-    }
-  }
-
-  public func commitBinder<S>(
-    name: String = "",
-    description: String = "",
-    target: WritableKeyPath<State, S?>,
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-    ) -> Binder<S?> {
-
-    return Binder<S?>(self) { t, e in
-      t.commit { s in
-        s[keyPath: target] = e
-      }
-    }
-  }
-}
-
 extension ModularVergeType {
 
   fileprivate var modularAssociated: ModularVergeAssociated<Parent> {
@@ -357,20 +295,20 @@ extension ModularVergeType {
   }
 }
 
-public final class DispatchContext<T : VergeType> {
+public final class DispatchingContext<Verge : VergeType> {
 
-  private weak var source: T?
-  private let state: Storage<T.State>
+  private weak var source: Verge?
+  private let state: Storage<Verge.State>
   private let completion: () -> Void
   private let lock: NSLock = .init()
   private let actionName: String
   private var isCompleted: Bool = false
 
-  public var currentState: T.State {
+  public var currentState: Verge.State {
     return state.value
   }
 
-  init(actionName: String, source: T, completion: @escaping () -> Void) {
+  init(actionName: String, source: Verge, completion: @escaping () -> Void) {
     self.source = source
     self.state = source.state
     self.completion = completion
@@ -391,15 +329,29 @@ public final class DispatchContext<T : VergeType> {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ mutate: (inout T.State) throws -> Void
+    _ mutate: (inout Verge.State) throws -> Void
     ) rethrows {
 
     assert(isCompleted == false, "Context has already been completed.")
     try source?.commit(name, description, file, function, line, mutate)
   }
+  
+  @discardableResult
+  public func dispatch<U>(
+    _ name: String = "",
+    _ description: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: (DispatchingContext<Verge>) throws -> RxFuture<U>
+    ) rethrows -> RxFuture<U> {
+    
+    return try source?.dispatch(name, description, file, function, line, action) ?? Single<U>.error(VergeInternalError.vergeObjectWasDeallocated).start()
+    
+  }
 
   public func emit(
-    _ activity: T.Activity,
+    _ activity: Verge.Activity,
     file: StaticString = #file,
     function: StaticString = #function,
     line: UInt = #line
@@ -446,6 +398,58 @@ final class ModularVergeAssociated<Parent : VergeType> {
   }
 }
 
+extension VergeType {
+  /// Dispatch
+  ///
+  /// - Parameters:
+  ///   - name:
+  ///   - description:
+  ///   - file:
+  ///   - function:
+  ///   - line:
+  ///   - action:
+  /// - Returns:
+  /// - Throws:
+  @discardableResult
+  public func __dispatch<T>(
+    _ name: String = "",
+    _ description: String = "",
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line,
+    _ action: (DispatchingContext<Self>) throws -> T
+    ) rethrows -> T {
+    
+    lock.lock(); defer { lock.unlock() }
+    
+    logger.willDispatch(
+      name: name,
+      description: description,
+      file: file,
+      function: function,
+      line: line,
+      on: self
+    )
+    
+    return try action(
+      .init(
+        actionName: name,
+        source: self,
+        completion: { [weak self] in
+          guard let `self` = self else { return }
+          self.logger.didDispatch(
+            name: name,
+            description: description,
+            file: file,
+            function: function,
+            line: line,
+            on: self
+          )
+      })
+    )
+  }
+}
+
 extension PrimitiveSequence where Trait == SingleTrait {
 
   /// Subscribe observable by Verge, and return shared observable
@@ -455,7 +459,8 @@ extension PrimitiveSequence where Trait == SingleTrait {
   ///   - untilDeinit:
   /// - Returns: Shared observable.
   @discardableResult
-  public func subscribe<C>(with context: DispatchContext<C>, untilDeinit: Bool = true) -> Single<Element> {
+  @available(*, deprecated)
+  public func subscribe<C>(with context: DispatchingContext<C>, untilDeinit: Bool = true) -> Single<Element> {
 
     let source = self.asObservable()
       .share(replay: 1, scope: .forever)
@@ -484,7 +489,8 @@ extension PrimitiveSequence where Trait == MaybeTrait {
   ///   - untilDeinit:
   /// - Returns: Shared observable.
   @discardableResult
-  public func subscribe<C>(with context: DispatchContext<C>, untilDeinit: Bool = true) -> Maybe<Element> {
+  @available(*, deprecated)
+  public func subscribe<C>(with context: DispatchingContext<C>, untilDeinit: Bool = true) -> Maybe<Element> {
 
     let source = self.asObservable()
       .share(replay: 1, scope: .forever)
