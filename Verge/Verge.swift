@@ -1,32 +1,3 @@
-//
-// Verge
-//
-// Copyright (c) 2017 muukii
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//  ViewModel.swift
-//  RxExtension
-//
-//  Created by muukii on 9/5/17.
-//  Copyright © 2017 eure. All rights reserved.
-//
 
 import Foundation
 import ObjectiveC
@@ -88,6 +59,7 @@ public protocol ModularVergeType : VergeType {
 private var _associated: Void?
 private var _modularAssociated: Void?
 
+@available(*, deprecated)
 public final class DeinitBox {
 
   private let onDeinit: () -> Void
@@ -115,6 +87,7 @@ extension VergeType {
     }
   }
 
+  @available(*, deprecated)
   func append(deinitBox: DeinitBox) {
     lock.lock(); defer { lock.unlock() }
     associated.deinitBoxes.append(deinitBox)
@@ -220,7 +193,7 @@ extension VergeType {
     _ action: (DispatchingContext<Self>) throws -> RxFuture<T>
     ) rethrows -> RxFuture<T> {
     
-    lock.lock(); defer { lock.unlock() }
+    lock.lock()
     
     logger.willDispatch(
       name: name,
@@ -231,22 +204,34 @@ extension VergeType {
       on: self
     )
     
-    return try action(
-      .init(
-        actionName: name,
-        source: self,
-        completion: { [weak self] in
-          guard let `self` = self else { return }
-          self.logger.didDispatch(
-            name: name,
-            description: description,
-            file: file,
-            function: function,
-            line: line,
-            on: self
-          )
-      })
-    )
+    lock.unlock()
+    
+    let context = DispatchingContext.init(
+      actionName: name,
+      source: self,
+      completion: { [weak self] in
+        guard let `self` = self else { return }
+        self.lock.lock()
+        self.logger.didDispatch(
+          name: name,
+          description: description,
+          file: file,
+          function: function,
+          line: line,
+          on: self
+        )
+        self.lock.unlock()
+    })
+    
+    let action = try action(context)
+      
+    action
+      .addCompletion({ (e) in
+        context.complete()
+    })
+    
+    return action
+
   }
 
   /// Add modular Cycler
@@ -360,6 +345,7 @@ public final class DispatchingContext<Verge : VergeType> {
     source?.emit(activity, file: file, function: function, line: line)
   }
 
+  @available(*, deprecated, message: "Will be private next version")
   public func complete() {
     lock.lock(); defer { lock.unlock() }
     assert(isCompleted == false, "Context has already been completed.")
@@ -367,6 +353,7 @@ public final class DispatchingContext<Verge : VergeType> {
     completion()
   }
 
+  @available(*, deprecated)
   func retainUntilDeinitVerge(box: DeinitBox) {
     source?.append(deinitBox: box)
   }
@@ -380,6 +367,7 @@ final class VergeAssociated<Activity> {
 
   let activity: PublishRelay<Activity> = .init()
 
+  @available(*, deprecated)
   var deinitBoxes: [DeinitBox] = []
 
   init() {

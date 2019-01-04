@@ -1,10 +1,3 @@
-//
-//  Storage+Rx.swift
-//  Verge
-//
-//  Created by muukii on 12/15/17.
-//  Copyright © 2017 muukii. All rights reserved.
-//
 
 import Foundation
 

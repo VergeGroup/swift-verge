@@ -1,10 +1,3 @@
-//
-//  CycleViewModel.h
-//  CycleViewModel
-//
-//  Created by muukii on 10/18/17.
-//  Copyright © 2017 muukii. All rights reserved.
-//
 
 #import <Foundation/Foundation.h>
 
