@@ -87,18 +87,18 @@ class ViewModel : ModularVergeType {
               context.emit(.didReachBigNumber)
             }
         })
-        .subscribe(with: context)
+        .start()
 
       }
   }
 
   func decrement(number: Int) {
 
-    dispatch("decrement") { context in
+    dispatch("decrement") { context -> RxFuture<Void> in
       context.commit { (state) in
         state.count -= number
       }
-      context.complete()
+      return Single<Void>.just(()).start()
     }
 
   }

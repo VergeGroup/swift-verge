@@ -36,6 +36,10 @@
 		4BAE9FE821DFA6F6003DDF3D /* RxFuture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FE721DFA6F6003DDF3D /* RxFuture.framework */; };
 		4BAE9FEA21DFA75A003DDF3D /* Verge+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */; };
 		4BAE9FEB21DFA75A003DDF3D /* Verge+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */; };
+		4BAE9FEC21DFB6A0003DDF3D /* RxAtomic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FC821DFA119003DDF3D /* RxAtomic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4BAE9FED21DFB6A0003DDF3D /* RxCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FC921DFA119003DDF3D /* RxCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4BAE9FEE21DFB6A0003DDF3D /* RxSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FCB21DFA119003DDF3D /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4BAE9FEF21DFB6AF003DDF3D /* RxFuture.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FCA21DFA119003DDF3D /* RxFuture.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +66,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				4BAE9FEF21DFB6AF003DDF3D /* RxFuture.framework in Embed Frameworks */,
+				4BAE9FEC21DFB6A0003DDF3D /* RxAtomic.framework in Embed Frameworks */,
+				4BAE9FED21DFB6A0003DDF3D /* RxCocoa.framework in Embed Frameworks */,
+				4BAE9FEE21DFB6A0003DDF3D /* RxSwift.framework in Embed Frameworks */,
 				4B956D19211483E7003AA189 /* Verge.framework in Embed Frameworks */,
 				4B6937C92162930D00746CCF /* EasyPeasy.framework in Embed Frameworks */,
 			);

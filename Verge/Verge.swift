@@ -2,9 +2,9 @@
 import Foundation
 import ObjectiveC
 
-import RxFuture
-import RxSwift
-import RxCocoa
+@_exported import RxFuture
+@_exported import RxSwift
+@_exported import RxCocoa
 
 public enum VergeInternalError : Error {
   case vergeObjectWasDeallocated
