@@ -84,13 +84,7 @@ extension VergeType {
       return associated
     }
   }
-
-  @available(*, deprecated)
-  func append(deinitBox: DeinitBox) {
-    lock.lock(); defer { lock.unlock() }
-    associated.deinitBoxes.append(deinitBox)
-  }
-
+  
   private var logger: VergeLogging {
     return associated.logger ?? EmptyVergeLogger.init()
   }
@@ -346,15 +340,6 @@ public final class DispatchingContext<Verge : VergeType> {
     source?.emit(activity, file: file, function: function, line: line)
   }
 
-  @available(*, deprecated, message: "Will be private next version")
-  public func complete() {
-    
-  }
-
-  @available(*, deprecated)
-  func retainUntilDeinitVerge(box: DeinitBox) {
-    source?.append(deinitBox: box)
-  }
 }
 
 final class VergeAssociated<Activity> {
@@ -364,9 +349,6 @@ final class VergeAssociated<Activity> {
   var logger: VergeLogging?
 
   let activity: PublishRelay<Activity> = .init()
-
-  @available(*, deprecated)
-  var deinitBoxes: [DeinitBox] = []
 
   init() {
 
