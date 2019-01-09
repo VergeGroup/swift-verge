@@ -233,6 +233,22 @@ extension VergeType {
     return action
 
   }
+  
+  public func dispatch(
+    _ name: String = "",
+    _ description: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: (DispatchingContext<Self>) throws -> Void
+    ) rethrows {
+    
+    try dispatch(name, description, file, function, line) { (c) -> RxFuture<Void> in
+        try action(c)
+        return RxFuture<Void>.succeed(())
+    }
+    
+  }
 
   /// Add modular Cycler
   ///
@@ -334,6 +350,20 @@ public final class DispatchingContext<Verge : VergeType> {
     return try source?.dispatch(name, description, file, function, line, action) ?? Single<U>.error(VergeInternalError.vergeObjectWasDeallocated).start()
     
   }
+  
+  public func dispatch(
+    _ name: String = "",
+    _ description: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: (DispatchingContext<Verge>) throws -> Void
+    ) rethrows {
+    
+    try source?.dispatch(name, description, file, function, line, action)
+    
+  }
+
 
   public func emit(
     _ activity: Verge.Activity,
