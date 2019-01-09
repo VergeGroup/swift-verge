@@ -17,7 +17,6 @@ public protocol VergeLogging : MutableStorageLogging {
 
   func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
   func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
-  func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
   func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
   func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
 }
@@ -36,7 +35,6 @@ public struct EmptyVergeLogger : VergeLogging {
   public func didReplace(root: Any) {}
   public func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on: AnyVergeType) {}
   public func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType) {}
-  public func didDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType) {}
   public func willMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType) {}
   public func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType) {}
 }
@@ -208,27 +206,10 @@ extension VergeType {
     
     let context = DispatchingContext.init(
       actionName: name,
-      source: self,
-      completion: { [weak self] in
-        guard let `self` = self else { return }
-        self.lock.lock()
-        self.logger.didDispatch(
-          name: name,
-          description: description,
-          file: file,
-          function: function,
-          line: line,
-          on: self
-        )
-        self.lock.unlock()
-    })
+      source: self
+    )
     
     let action = try action(context)
-      
-    action
-      .addCompletion({ (e) in
-        context.complete()
-    })
     
     return action
 
@@ -300,28 +281,21 @@ public final class DispatchingContext<Verge : VergeType> {
 
   private weak var source: Verge?
   private let state: Storage<Verge.State>
-  private let completion: () -> Void
   private let lock: NSLock = .init()
   private let actionName: String
-  private var isCompleted: Bool = false
 
   public var currentState: Verge.State {
     return state.value
   }
 
-  init(actionName: String, source: Verge, completion: @escaping () -> Void) {
+  init(actionName: String, source: Verge) {
     self.source = source
     self.state = source.state
-    self.completion = completion
     self.actionName = actionName
   }
 
   deinit {
-    #if DEBUG
-    if isCompleted == false {
-      // "DispatchContext is released without completion"
-    }
-    #endif
+
   }
 
   public func commit(
@@ -333,7 +307,6 @@ public final class DispatchingContext<Verge : VergeType> {
     _ mutate: (inout Verge.State) throws -> Void
     ) rethrows {
 
-    assert(isCompleted == false, "Context has already been completed.")
     try source?.commit(name, description, file, function, line, mutate)
   }
   
@@ -364,23 +337,18 @@ public final class DispatchingContext<Verge : VergeType> {
     
   }
 
-
   public func emit(
     _ activity: Verge.Activity,
     file: StaticString = #file,
     function: StaticString = #function,
     line: UInt = #line
     ) {
-    assert(isCompleted == false, "Context has already been completed.")
     source?.emit(activity, file: file, function: function, line: line)
   }
 
   @available(*, deprecated, message: "Will be private next version")
   public func complete() {
-    lock.lock(); defer { lock.unlock() }
-    assert(isCompleted == false, "Context has already been completed.")
-    isCompleted = true
-    completion()
+    
   }
 
   @available(*, deprecated)
@@ -413,58 +381,6 @@ final class ModularVergeAssociated<Parent : VergeType> {
 
   init() {
 
-  }
-}
-
-extension VergeType {
-  /// Dispatch
-  ///
-  /// - Parameters:
-  ///   - name:
-  ///   - description:
-  ///   - file:
-  ///   - function:
-  ///   - line:
-  ///   - action:
-  /// - Returns:
-  /// - Throws:
-  @discardableResult
-  public func __dispatch<T>(
-    _ name: String = "",
-    _ description: String = "",
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line,
-    _ action: (DispatchingContext<Self>) throws -> T
-    ) rethrows -> T {
-    
-    lock.lock(); defer { lock.unlock() }
-    
-    logger.willDispatch(
-      name: name,
-      description: description,
-      file: file,
-      function: function,
-      line: line,
-      on: self
-    )
-    
-    return try action(
-      .init(
-        actionName: name,
-        source: self,
-        completion: { [weak self] in
-          guard let `self` = self else { return }
-          self.logger.didDispatch(
-            name: name,
-            description: description,
-            file: file,
-            function: function,
-            line: line,
-            on: self
-          )
-      })
-    )
   }
 }
 
