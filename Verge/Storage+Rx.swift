@@ -42,7 +42,7 @@ extension Storage {
       return associated
     }
   }
-
+  
   /// Returns an observable sequence that contains only changed elements according to the `comparer`.
   ///
   /// - Parameters:
@@ -58,6 +58,17 @@ extension Storage {
 
   public func changed<S : Equatable>(_ target: KeyPath<T, S>) -> Observable<S> {
     return changed(target, ==)
+  }
+  
+  public func changed<S>(_ selector: @escaping (T) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
+    return
+      asObservable()
+        .map(selector)
+        .distinctUntilChanged(comparer)
+  }
+  
+  public func changed<S : Equatable>(_ selector: @escaping (T) -> S) -> Observable<S> {
+    return changed(selector, ==)
   }
 
   /// Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
@@ -77,7 +88,19 @@ extension Storage {
   public func changedDriver<S : Equatable>(_ target: KeyPath<T, S>) -> Driver<S> {
     return changedDriver(target, ==)
   }
-
+  
+  public func changedDriver<S>(_ selector: @escaping (T) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
+    return
+      asObservable()
+        .map(selector)
+        .distinctUntilChanged(comparer)
+        .asDriver(onErrorRecover: { _ in .empty() })
+  }
+  
+  public func changedDriver<S : Equatable>(_ selector: @escaping (T) -> S) -> Driver<S> {
+    return changedDriver(selector, ==)
+  }
+  
   /// Returns an observable sequence
   ///
   /// - Returns: Returns an observable sequence
