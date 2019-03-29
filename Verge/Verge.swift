@@ -99,7 +99,7 @@ extension VergeType {
     return associated.activity.asSignal()
   }
 
-  public var lock: NSRecursiveLock {
+  private var lock: NSRecursiveLock {
     return associated.lock
   }
 
@@ -122,11 +122,8 @@ extension VergeType {
     _ mutate: (inout State) throws -> Void
     ) rethrows {
 
-    lock.lock()
-
     defer {
       logger.didMutate(name: name, description: description, file: file, function: function, line: line, on: self)
-      lock.unlock()
     }
 
     logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
@@ -151,12 +148,9 @@ extension VergeType {
     _ line: UInt = #line,
     replace newState: State
     ) {
-
-    lock.lock()
-
+    
     defer {
       logger.didMutate(name: name, description: description, file: file, function: function, line: line, on: self)
-      lock.unlock()
     }
 
     logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
@@ -185,8 +179,6 @@ extension VergeType {
     _ action: (DispatchingContext<Self>) throws -> RxFuture<T>
     ) rethrows -> RxFuture<T> {
     
-    lock.lock()
-    
     logger.willDispatch(
       name: name,
       description: description,
@@ -195,8 +187,6 @@ extension VergeType {
       line: line,
       on: self
     )
-    
-    lock.unlock()
     
     let context = DispatchingContext.init(
       actionName: name,
