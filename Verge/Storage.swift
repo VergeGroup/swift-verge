@@ -13,10 +13,6 @@ public struct StorageSubscribeToken : Hashable {
     return lhs.identifier == rhs.identifier
   }
 
-  public var hashValue: Int {
-    return identifier.hashValue
-  }
-
   private let identifier = UUID().uuidString
 }
 
