@@ -199,6 +199,19 @@ extension VergeType {
 
   }
   
+  @discardableResult
+  public func dispatchAsync<T>(
+    _ name: String = "",
+    _ description: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: (DispatchingContext<Self>) throws -> RxFuture<T>
+    ) rethrows -> RxFuture<T> {
+    
+    return try dispatch(name, description, file, function, line, action)
+  }
+  
   public func dispatch(
     _ name: String = "",
     _ description: String = "",
