@@ -320,6 +320,20 @@ public final class DispatchingContext<Verge : VergeType> {
     try source?.dispatch(name, description, file, function, line, action)
     
   }
+  
+  @discardableResult
+  public func dispatchAsync<U>(
+    _ name: String = "",
+    _ description: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: (DispatchingContext<Verge>) throws -> RxFuture<U>
+    ) rethrows -> RxFuture<U> {
+    
+    return try source?.dispatch(name, description, file, function, line, action) ?? Single<U>.error(VergeInternalError.vergeObjectWasDeallocated).start()
+    
+  }
 
   public func emit(
     _ activity: Verge.Activity,
