@@ -7,14 +7,14 @@ Pod::Spec.new do |s|
                    DESC
   s.license      = "MIT"
   s.author             = { "Muukii" => "muukii.app@gmail.com  " }
-  s.social_media_url   = "http://twitter.com/muukii0803"
+  s.social_media_url   = "http://twitter.com/muukii_app"
   s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.13'
   s.source       = { :git => "https://github.com/muukii/Verge.git", :tag => s.version }
   s.source_files  = "Verge/*.swift"
   s.homepage     = "https://github.com/muukii/Verge"
 
-  s.dependency 'RxSwift', '~> 4.4'
-  s.dependency 'RxCocoa', '~> 4.4'
-  s.dependency 'RxFuture', '~> 1.0'
+  s.dependency 'RxSwift', '~> 5'
+  s.dependency 'RxCocoa', '~> 5'
+  s.dependency 'RxFuture', '~> 2'
 end
