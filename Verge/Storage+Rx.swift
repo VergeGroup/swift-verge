@@ -46,18 +46,71 @@ extension Storage {
   /// Returns an observable sequence that contains only changed elements according to the `comparer`.
   ///
   /// - Parameters:
-  ///   - target: KeyPath to property
-  ///   - comparer: 
+  ///   - selector:
+  ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S>(_ target: KeyPath<T, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
+  public func changed<S>(_ selector: @escaping (T) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
     return
       asObservable()
-        .map { $0[keyPath: target] }
+        .map { selector($0) }
         .distinctUntilChanged(comparer)
   }
 
-  public func changed<S : Equatable>(_ target: KeyPath<T, S>) -> Observable<S> {
-    return changed(target, ==)
+  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
+  ///
+  /// - Parameters:
+  ///   - selector:
+  ///   - comparer:
+  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
+  public func changed<S : Equatable>(_ selector: @escaping (T) -> S) -> Observable<S> {
+    return changed(selector, ==)
+  }
+
+  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
+  ///
+  /// - Parameters:
+  ///   - selector: KeyPath to property
+  ///   - comparer: 
+  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
+  public func changed<S>(_ selector: KeyPath<T, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
+    return
+      asObservable()
+        .map { $0[keyPath: selector] }
+        .distinctUntilChanged(comparer)
+  }
+
+  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
+  ///
+  /// - Parameters:
+  ///   - selector: KeyPath to property
+  ///   - comparer:
+  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
+  public func changed<S : Equatable>(_ selector: KeyPath<T, S>) -> Observable<S> {
+    return changed(selector, ==)
+  }
+
+  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
+  ///
+  /// - Parameters:
+  ///   - selector:
+  ///   - comparer:
+  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
+  public func changedDriver<S>(_ selector: @escaping (T) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
+    return
+      asObservable()
+        .map { selector($0) }
+        .distinctUntilChanged(comparer)
+        .asDriver(onErrorRecover: { _ in .empty() })
+  }
+
+  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
+  ///
+  /// - Parameters:
+  ///   - selector:
+  ///   - comparer:
+  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
+  public func changedDriver<S : Equatable>(_ selector: @escaping (T) -> S) -> Driver<S> {
+    return changedDriver(selector, ==)
   }
   
   public func changed<S>(_ selector: @escaping (T) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
@@ -74,19 +127,25 @@ extension Storage {
   /// Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
   ///
   /// - Parameters:
-  ///   - target: KeyPath to property
+  ///   - selector: KeyPath to property
   ///   - comparer:
   /// - Returns: Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
-  public func changedDriver<S>(_ target: KeyPath<T, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
+  public func changedDriver<S>(_ selector: KeyPath<T, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
     return
       asObservable()
-        .map { $0[keyPath: target] }
+        .map { $0[keyPath: selector] }
         .distinctUntilChanged(comparer)
         .asDriver(onErrorRecover: { _ in .empty() })
   }
-  
-  public func changedDriver<S : Equatable>(_ target: KeyPath<T, S>) -> Driver<S> {
-    return changedDriver(target, ==)
+
+  /// Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
+  ///
+  /// - Parameters:
+  ///   - selector: KeyPath to property
+  ///   - comparer:
+  /// - Returns: Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
+  public func changedDriver<S : Equatable>(_ selector: KeyPath<T, S>) -> Driver<S> {
+    return changedDriver(selector, ==)
   }
   
   public func changedDriver<S>(_ selector: @escaping (T) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
