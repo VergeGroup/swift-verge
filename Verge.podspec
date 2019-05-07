@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Verge"
-  s.version      = "4.3.0"
+  s.version      = "5.0.0"
   s.summary      = "The Architecture for building UI"
   s.description  = <<-DESC
   The unidirectional design pattern inspired with Flux
