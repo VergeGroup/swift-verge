@@ -1,16 +1,57 @@
 # Verge
 
-*This readme is working in progress*
-
 ## What is Verge?
 
-This is one of the ideas for ViewModel layer.
+This library is one of the ideas for ViewModel layer.
+Built with the concept of Flux(Redux) architecture.
+The main purpose of Flux is state management on the one place(like Store).
+And clarify the mutations in the state. (Unidirectional Flow)
+With this, we can observe how the state will be changed.
 
-Mainly it's inspired by Flux architecture.
+Almost implementation of Flux library has a way of mutations as `Payload`.
+This is to describe that mutation.
+
+But, Verge does not have that way.
+We can define the mutation to mutation closure directly.
+
+Verge just focuses only on management the state on the one place.
 
 <img src="Verge@2x.png" width=816>
 
 https://whimsical.co/6vgPs6dsjsatAMyZ6oHDsq
+
+## Concept
+
+### Container (like ViewModel, Store)
+
+Firstly, we recommend creating a Container for each Screen(ViewController).
+Container naming is anything. It's better to name ViewModel or Store or something.
+
+Container must have `VergeType` protocol.
+
+```swift
+public protocol VergeType {
+  associatedtype State
+  associatedtype Activity
+  var state: Storage<State> { get }
+}
+```
+
+`VergeType` defines structure.
+
+#### State
+
+The container that has `VergeType` contains the `State`.
+
+#### Activity (a difference point)
+
+The container that has `VergeType` contains the `Activity`.
+
+#### Mutations
+
+#### Actions
+
+---
 
 ## VergeType
 
@@ -119,4 +160,11 @@ This behavior will cause unnecessary operations.
 
 # Basically Demo
 
+This demo is super far away from real world.
+In real world applications, it will be more complicated.
+
 ![](demo.gif)
+
+# Authors
+
+- muukii <muukii.app@gmail.com>
