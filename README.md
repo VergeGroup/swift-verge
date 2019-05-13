@@ -1,39 +1,33 @@
 # Verge
 
-*This readme is working in progress*
-
 ## What is Verge?
 
-This is one of the ideas for ViewModel layer.
+This library is one of the ideas for ViewModel layer.
+Built with the concept of Flux(Redux) architecture.
+The main purpose of Flux is state management on the one place(like Store).
+And clarify the mutations in the state. (Unidirectional Flow)
+With this, we can observe how the state will be changed.
 
-Mainly it's inspired by Flux architecture.
+Almost implementation of Flux library has a way of mutations as `Payload`.
+This is to describe that mutation.
+
+But, Verge does not have that way.
+We can define the mutation to mutation closure directly.
+
+Verge just focuses only on management the state on the one place.
 
 <img src="Verge@2x.png" width=816>
 
 https://whimsical.co/6vgPs6dsjsatAMyZ6oHDsq
 
-## VergeType
+## Concept
 
-VergeType just defines clean data-flow.
+### Container (like ViewModel, Store)
 
-So, We are free that how we use Verge.
+Firstly, we recommend creating a Container for each Screen(ViewController).
+Container naming is anything. It's better to name ViewModel or Store or something.
 
-One of the usages, VergeType adapts ViewModel of MVVM architecture.
-
-### It has State that is observable
-
-### It updates State by receiving Mutation or Action
-
-Receive **Mutation** as **Commit**
-
-Receive **Action** as **Dispatch**
-
-### It emits Activity by receiving Mutation or Action
-
-Sometimes, There are some events that don't need store to State by Action or Mutation.
-So, We call them `Activity`.
-
-**Protocol**
+Container must have `VergeType` protocol.
 
 ```swift
 public protocol VergeType {
@@ -43,32 +37,107 @@ public protocol VergeType {
 }
 ```
 
-**Extension-Methods**
+`VergeType` defines structure.
+
+#### State
+
+The container that has `VergeType` contains the `State`.
+
+To create Container object has VergeType, It's like followings.
 
 ```swift
-extension VergeType {
+class ViewModel : VergeType {
 
-  public var activity: Signal<Activity>
+  // Constrained Type by VergeType
+  enum Activity {
+  }
 
-  public func commit(
-    _ name: String = "",
-    _ description: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    _ mutate: (inout State) throws -> Void
-    ) rethrows
+  // Constrained Type by VergeType
+  struct State {
+    fileprivate(set) var value: Int = 0
+  }
 
-  public func dispatch<T>(
-    _ name: String = "",
-    _ description: String = "",
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line,
-    _ action: (DispatchContext<Self>) throws -> T
-    ) rethrows -> T
+  // Constrained Property by VergeType
+  let state: Storage<State> = .init(.init())
+
+  init() {
+
+  }
 }
 ```
+
+#### Mutations
+
+To run Mutation, use `commit` methodj that VergeType has.
+`commit` allows to run synchronous tasks only.
+
+```swift
+extension ViewModel {
+
+  func updateValue() {
+    commit { s in
+      s.value += 1
+    }
+  }
+
+}
+```
+
+#### Actions
+
+To run Action, use `dispatch` method that VergeType has.
+`dispatch` allows to run asynchronous or synchronous tasks.
+
+`dispatch` provides `context` as argument on closure.
+`context` can call `commit`.
+
+```swift
+extension ViewModel {
+
+  func updateValue() {
+    dispatch { context in
+      Single.just(())
+        .delay(0.5, scheduler: MainScheduler.instance)
+        .do(onSuccess: {
+
+            context.commit { (state) in
+              state.count += number
+            }
+        })
+        .start() // this method is part of RxFuture.
+    }
+  }
+
+}
+```
+
+#### Activity (a difference point)
+
+The container that has `VergeType` contains the `Activity`.
+
+Sometimes, There are some events that don't need store to State by Action or Mutation.
+So, We call them `Activity`.
+
+Use `emit` method context has.
+
+```swift
+extension ViewModel {
+
+  func updateValue() {
+    dispatch { context in
+      Single.just(())
+        .delay(0.5, scheduler: MainScheduler.instance)
+        .do(onSuccess: {
+          context.emit(.didReachBigNumber)
+        })
+        .start() // this method is part of RxFuture.
+    }
+  }
+
+}
+```
+
+---
 
 ## Storage
 
@@ -119,4 +188,11 @@ This behavior will cause unnecessary operations.
 
 # Basically Demo
 
+This demo is super far away from real world.
+In real world applications, it will be more complicated.
+
 ![](demo.gif)
+
+# Authors
+
+- muukii <muukii.app@gmail.com>
