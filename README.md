@@ -43,73 +43,101 @@ public protocol VergeType {
 
 The container that has `VergeType` contains the `State`.
 
+To create Container object has VergeType, It's like followings.
+
+```swift
+class ViewModel : VergeType {
+
+  // Constrained Type by VergeType
+  enum Activity {
+  }
+
+  // Constrained Type by VergeType
+  struct State {
+    fileprivate(set) var value: Int = 0
+  }
+
+  // Constrained Property by VergeType
+  let state: Storage<State> = .init(.init())
+
+  init() {
+
+  }
+}
+```
+
+#### Mutations
+
+To run Mutation, use `commit` methodj that VergeType has.
+`commit` allows to run synchronous tasks only.
+
+```swift
+extension ViewModel {
+
+  func updateValue() {
+    commit { s in
+      s.value += 1
+    }
+  }
+
+}
+```
+
+#### Actions
+
+To run Action, use `dispatch` method that VergeType has.
+`dispatch` allows to run asynchronous or synchronous tasks.
+
+`dispatch` provides `context` as argument on closure.
+`context` can call `commit`.
+
+```swift
+extension ViewModel {
+
+  func updateValue() {
+    dispatch { context in
+      Single.just(())
+        .delay(0.5, scheduler: MainScheduler.instance)
+        .do(onSuccess: {
+
+            context.commit { (state) in
+              state.count += number
+            }
+        })
+        .start() // this method is part of RxFuture.
+    }
+  }
+
+}
+```
+
 #### Activity (a difference point)
 
 The container that has `VergeType` contains the `Activity`.
 
-#### Mutations
-
-#### Actions
-
----
-
-## VergeType
-
-VergeType just defines clean data-flow.
-
-So, We are free that how we use Verge.
-
-One of the usages, VergeType adapts ViewModel of MVVM architecture.
-
-### It has State that is observable
-
-### It updates State by receiving Mutation or Action
-
-Receive **Mutation** as **Commit**
-
-Receive **Action** as **Dispatch**
-
-### It emits Activity by receiving Mutation or Action
-
 Sometimes, There are some events that don't need store to State by Action or Mutation.
 So, We call them `Activity`.
 
-**Protocol**
+Use `emit` method context has.
 
 ```swift
-public protocol VergeType {
-  associatedtype State
-  associatedtype Activity
-  var state: Storage<State> { get }
+extension ViewModel {
+
+  func updateValue() {
+    dispatch { context in
+      Single.just(())
+        .delay(0.5, scheduler: MainScheduler.instance)
+        .do(onSuccess: {
+          context.emit(.didReachBigNumber)
+        })
+        .start() // this method is part of RxFuture.
+    }
+  }
+
 }
 ```
 
-**Extension-Methods**
-
-```swift
-extension VergeType {
-
-  public var activity: Signal<Activity>
-
-  public func commit(
-    _ name: String = "",
-    _ description: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    _ mutate: (inout State) throws -> Void
-    ) rethrows
-
-  public func dispatch<T>(
-    _ name: String = "",
-    _ description: String = "",
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line,
-    _ action: (DispatchContext<Self>) throws -> T
-    ) rethrows -> T
-}
-```
+---
 
 ## Storage
 
