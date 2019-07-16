@@ -46,7 +46,7 @@ public protocol AnyVergeType : class {
 /// The protocol is core of Cycler
 public protocol VergeType : AnyVergeType {
   associatedtype State
-  associatedtype Activity
+  associatedtype Activity  
   var activity: Emitter<Activity> { get }
   var state: Storage<State> { get }
 }
@@ -249,7 +249,7 @@ extension VergeType {
     line: UInt = #line
     ) {
 
-    associated.activity.makeEmitter().accept(activity)
+    self.activity.makeEmitter().accept(activity)
     logger.didEmit(activity: activity, file: file, function: function, line: line, on: self)
   }
 }
@@ -366,7 +366,7 @@ final class VergeAssociated<Activity> {
 
   var logger: VergeLogging?
 
-  let activity: Emitter<Activity> = .init()
+  lazy var activity: Emitter<Activity> = .init()
 
   init() {
 
