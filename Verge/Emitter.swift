@@ -30,6 +30,10 @@ public final class Emitter<Event> {
     return source
   }
   
+  public func asObservable() -> Observable<Event> {
+    return source.asObservable()
+  }
+  
   func makeEmitter() -> Accepter<Event> {
     return .init(backingEmitter: emitter)
   }
