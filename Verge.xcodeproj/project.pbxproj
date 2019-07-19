@@ -28,6 +28,8 @@
 		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
 		4B956D18211483E7003AA189 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; };
 		4B956D19211483E7003AA189 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
+		4B9F57D622DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
 		4BAE9FCD21DFA119003DDF3D /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FC921DFA119003DDF3D /* RxCocoa.framework */; };
 		4BAE9FCE21DFA119003DDF3D /* RxFuture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FCA21DFA119003DDF3D /* RxFuture.framework */; };
@@ -97,6 +99,7 @@
 		4B86A4A01F969C7D002D54FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B86A4A31F969C7D002D54FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B86A4A51F969C7D002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		4BAE9FC921DFA119003DDF3D /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = SOURCE_ROOT; };
 		4BAE9FCA21DFA119003DDF3D /* RxFuture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxFuture.framework; path = Carthage/Build/iOS/RxFuture.framework; sourceTree = SOURCE_ROOT; };
@@ -215,6 +218,7 @@
 				4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */,
 				4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */,
 				4B54E2781FE3646B001736D2 /* Storage.swift */,
+				4B9F57D422DDF951009705D1 /* Emitter.swift */,
 				4B86A48A1F969AD6002D54FE /* Info.plist */,
 			);
 			path = Verge;
@@ -425,6 +429,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B9F57D622DDF951009705D1 /* Emitter.swift in Sources */,
 				4B463D6920D4C4690053A4FF /* Storage+Rx.swift in Sources */,
 				4BAE9FEB21DFA75A003DDF3D /* Verge+Extension.swift in Sources */,
 				4B463D6A20D4C4690053A4FF /* Verge.swift in Sources */,
@@ -444,6 +449,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */,
 				4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */,
 				4BAE9FEA21DFA75A003DDF3D /* Verge+Extension.swift in Sources */,
 				4B86A4921F969BF3002D54FE /* Verge.swift in Sources */,
