@@ -51,28 +51,7 @@ public protocol VergeType : AnyVergeType {
   var state: Storage<State> { get }
 }
 
-public protocol ModularVergeType : VergeType {
-  associatedtype Parent : VergeType
-}
-
 private var _associated: Void?
-private var _modularAssociated: Void?
-
-@available(*, deprecated)
-public final class DeinitBox {
-
-  private let onDeinit: () -> Void
-
-  init<T>(_ value: T, _ onDeinit: @escaping (T) -> Void) {
-    self.onDeinit = {
-      onDeinit(value)
-    }
-  }
-
-  deinit {
-    onDeinit()
-  }
-}
 
 extension VergeType {
 
@@ -229,19 +208,6 @@ extension VergeType {
     
   }
 
-  /// Add modular Cycler
-  ///
-  /// - Parameters:
-  ///   - module: CyclerType
-  ///   - retainParent: Indicates retain parent
-  public func add<M: ModularVergeType>(module: M, retainParent: Bool = false) where M.Parent == Self {
-    if retainParent {
-      module.modularAssociated.retainedParent = self
-    } else {
-      module.modularAssociated.parent = self
-    }
-  }
-
   fileprivate func emit(
     _ activity: Activity,
     file: StaticString = #file,
@@ -251,27 +217,6 @@ extension VergeType {
 
     self.activity.makeEmitter().accept(activity)
     logger.didEmit(activity: activity, file: file, function: function, line: line, on: self)
-  }
-}
-
-extension ModularVergeType {
-
-  fileprivate var modularAssociated: ModularVergeAssociated<Parent> {
-    if let associated = objc_getAssociatedObject(self, &_modularAssociated) as? ModularVergeAssociated<Parent> {
-      return associated
-    } else {
-      let associated = ModularVergeAssociated<Parent>()
-      objc_setAssociatedObject(self, &_modularAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
-      return associated
-    }
-  }
-
-  public func forward(_ c: (_ parent: Parent) -> Void) {
-    guard let parent = modularAssociated.parent ?? modularAssociated.retainedParent else {
-      assertionFailure("\(String(describing: self)) is not set parent. `should call set(parent: Parent)`")
-      return
-    }
-    c(parent)
   }
 }
 
@@ -367,17 +312,6 @@ final class VergeAssociated<Activity> {
   var logger: VergeLogging?
 
   lazy var activity: Emitter<Activity> = .init()
-
-  init() {
-
-  }
-}
-
-final class ModularVergeAssociated<Parent : VergeType> {
-
-  weak var parent: Parent?
-
-  var retainedParent: Parent?
 
   init() {
 
