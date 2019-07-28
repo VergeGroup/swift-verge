@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B29A79D22EDA40B00191CBE /* VergeSwiftUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B29A79B22EDA40B00191CBE /* VergeSwiftUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B29A7A422EDA43700191CBE /* NextVergeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29A7A122EDA43600191CBE /* NextVergeType.swift */; };
+		4B29A7A522EDA43700191CBE /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29A7A222EDA43600191CBE /* Atomic.swift */; };
+		4B29A7A622EDA43700191CBE /* VergeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29A7A322EDA43600191CBE /* VergeStorage.swift */; };
 		4B463D6920D4C4690053A4FF /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B463D6A20D4C4690053A4FF /* Verge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4911F969BF3002D54FE /* Verge.swift */; };
 		4B463D6B20D4C4690053A4FF /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E2781FE3646B001736D2 /* Storage.swift */; };
@@ -78,6 +82,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B29A79922EDA40B00191CBE /* VergeSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B29A79B22EDA40B00191CBE /* VergeSwiftUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeSwiftUI.h; sourceTree = "<group>"; };
+		4B29A79C22EDA40B00191CBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B29A7A122EDA43600191CBE /* NextVergeType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextVergeType.swift; sourceTree = "<group>"; };
+		4B29A7A222EDA43600191CBE /* Atomic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
+		4B29A7A322EDA43600191CBE /* VergeStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VergeStorage.swift; sourceTree = "<group>"; };
 		4B463D7520D4C4690053A4FF /* Verge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Verge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B463D7B20D4C72D0053A4FF /* EasyPeasy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EasyPeasy.framework; path = Carthage/Build/iOS/EasyPeasy.framework; sourceTree = SOURCE_ROOT; };
 		4B463D8120D4C74A0053A4FF /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/Mac/RxCocoa.framework; sourceTree = "<group>"; };
@@ -109,6 +119,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4B29A79622EDA40B00191CBE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B463D6C20D4C4690053A4FF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -148,6 +165,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B29A79A22EDA40B00191CBE /* VergeSwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				4B29A7A222EDA43600191CBE /* Atomic.swift */,
+				4B29A7A122EDA43600191CBE /* NextVergeType.swift */,
+				4B29A7A322EDA43600191CBE /* VergeStorage.swift */,
+				4B29A79B22EDA40B00191CBE /* VergeSwiftUI.h */,
+				4B29A79C22EDA40B00191CBE /* Info.plist */,
+			);
+			path = VergeSwiftUI;
+			sourceTree = "<group>";
+		};
 		4B463D7820D4C71D0053A4FF /* Carthage */ = {
 			isa = PBXGroup;
 			children = (
@@ -191,6 +220,7 @@
 			isa = PBXGroup;
 			children = (
 				4B463D7820D4C71D0053A4FF /* Carthage */,
+				4B29A79A22EDA40B00191CBE /* VergeSwiftUI */,
 				4B86A4881F969AD5002D54FE /* Verge */,
 				4B86A4981F969C7D002D54FE /* Verge-Demo */,
 				4B65F8ED1FB4C0DC00A90A67 /* VergeTests */,
@@ -206,6 +236,7 @@
 				4B86A4971F969C7D002D54FE /* Verge-Demo.app */,
 				4B65F8EC1FB4C0DC00A90A67 /* VergeTests.xctest */,
 				4B463D7520D4C4690053A4FF /* Verge.framework */,
+				4B29A79922EDA40B00191CBE /* VergeSwiftUI.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -249,6 +280,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		4B29A79422EDA40B00191CBE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B29A79D22EDA40B00191CBE /* VergeSwiftUI.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B463D6F20D4C4690053A4FF /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -268,6 +307,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		4B29A79822EDA40B00191CBE /* VergeSwiftUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B29A7A022EDA40B00191CBE /* Build configuration list for PBXNativeTarget "VergeSwiftUI" */;
+			buildPhases = (
+				4B29A79422EDA40B00191CBE /* Headers */,
+				4B29A79522EDA40B00191CBE /* Sources */,
+				4B29A79622EDA40B00191CBE /* Frameworks */,
+				4B29A79722EDA40B00191CBE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VergeSwiftUI;
+			productName = VergeSwiftUI;
+			productReference = 4B29A79922EDA40B00191CBE /* VergeSwiftUI.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		4B463D6720D4C4690053A4FF /* Verge-macOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B463D7220D4C4690053A4FF /* Build configuration list for PBXNativeTarget "Verge-macOS" */;
@@ -351,6 +408,11 @@
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = muukii;
 				TargetAttributes = {
+					4B29A79822EDA40B00191CBE = {
+						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1100;
+						ProvisioningStyle = Automatic;
+					};
 					4B463D6720D4C4690053A4FF = {
 						ProvisioningStyle = Automatic;
 					};
@@ -386,11 +448,19 @@
 				4B463D6720D4C4690053A4FF /* Verge-macOS */,
 				4B86A4961F969C7D002D54FE /* Verge-Demo */,
 				4B65F8EB1FB4C0DC00A90A67 /* VergeTests */,
+				4B29A79822EDA40B00191CBE /* VergeSwiftUI */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4B29A79722EDA40B00191CBE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B463D7120D4C4690053A4FF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -425,6 +495,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4B29A79522EDA40B00191CBE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B29A7A622EDA43700191CBE /* VergeStorage.swift in Sources */,
+				4B29A7A522EDA43700191CBE /* Atomic.swift in Sources */,
+				4B29A7A422EDA43700191CBE /* NextVergeType.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B463D6820D4C4690053A4FF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -503,6 +583,56 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4B29A79E22EDA40B00191CBE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = VergeSwiftUI/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeSwiftUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B29A79F22EDA40B00191CBE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = VergeSwiftUI/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeSwiftUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		4B463D7320D4C4690053A4FF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -811,6 +941,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4B29A7A022EDA40B00191CBE /* Build configuration list for PBXNativeTarget "VergeSwiftUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B29A79E22EDA40B00191CBE /* Debug */,
+				4B29A79F22EDA40B00191CBE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4B463D7220D4C4690053A4FF /* Build configuration list for PBXNativeTarget "Verge-macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
