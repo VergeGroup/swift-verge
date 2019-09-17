@@ -23,6 +23,10 @@ public protocol ReducerType {
   
   typealias Mutation = _Mutation<TargetState>
   typealias Action<ReturnType> = _Action<TargetState, Self, ReturnType>
+  
+  typealias StoreType = Store<TargetState, Self>
+  typealias ScopedStoreType<RootState> = ScopedStore<RootState, TargetState, Self>
+  typealias DispatchContext = VergeNeue.DispatchContext<TargetState, Self>
 }
 
 public final class DispatchContext<State, Reducer: ReducerType> where Reducer.TargetState == State {
@@ -33,12 +37,13 @@ public final class DispatchContext<State, Reducer: ReducerType> where Reducer.Ta
     self.store = store
   }
   
+  @discardableResult
   public func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
     store.dispatch(makeAction)
   }
   
-  public func dispatch(_ makeMutation: (Reducer) -> Reducer.Mutation) {
-    store.dispatch(makeMutation)
+  public func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
+    store.commit(makeMutation)
   }
 }
 
@@ -127,7 +132,7 @@ public protocol StoreType where Reducer.TargetState == State {
   associatedtype Reducer: ReducerType
   
   func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType
-  func dispatch(_ makeMutation: (Reducer) -> Reducer.Mutation)
+  func commit(_ makeMutation: (Reducer) -> Reducer.Mutation)
 }
 
 public struct RegistrationToken {
@@ -145,11 +150,12 @@ public struct RegistrationToken {
 
 public class StoreBase<State, Reducer: ReducerType>: StoreType where Reducer.TargetState == State {
   
+  @discardableResult
   public func dispatch<ReturnType>(_ makeAction: (Reducer) -> _Action<Reducer.TargetState, Reducer, ReturnType>) -> ReturnType {
     fatalError()
   }
   
-  public func dispatch(_ makeMutation: (Reducer) -> _Mutation<Reducer.TargetState>) {
+  public func commit(_ makeMutation: (Reducer) -> _Mutation<Reducer.TargetState>) {
     fatalError()
   }
   
@@ -187,27 +193,28 @@ public final class Store<State, Reducer: ReducerType>: StoreBase<State, Reducer>
   
   let storage: Storage<State>
   
-  private let operations: Reducer
+  private let reducer: Reducer
   
   private let lock = NSLock()
   
   public init(
     state: State,
-    operations: Reducer
+    reducer: Reducer
   ) {
     self.storage = .init(state)
-    self.operations = operations
+    self.reducer = reducer
   }
   
+  @discardableResult
   public override func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
     let context = DispatchContext<State, Reducer>.init(store: self)
-    let action = makeAction(operations)
+    let action = makeAction(reducer)
     let result = action.action(context)
     return result
   }
   
-  public override func dispatch(_ makeMutation: (Reducer) -> Reducer.Mutation) {
-    let mutation = makeMutation(operations)
+  public override func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
+    let mutation = makeMutation(reducer)
     storage.update { (state) in
       mutation.mutate(&state)
     }
@@ -215,13 +222,13 @@ public final class Store<State, Reducer: ReducerType>: StoreBase<State, Reducer>
   
   public func makeScoped<ScopedState, ScopedOperations: ReducerType>(
     scope: WritableKeyPath<State, ScopedState>,
-    operations: ScopedOperations
+    reducer: ScopedOperations
   ) -> ScopedStore<State, ScopedState, ScopedOperations> where ScopedOperations.TargetState == ScopedState {
     
     let scopedStore = ScopedStore<State, ScopedState, ScopedOperations>(
       store: self,
       scopeSelector: scope,
-      operations: operations
+      reducer: reducer
     )
     
     return scopedStore
@@ -235,31 +242,32 @@ public final class ScopedStore<SourceState, State, Reducer: ReducerType>: StoreB
     storage.value[keyPath: scopeSelector]
   }
   
-  private let operations: Reducer
+  private let reducer: Reducer
   let storage: Storage<SourceState>
   private let scopeSelector: WritableKeyPath<SourceState, State>
   
   init<SourceOperations: ReducerType>(
     store: Store<SourceState, SourceOperations>,
     scopeSelector: WritableKeyPath<SourceState, State>,
-    operations: Reducer
+    reducer: Reducer
   ) {
     
     self.storage = store.storage
-    self.operations = operations
+    self.reducer = reducer
     self.scopeSelector = scopeSelector
     
   }
   
+  @discardableResult
   public override func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
     let context = DispatchContext<State, Reducer>.init(store: self)
-    let action = makeAction(operations)
+    let action = makeAction(reducer)
     let result = action.action(context)
     return result
   }
   
-  public override func dispatch(_ makeMutation: (Reducer) -> Reducer.Mutation) {
-    let mutation = makeMutation(operations)
+  public override func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
+    let mutation = makeMutation(reducer)
     storage.update { (sourceState) in
       mutation.mutate(&sourceState[keyPath: scopeSelector])
     }
