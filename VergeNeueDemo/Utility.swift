@@ -8,7 +8,7 @@
 
 import Foundation
 
-func demoDelay(_ perform: @escaping () -> Void) {
+func demoDelay(on queue: DispatchQueue = .main, _ perform: @escaping () -> Void) {
   DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
     perform()
   }

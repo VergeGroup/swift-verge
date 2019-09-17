@@ -8,17 +8,23 @@
 
 import Foundation
 import Combine
+import JAYSON
 
 final class MockAPIProvider {
+  
+  private let queue = DispatchQueue.global(qos: .default)
   
   init() {
     
   }
   
-  func fetchPhotos() -> Future<[Photo], Never> {
+  func fetchPhotos() -> Future<JSON, Never> {
     .init { promise in
-      demoDelay {
-        promise(.success([]))
+      demoDelay(on: self.queue) {
+        
+        let data = try! Data(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "list_page_1", ofType: "json")!))
+                        
+        promise(.success(try! JSON(data: data)))
       }
     }
   }

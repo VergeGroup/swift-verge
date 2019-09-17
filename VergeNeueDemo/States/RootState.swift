@@ -16,9 +16,11 @@ struct RootState {
   
   var activeSessionState: SessionState?
   
+  var count: Int = 0
+  
 }
 
-final class RootStateReducer: ReducerType {
+final class RootReducer: ReducerType {
   typealias TargetState = RootState
   
   func createSession(env: Env) -> Action<Future<Void, Never>> {
@@ -45,6 +47,20 @@ final class RootStateReducer: ReducerType {
   private func activateSession(_ session: SessionState) -> Mutation {
     return .init {
       $0.activeSessionState = session
+    }
+  }
+    
+  func syncIncrement() -> Mutation {
+    return .init {
+      $0.count += 1
+    }
+  }
+  
+  func asyncIncrement() -> Action<Void> {
+    return .init { context in
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        context.commit { $0.syncIncrement() }
+      }
     }
   }
   

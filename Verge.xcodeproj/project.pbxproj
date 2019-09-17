@@ -30,6 +30,14 @@
 		4B65F8EF1FB4C0DC00A90A67 /* VergeTests.wift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8EE1FB4C0DC00A90A67 /* VergeTests.wift */; };
 		4B65F8F11FB4C0DC00A90A67 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; };
 		4B65F8FA1FB4C75800A90A67 /* CycleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8F91FB4C75800A90A67 /* CycleViewModel.swift */; };
+		4B66DF9823314443002AD206 /* HomeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF9723314443002AD206 /* HomeState.swift */; };
+		4B66DF9A2331444A002AD206 /* NotificationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF992331444A002AD206 /* NotificationState.swift */; };
+		4B66DF9C23314450002AD206 /* MyPageState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF9B23314450002AD206 /* MyPageState.swift */; };
+		4B66DF9E23314955002AD206 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF9D23314955002AD206 /* Store.swift */; };
+		4B66DFA02331496B002AD206 /* ScopedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF9F2331496B002AD206 /* ScopedStore.swift */; };
+		4B66DFA22331497B002AD206 /* SwiftUIBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */; };
+		4B66DFA4233149A5002AD206 /* StoreBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DFA3233149A5002AD206 /* StoreBase.swift */; };
+		4B66DFA6233149D4002AD206 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DFA5233149D4002AD206 /* Storage.swift */; };
 		4B6937C92162930D00746CCF /* EasyPeasy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B463D7B20D4C72D0053A4FF /* EasyPeasy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B86A48B1F969AD6002D54FE /* Verge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B86A4891F969AD6002D54FE /* Verge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B86A4921F969BF3002D54FE /* Verge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4911F969BF3002D54FE /* Verge.swift */; };
@@ -70,6 +78,8 @@
 		4BECC8202331336200D6A0A1 /* MockDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BECC81F2331336200D6A0A1 /* MockDatabase.swift */; };
 		4BECC8222331337100D6A0A1 /* MockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BECC8212331337100D6A0A1 /* MockService.swift */; };
 		4BECC824233133FC00D6A0A1 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BECC823233133FC00D6A0A1 /* Env.swift */; };
+		4BECC82623313C1B00D6A0A1 /* list_page_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 4BECC82523313C1B00D6A0A1 /* list_page_1.json */; };
+		E7753A9D8D406494A27CB710 /* Pods_VergeNeueDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94193FF650F04C7E5B271434 /* Pods_VergeNeueDemo.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -156,6 +166,14 @@
 		4B65F8EE1FB4C0DC00A90A67 /* VergeTests.wift */ = {isa = PBXFileReference; lastKnownFileType = text; path = VergeTests.wift; sourceTree = "<group>"; };
 		4B65F8F01FB4C0DC00A90A67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B65F8F91FB4C75800A90A67 /* CycleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CycleViewModel.swift; sourceTree = "<group>"; };
+		4B66DF9723314443002AD206 /* HomeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeState.swift; sourceTree = "<group>"; };
+		4B66DF992331444A002AD206 /* NotificationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationState.swift; sourceTree = "<group>"; };
+		4B66DF9B23314450002AD206 /* MyPageState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageState.swift; sourceTree = "<group>"; };
+		4B66DF9D23314955002AD206 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		4B66DF9F2331496B002AD206 /* ScopedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedStore.swift; sourceTree = "<group>"; };
+		4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIBinder.swift; sourceTree = "<group>"; };
+		4B66DFA3233149A5002AD206 /* StoreBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBase.swift; sourceTree = "<group>"; };
+		4B66DFA5233149D4002AD206 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		4B86A4861F969AD5002D54FE /* Verge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Verge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B86A4891F969AD6002D54FE /* Verge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Verge.h; sourceTree = "<group>"; };
 		4B86A48A1F969AD6002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -192,6 +210,10 @@
 		4BECC81F2331336200D6A0A1 /* MockDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDatabase.swift; sourceTree = "<group>"; };
 		4BECC8212331337100D6A0A1 /* MockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockService.swift; sourceTree = "<group>"; };
 		4BECC823233133FC00D6A0A1 /* Env.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
+		4BECC82523313C1B00D6A0A1 /* list_page_1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = list_page_1.json; sourceTree = "<group>"; };
+		94193FF650F04C7E5B271434 /* Pods_VergeNeueDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VergeNeueDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D16F15177BB4D67B9B5F45B9 /* Pods-VergeNeueDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeNeueDemo/Pods-VergeNeueDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		E6998160A046DFFF14AC3FD4 /* Pods-VergeNeueDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueDemo.release.xcconfig"; path = "Target Support Files/Pods-VergeNeueDemo/Pods-VergeNeueDemo.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +233,7 @@
 			files = (
 				4BD85F2D2331213800FD04E9 /* SwiftUI.framework in Frameworks */,
 				4B4AEB2323310D68000709D9 /* VergeNeue.framework in Frameworks */,
+				E7753A9D8D406494A27CB710 /* Pods_VergeNeueDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,6 +275,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2A539E3FF4267844D858E039 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D16F15177BB4D67B9B5F45B9 /* Pods-VergeNeueDemo.debug.xcconfig */,
+				E6998160A046DFFF14AC3FD4 /* Pods-VergeNeueDemo.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		4B463D7820D4C71D0053A4FF /* Carthage */ = {
 			isa = PBXGroup;
 			children = (
@@ -294,12 +326,12 @@
 				4B4AEB1123310D40000709D9 /* AppDelegate.swift */,
 				4B4AEB1323310D40000709D9 /* SceneDelegate.swift */,
 				4B4AEB2E233114E7000709D9 /* RootStore.swift */,
-				4B4AEB2823310F4A000709D9 /* RootState.swift */,
-				4B4AEB2A233112D3000709D9 /* SessionState.swift */,
+				4B66DF96233142F2002AD206 /* States */,
 				4B4AEB1723310D42000709D9 /* Assets.xcassets */,
 				4B4AEB1C23310D42000709D9 /* LaunchScreen.storyboard */,
 				4B4AEB1F23310D42000709D9 /* Info.plist */,
 				4B4AEB1923310D42000709D9 /* Preview Content */,
+				4BECC82523313C1B00D6A0A1 /* list_page_1.json */,
 			);
 			path = VergeNeueDemo;
 			sourceTree = "<group>";
@@ -321,6 +353,18 @@
 			path = VergeTests;
 			sourceTree = "<group>";
 		};
+		4B66DF96233142F2002AD206 /* States */ = {
+			isa = PBXGroup;
+			children = (
+				4B4AEB2823310F4A000709D9 /* RootState.swift */,
+				4B4AEB2A233112D3000709D9 /* SessionState.swift */,
+				4B66DF9723314443002AD206 /* HomeState.swift */,
+				4B66DF992331444A002AD206 /* NotificationState.swift */,
+				4B66DF9B23314450002AD206 /* MyPageState.swift */,
+			);
+			path = States;
+			sourceTree = "<group>";
+		};
 		4B86A47C1F969AD5002D54FE = {
 			isa = PBXGroup;
 			children = (
@@ -332,6 +376,7 @@
 				4B4AEB1023310D40000709D9 /* VergeNeueDemo */,
 				4B86A4871F969AD5002D54FE /* Products */,
 				4B86A4AC1F969C98002D54FE /* Frameworks */,
+				2A539E3FF4267844D858E039 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -382,6 +427,7 @@
 			children = (
 				4BD85F2C2331213800FD04E9 /* SwiftUI.framework */,
 				4B93EC7323307637002BB30B /* SwiftUI.framework */,
+				94193FF650F04C7E5B271434 /* Pods_VergeNeueDemo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -392,6 +438,11 @@
 				4B93EC6923307624002BB30B /* VergeNeue.h */,
 				4B93EC6A23307624002BB30B /* Info.plist */,
 				4B93EC7523307656002BB30B /* VergeNeue.swift */,
+				4B66DFA5233149D4002AD206 /* Storage.swift */,
+				4B66DFA3233149A5002AD206 /* StoreBase.swift */,
+				4B66DF9F2331496B002AD206 /* ScopedStore.swift */,
+				4B66DF9D23314955002AD206 /* Store.swift */,
+				4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */,
 			);
 			path = VergeNeue;
 			sourceTree = "<group>";
@@ -496,10 +547,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B4AEB2223310D42000709D9 /* Build configuration list for PBXNativeTarget "VergeNeueDemo" */;
 			buildPhases = (
+				A892C8F4084E626D63053222 /* [CP] Check Pods Manifest.lock */,
 				4B4AEB0B23310D40000709D9 /* Sources */,
 				4B4AEB0C23310D40000709D9 /* Frameworks */,
 				4B4AEB0D23310D40000709D9 /* Resources */,
 				4B4AEB2723310D68000709D9 /* Embed Frameworks */,
+				376B416910F33AAE12FAB566 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -657,6 +710,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BECC82623313C1B00D6A0A1 /* list_page_1.json in Resources */,
 				4B4AEB1E23310D42000709D9 /* LaunchScreen.storyboard in Resources */,
 				4B4AEB1B23310D42000709D9 /* Preview Assets.xcassets in Resources */,
 				4B4AEB1823310D42000709D9 /* Assets.xcassets in Resources */,
@@ -696,6 +750,49 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		376B416910F33AAE12FAB566 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-VergeNeueDemo/Pods-VergeNeueDemo-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/JAYSON/JAYSON.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JAYSON.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-VergeNeueDemo/Pods-VergeNeueDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A892C8F4084E626D63053222 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-VergeNeueDemo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4B463D6820D4C4690053A4FF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -720,6 +817,7 @@
 				4BD85F392331259300FD04E9 /* SessionContainerView.swift in Sources */,
 				4BECC8222331337100D6A0A1 /* MockService.swift in Sources */,
 				4B4AEB2B233112D3000709D9 /* SessionState.swift in Sources */,
+				4B66DF9A2331444A002AD206 /* NotificationState.swift in Sources */,
 				4BD85F352331252E00FD04E9 /* NotificationsView.swift in Sources */,
 				4BECC81B233132ED00D6A0A1 /* MockAPIProvider.swift in Sources */,
 				4BD85F332331251400FD04E9 /* HomeView.swift in Sources */,
@@ -729,6 +827,8 @@
 				4BD85F2B2331202C00FD04E9 /* Utility.swift in Sources */,
 				4B4AEB2D2331145B000709D9 /* StartView.swift in Sources */,
 				4BECC81823312AD400D6A0A1 /* IndicatorView.swift in Sources */,
+				4B66DF9823314443002AD206 /* HomeState.swift in Sources */,
+				4B66DF9C23314450002AD206 /* MyPageState.swift in Sources */,
 				4B4AEB1623310D40000709D9 /* ContentView.swift in Sources */,
 				4B4AEB2923310F4A000709D9 /* RootState.swift in Sources */,
 				4BD85F312331247B00FD04E9 /* MainTabView.swift in Sources */,
@@ -771,6 +871,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B93EC7623307656002BB30B /* VergeNeue.swift in Sources */,
+				4B66DF9E23314955002AD206 /* Store.swift in Sources */,
+				4B66DFA4233149A5002AD206 /* StoreBase.swift in Sources */,
+				4B66DFA02331496B002AD206 /* ScopedStore.swift in Sources */,
+				4B66DFA22331497B002AD206 /* SwiftUIBinder.swift in Sources */,
+				4B66DFA6233149D4002AD206 /* Storage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -882,6 +987,7 @@
 		};
 		4B4AEB2023310D42000709D9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D16F15177BB4D67B9B5F45B9 /* Pods-VergeNeueDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -903,6 +1009,7 @@
 		};
 		4B4AEB2123310D42000709D9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E6998160A046DFFF14AC3FD4 /* Pods-VergeNeueDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
