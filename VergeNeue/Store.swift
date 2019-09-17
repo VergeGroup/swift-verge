@@ -30,6 +30,9 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
   ) {
     self.storage = .init(state)
     self.reducer = reducer
+    
+    super.init()
+    print("Init", self)
   }
   
   public convenience init<ParentReducer: ReducerType>(
@@ -46,16 +49,24 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
       self?.notify(newParentState: state)
     }
     
+    notifyCurrent: do {
+      notify(newParentState: parentStore.storage.value)      
+    }
+    
     self._deinit = { [weak storage = parentStore.storage] in
       storage?.remove(subscriber: parentSubscripton)
     }
     
     // FIXME:
     parentStore.register(store: self, for: UUID().uuidString)
+    
   }
   
   deinit {
-   _deinit()
+    #if DEBUG
+    print("Deinit", self)
+    #endif
+    _deinit()
   }
   
   private func notify(newParentState: Reducer.ParentState) {
