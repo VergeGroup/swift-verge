@@ -10,7 +10,7 @@ import SwiftUI
 
 struct SessionContainerView: View {
   
-  @ObservedObject var sessionStore: SessionStateReducer.ScopedStoreType<RootState>
+  @ObservedObject var sessionStore: SessionStateReducer.ScopedStoreType<RootState, RootReducer>
   
   var body: some View {
     MainTabView().environmentObject(sessionStore)

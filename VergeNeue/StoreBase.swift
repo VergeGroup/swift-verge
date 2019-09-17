@@ -10,13 +10,13 @@ import Foundation
 
 public protocol StoreType where Reducer.TargetState == State {
   associatedtype State
-  associatedtype Reducer: ReducerType
+  associatedtype Reducer: ModularReducerType
   
   func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType
   func commit(_ makeMutation: (Reducer) -> Reducer.Mutation)
 }
 
-public class StoreBase<State, Reducer: ReducerType>: StoreType where Reducer.TargetState == State {
+public class StoreBase<State, Reducer: ModularReducerType>: StoreType where Reducer.TargetState == State {
   
   @discardableResult
   public func dispatch<ReturnType>(_ makeAction: (Reducer) -> _Action<Reducer.TargetState, Reducer, ReturnType>) -> ReturnType {
@@ -29,10 +29,12 @@ public class StoreBase<State, Reducer: ReducerType>: StoreType where Reducer.Tar
   
   private var stores: [String : Any] = [:]
   private let lock = NSLock()
+  private var _deinit: () -> Void = {}
   
   private var registrationToken: RegistrationToken?
   
-  public func register<S, O: ReducerType>(store: StoreBase<S, O>, for key: String) -> RegistrationToken where O.TargetState == S {
+  @discardableResult
+  public func register<S, O: ModularReducerType>(store: StoreBase<S, O>, for key: String) -> RegistrationToken where O.TargetState == S {
     
     let key = StoreKey<S, O>.init(from: store).rawKey
     lock.lock()
@@ -50,14 +52,14 @@ public class StoreBase<State, Reducer: ReducerType>: StoreType where Reducer.Tar
     
     return token
   }
-  
+    
   public func reserveRelease() {
     registrationToken?.unregister()
   }
   
 }
 
-public struct StoreKey<State, Reducer: ReducerType> : Hashable where Reducer.TargetState == State {
+public struct StoreKey<State, Reducer: ModularReducerType> : Hashable where Reducer.TargetState == State {
   
   public let rawKey: String
   
