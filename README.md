@@ -4,7 +4,7 @@
 
 Latest released Verge => [`master` branch](https://github.com/muukii/Verge/tree/master)
 
-Verge - Neue is an unidirectional-data-flow framework.
+**Verge - Neue** is an unidirectional-data-flow framework.
 
 ## Architecture
 
@@ -74,6 +74,11 @@ store.commit { $0.syncIncrement() }
 store.dispatch { $0.asyncIncrement() }
 ```
 
+**ScopedStore**
 
+`ScopedStore` is a node object detached from `Store`<br>
+It initializes with `Store` as parent store and WritableKeyPath to take fragment of parent store's state.
 
+Its side-effects dispatch and commit affects parent-store.<br>
+And receives parent-store's side-effects 
 
