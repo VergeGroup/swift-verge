@@ -1,10 +1,79 @@
 # Verge - Neue (SwiftUI / UIKit)
 
-Currently in progress
+> ⚠️ Currently in progress
 
 Latest released Verge => [`master` branch](https://github.com/muukii/Verge/tree/master)
 
-## Usage
+Verge - Neue is an unidirectional-data-flow framework.
+
+## Architecture
+
+The sources are in `VergeNeue` directory.
+
+* Store / ScopedStore
+* Reducer
+  * Mutation
+  * Action
+  
+**Creating Store**
+  
+```swift
+let rootStore = Store(
+  state: RootState(),
+  reducer: RootReducer()
+)
+```
+
+**State**
+
+```swift
+struct RootState {
+     
+  var count: Int = 0
+  
+}
+```
+
+**Reducer**
+
+We can choose class or struct depends on use cases.
+
+Store uses Reducer as an instance.<br>
+This means Reducer can have some dependencies. (e.g Database, API client)
+
+```swift
+class RootReducer: ReducerType {
+  
+  typealias TargetState = RootState
+
+  func syncIncrement() -> Mutation {
+    return .init {
+      $0.count += 1
+    }
+  }
+  
+  func asyncIncrement() -> Action<Void> {
+    return .init { context in
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        context.commit { $0.syncIncrement() }
+      }
+    }
+  }
+}
+```
+
+**Commit Mutation**
+
+```swift
+store.commit { $0.syncIncrement() }
+```
+
+**Dispatch Action**
+
+```swift
+store.dispatch { $0.asyncIncrement() }
+```
+
 
 
 
