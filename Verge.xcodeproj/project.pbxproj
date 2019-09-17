@@ -759,10 +759,12 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-VergeNeueDemo/Pods-VergeNeueDemo-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/JAYSON/JAYSON.framework",
+				"${PODS_ROOT}/Reveal-SDK/RevealServer/iOS/RevealServer.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JAYSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RevealServer.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

@@ -16,6 +16,7 @@ struct SessionState {
   var notification: NotificationState = .init()
   var myPage: MyPageState = .init()
   
+  var count: Int = 0
 }
 
 final class SessionStateReducer: ReducerType {
@@ -25,5 +26,11 @@ final class SessionStateReducer: ReducerType {
   
   init(service: MockService) {
     self.service = service
+  }
+  
+  func increment() -> Mutation {
+    return .init {
+      $0.count += 1
+    }
   }
 }

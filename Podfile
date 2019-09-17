@@ -6,6 +6,7 @@ target 'VergeNeueDemo' do
   use_frameworks!
 
   pod 'JAYSON'
+  pod 'Reveal-SDK'
   # Pods for VergeNeueDemo
 
 end
