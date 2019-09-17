@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class ScopedStore<SourceState, State, Reducer: ReducerType>: StoreBase<State, Reducer> where Reducer.TargetState == State {
+public final class ScopedStore<SourceState, SourceReducer: ModularReducerType, State, Reducer: ModularReducerType>: StoreBase<State, Reducer> where Reducer.TargetState == State, SourceReducer.TargetState == SourceState {
   
   public var state: State {
     storage.value[keyPath: scopeSelector]
@@ -17,14 +17,16 @@ public final class ScopedStore<SourceState, State, Reducer: ReducerType>: StoreB
   private let reducer: Reducer
   let storage: Storage<SourceState>
   private let scopeSelector: WritableKeyPath<SourceState, State>
+  private weak var parentStore: Store<SourceState, SourceReducer>?
   
-  init<SourceOperations: ReducerType>(
-    store: Store<SourceState, SourceOperations>,
+  init(
+    parentStore: Store<SourceState, SourceReducer>,
     scopeSelector: WritableKeyPath<SourceState, State>,
     reducer: Reducer
   ) {
     
-    self.storage = store.storage
+    self.storage = parentStore.storage
+    self.parentStore = parentStore
     self.reducer = reducer
     self.scopeSelector = scopeSelector
     

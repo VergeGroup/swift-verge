@@ -10,7 +10,7 @@ import SwiftUI
 
 struct MainTabView: View {
   
-  @EnvironmentObject var sessionStore: SessionStateReducer.ScopedStoreType<RootState>
+  @EnvironmentObject var sessionStore: SessionStateReducer.ScopedStoreType<RootState, RootReducer>
   
   
   

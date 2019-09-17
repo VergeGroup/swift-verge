@@ -9,7 +9,7 @@ public struct _Mutation<State> {
   }
 }
 
-public struct _Action<State, Reducer: ReducerType, ReturnType> where Reducer.TargetState == State {
+public struct _Action<State, Reducer: ModularReducerType, ReturnType> where Reducer.TargetState == State {
   
   let action: (DispatchContext<State, Reducer>) -> ReturnType
   
@@ -18,18 +18,29 @@ public struct _Action<State, Reducer: ReducerType, ReturnType> where Reducer.Tar
   }
 }
 
-public protocol ReducerType {
+public protocol ModularReducerType {
   associatedtype TargetState
   
   typealias Mutation = _Mutation<TargetState>
   typealias Action<ReturnType> = _Action<TargetState, Self, ReturnType>
   
   typealias StoreType = Store<TargetState, Self>
-  typealias ScopedStoreType<RootState> = ScopedStore<RootState, TargetState, Self>
+  typealias ScopedStoreType<RootState, RootReducer: ModularReducerType> = ScopedStore<RootState, RootReducer, TargetState, Self> where RootState == RootReducer.TargetState
   typealias DispatchContext = VergeNeue.DispatchContext<TargetState, Self>
+    
+  associatedtype ParentState
+  func parentChanged(newState: ParentState)
 }
 
-public final class DispatchContext<State, Reducer: ReducerType> where Reducer.TargetState == State {
+extension ModularReducerType where ParentState == Void {
+  public func parentChanged(newState: ParentState) {}
+}
+
+public protocol ReducerType: ModularReducerType where ParentState == Void {
+    
+}
+
+public final class DispatchContext<State, Reducer: ModularReducerType> where Reducer.TargetState == State {
   
   private let store: StoreBase<State, Reducer>
   
