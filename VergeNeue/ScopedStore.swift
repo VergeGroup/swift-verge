@@ -8,7 +8,9 @@
 
 import Foundation
 
-public final class ScopedStore<SourceState, SourceReducer: ModularReducerType, State, Reducer: ModularReducerType>: StoreBase<State, Reducer> where Reducer.TargetState == State, SourceReducer.TargetState == SourceState {
+public final class ScopedStore<SourceReducer: ModularReducerType, Reducer: ModularReducerType>: StoreBase<Reducer> {
+  
+  public typealias SourceState = SourceReducer.TargetState
   
   public var state: State {
     storage.value[keyPath: scopeSelector]
@@ -17,10 +19,10 @@ public final class ScopedStore<SourceState, SourceReducer: ModularReducerType, S
   private let reducer: Reducer
   let storage: Storage<SourceState>
   private let scopeSelector: WritableKeyPath<SourceState, State>
-  private weak var parentStore: Store<SourceState, SourceReducer>?
+  private weak var parentStore: Store<SourceReducer>?
   
   init(
-    parentStore: Store<SourceState, SourceReducer>,
+    parentStore: Store<SourceReducer>,
     scopeSelector: WritableKeyPath<SourceState, State>,
     reducer: Reducer
   ) {
@@ -34,7 +36,7 @@ public final class ScopedStore<SourceState, SourceReducer: ModularReducerType, S
   
   @discardableResult
   public override func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
-    let context = DispatchContext<State, Reducer>.init(store: self)
+    let context = DispatchContext<Reducer>.init(store: self)
     let action = makeAction(reducer)
     let result = action.action(context)
     return result

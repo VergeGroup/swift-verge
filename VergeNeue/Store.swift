@@ -8,9 +8,11 @@
 
 import Foundation
 
-public final class Store<State, Reducer: ModularReducerType>: StoreBase<State, Reducer> where Reducer.TargetState == State {
+open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
   
-  public var state: State {
+  public typealias State = Reducer.TargetState
+  
+  public final var state: State {
     storage.value
   }
   
@@ -30,12 +32,12 @@ public final class Store<State, Reducer: ModularReducerType>: StoreBase<State, R
     self.reducer = reducer
   }
   
-  public convenience init<ParentState, ParentReducer: ReducerType>(
+  public convenience init<ParentReducer: ReducerType>(
     state: State,
     reducer: Reducer,
-    registerParent parentStore: Store<ParentState, ParentReducer>
+    registerParent parentStore: Store<ParentReducer>
   )
-    where Reducer.ParentState == ParentState
+    where Reducer.ParentState == ParentReducer.TargetState
   {
     
     self.init(state: state, reducer: reducer)
@@ -48,7 +50,8 @@ public final class Store<State, Reducer: ModularReducerType>: StoreBase<State, R
       storage?.remove(subscriber: parentSubscripton)
     }
     
-    parentStore.register(store: self, for: "Foo")
+    // FIXME:
+    parentStore.register(store: self, for: UUID().uuidString)
   }
   
   deinit {
@@ -60,26 +63,26 @@ public final class Store<State, Reducer: ModularReducerType>: StoreBase<State, R
   }
   
   @discardableResult
-  public override func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
-    let context = DispatchContext<State, Reducer>.init(store: self)
+  public final override func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
+    let context = DispatchContext<Reducer>.init(store: self)
     let action = makeAction(reducer)
     let result = action.action(context)
     return result
   }
   
-  public override func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
+  public final override func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
     let mutation = makeMutation(reducer)
     storage.update { (state) in
       mutation.mutate(&state)
     }
   }
   
-  public func makeScoped<ScopedState, ScopedReducer: ModularReducerType>(
+  public final func makeScoped<ScopedState, ScopedReducer: ModularReducerType>(
     scope: WritableKeyPath<State, ScopedState>,
     reducer: ScopedReducer
-  ) -> ScopedStore<State, Reducer, ScopedState, ScopedReducer> where ScopedReducer.TargetState == ScopedState {
+  ) -> ScopedStore<Reducer, ScopedReducer> where ScopedReducer.TargetState == ScopedState {
     
-    let scopedStore = ScopedStore<State, Reducer, ScopedState, ScopedReducer>(
+    let scopedStore = ScopedStore<Reducer, ScopedReducer>(
       parentStore: self,
       scopeSelector: scope,
       reducer: reducer

@@ -10,7 +10,7 @@ import SwiftUI
 
 struct NotificationsView: View {
   
-  @EnvironmentObject var sessionStore: SessionStateReducer.ScopedStoreType<RootState, RootReducer>
+  @EnvironmentObject var sessionStore: SessionStateReducer.ScopedStoreType<RootReducer>
   
   var body: some View {
      Text("Notification")
