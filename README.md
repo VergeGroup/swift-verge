@@ -6,9 +6,14 @@ Latest released Verge => [`master` branch](https://github.com/muukii/Verge/tree/
 
 **Verge - Neue** is an unidirectional-data-flow framework.
 
+
+
 ## Architecture
 
 The sources are in `VergeNeue` directory.
+
+**Demo Application** is in `VergeNeueDemo` directory.<br>
+Demo implementations are super experimentally code. I think there are no best practices. So these may be updated. 
 
 * Store / ScopedStore
 * Reducer
