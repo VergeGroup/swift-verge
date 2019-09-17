@@ -8,9 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		4B29A79D22EDA40B00191CBE /* VergeSwiftUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B29A79B22EDA40B00191CBE /* VergeSwiftUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4B29A7A422EDA43700191CBE /* NextVergeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29A7A122EDA43600191CBE /* NextVergeType.swift */; };
-		4B29A7A522EDA43700191CBE /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29A7A222EDA43600191CBE /* Atomic.swift */; };
-		4B29A7A622EDA43700191CBE /* VergeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29A7A322EDA43600191CBE /* VergeStorage.swift */; };
 		4B463D6920D4C4690053A4FF /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B463D6A20D4C4690053A4FF /* Verge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4911F969BF3002D54FE /* Verge.swift */; };
 		4B463D6B20D4C4690053A4FF /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E2781FE3646B001736D2 /* Storage.swift */; };
@@ -30,6 +27,12 @@
 		4B86A49F1F969C7D002D54FE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A49D1F969C7D002D54FE /* Main.storyboard */; };
 		4B86A4A11F969C7D002D54FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A01F969C7D002D54FE /* Assets.xcassets */; };
 		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
+		4B93EC5F232FCD4C002BB30B /* VergeSwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B93EC5E232FCD4C002BB30B /* VergeSwiftUI.swift */; };
+		4B93EC6B23307624002BB30B /* VergeNeue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B93EC6923307624002BB30B /* VergeNeue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B93EC6E23307624002BB30B /* VergeNeue.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B93EC6723307624002BB30B /* VergeNeue.framework */; };
+		4B93EC6F23307624002BB30B /* VergeNeue.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B93EC6723307624002BB30B /* VergeNeue.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B93EC7423307637002BB30B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B93EC7323307637002BB30B /* SwiftUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		4B93EC7623307656002BB30B /* VergeNeue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B93EC7523307656002BB30B /* VergeNeue.swift */; };
 		4B956D18211483E7003AA189 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; };
 		4B956D19211483E7003AA189 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
@@ -54,6 +57,13 @@
 			remoteGlobalIDString = 4B86A4851F969AD5002D54FE;
 			remoteInfo = CycleViewModel;
 		};
+		4B93EC6C23307624002BB30B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B93EC6623307624002BB30B;
+			remoteInfo = VergeNeue;
+		};
 		4B956D1A211483E7003AA189 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -71,6 +81,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				4BAE9FEF21DFB6AF003DDF3D /* RxFuture.framework in Embed Frameworks */,
+				4B93EC6F23307624002BB30B /* VergeNeue.framework in Embed Frameworks */,
 				4BAE9FED21DFB6A0003DDF3D /* RxCocoa.framework in Embed Frameworks */,
 				4BAE9FEE21DFB6A0003DDF3D /* RxSwift.framework in Embed Frameworks */,
 				4B956D19211483E7003AA189 /* Verge.framework in Embed Frameworks */,
@@ -85,9 +96,6 @@
 		4B29A79922EDA40B00191CBE /* VergeSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B29A79B22EDA40B00191CBE /* VergeSwiftUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeSwiftUI.h; sourceTree = "<group>"; };
 		4B29A79C22EDA40B00191CBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B29A7A122EDA43600191CBE /* NextVergeType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextVergeType.swift; sourceTree = "<group>"; };
-		4B29A7A222EDA43600191CBE /* Atomic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
-		4B29A7A322EDA43600191CBE /* VergeStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VergeStorage.swift; sourceTree = "<group>"; };
 		4B463D7520D4C4690053A4FF /* Verge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Verge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B463D7B20D4C72D0053A4FF /* EasyPeasy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EasyPeasy.framework; path = Carthage/Build/iOS/EasyPeasy.framework; sourceTree = SOURCE_ROOT; };
 		4B463D8120D4C74A0053A4FF /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/Mac/RxCocoa.framework; sourceTree = "<group>"; };
@@ -109,6 +117,12 @@
 		4B86A4A01F969C7D002D54FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B86A4A31F969C7D002D54FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B86A4A51F969C7D002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B93EC5E232FCD4C002BB30B /* VergeSwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeSwiftUI.swift; sourceTree = "<group>"; };
+		4B93EC6723307624002BB30B /* VergeNeue.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeNeue.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B93EC6923307624002BB30B /* VergeNeue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeNeue.h; sourceTree = "<group>"; };
+		4B93EC6A23307624002BB30B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		4B93EC7523307656002BB30B /* VergeNeue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeNeue.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		4BAE9FC921DFA119003DDF3D /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = SOURCE_ROOT; };
@@ -159,6 +173,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B956D18211483E7003AA189 /* Verge.framework in Frameworks */,
+				4B93EC6E23307624002BB30B /* VergeNeue.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B93EC6423307624002BB30B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B93EC7423307637002BB30B /* SwiftUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,9 +191,7 @@
 		4B29A79A22EDA40B00191CBE /* VergeSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				4B29A7A222EDA43600191CBE /* Atomic.swift */,
-				4B29A7A122EDA43600191CBE /* NextVergeType.swift */,
-				4B29A7A322EDA43600191CBE /* VergeStorage.swift */,
+				4B93EC5E232FCD4C002BB30B /* VergeSwiftUI.swift */,
 				4B29A79B22EDA40B00191CBE /* VergeSwiftUI.h */,
 				4B29A79C22EDA40B00191CBE /* Info.plist */,
 			);
@@ -224,6 +245,7 @@
 				4B86A4881F969AD5002D54FE /* Verge */,
 				4B86A4981F969C7D002D54FE /* Verge-Demo */,
 				4B65F8ED1FB4C0DC00A90A67 /* VergeTests */,
+				4B93EC6823307624002BB30B /* VergeNeue */,
 				4B86A4871F969AD5002D54FE /* Products */,
 				4B86A4AC1F969C98002D54FE /* Frameworks */,
 			);
@@ -237,6 +259,7 @@
 				4B65F8EC1FB4C0DC00A90A67 /* VergeTests.xctest */,
 				4B463D7520D4C4690053A4FF /* Verge.framework */,
 				4B29A79922EDA40B00191CBE /* VergeSwiftUI.framework */,
+				4B93EC6723307624002BB30B /* VergeNeue.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -273,8 +296,19 @@
 		4B86A4AC1F969C98002D54FE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4B93EC7323307637002BB30B /* SwiftUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4B93EC6823307624002BB30B /* VergeNeue */ = {
+			isa = PBXGroup;
+			children = (
+				4B93EC6923307624002BB30B /* VergeNeue.h */,
+				4B93EC6A23307624002BB30B /* Info.plist */,
+				4B93EC7523307656002BB30B /* VergeNeue.swift */,
+			);
+			path = VergeNeue;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -301,6 +335,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B86A48B1F969AD6002D54FE /* Verge.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B93EC6223307624002BB30B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B93EC6B23307624002BB30B /* VergeNeue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,11 +434,30 @@
 			);
 			dependencies = (
 				4B956D1B211483E7003AA189 /* PBXTargetDependency */,
+				4B93EC6D23307624002BB30B /* PBXTargetDependency */,
 			);
 			name = "Verge-Demo";
 			productName = "CycleViewModel-Demo";
 			productReference = 4B86A4971F969C7D002D54FE /* Verge-Demo.app */;
 			productType = "com.apple.product-type.application";
+		};
+		4B93EC6623307624002BB30B /* VergeNeue */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B93EC7223307624002BB30B /* Build configuration list for PBXNativeTarget "VergeNeue" */;
+			buildPhases = (
+				4B93EC6223307624002BB30B /* Headers */,
+				4B93EC6323307624002BB30B /* Sources */,
+				4B93EC6423307624002BB30B /* Frameworks */,
+				4B93EC6523307624002BB30B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VergeNeue;
+			productName = VergeNeue;
+			productReference = 4B93EC6723307624002BB30B /* VergeNeue.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -429,6 +490,11 @@
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Automatic;
 					};
+					4B93EC6623307624002BB30B = {
+						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1100;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 4B86A4801F969AD5002D54FE /* Build configuration list for PBXProject "Verge" */;
@@ -449,6 +515,7 @@
 				4B86A4961F969C7D002D54FE /* Verge-Demo */,
 				4B65F8EB1FB4C0DC00A90A67 /* VergeTests */,
 				4B29A79822EDA40B00191CBE /* VergeSwiftUI */,
+				4B93EC6623307624002BB30B /* VergeNeue */,
 			);
 		};
 /* End PBXProject section */
@@ -492,6 +559,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B93EC6523307624002BB30B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -499,9 +573,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B29A7A622EDA43700191CBE /* VergeStorage.swift in Sources */,
-				4B29A7A522EDA43700191CBE /* Atomic.swift in Sources */,
-				4B29A7A422EDA43700191CBE /* NextVergeType.swift in Sources */,
+				4B93EC5F232FCD4C002BB30B /* VergeSwiftUI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -548,6 +620,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B93EC6323307624002BB30B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B93EC7623307656002BB30B /* VergeNeue.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -555,6 +635,11 @@
 			isa = PBXTargetDependency;
 			target = 4B86A4851F969AD5002D54FE /* Verge-iOS */;
 			targetProxy = 4B65F8F21FB4C0DC00A90A67 /* PBXContainerItemProxy */;
+		};
+		4B93EC6D23307624002BB30B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B93EC6623307624002BB30B /* VergeNeue */;
+			targetProxy = 4B93EC6C23307624002BB30B /* PBXContainerItemProxy */;
 		};
 		4B956D1B211483E7003AA189 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -938,6 +1023,60 @@
 			};
 			name = Release;
 		};
+		4B93EC7023307624002BB30B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = VergeNeue/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeNeue;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B93EC7123307624002BB30B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = VergeNeue/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeNeue;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -991,6 +1130,15 @@
 			buildConfigurations = (
 				4B86A4A71F969C7D002D54FE /* Debug */,
 				4B86A4A81F969C7D002D54FE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B93EC7223307624002BB30B /* Build configuration list for PBXNativeTarget "VergeNeue" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B93EC7023307624002BB30B /* Debug */,
+				4B93EC7123307624002BB30B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
