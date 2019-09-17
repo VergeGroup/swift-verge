@@ -12,7 +12,7 @@ import VergeNeue
 
 struct StartView: View {
   
-  @ObservedObject private var store: Store<RootState, RootStateReducer> = rootStore
+  @ObservedObject private var store: Store<RootState, RootReducer> = rootStore
   @State private var isProcessing: Bool = false
   @State private var subscriptions: Set<AnyCancellable> = .init()
   
@@ -49,8 +49,7 @@ struct StartView: View {
                 }) {
                   Text("Stage")
                 }
-              }
-              Section {
+
                 Button(action: {
                   self.isProcessing = true
                   
@@ -63,6 +62,20 @@ struct StartView: View {
                     .store(in: &self.subscriptions)
                 }) {
                   Text("Production")
+                }
+              }
+              Section {
+                
+                Button(action: {
+                  self.store.commit { $0.syncIncrement() }
+                }) {
+                  Text("Sync Increment \(self.store.state.count)")
+                }
+                
+                Button(action: {
+                  self.store.dispatch { $0.asyncIncrement() }
+                }) {
+                  Text("Async Increment \(self.store.state.count)")
                 }
               }
             }

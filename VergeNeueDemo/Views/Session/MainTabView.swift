@@ -12,6 +12,8 @@ struct MainTabView: View {
   
   @EnvironmentObject var sessionStore: SessionStateReducer.ScopedStoreType<RootState>
   
+  
+  
   var body: some View {
     TabView {
       HomeView()

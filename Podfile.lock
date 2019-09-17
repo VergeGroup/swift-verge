@@ -1,0 +1,16 @@
+PODS:
+  - JAYSON (2.1.0)
+
+DEPENDENCIES:
+  - JAYSON
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - JAYSON
+
+SPEC CHECKSUMS:
+  JAYSON: 4280ff193d900fb11314434affac47673507757e
+
+PODFILE CHECKSUM: e03a1ce95cf0eca7ebae2e35a082b22ecb989ed5
+
+COCOAPODS: 1.7.5

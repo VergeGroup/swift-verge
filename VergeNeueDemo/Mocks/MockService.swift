@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combine
 
 final class MockService {
   
@@ -18,5 +19,18 @@ final class MockService {
     self.database = .init()
     self.apiProvider = .init()
     
+  }
+  
+  func fetchPhotosPage1() -> AnyPublisher<[Photo], Error> {
+    
+    apiProvider
+      .fetchPhotos()
+      .tryMap { (json) -> [Photo] in
+        try json.getArray().map {
+          try Photo(from: $0)
+        }
+    }
+    .eraseToAnyPublisher() // I don't want to do that.
+      
   }
 }

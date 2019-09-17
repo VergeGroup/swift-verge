@@ -12,6 +12,10 @@ struct SessionState {
   
   let env: Env
   
+  var home: HomeState = .init()
+  var notification: NotificationState = .init()
+  var myPage: MyPageState = .init()
+  
 }
 
 final class SessionStateReducer: ReducerType {
