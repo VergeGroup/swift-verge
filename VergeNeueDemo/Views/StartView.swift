@@ -12,7 +12,7 @@ import VergeNeue
 
 struct StartView: View {
   
-  @ObservedObject private var store: Store<RootState, RootReducer> = rootStore
+  @ObservedObject private var store: Store<RootReducer> = rootStore
   @State private var isProcessing: Bool = false
   @State private var subscriptions: Set<AnyCancellable> = .init()
   

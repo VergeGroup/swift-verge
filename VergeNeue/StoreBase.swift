@@ -8,18 +8,20 @@
 
 import Foundation
 
-public protocol StoreType where Reducer.TargetState == State {
-  associatedtype State
+public protocol StoreType {
   associatedtype Reducer: ModularReducerType
+  typealias State = Reducer.TargetState
   
   func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType
   func commit(_ makeMutation: (Reducer) -> Reducer.Mutation)
 }
 
-public class StoreBase<State, Reducer: ModularReducerType>: StoreType where Reducer.TargetState == State {
+open class StoreBase<Reducer: ModularReducerType>: StoreType {
+  
+  public typealias State = Reducer.TargetState
   
   @discardableResult
-  public func dispatch<ReturnType>(_ makeAction: (Reducer) -> _Action<Reducer.TargetState, Reducer, ReturnType>) -> ReturnType {
+  public func dispatch<ReturnType>(_ makeAction: (Reducer) -> _Action<Reducer, ReturnType>) -> ReturnType {
     fatalError()
   }
   
@@ -34,9 +36,9 @@ public class StoreBase<State, Reducer: ModularReducerType>: StoreType where Redu
   private var registrationToken: RegistrationToken?
   
   @discardableResult
-  public func register<S, O: ModularReducerType>(store: StoreBase<S, O>, for key: String) -> RegistrationToken where O.TargetState == S {
+  public func register<O: ModularReducerType>(store: StoreBase<O>, for key: String) -> RegistrationToken {
     
-    let key = StoreKey<S, O>.init(from: store).rawKey
+    let key = StoreKey<O>.init(from: store, additionalKey: key).rawKey
     lock.lock()
     stores[key] = store
     
@@ -59,18 +61,18 @@ public class StoreBase<State, Reducer: ModularReducerType>: StoreType where Redu
   
 }
 
-public struct StoreKey<State, Reducer: ModularReducerType> : Hashable where Reducer.TargetState == State {
+public struct StoreKey<Reducer: ModularReducerType> : Hashable {
   
   public let rawKey: String
   
   public init(additionalKey: String = "") {
     //    let baseKey = "\(String(reflecting: State.self)):\(String(reflecting: Operations.self))"
-    let baseKey = "\(String(reflecting: StoreKey<State, Reducer>.self))"
+    let baseKey = "\(String(reflecting: StoreKey<Reducer>.self))"
     let key = baseKey + additionalKey
     self.rawKey = key
   }
   
-  public init(from store: StoreBase<State, Reducer>, additionalKey: String = "") {
+  public init(from store: StoreBase<Reducer>, additionalKey: String = "") {
     self = StoreKey.init(additionalKey: additionalKey)
   }
   

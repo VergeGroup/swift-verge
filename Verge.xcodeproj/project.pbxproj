@@ -440,8 +440,8 @@
 				4B93EC7523307656002BB30B /* VergeNeue.swift */,
 				4B66DFA5233149D4002AD206 /* Storage.swift */,
 				4B66DFA3233149A5002AD206 /* StoreBase.swift */,
-				4B66DF9F2331496B002AD206 /* ScopedStore.swift */,
 				4B66DF9D23314955002AD206 /* Store.swift */,
+				4B66DF9F2331496B002AD206 /* ScopedStore.swift */,
 				4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */,
 			);
 			path = VergeNeue;
