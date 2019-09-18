@@ -13,6 +13,9 @@
 		4B463D7020D4C4690053A4FF /* Verge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B86A4891F969AD6002D54FE /* Verge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B463D8520D4C75E0053A4FF /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B463D8120D4C74A0053A4FF /* RxCocoa.framework */; };
 		4B463D8620D4C75E0053A4FF /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B463D8220D4C74A0053A4FF /* RxSwift.framework */; };
+		4B495D02233266ED0098F7B4 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D01233266ED0098F7B4 /* Logger.swift */; };
+		4B495D04233269160098F7B4 /* SharedLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D03233269160098F7B4 /* SharedLogger.swift */; };
+		4B495D06233280350098F7B4 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D05233280350098F7B4 /* Notification.swift */; };
 		4B4AEB1223310D40000709D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB1123310D40000709D9 /* AppDelegate.swift */; };
 		4B4AEB1423310D40000709D9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB1323310D40000709D9 /* SceneDelegate.swift */; };
 		4B4AEB1623310D40000709D9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB1523310D40000709D9 /* ContentView.swift */; };
@@ -30,9 +33,6 @@
 		4B65F8EF1FB4C0DC00A90A67 /* VergeTests.wift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8EE1FB4C0DC00A90A67 /* VergeTests.wift */; };
 		4B65F8F11FB4C0DC00A90A67 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; };
 		4B65F8FA1FB4C75800A90A67 /* CycleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8F91FB4C75800A90A67 /* CycleViewModel.swift */; };
-		4B66DF9823314443002AD206 /* HomeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF9723314443002AD206 /* HomeState.swift */; };
-		4B66DF9A2331444A002AD206 /* NotificationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF992331444A002AD206 /* NotificationState.swift */; };
-		4B66DF9C23314450002AD206 /* MyPageState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF9B23314450002AD206 /* MyPageState.swift */; };
 		4B66DF9E23314955002AD206 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF9D23314955002AD206 /* Store.swift */; };
 		4B66DFA02331496B002AD206 /* ScopedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF9F2331496B002AD206 /* ScopedStore.swift */; };
 		4B66DFA22331497B002AD206 /* SwiftUIBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */; };
@@ -148,6 +148,9 @@
 		4B463D7B20D4C72D0053A4FF /* EasyPeasy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EasyPeasy.framework; path = Carthage/Build/iOS/EasyPeasy.framework; sourceTree = SOURCE_ROOT; };
 		4B463D8120D4C74A0053A4FF /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/Mac/RxCocoa.framework; sourceTree = "<group>"; };
 		4B463D8220D4C74A0053A4FF /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/Mac/RxSwift.framework; sourceTree = "<group>"; };
+		4B495D01233266ED0098F7B4 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		4B495D03233269160098F7B4 /* SharedLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedLogger.swift; sourceTree = "<group>"; };
+		4B495D05233280350098F7B4 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		4B4AEB0F23310D40000709D9 /* VergeNeueDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeNeueDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B4AEB1123310D40000709D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B4AEB1323310D40000709D9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -166,9 +169,6 @@
 		4B65F8EE1FB4C0DC00A90A67 /* VergeTests.wift */ = {isa = PBXFileReference; lastKnownFileType = text; path = VergeTests.wift; sourceTree = "<group>"; };
 		4B65F8F01FB4C0DC00A90A67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B65F8F91FB4C75800A90A67 /* CycleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CycleViewModel.swift; sourceTree = "<group>"; };
-		4B66DF9723314443002AD206 /* HomeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeState.swift; sourceTree = "<group>"; };
-		4B66DF992331444A002AD206 /* NotificationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationState.swift; sourceTree = "<group>"; };
-		4B66DF9B23314450002AD206 /* MyPageState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageState.swift; sourceTree = "<group>"; };
 		4B66DF9D23314955002AD206 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		4B66DF9F2331496B002AD206 /* ScopedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedStore.swift; sourceTree = "<group>"; };
 		4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIBinder.swift; sourceTree = "<group>"; };
@@ -317,6 +317,7 @@
 		4B4AEB1023310D40000709D9 /* VergeNeueDemo */ = {
 			isa = PBXGroup;
 			children = (
+				4B495D03233269160098F7B4 /* SharedLogger.swift */,
 				4BECC823233133FC00D6A0A1 /* Env.swift */,
 				4BECC81C2331331F00D6A0A1 /* Models */,
 				4BECC819233132DB00D6A0A1 /* Mocks */,
@@ -358,9 +359,6 @@
 			children = (
 				4B4AEB2823310F4A000709D9 /* RootState.swift */,
 				4B4AEB2A233112D3000709D9 /* SessionState.swift */,
-				4B66DF9723314443002AD206 /* HomeState.swift */,
-				4B66DF992331444A002AD206 /* NotificationState.swift */,
-				4B66DF9B23314450002AD206 /* MyPageState.swift */,
 			);
 			path = States;
 			sourceTree = "<group>";
@@ -443,6 +441,7 @@
 				4B66DF9D23314955002AD206 /* Store.swift */,
 				4B66DF9F2331496B002AD206 /* ScopedStore.swift */,
 				4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */,
+				4B495D01233266ED0098F7B4 /* Logger.swift */,
 			);
 			path = VergeNeue;
 			sourceTree = "<group>";
@@ -491,6 +490,7 @@
 			isa = PBXGroup;
 			children = (
 				4BECC81D2331332B00D6A0A1 /* Photo.swift */,
+				4B495D05233280350098F7B4 /* Notification.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -818,8 +818,8 @@
 				4B4AEB1223310D40000709D9 /* AppDelegate.swift in Sources */,
 				4BD85F392331259300FD04E9 /* SessionContainerView.swift in Sources */,
 				4BECC8222331337100D6A0A1 /* MockService.swift in Sources */,
+				4B495D04233269160098F7B4 /* SharedLogger.swift in Sources */,
 				4B4AEB2B233112D3000709D9 /* SessionState.swift in Sources */,
-				4B66DF9A2331444A002AD206 /* NotificationState.swift in Sources */,
 				4BD85F352331252E00FD04E9 /* NotificationsView.swift in Sources */,
 				4BECC81B233132ED00D6A0A1 /* MockAPIProvider.swift in Sources */,
 				4BD85F332331251400FD04E9 /* HomeView.swift in Sources */,
@@ -829,8 +829,7 @@
 				4BD85F2B2331202C00FD04E9 /* Utility.swift in Sources */,
 				4B4AEB2D2331145B000709D9 /* StartView.swift in Sources */,
 				4BECC81823312AD400D6A0A1 /* IndicatorView.swift in Sources */,
-				4B66DF9823314443002AD206 /* HomeState.swift in Sources */,
-				4B66DF9C23314450002AD206 /* MyPageState.swift in Sources */,
+				4B495D06233280350098F7B4 /* Notification.swift in Sources */,
 				4B4AEB1623310D40000709D9 /* ContentView.swift in Sources */,
 				4B4AEB2923310F4A000709D9 /* RootState.swift in Sources */,
 				4BD85F312331247B00FD04E9 /* MainTabView.swift in Sources */,
@@ -876,6 +875,7 @@
 				4B66DF9E23314955002AD206 /* Store.swift in Sources */,
 				4B66DFA4233149A5002AD206 /* StoreBase.swift in Sources */,
 				4B66DFA02331496B002AD206 /* ScopedStore.swift in Sources */,
+				4B495D02233266ED0098F7B4 /* Logger.swift in Sources */,
 				4B66DFA22331497B002AD206 /* SwiftUIBinder.swift in Sources */,
 				4B66DFA6233149D4002AD206 /* Storage.swift in Sources */,
 			);

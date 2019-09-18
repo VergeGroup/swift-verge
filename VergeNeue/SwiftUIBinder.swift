@@ -24,7 +24,13 @@ extension Storage: ObservableObject {
       objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN)
       
       add { _ in
-        associated.send()
+        if Thread.isMainThread {
+          associated.send()
+        } else {
+          DispatchQueue.main.async {
+            associated.send()
+          }
+        }
       }
       
       return associated

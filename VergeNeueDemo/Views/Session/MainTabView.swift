@@ -15,7 +15,7 @@ struct MainTabView: View {
   @State private var count: Int = 0
       
   var body: some View {
-    ZStack {
+    VStack {
       TabView {
         HomeView()
           .tabItem {
@@ -34,20 +34,14 @@ struct MainTabView: View {
       }
       
       // How do I put the button on the right bottom?
-      VStack {
-        Spacer()
-        HStack {
-          Spacer()
-          Button(action: {
-//            self.count += 1
-            self.sessionStore.commit { $0.increment() }
-          }) {
-            Text("Floating \(self.count)")
-              .padding(8)
-              .background(Color.orange)
-              .cornerRadius(8)
-          }
-        }
+      Button(action: {
+        //            self.count += 1
+        self.sessionStore.commit { $0.increment() }
+      }) {
+        Text("Floating \(self.count)")
+          .padding(8)
+          .background(Color.orange)
+          .cornerRadius(8)
       }
       
     }

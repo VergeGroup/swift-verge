@@ -23,27 +23,35 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
   private let lock = NSLock()
   
   private var _deinit: () -> Void = {}
+  
+  private let logger: StoreLogger?
+  
     
   public init(
     state: State,
-    reducer: Reducer
+    reducer: Reducer,
+    logger: StoreLogger? = nil
   ) {
     self.storage = .init(state)
     self.reducer = reducer
+    self.logger = logger
     
     super.init()
+    #if DEBUG
     print("Init", self)
+    #endif
   }
   
   public convenience init<ParentReducer: ReducerType>(
     state: State,
     reducer: Reducer,
-    registerParent parentStore: Store<ParentReducer>
+    registerParent parentStore: Store<ParentReducer>,
+    logger: StoreLogger? = nil
   )
     where Reducer.ParentState == ParentReducer.TargetState
   {
-    
-    self.init(state: state, reducer: reducer)
+            
+    self.init(state: state, reducer: reducer, logger: logger)
     
     let parentSubscripton = parentStore.storage.add { [weak self] (state) in
       self?.notify(newParentState: state)
@@ -78,10 +86,17 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
     let context = DispatchContext<Reducer>.init(store: self)
     let action = makeAction(reducer)
     let result = action.action(context)
+    logger?.didDispatch(store: self, state: state)
     return result
   }
   
   public final override func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
+    
+    logger?.willCommit(store: self, state: state)
+    defer {
+      logger?.didCommit(store: self, state: state)
+    }
+    
     let mutation = makeMutation(reducer)
     storage.update { (state) in
       mutation.mutate(&state)
