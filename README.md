@@ -6,7 +6,7 @@ Latest released Verge => [`master` branch](https://github.com/muukii/Verge/tree/
 
 **Verge - Neue** is an unidirectional-data-flow framework.
 
-
+<img width="1200" src="./graph@2x.png">
 
 ## Architecture
 
