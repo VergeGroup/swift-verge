@@ -13,7 +13,22 @@ struct NotificationsView: View {
   @EnvironmentObject var sessionStore: SessionStateReducer.ScopedStoreType<RootReducer>
   
   var body: some View {
-     Text("Notification")
+    NavigationView {
+      VStack {
+        List(sessionStore.state.notifications) { (notification) in
+          Text(notification.body)
+        }
+        Button(action: {
+          self.sessionStore.dispatch { $0.addManyNotification() }
+        }) {
+          Text("Add Notification")
+        }
+      }
+      .navigationBarTitle("Home")
+    }
+    .onAppear {
+      self.sessionStore.dispatch { $0.fetchPhotos() }
+    }
   }
 }
 

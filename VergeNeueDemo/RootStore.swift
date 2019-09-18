@@ -11,5 +11,6 @@ import VergeNeue
 
 let rootStore = Store(
   state: RootState(),
-  reducer: RootReducer()
+  reducer: RootReducer(),
+  logger: MyStoreLogger.default
 )

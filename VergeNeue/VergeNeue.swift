@@ -1,11 +1,28 @@
 import Foundation
 
+public struct CodeLocation {
+  
+  public let file: StaticString
+  public let function: StaticString
+  public let line: UInt
+  
+}
+
 public struct _Mutation<State> {
   
   let mutate: (inout State) -> Void
   
-  public init(mutate: @escaping (inout State) -> Void) {
+  public let codeLocation: CodeLocation
+  
+  public init(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutate: @escaping (inout State) -> Void
+  ) {
     self.mutate = mutate
+    self.codeLocation = .init(file: file, function: function, line: line)
   }
 }
 
@@ -13,8 +30,18 @@ public struct _Action<Reducer: ModularReducerType, ReturnType> {
   
   let action: (DispatchContext<Reducer>) -> ReturnType
   
-  public init(action: @escaping (DispatchContext<Reducer>) -> ReturnType) {
+  public let codeLocation: CodeLocation
+  
+  public init(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    action: @escaping (DispatchContext<Reducer>
+    ) -> ReturnType) {
     self.action = action
+    self.codeLocation = .init(file: file, function: function, line: line)
+
   }
 }
 

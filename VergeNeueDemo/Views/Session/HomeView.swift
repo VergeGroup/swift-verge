@@ -9,28 +9,19 @@
 import SwiftUI
 import VergeNeue
 
-let tmp = Store<HomeReducer>(
-  state: .init(),
-  reducer: HomeReducer(service: .init(env: .stage)),
-  registerParent: rootStore
-)
-
 struct HomeView: View {
   
-//  @EnvironmentObject var sessionStore: SessionStateReducer.ScopedStoreType<RootReducer>
-    
-  // It's just for testing. This is bad approach. it will create every time.
-  @ObservedObject var store = tmp
-  
+  @EnvironmentObject var sessionStore: SessionStateReducer.ScopedStoreType<RootReducer>
+      
   var body: some View {
     NavigationView {
-      List(store.state.photos) { (photo) in
+      List(sessionStore.state.photosForHome) { (photo) in
         Text(photo.id)
       }
       .navigationBarTitle("Home")
     }
     .onAppear {
-      self.store.dispatch { $0.load() }
+      self.sessionStore.dispatch { $0.fetchPhotos() }
     }
   }
 }
