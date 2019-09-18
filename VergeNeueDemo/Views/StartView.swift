@@ -20,13 +20,10 @@ struct StartView: View {
     
     Group {
       
-      if store.state.activeSessionState != nil {
+      if store.state.activeEnv != nil {
         
         SessionContainerView(
-          sessionStore: store.makeScoped(
-            scope: \.activeSessionState!,
-            reducer: SessionStateReducer(service: MockService(env: store.state.activeSessionState!.env))
-          )
+          sessionStore: StoreContainer.store(for: store.state.activeEnv!)
         )
         
       } else {

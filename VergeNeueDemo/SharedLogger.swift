@@ -15,15 +15,15 @@ struct MyStoreLogger: StoreLogger {
   static let `default` = MyStoreLogger()
   
   func willCommit(store: Any, state: Any) {
-    print("Will Commit", store, state)
+    print("Will Commit", store)
   }
   
   func didCommit(store: Any, state: Any) {
-    print("Did Commit", store, state)
+    print("Did Commit", store)
   }
   
   func didDispatch(store: Any, state: Any) {
-    print("Will Dispatch", store, state)
+    print("Will Dispatch", store)
   }
       
 }

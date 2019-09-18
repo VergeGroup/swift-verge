@@ -10,11 +10,18 @@ import Foundation
 import VergeNeue
 import Combine
 
-struct RootState {
-     
-  var sessions: [Env : SessionState] = [:]
+enum StoreContainer {
   
-  var activeSessionState: SessionState?
+  fileprivate static var sessionStores: [Env : SessionStateReducer.StoreType] = [:]
+  
+  static func store(for env: Env) -> SessionStateReducer.StoreType {
+    sessionStores[env]!
+  }
+}
+
+struct RootState {
+       
+  var activeEnv: Env?
   
   var count: Int = 0
   
@@ -22,31 +29,32 @@ struct RootState {
 
 final class RootReducer: ReducerType {
   typealias TargetState = RootState
-  
+    
   func createSession(env: Env) -> Action<Future<Void, Never>> {
     .init { context in
       Future.init { (promise) in
         demoDelay {
           
-          let session = SessionState(env: env)
-          context.commit { $0.addSession(session, for: env) }
-          context.commit { $0.activateSession(session) }
+          guard StoreContainer.sessionStores[env] == nil else {
+            context.commit { $0.activate(env: env) }
+            promise(.success(()))
+            return
+          }
           
+          let session = SessionState(env: env)
+          let service = MockService(env: env)
+          
+          StoreContainer.sessionStores[env] = SessionStateReducer.StoreType(
+            state: session,
+            reducer: .init(service: service),
+            logger: MyStoreLogger.default
+          )
+          
+          context.commit { $0.activate(env: env) }
+                              
           promise(.success(()))
         }
       }
-    }
-  }
-
-  private func addSession(_ session: SessionState, for env: Env) -> Mutation {
-    .init {
-      $0.sessions[env] = session
-    }
-  }
-  
-  private func activateSession(_ session: SessionState) -> Mutation {
-    return .init {
-      $0.activeSessionState = session
     }
   }
     
@@ -61,6 +69,35 @@ final class RootReducer: ReducerType {
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
         context.commit { $0.syncIncrement() }
       }
+    }
+  }
+  
+  func logout() -> Action<Void> {
+    return .init { context in
+      
+      if let env = context.state.activeEnv {
+        StoreContainer.sessionStores.removeValue(forKey: env)
+      }
+      
+      context.commit { $0.deactivateUsingEnv() }
+    }
+  }
+  
+  func suspend() -> Action<Void> {
+    return .init { context in         
+      context.commit { $0.deactivateUsingEnv() }
+    }
+  }
+  
+  private func activate(env: Env) -> Mutation {
+    return .init {
+      $0.activeEnv = env
+    }
+  }
+  
+  private func deactivateUsingEnv() -> Mutation {
+    return .init {
+      $0.activeEnv = nil
     }
   }
   

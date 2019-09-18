@@ -9,10 +9,10 @@
 import Foundation
 
 open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
-  
+    
   public typealias State = Reducer.TargetState
   
-  public final var state: State {
+  public final override var state: State {
     storage.value
   }
   
@@ -25,8 +25,7 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
   private var _deinit: () -> Void = {}
   
   private let logger: StoreLogger?
-  
-    
+      
   public init(
     state: State,
     reducer: Reducer,
@@ -48,7 +47,7 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
     registerParent parentStore: Store<ParentReducer>,
     logger: StoreLogger? = nil
   )
-    where Reducer.ParentState == ParentReducer.TargetState
+    where Reducer.ParentReducer == ParentReducer
   {
             
     self.init(state: state, reducer: reducer, logger: logger)
@@ -65,9 +64,6 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
       storage?.remove(subscriber: parentSubscripton)
     }
     
-    // FIXME:
-    parentStore.register(store: self, for: UUID().uuidString)
-    
   }
   
   deinit {
@@ -77,10 +73,10 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
     _deinit()
   }
   
-  private func notify(newParentState: Reducer.ParentState) {
+  private func notify(newParentState: Reducer.ParentReducer.TargetState) {
     reducer.parentChanged(newState: newParentState)
   }
-  
+
   @discardableResult
   public final override func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
     let context = DispatchContext<Reducer>.init(store: self)
@@ -109,7 +105,7 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
   ) -> ScopedStore<Reducer, ScopedReducer> where ScopedReducer.TargetState == ScopedState {
     
     let scopedStore = ScopedStore<Reducer, ScopedReducer>(
-      parentStore: self,
+      sourceStore: self,
       scopeSelector: scope,
       reducer: reducer
     )

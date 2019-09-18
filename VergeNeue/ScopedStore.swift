@@ -12,23 +12,24 @@ public final class ScopedStore<SourceReducer: ModularReducerType, Reducer: Modul
   
   public typealias SourceState = SourceReducer.TargetState
   
-  public var state: State {
+  public override var state: State {
     storage.value[keyPath: scopeSelector]
   }
+  
+  public let sourceStore: Store<SourceReducer>
   
   private let reducer: Reducer
   let storage: Storage<SourceState>
   private let scopeSelector: WritableKeyPath<SourceState, State>
-  private weak var parentStore: Store<SourceReducer>?
   
   init(
-    parentStore: Store<SourceReducer>,
+    sourceStore: Store<SourceReducer>,
     scopeSelector: WritableKeyPath<SourceState, State>,
     reducer: Reducer
   ) {
     
-    self.storage = parentStore.storage
-    self.parentStore = parentStore
+    self.storage = sourceStore.storage
+    self.sourceStore = sourceStore
     self.reducer = reducer
     self.scopeSelector = scopeSelector
     
