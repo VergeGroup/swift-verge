@@ -20,13 +20,17 @@ open class StoreBase<Reducer: ModularReducerType>: StoreType {
   
   public typealias State = Reducer.TargetState
   
+  open var state: Reducer.TargetState {
+    fatalError("abstract")
+  }
+  
   @discardableResult
   public func dispatch<ReturnType>(_ makeAction: (Reducer) -> _Action<Reducer, ReturnType>) -> ReturnType {
-    fatalError()
+    fatalError("abstract")
   }
   
   public func commit(_ makeMutation: (Reducer) -> _Mutation<Reducer.TargetState>) {
-    fatalError()
+    fatalError("abstract")
   }
   
   private var stores: [String : Any] = [:]

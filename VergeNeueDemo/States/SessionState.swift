@@ -15,7 +15,9 @@ struct SessionState {
   let env: Env
   
   var photosStorage: [Photo.ID : Photo] = [:]
-  
+  var notificationStorage: [Notification.ID : Notification] = [:]
+  var commentsStorage: [Comment.ID : Comment] = [:]
+    
   var photosIdForHome: [Photo.ID] = []
   
   var photosForHome: [Photo] {
@@ -24,8 +26,10 @@ struct SessionState {
     }
   }
   
-  var notificationStorage: [Notification.ID : Notification] = [:]
-  
+  func comments(for photoID: Photo.ID) -> [Comment] {
+    commentsStorage.filter { $0.value.photoID == photoID }.map { $0.value }
+  }
+    
   var notificationIds: [Notification.ID] = []
   
   var notifications: [Notification] {
@@ -34,83 +38,5 @@ struct SessionState {
     }
   }
         
-  var count: Int = 0
-}
-
-final class SessionStateReducer: ReducerType {
-  typealias TargetState = SessionState
-  private var subscriptions = Set<AnyCancellable>()
-  
-  private let queue = DispatchQueue.global(qos: .default)
-  
-  let service: MockService
-  
-  init(service: MockService) {
-    self.service = service
-  }
-  
-  func increment() -> Mutation {
-    return .init {
-      $0.count += 1
-    }
-  }
-  
-  func fetchPhotos() -> Action<Void> {
-    return .init { context in
-      
-      self.service.fetchPhotosPage1()
-        .sink(receiveCompletion: { (completion) in
-          
-        }) { (photos) in
-          context.commit { _ in
-            .init { state in
-              // normalize
-              photos.forEach {
-                state.photosStorage[$0.id] = $0
-              }
-              state.photosIdForHome = photos.map { $0.id }
-            }
-          }
-      }
-      .store(in: &self.subscriptions)
-      
-    }
-  }
-  
-  func addNotification(body: String) -> Action<Void> {
-    .init { context in
-      
-      self.queue.async {
-        let n = Notification(body: body)
-        
-        context.commit { _ in
-          .init { state in
-            state.notificationStorage[n.id] = n
-            state.notificationIds.append(n.id)
-          }
-        }
-      }
-      
-    }
-  }
-  
-  func addManyNotification() -> Action<Void> {
-    .init { context in
-      
-      self.queue.async {
-        
-        context.commit { _ in
-          .init { state in
-            
-            for _ in 0..<1000 {
-              let n = Notification(body: Date().description)
-              state.notificationStorage[n.id] = n
-              state.notificationIds.append(n.id)
-            }
-          }
-        }
-      }
-      
-    }
-  }
+  var count: Int = 0  
 }

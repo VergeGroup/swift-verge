@@ -10,7 +10,7 @@ import SwiftUI
 
 struct MainTabView: View {
   
-  @EnvironmentObject var sessionStore: SessionStateReducer.ScopedStoreType<RootReducer>
+  @EnvironmentObject var sessionStore: SessionStateReducer.StoreType
   
   @State private var count: Int = 0
       
@@ -38,9 +38,9 @@ struct MainTabView: View {
         //            self.count += 1
         self.sessionStore.commit { $0.increment() }
       }) {
-        Text("Floating \(self.count)")
+        Text("Send event from Tab \(self.count)")
           .padding(8)
-          .background(Color.orange)
+          .background(Color(white: 0.9))
           .cornerRadius(8)
       }
       

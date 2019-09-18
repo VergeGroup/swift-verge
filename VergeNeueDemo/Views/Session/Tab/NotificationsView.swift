@@ -10,7 +10,7 @@ import SwiftUI
 
 struct NotificationsView: View {
   
-  @EnvironmentObject var sessionStore: SessionStateReducer.ScopedStoreType<RootReducer>
+  @EnvironmentObject var sessionStore: SessionStateReducer.StoreType
   
   var body: some View {
     NavigationView {
@@ -24,7 +24,7 @@ struct NotificationsView: View {
           Text("Add Notification")
         }
       }
-      .navigationBarTitle("Home")
+      .navigationBarTitle("Notifications")
     }
     .onAppear {
       self.sessionStore.dispatch { $0.fetchPhotos() }

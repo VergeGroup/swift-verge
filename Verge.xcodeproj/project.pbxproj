@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B1A384B2332B76E00AA5BD6 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A384A2332B76E00AA5BD6 /* Comment.swift */; };
+		4B1A384D2332B85800AA5BD6 /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A384C2332B85800AA5BD6 /* PhotoDetailView.swift */; };
 		4B463D6920D4C4690053A4FF /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B463D6A20D4C4690053A4FF /* Verge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4911F969BF3002D54FE /* Verge.swift */; };
 		4B463D6B20D4C4690053A4FF /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E2781FE3646B001736D2 /* Storage.swift */; };
@@ -16,6 +18,8 @@
 		4B495D02233266ED0098F7B4 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D01233266ED0098F7B4 /* Logger.swift */; };
 		4B495D04233269160098F7B4 /* SharedLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D03233269160098F7B4 /* SharedLogger.swift */; };
 		4B495D06233280350098F7B4 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D05233280350098F7B4 /* Notification.swift */; };
+		4B495D082332B4B10098F7B4 /* SessionReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D072332B4B10098F7B4 /* SessionReducer.swift */; };
+		4B495D0A2332B5170098F7B4 /* NetworkImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D092332B5170098F7B4 /* NetworkImageView.swift */; };
 		4B4AEB1223310D40000709D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB1123310D40000709D9 /* AppDelegate.swift */; };
 		4B4AEB1423310D40000709D9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB1323310D40000709D9 /* SceneDelegate.swift */; };
 		4B4AEB1623310D40000709D9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB1523310D40000709D9 /* ContentView.swift */; };
@@ -144,6 +148,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B1A384A2332B76E00AA5BD6 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		4B1A384C2332B85800AA5BD6 /* PhotoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailView.swift; sourceTree = "<group>"; };
 		4B463D7520D4C4690053A4FF /* Verge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Verge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B463D7B20D4C72D0053A4FF /* EasyPeasy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EasyPeasy.framework; path = Carthage/Build/iOS/EasyPeasy.framework; sourceTree = SOURCE_ROOT; };
 		4B463D8120D4C74A0053A4FF /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/Mac/RxCocoa.framework; sourceTree = "<group>"; };
@@ -151,6 +157,8 @@
 		4B495D01233266ED0098F7B4 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		4B495D03233269160098F7B4 /* SharedLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedLogger.swift; sourceTree = "<group>"; };
 		4B495D05233280350098F7B4 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
+		4B495D072332B4B10098F7B4 /* SessionReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionReducer.swift; sourceTree = "<group>"; };
+		4B495D092332B5170098F7B4 /* NetworkImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
 		4B4AEB0F23310D40000709D9 /* VergeNeueDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeNeueDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B4AEB1123310D40000709D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B4AEB1323310D40000709D9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -314,6 +322,17 @@
 			name = macOS;
 			sourceTree = "<group>";
 		};
+		4B495D0B2332B56E0098F7B4 /* Tab */ = {
+			isa = PBXGroup;
+			children = (
+				4BD85F322331251400FD04E9 /* HomeView.swift */,
+				4B1A384C2332B85800AA5BD6 /* PhotoDetailView.swift */,
+				4BD85F342331252E00FD04E9 /* NotificationsView.swift */,
+				4BD85F362331254000FD04E9 /* MyPageView.swift */,
+			);
+			path = Tab;
+			sourceTree = "<group>";
+		};
 		4B4AEB1023310D40000709D9 /* VergeNeueDemo */ = {
 			isa = PBXGroup;
 			children = (
@@ -359,6 +378,7 @@
 			children = (
 				4B4AEB2823310F4A000709D9 /* RootState.swift */,
 				4B4AEB2A233112D3000709D9 /* SessionState.swift */,
+				4B495D072332B4B10098F7B4 /* SessionReducer.swift */,
 			);
 			path = States;
 			sourceTree = "<group>";
@@ -451,9 +471,7 @@
 			children = (
 				4BD85F382331259300FD04E9 /* SessionContainerView.swift */,
 				4BD85F302331247B00FD04E9 /* MainTabView.swift */,
-				4BD85F322331251400FD04E9 /* HomeView.swift */,
-				4BD85F342331252E00FD04E9 /* NotificationsView.swift */,
-				4BD85F362331254000FD04E9 /* MyPageView.swift */,
+				4B495D0B2332B56E0098F7B4 /* Tab */,
 			);
 			path = Session;
 			sourceTree = "<group>";
@@ -472,6 +490,7 @@
 			isa = PBXGroup;
 			children = (
 				4BECC81723312AD400D6A0A1 /* IndicatorView.swift */,
+				4B495D092332B5170098F7B4 /* NetworkImageView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -491,6 +510,7 @@
 			children = (
 				4BECC81D2331332B00D6A0A1 /* Photo.swift */,
 				4B495D05233280350098F7B4 /* Notification.swift */,
+				4B1A384A2332B76E00AA5BD6 /* Comment.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -815,6 +835,7 @@
 				4BECC81E2331332B00D6A0A1 /* Photo.swift in Sources */,
 				4BECC8202331336200D6A0A1 /* MockDatabase.swift in Sources */,
 				4B4AEB2F233114E7000709D9 /* RootStore.swift in Sources */,
+				4B1A384D2332B85800AA5BD6 /* PhotoDetailView.swift in Sources */,
 				4B4AEB1223310D40000709D9 /* AppDelegate.swift in Sources */,
 				4BD85F392331259300FD04E9 /* SessionContainerView.swift in Sources */,
 				4BECC8222331337100D6A0A1 /* MockService.swift in Sources */,
@@ -827,12 +848,15 @@
 				4B4AEB1423310D40000709D9 /* SceneDelegate.swift in Sources */,
 				4BECC824233133FC00D6A0A1 /* Env.swift in Sources */,
 				4BD85F2B2331202C00FD04E9 /* Utility.swift in Sources */,
+				4B495D0A2332B5170098F7B4 /* NetworkImageView.swift in Sources */,
 				4B4AEB2D2331145B000709D9 /* StartView.swift in Sources */,
 				4BECC81823312AD400D6A0A1 /* IndicatorView.swift in Sources */,
 				4B495D06233280350098F7B4 /* Notification.swift in Sources */,
+				4B1A384B2332B76E00AA5BD6 /* Comment.swift in Sources */,
 				4B4AEB1623310D40000709D9 /* ContentView.swift in Sources */,
 				4B4AEB2923310F4A000709D9 /* RootState.swift in Sources */,
 				4BD85F312331247B00FD04E9 /* MainTabView.swift in Sources */,
+				4B495D082332B4B10098F7B4 /* SessionReducer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
