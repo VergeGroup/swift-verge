@@ -8,6 +8,8 @@ Latest released Verge => [`master` branch](https://github.com/muukii/Verge/tree/
 
 <img width="1200" src="./graph@2x.png">
 
+[Link to Demo Application Video](https://www.notion.so/muukii/Verge-Demo-Application-9bf28b56a61e468d9462d6100d721380)
+
 ## Architecture
 
 The sources are in `VergeNeue` directory.
