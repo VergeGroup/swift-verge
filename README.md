@@ -38,8 +38,39 @@ struct RootState {
      
   var count: Int = 0
   
+  var photos: [Photo.ID : Photo] = [:]
+  var comments: [Commenet.ID : Comment] = [:]
+  
 }
 ```
+
+<details><summary>struct Photo</summary>
+<p>
+
+```swift
+struct Photo: Identifiable {
+  
+  let id: String
+  let url: URL
+}
+```
+</p>
+</details>
+
+<details><summary>struct Comment</summary>
+<p>
+
+```swift
+struct Comment: Identifiable {
+  
+  let id: String
+  let photoID: Photo.ID
+  let body: String
+ 
+}
+```
+</p>
+</details>
 
 **Reducer**
 
