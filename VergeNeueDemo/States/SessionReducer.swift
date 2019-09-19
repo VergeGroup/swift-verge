@@ -87,4 +87,17 @@ final class SessionStateReducer: ReducerType {
       
     }
   }
+  
+  func submitComment(body: String, photoID: Photo.ID) -> Action<Void> {
+    return .init { context in
+      
+      let comment = Comment(photoID: photoID, body: body)
+      context.commit { _ in
+        .init {
+          $0.commentsStorage[comment.id] = comment
+        }
+      }
+      
+    }
+  }
 }

@@ -12,8 +12,32 @@ import SwiftUI
 
 struct PhotoDetailView: View {
   
+  @EnvironmentObject var sessionStore: SessionStateReducer.StoreType
+  
+  var photoID: Photo.ID
+  
+  @State var draftCommentBody: String = ""
+  
+  private var photo: Photo {
+    sessionStore.state.photosStorage[photoID]!
+  }
+      
   var body: some View {
-    EmptyView()
+    VStack {
+      Text("\(photo.id)")
+      TextField("Enter comment here", text: $draftCommentBody)
+        .padding(16)
+      Button(action: {
+        
+        guard self.draftCommentBody.isEmpty == false else { return }
+        
+        self.sessionStore.dispatch { $0.submitComment(body: self.draftCommentBody, photoID: self.photoID) }
+        self.draftCommentBody = ""
+        
+      }) {
+        Text("Submit")
+      }
+    }
   }
 }
 
