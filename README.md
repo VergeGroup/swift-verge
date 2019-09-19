@@ -19,8 +19,9 @@ Demo implementations are super experimentally code. I think there are no best pr
 
 * Store / ScopedStore
 * Reducer
-  * Mutation
-  * Action
+  * Mutation -> Change state
+  * Action -> Mutation -> Change state
+  * Contains dependencies what product needed
   
 **🏬 Store**
   
@@ -235,3 +236,24 @@ It initializes with `Store` as parent store and WritableKeyPath to take fragment
 Its side-effects dispatch and commit affects parent-store.<br>
 And receives parent-store's side-effects 
 
+**Integration between multiple stores**
+
+// TODO:
+
+**Integration Verge with External DataStore (e.g CoreData)**
+
+// TODO:
+
+## Installation
+
+Currently it supports only CocoaPods.
+
+In Podfile
+
+```
+pod 'VergeNeue'
+```
+
+## Author
+
+Hiroshi Kimura (Muukii) <muukii.app@gmail.com>
