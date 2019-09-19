@@ -12,11 +12,11 @@ import SwiftUI
 
 struct PhotoDetailView: View {
   
+  
+  let photoID: Photo.ID
+  
   @EnvironmentObject var sessionStore: SessionStateReducer.StoreType
-  
-  var photoID: Photo.ID
-  
-  @State var draftCommentBody: String = ""
+  @State private var draftCommentBody: String = ""
   
   private var photo: Photo {
     sessionStore.state.photosStorage[photoID]!
@@ -31,7 +31,9 @@ struct PhotoDetailView: View {
         
         guard self.draftCommentBody.isEmpty == false else { return }
         
-        self.sessionStore.dispatch { $0.submitComment(body: self.draftCommentBody, photoID: self.photoID) }
+        self.sessionStore.dispatch {
+          $0.submitComment(body: self.draftCommentBody, photoID: self.photoID)
+        }
         self.draftCommentBody = ""
         
       }) {
