@@ -18,7 +18,9 @@ struct HomeView: View {
   var body: some View {
     NavigationView {
       List(sessionStore.state.photosForHome) { (photo) in
-        Self.Cell(photo: photo, comments: self.sessionStore.state.comments(for: photo.id))
+        NavigationLink(destination: PhotoDetailView(photoID: photo.id)) {
+          Self.Cell(photo: photo, comments: self.sessionStore.state.comments(for: photo.id))
+        }
       }
       .navigationBarTitle("Home")
     }
