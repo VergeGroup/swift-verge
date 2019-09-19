@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "VergeNeue"
-  s.version      = "0.0.1"
+  s.version      = "6.0.0-alpha.1"
   s.summary      = "Verge Neue is Flux / Redux framework on SwiftUI"
   s.description  = <<-DESC
   Verge Neue is Flux / Redux framework on SwiftUI (It's not exclusive only SwiftUI)
