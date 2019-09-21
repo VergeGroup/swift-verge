@@ -15,7 +15,7 @@
 		4B463D7020D4C4690053A4FF /* Verge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B86A4891F969AD6002D54FE /* Verge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B463D8520D4C75E0053A4FF /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B463D8120D4C74A0053A4FF /* RxCocoa.framework */; };
 		4B463D8620D4C75E0053A4FF /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B463D8220D4C74A0053A4FF /* RxSwift.framework */; };
-		4B495D02233266ED0098F7B4 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D01233266ED0098F7B4 /* Logger.swift */; };
+		4B495D02233266ED0098F7B4 /* StoreLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D01233266ED0098F7B4 /* StoreLogger.swift */; };
 		4B495D04233269160098F7B4 /* SharedLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D03233269160098F7B4 /* SharedLogger.swift */; };
 		4B495D06233280350098F7B4 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D05233280350098F7B4 /* Notification.swift */; };
 		4B495D082332B4B10098F7B4 /* SessionReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B495D072332B4B10098F7B4 /* SessionReducer.swift */; };
@@ -154,7 +154,7 @@
 		4B463D7B20D4C72D0053A4FF /* EasyPeasy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EasyPeasy.framework; path = Carthage/Build/iOS/EasyPeasy.framework; sourceTree = SOURCE_ROOT; };
 		4B463D8120D4C74A0053A4FF /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/Mac/RxCocoa.framework; sourceTree = "<group>"; };
 		4B463D8220D4C74A0053A4FF /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/Mac/RxSwift.framework; sourceTree = "<group>"; };
-		4B495D01233266ED0098F7B4 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		4B495D01233266ED0098F7B4 /* StoreLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreLogger.swift; sourceTree = "<group>"; };
 		4B495D03233269160098F7B4 /* SharedLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedLogger.swift; sourceTree = "<group>"; };
 		4B495D05233280350098F7B4 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		4B495D072332B4B10098F7B4 /* SessionReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionReducer.swift; sourceTree = "<group>"; };
@@ -461,7 +461,7 @@
 				4B66DF9D23314955002AD206 /* Store.swift */,
 				4B66DF9F2331496B002AD206 /* ScopedStore.swift */,
 				4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */,
-				4B495D01233266ED0098F7B4 /* Logger.swift */,
+				4B495D01233266ED0098F7B4 /* StoreLogger.swift */,
 			);
 			path = VergeNeue;
 			sourceTree = "<group>";
@@ -899,7 +899,7 @@
 				4B66DF9E23314955002AD206 /* Store.swift in Sources */,
 				4B66DFA4233149A5002AD206 /* StoreBase.swift in Sources */,
 				4B66DFA02331496B002AD206 /* ScopedStore.swift in Sources */,
-				4B495D02233266ED0098F7B4 /* Logger.swift in Sources */,
+				4B495D02233266ED0098F7B4 /* StoreLogger.swift in Sources */,
 				4B66DFA22331497B002AD206 /* SwiftUIBinder.swift in Sources */,
 				4B66DFA6233149D4002AD206 /* Storage.swift in Sources */,
 			);
