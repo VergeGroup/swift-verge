@@ -1,4 +1,4 @@
-# Verge - Neue (SwiftUI / UIKit)
+# Verge - Neue (SwiftUI / UIKit) (v6.0.0-alpha.1)
 
 > ⚠️ Currently in progress
 
@@ -225,6 +225,55 @@ store.dispatch { $0.asyncIncrement() }
 
 </p>
 </details>
+
+## Logging
+
+VergeNeue provides `StoreLogger`.<br>
+We can get a log by dispatch and commit.
+
+It helps debugging.<br>
+
+
+```swift
+public protocol StoreLogger {
+  
+  func willCommit(store: Any, state: Any, mutation: MutationMetadata)
+  func didCommit(store: Any, state: Any, mutation: MutationMetadata)
+  func didDispatch(store: Any, state: Any, action: ActionMetadata)
+}
+```
+
+In implemetation StoreLogger, we can get `MutationMetadata` or `ActionMetadata`.
+These object contains metadata as `String` that about name and where that created(defined).
+
+Just like this.
+
+```swift
+public struct MutationMetadata {
+  
+  public let name: String
+  public let file: StaticString
+  public let function: StaticString
+  public let line: UInt
+  
+}
+```
+
+In order to get log, we create own logger object with using `StoreLogger` protocol.
+
+```swift
+struct MyStoreLogger: StoreLogger { ... }
+```
+
+And then, pass it to Store initializer.
+
+```swift 
+let rootStore = Store(
+  state: RootState(),
+  reducer: RootReducer(),
+  logger: MyStoreLogger()
+)
+```
 
 ## Advanced Informations
 
