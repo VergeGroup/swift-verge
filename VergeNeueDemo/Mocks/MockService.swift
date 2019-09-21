@@ -23,7 +23,7 @@ final class MockService {
   
   func fetchPhotosPage1() -> AnyPublisher<[Photo], Error> {
     
-    let a = apiProvider
+    apiProvider
       .fetchPhotos()
       .setFailureType(to: Error.self)
       .tryMap { (json) -> [Photo] in

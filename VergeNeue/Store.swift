@@ -82,18 +82,19 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
     let context = DispatchContext<Reducer>.init(store: self)
     let action = makeAction(reducer)
     let result = action.action(context)
-    logger?.didDispatch(store: self, state: state)
+    logger?.didDispatch(store: self, state: state, action: action.metadata)
     return result
   }
   
   public final override func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
+            
+    let mutation = makeMutation(reducer)
     
-    logger?.willCommit(store: self, state: state)
+    logger?.willCommit(store: self, state: state, mutation: mutation.metadata)
     defer {
-      logger?.didCommit(store: self, state: state)
+      logger?.didCommit(store: self, state: state, mutation: mutation.metadata)
     }
     
-    let mutation = makeMutation(reducer)
     storage.update { (state) in
       mutation.mutate(&state)
     }

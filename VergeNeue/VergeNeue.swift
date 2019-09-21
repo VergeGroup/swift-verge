@@ -1,7 +1,17 @@
 import Foundation
 
-public struct CodeLocation {
+public struct MutationMetadata {
   
+  public let name: String
+  public let file: StaticString
+  public let function: StaticString
+  public let line: UInt
+  
+}
+
+public struct ActionMetadata {
+  
+  public let name: String
   public let file: StaticString
   public let function: StaticString
   public let line: UInt
@@ -12,7 +22,7 @@ public struct _Mutation<State> {
   
   let mutate: (inout State) -> Void
   
-  public let codeLocation: CodeLocation
+  public let metadata: MutationMetadata
   
   public init(
     _ name: String = "",
@@ -22,7 +32,7 @@ public struct _Mutation<State> {
     mutate: @escaping (inout State) -> Void
   ) {
     self.mutate = mutate
-    self.codeLocation = .init(file: file, function: function, line: line)
+    self.metadata = .init(name: name, file: file, function: function, line: line)
   }
 }
 
@@ -30,7 +40,7 @@ public struct _Action<Reducer: ModularReducerType, ReturnType> {
   
   let action: (DispatchContext<Reducer>) -> ReturnType
   
-  public let codeLocation: CodeLocation
+  public let metadata: ActionMetadata
   
   public init(
     _ name: String = "",
@@ -39,7 +49,7 @@ public struct _Action<Reducer: ModularReducerType, ReturnType> {
     _ line: UInt = #line,
     action: @escaping (DispatchContext<Reducer>) -> ReturnType) {
     self.action = action
-    self.codeLocation = .init(file: file, function: function, line: line)
+    self.metadata = .init(name: name, file: file, function: function, line: line)
 
   }
 }

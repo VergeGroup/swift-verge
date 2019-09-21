@@ -10,7 +10,7 @@ import Foundation
 
 public protocol StoreLogger {
   
-  func willCommit(store: Any, state: Any)
-  func didCommit(store: Any, state: Any)
-  func didDispatch(store: Any, state: Any)
+  func willCommit(store: Any, state: Any, mutation: MutationMetadata)
+  func didCommit(store: Any, state: Any, mutation: MutationMetadata)
+  func didDispatch(store: Any, state: Any, action: ActionMetadata)
 }
