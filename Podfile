@@ -10,3 +10,13 @@ target 'VergeNeueDemo' do
   # Pods for VergeNeueDemo
 
 end
+
+target 'VergeNeueAdvancedDemo' do
+
+  use_frameworks!
+
+  pod 'JAYSON'
+  pod 'Reveal-SDK'
+  pod 'FlatStore', git: "git@github.com:eure/FlatStore", branch: "master"
+
+end

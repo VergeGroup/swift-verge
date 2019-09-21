@@ -59,6 +59,12 @@
 		4B956D19211483E7003AA189 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4B9F57D622DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
+		4BA7A86223363D40008D0EC6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA7A86123363D40008D0EC6 /* AppDelegate.swift */; };
+		4BA7A86423363D40008D0EC6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA7A86323363D40008D0EC6 /* SceneDelegate.swift */; };
+		4BA7A86623363D40008D0EC6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA7A86523363D40008D0EC6 /* ContentView.swift */; };
+		4BA7A86823363D41008D0EC6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BA7A86723363D41008D0EC6 /* Assets.xcassets */; };
+		4BA7A86B23363D41008D0EC6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BA7A86A23363D41008D0EC6 /* Preview Assets.xcassets */; };
+		4BA7A86E23363D41008D0EC6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BA7A86C23363D41008D0EC6 /* LaunchScreen.storyboard */; };
 		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
 		4BAE9FCD21DFA119003DDF3D /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FC921DFA119003DDF3D /* RxCocoa.framework */; };
 		4BAE9FCE21DFA119003DDF3D /* RxFuture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FCA21DFA119003DDF3D /* RxFuture.framework */; };
@@ -83,6 +89,7 @@
 		4BECC8222331337100D6A0A1 /* MockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BECC8212331337100D6A0A1 /* MockService.swift */; };
 		4BECC824233133FC00D6A0A1 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BECC823233133FC00D6A0A1 /* Env.swift */; };
 		4BECC82623313C1B00D6A0A1 /* list_page_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 4BECC82523313C1B00D6A0A1 /* list_page_1.json */; };
+		53EE208DC3BEFD746C3337DD /* Pods_VergeNeueAdvancedDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CC0EE485928B78F05C48BFA /* Pods_VergeNeueAdvancedDemo.framework */; };
 		E7753A9D8D406494A27CB710 /* Pods_VergeNeueDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94193FF650F04C7E5B271434 /* Pods_VergeNeueDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -199,6 +206,14 @@
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4B93EC7523307656002BB30B /* VergeNeue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeNeue.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
+		4BA7A85F23363D40008D0EC6 /* VergeNeueAdvancedDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeNeueAdvancedDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BA7A86123363D40008D0EC6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4BA7A86323363D40008D0EC6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4BA7A86523363D40008D0EC6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4BA7A86723363D41008D0EC6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4BA7A86A23363D41008D0EC6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4BA7A86D23363D41008D0EC6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4BA7A86F23363D41008D0EC6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		4BAE9FC921DFA119003DDF3D /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = SOURCE_ROOT; };
 		4BAE9FCA21DFA119003DDF3D /* RxFuture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxFuture.framework; path = Carthage/Build/iOS/RxFuture.framework; sourceTree = SOURCE_ROOT; };
@@ -219,8 +234,11 @@
 		4BECC8212331337100D6A0A1 /* MockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockService.swift; sourceTree = "<group>"; };
 		4BECC823233133FC00D6A0A1 /* Env.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
 		4BECC82523313C1B00D6A0A1 /* list_page_1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = list_page_1.json; sourceTree = "<group>"; };
+		90328BAB4D46D9567CA1EE36 /* Pods-VergeNeueAdvancedDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueAdvancedDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		94193FF650F04C7E5B271434 /* Pods_VergeNeueDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VergeNeueDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9CC0EE485928B78F05C48BFA /* Pods_VergeNeueAdvancedDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VergeNeueAdvancedDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D16F15177BB4D67B9B5F45B9 /* Pods-VergeNeueDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeNeueDemo/Pods-VergeNeueDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		E0E50110EAF71ECF46C0841B /* Pods-VergeNeueAdvancedDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueAdvancedDemo.release.xcconfig"; path = "Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo.release.xcconfig"; sourceTree = "<group>"; };
 		E6998160A046DFFF14AC3FD4 /* Pods-VergeNeueDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueDemo.release.xcconfig"; path = "Target Support Files/Pods-VergeNeueDemo/Pods-VergeNeueDemo.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -280,6 +298,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4BA7A85C23363D40008D0EC6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53EE208DC3BEFD746C3337DD /* Pods_VergeNeueAdvancedDemo.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -288,6 +314,8 @@
 			children = (
 				D16F15177BB4D67B9B5F45B9 /* Pods-VergeNeueDemo.debug.xcconfig */,
 				E6998160A046DFFF14AC3FD4 /* Pods-VergeNeueDemo.release.xcconfig */,
+				90328BAB4D46D9567CA1EE36 /* Pods-VergeNeueAdvancedDemo.debug.xcconfig */,
+				E0E50110EAF71ECF46C0841B /* Pods-VergeNeueAdvancedDemo.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -392,6 +420,7 @@
 				4B65F8ED1FB4C0DC00A90A67 /* VergeTests */,
 				4B93EC6823307624002BB30B /* VergeNeue */,
 				4B4AEB1023310D40000709D9 /* VergeNeueDemo */,
+				4BA7A86023363D40008D0EC6 /* VergeNeueAdvancedDemo */,
 				4B86A4871F969AD5002D54FE /* Products */,
 				4B86A4AC1F969C98002D54FE /* Frameworks */,
 				2A539E3FF4267844D858E039 /* Pods */,
@@ -407,6 +436,7 @@
 				4B463D7520D4C4690053A4FF /* Verge.framework */,
 				4B93EC6723307624002BB30B /* VergeNeue.framework */,
 				4B4AEB0F23310D40000709D9 /* VergeNeueDemo.app */,
+				4BA7A85F23363D40008D0EC6 /* VergeNeueAdvancedDemo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -446,6 +476,7 @@
 				4BD85F2C2331213800FD04E9 /* SwiftUI.framework */,
 				4B93EC7323307637002BB30B /* SwiftUI.framework */,
 				94193FF650F04C7E5B271434 /* Pods_VergeNeueDemo.framework */,
+				9CC0EE485928B78F05C48BFA /* Pods_VergeNeueAdvancedDemo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -464,6 +495,28 @@
 				4B495D01233266ED0098F7B4 /* StoreLogger.swift */,
 			);
 			path = VergeNeue;
+			sourceTree = "<group>";
+		};
+		4BA7A86023363D40008D0EC6 /* VergeNeueAdvancedDemo */ = {
+			isa = PBXGroup;
+			children = (
+				4BA7A86123363D40008D0EC6 /* AppDelegate.swift */,
+				4BA7A86323363D40008D0EC6 /* SceneDelegate.swift */,
+				4BA7A86523363D40008D0EC6 /* ContentView.swift */,
+				4BA7A86723363D41008D0EC6 /* Assets.xcassets */,
+				4BA7A86C23363D41008D0EC6 /* LaunchScreen.storyboard */,
+				4BA7A86F23363D41008D0EC6 /* Info.plist */,
+				4BA7A86923363D41008D0EC6 /* Preview Content */,
+			);
+			path = VergeNeueAdvancedDemo;
+			sourceTree = "<group>";
+		};
+		4BA7A86923363D41008D0EC6 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4BA7A86A23363D41008D0EC6 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		4BD85F2E2331245A00FD04E9 /* Session */ = {
@@ -658,6 +711,25 @@
 			productReference = 4B93EC6723307624002BB30B /* VergeNeue.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		4BA7A85E23363D40008D0EC6 /* VergeNeueAdvancedDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4BA7A87223363D41008D0EC6 /* Build configuration list for PBXNativeTarget "VergeNeueAdvancedDemo" */;
+			buildPhases = (
+				4A8A0A22E2BBC4E01CB46ED8 /* [CP] Check Pods Manifest.lock */,
+				4BA7A85B23363D40008D0EC6 /* Sources */,
+				4BA7A85C23363D40008D0EC6 /* Frameworks */,
+				4BA7A85D23363D40008D0EC6 /* Resources */,
+				014BB7CDEC4677111B697B03 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VergeNeueAdvancedDemo;
+			productName = VergeNeueAdvancedDemo;
+			productReference = 4BA7A85F23363D40008D0EC6 /* VergeNeueAdvancedDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -693,6 +765,10 @@
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 					};
+					4BA7A85E23363D40008D0EC6 = {
+						CreatedOnToolsVersion = 11.0;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 4B86A4801F969AD5002D54FE /* Build configuration list for PBXProject "Verge" */;
@@ -714,6 +790,7 @@
 				4B65F8EB1FB4C0DC00A90A67 /* VergeTests */,
 				4B93EC6623307624002BB30B /* VergeNeue */,
 				4B4AEB0E23310D40000709D9 /* VergeNeueDemo */,
+				4BA7A85E23363D40008D0EC6 /* VergeNeueAdvancedDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -768,9 +845,41 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4BA7A85D23363D40008D0EC6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BA7A86E23363D41008D0EC6 /* LaunchScreen.storyboard in Resources */,
+				4BA7A86B23363D41008D0EC6 /* Preview Assets.xcassets in Resources */,
+				4BA7A86823363D41008D0EC6 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		014BB7CDEC4677111B697B03 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/JAYSON/JAYSON.framework",
+				"${PODS_ROOT}/Reveal-SDK/RevealServer/iOS/RevealServer.framework",
+				"${BUILT_PRODUCTS_DIR}/FlatStore/FlatStore.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JAYSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RevealServer.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FlatStore.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		376B416910F33AAE12FAB566 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -789,6 +898,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-VergeNeueDemo/Pods-VergeNeueDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4A8A0A22E2BBC4E01CB46ED8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-VergeNeueAdvancedDemo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A892C8F4084E626D63053222 /* [CP] Check Pods Manifest.lock */ = {
@@ -905,6 +1036,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4BA7A85B23363D40008D0EC6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BA7A86223363D40008D0EC6 /* AppDelegate.swift in Sources */,
+				4BA7A86423363D40008D0EC6 /* SceneDelegate.swift in Sources */,
+				4BA7A86623363D40008D0EC6 /* ContentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -951,6 +1092,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				4B86A4A31F969C7D002D54FE /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		4BA7A86C23363D41008D0EC6 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4BA7A86D23363D41008D0EC6 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -1360,6 +1509,49 @@
 			};
 			name = Release;
 		};
+		4BA7A87023363D41008D0EC6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 90328BAB4D46D9567CA1EE36 /* Pods-VergeNeueAdvancedDemo.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"VergeNeueAdvancedDemo/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = VergeNeueAdvancedDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeNeueAdvancedDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4BA7A87123363D41008D0EC6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E0E50110EAF71ECF46C0841B /* Pods-VergeNeueAdvancedDemo.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"VergeNeueAdvancedDemo/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = VergeNeueAdvancedDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeNeueAdvancedDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1422,6 +1614,15 @@
 			buildConfigurations = (
 				4B93EC7023307624002BB30B /* Debug */,
 				4B93EC7123307624002BB30B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4BA7A87223363D41008D0EC6 /* Build configuration list for PBXNativeTarget "VergeNeueAdvancedDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BA7A87023363D41008D0EC6 /* Debug */,
+				4BA7A87123363D41008D0EC6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
