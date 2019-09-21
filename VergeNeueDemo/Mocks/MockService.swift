@@ -23,14 +23,15 @@ final class MockService {
   
   func fetchPhotosPage1() -> AnyPublisher<[Photo], Error> {
     
-    apiProvider
+    let a = apiProvider
       .fetchPhotos()
+      .setFailureType(to: Error.self)
       .tryMap { (json) -> [Photo] in
         try json.getArray().map {
           try Photo(from: $0)
         }
     }
-    .eraseToAnyPublisher() // I don't want to do that.
+    .eraseToAnyPublisher()
       
   }
 }

@@ -18,7 +18,7 @@ struct HomeView: View {
   var body: some View {
     NavigationView {
       List(sessionStore.state.photosForHome) { (photo) in
-        NavigationLink(destination: PhotoDetailView(photoID: photo.id)) {
+        NavigationLink(destination: PhotoDetailView(photo: photo)) {
           Self.Cell(photo: photo, comments: self.sessionStore.state.comments(for: photo.id))
         }
       }
