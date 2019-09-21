@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreStore
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,6 +16,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     // Override point for customization after application launch.
+    
+    CoreStore.defaultStack = DataStack(
+      CoreStoreSchema(
+        modelVersion: "v1",
+        entities: [
+          Entity<Comment>("Comment"),
+          Entity<Issue>("Issuee")
+        ]
+      )
+    )
+        
+    try! CoreStore.addStorageAndWait(InMemoryStore())
+    
     return true
   }
 

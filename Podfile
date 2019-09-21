@@ -18,5 +18,6 @@ target 'VergeNeueAdvancedDemo' do
   pod 'JAYSON'
   pod 'Reveal-SDK'
   pod 'FlatStore', git: "git@github.com:eure/FlatStore", branch: "master"
+  pod 'CoreStore'
 
 end

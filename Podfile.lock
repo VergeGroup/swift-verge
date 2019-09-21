@@ -1,15 +1,18 @@
 PODS:
+  - CoreStore (6.3.2)
   - FlatStore (0.0.1)
   - JAYSON (2.1.0)
   - Reveal-SDK (24)
 
 DEPENDENCIES:
+  - CoreStore
   - "FlatStore (from `git@github.com:eure/FlatStore`, branch `master`)"
   - JAYSON
   - Reveal-SDK
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - CoreStore
     - JAYSON
     - Reveal-SDK
 
@@ -24,10 +27,11 @@ CHECKOUT OPTIONS:
     :git: "git@github.com:eure/FlatStore"
 
 SPEC CHECKSUMS:
+  CoreStore: 690a587902a81c412cf353466d2d2a029934267e
   FlatStore: e1ffd1f6e1aee5fa7b2ee7c35b08ced9bb5603ee
   JAYSON: 4280ff193d900fb11314434affac47673507757e
   Reveal-SDK: 5d7e56b8f018c0a88b3a2c10bf68d598bbd3b071
 
-PODFILE CHECKSUM: 216315eff6fec1a58f6bcf54ddd337e06694b657
+PODFILE CHECKSUM: d90cadb4c74a73b9c9940299bd50ffc27b1e4c9d
 
 COCOAPODS: 1.7.5

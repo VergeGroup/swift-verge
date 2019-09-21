@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B035F7D2336A3400052C692 /* DataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B035F7C2336A3400052C692 /* DataStack.swift */; };
+		4B035F802336A3670052C692 /* Issue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B035F7F2336A3670052C692 /* Issue.swift */; };
+		4B035F822336A38A0052C692 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B035F812336A38A0052C692 /* Comment.swift */; };
+		4B035F842336A4390052C692 /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B035F832336A4390052C692 /* Views.swift */; };
+		4B035F862336A44A0052C692 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B035F852336A44A0052C692 /* AppContainer.swift */; };
+		4B035F882336A4810052C692 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B035F872336A4810052C692 /* Service.swift */; };
 		4B1A384B2332B76E00AA5BD6 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A384A2332B76E00AA5BD6 /* Comment.swift */; };
 		4B1A384D2332B85800AA5BD6 /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A384C2332B85800AA5BD6 /* PhotoDetailView.swift */; };
 		4B463D6920D4C4690053A4FF /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
@@ -155,6 +161,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B035F7C2336A3400052C692 /* DataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStack.swift; sourceTree = "<group>"; };
+		4B035F7F2336A3670052C692 /* Issue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Issue.swift; sourceTree = "<group>"; };
+		4B035F812336A38A0052C692 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		4B035F832336A4390052C692 /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; };
+		4B035F852336A44A0052C692 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		4B035F872336A4810052C692 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		4B1A384A2332B76E00AA5BD6 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		4B1A384C2332B85800AA5BD6 /* PhotoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailView.swift; sourceTree = "<group>"; };
 		4B463D7520D4C4690053A4FF /* Verge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Verge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -318,6 +330,25 @@
 				E0E50110EAF71ECF46C0841B /* Pods-VergeNeueAdvancedDemo.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		4B035F7B2336A3310052C692 /* Backend */ = {
+			isa = PBXGroup;
+			children = (
+				4B035F7E2336A3520052C692 /* Model */,
+				4B035F7C2336A3400052C692 /* DataStack.swift */,
+				4B035F872336A4810052C692 /* Service.swift */,
+			);
+			path = Backend;
+			sourceTree = "<group>";
+		};
+		4B035F7E2336A3520052C692 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				4B035F7F2336A3670052C692 /* Issue.swift */,
+				4B035F812336A38A0052C692 /* Comment.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		4B463D7820D4C71D0053A4FF /* Carthage */ = {
@@ -500,9 +531,12 @@
 		4BA7A86023363D40008D0EC6 /* VergeNeueAdvancedDemo */ = {
 			isa = PBXGroup;
 			children = (
+				4B035F7B2336A3310052C692 /* Backend */,
 				4BA7A86123363D40008D0EC6 /* AppDelegate.swift */,
 				4BA7A86323363D40008D0EC6 /* SceneDelegate.swift */,
 				4BA7A86523363D40008D0EC6 /* ContentView.swift */,
+				4B035F832336A4390052C692 /* Views.swift */,
+				4B035F852336A44A0052C692 /* AppContainer.swift */,
 				4BA7A86723363D41008D0EC6 /* Assets.xcassets */,
 				4BA7A86C23363D41008D0EC6 /* LaunchScreen.storyboard */,
 				4BA7A86F23363D41008D0EC6 /* Info.plist */,
@@ -867,12 +901,14 @@
 				"${PODS_ROOT}/Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/JAYSON/JAYSON.framework",
 				"${PODS_ROOT}/Reveal-SDK/RevealServer/iOS/RevealServer.framework",
+				"${BUILT_PRODUCTS_DIR}/CoreStore/CoreStore.framework",
 				"${BUILT_PRODUCTS_DIR}/FlatStore/FlatStore.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JAYSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RevealServer.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CoreStore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FlatStore.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1040,8 +1076,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B035F802336A3670052C692 /* Issue.swift in Sources */,
+				4B035F862336A44A0052C692 /* AppContainer.swift in Sources */,
+				4B035F822336A38A0052C692 /* Comment.swift in Sources */,
 				4BA7A86223363D40008D0EC6 /* AppDelegate.swift in Sources */,
+				4B035F842336A4390052C692 /* Views.swift in Sources */,
+				4B035F882336A4810052C692 /* Service.swift in Sources */,
 				4BA7A86423363D40008D0EC6 /* SceneDelegate.swift in Sources */,
+				4B035F7D2336A3400052C692 /* DataStack.swift in Sources */,
 				4BA7A86623363D40008D0EC6 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
