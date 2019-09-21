@@ -1,5 +1,7 @@
 # Verge - Neue (SwiftUI / UIKit) (v6.0.0-alpha.1)
 
+<img width=240 src='./demo.gif'/>
+
 > ⚠️ Currently in progress
 
 Latest released Verge => [`master` branch](https://github.com/muukii/Verge/tree/master)
