@@ -8,16 +8,25 @@
 
 import Foundation
 
+public protocol ScopedReducerType {
+  
+  associatedtype TargetState
+  associatedtype SourceReducer: ModularReducerType
+  
+  typealias Mutation = _Mutation<TargetState>
+  typealias ScopedAction<ReturnType> = _ScopedAction<Self, ReturnType>
+  
+  var scopeKeyPath: WritableKeyPath<SourceReducer.TargetState, TargetState> { get }
+}
+
 public protocol ModularReducerType {
   associatedtype TargetState
   associatedtype ParentReducer: ModularReducerType
   
   typealias Mutation = _Mutation<TargetState>
   typealias Action<ReturnType> = _Action<Self, ReturnType>
-  typealias ScopedAction<ReturnType> = _ScopedAction<Self, ReturnType>
   
   typealias StoreType = Store<Self>
-  typealias ScopedStoreType = ScopedStore<Self>
   
   func makeInitialState() -> TargetState
   

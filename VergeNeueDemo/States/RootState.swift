@@ -25,6 +25,12 @@ struct RootState {
   
   var count: Int = 0
   
+  struct UserInfo {
+    var name: String = ""
+  }
+  
+  var userInfo = UserInfo()
+  
 }
 
 final class RootReducer: ReducerType {

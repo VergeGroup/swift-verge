@@ -54,7 +54,7 @@ public struct _Action<Reducer: ModularReducerType, ReturnType> {
   }
 }
 
-public struct _ScopedAction<Reducer: ModularReducerType, ReturnType> {
+public struct _ScopedAction<Reducer: ScopedReducerType, ReturnType> {
   
   let action: (ScopedDispatchContext<Reducer>) -> ReturnType
   
@@ -94,7 +94,7 @@ public final class StoreDispatchContext<Reducer: ModularReducerType> {
   }
 }
 
-public final class ScopedDispatchContext<Reducer: ModularReducerType> {
+public final class ScopedDispatchContext<Reducer: ScopedReducerType> {
   
   private let store: ScopedStore<Reducer>
   

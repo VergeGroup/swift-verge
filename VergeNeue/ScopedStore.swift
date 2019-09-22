@@ -8,24 +8,24 @@
 
 import Foundation
 
-public final class ScopedStore<Reducer: ModularReducerType> {
+public final class ScopedStore<Reducer: ScopedReducerType> {
   
   public typealias Action = Reducer.ScopedAction
   public typealias State = Reducer.TargetState
-  public typealias SourceState = Reducer.ParentReducer.TargetState
+  public typealias SourceState = Reducer.SourceReducer.TargetState
   
   public var state: State {
     storage.value[keyPath: scopeSelector]
   }
   
-  public let sourceStore: Store<Reducer.ParentReducer>
+  public let sourceStore: Store<Reducer.SourceReducer>
   
   private let reducer: Reducer
-  let storage: Storage<Reducer.ParentReducer.TargetState>
+  let storage: Storage<Reducer.SourceReducer.TargetState>
   private let scopeSelector: WritableKeyPath<SourceState, State>
   
   init(
-    sourceStore: Store<Reducer.ParentReducer>,
+    sourceStore: Store<Reducer.SourceReducer>,
     scopeSelector: WritableKeyPath<SourceState, State>,
     reducer: Reducer
   ) {

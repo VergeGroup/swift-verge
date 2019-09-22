@@ -114,14 +114,13 @@ open class Store<Reducer: ModularReducerType> {
     }
   }
   
-  public final func makeScoped<ScopedReducer: ModularReducerType>(
-    scope: WritableKeyPath<State, ScopedReducer.TargetState>,
+  public final func makeScoped<ScopedReducer: ScopedReducerType>(
     reducer: ScopedReducer
-  ) -> ScopedStore<ScopedReducer> where ScopedReducer.ParentReducer == Reducer {
+  ) -> ScopedStore<ScopedReducer> where ScopedReducer.SourceReducer == Reducer {
         
     let scopedStore = ScopedStore<ScopedReducer>(
       sourceStore: self,
-      scopeSelector: scope,
+      scopeSelector: reducer.scopeKeyPath,
       reducer: reducer
     )
     
