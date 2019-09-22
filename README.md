@@ -1,4 +1,4 @@
-# Verge - Neue (SwiftUI / UIKit) (v6.0.0-alpha.1)
+# Verge - Neue (SwiftUI / UIKit) (v6.0.0)
 
 <img width=240 src='./demo.gif'/>
 
@@ -231,6 +231,60 @@ store.dispatch { $0.asyncIncrement() }
 </p>
 </details>
 
+## Adapter
+
+If we're using external data source (e.g. CoreData, Realm, Firebase Database), we may need to take them to store.<br>
+With `Adapter`, we can do this.
+
+To create an `Adapter`, create subclass of `AdapterBase<Reducer>`.<br>
+And then set `Adapter` to Store like followings.
+
+```swift
+let rootStore = Store(
+  reducer: RootReducer(),
+  logger: MyStoreLogger.default
+)
+.addAdapter(MyAdapter())
+```
+
+Store retains `Adapter`.
+
+When remove adapter, call `.removeAdapter(:)`.
+
+Here is sample implementations of Adapter.
+This sample adapter calls dispatch/commit with polling.
+
+<details><summary>Sample Code Adapter</summary>
+<p>
+
+```swift
+final class PollingAdapter: AdapterBase<RootReducer> {
+  
+  private var bag = Set<AnyCancellable>()
+  
+  override init() {
+    
+    super.init()
+    
+    let p = Timer.TimerPublisher(interval: 5, runLoop: .main, mode: .default)
+    p.connect().store(in: &bag)
+    p
+      .print()
+      .sink { [weak self] _ in
+      
+      self?.run { store in
+        store.commit { $0.syncIncrement() }
+      }
+    }
+    .store(in: &bag)
+  }
+}
+```
+</p>
+</details>
+
+In using Database, observe Database inside Adapter and then changes state by changed notification.
+
 ## Logging
 
 VergeNeue provides `StoreLogger`.<br>
@@ -280,15 +334,52 @@ let rootStore = Store(
 )
 ```
 
-## Advanced Informations
-
-**ScopedStore**
+## ScopedStore
 
 `ScopedStore` is a node object detached from `Store`<br>
 It initializes with `Store` as parent store and WritableKeyPath to take fragment of parent store's state.
 
 Its side-effects dispatch and commit affects parent-store.<br>
 And receives parent-store's side-effects 
+
+```swift
+struct RootState {
+       
+  struct UserInfo {
+    var name: String = ""
+  }
+  
+  var userInfo = UserInfo()
+}
+```
+
+```swift
+let rootStore = Store(
+  reducer: RootReducer()
+)
+```
+
+Defines ScopedReducer
+
+```swift
+struct UserInfoReducer: ScopedReducerType {
+  
+  typealias SourceReducer = RootReducer
+  typealias TargetState = RootState.UserInfo
+  
+  var scopeKeyPath: WritableKeyPath<RootState, RootState.UserInfo> {
+    \.userInfo
+  }
+}
+```
+
+`Store<Reducer>.makeScoped(reducer: )` creates `ScopedStore<Reducer>`.
+
+```swift
+let scopedStore: ScopedStore<UserInfoReducer> = rootStore.makeScoped(reducer: UserInfoReducer())
+```
+
+## Advanced Informations
 
 **Integration between multiple stores**
 
