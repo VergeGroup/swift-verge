@@ -29,6 +29,10 @@ struct RootState {
 
 final class RootReducer: ReducerType {
   typealias TargetState = RootState
+  
+  func makeInitialState() -> RootState {
+    .init()
+  }
     
   func createSession(env: Env) -> Action<Future<Void, Never>> {
     .init { context in
@@ -41,11 +45,9 @@ final class RootReducer: ReducerType {
             return
           }
           
-          let session = SessionState(env: env)
           let service = MockService(env: env)
           
           StoreContainer.sessionStores[env] = SessionStateReducer.StoreType(
-            state: session,
             reducer: .init(service: service),
             logger: MyStoreLogger.default
           )

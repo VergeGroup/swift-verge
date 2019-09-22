@@ -13,12 +13,13 @@ final class MockService {
   
   let database: MockDatabase
   let apiProvider: MockAPIProvider
+  let env: Env
   
   init(env: Env) {
     
     self.database = .init()
     self.apiProvider = .init()
-    
+    self.env = env
   }
   
   func fetchPhotosPage1() -> AnyPublisher<[Photo], Error> {

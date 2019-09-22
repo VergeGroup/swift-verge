@@ -29,7 +29,6 @@ Demo implementations are super experimentally code. I think there are no best pr
   
 ```swift
 let rootStore = Store(
-  state: RootState(),
   reducer: RootReducer()
 )
 ```
@@ -152,6 +151,10 @@ And then, `ReducerType` needs a type of state to update the state with type-safe
 class RootReducer: ReducerType {
   
   typealias TargetState = RootState
+  
+  func makeInitialState() -> TargetState {
+    return .init()
+  }
 ```
 
 **Define Mutation**

@@ -54,32 +54,7 @@ public struct _Action<Reducer: ModularReducerType, ReturnType> {
   }
 }
 
-public protocol ModularReducerType {
-  associatedtype TargetState
-  
-  typealias Mutation = _Mutation<TargetState>
-  typealias Action<ReturnType> = _Action<Self, ReturnType>
-  
-  typealias StoreType = Store<Self>
-  typealias ScopedStoreType = ScopedStore<ParentReducer, Self>
-  typealias DispatchContext = VergeNeue.DispatchContext<Self>
-    
-  associatedtype ParentReducer: ModularReducerType
-  func parentChanged(newState: ParentReducer.TargetState)
-}
 
-extension Never: ModularReducerType {
-  public typealias TargetState = Never
-  public typealias ParentReducer = Never
-}
-
-extension ModularReducerType where ParentReducer == Never {
-  public func parentChanged(newState: ParentReducer.TargetState) {}
-}
-
-public protocol ReducerType: ModularReducerType where ParentReducer == Never {
-    
-}
 
 public final class DispatchContext<Reducer: ModularReducerType> {
   

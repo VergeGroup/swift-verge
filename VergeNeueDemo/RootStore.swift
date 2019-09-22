@@ -10,7 +10,6 @@ import Foundation
 import VergeNeue
 
 let rootStore = Store(
-  state: RootState(),
   reducer: RootReducer(),
   logger: MyStoreLogger.default
 )

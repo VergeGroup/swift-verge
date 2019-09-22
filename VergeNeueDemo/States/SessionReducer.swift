@@ -23,6 +23,10 @@ final class SessionStateReducer: ReducerType {
     self.service = service
   }
   
+  func makeInitialState() -> SessionState {
+    .init(env: service.env)
+  }
+  
   func increment() -> Mutation {
     return .init {
       $0.count += 1

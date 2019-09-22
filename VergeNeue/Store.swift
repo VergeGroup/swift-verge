@@ -27,11 +27,10 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
   private let logger: StoreLogger?
       
   public init(
-    state: State,
     reducer: Reducer,
     logger: StoreLogger? = nil
   ) {
-    self.storage = .init(state)
+    self.storage = .init(reducer.makeInitialState())
     self.reducer = reducer
     self.logger = logger
     
@@ -42,7 +41,6 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
   }
   
   public convenience init<ParentReducer: ReducerType>(
-    state: State,
     reducer: Reducer,
     registerParent parentStore: Store<ParentReducer>,
     logger: StoreLogger? = nil
@@ -50,7 +48,7 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
     where Reducer.ParentReducer == ParentReducer
   {
             
-    self.init(state: state, reducer: reducer, logger: logger)
+    self.init(reducer: reducer, logger: logger)
     
     let parentSubscripton = parentStore.storage.add { [weak self] (state) in
       self?.notify(newParentState: state)
