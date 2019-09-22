@@ -46,7 +46,6 @@
 		4B66DF9E23314955002AD206 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF9D23314955002AD206 /* Store.swift */; };
 		4B66DFA02331496B002AD206 /* ScopedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DF9F2331496B002AD206 /* ScopedStore.swift */; };
 		4B66DFA22331497B002AD206 /* SwiftUIBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */; };
-		4B66DFA4233149A5002AD206 /* StoreBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DFA3233149A5002AD206 /* StoreBase.swift */; };
 		4B66DFA6233149D4002AD206 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66DFA5233149D4002AD206 /* Storage.swift */; };
 		4B6937C92162930D00746CCF /* EasyPeasy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B463D7B20D4C72D0053A4FF /* EasyPeasy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B86A48B1F969AD6002D54FE /* Verge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B86A4891F969AD6002D54FE /* Verge.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -82,6 +81,8 @@
 		4BAE9FEE21DFB6A0003DDF3D /* RxSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FCB21DFA119003DDF3D /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BAE9FEF21DFB6AF003DDF3D /* RxFuture.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FCA21DFA119003DDF3D /* RxFuture.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BC864E823376DD5002FEF62 /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864E723376DD5002FEF62 /* Reducer.swift */; };
+		4BC864EA23377066002FEF62 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864E923377066002FEF62 /* Adapter.swift */; };
+		4BC864EC23377269002FEF62 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864EB23377269002FEF62 /* Atomic.swift */; };
 		4BD85F2B2331202C00FD04E9 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD85F2A2331202C00FD04E9 /* Utility.swift */; };
 		4BD85F2D2331213800FD04E9 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BD85F2C2331213800FD04E9 /* SwiftUI.framework */; };
 		4BD85F312331247B00FD04E9 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD85F302331247B00FD04E9 /* MainTabView.swift */; };
@@ -200,7 +201,6 @@
 		4B66DF9D23314955002AD206 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		4B66DF9F2331496B002AD206 /* ScopedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedStore.swift; sourceTree = "<group>"; };
 		4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIBinder.swift; sourceTree = "<group>"; };
-		4B66DFA3233149A5002AD206 /* StoreBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBase.swift; sourceTree = "<group>"; };
 		4B66DFA5233149D4002AD206 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		4B86A4861F969AD5002D54FE /* Verge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Verge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B86A4891F969AD6002D54FE /* Verge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Verge.h; sourceTree = "<group>"; };
@@ -234,6 +234,8 @@
 		4BAE9FE721DFA6F6003DDF3D /* RxFuture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxFuture.framework; path = Carthage/Build/Mac/RxFuture.framework; sourceTree = "<group>"; };
 		4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Verge+Extension.swift"; sourceTree = "<group>"; };
 		4BC864E723376DD5002FEF62 /* Reducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reducer.swift; sourceTree = "<group>"; };
+		4BC864E923377066002FEF62 /* Adapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Adapter.swift; sourceTree = "<group>"; };
+		4BC864EB23377269002FEF62 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		4BD85F2A2331202C00FD04E9 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		4BD85F302331247B00FD04E9 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -522,11 +524,12 @@
 				4B93EC7523307656002BB30B /* VergeNeue.swift */,
 				4BC864E723376DD5002FEF62 /* Reducer.swift */,
 				4B66DFA5233149D4002AD206 /* Storage.swift */,
-				4B66DFA3233149A5002AD206 /* StoreBase.swift */,
 				4B66DF9D23314955002AD206 /* Store.swift */,
+				4BC864E923377066002FEF62 /* Adapter.swift */,
 				4B66DF9F2331496B002AD206 /* ScopedStore.swift */,
 				4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */,
 				4B495D01233266ED0098F7B4 /* StoreLogger.swift */,
+				4BC864EB23377269002FEF62 /* Atomic.swift */,
 			);
 			path = VergeNeue;
 			sourceTree = "<group>";
@@ -1066,9 +1069,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B93EC7623307656002BB30B /* VergeNeue.swift in Sources */,
+				4BC864EA23377066002FEF62 /* Adapter.swift in Sources */,
 				4B66DF9E23314955002AD206 /* Store.swift in Sources */,
 				4BC864E823376DD5002FEF62 /* Reducer.swift in Sources */,
-				4B66DFA4233149A5002AD206 /* StoreBase.swift in Sources */,
+				4BC864EC23377269002FEF62 /* Atomic.swift in Sources */,
 				4B66DFA02331496B002AD206 /* ScopedStore.swift in Sources */,
 				4B495D02233266ED0098F7B4 /* StoreLogger.swift in Sources */,
 				4B66DFA22331497B002AD206 /* SwiftUIBinder.swift in Sources */,

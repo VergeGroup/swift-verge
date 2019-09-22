@@ -8,22 +8,24 @@
 
 import Foundation
 
-public final class ScopedStore<SourceReducer: ModularReducerType, Reducer: ModularReducerType>: StoreBase<Reducer> {
+public final class ScopedStore<Reducer: ModularReducerType> {
   
-  public typealias SourceState = SourceReducer.TargetState
+  public typealias Action = Reducer.ScopedAction
+  public typealias State = Reducer.TargetState
+  public typealias SourceState = Reducer.ParentReducer.TargetState
   
-  public override var state: State {
+  public var state: State {
     storage.value[keyPath: scopeSelector]
   }
   
-  public let sourceStore: Store<SourceReducer>
+  public let sourceStore: Store<Reducer.ParentReducer>
   
   private let reducer: Reducer
-  let storage: Storage<SourceState>
+  let storage: Storage<Reducer.ParentReducer.TargetState>
   private let scopeSelector: WritableKeyPath<SourceState, State>
   
   init(
-    sourceStore: Store<SourceReducer>,
+    sourceStore: Store<Reducer.ParentReducer>,
     scopeSelector: WritableKeyPath<SourceState, State>,
     reducer: Reducer
   ) {
@@ -36,14 +38,14 @@ public final class ScopedStore<SourceReducer: ModularReducerType, Reducer: Modul
   }
   
   @discardableResult
-  public override func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
-    let context = DispatchContext<Reducer>.init(store: self)
+  public func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.ScopedAction<ReturnType>) -> ReturnType {
+    let context = ScopedDispatchContext<Reducer>.init(store: self)
     let action = makeAction(reducer)
     let result = action.action(context)
     return result
   }
   
-  public override func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
+  public func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
     let mutation = makeMutation(reducer)
     storage.update { (sourceState) in
       mutation.mutate(&sourceState[keyPath: scopeSelector])

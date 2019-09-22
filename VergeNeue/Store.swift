@@ -8,11 +8,11 @@
 
 import Foundation
 
-open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
+open class Store<Reducer: ModularReducerType> {
     
   public typealias State = Reducer.TargetState
   
-  public final override var state: State {
+  public final var state: State {
     storage.value
   }
   
@@ -25,6 +25,8 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
   private var _deinit: () -> Void = {}
   
   private let logger: StoreLogger?
+  
+  @_Atomic private var adapters: [AdapterBase<Reducer>] = []
       
   public init(
     reducer: Reducer,
@@ -34,7 +36,6 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
     self.reducer = reducer
     self.logger = logger
     
-    super.init()
     #if DEBUG
     print("Init", self)
     #endif
@@ -71,20 +72,30 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
     _deinit()
   }
   
+  // MARK: - Functions
+  
+  public func addAdapter(_ adapter: AdapterBase<Reducer>) {
+    adapters.append(adapter)
+  }
+  
+  public func removeAdapter(_ adapter: AdapterBase<Reducer>) {
+    adapters.removeAll { $0 === adapter }
+  }
+  
   private func notify(newParentState: Reducer.ParentReducer.TargetState) {
     reducer.parentChanged(newState: newParentState)
   }
 
   @discardableResult
-  public final override func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
-    let context = DispatchContext<Reducer>.init(store: self)
+  public final func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
+    let context = StoreDispatchContext<Reducer>.init(store: self)
     let action = makeAction(reducer)
     let result = action.action(context)
     logger?.didDispatch(store: self, state: state, action: action.metadata)
     return result
   }
   
-  public final override func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
+  public final func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
             
     let mutation = makeMutation(reducer)
     
@@ -98,12 +109,12 @@ open class Store<Reducer: ModularReducerType>: StoreBase<Reducer> {
     }
   }
   
-  public final func makeScoped<ScopedState, ScopedReducer: ModularReducerType>(
-    scope: WritableKeyPath<State, ScopedState>,
+  public final func makeScoped<ScopedReducer: ModularReducerType>(
+    scope: WritableKeyPath<State, ScopedReducer.TargetState>,
     reducer: ScopedReducer
-  ) -> ScopedStore<Reducer, ScopedReducer> where ScopedReducer.TargetState == ScopedState {
-    
-    let scopedStore = ScopedStore<Reducer, ScopedReducer>(
+  ) -> ScopedStore<ScopedReducer> where ScopedReducer.ParentReducer == Reducer {
+        
+    let scopedStore = ScopedStore<ScopedReducer>(
       sourceStore: self,
       scopeSelector: scope,
       reducer: reducer

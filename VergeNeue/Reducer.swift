@@ -10,17 +10,17 @@ import Foundation
 
 public protocol ModularReducerType {
   associatedtype TargetState
+  associatedtype ParentReducer: ModularReducerType
   
   typealias Mutation = _Mutation<TargetState>
   typealias Action<ReturnType> = _Action<Self, ReturnType>
+  typealias ScopedAction<ReturnType> = _ScopedAction<Self, ReturnType>
   
   typealias StoreType = Store<Self>
-  typealias ScopedStoreType = ScopedStore<ParentReducer, Self>
-  typealias DispatchContext = VergeNeue.DispatchContext<Self>
+  typealias ScopedStoreType = ScopedStore<Self>
   
   func makeInitialState() -> TargetState
   
-  associatedtype ParentReducer: ModularReducerType
   func parentChanged(newState: ParentReducer.TargetState)
 }
 

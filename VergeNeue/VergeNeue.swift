@@ -38,7 +38,7 @@ public struct _Mutation<State> {
 
 public struct _Action<Reducer: ModularReducerType, ReturnType> {
   
-  let action: (DispatchContext<Reducer>) -> ReturnType
+  let action: (StoreDispatchContext<Reducer>) -> ReturnType
   
   public let metadata: ActionMetadata
   
@@ -47,29 +47,67 @@ public struct _Action<Reducer: ModularReducerType, ReturnType> {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    action: @escaping (DispatchContext<Reducer>) -> ReturnType) {
+    action: @escaping (StoreDispatchContext<Reducer>) -> ReturnType) {
     self.action = action
     self.metadata = .init(name: name, file: file, function: function, line: line)
 
   }
 }
 
-
-
-public final class DispatchContext<Reducer: ModularReducerType> {
+public struct _ScopedAction<Reducer: ModularReducerType, ReturnType> {
   
-  private let store: StoreBase<Reducer>
+  let action: (ScopedDispatchContext<Reducer>) -> ReturnType
+  
+  public let metadata: ActionMetadata
+  
+  public init(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    action: @escaping (ScopedDispatchContext<Reducer>) -> ReturnType) {
+    self.action = action
+    self.metadata = .init(name: name, file: file, function: function, line: line)
+    
+  }
+}
+
+public final class StoreDispatchContext<Reducer: ModularReducerType> {
+  
+  private let store: Store<Reducer>
   
   public var state: Reducer.TargetState {
     return store.state
   }
   
-  init(store: StoreBase<Reducer>) {
+  init(store: Store<Reducer>) {
     self.store = store
   }
   
   @discardableResult
   public func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
+    store.dispatch(makeAction)
+  }
+  
+  public func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
+    store.commit(makeMutation)
+  }
+}
+
+public final class ScopedDispatchContext<Reducer: ModularReducerType> {
+  
+  private let store: ScopedStore<Reducer>
+  
+  public var state: Reducer.TargetState {
+    return store.state
+  }
+  
+  init(store: ScopedStore<Reducer>) {
+    self.store = store
+  }
+  
+  @discardableResult
+  public func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.ScopedAction<ReturnType>) -> ReturnType {
     store.dispatch(makeAction)
   }
   
