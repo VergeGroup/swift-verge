@@ -74,12 +74,17 @@ open class Store<Reducer: ModularReducerType> {
   
   // MARK: - Functions
   
-  public func addAdapter(_ adapter: AdapterBase<Reducer>) {
+  @discardableResult
+  public func addAdapter(_ adapter: AdapterBase<Reducer>) -> Self {
     adapters.append(adapter)
+    adapter.store = self
+    return self
   }
   
-  public func removeAdapter(_ adapter: AdapterBase<Reducer>) {
+  @discardableResult
+  public func removeAdapter(_ adapter: AdapterBase<Reducer>) -> Self {
     adapters.removeAll { $0 === adapter }
+    return self
   }
   
   private func notify(newParentState: Reducer.ParentReducer.TargetState) {

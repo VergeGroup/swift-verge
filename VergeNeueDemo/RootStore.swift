@@ -13,3 +13,4 @@ let rootStore = Store(
   reducer: RootReducer(),
   logger: MyStoreLogger.default
 )
+  .addAdapter(PollingAdapter())

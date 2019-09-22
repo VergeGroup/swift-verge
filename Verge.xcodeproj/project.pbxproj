@@ -83,6 +83,7 @@
 		4BC864E823376DD5002FEF62 /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864E723376DD5002FEF62 /* Reducer.swift */; };
 		4BC864EA23377066002FEF62 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864E923377066002FEF62 /* Adapter.swift */; };
 		4BC864EC23377269002FEF62 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864EB23377269002FEF62 /* Atomic.swift */; };
+		4BC864EE23377A4F002FEF62 /* PollingAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864ED23377A4F002FEF62 /* PollingAdapter.swift */; };
 		4BD85F2B2331202C00FD04E9 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD85F2A2331202C00FD04E9 /* Utility.swift */; };
 		4BD85F2D2331213800FD04E9 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BD85F2C2331213800FD04E9 /* SwiftUI.framework */; };
 		4BD85F312331247B00FD04E9 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD85F302331247B00FD04E9 /* MainTabView.swift */; };
@@ -236,6 +237,7 @@
 		4BC864E723376DD5002FEF62 /* Reducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reducer.swift; sourceTree = "<group>"; };
 		4BC864E923377066002FEF62 /* Adapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Adapter.swift; sourceTree = "<group>"; };
 		4BC864EB23377269002FEF62 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
+		4BC864ED23377A4F002FEF62 /* PollingAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingAdapter.swift; sourceTree = "<group>"; };
 		4BD85F2A2331202C00FD04E9 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		4BD85F302331247B00FD04E9 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -399,6 +401,7 @@
 		4B4AEB1023310D40000709D9 /* VergeNeueDemo */ = {
 			isa = PBXGroup;
 			children = (
+				4BC864ED23377A4F002FEF62 /* PollingAdapter.swift */,
 				4B495D03233269160098F7B4 /* SharedLogger.swift */,
 				4BECC823233133FC00D6A0A1 /* Env.swift */,
 				4BECC81C2331331F00D6A0A1 /* Models */,
@@ -1006,6 +1009,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BECC81E2331332B00D6A0A1 /* Photo.swift in Sources */,
+				4BC864EE23377A4F002FEF62 /* PollingAdapter.swift in Sources */,
 				4BECC8202331336200D6A0A1 /* MockDatabase.swift in Sources */,
 				4B4AEB2F233114E7000709D9 /* RootStore.swift in Sources */,
 				4B1A384D2332B85800AA5BD6 /* PhotoDetailView.swift in Sources */,
