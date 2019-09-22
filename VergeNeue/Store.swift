@@ -18,7 +18,7 @@ open class Store<Reducer: ModularReducerType> {
   
   let storage: Storage<State>
   
-  private let reducer: Reducer
+  public let reducer: Reducer
   
   private let lock = NSLock()
   
