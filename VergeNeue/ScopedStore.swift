@@ -12,7 +12,7 @@ public final class ScopedStore<Reducer: ScopedReducerType> {
   
   public typealias Action = Reducer.ScopedAction
   public typealias State = Reducer.TargetState
-  public typealias SourceState = Reducer.SourceReducer.TargetState
+  public typealias SourceState = Reducer.SourceReducer.State
   
   public var state: State {
     storage.value[keyPath: scopeSelector]
@@ -21,7 +21,7 @@ public final class ScopedStore<Reducer: ScopedReducerType> {
   public let sourceStore: Store<Reducer.SourceReducer>
   
   private let reducer: Reducer
-  let storage: Storage<Reducer.SourceReducer.TargetState>
+  let storage: Storage<Reducer.SourceReducer.State>
   private let scopeSelector: WritableKeyPath<SourceState, State>
   
   init(

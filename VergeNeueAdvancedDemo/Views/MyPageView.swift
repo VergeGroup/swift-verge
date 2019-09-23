@@ -19,13 +19,13 @@ struct MyPageView: View {
   var body: some View {
     NavigationView {
       List {
-        aboutMe(me: store.state.me)
+        Self.aboutMe(me: store.state.me)
       }
       .navigationBarTitle("MyPage")
     }
   }
   
-  private func aboutMe(me: LoggedInState.Me) -> some View {
+  static func aboutMe(me: LoggedInState.Me) -> some View {
     HStack {
       
       HStack {
@@ -36,6 +36,7 @@ struct MyPageView: View {
         
       }
       
+      Spacer()
 
       HStack() {
         
@@ -72,3 +73,18 @@ struct MyPageView: View {
   }
 }
 
+#if DEBUG
+
+struct Previews: PreviewProvider {
+  static var previews: some View {
+    Group {
+      MyPageView.aboutMe(me: .init())
+      
+      List {
+         MyPageView.aboutMe(me: .init())
+      }
+    }
+  }
+}
+
+#endif

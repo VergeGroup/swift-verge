@@ -87,7 +87,7 @@ public final class StoreDispatchContext<Reducer: ModularReducerType> {
   
   private let store: Store<Reducer>
   
-  public var state: Reducer.TargetState {
+  public var state: Reducer.State {
     return store.state
   }
   

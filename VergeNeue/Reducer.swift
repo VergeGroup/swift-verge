@@ -16,33 +16,50 @@ public protocol ScopedReducerType {
   typealias Mutation = _Mutation<TargetState>
   typealias ScopedAction<ReturnType> = _ScopedAction<Self, ReturnType>
   
-  var scopeKeyPath: WritableKeyPath<SourceReducer.TargetState, TargetState> { get }
+  var scopeKeyPath: WritableKeyPath<SourceReducer.State, TargetState> { get }
 }
 
 public protocol ModularReducerType {
-  associatedtype TargetState
+  associatedtype State
   associatedtype ParentReducer: ModularReducerType
   
-  typealias Mutation = _Mutation<TargetState>
+  typealias Mutation = _Mutation<State>
   typealias Action<ReturnType> = _Action<Self, ReturnType>
   
   typealias StoreType = Store<Self>
   
-  func makeInitialState() -> TargetState
+  func makeInitialState() -> State
   
-  func parentChanged(newState: ParentReducer.TargetState, store: Store<Self>)
+  func usingAdapters() -> [AdapterBase<Self>]
+  
+  func parentChanged(newState: ParentReducer.State, store: Store<Self>)
+}
+
+extension ModularReducerType {
+  
+  public func usingAdapters() -> [AdapterBase<Self>] {
+    []
+  }
+  
+  public func parentChanged(newState: ParentReducer.State, store: Store<Self>) {
+    
+  }
+  
 }
 
 extension Never: ModularReducerType {
-  public typealias TargetState = Never
+  public typealias State = Never
   public typealias ParentReducer = Never
   public func makeInitialState() -> Never {
+    fatalError()
+  }
+  public func usingAdapters() -> [AdapterBase<Never>] {
     fatalError()
   }
 }
 
 extension ModularReducerType where ParentReducer == Never {
-  public func parentChanged(newState: ParentReducer.TargetState, store: Store<Self>) {}
+  public func parentChanged(newState: ParentReducer.State, store: Store<Self>) {}
 }
 
 public protocol ReducerType: ModularReducerType where ParentReducer == Never {

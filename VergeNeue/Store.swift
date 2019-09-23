@@ -8,9 +8,13 @@
 
 import Foundation
 
-open class Store<Reducer: ModularReducerType> {
+open class Store<Reducer: ModularReducerType>: Identifiable {
+  
+  public var id: ObjectIdentifier {
+    return ObjectIdentifier(self)
+  }
     
-  public typealias State = Reducer.TargetState
+  public typealias State = Reducer.State
   
   public final var state: State {
     storage.value
@@ -27,18 +31,15 @@ open class Store<Reducer: ModularReducerType> {
   private let logger: StoreLogger?
   
   @_Atomic private var adapters: [AdapterBase<Reducer>] = []
-      
-  public init(
+  
+  fileprivate init(
     reducer: Reducer,
-    logger: StoreLogger? = nil
+    logger: StoreLogger?,
+    dummy: Void
   ) {
     self.storage = .init(reducer.makeInitialState())
     self.reducer = reducer
     self.logger = logger
-    
-    #if DEBUG
-    print("Init", self)
-    #endif
   }
   
   public convenience init<ParentReducer: ReducerType>(
@@ -49,7 +50,7 @@ open class Store<Reducer: ModularReducerType> {
     where Reducer.ParentReducer == ParentReducer
   {
             
-    self.init(reducer: reducer, logger: logger)
+    self.init(reducer: reducer, logger: logger, dummy: ())
     
     let parentSubscripton = parentStore.storage.add { [weak self] (state) in
       self?.notify(newParentState: state)
@@ -87,7 +88,7 @@ open class Store<Reducer: ModularReducerType> {
     return self
   }
   
-  private func notify(newParentState: Reducer.ParentReducer.TargetState) {
+  private func notify(newParentState: Reducer.ParentReducer.State) {
     reducer.parentChanged(newState: newParentState, store: self)
   }
   
@@ -131,4 +132,14 @@ open class Store<Reducer: ModularReducerType> {
     return scopedStore
   }
   
+}
+
+extension Store where Reducer : ReducerType {
+    
+  public convenience init(
+    reducer: Reducer,
+    logger: StoreLogger? = nil
+  ) {
+    self.init(reducer: reducer, logger: logger, dummy: ())
+  }
 }

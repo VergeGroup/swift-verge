@@ -39,7 +39,7 @@ extension HomeView {
       NetworkImageView(url: photo.url)
         .frame(width: nil, height: 120, alignment: .top)
         .clipped()
-                
+
       Text(photo.id)
       
       Text("Comments:")

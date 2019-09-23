@@ -13,15 +13,15 @@ import VergeNeue
 
 struct FeedView: View {
   
-  @ObservedObject var store: Store<LoggedInReducer>
+  @ObservedObject var store: Store<FeedViewReducer>
   
   @State var selectedValue: DynamicFeedPost?
   
   var body: some View {
     NavigationView {
-      List(store.state.fetchedPosts, selection: $selectedValue) { (item) in
-        NavigationLink(destination: IssueDetailView(store: self.store, post: item)) {
-          issueCell(issue: item)
+      List(store.state.posts, selection: $selectedValue) { (post) in
+        NavigationLink(destination: PhotoDetailView(store: store)) {
+          self.cell(post: post)
         }
       }
       .navigationBarTitle("Feed")
@@ -35,15 +35,16 @@ struct FeedView: View {
     }
     
   }
-}
-
-fileprivate func issueCell(issue: DynamicFeedPost) -> some View {
-  
-  ZStack {
-    VStack {
-      NetworkImageView(url: URL(string: issue.imageURLString.value)!)
-        .frame(width: 100, height: 100, alignment: .center)
-        .clipped()
+    
+  private func cell(post: DynamicFeedPost) -> some View {
+    
+    ZStack {
+      VStack {
+        NetworkImageView(url: URL(string: issue.imageURLString.value)!)
+          .frame(width: 100, height: 100, alignment: .center)
+          .clipped()
+      }
     }
   }
 }
+

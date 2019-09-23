@@ -12,7 +12,7 @@ import Combine
 import VergeNeue
 
 final class SessionStateReducer: ReducerType {
-  typealias TargetState = SessionState
+  typealias State = SessionState
   private var subscriptions = Set<AnyCancellable>()
   
   private let queue = DispatchQueue.global(qos: .default)

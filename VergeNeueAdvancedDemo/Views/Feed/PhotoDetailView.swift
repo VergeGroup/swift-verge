@@ -11,20 +11,9 @@ import SwiftUI
 import VergeNeue
 import CoreStore
 
-struct IssueDetailView: View {
+struct PhotoDetailView: View {
   
-  @ObservedObject var store: Store<LoggedInReducer>
-  
-  let post: DynamicFeedPost
-  
-  private var comments: [DynamicFeedPostComment] {
-    try! store.reducer.service.coreStore
-      .fetchAll(
-        From<DynamicFeedPostComment>()
-          .orderBy(.descending(\.updatedAt))
-          .where(\.post == self.post)
-    )
-  }
+  @ObservedObject var store: Store<PhotoDetailReducer>
   
   var body: some View {
     VStack {

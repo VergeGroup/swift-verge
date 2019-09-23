@@ -34,7 +34,7 @@ struct RootState {
 }
 
 final class RootReducer: ReducerType {
-  typealias TargetState = RootState
+  typealias State = RootState
   
   func makeInitialState() -> RootState {
     .init()

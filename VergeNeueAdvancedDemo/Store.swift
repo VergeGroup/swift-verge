@@ -19,28 +19,26 @@ extension DynamicFeedPost: Swift.Identifiable {
   }
 }
 
-struct LoggedInState {
-  
-  struct Me {
+struct LoggedInReducer: ReducerType {
+   
+  struct State {
     
-    var accountName: String = "muukii.app"
+    struct Me {
+      
+      var accountName: String = "muukii.app"
+      
+      var introduction: String = "I'm an iOS Developer"
+      
+      var postCount: Int = 123
+      var followerCount: Int = 379
+      var followingCount: Int = 1000
+    }
     
-    var introduction: String = "I'm an iOS Developer"
+    let feedStore: Store<FeedViewReducer>
     
-    var postCount: Int = 123
-    var followerCount: Int = 379
-    var followingCount: Int = 1000
+    var me: Me = .init()
+    
   }
-  
-  var fetchedPosts: [DynamicFeedPost] = []
-  
-  var me: Me = .init()
-  
-}
-
-final class LoggedInReducer: ReducerType {
-  
-  typealias TargetState = LoggedInState
   
   let service: Service
   private var subscriptions = Set<AnyCancellable>()
@@ -49,16 +47,10 @@ final class LoggedInReducer: ReducerType {
     self.service = service
   }
   
-  func makeInitialState() -> LoggedInState {
-    .init()
+  func makeInitialState() -> State {
+    .init(feedStore: .init(reducer: .init(service: service), registerParent: self))
   }
-  
-  func fetchPosts() -> Action<Void> {
-    Action<Void> { context in
-      _ = self.service.fetchPhoto()
-    }
-  }
-    
+      
   func addNewComment(target item: DynamicFeedPost) -> Action<Void> {
     Action<Void> { context in
       
@@ -75,42 +67,42 @@ final class LoggedInReducer: ReducerType {
   
 }
 
-final class ExternalDataIntegrationAdapter: AdapterBase<LoggedInReducer>, ListObserver {
-  
-  typealias ListEntityType = DynamicFeedPost
-  
-  private let listMonitor = CoreStore.monitorList(From<DynamicFeedPost>().orderBy(.descending(\.updatedAt)))
-  
-  override init() {
-    
-    super.init()
-    
-    self.listMonitor.addObserver(self)
-  }
-  
-  func listMonitorDidChange(_ monitor: ListMonitor<DynamicFeedPost>) {
-    
-    run { (store) in
-      
-      store.dispatch { _ in
-        Action<Void> { c in
-          guard c.state.fetchedPosts != monitor.objectsInAllSections() else { return }
-          c.commit { _ in
-            Mutation { s in
-              s.fetchedPosts = monitor.objectsInAllSections()
-            }
-          }
-        }
-        
-      }
-      
-    }
-  }
-  
-  func listMonitorDidRefetch(_ monitor: ListMonitor<DynamicFeedPost>) {
-    
-  }
-  
-}
-
+//final class ExternalDataIntegrationAdapter: AdapterBase<LoggedInReducer>, ListObserver {
+//  
+//  typealias ListEntityType = DynamicFeedPost
+//  
+//  private let listMonitor = CoreStore.monitorList(From<DynamicFeedPost>().orderBy(.descending(\.updatedAt)))
+//  
+//  override init() {
+//    
+//    super.init()
+//    
+//    self.listMonitor.addObserver(self)
+//  }
+//  
+//  func listMonitorDidChange(_ monitor: ListMonitor<DynamicFeedPost>) {
+//    
+//    run { (store) in
+//      
+//      store.dispatch { _ in
+//        Action<Void> { c in
+//          guard c.state.fetchedPosts != monitor.objectsInAllSections() else { return }
+//          c.commit { _ in
+//            Mutation { s in
+//              s.fetchedPosts = monitor.objectsInAllSections()
+//            }
+//          }
+//        }
+//        
+//      }
+//      
+//    }
+//  }
+//  
+//  func listMonitorDidRefetch(_ monitor: ListMonitor<DynamicFeedPost>) {
+//    
+//  }
+//  
+//}
+//
 

@@ -17,5 +17,5 @@ enum AppContainer {
   static let store = Store(
     reducer: LoggedInReducer(service: AppContainer.service)
   )
-    .addAdapter(ExternalDataIntegrationAdapter())
+//    .addAdapter(ExternalDataIntegrationAdapter())
 }
