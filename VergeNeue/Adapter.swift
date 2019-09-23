@@ -10,6 +10,9 @@ import Foundation
 
 open class AdapterBase<Reducer: ModularReducerType> {
   
+  public typealias Action = Reducer.Action
+  public typealias Mutation = Reducer.Mutation
+  
   weak var store: Store<Reducer>?
   
   public init() {}

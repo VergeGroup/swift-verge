@@ -21,8 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       CoreStoreSchema(
         modelVersion: "v1",
         entities: [
-          Entity<Comment>("Comment"),
-          Entity<Issue>("Issuee")
+          Entity<DynamicFeedPostComment>("Comment"),
+          Entity<DynamicFeedPost>("Issuee"),
+          Entity<DynamicUser>("User")
         ]
       )
     )

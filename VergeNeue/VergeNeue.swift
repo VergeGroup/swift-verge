@@ -36,7 +36,14 @@ public struct _Mutation<State> {
   }
 }
 
-public struct _Action<Reducer: ModularReducerType, ReturnType> {
+/// For supports Xcode code completion
+public protocol _ActionType {
+  associatedtype Reducer: ModularReducerType
+  associatedtype ReturnType
+  func asAction() -> _Action<Reducer, ReturnType>
+}
+
+public struct _Action<Reducer: ModularReducerType, ReturnType>: _ActionType {
   
   let action: (StoreDispatchContext<Reducer>) -> ReturnType
   
@@ -51,6 +58,10 @@ public struct _Action<Reducer: ModularReducerType, ReturnType> {
     self.action = action
     self.metadata = .init(name: name, file: file, function: function, line: line)
 
+  }
+  
+  public func asAction() -> _Action<Reducer, ReturnType> {
+    return self
   }
 }
 

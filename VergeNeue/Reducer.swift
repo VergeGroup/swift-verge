@@ -30,7 +30,7 @@ public protocol ModularReducerType {
   
   func makeInitialState() -> TargetState
   
-  func parentChanged(newState: ParentReducer.TargetState)
+  func parentChanged(newState: ParentReducer.TargetState, store: Store<Self>)
 }
 
 extension Never: ModularReducerType {
@@ -42,7 +42,7 @@ extension Never: ModularReducerType {
 }
 
 extension ModularReducerType where ParentReducer == Never {
-  public func parentChanged(newState: ParentReducer.TargetState) {}
+  public func parentChanged(newState: ParentReducer.TargetState, store: Store<Self>) {}
 }
 
 public protocol ReducerType: ModularReducerType where ParentReducer == Never {

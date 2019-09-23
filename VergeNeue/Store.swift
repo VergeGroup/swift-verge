@@ -88,13 +88,13 @@ open class Store<Reducer: ModularReducerType> {
   }
   
   private func notify(newParentState: Reducer.ParentReducer.TargetState) {
-    reducer.parentChanged(newState: newParentState)
+    reducer.parentChanged(newState: newParentState, store: self)
   }
-
+  
   @discardableResult
-  public final func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
+  public final func dispatch<Action: _ActionType>(_ makeAction: (Reducer) -> Action) -> Action.ReturnType where Action.Reducer == Reducer {
     let context = StoreDispatchContext<Reducer>.init(store: self)
-    let action = makeAction(reducer)
+    let action = makeAction(reducer).asAction()
     let result = action.action(context)
     logger?.didDispatch(store: self, state: state, action: action.metadata)
     return result
@@ -112,6 +112,10 @@ open class Store<Reducer: ModularReducerType> {
     storage.update { (state) in
       mutation.mutate(&state)
     }
+  }
+  
+  public final func inlineCommit(_ makeMutation: () -> Reducer.Mutation) {
+    commit { _ in makeMutation() }
   }
   
   public final func makeScoped<ScopedReducer: ScopedReducerType>(

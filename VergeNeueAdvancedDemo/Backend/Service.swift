@@ -10,6 +10,7 @@ import Foundation
 import Combine
 import CoreStore
 
+/// To simulate using SDK
 final class Service {
   
   let coreStore = CoreStore.defaultStack
@@ -18,31 +19,35 @@ final class Service {
     
   }
   
-  func createIssue(title: String, body: String) -> Future<Void, Never> {
+  func fetchPhoto() -> Future<Void, Never> {
+    
     return .init { promise in
-            
       self.coreStore.perform(asynchronous: { (t: AsynchronousDataTransaction) -> Void in
-        let issue = t.create(Into<Issue>())
-        issue.rawID .= UUID().uuidString
-        issue.updatedAt .= Date()
-        issue.title .= title
-        issue.body .= body
+        
+        DynamicFeedPost.imageURLs.forEach { url in
+          let post = t.create(Into<DynamicFeedPost>())
+          post.rawID .= UUID().uuidString
+          post.updatedAt .= Date()
+          post.imageURLString .= url.absoluteString
+        }
+        
       }) { (r) in
         promise(.success(()))
-      }            
+      }
     }
-    
+            
   }
+ 
   
-  func addComment(body: String, target issue: Issue) -> Future<Void, Never> {
+  func addComment(body: String, target post: DynamicFeedPost) -> Future<Void, Never> {
     return .init { promise in
                   
       self.coreStore.perform(asynchronous: { (t: AsynchronousDataTransaction) -> Void in
-        let comment = t.create(Into<Comment>())
-        let issue = t.edit(issue)!
+        let comment = t.create(Into<DynamicFeedPostComment>())
+        let post = t.edit(post)!
         comment.rawID .= UUID().uuidString
         comment.updatedAt .= Date()
-        comment.issue .= issue
+        comment.post .= post
         comment.body .= body
       }) { (r) in
         promise(.success(()))
