@@ -12,9 +12,7 @@ import SwiftUI
 import VergeNeue
 
 struct ActivityView: View {
-  
-  @ObservedObject var store: Store<LoggedInReducer>
-  
+    
   var body: some View {
     NavigationView {
       Text("")

@@ -9,7 +9,8 @@
 import Foundation
 
 import SwiftUI
-import VergeNeue
+import VergeStore
+
 import CoreStore
 import Combine
 
@@ -19,50 +20,24 @@ extension DynamicFeedPost: Swift.Identifiable {
   }
 }
 
-struct LoggedInReducer: ReducerType {
-   
-  struct State {
-    
-    struct Me {
-      
-      var accountName: String = "muukii.app"
-      
-      var introduction: String = "I'm an iOS Developer"
-      
-      var postCount: Int = 123
-      var followerCount: Int = 379
-      var followingCount: Int = 1000
-    }
-    
-    let feedStore: Store<FeedViewReducer>
-    
-    var me: Me = .init()
-    
-  }
+struct LoggedInState {
   
-  let service: Service
-  private var subscriptions = Set<AnyCancellable>()
+}
+
+final class LoggedInStore: StoreBase<LoggedInState> {
+  
+  
+  let feedStore: FeedViewStore
+  
+  let mypageStore: MyPageViewStore
   
   init(service: Service) {
-    self.service = service
-  }
-  
-  func makeInitialState() -> State {
-    .init(feedStore: .init(reducer: .init(service: service), registerParent: self))
-  }
-      
-  func addNewComment(target item: DynamicFeedPost) -> Action<Void> {
-    Action<Void> { context in
-      
-      _ = self.service.addComment(body: Lorem.title, target: item)
-      
-      /**
-       self.service.coreStore.fetchAll(From<DynamicFeedPostComment>()
-       .orderBy(.descending(\.updatedAt))
-       .where(\.post == self.issue))
-       */
-      
-    }
+    
+    self.feedStore = .init(service: service)
+    self.mypageStore = .init(service: service)
+    
+    super.init(initialState: .init(), logger: MyStoreLogger.default)
+    
   }
   
 }

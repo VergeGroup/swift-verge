@@ -8,7 +8,9 @@
 
 import Foundation
 
-import VergeNeue
+import CoreStore
+
+import VergeStore
 
 struct PhotoDetailState {
   
@@ -16,20 +18,47 @@ struct PhotoDetailState {
   var comments: [DynamicFeedPostComment] = []
 }
 
-struct PhotoDetailReducer: ModularReducerType {
-    
-  typealias State = PhotoDetailState
-  typealias ParentReducer = FeedViewReducer
+final class PhotoDetailStore: StoreBase<PhotoDetailState>, ListObserver {
   
+  typealias ListEntityType = DynamicFeedPostComment
+    
   let service: Service
-  let photo: DynamicFeedPost
-     
-  func makeInitialState() -> PhotoDetailState {
-    .init(post: photo)
+  
+  private let listMonitor: ListMonitor<DynamicFeedPostComment>
+ 
+  init(service: Service, post: DynamicFeedPost) {
+    
+    self.service = service
+    
+    self.listMonitor = service.coreStore.monitorList(
+      From<DynamicFeedPostComment>()
+        .orderBy(.descending(\.updatedAt))
+        .where(\.post == post)
+    )
+    
+    super.init(initialState: .init(post: post), logger: MyStoreLogger.default)
+    
+    self.listMonitor.addObserver(self)
+    
+    commit {
+      $0.comments = self.listMonitor.objectsInAllSections()
+    }
+  }
+      
+  func addAnyComment() {
+    dispatch { c in
+      _ = service.addComment(body: Lorem.title, target: c.state.post)
+    }
   }
   
-  func parentChanged(newState: FeedViewState, store: Store<PhotoDetailReducer>) {
+  func listMonitorDidChange(_ monitor: ListMonitor<DynamicFeedPostComment>) {
+    commit {
+      $0.comments = monitor.objectsInAllSections()
+    }
+  }
+  
+  func listMonitorDidRefetch(_ monitor: ListMonitor<DynamicFeedPostComment>) {
     
   }
-  
+    
 }

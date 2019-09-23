@@ -8,36 +8,55 @@
 
 import Foundation
 
-import VergeNeue
+import VergeStore
+import CoreStore
 
 struct FeedViewState {
   
-  var posts: [Store<PhotoDetailReducer>] = []
+  var posts: [PhotoDetailStore] = []
   
 }
 
-final class FeedViewReducer: ModularReducerType {
-      
-  typealias State = FeedViewState
-  typealias ParentReducer = LoggedInReducer
+final class FeedViewStore: StoreBase<FeedViewState>, ListObserver {
   
+  typealias ListEntityType = DynamicFeedPost
+     
   let service: Service
+  private let listMonitor: ListMonitor<ListEntityType>
   
   init(service: Service) {
     self.service = service
-  }
-  
-  func makeInitialState() -> FeedViewState {
-    .init()
-  }
-  
-  func parentChanged(newState: LoggedInState, store: Store<FeedViewReducer>) {
+        
+    self.listMonitor = service.coreStore.monitorList(
+      From<ListEntityType>()
+        .orderBy(.ascending(\.updatedAt))
+    )
+
+    super.init(initialState: .init(), logger: MyStoreLogger.default)
     
+    self.listMonitor.addObserver(self)
+  }
+    
+  func fetchPosts() {
+    dispatch { context in
+      _ = service.fetchPhoto()
+    }
   }
   
-  func fetchPosts() -> Action<Void> {
-    Action<Void> { context in
-      _ = self.service.fetchPhoto()
+  func listMonitorDidChange(_ monitor: ListMonitor<DynamicFeedPost>) {
+    // Diff
+    commit { state in
+      state.posts += monitor.objectsInAllSections().filter { object in
+        !state.posts.contains { $0.state.post == object }
+      }
+      .map {
+        PhotoDetailStore(service: service, post: $0)
+      }
+    
     }
+  }
+  
+  func listMonitorDidRefetch(_ monitor: ListMonitor<DynamicFeedPost>) {
+    
   }
 }

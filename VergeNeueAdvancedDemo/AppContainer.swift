@@ -8,14 +8,10 @@
 
 import Foundation
 
-import VergeNeue
-
 enum AppContainer {
   
   static let service = Service()
   
-  static let store = Store(
-    reducer: LoggedInReducer(service: AppContainer.service)
-  )
+  static let store = LoggedInStore(service: service)
 //    .addAdapter(ExternalDataIntegrationAdapter())
 }

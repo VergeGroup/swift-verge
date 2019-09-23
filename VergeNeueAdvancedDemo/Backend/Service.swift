@@ -12,8 +12,10 @@ import CoreStore
 
 /// To simulate using SDK
 final class Service {
-  
+    
   let coreStore = CoreStore.defaultStack
+  
+  @Published var me: Me = .init()
     
   init() {
     

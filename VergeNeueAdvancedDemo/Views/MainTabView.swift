@@ -14,22 +14,22 @@ import VergeNeue
 
 struct MainTabView: View {
   
-  @ObservedObject var store: Store<LoggedInReducer>
+  @ObservedObject var store: LoggedInStore
   
   var body: some View {
     
     TabView {
-      FeedView(store: store)
+      FeedView(store: store.feedStore)
         .tabItem {
           Text("Home")
       }
       
-      ActivityView(store: store)
+      ActivityView()
         .tabItem {
           Text("Activity")
       }
       
-      MyPageView(store: store)
+      MyPageView(store: store.mypageStore)
         .tabItem {
           Text("MyPage")
       }

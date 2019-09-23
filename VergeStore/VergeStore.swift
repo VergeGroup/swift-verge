@@ -26,51 +26,11 @@ public struct ActionMetadata {
   
 }
 
-public struct _Mutation<State> {
-  
-  let mutate: (inout State) -> Void
-  
-  public let metadata: MutationMetadata
-  
-  public init(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    mutate: @escaping (inout State) -> Void
-  ) {
-    self.mutate = mutate
-    self.metadata = .init(name: name, file: file, function: function, line: line)
-  }
-}
-
-public struct _Action<Store: StoreType, ReturnType> {
-  
-  let action: (StoreDispatchContext<Store>) -> ReturnType
-  
-  public let metadata: ActionMetadata
-  
-  public init(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    action: @escaping (StoreDispatchContext<Store>) -> ReturnType) {
-    self.action = action
-    self.metadata = .init(name: name, file: file, function: function, line: line)
-    
-  }
-  
-//  public func asAction() -> _Action<Reducer, ReturnType> {
-//    return self
-//  }
-}
-
 public final class StoreDispatchContext<Store: StoreType> {
   
-  private let store: Store
+  public let store: Store
   
-  public var state: Store.State {
+  public var state: Store.UsingState {
     return store.state
   }
   
@@ -79,12 +39,26 @@ public final class StoreDispatchContext<Store: StoreType> {
   }
   
   @discardableResult
-  public func dispatch<ReturnType>(_ makeAction: (Store) -> _Action<Store, ReturnType>) -> ReturnType {
-    store.dispatch(makeAction)
+  public func dispatch<ReturnType>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: (StoreDispatchContext<Store>) -> ReturnType
+  ) -> ReturnType {
+    
+    store.dispatch(name, file, function, line, action)
   }
   
-  public func commit(_ makeMutation: (Store) -> _Mutation<Store.State>) {
-    store.commit(makeMutation)
+  public func commit(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ mutation: (inout Store.UsingState) -> Void
+  ) {
+    
+    store.commit(name, file, function, line, mutation)
   }
 }
 
@@ -97,15 +71,17 @@ public protocol StoreLogger {
 
 public protocol StoreType {
   
-  associatedtype State
-  var storage: Storage<State> { get }
+  associatedtype UsingState
+  var storage: Storage<UsingState> { get }
   var logger: StoreLogger? { get }
   
-  typealias Action<Return> = _Action<Self, Return>
-  typealias Mutation = _Mutation<State>
 }
 
-open class StoreBase<State>: StoreType {
+open class StoreBase<State>: StoreType, Identifiable {
+  
+  public var id: ObjectIdentifier {
+    .init(self)
+  }
       
   public let storage: Storage<State>
   
@@ -120,31 +96,48 @@ open class StoreBase<State>: StoreType {
 
 extension StoreType {
   
-  public var state: State {
+  public var state: UsingState {
     storage.value
   }
-  
-  public func dispatch<Return>(_ makeAction: (Self) -> Action<Return>) -> Return {
+    
+  @discardableResult
+  public func dispatch<ReturnType>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: (StoreDispatchContext<Self>) -> ReturnType
+  ) -> ReturnType {
+    
+    let metadata = ActionMetadata(name: name, file: file, function: function, line: line)
     
     let context = StoreDispatchContext<Self>.init(store: self)
-    let action = makeAction(self)
-    let result = action.action(context)
-    logger?.didDispatch(store: self, state: state, action: action.metadata)
+    let result = action(context)
+    logger?.didDispatch(store: self, state: state, action: metadata)
     return result
+    
   }
   
-  public func commit(_ makeMutation: (Self) -> Mutation) {
-    let mutation = makeMutation(self)
+  public func commit(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ mutation: (inout UsingState) -> Void
+  ) {
     
-    logger?.willCommit(store: self, state: state, mutation: mutation.metadata)
+    let metadata = MutationMetadata(name: name, file: file, function: function, line: line)
+        
+    logger?.willCommit(store: self, state: state, mutation: metadata)
     defer {
-      logger?.didCommit(store: self, state: state, mutation: mutation.metadata)
+      logger?.didCommit(store: self, state: state, mutation: metadata)
     }
     
     storage.update { (state) in
-      mutation.mutate(&state)
+      mutation(&state)
     }
   }
+  
 }
 
 #if canImport(Combine)

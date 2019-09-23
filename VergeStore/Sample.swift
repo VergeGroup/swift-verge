@@ -10,7 +10,7 @@ import Foundation
 
 #if DEBUG
 
-class MyStore: StoreBase<MyStore.State> {
+final class MyStore: StoreBase<MyStore.State> {
   
   struct State {
     var count: Int = 0
@@ -20,30 +20,22 @@ class MyStore: StoreBase<MyStore.State> {
     super.init(initialState: .init(), logger: nil)
   }
   
-  func increment() -> Mutation {
-    return .init {
+  func increment() {
+    commit {
       $0.count += 1
     }
   }
   
-  func asyncIncrement() -> Action<Void> {
-    return .init { context in
+  func asyncIncrement() {
+    dispatch { context in
       DispatchQueue.main.async {
-        context.commit { $0.increment() }
+        context.commit {
+          $0.count += 1
+        }
       }
     }
   }
   
-}
-
-enum Run {
-  
-  static func hoge() {
-    
-    let m = MyStore()
-    
-    m.commit { $0.increment() }
-  }
 }
 
 #endif

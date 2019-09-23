@@ -54,6 +54,13 @@
 		4B78633F23391E4A009B9C1B /* VergeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B78633E23391E4A009B9C1B /* VergeStore.swift */; };
 		4B78634323393DB6009B9C1B /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B78634223393DB6009B9C1B /* Sample.swift */; };
 		4B78634523393DD8009B9C1B /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B78634423393DD7009B9C1B /* Storage.swift */; };
+		4B786346233966D8009B9C1B /* VergeNeue.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B93EC6723307624002BB30B /* VergeNeue.framework */; };
+		4B786347233966D8009B9C1B /* VergeNeue.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B93EC6723307624002BB30B /* VergeNeue.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B78634A233966D8009B9C1B /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
+		4B78634B233966D8009B9C1B /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B7863502339678B009B9C1B /* Me.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B78634F2339678B009B9C1B /* Me.swift */; };
+		4B7863522339690B009B9C1B /* SharedLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B786351233968F8009B9C1B /* SharedLogger.swift */; };
+		4B78635423396BC4009B9C1B /* MyPageViewStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B78635323396BC4009B9C1B /* MyPageViewStore.swift */; };
 		4B7D57022338C26B00C3AD71 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D57012338C26B00C3AD71 /* MainTabView.swift */; };
 		4B7D57042338C27F00C3AD71 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D57032338C27F00C3AD71 /* ActivityView.swift */; };
 		4B7D57062338C28800C3AD71 /* MyPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D57052338C28800C3AD71 /* MyPageView.swift */; };
@@ -144,6 +151,13 @@
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
 		};
+		4B78634C233966D8009B9C1B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
+			remoteInfo = VergeStore;
+		};
 		4B93EC6C23307624002BB30B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -175,6 +189,18 @@
 			dstSubfolderSpec = 10;
 			files = (
 				4B4AEB2423310D68000709D9 /* VergeNeue.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B78634E233966D8009B9C1B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4B78634B233966D8009B9C1B /* VergeStore.framework in Embed Frameworks */,
+				4B786347233966D8009B9C1B /* VergeNeue.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -244,6 +270,9 @@
 		4B78633E23391E4A009B9C1B /* VergeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeStore.swift; sourceTree = "<group>"; };
 		4B78634223393DB6009B9C1B /* Sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sample.swift; sourceTree = "<group>"; };
 		4B78634423393DD7009B9C1B /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
+		4B78634F2339678B009B9C1B /* Me.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Me.swift; sourceTree = "<group>"; };
+		4B786351233968F8009B9C1B /* SharedLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedLogger.swift; sourceTree = "<group>"; };
+		4B78635323396BC4009B9C1B /* MyPageViewStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewStore.swift; sourceTree = "<group>"; };
 		4B7D57012338C26B00C3AD71 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		4B7D57032338C27F00C3AD71 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
 		4B7D57052338C28800C3AD71 /* MyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageView.swift; sourceTree = "<group>"; };
@@ -378,6 +407,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				53EE208DC3BEFD746C3337DD /* Pods_VergeNeueAdvancedDemo.framework in Frameworks */,
+				4B786346233966D8009B9C1B /* VergeNeue.framework in Frameworks */,
+				4B78634A233966D8009B9C1B /* VergeStore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,6 +441,7 @@
 				4BADEB962337FA6C00E1D3F5 /* DynamicUser.swift */,
 				4B035F7F2336A3670052C692 /* DynamicFeedPost.swift */,
 				4B035F812336A38A0052C692 /* DynamicFeedPostComment.swift */,
+				4B78634F2339678B009B9C1B /* Me.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -546,6 +578,7 @@
 				4B78632F23391461009B9C1B /* Feed */,
 				4B7D57032338C27F00C3AD71 /* ActivityView.swift */,
 				4B7D57052338C28800C3AD71 /* MyPageView.swift */,
+				4B78635323396BC4009B9C1B /* MyPageViewStore.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -644,6 +677,7 @@
 		4BA7A86023363D40008D0EC6 /* VergeNeueAdvancedDemo */ = {
 			isa = PBXGroup;
 			children = (
+				4B786351233968F8009B9C1B /* SharedLogger.swift */,
 				4B035F7B2336A3310052C692 /* Backend */,
 				4BA7A86123363D40008D0EC6 /* AppDelegate.swift */,
 				4BA7A86323363D40008D0EC6 /* SceneDelegate.swift */,
@@ -893,10 +927,12 @@
 				4BA7A85C23363D40008D0EC6 /* Frameworks */,
 				4BA7A85D23363D40008D0EC6 /* Resources */,
 				014BB7CDEC4677111B697B03 /* [CP] Embed Pods Frameworks */,
+				4B78634E233966D8009B9C1B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4B78634D233966D8009B9C1B /* PBXTargetDependency */,
 				4BADEBA92338B7C200E1D3F5 /* PBXTargetDependency */,
 			);
 			name = VergeNeueAdvancedDemo;
@@ -1259,12 +1295,15 @@
 				4B7863332339150D009B9C1B /* FeedViewStore.swift in Sources */,
 				4B035F882336A4810052C692 /* Service.swift in Sources */,
 				4B7863312339146E009B9C1B /* PhotoDetailStore.swift in Sources */,
+				4B7863502339678B009B9C1B /* Me.swift in Sources */,
 				4BA7A86423363D40008D0EC6 /* SceneDelegate.swift in Sources */,
 				4B7D57022338C26B00C3AD71 /* MainTabView.swift in Sources */,
 				4BADEB972337FA6C00E1D3F5 /* DynamicUser.swift in Sources */,
 				4BADEB9F2338151100E1D3F5 /* FeedView.swift in Sources */,
 				4BADEB99233802F400E1D3F5 /* IndicatorView.swift in Sources */,
 				4BA7A86623363D40008D0EC6 /* ContentView.swift in Sources */,
+				4B7863522339690B009B9C1B /* SharedLogger.swift in Sources */,
+				4B78635423396BC4009B9C1B /* MyPageViewStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1285,6 +1324,11 @@
 			isa = PBXTargetDependency;
 			target = 4B78631F233912AB009B9C1B /* VergeStore */;
 			targetProxy = 4B786325233912AB009B9C1B /* PBXContainerItemProxy */;
+		};
+		4B78634D233966D8009B9C1B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B78631F233912AB009B9C1B /* VergeStore */;
+			targetProxy = 4B78634C233966D8009B9C1B /* PBXContainerItemProxy */;
 		};
 		4B93EC6D23307624002BB30B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

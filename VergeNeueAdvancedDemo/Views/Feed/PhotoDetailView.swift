@@ -8,17 +8,18 @@
 
 import Foundation
 import SwiftUI
-import VergeNeue
+import VergeStore
 import CoreStore
 
 struct PhotoDetailView: View {
   
-  @ObservedObject var store: Store<PhotoDetailReducer>
+  @ObservedObject var store: PhotoDetailStore
   
   var body: some View {
+    
     VStack {
       List {
-        ForEach(comments) { item in
+        ForEach(store.state.comments) { item in
           Text("\(item.body.value!)")
         }
       }
@@ -26,7 +27,7 @@ struct PhotoDetailView: View {
     .navigationBarTitle("Comments")
     .navigationBarItems(trailing: HStack {
       Button(action: {
-        self.store.dispatch { $0.addNewComment(target: self.post) }
+        self.store.addAnyComment()        
       }) {
         Text("Add")
       }

@@ -14,7 +14,7 @@ import VergeNeue
 
 struct MyPageView: View {
   
-  @ObservedObject var store: Store<LoggedInReducer>
+  @ObservedObject var store: MyPageViewStore
   
   var body: some View {
     NavigationView {
@@ -25,7 +25,7 @@ struct MyPageView: View {
     }
   }
   
-  static func aboutMe(me: LoggedInState.Me) -> some View {
+  static func aboutMe(me: Me) -> some View {
     HStack {
       
       HStack {
