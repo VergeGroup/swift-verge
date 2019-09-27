@@ -12,52 +12,75 @@ import SwiftUI
 import VergeNeue
 
 struct FeedView: View {
-  
-  @ObservedObject var store: FeedViewStore
+    
+  @EnvironmentObject var rootStore: LoggedInStore
   
   @State var selectedValue: DynamicFeedPost?
   
+  private var fetchedItems: [SnapshotFeedPost] {
+    rootStore.state.feed.fetched.compactMap { id in
+      rootStore.state.normalizedState.posts[id]
+    }
+  }
+    
   var body: some View {
-    NavigationView {
-      List(store.state.posts, selection: $selectedValue) { (store) in
-        NavigationLink(destination: PhotoDetailView(store: store)) {
-          self.cell(store: store)
+        
+    return NavigationView {
+      List(fetchedItems) { item in
+        NavigationLink(destination: PhotoDetailView(post: item) ) {
+          PostListCell(post: item)
         }
       }
       .navigationBarTitle("Feed")
       .navigationBarItems(trailing: HStack {
         Button(action: {
-          self.store.fetchPosts()
+          self.rootStore.fetchPosts()  
         }) {
           Text("Load")
         }
       })
+        .onAppear {
+          print("onappear", self)
+      }
     }
     
   }
+ 
+}
+
+struct PostListCell: View {
+  
+  @EnvironmentObject var rootStore: LoggedInStore
+  
+  let post: SnapshotFeedPost
+  
+  private var commentsCount: Int {
+    post.commentIDs.count
+  }
     
-  private func cell(store: PhotoDetailStore) -> some View {
+  var body: some View {
     
     HStack {
-      NetworkImageView(url: URL(string: store.state.post.imageURLString.value)!)
+      NetworkImageView(url: URL(string: post.imageURLString)!)
         .frame(width: 100, height: 100, alignment: .center)
         .clipped()
       
       VStack {
         Text("ID")
           .font(.caption)
-        Text(store.state.post.id)
+        Text(post.id)
           .font(.body)
           .fontWeight(.bold)
       }
       VStack {
         Text("Comments")
           .font(.caption)
-        Text(store.state.comments.count.description)
+        Text(commentsCount.description)
           .font(.body)
           .fontWeight(.bold)
       }
     }
+    
     
   }
 }

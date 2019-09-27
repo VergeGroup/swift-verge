@@ -10,27 +10,63 @@ import Foundation
 import SwiftUI
 import VergeStore
 import CoreStore
+import Combine
 
 struct PhotoDetailView: View {
   
-  @ObservedObject var store: PhotoDetailStore
+  @EnvironmentObject var store: LoggedInStore
+  @State var hasFirstApearBeenDone: Bool = false
+  @State var displayComments: [SnapshotFeedPostComment] = []
   
-  var body: some View {
+  let post: SnapshotFeedPost
     
-    VStack {
+  @discardableResult
+  private func fetchDisplayComments() -> Future<[SnapshotFeedPostComment], Never> {
+    .init { promise in
+      
+      let comments = self.store.state.normalizedState.comments
+
+      DispatchQueue.global(qos: .userInitiated).async {
+        let result = comments
+          .filter { $0.value.postID == self.post.id }
+          .map { $0.value }
+          .sorted { $0.updatedAt > $1.updatedAt }
+        
+        self.displayComments = result
+        
+        promise(.success(result))
+      }
+    }
+  }
+          
+  var body: some View {
+            
+    return VStack {
       List {
-        ForEach(store.state.comments) { item in
-          Text("\(item.body.value!)")
+        ForEach(displayComments) { item in
+          Text("\(item.body ?? "none")")
         }
       }
     }
     .navigationBarTitle("Comments")
     .navigationBarItems(trailing: HStack {
       Button(action: {
-        self.store.addAnyComment()        
+        self.store.addAnyComment(to: self.post)
       }) {
         Text("Add")
       }
     })
+      .onAppear {
+        
+        if !self.hasFirstApearBeenDone {
+          self.hasFirstApearBeenDone = true
+          self.fetchDisplayComments()
+        }
+        
+    }
+    .onDisappear {
+      print("disappear")
+    }
   }
+  
 }

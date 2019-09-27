@@ -15,11 +15,12 @@ import VergeNeue
 struct MainTabView: View {
   
   @ObservedObject var store: LoggedInStore
+  @EnvironmentObject var rootStore: LoggedInStore
   
   var body: some View {
     
     TabView {
-      FeedView(store: store.feedStore)
+      FeedView()
         .tabItem {
           Text("Home")
       }
@@ -29,7 +30,7 @@ struct MainTabView: View {
           Text("Activity")
       }
       
-      MyPageView(store: store.mypageStore)
+      MyPageView()
         .tabItem {
           Text("MyPage")
       }

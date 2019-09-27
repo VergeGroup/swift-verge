@@ -12,6 +12,8 @@ import SwiftUI
 import VergeNeue
 
 struct ActivityView: View {
+  
+  @EnvironmentObject var rootStore: LoggedInStore
     
   var body: some View {
     NavigationView {

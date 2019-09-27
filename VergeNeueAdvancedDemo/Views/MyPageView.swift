@@ -14,12 +14,12 @@ import VergeNeue
 
 struct MyPageView: View {
   
-  @ObservedObject var store: MyPageViewStore
+  @EnvironmentObject var rootStore: LoggedInStore
   
   var body: some View {
     NavigationView {
       List {
-        Self.aboutMe(me: store.state.me)
+        Self.aboutMe(me: rootStore.state.normalizedState.me)
       }
       .navigationBarTitle("MyPage")
     }

@@ -19,6 +19,29 @@ final class DynamicFeedPost: CoreStoreObject {
   
   let comments = Relationship.ToManyUnordered<DynamicFeedPostComment>("comments")
   let user = Relationship.ToOne<DynamicUser>("user", inverse: { $0.posts })
+  
+  var snapshotID: SnapshotFeedPost.ID {
+    rawID.value
+  }
+}
+
+struct SnapshotFeedPost: Identifiable {
+  
+  var id: String
+  var updatedAt: Date
+  var imageURLString: String
+  var commentIDs: [SnapshotFeedPostComment.ID]
+  var userID: SnapshotUser.ID?
+  var managedObjectID: NSManagedObjectID
+  
+  init(source: DynamicFeedPost) {
+    self.id = source.rawID.value
+    self.updatedAt = source.updatedAt.value
+    self.imageURLString = source.imageURLString.value
+    self.commentIDs = source.comments.value.map { $0.rawID.value }
+    self.userID = source.user.value?.rawID.value
+    self.managedObjectID = source.cs_id()
+  }
 }
 
 extension DynamicFeedPost {
@@ -39,3 +62,4 @@ extension DynamicFeedPost {
     ].map { URL(string: $0)! }
   
 }
+

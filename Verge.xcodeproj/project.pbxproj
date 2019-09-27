@@ -49,8 +49,6 @@
 		4B786324233912AB009B9C1B /* VergeStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B786322233912AB009B9C1B /* VergeStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B786327233912AB009B9C1B /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B786328233912AB009B9C1B /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B7863312339146E009B9C1B /* PhotoDetailStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7863302339146E009B9C1B /* PhotoDetailStore.swift */; };
-		4B7863332339150D009B9C1B /* FeedViewStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7863322339150D009B9C1B /* FeedViewStore.swift */; };
 		4B78633F23391E4A009B9C1B /* VergeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B78633E23391E4A009B9C1B /* VergeStore.swift */; };
 		4B78634323393DB6009B9C1B /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B78634223393DB6009B9C1B /* Sample.swift */; };
 		4B78634523393DD8009B9C1B /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B78634423393DD7009B9C1B /* Storage.swift */; };
@@ -60,7 +58,6 @@
 		4B78634B233966D8009B9C1B /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B7863502339678B009B9C1B /* Me.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B78634F2339678B009B9C1B /* Me.swift */; };
 		4B7863522339690B009B9C1B /* SharedLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B786351233968F8009B9C1B /* SharedLogger.swift */; };
-		4B78635423396BC4009B9C1B /* MyPageViewStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B78635323396BC4009B9C1B /* MyPageViewStore.swift */; };
 		4B7D57022338C26B00C3AD71 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D57012338C26B00C3AD71 /* MainTabView.swift */; };
 		4B7D57042338C27F00C3AD71 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D57032338C27F00C3AD71 /* ActivityView.swift */; };
 		4B7D57062338C28800C3AD71 /* MyPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D57052338C28800C3AD71 /* MyPageView.swift */; };
@@ -265,14 +262,11 @@
 		4B786320233912AB009B9C1B /* VergeStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B786322233912AB009B9C1B /* VergeStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeStore.h; sourceTree = "<group>"; };
 		4B786323233912AB009B9C1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B7863302339146E009B9C1B /* PhotoDetailStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailStore.swift; sourceTree = "<group>"; };
-		4B7863322339150D009B9C1B /* FeedViewStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewStore.swift; sourceTree = "<group>"; };
 		4B78633E23391E4A009B9C1B /* VergeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeStore.swift; sourceTree = "<group>"; };
 		4B78634223393DB6009B9C1B /* Sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sample.swift; sourceTree = "<group>"; };
 		4B78634423393DD7009B9C1B /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		4B78634F2339678B009B9C1B /* Me.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Me.swift; sourceTree = "<group>"; };
 		4B786351233968F8009B9C1B /* SharedLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedLogger.swift; sourceTree = "<group>"; };
-		4B78635323396BC4009B9C1B /* MyPageViewStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewStore.swift; sourceTree = "<group>"; };
 		4B7D57012338C26B00C3AD71 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		4B7D57032338C27F00C3AD71 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
 		4B7D57052338C28800C3AD71 /* MyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageView.swift; sourceTree = "<group>"; };
@@ -564,9 +558,7 @@
 			isa = PBXGroup;
 			children = (
 				4BADEB9D2338151100E1D3F5 /* FeedView.swift */,
-				4B7863322339150D009B9C1B /* FeedViewStore.swift */,
 				4BADEBA02338153100E1D3F5 /* PhotoDetailView.swift */,
-				4B7863302339146E009B9C1B /* PhotoDetailStore.swift */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -578,7 +570,6 @@
 				4B78632F23391461009B9C1B /* Feed */,
 				4B7D57032338C27F00C3AD71 /* ActivityView.swift */,
 				4B7D57052338C28800C3AD71 /* MyPageView.swift */,
-				4B78635323396BC4009B9C1B /* MyPageViewStore.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1292,9 +1283,7 @@
 				4B035F822336A38A0052C692 /* DynamicFeedPostComment.swift in Sources */,
 				4BA7A86223363D40008D0EC6 /* AppDelegate.swift in Sources */,
 				4B7D57062338C28800C3AD71 /* MyPageView.swift in Sources */,
-				4B7863332339150D009B9C1B /* FeedViewStore.swift in Sources */,
 				4B035F882336A4810052C692 /* Service.swift in Sources */,
-				4B7863312339146E009B9C1B /* PhotoDetailStore.swift in Sources */,
 				4B7863502339678B009B9C1B /* Me.swift in Sources */,
 				4BA7A86423363D40008D0EC6 /* SceneDelegate.swift in Sources */,
 				4B7D57022338C26B00C3AD71 /* MainTabView.swift in Sources */,
@@ -1303,7 +1292,6 @@
 				4BADEB99233802F400E1D3F5 /* IndicatorView.swift in Sources */,
 				4BA7A86623363D40008D0EC6 /* ContentView.swift in Sources */,
 				4B7863522339690B009B9C1B /* SharedLogger.swift in Sources */,
-				4B78635423396BC4009B9C1B /* MyPageViewStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
