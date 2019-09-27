@@ -287,7 +287,7 @@
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4B93EC7523307656002BB30B /* VergeNeue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeNeue.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
-		4BA7A85F23363D40008D0EC6 /* VergeNeueAdvancedDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeNeueAdvancedDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BA7A85F23363D40008D0EC6 /* VergeStoreAdvancedDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreAdvancedDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BA7A86123363D40008D0EC6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BA7A86323363D40008D0EC6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		4BA7A86523363D40008D0EC6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -585,7 +585,7 @@
 				4B93EC6823307624002BB30B /* VergeNeue */,
 				4B78632C233912B9009B9C1B /* DemoComponents */,
 				4B4AEB1023310D40000709D9 /* VergeNeueDemo */,
-				4BA7A86023363D40008D0EC6 /* VergeNeueAdvancedDemo */,
+				4BA7A86023363D40008D0EC6 /* VergeStoreAdvancedDemo */,
 				4B86A4871F969AD5002D54FE /* Products */,
 				4B86A4AC1F969C98002D54FE /* Frameworks */,
 				2A539E3FF4267844D858E039 /* Pods */,
@@ -601,7 +601,7 @@
 				4B463D7520D4C4690053A4FF /* Verge.framework */,
 				4B93EC6723307624002BB30B /* VergeNeue.framework */,
 				4B4AEB0F23310D40000709D9 /* VergeNeueDemo.app */,
-				4BA7A85F23363D40008D0EC6 /* VergeNeueAdvancedDemo.app */,
+				4BA7A85F23363D40008D0EC6 /* VergeStoreAdvancedDemo.app */,
 				4B786320233912AB009B9C1B /* VergeStore.framework */,
 			);
 			name = Products;
@@ -665,7 +665,7 @@
 			path = VergeNeue;
 			sourceTree = "<group>";
 		};
-		4BA7A86023363D40008D0EC6 /* VergeNeueAdvancedDemo */ = {
+		4BA7A86023363D40008D0EC6 /* VergeStoreAdvancedDemo */ = {
 			isa = PBXGroup;
 			children = (
 				4B786351233968F8009B9C1B /* SharedLogger.swift */,
@@ -681,7 +681,7 @@
 				4BA7A86F23363D41008D0EC6 /* Info.plist */,
 				4BA7A86923363D41008D0EC6 /* Preview Content */,
 			);
-			path = VergeNeueAdvancedDemo;
+			path = VergeStoreAdvancedDemo;
 			sourceTree = "<group>";
 		};
 		4BA7A86923363D41008D0EC6 /* Preview Content */ = {
@@ -909,9 +909,9 @@
 			productReference = 4B93EC6723307624002BB30B /* VergeNeue.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		4BA7A85E23363D40008D0EC6 /* VergeNeueAdvancedDemo */ = {
+		4BA7A85E23363D40008D0EC6 /* VergeStoreAdvancedDemo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4BA7A87223363D41008D0EC6 /* Build configuration list for PBXNativeTarget "VergeNeueAdvancedDemo" */;
+			buildConfigurationList = 4BA7A87223363D41008D0EC6 /* Build configuration list for PBXNativeTarget "VergeStoreAdvancedDemo" */;
 			buildPhases = (
 				4A8A0A22E2BBC4E01CB46ED8 /* [CP] Check Pods Manifest.lock */,
 				4BA7A85B23363D40008D0EC6 /* Sources */,
@@ -926,9 +926,9 @@
 				4B78634D233966D8009B9C1B /* PBXTargetDependency */,
 				4BADEBA92338B7C200E1D3F5 /* PBXTargetDependency */,
 			);
-			name = VergeNeueAdvancedDemo;
+			name = VergeStoreAdvancedDemo;
 			productName = VergeNeueAdvancedDemo;
-			productReference = 4BA7A85F23363D40008D0EC6 /* VergeNeueAdvancedDemo.app */;
+			productReference = 4BA7A85F23363D40008D0EC6 /* VergeStoreAdvancedDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -997,7 +997,7 @@
 				4B93EC6623307624002BB30B /* VergeNeue */,
 				4B78631F233912AB009B9C1B /* VergeStore */,
 				4B4AEB0E23310D40000709D9 /* VergeNeueDemo */,
-				4BA7A85E23363D40008D0EC6 /* VergeNeueAdvancedDemo */,
+				4BA7A85E23363D40008D0EC6 /* VergeStoreAdvancedDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -1834,9 +1834,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"VergeNeueAdvancedDemo/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"VergeStoreAdvancedDemo/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = VergeNeueAdvancedDemo/Info.plist;
+				INFOPLIST_FILE = VergeStoreAdvancedDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -1856,9 +1856,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"VergeNeueAdvancedDemo/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"VergeStoreAdvancedDemo/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = VergeNeueAdvancedDemo/Info.plist;
+				INFOPLIST_FILE = VergeStoreAdvancedDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_FAST_MATH = YES;
@@ -1945,7 +1945,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4BA7A87223363D41008D0EC6 /* Build configuration list for PBXNativeTarget "VergeNeueAdvancedDemo" */ = {
+		4BA7A87223363D41008D0EC6 /* Build configuration list for PBXNativeTarget "VergeStoreAdvancedDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4BA7A87023363D41008D0EC6 /* Debug */,
