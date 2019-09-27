@@ -25,7 +25,7 @@ final class DynamicFeedPostComment: CoreStoreObject, Identifiable {
   let body = Value.Optional<String>("body")
 }
 
-struct SnapshotFeedPostComment: Identifiable {
+struct SnapshotFeedPostComment: Equatable, Identifiable {
   
   var id: String
   var updatedAt: Date

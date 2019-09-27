@@ -16,13 +16,16 @@ struct PhotoDetailView: View {
   
   @EnvironmentObject var store: LoggedInStore
   @State var hasFirstApearBeenDone: Bool = false
-  @State var displayComments: [SnapshotFeedPostComment] = []
-  
-  let post: SnapshotFeedPost
+  @State private var displayComments: [SnapshotFeedPostComment] = []
     
+  @State private var previousPost: SnapshotFeedPost? = nil
+  var post: SnapshotFeedPost
+  
   @discardableResult
   private func fetchDisplayComments() -> Future<[SnapshotFeedPostComment], Never> {
     .init { promise in
+      
+      print("Fetch Comments from", self.post.id)
       
       let comments = self.store.state.normalizedState.comments
 
@@ -32,7 +35,10 @@ struct PhotoDetailView: View {
           .map { $0.value }
           .sorted { $0.updatedAt > $1.updatedAt }
         
-        self.displayComments = result
+        // bad practice, should have checked before querying.
+        if self.displayComments != result {
+          self.displayComments = result
+        }
         
         promise(.success(result))
       }
@@ -40,7 +46,9 @@ struct PhotoDetailView: View {
   }
           
   var body: some View {
-            
+    
+    fetchDisplayComments()
+    
     return VStack {
       List {
         ForEach(displayComments) { item in
@@ -55,12 +63,12 @@ struct PhotoDetailView: View {
       }) {
         Text("Add")
       }
-    })
+      })
       .onAppear {
         
         if !self.hasFirstApearBeenDone {
           self.hasFirstApearBeenDone = true
-          self.fetchDisplayComments()
+         
         }
         
     }

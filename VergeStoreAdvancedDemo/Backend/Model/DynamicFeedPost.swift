@@ -25,7 +25,7 @@ final class DynamicFeedPost: CoreStoreObject {
   }
 }
 
-struct SnapshotFeedPost: Identifiable {
+struct SnapshotFeedPost: Equatable, Identifiable {
   
   var id: String
   var updatedAt: Date
