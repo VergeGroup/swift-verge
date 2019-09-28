@@ -171,6 +171,7 @@ extension Storage: ObservableObject {
   }
 }
 
+@available(iOS 13, *)
 extension StoreBase: ObservableObject {
   public var objectWillChange: ObservableObjectPublisher {
     storage.objectWillChange
