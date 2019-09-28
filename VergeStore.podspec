@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name         = "VergeStore
+  s.name         = "VergeStore"
   s.version      = "6.0.0-alpha.1"
   s.summary      = "Verge Neue is Flux / Redux framework on SwiftUI"
   s.description  = <<-DESC
