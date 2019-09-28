@@ -96,10 +96,10 @@ public final class StoreDispatchContext<Reducer: ModularReducerType> {
   }
   
   @discardableResult
-  public func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
+  public final func dispatch<Action: _ActionType>(_ makeAction: (Reducer) -> Action) -> Action.ReturnType where Action.Reducer == Reducer {
     store.dispatch(makeAction)
   }
-  
+    
   public func commit(_ makeMutation: (Reducer) -> Reducer.Mutation) {
     store.commit(makeMutation)
   }
