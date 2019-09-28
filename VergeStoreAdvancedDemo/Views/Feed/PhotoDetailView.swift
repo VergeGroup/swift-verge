@@ -17,7 +17,7 @@ struct PhotoDetailView: View {
   @EnvironmentObject var store: LoggedInStore
   @State var hasFirstApearBeenDone: Bool = false
   @State private var displayComments: [SnapshotFeedPostComment] = []
-    
+
   @State private var previousPost: SnapshotFeedPost? = nil
   var post: SnapshotFeedPost
   
@@ -30,10 +30,10 @@ struct PhotoDetailView: View {
       let comments = self.store.state.normalizedState.comments
 
       DispatchQueue.global(qos: .userInitiated).async {
-        let result = comments
-          .filter { $0.value.postID == self.post.id }
-          .map { $0.value }
-          .sorted { $0.updatedAt > $1.updatedAt }
+        let result = self.post.commentIDs.compactMap {
+          comments[$0]
+        }
+        .sorted { $0.updatedAt > $1.updatedAt }
         
         // bad practice, should have checked before querying.
         if self.displayComments != result {

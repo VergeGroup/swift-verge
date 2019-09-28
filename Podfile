@@ -7,11 +7,12 @@ target 'VergeNeueDemo' do
 
   pod 'JAYSON'
   pod 'Reveal-SDK'
+  pod 'Nuke'
   # Pods for VergeNeueDemo
 
 end
 
-target 'VergeNeueAdvancedDemo' do
+target 'VergeStoreAdvancedDemo' do
 
   use_frameworks!
 

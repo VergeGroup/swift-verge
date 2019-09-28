@@ -17,7 +17,7 @@ struct StartView: View {
   @State private var subscriptions: Set<AnyCancellable> = .init()
   
   var body: some View {
-    
+        
     Group {
       
       if store.state.activeEnv != nil {
@@ -25,7 +25,7 @@ struct StartView: View {
         SessionContainerView(
           sessionStore: StoreContainer.store(for: store.state.activeEnv!)
         )
-        
+                
       } else {
         
         NavigationView {
@@ -35,7 +35,6 @@ struct StartView: View {
                 Button(action: {
                   
                   self.isProcessing = true
-                  
                   self.store.dispatch { $0.createSession(env: .stage) }
                     .sink(
                       receiveCompletion: { (_) in

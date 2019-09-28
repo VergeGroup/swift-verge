@@ -54,7 +54,7 @@ final class Service {
       
       self.coreStore.perform(asynchronous: { (t: AsynchronousDataTransaction) -> Void in
         
-          for _ in 0..<1000 {
+          for _ in 0..<100 {
             
             let post = t.edit(Into<DynamicFeedPost>(), post.managedObjectID)!
             

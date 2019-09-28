@@ -34,7 +34,6 @@
 		4B4AEB2423310D68000709D9 /* VergeNeue.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B93EC6723307624002BB30B /* VergeNeue.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B4AEB2923310F4A000709D9 /* RootState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB2823310F4A000709D9 /* RootState.swift */; };
 		4B4AEB2B233112D3000709D9 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB2A233112D3000709D9 /* SessionState.swift */; };
-		4B4AEB2D2331145B000709D9 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB2C2331145B000709D9 /* StartView.swift */; };
 		4B4AEB2F233114E7000709D9 /* RootStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB2E233114E7000709D9 /* RootStore.swift */; };
 		4B54E2791FE3646B001736D2 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E2781FE3646B001736D2 /* Storage.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
@@ -89,11 +88,8 @@
 		4BADEB99233802F400E1D3F5 /* IndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BECC81723312AD400D6A0A1 /* IndicatorView.swift */; };
 		4BADEB9B23380AE400E1D3F5 /* Lorem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BADEB9A23380AE400E1D3F5 /* Lorem.swift */; };
 		4BADEB9C23380AE400E1D3F5 /* Lorem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BADEB9A23380AE400E1D3F5 /* Lorem.swift */; };
-		4BADEB9E2338151100E1D3F5 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BADEB9D2338151100E1D3F5 /* FeedView.swift */; };
 		4BADEB9F2338151100E1D3F5 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BADEB9D2338151100E1D3F5 /* FeedView.swift */; };
-		4BADEBA12338153100E1D3F5 /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BADEBA02338153100E1D3F5 /* PhotoDetailView.swift */; };
 		4BADEBA22338153100E1D3F5 /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BADEBA02338153100E1D3F5 /* PhotoDetailView.swift */; };
-		4BADEBA42338156500E1D3F5 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BADEBA32338156500E1D3F5 /* Store.swift */; };
 		4BADEBA52338156500E1D3F5 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BADEBA32338156500E1D3F5 /* Store.swift */; };
 		4BAE9FCD21DFA119003DDF3D /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FC921DFA119003DDF3D /* RxCocoa.framework */; };
 		4BAE9FCE21DFA119003DDF3D /* RxFuture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FCA21DFA119003DDF3D /* RxFuture.framework */; };
@@ -108,6 +104,7 @@
 		4BC864EA23377066002FEF62 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864E923377066002FEF62 /* Adapter.swift */; };
 		4BC864EC23377269002FEF62 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864EB23377269002FEF62 /* Atomic.swift */; };
 		4BC864EE23377A4F002FEF62 /* PollingAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864ED23377A4F002FEF62 /* PollingAdapter.swift */; };
+		4BD1CD2B233FE691006E0565 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB2C2331145B000709D9 /* StartView.swift */; };
 		4BD85F2B2331202C00FD04E9 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD85F2A2331202C00FD04E9 /* Utility.swift */; };
 		4BD85F2D2331213800FD04E9 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BD85F2C2331213800FD04E9 /* SwiftUI.framework */; };
 		4BD85F312331247B00FD04E9 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD85F302331247B00FD04E9 /* MainTabView.swift */; };
@@ -122,7 +119,7 @@
 		4BECC8222331337100D6A0A1 /* MockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BECC8212331337100D6A0A1 /* MockService.swift */; };
 		4BECC824233133FC00D6A0A1 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BECC823233133FC00D6A0A1 /* Env.swift */; };
 		4BECC82623313C1B00D6A0A1 /* list_page_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 4BECC82523313C1B00D6A0A1 /* list_page_1.json */; };
-		53EE208DC3BEFD746C3337DD /* Pods_VergeNeueAdvancedDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CC0EE485928B78F05C48BFA /* Pods_VergeNeueAdvancedDemo.framework */; };
+		A02434078EC36FEB8CD37365 /* Pods_VergeStoreAdvancedDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB839F1950A2E18C7B8A8EB1 /* Pods_VergeStoreAdvancedDemo.framework */; };
 		E7753A9D8D406494A27CB710 /* Pods_VergeNeueDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94193FF650F04C7E5B271434 /* Pods_VergeNeueDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -222,6 +219,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		49853C9BFD678DAB19D85FBD /* Pods-VergeStoreAdvancedDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeStoreAdvancedDemo.release.xcconfig"; path = "Target Support Files/Pods-VergeStoreAdvancedDemo/Pods-VergeStoreAdvancedDemo.release.xcconfig"; sourceTree = "<group>"; };
 		4B035F7F2336A3670052C692 /* DynamicFeedPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicFeedPost.swift; sourceTree = "<group>"; };
 		4B035F812336A38A0052C692 /* DynamicFeedPostComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicFeedPostComment.swift; sourceTree = "<group>"; };
 		4B035F852336A44A0052C692 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
@@ -324,12 +322,13 @@
 		4BECC8212331337100D6A0A1 /* MockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockService.swift; sourceTree = "<group>"; };
 		4BECC823233133FC00D6A0A1 /* Env.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
 		4BECC82523313C1B00D6A0A1 /* list_page_1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = list_page_1.json; sourceTree = "<group>"; };
+		5D038BA7FA5507FA05A55370 /* Pods-VergeStoreAdvancedDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeStoreAdvancedDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeStoreAdvancedDemo/Pods-VergeStoreAdvancedDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		90328BAB4D46D9567CA1EE36 /* Pods-VergeNeueAdvancedDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueAdvancedDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		94193FF650F04C7E5B271434 /* Pods_VergeNeueDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VergeNeueDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9CC0EE485928B78F05C48BFA /* Pods_VergeNeueAdvancedDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VergeNeueAdvancedDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D16F15177BB4D67B9B5F45B9 /* Pods-VergeNeueDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeNeueDemo/Pods-VergeNeueDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		E0E50110EAF71ECF46C0841B /* Pods-VergeNeueAdvancedDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueAdvancedDemo.release.xcconfig"; path = "Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo.release.xcconfig"; sourceTree = "<group>"; };
 		E6998160A046DFFF14AC3FD4 /* Pods-VergeNeueDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueDemo.release.xcconfig"; path = "Target Support Files/Pods-VergeNeueDemo/Pods-VergeNeueDemo.release.xcconfig"; sourceTree = "<group>"; };
+		FB839F1950A2E18C7B8A8EB1 /* Pods_VergeStoreAdvancedDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VergeStoreAdvancedDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -400,9 +399,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53EE208DC3BEFD746C3337DD /* Pods_VergeNeueAdvancedDemo.framework in Frameworks */,
 				4B786346233966D8009B9C1B /* VergeNeue.framework in Frameworks */,
 				4B78634A233966D8009B9C1B /* VergeStore.framework in Frameworks */,
+				A02434078EC36FEB8CD37365 /* Pods_VergeStoreAdvancedDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,6 +415,8 @@
 				E6998160A046DFFF14AC3FD4 /* Pods-VergeNeueDemo.release.xcconfig */,
 				90328BAB4D46D9567CA1EE36 /* Pods-VergeNeueAdvancedDemo.debug.xcconfig */,
 				E0E50110EAF71ECF46C0841B /* Pods-VergeNeueAdvancedDemo.release.xcconfig */,
+				5D038BA7FA5507FA05A55370 /* Pods-VergeStoreAdvancedDemo.debug.xcconfig */,
+				49853C9BFD678DAB19D85FBD /* Pods-VergeStoreAdvancedDemo.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -642,7 +643,7 @@
 				4BD85F2C2331213800FD04E9 /* SwiftUI.framework */,
 				4B93EC7323307637002BB30B /* SwiftUI.framework */,
 				94193FF650F04C7E5B271434 /* Pods_VergeNeueDemo.framework */,
-				9CC0EE485928B78F05C48BFA /* Pods_VergeNeueAdvancedDemo.framework */,
+				FB839F1950A2E18C7B8A8EB1 /* Pods_VergeStoreAdvancedDemo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1078,22 +1079,22 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-VergeStoreAdvancedDemo/Pods-VergeStoreAdvancedDemo-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/JAYSON/JAYSON.framework",
+				"${BUILT_PRODUCTS_DIR}/Nuke/Nuke.framework",
 				"${PODS_ROOT}/Reveal-SDK/RevealServer/iOS/RevealServer.framework",
 				"${BUILT_PRODUCTS_DIR}/CoreStore/CoreStore.framework",
-				"${BUILT_PRODUCTS_DIR}/Nuke/Nuke.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JAYSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nuke.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RevealServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CoreStore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nuke.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-VergeStoreAdvancedDemo/Pods-VergeStoreAdvancedDemo-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		376B416910F33AAE12FAB566 /* [CP] Embed Pods Frameworks */ = {
@@ -1104,11 +1105,13 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-VergeNeueDemo/Pods-VergeNeueDemo-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/JAYSON/JAYSON.framework",
+				"${BUILT_PRODUCTS_DIR}/Nuke/Nuke.framework",
 				"${PODS_ROOT}/Reveal-SDK/RevealServer/iOS/RevealServer.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JAYSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nuke.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RevealServer.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1131,7 +1134,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-VergeNeueAdvancedDemo-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-VergeStoreAdvancedDemo-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1179,7 +1182,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BADEB9E2338151100E1D3F5 /* FeedView.swift in Sources */,
 				4BECC81E2331332B00D6A0A1 /* Photo.swift in Sources */,
 				4BC864EE23377A4F002FEF62 /* PollingAdapter.swift in Sources */,
 				4BECC8202331336200D6A0A1 /* MockDatabase.swift in Sources */,
@@ -1194,14 +1196,12 @@
 				4BD85F352331252E00FD04E9 /* NotificationsView.swift in Sources */,
 				4BECC81B233132ED00D6A0A1 /* MockAPIProvider.swift in Sources */,
 				4BD85F332331251400FD04E9 /* HomeView.swift in Sources */,
-				4BADEBA42338156500E1D3F5 /* Store.swift in Sources */,
 				4BD85F372331254000FD04E9 /* MyPageView.swift in Sources */,
 				4B4AEB1423310D40000709D9 /* SceneDelegate.swift in Sources */,
 				4BECC824233133FC00D6A0A1 /* Env.swift in Sources */,
-				4BADEBA12338153100E1D3F5 /* PhotoDetailView.swift in Sources */,
 				4BD85F2B2331202C00FD04E9 /* Utility.swift in Sources */,
+				4BD1CD2B233FE691006E0565 /* StartView.swift in Sources */,
 				4B495D0A2332B5170098F7B4 /* NetworkImageView.swift in Sources */,
-				4B4AEB2D2331145B000709D9 /* StartView.swift in Sources */,
 				4BECC81823312AD400D6A0A1 /* IndicatorView.swift in Sources */,
 				4B495D06233280350098F7B4 /* Notification.swift in Sources */,
 				4B1A384B2332B76E00AA5BD6 /* Comment.swift in Sources */,
@@ -1829,7 +1829,7 @@
 		};
 		4BA7A87023363D41008D0EC6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 90328BAB4D46D9567CA1EE36 /* Pods-VergeNeueAdvancedDemo.debug.xcconfig */;
+			baseConfigurationReference = 5D038BA7FA5507FA05A55370 /* Pods-VergeStoreAdvancedDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -1851,7 +1851,7 @@
 		};
 		4BA7A87123363D41008D0EC6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E0E50110EAF71ECF46C0841B /* Pods-VergeNeueAdvancedDemo.release.xcconfig */;
+			baseConfigurationReference = 49853C9BFD678DAB19D85FBD /* Pods-VergeStoreAdvancedDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;

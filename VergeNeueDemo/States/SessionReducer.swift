@@ -40,6 +40,7 @@ final class SessionStateReducer: ReducerType {
         .sink(receiveCompletion: { (completion) in
           
         }) { (photos) in
+          
           context.commit { _ in
             .init { state in
               // normalize
