@@ -26,7 +26,7 @@ public struct ActionMetadata {
   
 }
 
-public final class StoreDispatchContext<Store: StoreType> {
+public final class StoreDispatchContext<Store: StateNodeType> {
   
   public let store: Store
   
@@ -62,39 +62,64 @@ public final class StoreDispatchContext<Store: StoreType> {
   }
 }
 
-public protocol StoreLogger {
+public protocol StateNodeLogger {
   
   func willCommit(store: Any, state: Any, mutation: MutationMetadata)
   func didCommit(store: Any, state: Any, mutation: MutationMetadata)
   func didDispatch(store: Any, state: Any, action: ActionMetadata)
 }
 
-public protocol StoreType {
+public protocol StateNodeType {
   
   associatedtype UsingState
   var storage: Storage<UsingState> { get }
-  var logger: StoreLogger? { get }
+  var logger: StateNodeLogger? { get }
   
 }
 
-open class StoreBase<State>: StoreType, Identifiable {
+@available(*, deprecated, renamed: "StateNode")
+public typealias StoreBase<State> = StateNode<State>
+
+open class AnyStateNode: Identifiable {
   
   public var id: ObjectIdentifier {
     .init(self)
   }
-      
-  public let storage: Storage<State>
   
-  public private(set) var logger: StoreLogger?
+  public private(set) weak var parent: AnyStateNode?
   
-  public init(initialState: State, logger: StoreLogger?) {
-    self.storage = .init(initialState)
-    self.logger = logger
+  private var childNodes: [AnyStateNode] = .init()
+  
+  public func add(child node: AnyStateNode) {
+    childNodes.append(node)
+    node.parent = self
+  }
+  
+  public func remove(child node: AnyStateNode) {
+    childNodes.removeAll { $0 === node }
+    node.parent = nil
   }
     
+  public func removeFromParent() {
+    parent?.remove(child: self)
+  }
 }
 
-extension StoreType {
+open class StateNode<State>: AnyStateNode, StateNodeType {
+    
+  public let storage: Storage<State>
+    
+  public private(set) var logger: StateNodeLogger?
+  
+  public init(initialState: State, logger: StateNodeLogger?) {
+    self.storage = .init(initialState)
+    self.logger = logger
+    super.init()
+  }
+
+}
+
+extension StateNodeType {
   
   public var state: UsingState {
     storage.value
@@ -172,7 +197,7 @@ extension Storage: ObservableObject {
 }
 
 @available(iOS 13, *)
-extension StoreBase: ObservableObject {
+extension StateNode: ObservableObject {
   public var objectWillChange: ObservableObjectPublisher {
     storage.objectWillChange
   }
