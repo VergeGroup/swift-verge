@@ -10,20 +10,20 @@ import Foundation
 
 import VergeStore
 
-struct MyStoreLogger: StoreLogger {
-  
-  static let `default` = MyStoreLogger()
-  
-  func willCommit(store: Any, state: Any, mutation: MutationMetadata) {
-    print("Will Commit", store, mutation)
-  }
-  
-  func didCommit(store: Any, state: Any, mutation: MutationMetadata) {
-    print("Did Commit", store, mutation)
-  }
-  
-  func didDispatch(store: Any, state: Any, action: ActionMetadata) {
-    print("Will Dispatch", store, action)
-  }
-      
-}
+//struct MyStoreLogger: StoreLogger {
+//  
+//  static let `default` = MyStoreLogger()
+//  
+//  func willCommit(store: Any, state: Any, mutation: MutationMetadata) {
+//    print("Will Commit", store, mutation)
+//  }
+//  
+//  func didCommit(store: Any, state: Any, mutation: MutationMetadata) {
+//    print("Did Commit", store, mutation)
+//  }
+//  
+//  func didDispatch(store: Any, state: Any, action: ActionMetadata) {
+//    print("Will Dispatch", store, action)
+//  }
+//      
+//}

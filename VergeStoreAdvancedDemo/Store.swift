@@ -53,7 +53,7 @@ final class LoggedInStore: StoreBase<LoggedInState> {
     
     self.service = service
     
-    super.init(initialState: .init(), logger: MyStoreLogger.default)
+    super.init(initialState: .init(), logger: nil)
     
     startIntegrationWithCoreData()
   }
@@ -117,10 +117,10 @@ final class LoggedInStore: StoreBase<LoggedInState> {
         guard let self = self else { return }
         
         self.commit { state in
-          items.forEach { item in
-            let snapshot = SnapshotFeedPostComment(source: item)
-            state.normalizedState.comments[snapshot.id] = snapshot
-          }
+//          items.forEach { item in
+//            let snapshot = SnapshotFeedPostComment(source: item)
+//            state.normalizedState.comments[snapshot.id] = snapshot
+//          }
         }
       }
       

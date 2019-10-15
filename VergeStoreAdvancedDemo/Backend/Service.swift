@@ -52,8 +52,10 @@ final class Service {
   func addComment(body: String, target post: SnapshotFeedPost) -> Future<Void, Never> {
     return .init { promise in
       
-      self.coreStore.perform(asynchronous: { (t: AsynchronousDataTransaction) -> Void in
+      for _ in 0..<100 {
         
+        self.coreStore.perform(asynchronous: { (t: AsynchronousDataTransaction) -> Void in
+          
           for _ in 0..<100 {
             
             let post = t.edit(Into<DynamicFeedPost>(), post.managedObjectID)!
@@ -65,10 +67,13 @@ final class Service {
             comment.body .= body
           }
           
-      }) { (r) in
-        promise(.success(()))
+        }) { (r) in
+        }
       }
+      
+      promise(.success(()))
 
+      
     }
   }
 }
