@@ -110,6 +110,33 @@ extension VergeType {
     try state.update(mutate)
   }
   
+  /// Commit
+  ///
+  /// - Parameters:
+  ///   - name:
+  ///   - description:
+  ///   - file:
+  ///   - function:
+  ///   - line:
+  ///   - newState:
+  public func commit(
+    _ name: String = "",
+    _ description: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    replace newState: State
+  ) {
+    
+    defer {
+      logger.didMutate(name: name, description: description, file: file, function: function, line: line, on: self)
+    }
+    
+    logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
+    
+    state.replace(newState)
+  }
+  
   /// Dispatch
   ///
   /// - Parameters:
@@ -194,6 +221,27 @@ public final class DispatchingContext<Verge : VergeType> {
     ) rethrows {
 
     try source.commit(name, description, file, function, line, mutate)
+  }
+  
+  /// Commit
+  ///
+  /// - Parameters:
+  ///   - name:
+  ///   - description:
+  ///   - file:
+  ///   - function:
+  ///   - line:
+  ///   - newState:
+  public func commit(
+    _ name: String = "",
+    _ description: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    replace newState: Verge.State
+  ) {
+           
+    source.commit(name, description, file, function, line, replace: newState)
   }
   
   @discardableResult
