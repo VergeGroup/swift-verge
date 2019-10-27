@@ -1,114 +1,77 @@
 
 import Foundation
 
-public protocol MutableStorageLogging {
-
-  func didChange(root: Any)
-  func didReplace(root: Any)
-}
-
 public struct StorageSubscribeToken : Hashable {
-
-  public static func == (lhs: StorageSubscribeToken, rhs: StorageSubscribeToken) -> Bool {
-    return lhs.identifier == rhs.identifier
-  }
-
   private let identifier = UUID().uuidString
 }
 
-public class Storage<T> {
-
-  public var value: T {
-    return source.value
+@propertyWrapper
+public final class Storage<Value> {
+  
+  private var subscribers: [StorageSubscribeToken : (Value) -> Void] = [:]
+  
+  public var wrappedValue: Value {
+    return value
   }
-
-  private let source: MutableStorage<T>
-
-  public convenience init(_ value: T) {
-    self.init(MutableStorage.init(value))
+  
+  public var projectedValue: Storage<Value> {
+    self
   }
-
-  public init(_ source: MutableStorage<T>) {
-    self.source = source
-  }
-
-  @discardableResult
-  public func add(subscriber: @escaping (T) -> Void) -> StorageSubscribeToken {
-    return source.add(subscriber: subscriber)
-  }
-
-  public func remove(subscriber token: StorageSubscribeToken) {
-    source.remove(subscriber: token)
-  }
-
-  var mutableStateStorage: MutableStorage<T> {
-    return source
-  }
-}
-
-public final class MutableStorage<T> {
-
-  public typealias Source = T
-
-  private var subscribers: [StorageSubscribeToken : (T) -> Void] = [:]
-
-  public var loggers: [MutableStorageLogging] = []
-
-  private let lock: NSRecursiveLock = .init()
-
-  public var value: T {
+  
+  public var value: Value {
     lock.lock()
-    let v = _value
+    defer {
+      lock.unlock()
+    }
+    return nonatomicValue
+  }
+  
+  private var nonatomicValue: Value
+  
+  private let lock = NSLock()
+  
+  public init(_ value: Value) {
+    self.nonatomicValue = value
+  }
+  
+  public func update(_ update: (inout Value) throws -> Void) rethrows {
+    lock.lock()
+    do {
+      try update(&nonatomicValue)
+    } catch {
+      lock.unlock()
+      throw error
+    }
     lock.unlock()
-    return v
+    notify(value: nonatomicValue)
   }
-
-  private var _value: T
-
-  public init(_ value: T) {
-    self._value = value
+  
+  public func replace(_ value: Value) {
+    lock.lock()
+    nonatomicValue = value
+    lock.unlock()
+    notify(value: nonatomicValue)
   }
-
+    
   @discardableResult
-  public func add(subscriber: @escaping (T) -> Void) -> StorageSubscribeToken {
+  public func add(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
     lock.lock(); defer { lock.unlock() }
     let token = StorageSubscribeToken()
     subscribers[token] = subscriber
     return token
   }
-
+  
   public func remove(subscriber: StorageSubscribeToken) {
     lock.lock(); defer { lock.unlock() }
     subscribers.removeValue(forKey: subscriber)
   }
-
-  public func update(_ update: (inout T) throws -> Void) rethrows {
-    lock.lock()
-    try update(&_value)
-    let currentValue = _value
-    lock.unlock()
-    notify(value: currentValue)
-  }
-
-  public func replace(_ value: T) {
-    lock.lock()
-    _value = value
-    let currentValue = _value
-    lock.unlock()
-    notify(value: currentValue)
-  }
-
+  
   @inline(__always)
-  fileprivate func notify(value: T) {
+  fileprivate func notify(value: Value) {
     lock.lock()
-    let subscribers: [StorageSubscribeToken : (T) -> Void] = self.subscribers
+    let subscribers: [StorageSubscribeToken : (Value) -> Void] = self.subscribers
     lock.unlock()
     subscribers.forEach { $0.value(value) }
   }
-
-  public func asStorage() -> Storage<T> {
-    return Storage.init(self)
-  }
-
+  
 }
-

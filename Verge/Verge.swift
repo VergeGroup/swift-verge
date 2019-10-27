@@ -13,7 +13,7 @@ public enum VergeInternalError : Error {
 public enum NoActivity {}
 public struct NoState {}
 
-public protocol VergeLogging : MutableStorageLogging {
+public protocol VergeLogging {
 
   func didEmit(activity: Any, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
   func willDispatch(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType)
@@ -72,7 +72,6 @@ extension VergeType {
   public func set(logger: VergeLogging) {
     lock.lock(); defer { lock.unlock() }
     associated.logger = logger
-    state.mutableStateStorage.loggers = [logger]
   }
 
   public var activity: Emitter<Activity> {
@@ -108,34 +107,7 @@ extension VergeType {
 
     logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
 
-    try state.mutableStateStorage.update(mutate)
-  }
-
-  /// Commit
-  ///
-  /// - Parameters:
-  ///   - name:
-  ///   - description:
-  ///   - file:
-  ///   - function:
-  ///   - line:
-  ///   - newState:
-  public func commit(
-    _ name: String = "",
-    _ description: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    replace newState: State
-    ) {
-    
-    defer {
-      logger.didMutate(name: name, description: description, file: file, function: function, line: line, on: self)
-    }
-
-    logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
-
-    state.mutableStateStorage.replace(newState)
+    try state.update(mutate)
   }
   
   /// Dispatch
@@ -150,14 +122,14 @@ extension VergeType {
   /// - Returns:
   /// - Throws:
   @discardableResult
-  public func dispatch<T>(
+  public func dispatch<Return>(
     _ name: String = "",
     _ description: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ action: (DispatchingContext<Self>) throws -> RxFuture<T>
-    ) rethrows -> RxFuture<T> {
+    _ action: (DispatchingContext<Self>) throws -> Return
+    ) rethrows -> Return {
     
     logger.willDispatch(
       name: name,
@@ -173,41 +145,12 @@ extension VergeType {
       source: self
     )
     
-    let action = try action(context)
+    let returnValue = try action(context)
     
-    return action
+    return returnValue
 
   }
-  
-  @discardableResult
-  public func dispatchAsync<T>(
-    _ name: String = "",
-    _ description: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    _ action: (DispatchingContext<Self>) throws -> RxFuture<T>
-    ) rethrows -> RxFuture<T> {
-    
-    return try dispatch(name, description, file, function, line, action)
-  }
-  
-  public func dispatch(
-    _ name: String = "",
-    _ description: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    _ action: (DispatchingContext<Self>) throws -> Void
-    ) rethrows {
-    
-    try dispatch(name, description, file, function, line) { (c) -> RxFuture<Void> in
-        try action(c)
-        return RxFuture<Void>.succeed(())
-    }
-    
-  }
-
+   
   fileprivate func emit(
     _ activity: Activity,
     file: StaticString = #file,
@@ -222,7 +165,7 @@ extension VergeType {
 
 public final class DispatchingContext<Verge : VergeType> {
 
-  private weak var source: Verge?
+  private let source: Verge
   private let state: Storage<Verge.State>
   private let lock: NSLock = .init()
   private let actionName: String
@@ -250,57 +193,30 @@ public final class DispatchingContext<Verge : VergeType> {
     _ mutate: (inout Verge.State) throws -> Void
     ) rethrows {
 
-    try source?.commit(name, description, file, function, line, mutate)
+    try source.commit(name, description, file, function, line, mutate)
   }
   
   @discardableResult
-  public func dispatch<U>(
+  public func dispatch<Return>(
     _ name: String = "",
     _ description: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ action: (DispatchingContext<Verge>) throws -> RxFuture<U>
-    ) rethrows -> RxFuture<U> {
+    _ action: (DispatchingContext<Verge>) throws -> Return
+    ) rethrows -> Return {
     
-    return try source?.dispatch(name, description, file, function, line, action) ?? Single<U>.error(VergeInternalError.vergeObjectWasDeallocated).start()
-    
-  }
-  
-  public func dispatch(
-    _ name: String = "",
-    _ description: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    _ action: (DispatchingContext<Verge>) throws -> Void
-    ) rethrows {
-    
-    try source?.dispatch(name, description, file, function, line, action)
+    try source.dispatch(name, description, file, function, line, action)
     
   }
-  
-  @discardableResult
-  public func dispatchAsync<U>(
-    _ name: String = "",
-    _ description: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    _ action: (DispatchingContext<Verge>) throws -> RxFuture<U>
-    ) rethrows -> RxFuture<U> {
-    
-    return try source?.dispatch(name, description, file, function, line, action) ?? Single<U>.error(VergeInternalError.vergeObjectWasDeallocated).start()
-    
-  }
-
+   
   public func emit(
     _ activity: Verge.Activity,
     file: StaticString = #file,
     function: StaticString = #function,
     line: UInt = #line
     ) {
-    source?.emit(activity, file: file, function: function, line: line)
+    source.emit(activity, file: file, function: function, line: line)
   }
 
 }
