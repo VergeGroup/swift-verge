@@ -13,6 +13,8 @@ public protocol ScopedReducerType {
   associatedtype TargetState
   associatedtype SourceReducer: ModularReducerType
   
+  typealias StoreType = ScopedStore<Self>
+  
   typealias Mutation = _Mutation<TargetState>
   typealias ScopedAction<ReturnType> = _ScopedAction<Self, ReturnType>
   
