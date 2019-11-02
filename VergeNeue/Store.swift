@@ -31,6 +31,7 @@ open class Store<Reducer: ModularReducerType>: Identifiable {
   private let logger: StoreLogger?
   
   @_Atomic private var adapters: [AdapterBase<Reducer>] = []
+  @_Atomic private var scopedStores: [AnyObject] = []
   
   fileprivate init(
     reducer: Reducer,
@@ -74,6 +75,18 @@ open class Store<Reducer: ModularReducerType>: Identifiable {
   }
   
   // MARK: - Functions
+  
+  @discardableResult
+  public func addScopedStore<R>(_ store: ScopedStore<R>) -> Self {
+    scopedStores.append(store)
+    return self
+  }
+  
+  @discardableResult
+  public func removeScopedStore<R>(_ store: ScopedStore<R>) -> Self {
+    scopedStores.removeAll { $0 === store }
+    return self
+  }
   
   @discardableResult
   public func addAdapter(_ adapter: AdapterBase<Reducer>) -> Self {

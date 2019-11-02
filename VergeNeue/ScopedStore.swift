@@ -17,9 +17,7 @@ public final class ScopedStore<Reducer: ScopedReducerType> {
   public var state: State {
     storage.value[keyPath: scopeSelector]
   }
-  
-  public let sourceStore: Store<Reducer.SourceReducer>
-  
+    
   private let reducer: Reducer
   let storage: Storage<Reducer.SourceReducer.State>
   private let scopeSelector: WritableKeyPath<SourceState, State>
@@ -31,7 +29,6 @@ public final class ScopedStore<Reducer: ScopedReducerType> {
   ) {
     
     self.storage = sourceStore.storage
-    self.sourceStore = sourceStore
     self.reducer = reducer
     self.scopeSelector = scopeSelector
     
