@@ -110,7 +110,11 @@ public final class ScopedDispatchContext<Reducer: ScopedReducerType> {
   private let store: ScopedStore<Reducer>
   
   public var state: Reducer.TargetState {
-    return store.state
+    store.state
+  }
+  
+  public var sourceState: Reducer.SourceReducer.State {
+    store.sourceState
   }
   
   init(store: ScopedStore<Reducer>) {

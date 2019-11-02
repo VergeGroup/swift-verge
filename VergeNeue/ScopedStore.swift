@@ -17,6 +17,10 @@ public final class ScopedStore<Reducer: ScopedReducerType> {
   public var state: State {
     storage.value[keyPath: scopeSelector]
   }
+  
+  public var sourceState: SourceState {
+    storage.value
+  }
     
   private let reducer: Reducer
   let storage: Storage<Reducer.SourceReducer.State>
