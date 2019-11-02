@@ -16,7 +16,7 @@ public protocol ScopedReducerType {
   typealias StoreType = ScopedStore<Self>
   
   typealias Mutation = _Mutation<TargetState>
-  typealias ScopedAction<ReturnType> = _ScopedAction<Self, ReturnType>
+  typealias Action<ReturnType> = _ScopedAction<Self, ReturnType>
   
   var scopeKeyPath: WritableKeyPath<SourceReducer.State, TargetState> { get }
 }

@@ -10,7 +10,7 @@ import Foundation
 
 public final class ScopedStore<Reducer: ScopedReducerType> {
   
-  public typealias Action = Reducer.ScopedAction
+  public typealias Action = Reducer.Action
   public typealias State = Reducer.TargetState
   public typealias SourceState = Reducer.SourceReducer.State
   
@@ -35,7 +35,7 @@ public final class ScopedStore<Reducer: ScopedReducerType> {
   }
   
   @discardableResult
-  public func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.ScopedAction<ReturnType>) -> ReturnType {
+  public func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
     let context = ScopedDispatchContext<Reducer>.init(store: self)
     let action = makeAction(reducer)
     let result = action.action(context)

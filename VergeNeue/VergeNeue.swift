@@ -118,7 +118,7 @@ public final class ScopedDispatchContext<Reducer: ScopedReducerType> {
   }
   
   @discardableResult
-  public func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.ScopedAction<ReturnType>) -> ReturnType {
+  public func dispatch<ReturnType>(_ makeAction: (Reducer) -> Reducer.Action<ReturnType>) -> ReturnType {
     store.dispatch(makeAction)
   }
   
