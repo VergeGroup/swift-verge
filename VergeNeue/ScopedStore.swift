@@ -22,7 +22,7 @@ public final class ScopedStore<Reducer: ScopedReducerType> {
     storage.value
   }
     
-  private let reducer: Reducer
+  public let reducer: Reducer
   let storage: Storage<Reducer.SourceReducer.State>
   private let scopeSelector: WritableKeyPath<SourceState, State>
   
