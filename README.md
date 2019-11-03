@@ -1,4 +1,4 @@
-# Verge - Store (SwiftUI / UIKit) (v6.0.0)
+# Verge - Store (SwiftUI / UIKit) (Planning v6.0.0)
 
 Latest released Verge => [`master` branch](https://github.com/muukii/Verge/tree/master)
 
