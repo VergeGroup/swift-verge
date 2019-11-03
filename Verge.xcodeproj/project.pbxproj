@@ -101,7 +101,6 @@
 		4BAE9FED21DFB6A0003DDF3D /* RxCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FC921DFA119003DDF3D /* RxCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BAE9FEE21DFB6A0003DDF3D /* RxSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FCB21DFA119003DDF3D /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BAE9FEF21DFB6AF003DDF3D /* RxFuture.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BAE9FCA21DFA119003DDF3D /* RxFuture.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4BC22688236ED5EC00699BE6 /* Play.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC22687236ED5EC00699BE6 /* Play.swift */; };
 		4BC864E823376DD5002FEF62 /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864E723376DD5002FEF62 /* Reducer.swift */; };
 		4BC864EA23377066002FEF62 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864E923377066002FEF62 /* Adapter.swift */; };
 		4BC864EC23377269002FEF62 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864EB23377269002FEF62 /* Atomic.swift */; };
@@ -301,7 +300,6 @@
 		4BAE9FCB21DFA119003DDF3D /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = SOURCE_ROOT; };
 		4BAE9FE721DFA6F6003DDF3D /* RxFuture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxFuture.framework; path = Carthage/Build/Mac/RxFuture.framework; sourceTree = "<group>"; };
 		4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Verge+Extension.swift"; sourceTree = "<group>"; };
-		4BC22687236ED5EC00699BE6 /* Play.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Play.swift; sourceTree = "<group>"; };
 		4BC864E723376DD5002FEF62 /* Reducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reducer.swift; sourceTree = "<group>"; };
 		4BC864E923377066002FEF62 /* Adapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Adapter.swift; sourceTree = "<group>"; };
 		4BC864EB23377269002FEF62 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
@@ -670,7 +668,6 @@
 				4B66DFA12331497B002AD206 /* SwiftUIBinder.swift */,
 				4B495D01233266ED0098F7B4 /* StoreLogger.swift */,
 				4BC864EB23377269002FEF62 /* Atomic.swift */,
-				4BC22687236ED5EC00699BE6 /* Play.swift */,
 			);
 			path = VergeNeue;
 			sourceTree = "<group>";
@@ -1277,7 +1274,6 @@
 				4B495D02233266ED0098F7B4 /* StoreLogger.swift in Sources */,
 				4B66DFA22331497B002AD206 /* SwiftUIBinder.swift in Sources */,
 				4B66DFA6233149D4002AD206 /* Storage.swift in Sources */,
-				4BC22688236ED5EC00699BE6 /* Play.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
