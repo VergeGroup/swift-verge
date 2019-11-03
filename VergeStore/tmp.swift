@@ -122,3 +122,22 @@ public final class DispatchingActionContext<State> {
     dispatcher.commit(name, file, function, line, mutation)
   }
 }
+
+#if canImport(Combine)
+
+import Foundation
+import Combine
+
+@available(iOS 13, *)
+extension VergeDefaultStore: ObservableObject {
+  public var objectWillChange: ObservableObjectPublisher {
+    storage.objectWillChange
+  }
+}
+
+@available(iOS 13, *)
+extension Dispatcher: ObservableObject {
+
+}
+
+#endif
