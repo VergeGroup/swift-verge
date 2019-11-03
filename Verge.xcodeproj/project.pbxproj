@@ -19,6 +19,7 @@
 		4B427412236F1D2D00C302C8 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B42740C236F1D2D00C302C8 /* Storage.swift */; };
 		4B427413236F1D2D00C302C8 /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B42740D236F1D2D00C302C8 /* Sample.swift */; };
 		4B427414236F1D2D00C302C8 /* StateNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B42740E236F1D2D00C302C8 /* StateNode.swift */; };
+		4B427419236F269C00C302C8 /* tmp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B427418236F269C00C302C8 /* tmp.swift */; };
 		4B463D6920D4C4690053A4FF /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B463D6A20D4C4690053A4FF /* Verge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4911F969BF3002D54FE /* Verge.swift */; };
 		4B463D6B20D4C4690053A4FF /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E2781FE3646B001736D2 /* Storage.swift */; };
@@ -225,6 +226,7 @@
 		4B42740C236F1D2D00C302C8 /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		4B42740D236F1D2D00C302C8 /* Sample.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sample.swift; sourceTree = "<group>"; };
 		4B42740E236F1D2D00C302C8 /* StateNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateNode.swift; sourceTree = "<group>"; };
+		4B427418236F269C00C302C8 /* tmp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tmp.swift; sourceTree = "<group>"; };
 		4B463D7520D4C4690053A4FF /* Verge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Verge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B463D7B20D4C72D0053A4FF /* EasyPeasy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EasyPeasy.framework; path = Carthage/Build/iOS/EasyPeasy.framework; sourceTree = SOURCE_ROOT; };
 		4B463D8120D4C74A0053A4FF /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/Mac/RxCocoa.framework; sourceTree = "<group>"; };
@@ -546,6 +548,7 @@
 				4B427409236F1D2D00C302C8 /* StateNodeDispatchContext.swift */,
 				4B42740B236F1D2D00C302C8 /* StateNodeLogger.swift */,
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
+				4B427418236F269C00C302C8 /* tmp.swift */,
 			);
 			path = VergeStore;
 			sourceTree = "<group>";
@@ -1231,6 +1234,7 @@
 			files = (
 				4B427413236F1D2D00C302C8 /* Sample.swift in Sources */,
 				4B42740F236F1D2D00C302C8 /* StateNodeDispatchContext.swift in Sources */,
+				4B427419236F269C00C302C8 /* tmp.swift in Sources */,
 				4B427412236F1D2D00C302C8 /* Storage.swift in Sources */,
 				4B427411236F1D2D00C302C8 /* StateNodeLogger.swift in Sources */,
 				4B427410236F1D2D00C302C8 /* StateNode+Combine.swift in Sources */,
