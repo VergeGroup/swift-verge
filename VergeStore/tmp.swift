@@ -13,6 +13,11 @@ public protocol VergeStoreLogger {
   func willCommit(store: Any, state: Any, mutation: MutationMetadata)
   func didCommit(store: Any, state: Any, mutation: MutationMetadata)
   func didDispatch(store: Any, state: Any, action: ActionMetadata)
+  
+  func didCreateDispatcher(store: Any, dispatcher: Any)
+  func didDestroyDispatcher(store: Any, dispatcher: Any)
+  
+  func didTakeTimeToCommit(store: Any, state: Any, mutation: MutationMetadata, time: CFTimeInterval)
 }
 
 open class VergeDefaultStore<State> {
@@ -43,8 +48,18 @@ open class Dispatcher<State> {
   
   public let targetStore: Store
   
+  private var logger: VergeStoreLogger? {
+    targetStore.logger
+  }
+  
   public init(target store: Store) {
     self.targetStore = store
+    
+    logger?.didCreateDispatcher(store: store, dispatcher: self)
+  }
+  
+  deinit {
+    logger?.didDestroyDispatcher(store: targetStore, dispatcher: self)
   }
   
   @discardableResult
@@ -75,14 +90,23 @@ open class Dispatcher<State> {
     
     let metadata = MutationMetadata(name: name, file: file, function: function, line: line)
     
-    targetStore.logger?.willCommit(store: self, state: targetStore.state, mutation: metadata)
+    logger?.willCommit(store: targetStore, state: targetStore.state, mutation: metadata)
     defer {
-      targetStore.logger?.didCommit(store: self, state: targetStore.state, mutation: metadata)
+      logger?.didCommit(store: targetStore, state: targetStore.state, mutation: metadata)
     }
     
+    let startedTime = CFAbsoluteTimeGetCurrent()
     try targetStore.storage.update { (state) in
       try mutation(&state)
     }
+    let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
+
+    logger?.didTakeTimeToCommit(
+      store: targetStore,
+      state: targetStore.state,
+      mutation: metadata,
+      time: elapsed
+    )
   }
   
 }
