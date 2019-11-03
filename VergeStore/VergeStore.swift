@@ -8,6 +8,24 @@
 
 import Foundation
 
+public struct MutationMetadata {
+  
+  public let name: String
+  public let file: StaticString
+  public let function: StaticString
+  public let line: UInt
+  
+}
+
+public struct ActionMetadata {
+  
+  public let name: String
+  public let file: StaticString
+  public let function: StaticString
+  public let line: UInt
+  
+}
+
 public protocol VergeStoreLogger {
   
   func willCommit(store: Any, state: Any, mutation: MutationMetadata)
@@ -151,6 +169,33 @@ public final class DispatchingActionContext<State> {
 
 import Foundation
 import Combine
+
+private var _associated: Void?
+
+@available(iOS 13.0, *)
+extension Storage: ObservableObject {
+  
+  public var objectWillChange: ObservableObjectPublisher {
+    if let associated = objc_getAssociatedObject(self, &_associated) as? ObservableObjectPublisher {
+      return associated
+    } else {
+      let associated = ObservableObjectPublisher()
+      objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN)
+      
+      add { _ in
+        if Thread.isMainThread {
+          associated.send()
+        } else {
+          DispatchQueue.main.async {
+            associated.send()
+          }
+        }
+      }
+      
+      return associated
+    }
+  }
+}
 
 @available(iOS 13, *)
 extension VergeDefaultStore: ObservableObject {
