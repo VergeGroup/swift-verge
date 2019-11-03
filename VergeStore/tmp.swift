@@ -39,9 +39,11 @@ open class VergeDefaultStore<State> {
 
 open class Dispatcher<State> {
   
-  public let targetStore: VergeDefaultStore<State>
+  public typealias Store = VergeDefaultStore<State>
   
-  public init(target store: VergeDefaultStore<State>) {
+  public let targetStore: Store
+  
+  public init(target store: Store) {
     self.targetStore = store
   }
   
