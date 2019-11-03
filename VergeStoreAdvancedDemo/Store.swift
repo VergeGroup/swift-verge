@@ -40,7 +40,7 @@ struct LoggedInState {
   
 }
 
-final class LoggedInStore: StoreBase<LoggedInState> {
+final class LoggedInStore: StateNode<LoggedInState> {
     
   let service: Service
   

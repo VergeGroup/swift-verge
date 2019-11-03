@@ -19,37 +19,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if canImport(Combine)
 
 import Foundation
+import Combine
 
-#if DEBUG
+private var _associated: Void?
 
-final class MyStore: StateNode<MyStore.State> {
+@available(iOS 13.0, *)
+extension Storage: ObservableObject {
   
-  struct State {
-    var count: Int = 0
-  }
-  
-  init() {
-    super.init(initialState: .init(), logger: nil)
-  }
-  
-  func increment() {
-    commit {
-      $0.count += 1
-    }
-  }
-  
-  func asyncIncrement() {
-    dispatch { context in
-      DispatchQueue.main.async {
-        context.commit {
-          $0.count += 1
+  public var objectWillChange: ObservableObjectPublisher {
+    if let associated = objc_getAssociatedObject(self, &_associated) as? ObservableObjectPublisher {
+      return associated
+    } else {
+      let associated = ObservableObjectPublisher()
+      objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN)
+      
+      add { _ in
+        if Thread.isMainThread {
+          associated.send()
+        } else {
+          DispatchQueue.main.async {
+            associated.send()
+          }
         }
       }
+      
+      return associated
     }
   }
-  
+}
+
+@available(iOS 13, *)
+extension StateNode: ObservableObject {
+  public var objectWillChange: ObservableObjectPublisher {
+    storage.objectWillChange
+  }
 }
 
 #endif
+

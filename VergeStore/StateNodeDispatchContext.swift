@@ -22,34 +22,38 @@
 
 import Foundation
 
-#if DEBUG
-
-final class MyStore: StateNode<MyStore.State> {
+public final class StateNodeDispatchContext<StateNode: StateNodeType> {
   
-  struct State {
-    var count: Int = 0
+  public let stateNode: StateNode
+  
+  public var state: StateNode.UsingState {
+    return stateNode.state
   }
   
-  init() {
-    super.init(initialState: .init(), logger: nil)
+  init(store: StateNode) {
+    self.stateNode = store
   }
   
-  func increment() {
-    commit {
-      $0.count += 1
-    }
+  @discardableResult
+  public func dispatch<ReturnType>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: (StateNodeDispatchContext<StateNode>) -> ReturnType
+  ) -> ReturnType {
+    
+    stateNode.dispatch(name, file, function, line, action)
   }
   
-  func asyncIncrement() {
-    dispatch { context in
-      DispatchQueue.main.async {
-        context.commit {
-          $0.count += 1
-        }
-      }
-    }
+  public func commit(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ mutation: (inout StateNode.UsingState) -> Void
+  ) {
+    
+    stateNode.commit(name, file, function, line, mutation)
   }
-  
 }
-
-#endif

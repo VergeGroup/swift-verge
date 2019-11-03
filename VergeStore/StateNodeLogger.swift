@@ -19,37 +19,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
-import Foundation
-
-#if DEBUG
-
-final class MyStore: StateNode<MyStore.State> {
+public protocol StateNodeLogger {
   
-  struct State {
-    var count: Int = 0
-  }
-  
-  init() {
-    super.init(initialState: .init(), logger: nil)
-  }
-  
-  func increment() {
-    commit {
-      $0.count += 1
-    }
-  }
-  
-  func asyncIncrement() {
-    dispatch { context in
-      DispatchQueue.main.async {
-        context.commit {
-          $0.count += 1
-        }
-      }
-    }
-  }
-  
+  func willCommit(store: Any, state: Any, mutation: MutationMetadata)
+  func didCommit(store: Any, state: Any, mutation: MutationMetadata)
+  func didDispatch(store: Any, state: Any, action: ActionMetadata)
 }
-
-#endif
