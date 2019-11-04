@@ -13,9 +13,9 @@ The characteristics are
 - Creating one or more Dispatcher.
 - A dispatcher can have dependencies service needs. (e.g. API Client, DB)
 
-### Store
+### 🪐 Store
 
-### Mutation
+### ☄️ Mutation
 
 The only way to actually change state in a Verge store is by committing a mutation.
 Define a function that returns Mutation object. That expresses that function is Mutation
@@ -24,14 +24,14 @@ Mutation object is simple struct that has a closure what passes current state to
 
 > Mutation does not run asynchronous operation.
 
-### Action
+### 🌟 Action
 
 Action is similar to Mutation.
 Action can contain arbitrary asynchronous operations.
 
 To commit Mutations inside Action, Use context.commit.
 
-### Dispatcher
+### 🚀 Dispatcher
 
 ## Utils
 
