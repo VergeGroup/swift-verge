@@ -1,10 +1,23 @@
 //
-//  tmp.swift
-//  VergeStore
+// Copyright (c) 2019 muukii
 //
-//  Created by muukii on 2019/11/04.
-//  Copyright © 2019 muukii. All rights reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 import Foundation
 
@@ -28,17 +41,19 @@ public struct ActionMetadata {
 
 public protocol VergeStoreLogger {
   
-  func willCommit(store: Any, state: Any, mutation: MutationMetadata)
-  func didCommit(store: Any, state: Any, mutation: MutationMetadata)
-  func didDispatch(store: Any, state: Any, action: ActionMetadata)
+  func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?)
+  func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?)
+  func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: AnyObject?)
   
-  func didCreateDispatcher(store: Any, dispatcher: Any)
-  func didDestroyDispatcher(store: Any, dispatcher: Any)
+  func didCreateDispatcher(store: AnyObject, dispatcher: Any)
+  func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
   
-  func didTakeTimeToCommit(store: Any, state: Any, mutation: MutationMetadata, time: CFTimeInterval)
+  func didTakeTimeToCommit(store: AnyObject, state: Any, mutation: MutationMetadata, time: CFTimeInterval)
 }
 
-open class VergeDefaultStore<State> {
+open class VergeDefaultStore<State>: CustomReflectable {
+  
+  public typealias DispatcherType = Dispatcher<State>
   
   public var state: State {
     storage.value
@@ -57,12 +72,94 @@ open class VergeDefaultStore<State> {
     self.logger = logger
     
   }
+  
+  func receive<FromDispatcher: Dispatching>(
+    context: VergeStoreDispatcherContext<FromDispatcher>?,
+    metadata: MutationMetadata,
+    mutation: (inout State) throws -> Void
+  ) rethrows {
+    
+    logger?.willCommit(store: self, state: self.state, mutation: metadata, context: context)
+    defer {
+      logger?.didCommit(store: self, state: self.state, mutation: metadata, context: context)
+    }
+    
+    let startedTime = CFAbsoluteTimeGetCurrent()
+    try storage.update { (state) in
+      try mutation(&state)
+    }
+    let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
+    
+    logger?.didTakeTimeToCommit(
+      store: self,
+      state: self.state,
+      mutation: metadata,
+      time: elapsed
+    )
+       
+  }
+  
+  public var customMirror: Mirror {
+    Mirror(
+      self,
+      children: [
+        "state": state
+      ],
+      displayStyle: .struct
+    )
+  }
       
 }
 
-open class Dispatcher<State> {
+public protocol Dispatching {
+  associatedtype State
+  typealias Store = VergeDefaultStore<State>
+  var targetStore: Store { get }
+}
+
+extension Dispatching {
   
-  public typealias Store = VergeDefaultStore<State>
+  @discardableResult
+  public func dispatch<ReturnType>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: (VergeStoreDispatcherContext<Self>) throws -> ReturnType
+  ) rethrows -> ReturnType {
+    
+    let metadata = ActionMetadata(name: name, file: file, function: function, line: line)
+    
+    let context = VergeStoreDispatcherContext<Self>.init(dispatcher: self)
+    let result = try action(context)
+    targetStore.logger?.didDispatch(store: targetStore, state: targetStore.state, action: metadata, context: context)
+    return result
+    
+  }
+  
+  public func commit(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ context: VergeStoreDispatcherContext<Self>? = nil,
+    _ mutation: (inout State) throws -> Void
+  ) rethrows {
+    
+    let metadata = MutationMetadata(name: name, file: file, function: function, line: line)
+    
+    try targetStore.receive(
+      context: context,
+      metadata: metadata,
+      mutation: mutation
+    )
+    
+  }
+}
+
+open class Dispatcher<State>: Dispatching {
+  
+  public typealias Context = VergeStoreDispatcherContext<Dispatcher<State>>
   
   public let targetStore: Store
   
@@ -80,88 +177,132 @@ open class Dispatcher<State> {
     logger?.didDestroyDispatcher(store: targetStore, dispatcher: self)
   }
   
-  @discardableResult
-  public func dispatch<ReturnType>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    _ action: (DispatchingActionContext<State>) throws -> ReturnType
-  ) rethrows -> ReturnType {
-    
-    let metadata = ActionMetadata(name: name, file: file, function: function, line: line)
-    
-    let context = DispatchingActionContext<State>.init(dispatcher: self)
-    let result = try action(context)
-    targetStore.logger?.didDispatch(store: self, state: targetStore.state, action: metadata)
-    return result
-    
-  }
+
   
-  public func commit(
+  
+}
+
+public protocol _VergeStore_OptionalProtocol {
+  associatedtype Wrapped
+  var _vergestore_wrappedValue: Wrapped? { get set }
+}
+
+extension Optional: _VergeStore_OptionalProtocol {
+  
+  public var _vergestore_wrappedValue: Wrapped? {
+    get {
+      return self
+    }
+    mutating set {
+      self = newValue
+    }
+  }
+}
+
+public protocol ScopedDispatching: Dispatching {
+  associatedtype Scoped
+  
+  var selector: WritableKeyPath<State, Scoped> { get }
+}
+
+extension ScopedDispatching {
+  
+  public func commitScoped(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ mutation: (inout State) throws -> Void
-  ) rethrows {
+    _ context: VergeStoreDispatcherContext<Self>? = nil,
+    _ mutation: (inout Scoped) throws -> Void) rethrows {
     
     let metadata = MutationMetadata(name: name, file: file, function: function, line: line)
     
-    logger?.willCommit(store: targetStore, state: targetStore.state, mutation: metadata)
-    defer {
-      logger?.didCommit(store: targetStore, state: targetStore.state, mutation: metadata)
-    }
+    try targetStore.receive(
+      context: context,
+      metadata: metadata,
+      mutation: { ( state: inout State) in
+        
+        try mutation(&state[keyPath: selector])
+    })
     
-    let startedTime = CFAbsoluteTimeGetCurrent()
-    try targetStore.storage.update { (state) in
-      try mutation(&state)
-    }
-    let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
-
-    logger?.didTakeTimeToCommit(
-      store: targetStore,
-      state: targetStore.state,
-      mutation: metadata,
-      time: elapsed
-    )
   }
   
 }
 
-public final class DispatchingActionContext<State> {
+extension ScopedDispatching where Scoped : _VergeStore_OptionalProtocol {
   
-  public let dispatcher: Dispatcher<State>
-  
-  public var state: State {
-    return dispatcher.targetStore.state
-  }
-  
-  init(dispatcher: Dispatcher<State>) {
-    self.dispatcher = dispatcher
-  }
-  
-  @discardableResult
-  public func dispatch<ReturnType>(
+  public func commitIfPresent(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ action: (DispatchingActionContext<State>) -> ReturnType
-  ) -> ReturnType {
+    _ context: VergeStoreDispatcherContext<Self>? = nil,
+    _ mutation: (inout Scoped.Wrapped) throws -> Void) rethrows {
     
-    dispatcher.dispatch(name, file, function, line, action)
+    let metadata = MutationMetadata(name: name, file: file, function: function, line: line)
+    
+    try targetStore.receive(
+      context: context,
+      metadata: metadata,
+      mutation: { ( state: inout State) in
+                                
+        guard state[keyPath: selector]._vergestore_wrappedValue != nil else { return }
+        try mutation(&state[keyPath: selector]._vergestore_wrappedValue!)
+    })
+    
   }
   
+}
+
+public final class VergeStoreDispatcherContext<Dispatcher: Dispatching> {
+  
+  public let dispatcher: Dispatcher
+  
+  public var state: Dispatcher.State {
+    return dispatcher.targetStore.state
+  }
+  
+  init(dispatcher: Dispatcher) {
+    self.dispatcher = dispatcher
+  }
+    
   public func commit(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ mutation: (inout State) -> Void
+    _ mutation: (inout Dispatcher.State) -> Void
   ) {
     
-    dispatcher.commit(name, file, function, line, mutation)
+    dispatcher.commit(name, file, function, line, self, mutation)
+  }
+}
+
+extension VergeStoreDispatcherContext where Dispatcher : ScopedDispatching {
+  
+  public func commitScoped(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ mutation: (inout Dispatcher.Scoped) throws -> Void) rethrows {
+
+    try dispatcher.commitScoped(name, file, function, line, self, mutation)
+    
+  }
+}
+
+extension VergeStoreDispatcherContext where Dispatcher : ScopedDispatching, Dispatcher.Scoped : _VergeStore_OptionalProtocol {
+  
+  public func commitIfPresent(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ mutation: (inout Dispatcher.Scoped.Wrapped) throws -> Void) rethrows {
+    
+    try dispatcher.commitIfPresent(name, file, function, line, self, mutation)
+    
   }
 }
 

@@ -27,7 +27,7 @@ struct StorageSubscribeToken : Hashable {
 }
 
 @propertyWrapper
-public final class Storage<Value> {
+public final class Storage<Value>: CustomReflectable {
   
   private var subscribers: [StorageSubscribeToken : (Value) -> Void] = [:]
   
@@ -87,6 +87,14 @@ public final class Storage<Value> {
     let subscribers: [StorageSubscribeToken : (Value) -> Void] = self.subscribers
     lock.unlock()
     subscribers.forEach { $0.value(value) }
+  }
+  
+  public var customMirror: Mirror {
+    Mirror(
+      self,
+      children: ["value": value],
+      displayStyle: .struct
+    )
   }
   
 }
