@@ -52,27 +52,27 @@ class RootDispatcher: Store.DispatcherType {
   }
 }
 
-final class OptionalNestedDispatcher: RootDispatcher, ScopedDispatching {
+final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
   
   var selector: WritableKeyPath<State, State.NestedState?> {
     \.optionalNested
   }
   
-  override func setMyName() {
-    commitIfPresent {
+  func setMyName() {
+    commitScopedIfPresent {
       $0.myName = "Hello"
     }
   }
   
 }
 
-final class NestedDispatcher: RootDispatcher, ScopedDispatching {
+final class NestedDispatcher: Store.DispatcherType, ScopedDispatching {
   
   var selector: WritableKeyPath<State, State.NestedState> {
     \.nested
   }
   
-  override func setMyName() {
+  func setMyName() {
     commitScoped {
       $0.myName = "Hello"
     }

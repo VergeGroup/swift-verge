@@ -231,7 +231,7 @@ extension ScopedDispatching {
 
 extension ScopedDispatching where Scoped : _VergeStore_OptionalProtocol {
   
-  public func commitIfPresent(
+  public func commitScopedIfPresent(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
@@ -301,7 +301,7 @@ extension VergeStoreDispatcherContext where Dispatcher : ScopedDispatching, Disp
     _ line: UInt = #line,
     _ mutation: (inout Dispatcher.Scoped.Wrapped) throws -> Void) rethrows {
     
-    try dispatcher.commitIfPresent(name, file, function, line, self, mutation)
+    try dispatcher.commitScopedIfPresent(name, file, function, line, self, mutation)
     
   }
 }
