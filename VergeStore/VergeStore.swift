@@ -313,7 +313,7 @@ import Combine
 
 private var _associated: Void?
 
-@available(iOS 13.0, *)
+@available(iOS 13.0, macOS 10.15, *)
 extension Storage: ObservableObject {
   
   public var objectWillChange: ObservableObjectPublisher {
@@ -338,14 +338,14 @@ extension Storage: ObservableObject {
   }
 }
 
-@available(iOS 13, *)
+@available(iOS 13.0, macOS 10.15, *)
 extension VergeDefaultStore: ObservableObject {
   public var objectWillChange: ObservableObjectPublisher {
     storage.objectWillChange
   }
 }
 
-@available(iOS 13, *)
+@available(iOS 13.0, macOS 10.15, *)
 extension Dispatcher: ObservableObject {
 
 }
