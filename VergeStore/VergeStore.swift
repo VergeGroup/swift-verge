@@ -125,13 +125,13 @@ extension Dispatching {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ action: (VergeStoreDispatcherContext<Self>) throws -> ReturnType
+    _ inlineAction: (VergeStoreDispatcherContext<Self>) throws -> ReturnType
   ) rethrows -> ReturnType {
     
     let metadata = ActionMetadata(name: name, file: file, function: function, line: line)
     
     let context = VergeStoreDispatcherContext<Self>.init(dispatcher: self)
-    let result = try action(context)
+    let result = try inlineAction(context)
     targetStore.logger?.didDispatch(store: targetStore, state: targetStore.state, action: metadata, context: context)
     return result
     
@@ -143,7 +143,7 @@ extension Dispatching {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     _ context: VergeStoreDispatcherContext<Self>? = nil,
-    _ mutation: (inout State) throws -> Void
+    _ inlineMutation: (inout State) throws -> Void
   ) rethrows {
     
     let metadata = MutationMetadata(name: name, file: file, function: function, line: line)
@@ -151,7 +151,7 @@ extension Dispatching {
     try targetStore.receive(
       context: context,
       metadata: metadata,
-      mutation: mutation
+      mutation: inlineMutation
     )
     
   }
@@ -176,9 +176,6 @@ open class Dispatcher<State>: Dispatching {
   deinit {
     logger?.didDestroyDispatcher(store: targetStore, dispatcher: self)
   }
-  
-
-  
   
 }
 
@@ -213,7 +210,7 @@ extension ScopedDispatching {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     _ context: VergeStoreDispatcherContext<Self>? = nil,
-    _ mutation: (inout Scoped) throws -> Void) rethrows {
+    _ inlineMutation: (inout Scoped) throws -> Void) rethrows {
     
     let metadata = MutationMetadata(name: name, file: file, function: function, line: line)
     
@@ -222,7 +219,7 @@ extension ScopedDispatching {
       metadata: metadata,
       mutation: { ( state: inout State) in
         
-        try mutation(&state[keyPath: selector])
+        try inlineMutation(&state[keyPath: selector])
     })
     
   }
@@ -237,7 +234,7 @@ extension ScopedDispatching where Scoped : _VergeStore_OptionalProtocol {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     _ context: VergeStoreDispatcherContext<Self>? = nil,
-    _ mutation: (inout Scoped.Wrapped) throws -> Void) rethrows {
+    _ inlineMutation: (inout Scoped.Wrapped) throws -> Void) rethrows {
     
     let metadata = MutationMetadata(name: name, file: file, function: function, line: line)
     
@@ -247,7 +244,7 @@ extension ScopedDispatching where Scoped : _VergeStore_OptionalProtocol {
       mutation: { ( state: inout State) in
                                 
         guard state[keyPath: selector]._vergestore_wrappedValue != nil else { return }
-        try mutation(&state[keyPath: selector]._vergestore_wrappedValue!)
+        try inlineMutation(&state[keyPath: selector]._vergestore_wrappedValue!)
     })
     
   }
@@ -271,10 +268,10 @@ public final class VergeStoreDispatcherContext<Dispatcher: Dispatching> {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ mutation: (inout Dispatcher.State) -> Void
+    _ inlineMutation: (inout Dispatcher.State) -> Void
   ) {
     
-    dispatcher.commit(name, file, function, line, self, mutation)
+    dispatcher.commit(name, file, function, line, self, inlineMutation)
   }
 }
 
@@ -285,9 +282,9 @@ extension VergeStoreDispatcherContext where Dispatcher : ScopedDispatching {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ mutation: (inout Dispatcher.Scoped) throws -> Void) rethrows {
+    _ inlineMutation: (inout Dispatcher.Scoped) throws -> Void) rethrows {
 
-    try dispatcher.commitScoped(name, file, function, line, self, mutation)
+    try dispatcher.commitScoped(name, file, function, line, self, inlineMutation)
     
   }
 }
@@ -299,9 +296,9 @@ extension VergeStoreDispatcherContext where Dispatcher : ScopedDispatching, Disp
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ mutation: (inout Dispatcher.Scoped.Wrapped) throws -> Void) rethrows {
+    _ inlineMutation: (inout Dispatcher.Scoped.Wrapped) throws -> Void) rethrows {
     
-    try dispatcher.commitScopedIfPresent(name, file, function, line, self, mutation)
+    try dispatcher.commitScopedIfPresent(name, file, function, line, self, inlineMutation)
     
   }
 }
