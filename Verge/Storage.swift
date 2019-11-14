@@ -38,19 +38,22 @@ public final class Storage<Value> {
     lock.lock()
     do {
       try update(&nonatomicValue)
+      let value = nonatomicValue
+      lock.unlock()
+      notify(value: value)
     } catch {
       lock.unlock()
       throw error
     }
-    lock.unlock()
-    notify(value: nonatomicValue)
+    
   }
   
   public func replace(_ value: Value) {
     lock.lock()
     nonatomicValue = value
+    let value = nonatomicValue
     lock.unlock()
-    notify(value: nonatomicValue)
+    notify(value: value)
   }
     
   @discardableResult
