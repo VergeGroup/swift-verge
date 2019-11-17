@@ -27,9 +27,18 @@ public protocol StateType {
 
 extension StateType {
   
-  public mutating func updateIfExists<T>(target keyPath: WritableKeyPath<Self, T?>, update: (inout T) throws -> Void) rethrows {
-    guard self[keyPath: keyPath] != nil else { return }
-    try update(&self[keyPath: keyPath]!)
+  public mutating func update<T: _VergeStore_OptionalProtocol>(target keyPath: WritableKeyPath<Self, T>, update: (inout T.Wrapped) throws -> Void) rethrows {
+    guard self[keyPath: keyPath]._vergestore_wrappedValue != nil else { return }
+    try update(&self[keyPath: keyPath]._vergestore_wrappedValue!)
   }
+  
+  public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T) throws -> Void) rethrows {
+    try update(&self[keyPath: keyPath])
+  }
+  
+  public mutating func update(update: (inout Self) throws -> Void) rethrows {
+    try update(&self)
+  }
+  
 }
 

@@ -105,6 +105,8 @@
 		4BC864EA23377066002FEF62 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864E923377066002FEF62 /* Adapter.swift */; };
 		4BC864EC23377269002FEF62 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864EB23377269002FEF62 /* Atomic.swift */; };
 		4BC864EE23377A4F002FEF62 /* PollingAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC864ED23377A4F002FEF62 /* PollingAdapter.swift */; };
+		4BCBCA8B2381C82100F33B15 /* Dispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8A2381C82100F33B15 /* Dispatcher.swift */; };
+		4BCBCA8D2381CC2B00F33B15 /* DispatcherContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */; };
 		4BD1CD2B233FE691006E0565 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AEB2C2331145B000709D9 /* StartView.swift */; };
 		4BD85F2B2331202C00FD04E9 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD85F2A2331202C00FD04E9 /* Utility.swift */; };
 		4BD85F2D2331213800FD04E9 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BD85F2C2331213800FD04E9 /* SwiftUI.framework */; };
@@ -312,6 +314,8 @@
 		4BC864E923377066002FEF62 /* Adapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Adapter.swift; sourceTree = "<group>"; };
 		4BC864EB23377269002FEF62 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		4BC864ED23377A4F002FEF62 /* PollingAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingAdapter.swift; sourceTree = "<group>"; };
+		4BCBCA8A2381C82100F33B15 /* Dispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dispatcher.swift; sourceTree = "<group>"; };
+		4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherContext.swift; sourceTree = "<group>"; };
 		4BD85F2A2331202C00FD04E9 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		4BD85F302331247B00FD04E9 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -571,6 +575,8 @@
 				4B786323233912AB009B9C1B /* Info.plist */,
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
 				4B427418236F269C00C302C8 /* VergeStore.swift */,
+				4BCBCA8A2381C82100F33B15 /* Dispatcher.swift */,
+				4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */,
 				4B68394F237062F7002FFC5A /* Utility.swift */,
 			);
 			path = VergeStore;
@@ -1295,6 +1301,8 @@
 			files = (
 				4B427419236F269C00C302C8 /* VergeStore.swift in Sources */,
 				4B427412236F1D2D00C302C8 /* Storage.swift in Sources */,
+				4BCBCA8D2381CC2B00F33B15 /* DispatcherContext.swift in Sources */,
+				4BCBCA8B2381C82100F33B15 /* Dispatcher.swift in Sources */,
 				4B683950237062F7002FFC5A /* Utility.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

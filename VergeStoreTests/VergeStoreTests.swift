@@ -45,9 +45,15 @@ class RootDispatcher: Store.DispatcherType {
   
   func setMyName() {
     commit {
-      $0.updateIfExists(target: \.optionalNested) {
+      $0.update(target: \.optionalNested) {
         $0.myName = "Muuk"
       }
+    }
+  }
+   
+  func setMyNameUsingTargetingCommit() {
+    commit(\.optionalNested) {
+      $0.myName = "Target"
     }
   }
 }
@@ -118,6 +124,13 @@ final class VergeStoreTests: XCTestCase {
     dispatcher.increment()
     XCTAssertEqual(store.state.count, 1)
     
+  }
+  
+  func testTargetingCommit() {
+    
+    dispatcher.setNestedState()
+    dispatcher.setMyNameUsingTargetingCommit()
+    XCTAssertEqual(store.state.optionalNested?.myName, "Target")
   }
   
   func testPerformanceExample() {
