@@ -135,7 +135,42 @@ It can allow composite actions.
 
 ## Advanced
 
-### ScopedDispatching
+### StateType protocol
+
+VergeStore provides `StateType` protocol as a helper.
+
+It will be used in State struct that Store uses.<br>
+`StateType` protocol is just providing the extensions to mutate easily in the nested state.
+
+Just like this.
+
+```swift
+public protocol StateType {
+}
+
+extension StateType {
+
+    public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T.Wrapped) throws -> Void) rethrows where T : VergeStore._VergeStore_OptionalProtocol
+
+    public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T) throws -> Void) rethrows
+
+    public mutating func update(update: (inout Self) throws -> Void) rethrows
+}
+```
+
+### Mutating on nested state with StateType
+
+Basically, the application state should be flattened as possible. (Avoid nesting) <br>
+However, sometimes we can't avoid this. And then it may be hard to update the nested state. <br>
+If it's an optional state, we have to check non-nil every time when mutating or dispatching. <br>
+
+So, VergeStore provides the following method to make it easier.
+
+```swift
+Dispatcher.commit(\.target)
+```
+
+### ScopedDispatching with StateType
 
 To handle nested states efficiently.
 
