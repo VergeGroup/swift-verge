@@ -11,6 +11,7 @@
 		4B035F822336A38A0052C692 /* DynamicFeedPostComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B035F812336A38A0052C692 /* DynamicFeedPostComment.swift */; };
 		4B035F862336A44A0052C692 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B035F852336A44A0052C692 /* AppContainer.swift */; };
 		4B035F882336A4810052C692 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B035F872336A4810052C692 /* Service.swift */; };
+		4B0AFD6D2388643400AABA90 /* DefaultLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0AFD6C2388643400AABA90 /* DefaultLogger.swift */; };
 		4B1A384B2332B76E00AA5BD6 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A384A2332B76E00AA5BD6 /* Comment.swift */; };
 		4B1A384D2332B85800AA5BD6 /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A384C2332B85800AA5BD6 /* PhotoDetailView.swift */; };
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
@@ -226,6 +227,7 @@
 		4B035F812336A38A0052C692 /* DynamicFeedPostComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicFeedPostComment.swift; sourceTree = "<group>"; };
 		4B035F852336A44A0052C692 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
 		4B035F872336A4810052C692 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
+		4B0AFD6C2388643400AABA90 /* DefaultLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLogger.swift; sourceTree = "<group>"; };
 		4B1A384A2332B76E00AA5BD6 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		4B1A384C2332B85800AA5BD6 /* PhotoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailView.swift; sourceTree = "<group>"; };
 		4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizeDisplayValueTests.swift; sourceTree = "<group>"; };
@@ -579,6 +581,7 @@
 				4BCBCA8A2381C82100F33B15 /* Dispatcher.swift */,
 				4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */,
 				4B68394F237062F7002FFC5A /* Utility.swift */,
+				4B0AFD6C2388643400AABA90 /* DefaultLogger.swift */,
 			);
 			path = VergeStore;
 			sourceTree = "<group>";
@@ -1314,6 +1317,7 @@
 				4BCBCA8D2381CC2B00F33B15 /* DispatcherContext.swift in Sources */,
 				4BCBCA8B2381C82100F33B15 /* Dispatcher.swift in Sources */,
 				4B683950237062F7002FFC5A /* Utility.swift in Sources */,
+				4B0AFD6D2388643400AABA90 /* DefaultLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1636,9 +1640,9 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = VergeStore/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/VergeStore/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1665,9 +1669,9 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = VergeStore/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/VergeStore/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeStore;

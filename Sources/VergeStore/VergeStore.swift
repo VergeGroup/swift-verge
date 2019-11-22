@@ -42,13 +42,11 @@ public struct ActionMetadata {
 public protocol VergeStoreLogger {
   
   func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?)
-  func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?)
+  func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?, time: CFTimeInterval)
   func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: AnyObject?)
   
   func didCreateDispatcher(store: AnyObject, dispatcher: Any)
   func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
-  
-  func didTakeTimeToCommit(store: AnyObject, state: Any, mutation: MutationMetadata, time: CFTimeInterval)
 }
 
 open class VergeDefaultStore<State>: CustomReflectable {
@@ -80,9 +78,6 @@ open class VergeDefaultStore<State>: CustomReflectable {
   ) rethrows {
     
     logger?.willCommit(store: self, state: self.state, mutation: metadata, context: context)
-    defer {
-      logger?.didCommit(store: self, state: self.state, mutation: metadata, context: context)
-    }
     
     let startedTime = CFAbsoluteTimeGetCurrent()
     try storage.update { (state) in
@@ -90,13 +85,8 @@ open class VergeDefaultStore<State>: CustomReflectable {
     }
     let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
     
-    logger?.didTakeTimeToCommit(
-      store: self,
-      state: self.state,
-      mutation: metadata,
-      time: elapsed
-    )
-       
+    logger?.didCommit(store: self, state: self.state, mutation: metadata, context: context, time: elapsed)
+           
   }
   
   public var customMirror: Mirror {
