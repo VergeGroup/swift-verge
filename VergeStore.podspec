@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.osx.deployment_target = '10.13'
 
   s.source       = { :git => "https://github.com/muukii/Verge.git", :tag => s.version }
-  s.source_files  = "VergeStore/**/*.swift"
+  s.source_files  = "Sources/VergeStore/**/*.swift"
   s.homepage     = "https://github.com/muukii/Verge"
 
   s.weak_frameworks = ['Combine']
