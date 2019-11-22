@@ -12,6 +12,8 @@ import os
 
 public final class DefaultLogger: VergeStoreLogger {
   
+  public static let shared = DefaultLogger()
+  
   public let commitLog = OSLog(subsystem: "VergeStore", category: "Commit")
   public let dispatchLog = OSLog(subsystem: "VergeStore", category: "Dispatch")
   public let dispatcherCreationLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Creation")
