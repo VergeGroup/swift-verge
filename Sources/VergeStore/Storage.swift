@@ -23,7 +23,7 @@
 import Foundation
 import os
 
-struct StorageSubscribeToken : Hashable {
+public struct StorageSubscribeToken : Hashable {
   private let identifier = UUID().uuidString
 }
 
@@ -52,25 +52,33 @@ public final class Storage<Value>: CustomReflectable {
   
   private var unfairLock = os_unfair_lock_s()
   
-  init(_ value: Value) {
+  public init(_ value: Value) {
     self.nonatomicValue = value
   }
   
-  func update(_ update: (inout Value) throws -> Void) rethrows {
+  public func update(_ update: (inout Value) throws -> Void) rethrows {
     os_unfair_lock_lock(&unfairLock)
     do {
       try update(&nonatomicValue)
+      let notifyValue = nonatomicValue
+      os_unfair_lock_unlock(&unfairLock)
+      notify(value: notifyValue)
     } catch {
       os_unfair_lock_unlock(&unfairLock)
       throw error
     }
-    os_unfair_lock_unlock(&unfairLock)
-    notify(value: nonatomicValue)
   }
   
+  public func replace(_ value: Value) {
+    os_unfair_lock_lock(&unfairLock)
+    nonatomicValue = value
+    let notifyValue = nonatomicValue
+    os_unfair_lock_unlock(&unfairLock)
+    notify(value: notifyValue)
+  }
   
   @discardableResult
-  func add(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
+  public func add(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
     os_unfair_lock_lock(&unfairLock)
     defer { os_unfair_lock_unlock(&unfairLock) }
     
@@ -79,7 +87,7 @@ public final class Storage<Value>: CustomReflectable {
     return token
   }
   
-  func remove(subscriber: StorageSubscribeToken) {
+  public func remove(subscriber: StorageSubscribeToken) {
     os_unfair_lock_lock(&unfairLock)
     defer { os_unfair_lock_unlock(&unfairLock) }
     

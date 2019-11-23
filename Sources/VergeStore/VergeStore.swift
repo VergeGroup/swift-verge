@@ -21,6 +21,7 @@
 
 import Foundation
 
+/// A metadata object that indicates the name of the mutation and where it was caused.
 public struct MutationMetadata {
   
   public let name: String
@@ -30,6 +31,7 @@ public struct MutationMetadata {
   
 }
 
+/// A metadata object that indicates the name of the action and where it was caused.
 public struct ActionMetadata {
   
   public let name: String
@@ -39,6 +41,7 @@ public struct ActionMetadata {
   
 }
 
+/// A protocol to register logger and get the event VergeStore emits.
 public protocol VergeStoreLogger {
   
   func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?)
@@ -49,24 +52,40 @@ public protocol VergeStoreLogger {
   func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
 }
 
+/// A base object to create store.
+/// You may create subclass of VergeDefaultStore
+/// ```
+/// final class MyStore: VergeDefaultStore<MyState> {
+///   init() {
+///     super.init(initialState: .init(), logger: nil)
+///   }
+/// }
+/// ```
 open class VergeDefaultStore<State>: CustomReflectable {
   
   public typealias DispatcherType = Dispatcher<State>
   
+  /// A current state.
   public var state: State {
-    storage.value
+    backingStorage.value
   }
-  
-  let storage: Storage<State>
+
+  /// A backing storage that manages current state.
+  /// You shouldn't access this directly unless special case.
+  public let backingStorage: Storage<State>
   
   public private(set) var logger: VergeStoreLogger?
-  
+    
+  /// An initializer
+  /// - Parameters:
+  ///   - initialState:
+  ///   - logger: You can also use `DefaultLogger.shared`.
   public init(
     initialState: State,
     logger: VergeStoreLogger?
   ) {
     
-    self.storage = .init(initialState)
+    self.backingStorage = .init(initialState)
     self.logger = logger
     
   }
@@ -80,7 +99,7 @@ open class VergeDefaultStore<State>: CustomReflectable {
     logger?.willCommit(store: self, state: self.state, mutation: metadata, context: context)
     
     let startedTime = CFAbsoluteTimeGetCurrent()
-    try storage.update { (state) in
+    try backingStorage.update { (state) in
       try mutation(&state)
     }
     let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
@@ -136,7 +155,7 @@ extension Storage: ObservableObject {
 @available(iOS 13.0, macOS 10.15, *)
 extension VergeDefaultStore: ObservableObject {
   public var objectWillChange: ObservableObjectPublisher {
-    storage.objectWillChange
+    backingStorage.objectWillChange
   }
 }
 

@@ -10,6 +10,10 @@ import Foundation
 
 import os
 
+/// An object default implementation of VergeStoreLogger.
+/// It uses `os_log` to print inside.
+/// There are OSLog object each type of action.
+/// You can turn off logging each OSLog object.
 public final class DefaultLogger: VergeStoreLogger {
   
   public static let shared = DefaultLogger()
