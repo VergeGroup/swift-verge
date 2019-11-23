@@ -9,15 +9,15 @@ private var storage_diposeBag: Void?
 
 extension Storage {
 
-  private var subject: BehaviorRelay<T> {
+  private var subject: BehaviorRelay<Value> {
 
-    if let associated = objc_getAssociatedObject(self, &storage_subject) as? BehaviorRelay<T> {
+    if let associated = objc_getAssociatedObject(self, &storage_subject) as? BehaviorRelay<Value> {
 
       return associated
 
     } else {
 
-      let associated = BehaviorRelay<T>.init(value: value)
+      let associated = BehaviorRelay<Value>.init(value: value)
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
 
       add(subscriber: { (value) in
@@ -49,7 +49,7 @@ extension Storage {
   ///   - selector:
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S>(_ selector: @escaping (T) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
+  public func changed<S>(_ selector: @escaping (Value) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
     return
       asObservable()
         .map { selector($0) }
@@ -62,7 +62,7 @@ extension Storage {
   ///   - selector:
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S : Equatable>(_ selector: @escaping (T) -> S) -> Observable<S> {
+  public func changed<S : Equatable>(_ selector: @escaping (Value) -> S) -> Observable<S> {
     return changed(selector, ==)
   }
 
@@ -72,7 +72,7 @@ extension Storage {
   ///   - selector: KeyPath to property
   ///   - comparer: 
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S>(_ selector: KeyPath<T, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
+  public func changed<S>(_ selector: KeyPath<Value, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
     return
       asObservable()
         .map { $0[keyPath: selector] }
@@ -85,7 +85,7 @@ extension Storage {
   ///   - selector: KeyPath to property
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S : Equatable>(_ selector: KeyPath<T, S>) -> Observable<S> {
+  public func changed<S : Equatable>(_ selector: KeyPath<Value, S>) -> Observable<S> {
     return changed(selector, ==)
   }
 
@@ -95,7 +95,7 @@ extension Storage {
   ///   - selector:
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changedDriver<S>(_ selector: @escaping (T) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
+  public func changedDriver<S>(_ selector: @escaping (Value) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
     return
       asObservable()
         .map { selector($0) }
@@ -109,7 +109,7 @@ extension Storage {
   ///   - selector:
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changedDriver<S : Equatable>(_ selector: @escaping (T) -> S) -> Driver<S> {
+  public func changedDriver<S : Equatable>(_ selector: @escaping (Value) -> S) -> Driver<S> {
     return changedDriver(selector, ==)
   }
 
@@ -119,7 +119,7 @@ extension Storage {
   ///   - selector: KeyPath to property
   ///   - comparer:
   /// - Returns: Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
-  public func changedDriver<S>(_ selector: KeyPath<T, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
+  public func changedDriver<S>(_ selector: KeyPath<Value, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
     return
       asObservable()
         .map { $0[keyPath: selector] }
@@ -133,18 +133,18 @@ extension Storage {
   ///   - selector: KeyPath to property
   ///   - comparer:
   /// - Returns: Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
-  public func changedDriver<S : Equatable>(_ selector: KeyPath<T, S>) -> Driver<S> {
+  public func changedDriver<S : Equatable>(_ selector: KeyPath<Value, S>) -> Driver<S> {
     return changedDriver(selector, ==)
   }
 
   /// Returns an observable sequence
   ///
   /// - Returns: Returns an observable sequence
-  public func asObservable() -> Observable<T> {
+  public func asObservable() -> Observable<Value> {
     return subject.asObservable()
   }
 
-  public func asObservable<S>(keyPath: KeyPath<T, S>) -> Observable<S> {
+  public func asObservable<S>(keyPath: KeyPath<Value, S>) -> Observable<S> {
     return asObservable()
       .map { $0[keyPath: keyPath] }
   }
@@ -152,11 +152,11 @@ extension Storage {
   /// Returns an observable sequence as Driver
   ///
   /// - Returns: Returns an observable sequence as Driver
-  public func asDriver() -> Driver<T> {
+  public func asDriver() -> Driver<Value> {
     return subject.asDriver()
   }
 
-  public func asDriver<S>(keyPath: KeyPath<T, S>) -> Driver<S> {
+  public func asDriver<S>(keyPath: KeyPath<Value, S>) -> Driver<S> {
     return asDriver()
       .map { $0[keyPath: keyPath] }
   }
@@ -165,7 +165,7 @@ extension Storage {
   ///
   /// - Parameter keyPath:
   /// - Returns:
-  public func map<U>(_ keyPath: KeyPath<T, U>) -> Storage<U> {
+  public func map<U>(_ keyPath: KeyPath<Value, U>) -> Storage<U> {
     return
       map {
         $0[keyPath: keyPath]
@@ -176,11 +176,9 @@ extension Storage {
   ///
   /// - Parameter keyPath:
   /// - Returns: 
-  public func map<U>(_ closure: @escaping (T) -> U) -> Storage<U> {
-
-    let m_state = MutableStorage.init(closure(value))
-
-    let state = m_state.asStorage()
+  public func map<U>(_ closure: @escaping (Value) -> U) -> Storage<U> {
+        
+    let m_state = Storage<U>.init(closure(value))
 
     let subscription = asObservable()
       .map(closure)
@@ -188,9 +186,9 @@ extension Storage {
         m_state?.replace(o)
       })
 
-    state.disposeBag.insert(subscription)
+    m_state.disposeBag.insert(subscription)
     disposeBag.insert(subscription)
 
-    return state
+    return m_state
   }
 }
