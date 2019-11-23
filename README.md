@@ -232,6 +232,35 @@ It runs only when the selected slice is existing.
 
 If it's not, can use `commitScoped()`
 
+### Logging
+
+With creating a object that using `VergeStoreLogger`, we can get the log that VergeStore emits.
+
+As a default implementation, we can use `DefaultLogger.shared`.
+
+```swift
+public protocol VergeStoreLogger {
+  
+  func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?)
+  func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?, time: CFTimeInterval)
+  func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: AnyObject?)
+  
+  func didCreateDispatcher(store: AnyObject, dispatcher: Any)
+  func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
+}
+```
+
+### Rx Extensions
+
+VergeStore provides RxSwift extensions.<br>
+It may help using VergeStore in UIKit based application.
+
+We can add this with following pod'
+
+```ruby
+pod 'VergeStore/Rx'
+```
+
 ## References
 
 ## Normalized State Shape
