@@ -66,6 +66,10 @@ extension VergeStoreDispatcherContext where State : StateType {
 
 extension VergeStoreDispatcherContext where Dispatcher : ScopedDispatching {
   
+  public var scopedState: Dispatcher.Scoped {
+    state[keyPath: dispatcher.selector]
+  }
+  
   public func commitScoped(
     _ name: String = "",
     _ file: StaticString = #file,
