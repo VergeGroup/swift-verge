@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B463D6720D4C4690053A4FF"
+               BlueprintIdentifier = "4B86A4851F969AD5002D54FE"
                BuildableName = "Verge.framework"
-               BlueprintName = "Verge-macOS"
+               BlueprintName = "VergeClassic"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -27,10 +27,27 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "4B86A4851F969AD5002D54FE"
+            BuildableName = "Verge.framework"
+            BlueprintName = "VergeClassic"
+            ReferencedContainer = "container:Verge.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4B65F8EB1FB4C0DC00A90A67"
+               BuildableName = "VergeTests.xctest"
+               BlueprintName = "VergeTests"
+               ReferencedContainer = "container:Verge.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -45,17 +62,15 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4B463D6720D4C4690053A4FF"
+            BlueprintIdentifier = "4B86A4851F969AD5002D54FE"
             BuildableName = "Verge.framework"
-            BlueprintName = "Verge-macOS"
+            BlueprintName = "VergeClassic"
             ReferencedContainer = "container:Verge.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -63,9 +78,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4B463D6720D4C4690053A4FF"
+            BlueprintIdentifier = "4B86A4851F969AD5002D54FE"
             BuildableName = "Verge.framework"
-            BlueprintName = "Verge-macOS"
+            BlueprintName = "VergeClassic"
             ReferencedContainer = "container:Verge.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

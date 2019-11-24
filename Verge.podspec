@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.13'
   s.source       = { :git => "https://github.com/muukii/Verge.git", :tag => s.version }
-  s.source_files  = "Verge/*.swift"
+  s.source_files  = "Sources/Verge/*.swift"
   s.homepage     = "https://github.com/muukii/Verge"
 
   s.dependency 'RxSwift', '~> 5'

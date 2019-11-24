@@ -2,7 +2,6 @@
 import Foundation
 import ObjectiveC
 
-@_exported import RxFuture
 @_exported import RxSwift
 @_exported import RxCocoa
 
