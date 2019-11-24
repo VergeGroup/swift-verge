@@ -30,4 +30,9 @@ Pod::Spec.new do |s|
     rx.source_files = 'Sources/RxVergeStore/**/*.swift'    
   end
 
+  s.subspec 'VM' do |rx|
+    rx.dependency 'VergeStore/Core'   
+    rx.source_files = 'Sources/VergeViewModel/**/*.swift'    
+  end
+
 end

@@ -21,7 +21,9 @@
 
 import Foundation
 
-import VergeStore
+#if !COCOAPODS
+@_exported import VergeStore
+#endif
 
 open class VergeViewModelBase<State, StoreState>: VergeDefaultStore<State>, Dispatching {
   
