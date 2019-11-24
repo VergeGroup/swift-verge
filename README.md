@@ -2,7 +2,7 @@
 
 Latest released Verge => [`master` branch](https://github.com/muukii/Verge/tree/master)
 
-<img src="VergeStore@2x.png" width=966/>
+<img src="loop@2x.png" width=646/>
 
 ## Gallary
 
