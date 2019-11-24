@@ -29,6 +29,12 @@ public struct MutationMetadata {
   public let function: StaticString
   public let line: UInt
   
+  public init(name: String, file: StaticString, function: StaticString, line: UInt) {
+    self.name = name
+    self.file = file
+    self.function = function
+    self.line = line
+  }
 }
 
 /// A metadata object that indicates the name of the action and where it was caused.
@@ -39,6 +45,12 @@ public struct ActionMetadata {
   public let function: StaticString
   public let line: UInt
   
+  public init(name: String, file: StaticString, function: StaticString, line: UInt) {
+    self.name = name
+    self.file = file
+    self.function = function
+    self.line = line
+  }
 }
 
 /// A protocol to register logger and get the event VergeStore emits.

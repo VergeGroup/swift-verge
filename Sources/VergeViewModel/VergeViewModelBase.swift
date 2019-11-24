@@ -1,115 +1,49 @@
 //
-//  VergeViewModel.swift
-//  VergeViewModel
+// Copyright (c) 2019 muukii
 //
-//  Created by muukii on 2019/11/24.
-//  Copyright © 2019 muukii. All rights reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 import Foundation
 
 import VergeStore
 
-public protocol VergeViewModelType {
+open class VergeViewModelBase<State, StoreState>: VergeDefaultStore<State>, Dispatching {
   
-  associatedtype State
-  associatedtype Activity
-  
-  var state: State { get }
-  var storage: Storage<State> { get }
-  var emitter: EventEmitter<Activity> { get }
-  
-}
-
-extension VergeViewModelType {
-  /// Commit
-  ///
-  /// - Parameters:
-  ///   - name:
-  ///   - description:
-  ///   - file:
-  ///   - function:
-  ///   - line:
-  ///   - mutate:
-  /// - Throws:
-  public func commit(
-    _ name: String = "",
-    _ description: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    _ mutate: (inout State) throws -> Void
-  ) rethrows {
-    
-    try storage.update(mutate)
-  }
-  
-  /// Dispatch
-  ///
-  /// - Parameters:
-  ///   - name:
-  ///   - description:
-  ///   - file:
-  ///   - function:
-  ///   - line:
-  ///   - action:
-  /// - Returns:
-  /// - Throws:
-  @discardableResult
-  public func dispatch<Return>(
-    _ name: String = "",
-    _ description: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    _ action: (DispatchingContext<Self>) throws -> Return
-  ) rethrows -> Return {
-    
-    let context = DispatchingContext.init(
-      actionName: name,
-      source: self
-    )
-    
-    let returnValue = try action(context)
-    
-    return returnValue
-    
-  }
-  
-  fileprivate func emit(
-    _ activity: Activity,
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-  ) {
-    
-    emitter.accept(activity)
-  }
-  
-}
-
-open class VergeViewModelBase<State, Activity, StoreState>: VergeViewModelType {
-    
-  public var state: State {
-    storage.value
-  }
-  
-  /// You shouldn't access unless special-case
-  public let storage: Storage<State>
-  
-  /// You shouldn't access unless special-case
-  public let emitter: EventEmitter<Activity> = .init()
-  
+  public var targetStore: VergeDefaultStore<State> { self }
   public let store: VergeDefaultStore<StoreState>
   private var subscription: StorageSubscribeToken?
   
-  public init(initialState: State, store: VergeDefaultStore<StoreState>) {
-    self.storage = .init(initialState)
+  public init(
+    initialState: State,
+    store: VergeDefaultStore<StoreState>,
+    logger: VergeStoreLogger?
+  ) {
+    
     self.store = store
+    
+    super.init(initialState: initialState, logger: logger)
+    
     self.subscription = store.backingStorage.add { [weak self] (state) in
       guard let self = self else { return }
-      self.updateState(storeState: state)
+      self.storeStateUpdated(storeState: state)
     }
+    
   }
   
   deinit {
@@ -117,68 +51,13 @@ open class VergeViewModelBase<State, Activity, StoreState>: VergeViewModelType {
       store.backingStorage.remove(subscriber: subscription)
     }
   }
-    
+  
   /// Tells you Store's state has been updated.
   /// It also called when initialized
   ///
   /// - Parameter storeState:
-  open func updateState(storeState: StoreState) {
-    
-  }
-  
-}
+  open func storeStateUpdated(storeState: StoreState) {
 
-public final class DispatchingContext<VergeViewModel : VergeViewModelType> {
-  
-  private let source: VergeViewModel
-  private let actionName: String
-  
-  public var state: VergeViewModel.State {
-    return source.state
-  }
-  
-  init(actionName: String, source: VergeViewModel) {
-    self.source = source
-    self.actionName = actionName
-  }
-  
-  deinit {
-    
-  }
-  
-  public func commit(
-    _ name: String = "",
-    _ description: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    _ mutate: (inout VergeViewModel.State) throws -> Void
-  ) rethrows {
-    
-    try source.commit(name, description, file, function, line, mutate)
-  }
-    
-  @discardableResult
-  public func dispatch<Return>(
-    _ name: String = "",
-    _ description: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    _ action: (DispatchingContext<VergeViewModel>) throws -> Return
-  ) rethrows -> Return {
-    
-    try source.dispatch(name, description, file, function, line, action)
-    
-  }
-  
-  public func emit(
-    _ activity: VergeViewModel.Activity,
-    file: StaticString = #file,
-    function: StaticString = #function,
-    line: UInt = #line
-  ) {
-    source.emit(activity, file: file, function: function, line: line)
   }
   
 }

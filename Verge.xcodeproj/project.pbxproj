@@ -60,6 +60,8 @@
 		4BF2BCCE238A658400F70CDA /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; };
 		4BF2BCD6238A68CE00F70CDA /* VergeViewModelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD5238A68CE00F70CDA /* VergeViewModelBase.swift */; };
 		4BF2BCDA238A7B6900F70CDA /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */; };
+		4BF2BCE2238A85A700F70CDA /* VergeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCE1238A85A700F70CDA /* VergeViewModelTests.swift */; };
+		4BF2BCE4238A85A700F70CDA /* VergeViewModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BF2BCA0238A63FB00F70CDA /* VergeViewModel.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,6 +129,13 @@
 			remoteInfo = RxVergeViewModel;
 		};
 		4BF2BCC4238A644500F70CDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4BF2BC9F238A63FB00F70CDA;
+			remoteInfo = VergeViewModel;
+		};
+		4BF2BCE5238A85A700F70CDA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
 			proxyType = 1;
@@ -239,6 +248,9 @@
 		4BF2BCB9238A643C00F70CDA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BF2BCD5238A68CE00F70CDA /* VergeViewModelBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeViewModelBase.swift; sourceTree = "<group>"; };
 		4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitter.swift; sourceTree = "<group>"; };
+		4BF2BCDF238A85A700F70CDA /* VergeViewModelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeViewModelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BF2BCE1238A85A700F70CDA /* VergeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeViewModelTests.swift; sourceTree = "<group>"; };
+		4BF2BCE3238A85A700F70CDA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D038BA7FA5507FA05A55370 /* Pods-VergeStoreAdvancedDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeStoreAdvancedDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeStoreAdvancedDemo/Pods-VergeStoreAdvancedDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		90328BAB4D46D9567CA1EE36 /* Pods-VergeNeueAdvancedDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueAdvancedDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		94193FF650F04C7E5B271434 /* Pods_VergeNeueDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VergeNeueDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -318,6 +330,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BF2BCC2238A644500F70CDA /* VergeViewModel.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4BF2BCDC238A85A700F70CDA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BF2BCE4238A85A700F70CDA /* VergeViewModel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,6 +448,7 @@
 				4B7F3840238948CF000B9ACF /* RxVergeStore.framework */,
 				4BF2BCA0238A63FB00F70CDA /* VergeViewModel.framework */,
 				4BF2BCB6238A643C00F70CDA /* RxVergeViewModel.framework */,
+				4BF2BCDF238A85A700F70CDA /* VergeViewModelTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -497,8 +518,18 @@
 			children = (
 				4B65F8ED1FB4C0DC00A90A67 /* VergeTests */,
 				4B68394523705ACD002FFC5A /* VergeStoreTests */,
+				4BF2BCE0238A85A700F70CDA /* VergeViewModelTests */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		4BF2BCE0238A85A700F70CDA /* VergeViewModelTests */ = {
+			isa = PBXGroup;
+			children = (
+				4BF2BCE1238A85A700F70CDA /* VergeViewModelTests.swift */,
+				4BF2BCE3238A85A700F70CDA /* Info.plist */,
+			);
+			path = VergeViewModelTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -714,6 +745,24 @@
 			productReference = 4BF2BCB6238A643C00F70CDA /* RxVergeViewModel.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		4BF2BCDE238A85A700F70CDA /* VergeViewModelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4BF2BCE9238A85A700F70CDA /* Build configuration list for PBXNativeTarget "VergeViewModelTests" */;
+			buildPhases = (
+				4BF2BCDB238A85A700F70CDA /* Sources */,
+				4BF2BCDC238A85A700F70CDA /* Frameworks */,
+				4BF2BCDD238A85A700F70CDA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4BF2BCE6238A85A700F70CDA /* PBXTargetDependency */,
+			);
+			name = VergeViewModelTests;
+			productName = VergeViewModelTests;
+			productReference = 4BF2BCDF238A85A700F70CDA /* VergeViewModelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -756,6 +805,9 @@
 					4BF2BCB5238A643C00F70CDA = {
 						CreatedOnToolsVersion = 11.2.1;
 					};
+					4BF2BCDE238A85A700F70CDA = {
+						CreatedOnToolsVersion = 11.2.1;
+					};
 				};
 			};
 			buildConfigurationList = 4B86A4801F969AD5002D54FE /* Build configuration list for PBXProject "Verge" */;
@@ -782,6 +834,7 @@
 				4B86A4961F969C7D002D54FE /* Verge-Demo */,
 				4B65F8EB1FB4C0DC00A90A67 /* VergeTests */,
 				4B68394323705ACD002FFC5A /* VergeStoreTests */,
+				4BF2BCDE238A85A700F70CDA /* VergeViewModelTests */,
 			);
 		};
 /* End PBXProject section */
@@ -840,6 +893,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4BF2BCB4238A643C00F70CDA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4BF2BCDD238A85A700F70CDA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -926,6 +986,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4BF2BCDB238A85A700F70CDA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BF2BCE2238A85A700F70CDA /* VergeViewModelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -978,6 +1046,11 @@
 			isa = PBXTargetDependency;
 			target = 4BF2BC9F238A63FB00F70CDA /* VergeViewModel */;
 			targetProxy = 4BF2BCC4238A644500F70CDA /* PBXContainerItemProxy */;
+		};
+		4BF2BCE6238A85A700F70CDA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4BF2BC9F238A63FB00F70CDA /* VergeViewModel */;
+			targetProxy = 4BF2BCE5238A85A700F70CDA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1551,6 +1624,49 @@
 			};
 			name = Release;
 		};
+		4BF2BCE7238A85A700F70CDA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = Tests/VergeViewModelTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeViewModelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4BF2BCE8238A85A700F70CDA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = Tests/VergeViewModelTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeViewModelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1631,6 +1747,15 @@
 			buildConfigurations = (
 				4BF2BCC0238A643C00F70CDA /* Debug */,
 				4BF2BCC1238A643C00F70CDA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4BF2BCE9238A85A700F70CDA /* Build configuration list for PBXNativeTarget "VergeViewModelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BF2BCE7238A85A700F70CDA /* Debug */,
+				4BF2BCE8238A85A700F70CDA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
