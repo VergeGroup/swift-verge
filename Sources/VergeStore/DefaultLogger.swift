@@ -36,10 +36,10 @@ public final class DefaultLogger: VergeStoreLogger {
     queue.async {
       os_log("%@", log: self.commitLog, type: .default, """
         {
-        "type" : "commit",
-        "store" : "\(store)",
-        "took": "\(time * 1000)ms"
-        "mutation" : \(mutation)
+          "type" : "commit",
+          "took": "\(time * 1000)ms"
+          "mutation" : \(mutation),
+          "store" : "\(store)"
         }
         """
       )
@@ -50,10 +50,10 @@ public final class DefaultLogger: VergeStoreLogger {
     queue.async {
       os_log("%@", log: self.dispatchLog, type: .default, """
         {
-        "type" : "dispatch",
-        "store" : "\(store)",
-        "action" : \(action),
-        "context" : \(context as Any)
+          "type" : "dispatch",
+          "action" : \(action),
+          "context" : \(context as Any),
+          "store" : "\(store)"
         }
         """
       )
@@ -64,10 +64,9 @@ public final class DefaultLogger: VergeStoreLogger {
     queue.async {
       os_log("%@", log: self.dispatcherCreationLog, type: .default, """
         {
-        "type" : "dispatcher_creation",
-        "store" : "\(store)",
-        "store" : "\(store)",
-        "dispatcher" : \(dispatcher)
+          "type" : "dispatcher_creation",
+          "dispatcher" : \(dispatcher),
+          "store" : "\(store)"
         }
         """
       )
@@ -78,9 +77,9 @@ public final class DefaultLogger: VergeStoreLogger {
     queue.async {
       os_log("%@", log: self.dispatcherDestructionLog, type: .default, """
         {
-        "type" : "dispatcher_destruction",
-        "store" : "\(store)",
-        "dispatcher" : \(dispatcher)
+          "type" : "dispatcher_destruction",
+          "dispatcher" : \(dispatcher),
+          "store" : "\(store)"
         }
         """
       )
