@@ -28,7 +28,7 @@ public struct StorageSubscribeToken : Hashable {
 }
 
 @propertyWrapper
-public final class Storage<Value>: CustomReflectable {
+public class Storage<Value>: CustomReflectable {
   
   private var subscribers: [StorageSubscribeToken : (Value) -> Void] = [:]
   

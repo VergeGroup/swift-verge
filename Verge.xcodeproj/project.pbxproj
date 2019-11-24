@@ -58,7 +58,8 @@
 		4BF2BCCA238A64C600F70CDA /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 4BF2BCC9238A64C600F70CDA /* RxRelay */; };
 		4BF2BCCC238A64C600F70CDA /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4BF2BCCB238A64C600F70CDA /* RxSwift */; };
 		4BF2BCCE238A658400F70CDA /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; };
-		4BF2BCD6238A68CE00F70CDA /* VergeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD5238A68CE00F70CDA /* VergeViewModel.swift */; };
+		4BF2BCD6238A68CE00F70CDA /* VergeViewModelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD5238A68CE00F70CDA /* VergeViewModelBase.swift */; };
+		4BF2BCDA238A7B6900F70CDA /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -236,7 +237,8 @@
 		4BF2BCB6238A643C00F70CDA /* RxVergeViewModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RxVergeViewModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BF2BCB8238A643C00F70CDA /* RxVergeViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RxVergeViewModel.h; sourceTree = "<group>"; };
 		4BF2BCB9238A643C00F70CDA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4BF2BCD5238A68CE00F70CDA /* VergeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeViewModel.swift; sourceTree = "<group>"; };
+		4BF2BCD5238A68CE00F70CDA /* VergeViewModelBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeViewModelBase.swift; sourceTree = "<group>"; };
+		4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitter.swift; sourceTree = "<group>"; };
 		5D038BA7FA5507FA05A55370 /* Pods-VergeStoreAdvancedDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeStoreAdvancedDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeStoreAdvancedDemo/Pods-VergeStoreAdvancedDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		90328BAB4D46D9567CA1EE36 /* Pods-VergeNeueAdvancedDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueAdvancedDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		94193FF650F04C7E5B271434 /* Pods_VergeNeueDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VergeNeueDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -475,7 +477,8 @@
 			children = (
 				4BF2BCA2238A63FB00F70CDA /* VergeViewModel.h */,
 				4BF2BCA3238A63FB00F70CDA /* Info.plist */,
-				4BF2BCD5238A68CE00F70CDA /* VergeViewModel.swift */,
+				4BF2BCD5238A68CE00F70CDA /* VergeViewModelBase.swift */,
+				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
 			);
 			path = VergeViewModel;
 			sourceTree = "<group>";
@@ -911,7 +914,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BF2BCD6238A68CE00F70CDA /* VergeViewModel.swift in Sources */,
+				4BF2BCD6238A68CE00F70CDA /* VergeViewModelBase.swift in Sources */,
+				4BF2BCDA238A7B6900F70CDA /* EventEmitter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
