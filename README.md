@@ -1,6 +1,6 @@
 # Verge - Store (SwiftUI / UIKit) (Planning v6.0.0)
 
-Latest released Verge => [`master` branch](https://github.com/muukii/Verge/tree/master)
+Classic Version is here => [Verge Classic](tree/store/Sources/VergeClassic)
 
 <img src="loop@2x.png" width=646/>
 
@@ -240,11 +240,11 @@ As a default implementation, we can use `DefaultLogger.shared`.
 
 ```swift
 public protocol VergeStoreLogger {
-  
+
   func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?)
   func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?, time: CFTimeInterval)
   func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: AnyObject?)
-  
+
   func didCreateDispatcher(store: AnyObject, dispatcher: Any)
   func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
 }
