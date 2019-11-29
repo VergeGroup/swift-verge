@@ -1,4 +1,4 @@
-# Verge
+# Verge - Classic (Obsoluted)
 
 ## What is Verge?
 
