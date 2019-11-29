@@ -74,15 +74,15 @@ public final class DefaultLogger: VergeStoreLogger {
   }
   
   public func didDestroyDispatcher(store: AnyObject, dispatcher: Any) {
+    let log = """
+    {
+      "type" : "dispatcher_destruction",
+      "dispatcher" : \(dispatcher),
+      "store" : "\(store)"
+    }
+    """
     queue.async {
-      os_log("%@", log: self.dispatcherDestructionLog, type: .default, """
-        {
-          "type" : "dispatcher_destruction",
-          "dispatcher" : \(dispatcher),
-          "store" : "\(store)"
-        }
-        """
-      )
+      os_log("%@", log: self.dispatcherDestructionLog, type: .default, log)
     }
   }
   
