@@ -1,6 +1,6 @@
 # Verge - Store (SwiftUI / UIKit) (Planning v6.0.0)
 
-Classic Version is here => [Verge Classic](tree/store/Sources/VergeClassic)
+Classic Version is here => [Verge Classic](./Sources/VergeClassic)
 
 <img src="loop@2x.png" width=646/>
 
