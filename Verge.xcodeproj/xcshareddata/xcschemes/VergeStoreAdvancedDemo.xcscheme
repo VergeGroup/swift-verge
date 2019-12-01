@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0940"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B463D6720D4C4690053A4FF"
-               BuildableName = "Verge.framework"
-               BlueprintName = "Verge-macOS"
+               BlueprintIdentifier = "4BA7A85E23363D40008D0EC6"
+               BuildableName = "VergeStoreAdvancedDemo.app"
+               BlueprintName = "VergeStoreAdvancedDemo"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,8 +29,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -42,17 +40,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4B463D6720D4C4690053A4FF"
-            BuildableName = "Verge.framework"
-            BlueprintName = "Verge-macOS"
+            BlueprintIdentifier = "4BA7A85E23363D40008D0EC6"
+            BuildableName = "VergeStoreAdvancedDemo.app"
+            BlueprintName = "VergeStoreAdvancedDemo"
             ReferencedContainer = "container:Verge.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -60,15 +57,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4B463D6720D4C4690053A4FF"
-            BuildableName = "Verge.framework"
-            BlueprintName = "Verge-macOS"
+            BlueprintIdentifier = "4BA7A85E23363D40008D0EC6"
+            BuildableName = "VergeStoreAdvancedDemo.app"
+            BlueprintName = "VergeStoreAdvancedDemo"
             ReferencedContainer = "container:Verge.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

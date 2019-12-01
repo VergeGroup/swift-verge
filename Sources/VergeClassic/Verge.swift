@@ -2,7 +2,6 @@
 import Foundation
 import ObjectiveC
 
-@_exported import RxFuture
 @_exported import RxSwift
 @_exported import RxCocoa
 
@@ -194,7 +193,6 @@ public final class DispatchingContext<Verge : VergeType> {
 
   private let source: Verge
   private let state: Storage<Verge.State>
-  private let lock: NSLock = .init()
   private let actionName: String
 
   public var currentState: Verge.State {

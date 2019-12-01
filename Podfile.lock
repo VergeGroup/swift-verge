@@ -1,0 +1,28 @@
+PODS:
+  - CoreStore (6.3.2)
+  - JAYSON (2.1.0)
+  - Nuke (8.2.0)
+  - Reveal-SDK (24)
+
+DEPENDENCIES:
+  - CoreStore
+  - JAYSON
+  - Nuke
+  - Reveal-SDK
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - CoreStore
+    - JAYSON
+    - Nuke
+    - Reveal-SDK
+
+SPEC CHECKSUMS:
+  CoreStore: 690a587902a81c412cf353466d2d2a029934267e
+  JAYSON: 4280ff193d900fb11314434affac47673507757e
+  Nuke: 0134d56b7c9dd3e69e9bce8bdcb37c2e0d55469f
+  Reveal-SDK: 5d7e56b8f018c0a88b3a2c10bf68d598bbd3b071
+
+PODFILE CHECKSUM: 21a646b27c2f10bfa0d23c121fb959754ab5fd60
+
+COCOAPODS: 1.8.4

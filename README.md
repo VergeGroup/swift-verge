@@ -1,198 +1,282 @@
-# Verge
+# Verge - Store (SwiftUI / UIKit) (Planning v6.0.0)
 
-## What is Verge?
+Classic Version is here => [Verge Classic](./Sources/VergeClassic)
 
-This library is one of the ideas for ViewModel layer.
-Built with the concept of Flux(Redux) architecture.
-The main purpose of Flux is state management on the one place(like Store).
-And clarify the mutations in the state. (Unidirectional Flow)
-With this, we can observe how the state will be changed.
+<img src="loop@2x.png" width=646/>
 
-Almost implementation of Flux library has a way of mutations as `Payload`.
-This is to describe that mutation.
+## Gallary
 
-But, Verge does not have that way.
-We can define the mutation to mutation closure directly.
-
-Verge just focuses only on management the state on the one place.
-
-<img src="Verge@2x.png" width=816>
-
-https://whimsical.co/6vgPs6dsjsatAMyZ6oHDsq
+- [APNsClient](https://github.com/muukii/APNsClient) : A desktop application to send a apns push with HTTP/2 based API.
 
 ## Concept
 
-### Container (like ViewModel, Store)
+The concept of VergeStore is inspired by [Redux](https://redux.js.org/) and [Vuex](https://vuex.vuejs.org/).
 
-Firstly, we recommend creating a Container for each Screen(ViewController).
-Container naming is anything. It's better to name ViewModel or Store or something.
+The characteristics are
 
-Container must have `VergeType` protocol.
+- Creating one or more Dispatcher. (Single store, multiple dispatcher)
+- A dispatcher can have dependencies service needs. (e.g. API Client, DB)
+- No switch-case to reduce state
+- Support Logging (Commit, Action, Performance monitoring)
+
+### 🪐 Store
+
+- Store holds application state.
+- Allows access to `Store.state`
+- Allows state to be updated via `Dispatcher.commit()`
 
 ```swift
-public protocol VergeType {
-  associatedtype State
-  associatedtype Activity
-  var state: Storage<State> { get }
+struct State {
+
+  struct Todo {
+    var title: String
+    var hasCompleted: Bool
+  }
+
+  var todos: [Todo] = []
+
 }
-```
 
-`VergeType` defines structure.
-
-#### State
-
-The container that has `VergeType` contains the `State`.
-
-To create Container object has VergeType, It's like followings.
-
-```swift
-class ViewModel : VergeType {
-
-  // Constrained Type by VergeType
-  enum Activity {
-  }
-
-  // Constrained Type by VergeType
-  struct State {
-    fileprivate(set) var value: Int = 0
-  }
-
-  // Constrained Property by VergeType
-  let state: Storage<State> = .init(.init())
+class MyStore: VergeDefaultStore<State> {
 
   init() {
-
+    super.init(initialState: .init(), logger: nil)
   }
 }
+
+let store = MyStore()
 ```
 
-#### Mutations
+### 🚀 Dispatcher
 
-To run Mutation, use `commit` methodj that VergeType has.
-`commit` allows to run synchronous tasks only.
+Mainly, Dispatcher allows Store.state to be updated.
+
+To change state, use **Mutation** via `commit()`.<br>
+To run asynchronous operation, use **Action** via `dispatch()`.
 
 ```swift
-extension ViewModel {
+class MyDispatcher: Dispatcher<RootState> {
 
-  func updateValue() {
-    commit { s in
-      s.value += 1
+}
+
+let store = MyStore()
+let dispatcher = MyDispatcher(target: store)
+```
+
+`MyStore` provies typealias to `Dispatcher<RootState>` as `MyStore.DispatcherType`.
+
+### ☄️ Mutation
+
+The only way to actually change state in a Verge store is by committing a mutation.
+Define a function that returns Mutation object. That expresses that function is Mutation
+
+Mutation object is simple struct that has a closure what passes current state to change it.
+
+> Mutation does not run asynchronous operation.
+
+```swift
+class MyDispatcher: Dispatcher<RootState> {
+  func addNewTodo(title: String) {
+    commit { (state: inout RootState) in
+      state.todos.append(Todo(title: title, hasCompleted: false))
     }
   }
-
 }
+
+let store = MyStore()
+let dispatcher = MyDispatcher(target: store)
+
+dispatcher.addNewTodo(title: "Create SwiftUI App")
+
+print(store.state.todos)
+// store.state.todos => [Todo(title: "Create SwiftUI App", hasCompleted: false)]
 ```
 
-#### Actions
+### 🌟 Action
 
-To run Action, use `dispatch` method that VergeType has.
-`dispatch` allows to run asynchronous or synchronous tasks.
+Action is similar to Mutation.
+Action can contain arbitrary asynchronous operations.
 
-`dispatch` provides `context` as argument on closure.
-`context` can call `commit`.
+To run Action, use `dispatch()`.
+
+To commit Mutations inside Action, Use context.commit.
 
 ```swift
-extension ViewModel {
+class MyDispatcher: Dispatcher<RootState> {
 
-  func updateValue() {
+  @discardableResult
+  func fetchRemoteTodos() -> Future<Void> {
     dispatch { context in
-      Single.just(())
-        .delay(0.5, scheduler: MainScheduler.instance)
-        .do(onSuccess: {
 
-            context.commit { (state) in
-              state.count += number
-            }
-        })
-        .start() // this method is part of RxFuture.
+      return Future<[Todo], Never> { ... }
+        .sink { todos in
+
+          context.commit { state in
+            state.todos = todos
+          }
+
+       }
+       ...
+    }
+  }
+
+}
+
+let store = MyStore()
+let dispatcher = MyDispatcher(target: store)
+
+dispatcher.fetchRemoteTodos()
+
+// After Future completed
+
+print(store.state.todos)
+// [...]
+```
+
+Actions are often asynchronous, So we may need to know the timing action completed inside the view.<br>
+`dispatch()` allows returning anything. For example, we can return Future object to caller.<br>
+It can allow composite actions.
+
+## Advanced
+
+### StateType protocol
+
+VergeStore provides `StateType` protocol as a helper.
+
+It will be used in State struct that Store uses.<br>
+`StateType` protocol is just providing the extensions to mutate easily in the nested state.
+
+Just like this.
+
+```swift
+public protocol StateType {
+}
+
+extension StateType {
+
+    public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T.Wrapped) throws -> Void) rethrows where T : VergeStore._VergeStore_OptionalProtocol
+
+    public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T) throws -> Void) rethrows
+
+    public mutating func update(update: (inout Self) throws -> Void) rethrows
+}
+```
+
+### Mutating on nested state with StateType
+
+Basically, the application state should be flattened as possible. (Avoid nesting) <br>
+However, sometimes we can't avoid this. And then it may be hard to update the nested state. <br>
+If it's an optional state, we have to check non-nil every time when mutating or dispatching. <br>
+
+So, VergeStore provides the following method to make it easier.
+
+```swift
+Dispatcher.commit(\.target)
+```
+
+### ScopedDispatching with StateType
+
+To handle nested states efficiently.
+
+VergeStore provides the `ScopedDispatching` protocol to expand Dispatcher's function.
+
+```swift
+public protocol ScopedDispatching: Dispatching {
+  associatedtype Scoped
+
+  var selector: WritableKeyPath<State, Scoped> { get }
+}
+```
+
+Explanation with following state example.
+
+```swift
+struct State: StateType {
+
+  struct NestedState {
+
+    var myName: String = ""
+  }
+
+  var optionalNested: NestedState?
+  var nested: NestedState = .init()
+}
+```
+
+Create Dispatcher that has `ScopedDispatching`
+
+```swift
+final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
+
+  var selector: WritableKeyPath<State, State.NestedState?> {
+    \.optionalNested
+  }
+
+  func setMyName() {
+    commitIfPresent {
+      $0.myName = "Hello"
     }
   }
 
 }
 ```
 
-#### Activity (a difference point)
+`ScopedDispatching` works with a slice of the state.
 
-The container that has `VergeType` contains the `Activity`.
+`ScopedDispatching.Scoped` points where is a slice on the state.
 
-Sometimes, There are some events that don't need store to State by Action or Mutation.
-So, We call them `Activity`.
+`ScopedDispatching` requires `selector` to get a slice of the state.
 
-Use `emit` method context has.
+If `Scoped` is optional type, can use `commitScopedIfPresent()`.<br>
+It runs only when the selected slice is existing.
+
+If it's not, can use `commitScoped()`
+
+### Logging
+
+With creating a object that using `VergeStoreLogger`, we can get the log that VergeStore emits.
+
+As a default implementation, we can use `DefaultLogger.shared`.
 
 ```swift
-extension ViewModel {
+public protocol VergeStoreLogger {
 
-  func updateValue() {
-    dispatch { context in
-      Single.just(())
-        .delay(0.5, scheduler: MainScheduler.instance)
-        .do(onSuccess: {
-          context.emit(.didReachBigNumber)
-        })
-        .start() // this method is part of RxFuture.
-    }
-  }
+  func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?)
+  func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?, time: CFTimeInterval)
+  func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: AnyObject?)
 
+  func didCreateDispatcher(store: AnyObject, dispatcher: Any)
+  func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
 }
 ```
 
----
+### Rx Extensions
 
-## Storage
+VergeStore provides RxSwift extensions.<br>
+It may help using VergeStore in UIKit based application.
 
-This is Storage that used for current **State**.
+We can add this with following pod'
 
-```swift
-public class Storage<T> {
-  public var value: T { get }
-  public convenience init(_ value: T)
-  public init(_ source: MutableStorage<T>)
-  public func add(subscriber: @escaping (T) -> Void) -> StorageSubscribeToken
-  public func remove(subscriber token: StorageSubscribeToken)
-}
-
-public final class MutableStorage<T> {
-  public var loggers: [MutableStorageLogging]
-  public var value: T { get }
-  public init(_ value: T)
-  public func add(subscriber: @escaping (T) -> Void) -> StorageSubscribeToken
-  public func remove(subscriber: StorageSubscribeToken)
-  public func update(_ update: (inout T) throws -> Void) rethrows
-  public func replace(_ value: T)
-  public func asStorage() -> Storage<T>
-}
+```ruby
+pod 'VergeStore/Rx'
 ```
 
-### It can use without RxSwift
+## References
 
-We can use `Storage` as standalone.
+## Normalized State Shape
 
-## Logging
+[https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape)
 
-We can log event about Actions and Commits in Verge.
+## Installation
 
-- Logs are
-  - Changes state
-  - Receives mutations
-  - Receives actions
-  - Emits activities
+Currently it supports only CocoaPods.
 
-Use `VergeLogging`
+In Podfile
 
-## `distinctUntilChanged` is very important.
+```
+pod 'VergeStore'
+```
 
-Mutation will mutate whole of the State.
-Observable from the State will send event whenever updating the State.
-This behavior will cause unnecessary operations.
+## Author
 
-# Basically Demo
-
-This demo is super far away from real world.
-In real world applications, it will be more complicated.
-
-![](demo.gif)
-
-# Authors
-
-- muukii <muukii.app@gmail.com>
+Hiroshi Kimura (Muukii) <muukii.app@gmail.com>
