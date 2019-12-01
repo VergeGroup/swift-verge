@@ -149,7 +149,7 @@ extension Storage: ObservableObject {
       let associated = ObservableObjectPublisher()
       objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN)
       
-      add { _ in
+      addWillUpdate { _ in
         if Thread.isMainThread {
           associated.send()
         } else {

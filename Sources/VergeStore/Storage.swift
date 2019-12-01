@@ -30,7 +30,8 @@ public struct StorageSubscribeToken : Hashable {
 @propertyWrapper
 public class Storage<Value>: CustomReflectable {
   
-  private var subscribers: [StorageSubscribeToken : (Value) -> Void] = [:]
+  private var willUpdateSubscribers: [StorageSubscribeToken : (Value) -> Void] = [:]
+  private var didUpdateSubscribers: [StorageSubscribeToken : (Value) -> Void] = [:]
   
   public var wrappedValue: Value {
     return value
@@ -56,13 +57,21 @@ public class Storage<Value>: CustomReflectable {
     self.nonatomicValue = value
   }
   
-  public func update(_ update: (inout Value) throws -> Void) rethrows {
+  public func update(_ update: (inout Value) throws -> Void) rethrows {    
+    do {
+      let notifyValue: Value
+      os_unfair_lock_lock(&unfairLock)
+      notifyValue = nonatomicValue
+      os_unfair_lock_unlock(&unfairLock)
+      notifyWillUpdate(value: notifyValue)
+    }
+    
     os_unfair_lock_lock(&unfairLock)
     do {
       try update(&nonatomicValue)
       let notifyValue = nonatomicValue
       os_unfair_lock_unlock(&unfairLock)
-      notify(value: notifyValue)
+      notifyDidUpdate(value: notifyValue)
     } catch {
       os_unfair_lock_unlock(&unfairLock)
       throw error
@@ -70,20 +79,40 @@ public class Storage<Value>: CustomReflectable {
   }
   
   public func replace(_ value: Value) {
-    os_unfair_lock_lock(&unfairLock)
-    nonatomicValue = value
-    let notifyValue = nonatomicValue
-    os_unfair_lock_unlock(&unfairLock)
-    notify(value: notifyValue)
+    do {
+      let notifyValue: Value
+      os_unfair_lock_lock(&unfairLock)
+      notifyValue = nonatomicValue
+      os_unfair_lock_unlock(&unfairLock)
+      notifyWillUpdate(value: notifyValue)
+    }
+    
+    do {
+      os_unfair_lock_lock(&unfairLock)
+      nonatomicValue = value
+      let notifyValue = nonatomicValue
+      os_unfair_lock_unlock(&unfairLock)
+      notifyDidUpdate(value: notifyValue)
+    }
   }
   
   @discardableResult
-  public func add(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
+  public func addWillUpdate(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
     os_unfair_lock_lock(&unfairLock)
     defer { os_unfair_lock_unlock(&unfairLock) }
     
     let token = StorageSubscribeToken()
-    subscribers[token] = subscriber
+    willUpdateSubscribers[token] = subscriber
+    return token
+  }
+  
+  @discardableResult
+  public func addDidUpdate(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
+    os_unfair_lock_lock(&unfairLock)
+    defer { os_unfair_lock_unlock(&unfairLock) }
+    
+    let token = StorageSubscribeToken()
+    didUpdateSubscribers[token] = subscriber
     return token
   }
   
@@ -91,13 +120,23 @@ public class Storage<Value>: CustomReflectable {
     os_unfair_lock_lock(&unfairLock)
     defer { os_unfair_lock_unlock(&unfairLock) }
     
-    subscribers.removeValue(forKey: subscriber)
+    didUpdateSubscribers.removeValue(forKey: subscriber)
+    willUpdateSubscribers.removeValue(forKey: subscriber)
+  }
+    
+  @inline(__always)
+  fileprivate func notifyWillUpdate(value: Value) {
+    os_unfair_lock_lock(&unfairLock)
+    let subscribers: [StorageSubscribeToken : (Value) -> Void] = self.didUpdateSubscribers
+    os_unfair_lock_unlock(&unfairLock)
+    
+    subscribers.forEach { $0.value(value) }
   }
   
   @inline(__always)
-  fileprivate func notify(value: Value) {
+  fileprivate func notifyDidUpdate(value: Value) {
     os_unfair_lock_lock(&unfairLock)
-    let subscribers: [StorageSubscribeToken : (Value) -> Void] = self.subscribers
+    let subscribers: [StorageSubscribeToken : (Value) -> Void] = self.didUpdateSubscribers
     os_unfair_lock_unlock(&unfairLock)
     
     subscribers.forEach { $0.value(value) }

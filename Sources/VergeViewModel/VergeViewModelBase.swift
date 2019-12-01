@@ -41,7 +41,7 @@ open class VergeViewModelBase<State, StoreState>: VergeDefaultStore<State>, Disp
     
     super.init(initialState: initialState, logger: logger)
     
-    self.subscription = store.backingStorage.add { [weak self] (state) in
+    self.subscription = store.backingStorage.addDidUpdate { [weak self] (state) in
       guard let self = self else { return }
       self.storeStateUpdated(storeState: state)
     }
