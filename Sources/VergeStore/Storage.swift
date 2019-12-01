@@ -127,7 +127,7 @@ public class Storage<Value>: CustomReflectable {
   @inline(__always)
   fileprivate func notifyWillUpdate(value: Value) {
     os_unfair_lock_lock(&unfairLock)
-    let subscribers: [StorageSubscribeToken : (Value) -> Void] = self.didUpdateSubscribers
+    let subscribers: [StorageSubscribeToken : (Value) -> Void] = self.willUpdateSubscribers
     os_unfair_lock_unlock(&unfairLock)
     
     subscribers.forEach { $0.value(value) }
