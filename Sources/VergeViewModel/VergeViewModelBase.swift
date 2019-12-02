@@ -43,7 +43,9 @@ open class VergeViewModelBase<State, StoreState>: VergeDefaultStore<State>, Disp
     
     self.subscription = store.backingStorage.addDidUpdate { [weak self] (state) in
       guard let self = self else { return }
-      self.storeStateUpdated(storeState: state)
+      self.backingStorage.update { s in
+        self.updateState(state: &s, by: state)
+      }
     }
     
   }
@@ -58,8 +60,8 @@ open class VergeViewModelBase<State, StoreState>: VergeDefaultStore<State>, Disp
   /// It also called when initialized
   ///
   /// - Parameter storeState:
-  open func storeStateUpdated(storeState: StoreState) {
-
+  open func updateState(state: inout State, by storeState: StoreState) {
+    
   }
   
 }

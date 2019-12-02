@@ -39,6 +39,7 @@
 		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
 		4B956D18211483E7003AA189 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; };
 		4B956D19211483E7003AA189 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B9AF5B323957DBF007B78D1 /* Dispatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* Dispatching.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
 		4BAE9FEA21DFA75A003DDF3D /* Verge+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */; };
@@ -232,6 +233,7 @@
 		4B86A4A31F969C7D002D54FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B86A4A51F969C7D002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		4B9AF5B223957DBF007B78D1 /* Dispatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dispatching.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		4BADEB9A23380AE400E1D3F5 /* Lorem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lorem.swift; sourceTree = "<group>"; };
@@ -383,6 +385,7 @@
 				4B786323233912AB009B9C1B /* Info.plist */,
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
 				4B427418236F269C00C302C8 /* VergeStore.swift */,
+				4B9AF5B223957DBF007B78D1 /* Dispatching.swift */,
 				4BCBCA8A2381C82100F33B15 /* Dispatcher.swift */,
 				4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */,
 				4B68394F237062F7002FFC5A /* Utility.swift */,
@@ -936,6 +939,7 @@
 				4BCBCA8B2381C82100F33B15 /* Dispatcher.swift in Sources */,
 				4B683950237062F7002FFC5A /* Utility.swift in Sources */,
 				4B0AFD6D2388643400AABA90 /* DefaultLogger.swift in Sources */,
+				4B9AF5B323957DBF007B78D1 /* Dispatching.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -30,6 +30,10 @@ final class Store: VergeDefaultStore<State> {
 }
 
 class RootDispatcher: Store.DispatcherType {
+
+}
+
+extension Commit where Base == RootDispatcher {
   
   func increment() {
     commit {
@@ -50,7 +54,7 @@ class RootDispatcher: Store.DispatcherType {
       }
     }
   }
-   
+  
   func setMyNameUsingTargetingCommit() {
     commit(\.optionalNested) {
       $0.myName = "Target"
@@ -59,11 +63,13 @@ class RootDispatcher: Store.DispatcherType {
 }
 
 final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
-  
   var selector: WritableKeyPath<State, State.NestedState?> {
     \.optionalNested
   }
-  
+}
+
+extension Commit where Base == OptionalNestedDispatcher {
+     
   func setMyName() {
     commitScopedIfPresent {
       $0.myName = "Hello"
@@ -77,6 +83,10 @@ final class NestedDispatcher: Store.DispatcherType, ScopedDispatching {
   var selector: WritableKeyPath<State, State.NestedState> {
     \.nested
   }
+  
+}
+
+extension Commit where Base == NestedDispatcher {
   
   func setMyName() {
     commitScoped {
@@ -102,34 +112,35 @@ final class VergeStoreTests: XCTestCase {
   func testMutatingOptionalNestedState() {
     
     XCTAssert(store.state.optionalNested == nil)
-    dispatcher.setNestedState()
+    dispatcher.commit.setNestedState()
+    dispatcher.commit.setNestedState()
     XCTAssert(store.state.optionalNested != nil)
-    dispatcher.setMyName()
+    dispatcher.commit.setMyName()
     XCTAssertEqual(store.state.optionalNested?.myName, "Muuk")
     
     let d = OptionalNestedDispatcher(target: store)
-    d.setMyName()
+    d.commit.setMyName()
     XCTAssertEqual(store.state.optionalNested?.myName, "Hello")
   }
   
   func testMutatingNestedState() {
                
     let d = NestedDispatcher(target: store)
-    d.setMyName()
+    d.commit.setMyName()
     XCTAssertEqual(store.state.nested.myName, "Hello")
   }
   
   func testIncrement() {
     
-    dispatcher.increment()
+    dispatcher.commit.increment()
     XCTAssertEqual(store.state.count, 1)
     
   }
   
   func testTargetingCommit() {
     
-    dispatcher.setNestedState()
-    dispatcher.setMyNameUsingTargetingCommit()
+    dispatcher.commit.setNestedState()
+    dispatcher.commit.setMyNameUsingTargetingCommit()
     XCTAssertEqual(store.state.optionalNested?.myName, "Target")
   }
   
