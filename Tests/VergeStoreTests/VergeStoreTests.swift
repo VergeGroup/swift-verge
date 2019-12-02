@@ -35,6 +35,12 @@ class RootDispatcher: Store.DispatcherType {
 
 extension Mutations where Base == RootDispatcher {
   
+  func resetCount() {
+    commit {
+      $0.count = 0
+    }
+  }
+  
   func increment() {
     commit {
       $0.count += 1
@@ -60,6 +66,19 @@ extension Mutations where Base == RootDispatcher {
       $0.myName = "Target"
     }
   }
+}
+
+extension Actions where Base == RootDispatcher {
+  
+  func continuousIncrement() {
+    
+    dispatch { c in
+      c.commit.increment()
+      c.commit.increment()
+    }
+    
+  }
+  
 }
 
 final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
@@ -107,6 +126,12 @@ final class VergeStoreTests: XCTestCase {
   
   override func tearDown() {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+  }
+  
+  func testDispatch() {
+    dispatcher.commit.resetCount()
+    dispatcher.dispatch.continuousIncrement()
+    XCTAssert(store.state.count == 2)
   }
   
   func testMutatingOptionalNestedState() {

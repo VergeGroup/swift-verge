@@ -8,6 +8,16 @@ Classic Version is here => [Verge Classic](./Sources/VergeClassic)
 
 - [APNsClient](https://github.com/muukii/APNsClient) : A desktop application to send a apns push with HTTP/2 based API.
 
+## Installation VergeStore
+
+Currently it supports only CocoaPods.
+
+In Podfile
+
+```
+pod 'VergeStore/Core'
+```
+
 ## Concept
 
 The concept of VergeStore is inspired by [Redux](https://redux.js.org/) and [Vuex](https://vuex.vuejs.org/).
@@ -76,6 +86,9 @@ Mutation object is simple struct that has a closure what passes current state to
 
 ```swift
 class MyDispatcher: Dispatcher<RootState> {
+}
+
+extension Mutations where Base == MyDispatcher {
   func addNewTodo(title: String) {
     commit { (state: inout RootState) in
       state.todos.append(Todo(title: title, hasCompleted: false))
@@ -86,7 +99,7 @@ class MyDispatcher: Dispatcher<RootState> {
 let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 
-dispatcher.addNewTodo(title: "Create SwiftUI App")
+dispatcher.commit.addNewTodo(title: "Create SwiftUI App")
 
 print(store.state.todos)
 // store.state.todos => [Todo(title: "Create SwiftUI App", hasCompleted: false)]
@@ -103,6 +116,9 @@ To commit Mutations inside Action, Use context.commit.
 
 ```swift
 class MyDispatcher: Dispatcher<RootState> {
+}
+
+extension Actions where Base == MyDispatcher {
 
   @discardableResult
   func fetchRemoteTodos() -> Future<Void> {
@@ -125,7 +141,7 @@ class MyDispatcher: Dispatcher<RootState> {
 let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 
-dispatcher.fetchRemoteTodos()
+dispatcher.dispatch.fetchRemoteTodos()
 
 // After Future completed
 
@@ -212,6 +228,10 @@ final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
     \.optionalNested
   }
 
+}
+
+extension Mutations where Base == OptionalNestedDispatcher {
+
   func setMyName() {
     commitIfPresent {
       $0.myName = "Hello"
@@ -250,15 +270,35 @@ public protocol VergeStoreLogger {
 }
 ```
 
-### Rx Extensions
+## Rx Extensions
 
 VergeStore provides RxSwift extensions.<br>
 It may help using VergeStore in UIKit based application.
 
 We can add this with following pod'
 
+### Installation VergeStore/Rx
+
 ```ruby
 pod 'VergeStore/Rx'
+```
+
+## VergeViewModel module
+
+We have a sub-framework VergeViewModel.<br>
+This helps UIKit based application.
+
+VergeStore is a state container and that state will be bigger according to the application scale.<br>
+You would need something that map to view-state.
+
+In SwiftUI, `SwiftUI.View` is that. But UIKit is not.
+
+It may be a better way to get ViewModel or something.
+
+### Installation VergeStore/VM
+
+```ruby
+pod 'VergeStore/VM'
 ```
 
 ## References
@@ -266,16 +306,6 @@ pod 'VergeStore/Rx'
 ## Normalized State Shape
 
 [https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape)
-
-## Installation
-
-Currently it supports only CocoaPods.
-
-In Podfile
-
-```
-pod 'VergeStore'
-```
 
 ## Author
 
