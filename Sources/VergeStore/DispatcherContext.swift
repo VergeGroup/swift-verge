@@ -8,18 +8,20 @@
 
 import Foundation
 
-public final class VergeStoreDispatcherContext<Dispatcher: Dispatching> {
+public struct VergeStoreDispatcherContext<Dispatcher: Dispatching> {
   
   public typealias State = Dispatcher.State
   
   public let dispatcher: Dispatcher
+  public let metadata: ActionMetadata
   
   public var state: State {
     return dispatcher.targetStore.state
   }
   
-  init(dispatcher: Dispatcher) {
+  init(dispatcher: Dispatcher, metadata: ActionMetadata) {
     self.dispatcher = dispatcher
+    self.metadata = metadata
   }
      
 }
@@ -31,6 +33,18 @@ extension VergeStoreDispatcherContext {
   }
 }
 
+extension VergeStoreDispatcherContext: CustomReflectable {
+  
+  public var customMirror: Mirror {
+    Mirror(
+      self,
+      children: [
+        "metadata": metadata
+      ],
+      displayStyle: .struct
+    )
+  }
+}
 
 //extension VergeStoreDispatcherContext where State : StateType {
 //

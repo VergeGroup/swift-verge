@@ -25,7 +25,7 @@ struct State: StateType {
 final class Store: VergeDefaultStore<State> {
   
   init() {
-    super.init(initialState: .init(), logger: nil)
+    super.init(initialState: .init(), logger: DefaultLogger.shared)
   }
 }
 

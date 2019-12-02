@@ -145,7 +145,7 @@ public struct Actions<Base: Dispatching> {
     
     let metadata = ActionMetadata(name: name, file: file, function: function, line: line)
     
-    let context = VergeStoreDispatcherContext<Base>.init(dispatcher: base)
+    let context = VergeStoreDispatcherContext<Base>.init(dispatcher: base, metadata: metadata)
     let result = try inlineAction(context)
     base.targetStore.logger?.didDispatch(
       store: base.targetStore,

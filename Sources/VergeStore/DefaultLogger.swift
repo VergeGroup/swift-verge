@@ -29,16 +29,17 @@ public final class DefaultLogger: VergeStoreLogger {
     
   }
   
-  public func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?) {
+  public func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?) {
   }
   
-  public func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?, time: CFTimeInterval) {
+  public func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?, time: CFTimeInterval) {
     queue.async {
       os_log("%@", log: self.commitLog, type: .default, """
         {
           "type" : "commit",
           "took": "\(time * 1000)ms"
           "mutation" : \(mutation),
+          "context" : \(context as Any),
           "store" : "\(store)"
         }
         """
@@ -46,7 +47,7 @@ public final class DefaultLogger: VergeStoreLogger {
     }
   }
   
-  public func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: AnyObject?) {
+  public func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: Any?) {
     queue.async {
       os_log("%@", log: self.dispatchLog, type: .default, """
         {
