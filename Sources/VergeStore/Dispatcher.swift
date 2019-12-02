@@ -1,6 +1,6 @@
 
 open class Dispatcher<S>: Dispatching {
-  
+    
   public typealias State = S
   
   public typealias Context = VergeStoreDispatcherContext<Dispatcher<State>>

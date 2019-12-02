@@ -33,7 +33,7 @@ class RootDispatcher: Store.DispatcherType {
 
 }
 
-extension Commit where Base == RootDispatcher {
+extension Mutations where Base == RootDispatcher {
   
   func increment() {
     commit {
@@ -68,7 +68,7 @@ final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
   }
 }
 
-extension Commit where Base == OptionalNestedDispatcher {
+extension Mutations where Base == OptionalNestedDispatcher {
      
   func setMyName() {
     commitScopedIfPresent {
@@ -86,7 +86,7 @@ final class NestedDispatcher: Store.DispatcherType, ScopedDispatching {
   
 }
 
-extension Commit where Base == NestedDispatcher {
+extension Mutations where Base == NestedDispatcher {
   
   func setMyName() {
     commitScoped {

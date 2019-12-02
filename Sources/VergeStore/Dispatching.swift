@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Commit<Base: Dispatching> {
+public struct Mutations<Base: Dispatching> {
   
   public let base: Base
   private let context: VergeStoreDispatcherContext<Base>?
@@ -38,7 +38,7 @@ public struct Commit<Base: Dispatching> {
   
 }
 
-extension Commit where Base.State : StateType {
+extension Mutations where Base.State : StateType {
   
   public func commit<Target>(
     _ target: WritableKeyPath<Base.State, Target>,
@@ -81,7 +81,7 @@ extension Commit where Base.State : StateType {
   }
 }
 
-extension Commit where Base : ScopedDispatching {
+extension Mutations where Base : ScopedDispatching {
   
   public func commitScoped(
     _ name: String = "",
@@ -103,7 +103,7 @@ extension Commit where Base : ScopedDispatching {
   
 }
 
-extension Commit where Base : ScopedDispatching, Base.Scoped : _VergeStore_OptionalProtocol {
+extension Mutations where Base : ScopedDispatching, Base.Scoped : _VergeStore_OptionalProtocol {
   
   public func commitScopedIfPresent(
     _ name: String = "",
@@ -126,7 +126,7 @@ extension Commit where Base : ScopedDispatching, Base.Scoped : _VergeStore_Optio
 }
 
 
-public struct Dispatch<Base: Dispatching> {
+public struct Actions<Base: Dispatching> {
   
   public let base: Base
   
@@ -161,17 +161,21 @@ public struct Dispatch<Base: Dispatching> {
 }
 
 public protocol Dispatching {
+    
   associatedtype State
   typealias Store = VergeDefaultStore<State>
   var targetStore: Store { get }
 }
 
 extension Dispatching {
-  public var dispatch: Dispatch<Self> {
+  
+  public typealias Hoge = Mutations<Self>
+    
+  public var dispatch: Actions<Self> {
     return .init(base: self)
   }
   
-  public var commit: Commit<Self> {
+  public var commit: Mutations<Self> {
     return .init(base: self)
   }
 }

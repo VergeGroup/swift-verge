@@ -26,7 +26,7 @@ public final class VergeStoreDispatcherContext<Dispatcher: Dispatching> {
 
 extension VergeStoreDispatcherContext {
   
-  public var commit: Commit<Dispatcher> {
+  public var commit: Mutations<Dispatcher> {
     return .init(base: dispatcher, context: self)
   }
 }
