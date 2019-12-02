@@ -129,9 +129,11 @@ extension Mutations where Base : ScopedDispatching, Base.Scoped : _VergeStore_Op
 public struct Actions<Base: Dispatching> {
   
   let base: Base
+  let parentContext: VergeStoreDispatcherContext<Base>?
   
-  init(base: Base) {
+  init(base: Base, parentContext: VergeStoreDispatcherContext<Base>?) {
     self.base = base
+    self.parentContext = parentContext
   }
   
   @discardableResult
@@ -145,8 +147,14 @@ public struct Actions<Base: Dispatching> {
     
     let metadata = ActionMetadata(name: name, file: file, function: function, line: line)
     
-    let context = VergeStoreDispatcherContext<Base>.init(dispatcher: base, metadata: metadata)
+    let context = VergeStoreDispatcherContext<Base>(
+      dispatcher: base,
+      metadata: metadata,
+      parent: parentContext
+    )
+    
     let result = try inlineAction(context)
+    
     base.targetStore.logger?.didDispatch(
       store: base.targetStore,
       state: base.targetStore.state,
@@ -168,11 +176,9 @@ public protocol Dispatching {
 }
 
 extension Dispatching {
-  
-  public typealias Hoge = Mutations<Self>
-    
+      
   public var dispatch: Actions<Self> {
-    return .init(base: self)
+    return .init(base: self, parentContext: nil)
   }
   
   public var commit: Mutations<Self> {

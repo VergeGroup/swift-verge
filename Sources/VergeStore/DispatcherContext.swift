@@ -8,25 +8,35 @@
 
 import Foundation
 
-public struct VergeStoreDispatcherContext<Dispatcher: Dispatching> {
+public final class VergeStoreDispatcherContext<Dispatcher: Dispatching> {
   
   public typealias State = Dispatcher.State
   
   public let dispatcher: Dispatcher
   public let metadata: ActionMetadata
+  private let parent: VergeStoreDispatcherContext<Dispatcher>?
   
   public var state: State {
     return dispatcher.targetStore.state
   }
   
-  init(dispatcher: Dispatcher, metadata: ActionMetadata) {
+  init(
+    dispatcher: Dispatcher,
+    metadata: ActionMetadata,
+    parent: VergeStoreDispatcherContext<Dispatcher>?
+  ) {
     self.dispatcher = dispatcher
     self.metadata = metadata
+    self.parent = parent
   }
      
 }
 
 extension VergeStoreDispatcherContext {
+  
+  public var dispatch: Actions<Dispatcher> {
+    return .init(base: dispatcher, parentContext: self)
+  }
   
   public var commit: Mutations<Dispatcher> {
     return .init(base: dispatcher, context: self)
@@ -39,7 +49,8 @@ extension VergeStoreDispatcherContext: CustomReflectable {
     Mirror(
       self,
       children: [
-        "metadata": metadata
+        "metadata": metadata,
+        "parent" : parent as Any
       ],
       displayStyle: .struct
     )
