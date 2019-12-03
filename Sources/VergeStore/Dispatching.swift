@@ -10,7 +10,7 @@ import Foundation
 
 public struct Mutations<Base: Dispatching> {
   
-  let base: Base
+  public let base: Base
   private let context: VergeStoreDispatcherContext<Base>?
   
   init(base: Base, context: VergeStoreDispatcherContext<Base>? = nil) {
@@ -128,7 +128,7 @@ extension Mutations where Base : ScopedDispatching, Base.Scoped : _VergeStore_Op
 
 public struct Actions<Base: Dispatching> {
   
-  let base: Base
+  public let base: Base
   let parentContext: VergeStoreDispatcherContext<Base>?
   
   init(base: Base, parentContext: VergeStoreDispatcherContext<Base>?) {
