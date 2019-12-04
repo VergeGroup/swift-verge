@@ -90,7 +90,7 @@ class MyDispatcher: Dispatcher<RootState> {
 
 extension Mutations where Base == MyDispatcher {
   func addNewTodo(title: String) {
-    commit { (state: inout RootState) in
+    descriptor.commit { (state: inout RootState) in
       state.todos.append(Todo(title: title, hasCompleted: false))
     }
   }
@@ -122,7 +122,7 @@ extension Actions where Base == MyDispatcher {
 
   @discardableResult
   func fetchRemoteTodos() -> Future<Void> {
-    dispatch { context in
+    descriptor.dispatch { context in
 
       return Future<[Todo], Never> { ... }
         .sink { todos in
@@ -170,11 +170,11 @@ public protocol StateType {
 
 extension StateType {
 
-    public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T.Wrapped) throws -> Void) rethrows where T : VergeStore._VergeStore_OptionalProtocol
+  public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T.Wrapped) throws -> Void) rethrows where T : VergeStore._VergeStore_OptionalProtocol
 
-    public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T) throws -> Void) rethrows
+  public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T) throws -> Void) rethrows
 
-    public mutating func update(update: (inout Self) throws -> Void) rethrows
+  public mutating func update(update: (inout Self) throws -> Void) rethrows
 }
 ```
 
@@ -233,7 +233,7 @@ final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
 extension Mutations where Base == OptionalNestedDispatcher {
 
   func setMyName() {
-    commitIfPresent {
+    descriptor.commitIfPresent {
       $0.myName = "Hello"
     }
   }
