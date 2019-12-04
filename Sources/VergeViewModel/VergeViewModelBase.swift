@@ -25,9 +25,21 @@ import Foundation
 @_exported import VergeStore
 #endif
 
-open class VergeViewModelBase<State, StoreState>: VergeDefaultStore<State>, Dispatching {
+open class StandaloneVergeViewModelBase<State>: VergeDefaultStore<State>, Dispatching {
   
   public var targetStore: VergeDefaultStore<State> { self }
+  
+  public override init(
+    initialState: State,
+    logger: VergeStoreLogger?
+  ) {    
+    super.init(initialState: initialState, logger: logger)
+  }
+  
+}
+
+open class VergeViewModelBase<State, StoreState>: StandaloneVergeViewModelBase<State> {
+    
   public let store: VergeDefaultStore<StoreState>
   private var subscription: StorageSubscribeToken?
   
@@ -65,3 +77,4 @@ open class VergeViewModelBase<State, StoreState>: VergeDefaultStore<State>, Disp
   }
   
 }
+

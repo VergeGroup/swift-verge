@@ -33,49 +33,51 @@ public final class DefaultLogger: VergeStoreLogger {
   }
   
   public func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?, time: CFTimeInterval) {
+    
+    let message = """
+    {
+      "type" : "commit",
+      "took": "\(time * 1000)ms"
+      "mutation" : \(mutation),
+      "context" : \(context as Any),
+      "store" : "\(store)"
+    }
+    """
+    
     queue.async {
-      os_log("%@", log: self.commitLog, type: .default, """
-        {
-          "type" : "commit",
-          "took": "\(time * 1000)ms"
-          "mutation" : \(mutation),
-          "context" : \(context as Any),
-          "store" : "\(store)"
-        }
-        """
-      )
+      os_log("%@", log: self.commitLog, type: .default, message)
     }
   }
   
   public func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: Any?) {
+    let message = """
+    {
+      "type" : "dispatch",
+      "action" : \(action),
+      "context" : \(context as Any),
+      "store" : "\(store)"
+    }
+    """
     queue.async {
-      os_log("%@", log: self.dispatchLog, type: .default, """
-        {
-          "type" : "dispatch",
-          "action" : \(action),
-          "context" : \(context as Any),
-          "store" : "\(store)"
-        }
-        """
-      )
+      os_log("%@", log: self.dispatchLog, type: .default, message)
     }
   }
   
   public func didCreateDispatcher(store: AnyObject, dispatcher: Any) {
+    let message = """
+    {
+      "type" : "dispatcher_creation",
+      "dispatcher" : \(dispatcher),
+      "store" : "\(store)"
+    }
+    """
     queue.async {
-      os_log("%@", log: self.dispatcherCreationLog, type: .default, """
-        {
-          "type" : "dispatcher_creation",
-          "dispatcher" : \(dispatcher),
-          "store" : "\(store)"
-        }
-        """
-      )
+      os_log("%@", log: self.dispatcherCreationLog, type: .default, message)
     }
   }
   
   public func didDestroyDispatcher(store: AnyObject, dispatcher: Any) {
-    let log = """
+    let message = """
     {
       "type" : "dispatcher_destruction",
       "dispatcher" : \(dispatcher),
@@ -83,7 +85,7 @@ public final class DefaultLogger: VergeStoreLogger {
     }
     """
     queue.async {
-      os_log("%@", log: self.dispatcherDestructionLog, type: .default, log)
+      os_log("%@", log: self.dispatcherDestructionLog, type: .default, message)
     }
   }
   

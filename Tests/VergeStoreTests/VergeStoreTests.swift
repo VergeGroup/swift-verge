@@ -36,25 +36,25 @@ class RootDispatcher: Store.DispatcherType {
 extension Mutations where Base == RootDispatcher {
   
   func resetCount() {
-    commit {
+    descriptor.commit {
       $0.count = 0
     }
   }
   
   func increment() {
-    commit {
+    descriptor.commit {
       $0.count += 1
     }
   }
   
   func setNestedState() {
-    commit {
+    descriptor.commit {
       $0.optionalNested = .init()
     }
   }
   
   func setMyName() {
-    commit {
+    descriptor.commit {
       $0.update(target: \.optionalNested) {
         $0.myName = "Muuk"
       }
@@ -62,7 +62,7 @@ extension Mutations where Base == RootDispatcher {
   }
   
   func setMyNameUsingTargetingCommit() {
-    commit(\.optionalNested) {
+    descriptor.commit(\.optionalNested) {
       $0.myName = "Target"
     }
   }
@@ -72,7 +72,7 @@ extension Actions where Base == RootDispatcher {
   
   func continuousIncrement() {
     
-    dispatch { c in
+    descriptor.dispatch { c in
       c.commit.increment()
       c.commit.increment()
     }
@@ -90,7 +90,7 @@ final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
 extension Mutations where Base == OptionalNestedDispatcher {
      
   func setMyName() {
-    commitScopedIfPresent {
+    descriptor.commitScopedIfPresent {
       $0.myName = "Hello"
     }
   }
@@ -108,7 +108,7 @@ final class NestedDispatcher: Store.DispatcherType, ScopedDispatching {
 extension Mutations where Base == NestedDispatcher {
   
   func setMyName() {
-    commitScoped {
+    descriptor.commitScoped {
       $0.myName = "Hello"
     }
   }
