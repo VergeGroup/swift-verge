@@ -13,6 +13,12 @@
 		4B427419236F269C00C302C8 /* VergeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B427418236F269C00C302C8 /* VergeStore.swift */; };
 		4B54E2791FE3646B001736D2 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E2781FE3646B001736D2 /* Storage.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
+		4B6382992397F4D500FAD87F /* Mutations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6382982397F4D500FAD87F /* Mutations.swift */; };
+		4B63829B2397F4FC00FAD87F /* Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B63829A2397F4FC00FAD87F /* Actions.swift */; };
+		4B63829D23980D4600FAD87F /* StandaloneVergeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B63829C23980D4600FAD87F /* StandaloneVergeViewModelTests.swift */; };
+		4B6382A0239811E500FAD87F /* AtomicReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B63829E239811E000FAD87F /* AtomicReference.swift */; };
+		4B6382A32398120E00FAD87F /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B6382A12398120700FAD87F /* AtomicBridges.m */; };
+		4B6382A52398123C00FAD87F /* AtomicBridges.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6382A42398123900FAD87F /* AtomicBridges.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B65F8EF1FB4C0DC00A90A67 /* VergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */; };
 		4B65F8FA1FB4C75800A90A67 /* CycleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8F91FB4C75800A90A67 /* CycleViewModel.swift */; };
 		4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B68394623705ACD002FFC5A /* VergeStoreTests.swift */; };
@@ -39,6 +45,7 @@
 		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
 		4B956D18211483E7003AA189 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; };
 		4B956D19211483E7003AA189 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B9AF5B323957DBF007B78D1 /* Dispatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* Dispatching.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
 		4BAE9FEA21DFA75A003DDF3D /* Verge+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */; };
@@ -204,6 +211,12 @@
 		4B495D092332B5170098F7B4 /* NetworkImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
 		4B54E2781FE3646B001736D2 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
+		4B6382982397F4D500FAD87F /* Mutations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mutations.swift; sourceTree = "<group>"; };
+		4B63829A2397F4FC00FAD87F /* Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Actions.swift; sourceTree = "<group>"; };
+		4B63829C23980D4600FAD87F /* StandaloneVergeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandaloneVergeViewModelTests.swift; sourceTree = "<group>"; };
+		4B63829E239811E000FAD87F /* AtomicReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicReference.swift; sourceTree = "<group>"; };
+		4B6382A12398120700FAD87F /* AtomicBridges.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AtomicBridges.m; sourceTree = "<group>"; };
+		4B6382A42398123900FAD87F /* AtomicBridges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicBridges.h; sourceTree = "<group>"; };
 		4B65F8EC1FB4C0DC00A90A67 /* VergeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeTests.swift; sourceTree = "<group>"; };
 		4B65F8F01FB4C0DC00A90A67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -232,6 +245,7 @@
 		4B86A4A31F969C7D002D54FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B86A4A51F969C7D002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		4B9AF5B223957DBF007B78D1 /* Dispatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dispatching.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		4BADEB9A23380AE400E1D3F5 /* Lorem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lorem.swift; sourceTree = "<group>"; };
@@ -383,10 +397,16 @@
 				4B786323233912AB009B9C1B /* Info.plist */,
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
 				4B427418236F269C00C302C8 /* VergeStore.swift */,
+				4B9AF5B223957DBF007B78D1 /* Dispatching.swift */,
+				4B6382982397F4D500FAD87F /* Mutations.swift */,
+				4B63829A2397F4FC00FAD87F /* Actions.swift */,
 				4BCBCA8A2381C82100F33B15 /* Dispatcher.swift */,
 				4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */,
 				4B68394F237062F7002FFC5A /* Utility.swift */,
 				4B0AFD6C2388643400AABA90 /* DefaultLogger.swift */,
+				4B63829E239811E000FAD87F /* AtomicReference.swift */,
+				4B6382A12398120700FAD87F /* AtomicBridges.m */,
+				4B6382A42398123900FAD87F /* AtomicBridges.h */,
 			);
 			path = VergeStore;
 			sourceTree = "<group>";
@@ -527,6 +547,7 @@
 			isa = PBXGroup;
 			children = (
 				4BF2BCE1238A85A700F70CDA /* VergeViewModelTests.swift */,
+				4B63829C23980D4600FAD87F /* StandaloneVergeViewModelTests.swift */,
 				4BF2BCE3238A85A700F70CDA /* Info.plist */,
 			);
 			path = VergeViewModelTests;
@@ -539,6 +560,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B6382A52398123C00FAD87F /* AtomicBridges.h in Headers */,
 				4B786324233912AB009B9C1B /* VergeStore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -807,6 +829,7 @@
 					};
 					4BF2BCDE238A85A700F70CDA = {
 						CreatedOnToolsVersion = 11.2.1;
+						LastSwiftMigration = 1120;
 					};
 				};
 			};
@@ -932,10 +955,15 @@
 			files = (
 				4B427419236F269C00C302C8 /* VergeStore.swift in Sources */,
 				4B427412236F1D2D00C302C8 /* Storage.swift in Sources */,
+				4B6382A0239811E500FAD87F /* AtomicReference.swift in Sources */,
 				4BCBCA8D2381CC2B00F33B15 /* DispatcherContext.swift in Sources */,
 				4BCBCA8B2381C82100F33B15 /* Dispatcher.swift in Sources */,
 				4B683950237062F7002FFC5A /* Utility.swift in Sources */,
 				4B0AFD6D2388643400AABA90 /* DefaultLogger.swift in Sources */,
+				4B6382A32398120E00FAD87F /* AtomicBridges.m in Sources */,
+				4B63829B2397F4FC00FAD87F /* Actions.swift in Sources */,
+				4B6382992397F4D500FAD87F /* Mutations.swift in Sources */,
+				4B9AF5B323957DBF007B78D1 /* Dispatching.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -991,6 +1019,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BF2BCE2238A85A700F70CDA /* VergeViewModelTests.swift in Sources */,
+				4B63829D23980D4600FAD87F /* StandaloneVergeViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1627,6 +1656,7 @@
 		4BF2BCE7238A85A700F70CDA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Tests/VergeViewModelTests/Info.plist;
@@ -1641,6 +1671,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeViewModelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1649,6 +1680,7 @@
 		4BF2BCE8238A85A700F70CDA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Tests/VergeViewModelTests/Info.plist;

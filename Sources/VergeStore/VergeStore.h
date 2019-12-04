@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "AtomicBridges.h"
+
 //! Project version number for VergeStore.
 FOUNDATION_EXPORT double VergeStoreVersionNumber;
 

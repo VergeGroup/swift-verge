@@ -25,47 +25,72 @@ struct State: StateType {
 final class Store: VergeDefaultStore<State> {
   
   init() {
-    super.init(initialState: .init(), logger: nil)
+    super.init(initialState: .init(), logger: DefaultLogger.shared)
   }
 }
 
 class RootDispatcher: Store.DispatcherType {
+
+}
+
+extension Mutations where Base == RootDispatcher {
+  
+  func resetCount() {
+    descriptor.commit {
+      $0.count = 0
+    }
+  }
   
   func increment() {
-    commit {
+    descriptor.commit {
       $0.count += 1
     }
   }
   
   func setNestedState() {
-    commit {
+    descriptor.commit {
       $0.optionalNested = .init()
     }
   }
   
   func setMyName() {
-    commit {
+    descriptor.commit {
       $0.update(target: \.optionalNested) {
         $0.myName = "Muuk"
       }
     }
   }
-   
+  
   func setMyNameUsingTargetingCommit() {
-    commit(\.optionalNested) {
+    descriptor.commit(\.optionalNested) {
       $0.myName = "Target"
     }
   }
 }
 
-final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
+extension Actions where Base == RootDispatcher {
   
+  func continuousIncrement() {
+    
+    descriptor.dispatch { c in
+      c.commit.increment()
+      c.commit.increment()
+    }
+    
+  }
+  
+}
+
+final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
   var selector: WritableKeyPath<State, State.NestedState?> {
     \.optionalNested
   }
-  
+}
+
+extension Mutations where Base == OptionalNestedDispatcher {
+     
   func setMyName() {
-    commitScopedIfPresent {
+    descriptor.commitScopedIfPresent {
       $0.myName = "Hello"
     }
   }
@@ -78,8 +103,12 @@ final class NestedDispatcher: Store.DispatcherType, ScopedDispatching {
     \.nested
   }
   
+}
+
+extension Mutations where Base == NestedDispatcher {
+  
   func setMyName() {
-    commitScoped {
+    descriptor.commitScoped {
       $0.myName = "Hello"
     }
   }
@@ -99,37 +128,44 @@ final class VergeStoreTests: XCTestCase {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
   
+  func testDispatch() {
+    dispatcher.commit.resetCount()
+    dispatcher.dispatch.continuousIncrement()
+    XCTAssert(store.state.count == 2)
+  }
+  
   func testMutatingOptionalNestedState() {
     
     XCTAssert(store.state.optionalNested == nil)
-    dispatcher.setNestedState()
+    dispatcher.commit.setNestedState()
+    dispatcher.commit.setNestedState()
     XCTAssert(store.state.optionalNested != nil)
-    dispatcher.setMyName()
+    dispatcher.commit.setMyName()
     XCTAssertEqual(store.state.optionalNested?.myName, "Muuk")
     
     let d = OptionalNestedDispatcher(target: store)
-    d.setMyName()
+    d.commit.setMyName()
     XCTAssertEqual(store.state.optionalNested?.myName, "Hello")
   }
   
   func testMutatingNestedState() {
                
     let d = NestedDispatcher(target: store)
-    d.setMyName()
+    d.commit.setMyName()
     XCTAssertEqual(store.state.nested.myName, "Hello")
   }
   
   func testIncrement() {
     
-    dispatcher.increment()
+    dispatcher.commit.increment()
     XCTAssertEqual(store.state.count, 1)
     
   }
   
   func testTargetingCommit() {
     
-    dispatcher.setNestedState()
-    dispatcher.setMyNameUsingTargetingCommit()
+    dispatcher.commit.setNestedState()
+    dispatcher.commit.setMyNameUsingTargetingCommit()
     XCTAssertEqual(store.state.optionalNested?.myName, "Target")
   }
   

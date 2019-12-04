@@ -25,9 +25,21 @@ import Foundation
 @_exported import VergeStore
 #endif
 
-open class VergeViewModelBase<State, StoreState>: VergeDefaultStore<State>, Dispatching {
+open class StandaloneVergeViewModelBase<State>: VergeDefaultStore<State>, Dispatching {
   
   public var targetStore: VergeDefaultStore<State> { self }
+  
+  public override init(
+    initialState: State,
+    logger: VergeStoreLogger?
+  ) {    
+    super.init(initialState: initialState, logger: logger)
+  }
+  
+}
+
+open class VergeViewModelBase<State, StoreState>: StandaloneVergeViewModelBase<State> {
+    
   public let store: VergeDefaultStore<StoreState>
   private var subscription: StorageSubscribeToken?
   
@@ -43,7 +55,9 @@ open class VergeViewModelBase<State, StoreState>: VergeDefaultStore<State>, Disp
     
     self.subscription = store.backingStorage.addDidUpdate { [weak self] (state) in
       guard let self = self else { return }
-      self.storeStateUpdated(storeState: state)
+      self.backingStorage.update { s in
+        self.updateState(state: &s, by: state)
+      }
     }
     
   }
@@ -58,8 +72,9 @@ open class VergeViewModelBase<State, StoreState>: VergeDefaultStore<State>, Disp
   /// It also called when initialized
   ///
   /// - Parameter storeState:
-  open func storeStateUpdated(storeState: StoreState) {
-
+  open func updateState(state: inout State, by storeState: StoreState) {
+    
   }
   
 }
+

@@ -57,7 +57,9 @@ public class Storage<Value>: CustomReflectable {
     self.nonatomicValue = value
   }
   
-  public func update(_ update: (inout Value) throws -> Void) rethrows {    
+  @discardableResult
+  @inline(__always)
+  public func update(_ update: (inout Value) throws -> Void) rethrows -> Value {
     do {
       let notifyValue: Value
       os_unfair_lock_lock(&unfairLock)
@@ -72,6 +74,7 @@ public class Storage<Value>: CustomReflectable {
       let notifyValue = nonatomicValue
       os_unfair_lock_unlock(&unfairLock)
       notifyDidUpdate(value: notifyValue)
+      return notifyValue
     } catch {
       os_unfair_lock_unlock(&unfairLock)
       throw error

@@ -56,9 +56,9 @@ public struct ActionMetadata {
 /// A protocol to register logger and get the event VergeStore emits.
 public protocol VergeStoreLogger {
   
-  func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?)
-  func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?, time: CFTimeInterval)
-  func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: AnyObject?)
+  func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?)
+  func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?, time: CFTimeInterval)
+  func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: Any?)
   
   func didCreateDispatcher(store: AnyObject, dispatcher: Any)
   func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
@@ -102,6 +102,7 @@ open class VergeDefaultStore<State>: CustomReflectable {
     
   }
   
+  @inline(__always)
   func receive<FromDispatcher: Dispatching>(
     context: VergeStoreDispatcherContext<FromDispatcher>?,
     metadata: MutationMetadata,
@@ -111,12 +112,12 @@ open class VergeDefaultStore<State>: CustomReflectable {
     logger?.willCommit(store: self, state: self.state, mutation: metadata, context: context)
     
     let startedTime = CFAbsoluteTimeGetCurrent()
-    try backingStorage.update { (state) in
+    let result = try backingStorage.update { (state) in
       try mutation(&state)
     }
     let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
     
-    logger?.didCommit(store: self, state: self.state, mutation: metadata, context: context, time: elapsed)
+    logger?.didCommit(store: self, state: result, mutation: metadata, context: context, time: elapsed)
            
   }
   
