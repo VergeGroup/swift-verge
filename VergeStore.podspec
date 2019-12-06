@@ -35,4 +35,8 @@ Pod::Spec.new do |s|
     rx.source_files = 'Sources/VergeViewModel/**/*.swift'    
   end
 
+  s.subspec 'ORM' do |orm|
+    orm.source_files = 'Sources/VergeORM/**/*.swift'    
+  end
+
 end

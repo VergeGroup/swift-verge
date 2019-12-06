@@ -129,7 +129,7 @@ extension Storage {
       let associated = BehaviorRelay<Value>.init(value: value)
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
 
-      add(subscriber: { (value) in
+      addDidUpdate(subscriber: { (value) in
         associated.accept(value)
       })
 
