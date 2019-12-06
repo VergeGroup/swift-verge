@@ -11,6 +11,10 @@
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
 		4B427412236F1D2D00C302C8 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B42740C236F1D2D00C302C8 /* Storage.swift */; };
 		4B427419236F269C00C302C8 /* VergeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B427418236F269C00C302C8 /* VergeStore.swift */; };
+		4B475BB6239AB954008A03E1 /* VergeNormalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B475BB4239AB954008A03E1 /* VergeNormalizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B475BB9239AB954008A03E1 /* VergeNormalizer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeNormalizer.framework */; };
+		4B475BBA239AB954008A03E1 /* VergeNormalizer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeNormalizer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B475BC0239AB983008A03E1 /* VergeNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BBE239AB97F008A03E1 /* VergeNormalizer.swift */; };
 		4B54E2791FE3646B001736D2 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E2781FE3646B001736D2 /* Storage.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B6382992397F4D500FAD87F /* Mutations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6382982397F4D500FAD87F /* Mutations.swift */; };
@@ -85,6 +89,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4B475BB7239AB954008A03E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B475BB1239AB954008A03E1;
+			remoteInfo = VergeNormalizer;
+		};
 		4B65F8F21FB4C0DC00A90A67 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -201,6 +212,7 @@
 				4B786328233912AB009B9C1B /* VergeStore.framework in Embed Frameworks */,
 				4B956D19211483E7003AA189 /* Verge.framework in Embed Frameworks */,
 				4B7F3848238948CF000B9ACF /* RxVergeStore.framework in Embed Frameworks */,
+				4B475BBA239AB954008A03E1 /* VergeNormalizer.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -247,6 +259,10 @@
 		4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizeDisplayValueTests.swift; sourceTree = "<group>"; };
 		4B42740C236F1D2D00C302C8 /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		4B427418236F269C00C302C8 /* VergeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeStore.swift; sourceTree = "<group>"; };
+		4B475BB2239AB954008A03E1 /* VergeNormalizer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeNormalizer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B475BB4239AB954008A03E1 /* VergeNormalizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeNormalizer.h; sourceTree = "<group>"; };
+		4B475BB5239AB954008A03E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B475BBE239AB97F008A03E1 /* VergeNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeNormalizer.swift; sourceTree = "<group>"; };
 		4B495D092332B5170098F7B4 /* NetworkImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
 		4B54E2781FE3646B001736D2 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
@@ -327,6 +343,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4B475BAF239AB954008A03E1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B65F8E91FB4C0DC00A90A67 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -380,6 +403,7 @@
 				4B786327233912AB009B9C1B /* VergeStore.framework in Frameworks */,
 				4B7F3847238948CF000B9ACF /* RxVergeStore.framework in Frameworks */,
 				4BF2BCBD238A643C00F70CDA /* RxVergeViewModel.framework in Frameworks */,
+				4B475BB9239AB954008A03E1 /* VergeNormalizer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,6 +461,16 @@
 				49853C9BFD678DAB19D85FBD /* Pods-VergeStoreAdvancedDemo.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		4B475BB3239AB954008A03E1 /* VergeNormalizer */ = {
+			isa = PBXGroup;
+			children = (
+				4B475BB4239AB954008A03E1 /* VergeNormalizer.h */,
+				4B475BB5239AB954008A03E1 /* Info.plist */,
+				4B475BBE239AB97F008A03E1 /* VergeNormalizer.swift */,
+			);
+			path = VergeNormalizer;
 			sourceTree = "<group>";
 		};
 		4B65F8ED1FB4C0DC00A90A67 /* VergeTests */ = {
@@ -504,6 +538,7 @@
 				4B86A4981F969C7D002D54FE /* Verge-Demo */,
 				4B86A4881F969AD5002D54FE /* VergeClassic */,
 				4B786321233912AB009B9C1B /* VergeStore */,
+				4B475BB3239AB954008A03E1 /* VergeNormalizer */,
 				4BF2BCA1238A63FB00F70CDA /* VergeViewModel */,
 				4B7F3841238948CF000B9ACF /* RxVergeStore */,
 				4BF2BCB7238A643C00F70CDA /* RxVergeViewModel */,
@@ -538,6 +573,7 @@
 				4BF2BCDF238A85A700F70CDA /* VergeViewModelTests.xctest */,
 				4BE7621E239AAE09009EB209 /* VergeViewModelDemo.app */,
 				4BE76236239AAE46009EB209 /* VergeStoreDemoSwiftUI.app */,
+				4B475BB2239AB954008A03E1 /* VergeNormalizer.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -653,6 +689,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		4B475BAD239AB954008A03E1 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B475BB6239AB954008A03E1 /* VergeNormalizer.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B78631B233912AB009B9C1B /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -696,6 +740,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		4B475BB1239AB954008A03E1 /* VergeNormalizer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B475BBD239AB954008A03E1 /* Build configuration list for PBXNativeTarget "VergeNormalizer" */;
+			buildPhases = (
+				4B475BAD239AB954008A03E1 /* Headers */,
+				4B475BAE239AB954008A03E1 /* Sources */,
+				4B475BAF239AB954008A03E1 /* Frameworks */,
+				4B475BB0239AB954008A03E1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VergeNormalizer;
+			productName = VergeNormalizer;
+			productReference = 4B475BB2239AB954008A03E1 /* VergeNormalizer.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		4B65F8EB1FB4C0DC00A90A67 /* VergeTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B65F8F41FB4C0DC00A90A67 /* Build configuration list for PBXNativeTarget "VergeTests" */;
@@ -817,6 +879,7 @@
 				4B7F3846238948CF000B9ACF /* PBXTargetDependency */,
 				4BF2BCA6238A63FB00F70CDA /* PBXTargetDependency */,
 				4BF2BCBC238A643C00F70CDA /* PBXTargetDependency */,
+				4B475BB8239AB954008A03E1 /* PBXTargetDependency */,
 			);
 			name = "Verge-Demo";
 			productName = "CycleViewModel-Demo";
@@ -928,6 +991,9 @@
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = muukii;
 				TargetAttributes = {
+					4B475BB1239AB954008A03E1 = {
+						CreatedOnToolsVersion = 11.2.1;
+					};
 					4B65F8EB1FB4C0DC00A90A67 = {
 						CreatedOnToolsVersion = 9.1;
 						ProvisioningStyle = Automatic;
@@ -989,6 +1055,7 @@
 			projectRoot = "";
 			targets = (
 				4B78631F233912AB009B9C1B /* VergeStore */,
+				4B475BB1239AB954008A03E1 /* VergeNormalizer */,
 				4B7F383F238948CF000B9ACF /* RxVergeStore */,
 				4BF2BC9F238A63FB00F70CDA /* VergeViewModel */,
 				4BF2BCB5238A643C00F70CDA /* RxVergeViewModel */,
@@ -1004,6 +1071,13 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4B475BB0239AB954008A03E1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B65F8EA1FB4C0DC00A90A67 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1093,6 +1167,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4B475BAE239AB954008A03E1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B475BC0239AB983008A03E1 /* VergeNormalizer.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B65F8E81FB4C0DC00A90A67 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1205,6 +1287,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4B475BB8239AB954008A03E1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B475BB1239AB954008A03E1 /* VergeNormalizer */;
+			targetProxy = 4B475BB7239AB954008A03E1 /* PBXContainerItemProxy */;
+		};
 		4B65F8F31FB4C0DC00A90A67 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4B86A4851F969AD5002D54FE /* VergeClassic */;
@@ -1324,6 +1411,65 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4B475BBB239AB954008A03E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeNormalizer/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeNormalizer;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B475BBC239AB954008A03E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeNormalizer/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeNormalizer;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		4B65F8F51FB4C0DC00A90A67 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2009,6 +2155,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4B475BBD239AB954008A03E1 /* Build configuration list for PBXNativeTarget "VergeNormalizer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B475BBB239AB954008A03E1 /* Debug */,
+				4B475BBC239AB954008A03E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4B65F8F41FB4C0DC00A90A67 /* Build configuration list for PBXNativeTarget "VergeTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
