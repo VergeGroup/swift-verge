@@ -56,7 +56,7 @@ final class BViewModel: VergeViewModelBase<ViewModelState, AViewModelState> {
   init(viewModel: AViewModel) {
     super.init(
       initialState: .init(),
-      store: viewModel,
+      parent: viewModel,
       logger: nil
     )
   }

@@ -17,7 +17,7 @@ public final class VergeStoreDispatcherContext<Dispatcher: Dispatching> {
   private let parent: VergeStoreDispatcherContext<Dispatcher>?
   
   public var state: State {
-    return dispatcher.targetStore.state
+    return dispatcher.dispatchTarget.state
   }
   
   init(

@@ -5,20 +5,20 @@ open class Dispatcher<S>: Dispatching {
   
   public typealias Context = VergeStoreDispatcherContext<Dispatcher<State>>
   
-  public let targetStore: Store
+  public let dispatchTarget: Store
   
   private var logger: VergeStoreLogger? {
-    targetStore.logger
+    dispatchTarget.logger
   }
   
   public init(target store: Store) {
-    self.targetStore = store
+    self.dispatchTarget = store
     
     logger?.didCreateDispatcher(store: store, dispatcher: self)
   }
   
   deinit {
-    logger?.didDestroyDispatcher(store: targetStore, dispatcher: self)
+    logger?.didDestroyDispatcher(store: dispatchTarget, dispatcher: self)
   }
   
 }

@@ -12,7 +12,7 @@ public protocol Dispatching {
     
   associatedtype State
   typealias Store = VergeDefaultStore<State>
-  var targetStore: Store { get }
+  var dispatchTarget: Store { get }
 }
 
 extension Dispatching {

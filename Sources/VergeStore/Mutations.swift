@@ -60,7 +60,7 @@ public struct MutationDescriptor<Base: Dispatching> {
     
     let metadata = MutationMetadata(name: name, file: file, function: function, line: line)
     
-    try base.targetStore.receive(
+    try base.dispatchTarget.receive(
       context: context,
       metadata: metadata,
       mutation: inlineMutation
@@ -83,7 +83,7 @@ extension MutationDescriptor where Base.State : StateType {
     
     let metadata = MutationMetadata(name: name, file: file, function: function, line: line)
     
-    try base.targetStore.receive(
+    try base.dispatchTarget.receive(
       context: context,
       metadata: metadata,
       mutation: { ( state: inout Base.State) in
@@ -103,7 +103,7 @@ extension MutationDescriptor where Base.State : StateType {
     
     let metadata = MutationMetadata(name: name, file: file, function: function, line: line)
     
-    try base.targetStore.receive(
+    try base.dispatchTarget.receive(
       context: context,
       metadata: metadata,
       mutation: { ( state: inout Base.State) in
