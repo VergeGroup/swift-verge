@@ -123,7 +123,7 @@ extension MutationDescriptor where Base : ScopedDispatching {
     _ inlineMutation: (inout Base.Scoped) throws -> Void) rethrows {
     
     try self.commit(
-      base.selector,
+      base.scopedStateKeyPath,
       name,
       file,
       function,
@@ -145,7 +145,7 @@ extension MutationDescriptor where Base : ScopedDispatching, Base.Scoped : _Verg
     _ inlineMutation: (inout Base.Scoped.Wrapped) throws -> Void) rethrows {
     
     try self.commit(
-      base.selector,
+      base.scopedStateKeyPath,
       name,
       file,
       function,

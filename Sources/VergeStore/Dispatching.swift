@@ -29,5 +29,5 @@ extension Dispatching {
 public protocol ScopedDispatching: Dispatching where State : StateType {
   associatedtype Scoped
   
-  var selector: WritableKeyPath<State, Scoped> { get }
+  var scopedStateKeyPath: WritableKeyPath<State, Scoped> { get }
 }

@@ -57,63 +57,10 @@ extension VergeStoreDispatcherContext: CustomReflectable {
   }
 }
 
-//extension VergeStoreDispatcherContext where State : StateType {
-//
-//  public func commit<Target>(
-//    _ target: WritableKeyPath<State, Target>,
-//    _ name: String = "",
-//    _ file: StaticString = #file,
-//    _ function: StaticString = #function,
-//    _ line: UInt = #line,
-//    _ inlineMutation: (inout Target) throws -> Void
-//  ) rethrows {
-//
-//    try dispatcher.commit(target, name, file, function, line, self, inlineMutation)
-//
-//  }
-//
-//  public func commit<Target: _VergeStore_OptionalProtocol>(
-//    _ target: WritableKeyPath<State, Target>,
-//    _ name: String = "",
-//    _ file: StaticString = #file,
-//    _ function: StaticString = #function,
-//    _ line: UInt = #line,
-//    _ inlineMutation: (inout Target.Wrapped) throws -> Void
-//  ) rethrows {
-//
-//    try dispatcher.commit(target, name, file, function, line, self, inlineMutation)
-//
-//  }
-//}
-
-//extension VergeStoreDispatcherContext where Dispatcher : ScopedDispatching {
-//  
-//  public var scopedState: Dispatcher.Scoped {
-//    state[keyPath: dispatcher.selector]
-//  }
-//  
-//  public func commitScoped(
-//    _ name: String = "",
-//    _ file: StaticString = #file,
-//    _ function: StaticString = #function,
-//    _ line: UInt = #line,
-//    _ inlineMutation: (inout Dispatcher.Scoped) throws -> Void) rethrows {
-//    
-//    try dispatcher.commitScoped(name, file, function, line, self, inlineMutation)
-//    
-//  }
-//}
-//
-//extension VergeStoreDispatcherContext where Dispatcher : ScopedDispatching, Dispatcher.Scoped : _VergeStore_OptionalProtocol {
-//  
-//  public func commitIfPresent(
-//    _ name: String = "",
-//    _ file: StaticString = #file,
-//    _ function: StaticString = #function,
-//    _ line: UInt = #line,
-//    _ inlineMutation: (inout Dispatcher.Scoped.Wrapped) throws -> Void) rethrows {
-//    
-//    try dispatcher.commitScopedIfPresent(name, file, function, line, self, inlineMutation)
-//    
-//  }
-//}
+extension VergeStoreDispatcherContext where Dispatcher : ScopedDispatching {
+  
+  public var scopedState: Dispatcher.Scoped {
+    state[keyPath: dispatcher.scopedStateKeyPath]
+  }
+  
+}
