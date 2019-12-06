@@ -23,7 +23,7 @@ final class RootDispatcher: Dispatcher<RootState> {
   
 }
 
-extension Mutations where Base == RootDispatcher {
+extension Mutations where Base : RootDispatcher {
   
   func increment() {
     descriptor.commit {
@@ -45,7 +45,7 @@ final class MyViewModel: VergeViewModelBase<MyViewModelState, RootState> {
   
 }
 
-extension Mutations where Base == MyViewModel {
+extension Mutations where Base : MyViewModel {
   
   func increment() {
     descriptor.commit {

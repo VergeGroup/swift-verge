@@ -28,7 +28,7 @@ public struct StorageSubscribeToken : Hashable {
 }
 
 @propertyWrapper
-public class Storage<Value>: CustomReflectable {
+public final class Storage<Value>: CustomReflectable {
   
   private var willUpdateSubscribers: [StorageSubscribeToken : (Value) -> Void] = [:]
   private var didUpdateSubscribers: [StorageSubscribeToken : (Value) -> Void] = [:]
@@ -42,16 +42,16 @@ public class Storage<Value>: CustomReflectable {
   }
   
   public var value: Value {
-    os_unfair_lock_lock(&unfairLock)
+    lock.lock()
     defer {
-      os_unfair_lock_unlock(&unfairLock)
+      lock.unlock()
     }
     return nonatomicValue
   }
   
   private var nonatomicValue: Value
   
-  private var unfairLock = os_unfair_lock_s()
+  private let lock = NSRecursiveLock()
   
   public init(_ value: Value) {
     self.nonatomicValue = value
@@ -62,21 +62,21 @@ public class Storage<Value>: CustomReflectable {
   public func update(_ update: (inout Value) throws -> Void) rethrows -> Value {
     do {
       let notifyValue: Value
-      os_unfair_lock_lock(&unfairLock)
+      lock.lock()
       notifyValue = nonatomicValue
-      os_unfair_lock_unlock(&unfairLock)
+      lock.unlock()
       notifyWillUpdate(value: notifyValue)
     }
     
-    os_unfair_lock_lock(&unfairLock)
+    lock.lock()
     do {
       try update(&nonatomicValue)
       let notifyValue = nonatomicValue
-      os_unfair_lock_unlock(&unfairLock)
+      lock.unlock()
       notifyDidUpdate(value: notifyValue)
       return notifyValue
     } catch {
-      os_unfair_lock_unlock(&unfairLock)
+      lock.unlock()
       throw error
     }
   }
@@ -84,25 +84,25 @@ public class Storage<Value>: CustomReflectable {
   public func replace(_ value: Value) {
     do {
       let notifyValue: Value
-      os_unfair_lock_lock(&unfairLock)
+      lock.lock()
       notifyValue = nonatomicValue
-      os_unfair_lock_unlock(&unfairLock)
+      lock.unlock()
       notifyWillUpdate(value: notifyValue)
     }
     
     do {
-      os_unfair_lock_lock(&unfairLock)
+      lock.lock()
       nonatomicValue = value
       let notifyValue = nonatomicValue
-      os_unfair_lock_unlock(&unfairLock)
+      lock.unlock()
       notifyDidUpdate(value: notifyValue)
     }
   }
   
   @discardableResult
   public func addWillUpdate(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
-    os_unfair_lock_lock(&unfairLock)
-    defer { os_unfair_lock_unlock(&unfairLock) }
+    lock.lock()
+    defer { lock.unlock() }
     
     let token = StorageSubscribeToken()
     willUpdateSubscribers[token] = subscriber
@@ -111,8 +111,8 @@ public class Storage<Value>: CustomReflectable {
   
   @discardableResult
   public func addDidUpdate(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
-    os_unfair_lock_lock(&unfairLock)
-    defer { os_unfair_lock_unlock(&unfairLock) }
+    lock.lock()
+    defer { lock.unlock() }
     
     let token = StorageSubscribeToken()
     didUpdateSubscribers[token] = subscriber
@@ -120,8 +120,8 @@ public class Storage<Value>: CustomReflectable {
   }
   
   public func remove(subscriber: StorageSubscribeToken) {
-    os_unfair_lock_lock(&unfairLock)
-    defer { os_unfair_lock_unlock(&unfairLock) }
+    lock.lock()
+    defer { lock.unlock() }
     
     didUpdateSubscribers.removeValue(forKey: subscriber)
     willUpdateSubscribers.removeValue(forKey: subscriber)
@@ -129,18 +129,18 @@ public class Storage<Value>: CustomReflectable {
     
   @inline(__always)
   fileprivate func notifyWillUpdate(value: Value) {
-    os_unfair_lock_lock(&unfairLock)
+    lock.lock()
     let subscribers: [StorageSubscribeToken : (Value) -> Void] = self.willUpdateSubscribers
-    os_unfair_lock_unlock(&unfairLock)
+    lock.unlock()
     
     subscribers.forEach { $0.value(value) }
   }
   
   @inline(__always)
   fileprivate func notifyDidUpdate(value: Value) {
-    os_unfair_lock_lock(&unfairLock)
+    lock.lock()
     let subscribers: [StorageSubscribeToken : (Value) -> Void] = self.didUpdateSubscribers
-    os_unfair_lock_unlock(&unfairLock)
+    lock.unlock()
     
     subscribers.forEach { $0.value(value) }
   }

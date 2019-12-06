@@ -48,6 +48,7 @@
 		4BAE9FEA21DFA75A003DDF3D /* Verge+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */; };
 		4BCBCA8B2381C82100F33B15 /* Dispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8A2381C82100F33B15 /* Dispatcher.swift */; };
 		4BCBCA8D2381CC2B00F33B15 /* DispatcherContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */; };
+		4BE76219239AA4A1009EB209 /* ChainingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE76218239AA4A1009EB209 /* ChainingViewModelTests.swift */; };
 		4BF2BCA4238A63FB00F70CDA /* VergeViewModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BF2BCA2238A63FB00F70CDA /* VergeViewModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4BF2BCA7238A63FB00F70CDA /* VergeViewModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BF2BCA0238A63FB00F70CDA /* VergeViewModel.framework */; };
 		4BF2BCA8238A63FB00F70CDA /* VergeViewModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BF2BCA0238A63FB00F70CDA /* VergeViewModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -247,6 +248,7 @@
 		4BCBCA8A2381C82100F33B15 /* Dispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dispatcher.swift; sourceTree = "<group>"; };
 		4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherContext.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
+		4BE76218239AA4A1009EB209 /* ChainingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChainingViewModelTests.swift; sourceTree = "<group>"; };
 		4BECC81723312AD400D6A0A1 /* IndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorView.swift; sourceTree = "<group>"; };
 		4BF2BCA0238A63FB00F70CDA /* VergeViewModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeViewModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BF2BCA2238A63FB00F70CDA /* VergeViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeViewModel.h; sourceTree = "<group>"; };
@@ -539,6 +541,7 @@
 			children = (
 				4BF2BCE1238A85A700F70CDA /* VergeViewModelTests.swift */,
 				4B63829C23980D4600FAD87F /* StandaloneVergeViewModelTests.swift */,
+				4BE76218239AA4A1009EB209 /* ChainingViewModelTests.swift */,
 				4BF2BCE3238A85A700F70CDA /* Info.plist */,
 			);
 			path = VergeViewModelTests;
@@ -1007,6 +1010,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BF2BCE2238A85A700F70CDA /* VergeViewModelTests.swift in Sources */,
+				4BE76219239AA4A1009EB209 /* ChainingViewModelTests.swift in Sources */,
 				4B63829D23980D4600FAD87F /* StandaloneVergeViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
