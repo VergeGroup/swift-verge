@@ -69,9 +69,9 @@ public struct ActionDescriptor<Base: Dispatching> {
     
     let result = try inlineAction(context)
     
-    base.targetStore.logger?.didDispatch(
-      store: base.targetStore,
-      state: base.targetStore.state,
+    base.dispatchTarget.logger?.didDispatch(
+      store: base.dispatchTarget,
+      state: base.dispatchTarget.state,
       action: metadata,
       context: context
     )

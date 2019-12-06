@@ -24,7 +24,7 @@ final class ViewModel: StandaloneVergeViewModelBase<ViewModelState> {
   }
 }
 
-extension Mutations where Base == ViewModel {
+extension Mutations where Base : ViewModel {
   
   func increment() {
     descriptor.commit {

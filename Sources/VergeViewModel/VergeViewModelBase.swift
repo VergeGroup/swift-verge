@@ -27,7 +27,7 @@ import Foundation
 
 open class StandaloneVergeViewModelBase<State>: VergeDefaultStore<State>, Dispatching {
   
-  public var targetStore: VergeDefaultStore<State> { self }
+  public var dispatchTarget: VergeDefaultStore<State> { self }
   
   public override init(
     initialState: State,
@@ -40,20 +40,20 @@ open class StandaloneVergeViewModelBase<State>: VergeDefaultStore<State>, Dispat
 
 open class VergeViewModelBase<State, StoreState>: StandaloneVergeViewModelBase<State> {
     
-  public let store: VergeDefaultStore<StoreState>
+  public let parent: VergeDefaultStore<StoreState>
   private var subscription: StorageSubscribeToken?
   
   public init(
     initialState: State,
-    store: VergeDefaultStore<StoreState>,
+    parent: VergeDefaultStore<StoreState>,
     logger: VergeStoreLogger?
   ) {
     
-    self.store = store
+    self.parent = parent
     
     super.init(initialState: initialState, logger: logger)
     
-    self.subscription = store.backingStorage.addDidUpdate { [weak self] (state) in
+    self.subscription = parent.backingStorage.addDidUpdate { [weak self] (state) in
       guard let self = self else { return }
       self.backingStorage.update { s in
         self.updateState(state: &s, by: state)
@@ -64,7 +64,7 @@ open class VergeViewModelBase<State, StoreState>: StandaloneVergeViewModelBase<S
   
   deinit {
     if let subscription = self.subscription {
-      store.backingStorage.remove(subscriber: subscription)
+      parent.backingStorage.remove(subscriber: subscription)
     }
   }
   
