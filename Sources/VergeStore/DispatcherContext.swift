@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class VergeStoreDispatcherContext<Dispatcher: Dispatching> {
+public final class VergeStoreDispatcherContext<Dispatcher: DispatcherType> {
   
   public typealias State = Dispatcher.State
   
@@ -34,12 +34,18 @@ public final class VergeStoreDispatcherContext<Dispatcher: Dispatching> {
 
 extension VergeStoreDispatcherContext {
   
-  public var dispatch: Actions<Dispatcher> {
-    return .init(base: dispatcher, parentContext: self)
+  public func `do`(_ get: (Dispatcher) -> Dispatcher.Mutation) {
+    dispatcher.`do`(get)
   }
   
-  public var commit: Mutations<Dispatcher> {
-    return .init(base: dispatcher, context: self)
+  public func `do`<Return>(_ get: (Dispatcher) -> Dispatcher.Action<Return>) -> Return {
+    let action = get(dispatcher)
+    let context = VergeStoreDispatcherContext<Dispatcher>.init(
+      dispatcher: dispatcher,
+      metadata: action.metadata,
+      parent: self
+    )
+    return action._action(context)
   }
 }
 
@@ -60,7 +66,7 @@ extension VergeStoreDispatcherContext: CustomReflectable {
 extension VergeStoreDispatcherContext where Dispatcher : ScopedDispatching {
   
   public var scopedState: Dispatcher.Scoped {
-    state[keyPath: dispatcher.scopedStateKeyPath]
+    state[keyPath: Dispatcher.scopedStateKeyPath]
   }
   
 }

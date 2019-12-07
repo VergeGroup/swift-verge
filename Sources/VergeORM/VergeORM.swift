@@ -67,7 +67,7 @@ public struct Table<Entity: VergeTypedIdentifiable> {
     
 }
 
-public protocol VergeNormalizedDatabase {
+public protocol DatabaseType {
   
   /// Create a empty database to perform batch update
   static func makeEmtpy() -> Self
@@ -75,7 +75,11 @@ public protocol VergeNormalizedDatabase {
   mutating func merge(database: Self)
 }
 
-public final class VergeNormalizedDatabaseBatchContext<Database: VergeNormalizedDatabase> {
+public enum ORMError: Error {
+  case aborted
+}
+
+public final class DatabaseBatchUpdateContext<Database: DatabaseType> {
   
   public let current: Database
   public private(set) var updates: Database = .makeEmtpy()
@@ -87,16 +91,20 @@ public final class VergeNormalizedDatabaseBatchContext<Database: VergeNormalized
   public func update(_ update: (inout Database) -> Void) {
     update(&updates)
   }
+  
+  public func abort() throws -> Never {
+    throw ORMError.aborted
+  }
 }
 
-extension VergeNormalizedDatabase {
+extension DatabaseType {
   
   public mutating func mergeTable<Entity>(keyPath: WritableKeyPath<Self, Table<Entity>>, otherDatabase: Self) {
     self[keyPath: keyPath].merge(otherTable: otherDatabase[keyPath: keyPath])
   }
   
-  public mutating func performBatchUpdate(_ update: (VergeNormalizedDatabaseBatchContext<Self>) throws -> Void) rethrows {
-    let context = VergeNormalizedDatabaseBatchContext<Self>(current: self)
+  public mutating func performBatchUpdate(_ update: (DatabaseBatchUpdateContext<Self>) throws -> Void) rethrows {
+    let context = DatabaseBatchUpdateContext<Self>(current: self)
     do {
       try update(context)
       self.merge(database: context.updates)

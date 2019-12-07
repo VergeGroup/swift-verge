@@ -15,18 +15,14 @@ struct RootState {
   var count: Int = 0
 }
 
-final class RootStore: VergeDefaultStore<RootState> {
+final class RootStore: StoreBase<RootState> {
   
 }
 
-final class RootDispatcher: Dispatcher<RootState> {
-  
-}
-
-extension Mutations where Base : RootDispatcher {
-  
-  func increment() {
-    descriptor.commit {
+final class RootDispatcher: DispatcherBase<RootState> {
+    
+  func increment() -> Mutation {
+    .commit {
       $0.count += 1
     }
   }
@@ -42,13 +38,9 @@ final class MyViewModel: VergeViewModelBase<MyViewModelState, RootState> {
   override func updateState(state: inout MyViewModelState, by storeState: RootState) {
     state.rootCount = storeState.count
   }
-  
-}
-
-extension Mutations where Base : MyViewModel {
-  
-  func increment() {
-    descriptor.commit {
+    
+  func increment() -> Mutation {
+    .commit {
       $0.count += 1
     }
   }
@@ -72,13 +64,13 @@ class VergeViewModelTests: XCTestCase {
   
   func testSyncRootStore() {
     
-    dispatcher.commit.increment()
+    dispatcher.do { $0.increment() }
     XCTAssertEqual(viewModel.state.rootCount, 1)
   }
   
   func testIncrement() {
     
-    viewModel.commit.increment()
+    viewModel.do { $0.increment() }
     XCTAssertEqual(viewModel.state.count, 1)
 
   }

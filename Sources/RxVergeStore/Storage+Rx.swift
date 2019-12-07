@@ -11,7 +11,7 @@ import RxCocoa
 private var storage_subject: Void?
 private var storage_diposeBag: Void?
 
-extension VergeDefaultStore where State : StateType {
+extension StoreBase where State : StateType {
   
   public func statePublisher() -> Observable<State> {
     backingStorage.asObservable()

@@ -1,9 +1,9 @@
 
-open class Dispatcher<S>: Dispatching {
+open class DispatcherBase<S>: DispatcherType {
     
   public typealias State = S
   
-  public typealias Context = VergeStoreDispatcherContext<Dispatcher<State>>
+  public typealias Context = VergeStoreDispatcherContext<DispatcherBase<State>>
   
   public let dispatchTarget: Store
   
@@ -20,7 +20,7 @@ open class Dispatcher<S>: Dispatching {
   deinit {
     logger?.didDestroyDispatcher(store: dispatchTarget, dispatcher: self)
   }
-  
+    
 }
 
 public protocol _VergeStore_OptionalProtocol {

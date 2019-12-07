@@ -24,12 +24,12 @@ import Foundation
 /// A metadata object that indicates the name of the mutation and where it was caused.
 public struct MutationMetadata {
   
-  public let name: String
+  public let name: StaticString
   public let file: StaticString
   public let function: StaticString
   public let line: UInt
   
-  public init(name: String, file: StaticString, function: StaticString, line: UInt) {
+  public init(name: StaticString, file: StaticString, function: StaticString, line: UInt) {
     self.name = name
     self.file = file
     self.function = function
@@ -40,12 +40,12 @@ public struct MutationMetadata {
 /// A metadata object that indicates the name of the action and where it was caused.
 public struct ActionMetadata {
   
-  public let name: String
+  public let name: StaticString
   public let file: StaticString
   public let function: StaticString
   public let line: UInt
   
-  public init(name: String, file: StaticString, function: StaticString, line: UInt) {
+  public init(name: StaticString, file: StaticString, function: StaticString, line: UInt) {
     self.name = name
     self.file = file
     self.function = function
@@ -64,6 +64,10 @@ public protocol VergeStoreLogger {
   func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
 }
 
+public protocol VergeStoreType {
+  associatedtype State
+}
+
 /// A base object to create store.
 /// You may create subclass of VergeDefaultStore
 /// ```
@@ -73,10 +77,8 @@ public protocol VergeStoreLogger {
 ///   }
 /// }
 /// ```
-open class VergeDefaultStore<State>: CustomReflectable {
-  
-  public typealias DispatcherType = Dispatcher<State>
-  
+open class StoreBase<State>: CustomReflectable, VergeStoreType {
+    
   /// A current state.
   public var state: State {
     backingStorage.value
@@ -103,24 +105,23 @@ open class VergeDefaultStore<State>: CustomReflectable {
   }
   
   @inline(__always)
-  func receive<FromDispatcher: Dispatching>(
+  func receive<FromDispatcher: DispatcherType>(
     context: VergeStoreDispatcherContext<FromDispatcher>?,
-    metadata: MutationMetadata,
-    mutation: (inout State) throws -> Void
-  ) rethrows {
+    mutation: AnyMutation<FromDispatcher>
+  ) where FromDispatcher.State == State {
     
-    logger?.willCommit(store: self, state: self.state, mutation: metadata, context: context)
+    logger?.willCommit(store: self, state: self.state, mutation: mutation.metadata, context: context)
     
     let startedTime = CFAbsoluteTimeGetCurrent()
-    let result = try backingStorage.update { (state) in
-      try mutation(&state)
+    let result = backingStorage.update { (state) in
+      mutation._mutate(&state)
     }
     let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
     
-    logger?.didCommit(store: self, state: result, mutation: metadata, context: context, time: elapsed)
-           
+    logger?.didCommit(store: self, state: result, mutation: mutation.metadata, context: context, time: elapsed)
+    
   }
-  
+     
   public var customMirror: Mirror {
     Mirror(
       self,
@@ -189,7 +190,7 @@ extension Storage: ObservableObject {
 }
 
 @available(iOS 13.0, macOS 10.15, *)
-extension VergeDefaultStore: ObservableObject {
+extension StoreBase: ObservableObject {
   public var objectWillChange: ObservableObjectPublisher {
     backingStorage.objectWillChange
   }
@@ -200,7 +201,7 @@ extension VergeDefaultStore: ObservableObject {
 }
 
 @available(iOS 13.0, macOS 10.15, *)
-extension Dispatcher: ObservableObject {
+extension DispatcherBase: ObservableObject {
 
 }
 
