@@ -102,7 +102,8 @@ public protocol DatabaseType {
   /// Create a empty database to perform batch update
   static func makeEmtpy() -> Self
   
-  mutating func merge(database: Self)
+  mutating func apply(insertsOrUpdatesDatabase: Self)
+  mutating func apply(deletesDatabase: Self)
 }
 
 public enum ORMError: Error {
@@ -113,7 +114,7 @@ public final class DatabaseBatchUpdateContext<Database: DatabaseType> {
   
   public let current: Database
   
-  public var insertOrUpdates: Database = .makeEmtpy()
+  public var insertsOrUpdates: Database = .makeEmtpy()
   public var deletes: Database = .makeEmtpy()
 
   init(current: Database) {
@@ -135,7 +136,8 @@ extension DatabaseType {
     let context = DatabaseBatchUpdateContext<Self>(current: self)
     do {
       try update(context)
-      self.merge(database: context.insertOrUpdates)
+      self.apply(insertsOrUpdatesDatabase: context.insertsOrUpdates)
+      self.apply(deletesDatabase: context.deletes)
     } catch {
       // TODO:
       throw error

@@ -51,7 +51,7 @@ enum Entity {
 struct SessionState: StateType {
   
   struct Database: DatabaseType {
-    
+            
     static func makeEmtpy() -> SessionState.Database {
       .init()
     }
@@ -59,13 +59,16 @@ struct SessionState: StateType {
     var post = Entity.Post.makeTable()
     var user = Entity.User.makeTable()
     var comment = Entity.Comment.makeTable()
-    
-    mutating func merge(database: SessionState.Database) {
-      mergeTable(keyPath: \.post, otherDatabase: database)
-      mergeTable(keyPath: \.user, otherDatabase: database)
-      mergeTable(keyPath: \.comment, otherDatabase: database)
+
+    mutating func apply(insertsOrUpdatesDatabase: SessionState.Database) {
+      mergeTable(keyPath: \.post, otherDatabase: insertsOrUpdatesDatabase)
+      mergeTable(keyPath: \.user, otherDatabase: insertsOrUpdatesDatabase)
+      mergeTable(keyPath: \.comment, otherDatabase: insertsOrUpdatesDatabase)
     }
     
+    mutating func apply(deletesDatabase: SessionState.Database) {
+      // TODO:
+    }
   }
     
   var entity: Database = .init()
@@ -92,7 +95,7 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
         let pat = Entity.User(rawID: "pat", name: "Pat Torpey")
         let eric = Entity.User(rawID: "eric", name: "Eric Martin")
         
-        s.userIDs = context.insertOrUpdates.user.insert([
+        s.userIDs = context.insertsOrUpdates.user.insert([
           paul,
           billy,
           pat,
@@ -107,7 +110,7 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
     return .mutation { (s) in
       let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.id)
       s.entity.performBatchUpdate { (context) in
-        let id = context.insertOrUpdates.post.insert(post)
+        let id = context.insertsOrUpdates.post.insert(post)
         s.postIDs.append(id)
         
         if let _ = s.postIDsByUser[user.id] {
