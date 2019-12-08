@@ -30,7 +30,7 @@ public struct AnyMutation<From: DispatcherType> {
 
 extension AnyMutation {
   
-  public static func commit(
+  public static func mutation(
     _ name: StaticString = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
@@ -46,7 +46,7 @@ extension AnyMutation {
 
 extension AnyMutation where From.State : StateType {
   
-  public static func commit<Target>(
+  public static func mutation<Target>(
     _ target: WritableKeyPath<From.State, Target>,
     _ name: StaticString = "",
     _ file: StaticString = #file,
@@ -61,7 +61,7 @@ extension AnyMutation where From.State : StateType {
            
   }
   
-  public static func commitIfPresent<Target: _VergeStore_OptionalProtocol>(
+  public static func mutationIfPresent<Target: _VergeStore_OptionalProtocol>(
     _ target: WritableKeyPath<From.State, Target>,
     _ name: StaticString = "",
     _ file: StaticString = #file,
@@ -79,7 +79,7 @@ extension AnyMutation where From.State : StateType {
 
 extension AnyMutation where From : ScopedDispatching {
   
-  public static func commitScoped(
+  public static func mutationScoped(
     _ name: StaticString = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
@@ -87,7 +87,7 @@ extension AnyMutation where From : ScopedDispatching {
     inlineMutation: @escaping (inout From.Scoped) -> Void
   ) -> Self {
     
-    self.commit(
+    self.mutation(
       From.scopedStateKeyPath,
       name,
       file,
@@ -102,14 +102,14 @@ extension AnyMutation where From : ScopedDispatching {
 
 extension AnyMutation where From : ScopedDispatching, From.Scoped : _VergeStore_OptionalProtocol {
   
-  public static func commitScopedIfPresent(
+  public static func mutationScopedIfPresent(
     _ name: StaticString = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
     inlineMutation: @escaping  (inout From.Scoped.Wrapped) -> Void) -> Self {
     
-    self.commitIfPresent(
+    self.mutationIfPresent(
       From.scopedStateKeyPath,
       name,
       file,

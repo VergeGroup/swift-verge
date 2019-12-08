@@ -22,7 +22,7 @@ extension DispatcherType {
   
   ///
   /// - Parameter get: Return Mutation Object
-  public func `do`(_ get: (Self) -> Mutation) {
+  public func accept(_ get: (Self) -> Mutation) {
     let mutation = get(self)
     dispatchTarget.receive(
       context: Optional<VergeStoreDispatcherContext<Self>>.none,
@@ -32,7 +32,7 @@ extension DispatcherType {
     
   ///
   /// - Parameter get: Return Action object
-  public func `do`<Return>(_ get: (Self) -> Action<Return>) -> Return {
+  public func accept<Return>(_ get: (Self) -> Action<Return>) -> Return {
     let action = get(self)
     let context = VergeStoreDispatcherContext<Self>.init(
       dispatcher: self,

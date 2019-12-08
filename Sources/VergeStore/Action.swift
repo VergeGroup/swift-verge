@@ -29,7 +29,7 @@ public struct AnyAction<Dispatcher: DispatcherType, Return> {
 
 extension AnyAction {
   
-  public static func dispatch(
+  public static func action(
     _ name: StaticString = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,

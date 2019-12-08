@@ -24,7 +24,7 @@ final class ViewModel: StandaloneVergeViewModelBase<ViewModelState> {
   }
   
   func increment() -> Mutation {
-    .commit {
+    .mutation {
       $0.count += 1
     }
   }
@@ -37,7 +37,7 @@ final class StandaloneVergeViewModelTests: XCTestCase {
     let viewModel = ViewModel()
     measure {
       DispatchQueue.concurrentPerform(iterations: 1000) { (_) in
-        viewModel.do { $0.increment() }
+        viewModel.accept { $0.increment() }
       }
     }
               
@@ -47,7 +47,7 @@ final class StandaloneVergeViewModelTests: XCTestCase {
     
     let viewModel = ViewModel()
     DispatchQueue.concurrentPerform(iterations: 1000) { (_) in
-      viewModel.do { $0.increment() }
+      viewModel.accept { $0.increment() }
     }
     XCTAssertEqual(viewModel.state.count, 1000)
     

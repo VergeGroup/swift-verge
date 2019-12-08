@@ -32,25 +32,25 @@ final class Store: StoreBase<State> {
 class RootDispatcher: DispatcherBase<State> {
   
   func resetCount() -> Mutation {
-    .commit {
+    .mutation {
       $0.count = 0
     }
   }
   
   func increment() -> Mutation  {
-    .commit {
+    .mutation {
       $0.count += 1
     }
   }
   
   func setNestedState() -> Mutation  {
-    .commit {
+    .mutation {
       $0.optionalNested = .init()
     }
   }
   
   func setMyName() -> Mutation  {
-    .commit {
+    .mutation {
       $0.updateIfPresent(target: \.optionalNested) {
         $0.myName = "Muuk"
       }
@@ -58,15 +58,15 @@ class RootDispatcher: DispatcherBase<State> {
   }
   
   func setMyNameUsingTargetingCommit() -> Mutation  {
-    .commitIfPresent(\.optionalNested) {
+    .mutationIfPresent(\.optionalNested) {
       $0.myName = "Target"
     }
   }
   
   func continuousIncrement() -> Action<Void> {
-    .dispatch { c in
-      c.`do` { $0.increment() }
-      c.`do` { $0.increment() }
+    .action { c in
+      c.accept { $0.increment() }
+      c.accept { $0.increment() }
     }
   }
   
@@ -79,7 +79,7 @@ final class OptionalNestedDispatcher: DispatcherBase<State>, ScopedDispatching {
   }
      
   func setMyName() -> Mutation {
-    .commitScopedIfPresent {
+    .mutationScopedIfPresent {
       $0.myName = "Hello"
     }
   }
@@ -93,7 +93,7 @@ final class NestedDispatcher: DispatcherBase<State>, ScopedDispatching {
   }
     
   func setMyName() -> Mutation {
-    .commitScoped {
+    .mutationScoped {
       $0.myName = "Hello"
     }
   }
@@ -115,46 +115,46 @@ final class VergeStoreTests: XCTestCase {
   
   func testDispatch() {
     
-    dispatcher.do { $0.resetCount() }
-    dispatcher.do { $0.resetCount() }
+    dispatcher.accept { $0.resetCount() }
+    dispatcher.accept { $0.resetCount() }
         
-    dispatcher.do { $0.resetCount() }
-    dispatcher.do { $0.continuousIncrement() }
+    dispatcher.accept { $0.resetCount() }
+    dispatcher.accept { $0.continuousIncrement() }
     XCTAssert(store.state.count == 2)
   }
   
   func testMutatingOptionalNestedState() {
     
     XCTAssert(store.state.optionalNested == nil)
-    dispatcher.do { $0.setNestedState() }
-    dispatcher.do { $0.setNestedState() }
+    dispatcher.accept { $0.setNestedState() }
+    dispatcher.accept { $0.setNestedState() }
     XCTAssert(store.state.optionalNested != nil)
-    dispatcher.do { $0.setMyName() }
+    dispatcher.accept { $0.setMyName() }
     XCTAssertEqual(store.state.optionalNested?.myName, "Muuk")
     
     let d = OptionalNestedDispatcher(target: store)
-    d.do { $0.setMyName() }
+    d.accept { $0.setMyName() }
     XCTAssertEqual(store.state.optionalNested?.myName, "Hello")
   }
   
   func testMutatingNestedState() {
                
     let d = NestedDispatcher(target: store)
-    d.do { $0.setMyName() }
+    d.accept { $0.setMyName() }
     XCTAssertEqual(store.state.nested.myName, "Hello")
   }
   
   func testIncrement() {
     
-    dispatcher.do { $0.increment() }
+    dispatcher.accept { $0.increment() }
     XCTAssertEqual(store.state.count, 1)
     
   }
   
   func testTargetingCommit() {
     
-    dispatcher.do { $0.setNestedState() }
-    dispatcher.do { $0.setMyNameUsingTargetingCommit() }
+    dispatcher.accept { $0.setNestedState() }
+    dispatcher.accept { $0.setMyNameUsingTargetingCommit() }
     XCTAssertEqual(store.state.optionalNested?.myName, "Target")
   }
   

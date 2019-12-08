@@ -22,7 +22,7 @@ final class RootStore: StoreBase<RootState> {
 final class RootDispatcher: DispatcherBase<RootState> {
     
   func increment() -> Mutation {
-    .commit {
+    .mutation {
       $0.count += 1
     }
   }
@@ -40,7 +40,7 @@ final class MyViewModel: VergeViewModelBase<MyViewModelState, RootState> {
   }
     
   func increment() -> Mutation {
-    .commit {
+    .mutation {
       $0.count += 1
     }
   }
@@ -64,13 +64,13 @@ class VergeViewModelTests: XCTestCase {
   
   func testSyncRootStore() {
     
-    dispatcher.do { $0.increment() }
+    dispatcher.accept { $0.increment() }
     XCTAssertEqual(viewModel.state.rootCount, 1)
   }
   
   func testIncrement() {
     
-    viewModel.do { $0.increment() }
+    viewModel.accept { $0.increment() }
     XCTAssertEqual(viewModel.state.count, 1)
 
   }

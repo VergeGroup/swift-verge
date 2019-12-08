@@ -33,7 +33,7 @@ The characteristics are
 
 - Store holds application state.
 - Allows access to `Store.state`
-- Allows state to be updated via `Dispatcher.commit()`
+- Allows state to be updated via `Dispatcher.accept(_ get: (Self) -> Mutation)`
 
 ```swift
 struct State {
@@ -65,15 +65,13 @@ To change state, use **Mutation** via `commit()`.<br>
 To run asynchronous operation, use **Action** via `dispatch()`.
 
 ```swift
-class MyDispatcher: Dispatcher<RootState> {
+class MyDispatcher: DispatcherBase<RootState> {
 
 }
 
 let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 ```
-
-`MyStore` provies typealias to `Dispatcher<RootState>` as `MyStore.DispatcherType`.
 
 ### ☄️ Mutation
 
@@ -85,7 +83,7 @@ Mutation object is simple struct that has a closure what passes current state to
 > Mutation does not run asynchronous operation.
 
 ```swift
-class MyDispatcher: Dispatcher<RootState> {
+class MyDispatcher: DispatcherBase<RootState> {
   func addNewTodo(title: String) -> Mutation {
     .commit { (state: inout RootState) in
       state.todos.append(Todo(title: title, hasCompleted: false))
@@ -96,7 +94,7 @@ class MyDispatcher: Dispatcher<RootState> {
 let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 
-dispatcher.do { $0.addNewTodo(title: "Create SwiftUI App") }
+dispatcher.accept { $0.addNewTodo(title: "Create SwiftUI App") }
 
 print(store.state.todos)
 // store.state.todos => [Todo(title: "Create SwiftUI App", hasCompleted: false)]
@@ -112,7 +110,7 @@ To run Action, use `dispatch()`.
 To commit Mutations inside Action, Use context.commit.
 
 ```swift
-class MyDispatcher: Dispatcher<RootState> {
+class MyDispatcher: DispatcherBase<RootState> {
 
   @discardableResult
   func fetchRemoteTodos() -> Action<Future<Void>> {
@@ -135,7 +133,7 @@ class MyDispatcher: Dispatcher<RootState> {
 let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 
-dispatcher.do { $0.fetchRemoteTodos() }
+dispatcher.accept { $0.fetchRemoteTodos() }
 
 // After Future completed
 
@@ -216,7 +214,7 @@ struct State: StateType {
 Create Dispatcher that has `ScopedDispatching`
 
 ```swift
-final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
+final class OptionalNestedDispatcher: DispatcherBase<State>, ScopedDispatching {
 
   static var scopedStateKeyPath: WritableKeyPath<State, State.NestedState?> {
     \.optionalNested

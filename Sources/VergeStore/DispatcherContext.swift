@@ -34,11 +34,11 @@ public final class VergeStoreDispatcherContext<Dispatcher: DispatcherType> {
 
 extension VergeStoreDispatcherContext {
   
-  public func `do`(_ get: (Dispatcher) -> Dispatcher.Mutation) {
-    dispatcher.`do`(get)
+  public func accept(_ get: (Dispatcher) -> Dispatcher.Mutation) {
+    dispatcher.accept(get)
   }
   
-  public func `do`<Return>(_ get: (Dispatcher) -> Dispatcher.Action<Return>) -> Return {
+  public func accept<Return>(_ get: (Dispatcher) -> Dispatcher.Action<Return>) -> Return {
     let action = get(dispatcher)
     let context = VergeStoreDispatcherContext<Dispatcher>.init(
       dispatcher: dispatcher,
