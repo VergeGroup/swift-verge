@@ -1,4 +1,8 @@
-# Getting Started
+---
+description: A Store-Pattern based data-flow architecture.
+---
+
+# Verge
 
 ![Data flow](.gitbook/assets/loop-2x.png)
 

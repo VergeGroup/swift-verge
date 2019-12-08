@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Getting Started](README.md)
+* [Verge](README.md)
 * [Gallery](gallery.md)
 
 ## Verge Store <a id="vergestore"></a>
