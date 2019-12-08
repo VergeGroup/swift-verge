@@ -4,7 +4,7 @@ Classic Version is here => [Verge Classic](./Sources/VergeClassic)
 
 <img src="loop@2x.png" width=646/>
 
-## Gallary
+## Gallery
 
 - [APNsClient](https://github.com/muukii/APNsClient) : A desktop application to send a apns push with HTTP/2 based API.
 
