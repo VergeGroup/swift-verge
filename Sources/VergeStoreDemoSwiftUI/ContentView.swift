@@ -9,13 +9,25 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        Text("Hello, World!")
-    }
+  
+  @EnvironmentObject var session: Session
+  
+  var body: some View {
+    TabView {
+      UserListView()
+        .tabItem {
+          Text("Users")
+      }
+      AllPostsView()
+        .tabItem {
+          Text("All Post")
+      }
+    }    
+  }
 }
 
 struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+  static var previews: some View {
+    ContentView()
+  }
 }

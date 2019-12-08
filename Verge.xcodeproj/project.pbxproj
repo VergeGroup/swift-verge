@@ -57,6 +57,7 @@
 		4B949157239C26C100370067 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B949156239C26C100370067 /* Session.swift */; };
 		4B94915C239C35D300370067 /* Mutation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B949158239C35BB00370067 /* Mutation.swift */; };
 		4B94915D239C35D300370067 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B94915A239C35CB00370067 /* Action.swift */; };
+		4B94915F239CF1CF00370067 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B94915E239CF1CF00370067 /* UserListView.swift */; };
 		4B956D18211483E7003AA189 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; };
 		4B956D19211483E7003AA189 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
@@ -349,6 +350,7 @@
 		4B949156239C26C100370067 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		4B949158239C35BB00370067 /* Mutation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mutation.swift; sourceTree = "<group>"; };
 		4B94915A239C35CB00370067 /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
+		4B94915E239CF1CF00370067 /* UserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
 		4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherType.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -690,6 +692,7 @@
 				4B949149239C264D00370067 /* LaunchScreen.storyboard */,
 				4B94914B239C264D00370067 /* AppDelegate.swift */,
 				4B94914C239C264D00370067 /* ContentView.swift */,
+				4B94915E239CF1CF00370067 /* UserListView.swift */,
 				4B94914D239C264D00370067 /* Info.plist */,
 				4B94914E239C264D00370067 /* SceneDelegate.swift */,
 				4B949156239C26C100370067 /* Session.swift */,
@@ -1358,6 +1361,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B949157239C26C100370067 /* Session.swift in Sources */,
+				4B94915F239CF1CF00370067 /* UserListView.swift in Sources */,
 				4B949153239C264D00370067 /* ContentView.swift in Sources */,
 				4B949152239C264D00370067 /* AppDelegate.swift in Sources */,
 				4B949155239C264D00370067 /* SceneDelegate.swift in Sources */,

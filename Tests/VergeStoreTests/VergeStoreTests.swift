@@ -32,8 +32,8 @@ final class Store: StoreBase<State> {
 class RootDispatcher: DispatcherBase<State> {
   
   func resetCount() -> Mutation {
-    .mutation {
-      $0.count = 0
+    return .mutation { s in
+      s.count = 0
     }
   }
   
