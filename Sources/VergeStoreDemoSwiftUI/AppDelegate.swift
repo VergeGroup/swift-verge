@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  VergeStoreDemoSwiftUI
 //
-//  Created by muukii on 2019/12/07.
+//  Created by muukii on 2019/12/08.
 //  Copyright © 2019 muukii. All rights reserved.
 //
 

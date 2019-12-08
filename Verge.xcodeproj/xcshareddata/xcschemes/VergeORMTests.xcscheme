@@ -5,22 +5,6 @@
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
-      <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4BF2BC9F238A63FB00F70CDA"
-               BuildableName = "VergeViewModel.framework"
-               BlueprintName = "VergeViewModel"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-      </BuildActionEntries>
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
@@ -32,19 +16,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4BF2BCDE238A85A700F70CDA"
-               BuildableName = "VergeViewModelTests.xctest"
-               BlueprintName = "VergeViewModelTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B68394323705ACD002FFC5A"
-               BuildableName = "VergeStoreTests.xctest"
-               BlueprintName = "VergeStoreTests"
+               BlueprintIdentifier = "4B475BC4239ADE1C008A03E1"
+               BuildableName = "VergeORMTests.xctest"
+               BlueprintName = "VergeORMTests"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -67,15 +41,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4BF2BC9F238A63FB00F70CDA"
-            BuildableName = "VergeViewModel.framework"
-            BlueprintName = "VergeViewModel"
-            ReferencedContainer = "container:Verge.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

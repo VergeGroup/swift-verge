@@ -22,25 +22,22 @@ final class AViewModel: StandaloneVergeViewModelBase<AViewModelState> {
   init() {
     super.init(initialState: .init(), logger: nil)
     
-    commit.makeB()
+    accept { $0.makeB() }
   }
   
   deinit {
     print("deinit", self)
   }
-}
-
-extension Mutations where Base : AViewModel {
   
-  func increment() {
-    descriptor.commit {
+  func increment() -> Mutation {
+    .mutation {
       $0.count += 1
     }
   }
   
-  func makeB() {
-    descriptor.commit {
-      $0.bViewModel = .init(viewModel: base)
+  func makeB() -> Mutation {
+    .mutation {
+      $0.bViewModel = .init(viewModel: self)
     }
   }
   
@@ -75,7 +72,7 @@ final class ChainingViewModelTests: XCTestCase {
   func testChain() {
     
     let a: AViewModel? = AViewModel()
-    a?.commit.increment()
+    a?.accept { $0.increment() }
     XCTAssertEqual(a!.state.bViewModel!.state.count, 1)
   }
 }

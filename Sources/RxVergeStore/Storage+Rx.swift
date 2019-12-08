@@ -11,7 +11,7 @@ import RxCocoa
 private var storage_subject: Void?
 private var storage_diposeBag: Void?
 
-extension VergeDefaultStore where State : StateType {
+extension StoreBase where State : StateType {
   
   public func statePublisher() -> Observable<State> {
     backingStorage.asObservable()
@@ -129,7 +129,7 @@ extension Storage {
       let associated = BehaviorRelay<Value>.init(value: value)
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
 
-      add(subscriber: { (value) in
+      addDidUpdate(subscriber: { (value) in
         associated.accept(value)
       })
 

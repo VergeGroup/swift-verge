@@ -14,11 +14,6 @@ The concept of VergeStore is inspired by [Redux](https://redux.js.org/) and [Vue
 
 The characteristics are
 
-* Creating one or more Dispatcher. \(Single store, multiple dispatcher\)
-* A dispatcher can have dependencies service needs. \(e.g. API Client, DB\)
-* No switch-case to reduce state
-* Support Logging \(Commit, Action, Performance monitoring\)
-
 ### 📖[**Open Documentation**](https://muukii-app.gitbook.io/verge/)\*\*\*\*
 
 **For viewing on GitHub repo,  

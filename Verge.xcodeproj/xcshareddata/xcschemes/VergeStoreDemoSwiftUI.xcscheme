@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4BF2BC9F238A63FB00F70CDA"
-               BuildableName = "VergeViewModel.framework"
-               BlueprintName = "VergeViewModel"
+               BlueprintIdentifier = "4B949127239C257500370067"
+               BuildableName = "VergeStoreDemoSwiftUI.app"
+               BlueprintName = "VergeStoreDemoSwiftUI"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,26 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4BF2BCDE238A85A700F70CDA"
-               BuildableName = "VergeViewModelTests.xctest"
-               BlueprintName = "VergeViewModelTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B68394323705ACD002FFC5A"
-               BuildableName = "VergeStoreTests.xctest"
-               BlueprintName = "VergeStoreTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -60,6 +40,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "4B949127239C257500370067"
+            BuildableName = "VergeStoreDemoSwiftUI.app"
+            BlueprintName = "VergeStoreDemoSwiftUI"
+            ReferencedContainer = "container:Verge.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -67,15 +57,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4BF2BC9F238A63FB00F70CDA"
-            BuildableName = "VergeViewModel.framework"
-            BlueprintName = "VergeViewModel"
+            BlueprintIdentifier = "4B949127239C257500370067"
+            BuildableName = "VergeStoreDemoSwiftUI.app"
+            BlueprintName = "VergeStoreDemoSwiftUI"
             ReferencedContainer = "container:Verge.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

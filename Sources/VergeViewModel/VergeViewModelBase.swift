@@ -25,9 +25,9 @@ import Foundation
 @_exported import VergeStore
 #endif
 
-open class StandaloneVergeViewModelBase<State>: VergeDefaultStore<State>, Dispatching {
+open class StandaloneVergeViewModelBase<State>: StoreBase<State>, DispatcherType {
   
-  public var dispatchTarget: VergeDefaultStore<State> { self }
+  public var dispatchTarget: StoreBase<State> { self }
   
   public override init(
     initialState: State,
@@ -40,12 +40,12 @@ open class StandaloneVergeViewModelBase<State>: VergeDefaultStore<State>, Dispat
 
 open class VergeViewModelBase<State, StoreState>: StandaloneVergeViewModelBase<State> {
     
-  public let parent: VergeDefaultStore<StoreState>
+  public let parent: StoreBase<StoreState>
   private var subscription: StorageSubscribeToken?
   
   public init(
     initialState: State,
-    parent: VergeDefaultStore<StoreState>,
+    parent: StoreBase<StoreState>,
     logger: VergeStoreLogger?
   ) {
     
