@@ -86,11 +86,8 @@ Mutation object is simple struct that has a closure what passes current state to
 
 ```swift
 class MyDispatcher: Dispatcher<RootState> {
-}
-
-extension Mutations where Base == MyDispatcher {
-  func addNewTodo(title: String) {
-    descriptor.commit { (state: inout RootState) in
+  func addNewTodo(title: String) -> Mutation {
+    .commit { (state: inout RootState) in
       state.todos.append(Todo(title: title, hasCompleted: false))
     }
   }
@@ -99,7 +96,7 @@ extension Mutations where Base == MyDispatcher {
 let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 
-dispatcher.commit.addNewTodo(title: "Create SwiftUI App")
+dispatcher.do { $0.addNewTodo(title: "Create SwiftUI App") }
 
 print(store.state.todos)
 // store.state.todos => [Todo(title: "Create SwiftUI App", hasCompleted: false)]
@@ -116,13 +113,10 @@ To commit Mutations inside Action, Use context.commit.
 
 ```swift
 class MyDispatcher: Dispatcher<RootState> {
-}
-
-extension Actions where Base == MyDispatcher {
 
   @discardableResult
-  func fetchRemoteTodos() -> Future<Void> {
-    descriptor.dispatch { context in
+  func fetchRemoteTodos() -> Action<Future<Void>> {
+    .dispatch { context in
 
       return Future<[Todo], Never> { ... }
         .sink { todos in
@@ -141,7 +135,7 @@ extension Actions where Base == MyDispatcher {
 let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 
-dispatcher.dispatch.fetchRemoteTodos()
+dispatcher.do { $0.fetchRemoteTodos() }
 
 // After Future completed
 
@@ -200,7 +194,7 @@ VergeStore provides the `ScopedDispatching` protocol to expand Dispatcher's func
 public protocol ScopedDispatching: Dispatching {
   associatedtype Scoped
 
-  var selector: WritableKeyPath<State, Scoped> { get }
+  var scopedStateKeyPath: WritableKeyPath<State, Scoped> { get }
 }
 ```
 
@@ -224,16 +218,12 @@ Create Dispatcher that has `ScopedDispatching`
 ```swift
 final class OptionalNestedDispatcher: Store.DispatcherType, ScopedDispatching {
 
-  var selector: WritableKeyPath<State, State.NestedState?> {
+  static var scopedStateKeyPath: WritableKeyPath<State, State.NestedState?> {
     \.optionalNested
   }
 
-}
-
-extension Mutations where Base == OptionalNestedDispatcher {
-
-  func setMyName() {
-    descriptor.commitIfPresent {
+  func setMyName() -> Mutation {
+    .commitIfPresent {
       $0.myName = "Hello"
     }
   }
