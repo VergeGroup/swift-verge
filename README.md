@@ -1,17 +1,15 @@
-# Verge - Store (SwiftUI / UIKit) (Planning v6.0.0)
+# Getting Started
 
-Classic Version is here => [Verge Classic](./Sources/VergeClassic)
+![Data flow](.gitbook/assets/loop-2x.png)
 
-<img src="loop@2x.png" width=646/>
+The concept of VergeStore is inspired by [Redux](https://redux.js.org/) and [Vuex](https://vuex.vuejs.org/).
 
-## Gallery
+The characteristics are
 
-- [APNsClient](https://github.com/muukii/APNsClient) : A desktop application to send a apns push with HTTP/2 based API.
+* Creating one or more Dispatcher. \(Single store, multiple dispatcher\)
+* A dispatcher can have dependencies service needs. \(e.g. API Client, DB\)
+* No switch-case to reduce state
+* Support Logging \(Commit, Action, Performance monitoring\)
 
-## Documentations
 
-[Documentation](https://muukii-app.gitbook.io/verge/)
 
-## Author
-
-Hiroshi Kimura (Muukii) <muukii.app@gmail.com>
