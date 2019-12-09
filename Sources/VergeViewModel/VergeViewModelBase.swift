@@ -25,9 +25,11 @@ import Foundation
 @_exported import VergeStore
 #endif
 
-open class StandaloneVergeViewModelBase<State>: StoreBase<State>, DispatcherType {
+open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State>, DispatcherType {
   
   public var dispatchTarget: StoreBase<State> { self }
+  
+  let activityEmitter: EventEmitter<Activity> = .init()
   
   public override init(
     initialState: State,
@@ -78,3 +80,7 @@ open class VergeViewModelBase<State, StoreState>: StandaloneVergeViewModelBase<S
   
 }
 
+extension VergeStoreDispatcherContext where Dispatcher : StandaloneVergeViewModelBase {
+  
+  
+}
