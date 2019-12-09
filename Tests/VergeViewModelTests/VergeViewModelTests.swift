@@ -33,7 +33,7 @@ struct MyViewModelState {
   var count: Int = 0
 }
 
-final class MyViewModel: VergeViewModelBase<MyViewModelState, RootState> {
+final class MyViewModel: VergeViewModelBase<MyViewModelState, RootState, Never> {
   
   override func updateState(state: inout MyViewModelState, by storeState: RootState) {
     state.rootCount = storeState.count

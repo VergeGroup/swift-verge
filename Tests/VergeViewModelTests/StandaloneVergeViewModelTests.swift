@@ -17,7 +17,7 @@ struct ViewModelState {
   var count: Int = 0
 }
 
-final class ViewModel: StandaloneVergeViewModelBase<ViewModelState> {
+final class ViewModel: StandaloneVergeViewModelBase<ViewModelState, Never> {
 
   init() {
     super.init(initialState: .init(), logger: nil)

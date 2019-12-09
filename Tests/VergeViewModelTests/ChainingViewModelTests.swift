@@ -17,7 +17,7 @@ struct AViewModelState {
   var bViewModel: BViewModel?
 }
 
-final class AViewModel: StandaloneVergeViewModelBase<AViewModelState> {
+final class AViewModel: StandaloneVergeViewModelBase<AViewModelState, Never> {
   
   init() {
     super.init(initialState: .init(), logger: nil)
@@ -48,7 +48,7 @@ struct BViewModelState {
   var count: Int = 0
 }
 
-final class BViewModel: VergeViewModelBase<ViewModelState, AViewModelState> {
+final class BViewModel: VergeViewModelBase<ViewModelState, AViewModelState, Never> {
   
   init(viewModel: AViewModel) {
     super.init(

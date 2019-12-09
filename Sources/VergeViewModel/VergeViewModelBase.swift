@@ -25,7 +25,12 @@ import Foundation
 @_exported import VergeStore
 #endif
 
-open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State>, DispatcherType {
+public protocol _StandaloneVergeViewModelBaseType {
+  associatedtype Activity
+  associatedtype State
+}
+
+open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State>, DispatcherType, _StandaloneVergeViewModelBaseType {
   
   public var dispatchTarget: StoreBase<State> { self }
   
@@ -38,9 +43,13 @@ open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State>, Disp
     super.init(initialState: initialState, logger: logger)
   }
   
+  public func addActivityTarget(_ eventReceiver: @escaping (Activity) -> Void) {
+    activityEmitter.add(eventReceiver)
+  }
+  
 }
 
-open class VergeViewModelBase<State, StoreState>: StandaloneVergeViewModelBase<State> {
+open class VergeViewModelBase<State, StoreState, Activity>: StandaloneVergeViewModelBase<State, Activity> {
     
   public let parent: StoreBase<StoreState>
   private var subscription: StorageSubscribeToken?
@@ -80,7 +89,14 @@ open class VergeViewModelBase<State, StoreState>: StandaloneVergeViewModelBase<S
   
 }
 
-extension VergeStoreDispatcherContext where Dispatcher : StandaloneVergeViewModelBase {
+extension VergeStoreDispatcherContext where Dispatcher : _StandaloneVergeViewModelBaseType {
   
+  public func emit(_ activity: Dispatcher.Activity) {
+    guard let target = self.dispatcher.dispatchTarget as? StandaloneVergeViewModelBase<Dispatcher.State, Dispatcher.Activity> else {
+      assertionFailure("")
+      return
+    }
+    target.activityEmitter.accept(activity)
+  }
   
 }

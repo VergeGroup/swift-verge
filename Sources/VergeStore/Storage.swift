@@ -99,6 +99,9 @@ public final class Storage<Value>: CustomReflectable {
     }
   }
   
+  /// Register observer with closure.
+  /// Storage tells got a newValue.
+  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
   public func addWillUpdate(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
     lock.lock()
@@ -109,6 +112,9 @@ public final class Storage<Value>: CustomReflectable {
     return token
   }
   
+  /// Register observer with closure.
+  /// Storage tells got a newValue.
+  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
   public func addDidUpdate(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
     lock.lock()
@@ -153,4 +159,16 @@ public final class Storage<Value>: CustomReflectable {
     )
   }
   
+}
+
+extension Storage {
+  
+  public func map<U>(selector: @escaping (Value) -> U) -> Storage<U> {
+    let initialValue = selector(value)
+    let newStorage = Storage<U>.init(initialValue)
+    self.addDidUpdate { (newValue) in
+      newStorage.replace(selector(newValue))
+    }
+    return newStorage
+  }
 }
