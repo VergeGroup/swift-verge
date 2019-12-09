@@ -46,7 +46,7 @@ public struct Table<Entity: EntityType> {
     entities.count
   }
     
-  public var entities: [Entity.ID : Entity] = [:]
+  public internal(set) var entities: [Entity.ID : Entity] = [:]
   
   public init() {
     
@@ -94,6 +94,12 @@ public struct Table<Entity: EntityType> {
   public mutating func merge(otherTable: Table<Entity>) {
     entities.merge(otherTable.entities, uniquingKeysWith: { _, new in new })
   }
+  
+  public mutating func subtract(otherTable: Table<Entity>) {
+    otherTable.entities.forEach { key, _ in
+      entities.removeValue(forKey: key)
+    }
+  }
     
 }
 
@@ -130,6 +136,10 @@ extension DatabaseType {
   
   public mutating func mergeTable<Entity>(keyPath: WritableKeyPath<Self, Table<Entity>>, otherDatabase: Self) {
     self[keyPath: keyPath].merge(otherTable: otherDatabase[keyPath: keyPath])
+  }
+  
+  public mutating func subtractTable<Entity>(keyPath: WritableKeyPath<Self, Table<Entity>>, otherDatabase: Self) {
+    self[keyPath: keyPath].subtract(otherTable: otherDatabase[keyPath: keyPath])
   }
   
   public mutating func performBatchUpdate(_ update: (DatabaseBatchUpdateContext<Self>) throws -> Void) rethrows {
