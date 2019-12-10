@@ -165,21 +165,18 @@ public struct BackingStorage<MappingTable: MappingTableType> {
   }
   
   mutating func subtract(otherStorage: BackingStorage<MappingTable>) {
-    // TODO:
-//    otherStorage.storage.forEach { key, value in
-//      if var table = storage[key] {
-//        var merged = table
-//
-//        value.forEach { key, value in
-//          merged[key] = value
-//        }
-//
-//        table = merged
-//        storage[key] = table
-//      } else {
-//        storage[key] = value
-//      }
-//    }
+    otherStorage.storage.forEach { key, value in
+      if var table = storage[key] {
+        var merged = table
+
+        value.forEach { key, _ in
+          merged.removeValue(forKey: key)
+        }
+
+        table = merged
+        storage[key] = table
+      }
+    }
   }
     
 }
