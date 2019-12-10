@@ -541,13 +541,13 @@
 			path = VergeORM;
 			sourceTree = "<group>";
 		};
-		4B475BC6239ADE1C008A03E1 /* VergeNormalizerTests */ = {
+		4B475BC6239ADE1C008A03E1 /* VergeORMTests */ = {
 			isa = PBXGroup;
 			children = (
 				4B475BC7239ADE1C008A03E1 /* VergeNormalizerTests.swift */,
 				4B475BC9239ADE1C008A03E1 /* Info.plist */,
 			);
-			path = VergeNormalizerTests;
+			path = VergeORMTests;
 			sourceTree = "<group>";
 		};
 		4B65F8ED1FB4C0DC00A90A67 /* VergeTests */ = {
@@ -761,7 +761,7 @@
 				4B65F8ED1FB4C0DC00A90A67 /* VergeTests */,
 				4B68394523705ACD002FFC5A /* VergeStoreTests */,
 				4BF2BCE0238A85A700F70CDA /* VergeViewModelTests */,
-				4B475BC6239ADE1C008A03E1 /* VergeNormalizerTests */,
+				4B475BC6239ADE1C008A03E1 /* VergeORMTests */,
 			);
 			path = Tests;
 			sourceTree = "<group>";

@@ -8,33 +8,30 @@
 
 import XCTest
 
-import VergeNormalizer
+import VergeORM
 
-struct Book: VergeTypedIdentifiable {
+struct Book: EntityType {
   
   let rawID: String
   
 }
 
-struct Author: VergeTypedIdentifiable {
+struct Author: EntityType {
   
   let rawID: String
 }
 
 struct RootState {
   
-  struct Entity: VergeNormalizedDatabase {
-    static func makeEmtpy() -> RootState.Entity {
-      .init()
+  struct Entity: DatabaseType {
+       
+    struct MappingTable: MappingTableType {
+      let book = MappingKey<Book>()
+      let author = MappingKey<Author>()
     }
     
-    var book: Table<Book> = .init()
-    var author: Table<Author> = .init()
-            
-    mutating func merge(database: RootState.Entity) {
-      mergeTable(keyPath: \.book, otherDatabase: database)
-      mergeTable(keyPath: \.author, otherDatabase: database)
-    }
+    var backingStorage: BackingStorage<RootState.Entity.MappingTable> = .init()
+   
   }
   
   var entity = Entity()
@@ -57,12 +54,10 @@ class VergeNormalizerTests: XCTestCase {
     state.entity.performBatchUpdate { (context) in
       
       let book = Book(rawID: "some")
-      context.update {
-        $0.book.update(book)
-      }
+      context.insertsOrUpdates.book.insert(book)
     }
     
-    XCTAssertEqual(state.entity.book.entities.count, 1)
+    XCTAssertEqual(state.entity.book.count, 1)
     
   }
   
