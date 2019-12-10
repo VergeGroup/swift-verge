@@ -1,5 +1,9 @@
 # Logging
 
+{% hint style="warning" %}
+Sorry, this documentation is currently working in progress.
+{% endhint %}
+
 With creating an object that using `VergeStoreLogger`, we can get the log that VergeStore emits.
 
 As a default implementation, we can use `DefaultLogger.shared`.

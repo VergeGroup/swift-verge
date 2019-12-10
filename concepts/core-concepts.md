@@ -1,5 +1,11 @@
 # VergeViewModel Core Concepts
 
+
+
+{% hint style="warning" %}
+Sorry, this documentation is currently working in progress.
+{% endhint %}
+
 We have a sub-framework VergeViewModel.  
 This helps UIKit based application.
 
