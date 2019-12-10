@@ -1,3 +1,7 @@
+---
+description: A Store-Pattern based data-flow architecture.
+---
+
 # Verge \(v6.0.0-alpha\)
 
 ## 📖[**Open Documentation on GitBook**](https://muukii-app.gitbook.io/verge/)\*\*\*\*
