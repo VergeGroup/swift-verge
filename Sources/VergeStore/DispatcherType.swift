@@ -32,6 +32,7 @@ extension DispatcherType {
     
   ///
   /// - Parameter get: Return Action object
+  @discardableResult
   public func accept<Return>(_ get: (Self) -> Action<Return>) -> Return {
     let action = get(self)
     let context = VergeStoreDispatcherContext<Self>.init(

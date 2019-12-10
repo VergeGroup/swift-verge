@@ -38,6 +38,7 @@ extension VergeStoreDispatcherContext {
     dispatcher.accept(get)
   }
   
+  @discardableResult
   public func accept<Return>(_ get: (Dispatcher) -> Dispatcher.Action<Return>) -> Return {
     let action = get(dispatcher)
     let context = VergeStoreDispatcherContext<Dispatcher>.init(
