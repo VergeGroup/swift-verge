@@ -1,4 +1,4 @@
-# Core Concepts
+# VergeViewModel Core Concepts
 
 We have a sub-framework VergeViewModel.  
 This helps UIKit based application.

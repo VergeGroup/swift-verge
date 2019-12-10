@@ -1,2 +1,2 @@
-# Core Concepts
+# VergeStoreRx Core Concepts
 

@@ -1,11 +1,11 @@
 # Table of contents
 
-* [Verge](README.md)
+* [Verge \(v6.0.0-alpha\)](README.md)
 * [Gallery](gallery.md)
 
 ## Verge Store <a id="vergestore"></a>
 
-* [Core Concepts](vergestore/core-concepts/README.md)
+* [VergeStore Core Concepts](vergestore/core-concepts/README.md)
   * [State](vergestore/core-concepts/state.md)
   * [Store](vergestore/core-concepts/store.md)
   * [Dispatcher](vergestore/core-concepts/dispatcher.md)
@@ -17,15 +17,15 @@
 
 ## Verge ViewModel <a id="concepts"></a>
 
-* [Core Concepts](core-concepts.md)
+* [VergeViewModel Core Concepts](concepts/core-concepts.md)
 
 ## Verge ORM
 
-* [Core Concepts](verge-orm/core-concepts.md)
+* [VergeORM Core Concepts](verge-orm/core-concepts.md)
 
 ## Verge Store Rx
 
-* [Core Concepts](verge-store-rx/core-concepts.md)
+* [VergeStoreRx Core Concepts](verge-store-rx/core-concepts.md)
 
 ## Additional Informations
 
