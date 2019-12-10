@@ -12,6 +12,7 @@
   * [Mutation](vergestore/core-concepts/mutation.md)
   * [Action](vergestore/core-concepts/action.md)
 * [Logging](vergestore/logging.md)
+* [Memoization](vergestore/memoization.md)
 * [Advanced](vergestore/advanced/README.md)
   * [Scoped Dispatcher](vergestore/advanced/scoped-dispatcher.md)
 
