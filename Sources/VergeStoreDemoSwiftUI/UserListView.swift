@@ -8,24 +8,21 @@
 
 import Foundation
 import SwiftUI
+import VergeStore
 
 struct UserListView: View {
   
   @EnvironmentObject var session: Session
   
-  private var users: AnyRandomAccessCollection<Entity.User> {
-    // Experimental using lazy
-    AnyRandomAccessCollection(
-      session.store.state.userIDs.lazy.compactMap {
-        self.session.store.state.entity.user.find(by: $0)
-      }
-    )
+  private var users: MemoizeGetter<SessionState, [Entity.User]> {
+    session.users
   }
-      
+           
   var body: some View {
+    
     NavigationView {
       List {
-        ForEach(users) { user in
+        ForEach(users.value) { user in
           NavigationLink(destination: SubmitView(user: user)) {
             Text(user.name)
           }
@@ -60,7 +57,7 @@ struct SubmitView: View {
   let user: Entity.User
   
   private var posts: [Entity.Post] {
-    session.store.state.entity.post.find(in: session.store.state.postIDsByUser[user.id] ?? [])
+    session.store.state.db.entities.post.find(in: session.store.state.postIDsByUser[user.id] ?? [])
   }
   
   var body: some View {
@@ -84,7 +81,7 @@ struct AllPostsView: View {
   @EnvironmentObject var session: Session
   
   private var posts: [Entity.Post] {
-    session.store.state.entity.post.find(in: session.store.state.postIDs)
+    session.store.state.db.entities.post.find(in: session.store.state.db.orderTables.postIDs)
   }
     
   var body: some View {
@@ -108,7 +105,7 @@ struct PostView: View {
   let post: Entity.Post
   
   private var user: Entity.User? {
-    session.store.state.entity.user.find(by: post.userID)
+    session.store.state.db.entities.user.find(by: post.userID)
   }
   
   var body: some View {

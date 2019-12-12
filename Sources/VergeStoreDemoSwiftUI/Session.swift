@@ -22,6 +22,12 @@ final class Session: ObservableObject {
   let store = SessionStore()
   private(set) lazy var sessionDispatcher = SessionDispatcher(target: store)
   
+  private(set) lazy var users = self.store.makeMemoizeGetter(
+  equality: .init(selector: { $0.db.entities.user }),
+  selector: { state in
+  state.db.entities.user.find(in: state.db.orderTables.userIDs)
+  })
+  
   init() {
     
   }
@@ -29,19 +35,19 @@ final class Session: ObservableObject {
 }
 
 enum Entity {
-  struct Post: EntityType {
+  struct Post: EntityType, Equatable {
     let rawID: String
     var title: String
     var userID: User.ID
     var commentIDs: [Comment.ID] = []
   }
   
-  struct User: EntityType {
+  struct User: EntityType, Equatable {
     let rawID: String
     var name: String
   }
   
-  struct Comment: EntityType {
+  struct Comment: EntityType, Equatable {
     let rawID: String
     var text: String
     var postID: Post.ID
@@ -51,30 +57,24 @@ enum Entity {
 struct SessionState: StateType {
   
   struct Database: DatabaseType {
-            
-    static func makeEmtpy() -> SessionState.Database {
-      .init()
+    
+    struct Schema: EntitySchemaType {
+      
+      let post = Entity.Post.EntityTableKey()
+      let user = Entity.User.EntityTableKey()
+      let comment = Entity.Comment.EntityTableKey()
     }
     
-    var post = Entity.Post.makeTable()
-    var user = Entity.User.makeTable()
-    var comment = Entity.Comment.makeTable()
-
-    mutating func apply(insertsOrUpdatesDatabase: SessionState.Database) {
-      mergeTable(keyPath: \.post, otherDatabase: insertsOrUpdatesDatabase)
-      mergeTable(keyPath: \.user, otherDatabase: insertsOrUpdatesDatabase)
-      mergeTable(keyPath: \.comment, otherDatabase: insertsOrUpdatesDatabase)
+    struct OrderTables: OrderTablesType {
+      let userIDs = Entity.User.OrderTableKey(name: "userIDs")
+      let postIDs = Entity.Post.OrderTableKey(name: "postIDs")
     }
-    
-    mutating func apply(deletesDatabase: SessionState.Database) {
-      // TODO:
-    }
+       
+    var storage: DatabaseStorage<SessionState.Database.Schema, SessionState.Database.OrderTables> = .init()
   }
     
-  var entity: Database = .init()
+  var db: Database = .init()
   
-  var userIDs: [Entity.User.ID] = []
-  var postIDs: [Entity.Post.ID] = []
   var postIDsByUser: [Entity.User.ID : [Entity.Post.ID]] = [:]
 }
 
@@ -89,18 +89,21 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
   
   func insertSampleUsers() -> Mutation {
     return .mutation { s in
-      s.entity.performBatchUpdate { (context) in
+      s.db.performBatchUpdate { (context) in
         let paul = Entity.User(rawID: "paul", name: "Paul Gilbert")
         let billy = Entity.User(rawID: "billy", name: "Billy Sheehan")
         let pat = Entity.User(rawID: "pat", name: "Pat Torpey")
         let eric = Entity.User(rawID: "eric", name: "Eric Martin")
         
-        s.userIDs = context.insertsOrUpdates.user.insert([
+        let ids = context.insertsOrUpdates.user.insert([
           paul,
           billy,
           pat,
           eric
         ])
+
+        context.orderTables.userIDs.removeAll()
+        context.orderTables.userIDs.append(contentsOf: ids)
         
       }
     }
@@ -109,9 +112,9 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
   func submitNewPost(title: String, from user: Entity.User) -> Mutation {
     return .mutation { (s) in
       let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.id)
-      s.entity.performBatchUpdate { (context) in
+      s.db.performBatchUpdate { (context) in
         let id = context.insertsOrUpdates.post.insert(post)
-        s.postIDs.append(id)
+        context.orderTables.postIDs.append(id)
         
         if let _ = s.postIDsByUser[user.id] {
           s.postIDsByUser[user.id]!.append(id)

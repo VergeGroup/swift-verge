@@ -1,10 +1,23 @@
 //
-//  VergeNormalizer.swift
-//  VergeStore
+// Copyright (c) 2019 muukii
 //
-//  Created by muukii on 2019/12/07.
-//  Copyright © 2019 muukii. All rights reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 import Foundation
 
@@ -28,11 +41,11 @@ public protocol DatabaseType {
 
 public struct DatabaseStorage<Schema: EntitySchemaType, OrderTables: OrderTablesType> {
   
-  public typealias EntityBackingStorage = VergeORM.BackingEntityStorage<Schema, Read>
-  public typealias OrderTableBackingStorage = VergeORM.BackingOrderTableStorage<OrderTables, Read>
+  public typealias EntityBackingStorage = VergeORM.EntityStorage<Schema, Read>
+  public typealias OrderTableBackingStorage = VergeORM.OrderTableStorage<OrderTables, Read>
   
-  public typealias WritableBackingStorage = VergeORM.BackingEntityStorage<Schema, Write>
-  public typealias WritableOrderTableBackingStorage = VergeORM.BackingOrderTableStorage<OrderTables, Write>
+  public typealias WritableBackingStorage = VergeORM.EntityStorage<Schema, Write>
+  public typealias WritableOrderTableBackingStorage = VergeORM.OrderTableStorage<OrderTables, Write>
  
   var entityBackingStorage: EntityBackingStorage = .init()
   var orderTableBackingStorage: OrderTableBackingStorage = .init()
@@ -47,7 +60,7 @@ public struct EntityPropertyAdapter<DB: DatabaseType> {
   
   let get: () -> DB
   
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.Schema, MappingKey<U>>) -> Table<U, Read> {
+  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.Schema, EntityTableKey<U>>) -> EntityTable<U, Read> {
     get {
       get().storage.entityBackingStorage[dynamicMember: keyPath]
     }
@@ -59,7 +72,7 @@ public struct OrderTablePropertyAdapter<DB: DatabaseType> {
   
   let get: () -> DB
   
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.OrderTables, OrderTablePropertyKey<U>>) -> OrderTable<U, Read> {
+  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.OrderTables, OrderTableKey<U>>) -> OrderTable<U, Read> {
     get {
       get().storage.orderTableBackingStorage[dynamicMember: keyPath]
     }

@@ -26,12 +26,12 @@ struct RootState {
   struct Entity: DatabaseType {
               
     struct Schema: EntitySchemaType {
-      let book = MappingKey<Book>()
-      let author = MappingKey<Author>()
+      let book = EntityTableKey<Book>()
+      let author = EntityTableKey<Author>()
     }
     
     struct OrderTables: OrderTablesType {
-      let bookA = OrderTablePropertyKey<Book>(name: "bookA")
+      let bookA = OrderTableKey<Book>(name: "bookA")
     }
     
     var storage: Storage = .init()
