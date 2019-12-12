@@ -9,7 +9,7 @@ Action object's looks
 public struct AnyAction<Dispatcher, Return> where Dispatcher : VergeStore.DispatcherType {
 
   public let metadata: ActionMetadata
-
+  
   public init(_ name: StaticString = "", _ action: @escaping (VergeStoreDispatcherContext<Dispatcher>) -> Return)
 }
 ```
@@ -40,12 +40,14 @@ dispatcher.accept { $0.someAsyncOperation() }
 To commit Mutation, do it from context.
 
 ```swift
+  
+  
 class MyDispatcher: DispatcherBase<RootState> {
 
   func someMutation() -> Mutation<Void> {
     ...
   }
-
+  
   func someAsyncOperation() -> Action<Void> {
     .action { context in
       context.accept { $0.someMutation() }
@@ -63,7 +65,7 @@ class MyDispatcher: DispatcherBase<RootState> {
   func someMutation() -> Mutation<Void> {
     ...
   }
-
+  
   func someAsyncOperation() -> Action<Void> {
     .action { context in
       DispatchQueue.global().async {
@@ -74,6 +76,8 @@ class MyDispatcher: DispatcherBase<RootState> {
 
 }
 ```
+
+
 
 You may already notice that, Action can return anything you need outside.  
 This feature is super inspired by **Vuex**
@@ -87,17 +91,17 @@ class MyDispatcher: DispatcherBase<RootState> {
 
   func fetchRemoteTodos() -> Action<Future<Void>> {
     .dispatch { context in
-
+    
       let future = Future<[Todo], Never> { ... }
         .sink { todos in
-
+    
           context.commit { state in
             state.todos = todos
           }
-
+    
        }
        .store(in: &self.subscriptions)
-
+       
        return future
     }
   }

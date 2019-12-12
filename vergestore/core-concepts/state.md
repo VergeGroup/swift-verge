@@ -6,9 +6,9 @@ With this, we can get to achieve **"single source of truth"**
 
 ```swift
 struct State {
-
+  
   var count: Int = 0
-
+  
 }
 ```
 
@@ -20,7 +20,7 @@ VergeStore does support multiple state-tree as well.
 Depending on the case, we can create another Store instance.
 {% endhint %}
 
-## StateType protocol
+### StateType protocol
 
 VergeStore provides `StateType` protocol as a helper.
 

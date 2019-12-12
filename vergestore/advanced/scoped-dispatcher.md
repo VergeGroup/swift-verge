@@ -1,10 +1,11 @@
 # Scoped Dispatcher
 
-## Mutating on nested state with StateType
+#### Mutating on nested state with StateType
 
-Basically, the application state should be flattened as possible. \(Avoid nesting\)  
-However, sometimes we can't avoid this. And then it may be hard to update the nested state.  
-If it's an optional state, we have to check non-nil every time when mutating or dispatching.
+Basically, the application state should be flattened as possible. \(Avoid nesting\)   
+ However, sometimes we can't avoid this. And then it may be hard to update the nested state.   
+ If it's an optional state, we have to check non-nil every time when mutating or dispatching.   
+
 
 So, VergeStore provides the following method to make it easier.
 
@@ -12,7 +13,7 @@ So, VergeStore provides the following method to make it easier.
 Dispatcher.commit(\.target)
 ```
 
-## ScopedDispatching with StateType
+#### ScopedDispatching with StateType
 
 To handle nested states efficiently.
 
@@ -66,7 +67,7 @@ final class OptionalNestedDispatcher: DispatcherBase<State>, ScopedDispatching {
 `ScopedDispatching` requires `selector` to get a slice of the state.
 
 If `Scoped` is optional type, can use `commitScopedIfPresent()`.  
-It runs only when the selected slice is existing.
+ It runs only when the selected slice is existing.
 
 If it's not, can use `commitScoped()`
 

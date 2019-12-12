@@ -1,6 +1,7 @@
 # Table of contents
 
 * [Verge \(v6.0.0-alpha\)](README.md)
+* [Installation](installation.md)
 * [Gallery](gallery.md)
 
 ## Verge Store <a id="vergestore"></a>
@@ -23,6 +24,7 @@
 ## Verge ORM
 
 * [VergeORM Core Concepts](verge-orm/core-concepts.md)
+* [Getting Started](verge-orm/getting-started.md)
 
 ## Verge Store Rx
 
