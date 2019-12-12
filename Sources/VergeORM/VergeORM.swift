@@ -8,108 +8,78 @@
 
 import Foundation
 
-public protocol VergeTypedIdentifiable: Identifiable {
-  associatedtype RawValue: Hashable
-  var rawID: RawValue { get }
+public protocol AccessControlType {}
+
+public enum Read: AccessControlType {
+  
 }
 
-extension VergeTypedIdentifiable {
+public enum Write: AccessControlType {
   
-  public var id: VergeTypedIdentifier<Self> {
-    .init(raw: rawID)
-  }
-}
-
-public struct VergeTypedIdentifier<T: VergeTypedIdentifiable> : Hashable {
-  
-  public let raw: T.RawValue
-  
-  public init(raw: T.RawValue) {
-    self.raw = raw
-  }
-}
-
-public protocol EntityType: VergeTypedIdentifiable {
-  typealias Table = VergeORM.Table<Self>
-  // TODO: Add some methods for updating entity.
-}
-
-extension EntityType {
-  public static func makeTable() -> Table {
-    .init()
-  }
-}
-
-public struct Table<Entity: EntityType> {
-  
-  public var count: Int {
-    entities.count
-  }
-    
-  public internal(set) var entities: [Entity.ID : Entity] = [:]
-  
-  public init() {
-    
-  }
-  
-  public func all() -> [Entity] {
-    entities.map { $0.value }
-  }
-  
-  public func find(by id: Entity.ID) -> Entity? {
-    entities[id]
-  }
-  
-  public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.ID {
-    ids.reduce(into: [Entity]()) { (buf, id) in
-      guard let entity = entities[id] else { return }
-      buf.append(entity)
-    }
-  }
-    
-  @discardableResult
-  public mutating func insert(_ entity: Entity) -> Entity.ID {
-    entities[entity.id] = entity
-    return entity.id
-  }
-  
-  @discardableResult
-  public mutating func insert<S: Sequence>(_ addingEntities: S) -> [Entity.ID] where S.Element == Entity {
-    var ids: [Entity.ID] = []
-    addingEntities.forEach { entity in
-      entities[entity.id] = entity
-      ids.append(entity.id)
-    }
-    return ids
-  }
-  
-  public mutating func remove(_ id: Entity.ID) {
-    entities.removeValue(forKey: id)
-  }
-  
-  public mutating func removeAll() {
-    entities.removeAll(keepingCapacity: false)
-  }
-  
-  public mutating func merge(otherTable: Table<Entity>) {
-    entities.merge(otherTable.entities, uniquingKeysWith: { _, new in new })
-  }
-  
-  public mutating func subtract(otherTable: Table<Entity>) {
-    otherTable.entities.forEach { key, _ in
-      entities.removeValue(forKey: key)
-    }
-  }
-    
 }
 
 public protocol DatabaseType {
   
-  /// Create a empty database to perform batch update
-  static func makeEmtpy() -> Self
+  associatedtype Schema: EntitySchemaType
+  associatedtype OrderTables: OrderTablesType
+  typealias Storage = DatabaseStorage<Schema, OrderTables>
+  var storage: Storage { get set }
+}
+
+public struct DatabaseStorage<Schema: EntitySchemaType, OrderTables: OrderTablesType> {
   
-  mutating func apply(insertsOrUpdatesDatabase: Self)
-  mutating func apply(deletesDatabase: Self)
+  public typealias EntityBackingStorage = VergeORM.BackingEntityStorage<Schema, Read>
+  public typealias OrderTableBackingStorage = VergeORM.BackingOrderTableStorage<OrderTables, Read>
+  
+  public typealias WritableBackingStorage = VergeORM.BackingEntityStorage<Schema, Write>
+  public typealias WritableOrderTableBackingStorage = VergeORM.BackingOrderTableStorage<OrderTables, Write>
+ 
+  var entityBackingStorage: EntityBackingStorage = .init()
+  var orderTableBackingStorage: OrderTableBackingStorage = .init()
+  
+  public init() {
+    
+  }
+}
+
+@dynamicMemberLookup
+public struct EntityPropertyAdapter<DB: DatabaseType> {
+  
+  let get: () -> DB
+  
+  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.Schema, MappingKey<U>>) -> Table<U, Read> {
+    get {
+      get().storage.entityBackingStorage[dynamicMember: keyPath]
+    }
+  }
+}
+
+@dynamicMemberLookup
+public struct OrderTablePropertyAdapter<DB: DatabaseType> {
+  
+  let get: () -> DB
+  
+  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.OrderTables, OrderTablePropertyKey<U>>) -> OrderTable<U, Read> {
+    get {
+      get().storage.orderTableBackingStorage[dynamicMember: keyPath]
+    }
+  }
+}
+
+extension DatabaseType {
+    
+  public var entities: EntityPropertyAdapter<Self> {
+    .init {
+      self
+    }
+  }
+  
+  public var orderTables: OrderTablePropertyAdapter<Self> {
+    .init {
+      self
+    }
+  }
+  
 }
 
 public enum ORMError: Error {
@@ -120,11 +90,14 @@ public final class DatabaseBatchUpdateContext<Database: DatabaseType> {
   
   public let current: Database
   
-  public var insertsOrUpdates: Database = .makeEmtpy()
-  public var deletes: Database = .makeEmtpy()
-
+  public var insertsOrUpdates: Database.Storage.WritableBackingStorage = .init()
+  public var deletes: BackingRemovingEntityStorage<Database.Schema> = .init()
+  
+  public var orderTables: Database.Storage.WritableOrderTableBackingStorage
+  
   init(current: Database) {
     self.current = current
+    self.orderTables = current.storage.orderTableBackingStorage.makeWriable()
   }
   
   public func abort() throws -> Never {
@@ -134,22 +107,35 @@ public final class DatabaseBatchUpdateContext<Database: DatabaseType> {
 
 extension DatabaseType {
   
-  public mutating func mergeTable<Entity>(keyPath: WritableKeyPath<Self, Table<Entity>>, otherDatabase: Self) {
-    self[keyPath: keyPath].merge(otherTable: otherDatabase[keyPath: keyPath])
-  }
-  
-  public mutating func subtractTable<Entity>(keyPath: WritableKeyPath<Self, Table<Entity>>, otherDatabase: Self) {
-    self[keyPath: keyPath].subtract(otherTable: otherDatabase[keyPath: keyPath])
-  }
-  
   public mutating func performBatchUpdate(_ update: (DatabaseBatchUpdateContext<Self>) throws -> Void) rethrows {
+            
     let context = DatabaseBatchUpdateContext<Self>(current: self)
     do {
       try update(context)
-      self.apply(insertsOrUpdatesDatabase: context.insertsOrUpdates)
-      self.apply(deletesDatabase: context.deletes)
+      var target = self.storage.entityBackingStorage.makeWriable()
+      target.merge(otherStorage: context.insertsOrUpdates)
+      target.subtract(otherStorage: context.deletes)
+      
+      updateOrderTable: do {
+        
+        self.storage.orderTableBackingStorage = context.orderTables.makeReadonly()
+        
+        context.deletes.entityTableStorage.forEach { key, value in
+          
+          if let table = context.orderTables.orderTableStorage[key] {
+            var modified = table
+            
+            modified.removeAll { value.contains($0) }
+            
+            self.storage.orderTableBackingStorage.orderTableStorage[key] = modified
+          }
+          
+        }
+        
+      }
+                  
+      self.storage.entityBackingStorage = target.makeReadonly()
     } catch {
-      // TODO:
       throw error
     }
   }
