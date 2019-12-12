@@ -24,17 +24,22 @@ struct Author: EntityType {
 struct RootState {
   
   struct Entity: DatabaseType {
-       
-    struct MappingTable: MappingTableType {
+              
+    struct Schema: EntitySchemaType {
       let book = MappingKey<Book>()
       let author = MappingKey<Author>()
     }
     
-    var backingStorage: BackingStorage<RootState.Entity.MappingTable> = .init()
+    struct OrderTables: OrderTablesType {
+      let bookA = OrderTablePropertyKey<Book>(name: "bookA")
+    }
+    
+    var entityBackingStorage: BackingEntityStorage<RootState.Entity.Schema, Read> = .init()
+    var orderTableBackingStorage: BackingOrderTableStorage<RootState.Entity.OrderTables, Read> = .init()
    
   }
   
-  var entity = Entity()
+  var db = Entity()
 }
 
 class VergeNormalizerTests: XCTestCase {
@@ -51,13 +56,38 @@ class VergeNormalizerTests: XCTestCase {
     
     var state = RootState()
     
-    state.entity.performBatchUpdate { (context) in
+    state.db.performBatchUpdate { (context) in
       
       let book = Book(rawID: "some")
       context.insertsOrUpdates.book.insert(book)
     }
     
-    XCTAssertEqual(state.entity.book.count, 1)
+    XCTAssertEqual(state.db.entities.book.count, 1)
+    
+  }
+  
+  func testManagingOrderTable() {
+    
+    var state = RootState()
+    
+    state.db.performBatchUpdate { (context) in
+      
+      let book = Book(rawID: "some")
+      context.insertsOrUpdates.book.insert(book)
+      context.orderTables.bookA.append(book.id)
+    }
+        
+    XCTAssertEqual(state.db.entities.book.count, 1)
+    XCTAssertEqual(state.db.orderTables.bookA.count, 1)
+    
+    print(state.db.orderTables.bookA)
+    
+    state.db.performBatchUpdate { (context) in
+      context.deletes.book.insert(Book.ID.init(raw: "some"))
+    }
+    
+    XCTAssertEqual(state.db.entities.book.count, 0)
+    XCTAssertEqual(state.db.orderTables.bookA.count, 0)
     
   }
   
