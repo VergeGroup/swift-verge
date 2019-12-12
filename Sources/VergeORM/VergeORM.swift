@@ -22,17 +22,24 @@ public protocol DatabaseType {
   
   associatedtype Schema: EntitySchemaType
   associatedtype OrderTables: OrderTablesType
-  var entityBackingStorage: EntityBackingStorage { get set }
-  var orderTableBackingStorage: OrderTableBackingStorage { get set }
+  typealias Storage = DatabaseStorage<Schema, OrderTables>
+  var storage: Storage { get set }
 }
 
-extension DatabaseType {
+public struct DatabaseStorage<Schema: EntitySchemaType, OrderTables: OrderTablesType> {
   
   public typealias EntityBackingStorage = VergeORM.BackingEntityStorage<Schema, Read>
   public typealias OrderTableBackingStorage = VergeORM.BackingOrderTableStorage<OrderTables, Read>
   
   public typealias WritableBackingStorage = VergeORM.BackingEntityStorage<Schema, Write>
   public typealias WritableOrderTableBackingStorage = VergeORM.BackingOrderTableStorage<OrderTables, Write>
+ 
+  var entityBackingStorage: EntityBackingStorage = .init()
+  var orderTableBackingStorage: OrderTableBackingStorage = .init()
+  
+  public init() {
+    
+  }
 }
 
 @dynamicMemberLookup
@@ -42,7 +49,7 @@ public struct EntityPropertyAdapter<DB: DatabaseType> {
   
   public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.Schema, MappingKey<U>>) -> Table<U, Read> {
     get {
-      get().entityBackingStorage[dynamicMember: keyPath]
+      get().storage.entityBackingStorage[dynamicMember: keyPath]
     }
   }
 }
@@ -54,7 +61,7 @@ public struct OrderTablePropertyAdapter<DB: DatabaseType> {
   
   public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.OrderTables, OrderTablePropertyKey<U>>) -> OrderTable<U, Read> {
     get {
-      get().orderTableBackingStorage[dynamicMember: keyPath]
+      get().storage.orderTableBackingStorage[dynamicMember: keyPath]
     }
   }
 }
@@ -83,14 +90,14 @@ public final class DatabaseBatchUpdateContext<Database: DatabaseType> {
   
   public let current: Database
   
-  public var insertsOrUpdates: Database.WritableBackingStorage = .init()
+  public var insertsOrUpdates: Database.Storage.WritableBackingStorage = .init()
   public var deletes: BackingRemovingEntityStorage<Database.Schema> = .init()
   
-  public var orderTables: Database.WritableOrderTableBackingStorage
+  public var orderTables: Database.Storage.WritableOrderTableBackingStorage
   
   init(current: Database) {
     self.current = current
-    self.orderTables = current.orderTableBackingStorage.makeWriable()
+    self.orderTables = current.storage.orderTableBackingStorage.makeWriable()
   }
   
   public func abort() throws -> Never {
@@ -105,13 +112,13 @@ extension DatabaseType {
     let context = DatabaseBatchUpdateContext<Self>(current: self)
     do {
       try update(context)
-      var target = self.entityBackingStorage.makeWriable()
+      var target = self.storage.entityBackingStorage.makeWriable()
       target.merge(otherStorage: context.insertsOrUpdates)
       target.subtract(otherStorage: context.deletes)
       
       updateOrderTable: do {
         
-        self.orderTableBackingStorage = context.orderTables.makeReadonly()
+        self.storage.orderTableBackingStorage = context.orderTables.makeReadonly()
         
         context.deletes.entityTableStorage.forEach { key, value in
           
@@ -120,14 +127,14 @@ extension DatabaseType {
             
             modified.removeAll { value.contains($0) }
             
-            self.orderTableBackingStorage.orderTableStorage[key] = modified
+            self.storage.orderTableBackingStorage.orderTableStorage[key] = modified
           }
           
         }
         
       }
                   
-      self.entityBackingStorage = target.makeReadonly()
+      self.storage.entityBackingStorage = target.makeReadonly()
     } catch {
       throw error
     }

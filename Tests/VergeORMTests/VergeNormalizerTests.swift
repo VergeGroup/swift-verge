@@ -13,7 +13,7 @@ import VergeORM
 struct Book: EntityType {
   
   let rawID: String
-  
+  var name: String = ""
 }
 
 struct Author: EntityType {
@@ -34,9 +34,7 @@ struct RootState {
       let bookA = OrderTablePropertyKey<Book>(name: "bookA")
     }
     
-    var entityBackingStorage: BackingEntityStorage<RootState.Entity.Schema, Read> = .init()
-    var orderTableBackingStorage: BackingOrderTableStorage<RootState.Entity.OrderTables, Read> = .init()
-   
+    var storage: Storage = .init()
   }
   
   var db = Entity()
@@ -89,6 +87,36 @@ class VergeNormalizerTests: XCTestCase {
     XCTAssertEqual(state.db.entities.book.count, 0)
     XCTAssertEqual(state.db.orderTables.bookA.count, 0)
     
+  }
+  
+  func testUpdate() {
+    
+    var state = RootState()
+    
+    let id = Book.ID.init(raw: "some")
+    
+    state.db.performBatchUpdate { (context) in
+      
+      let book = Book(rawID: id.raw)
+      context.insertsOrUpdates.book.insert(book)
+    }
+    
+    XCTAssertNotNil(state.db.entities.book.find(by: id))
+    
+    state.db.performBatchUpdate { (context) in
+      
+      guard var book = context.current.entities.book.find(by: id) else {
+        XCTFail()
+        return
+      }
+      book.name = "hello"
+      
+      context.insertsOrUpdates.book.insert(book)
+    }
+    
+    XCTAssertNotNil(state.db.entities.book.find(by: id))
+    XCTAssertNotNil(state.db.entities.book.find(by: id)!.name == "hello")
+
   }
   
   func testPerformanceExample() {

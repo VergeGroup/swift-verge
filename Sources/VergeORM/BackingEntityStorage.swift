@@ -40,7 +40,7 @@ public struct Table<Entity: EntityType, Trait: AccessControlType> {
   }
   
   public func find(by id: Entity.ID) -> Entity? {
-    unsafeBitCast(entities[id], to: Entity?.self)
+    entities[id] as? Entity
   }
   
   public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.ID {
