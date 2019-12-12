@@ -31,7 +31,7 @@ let apiClient = APIClient()
 let dispatcher = MyDispatcher(apiClient: apiClient, target: store)
 ```
 
-### Create multiple Dispatcher
+## Create multiple Dispatcher
 
 ![](../../.gitbook/assets/image%20%283%29.png)
 
@@ -43,7 +43,7 @@ In this case, creating multiple dispatchers will help us. Define the dispatcher 
 
 ```swift
 class LoggedInDispatcher: DispatcherBase<RootState> {
-  
+
   let apiClientNeedsAuthToken = ...
   ...
 }

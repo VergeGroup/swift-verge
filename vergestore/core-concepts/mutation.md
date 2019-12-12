@@ -1,7 +1,7 @@
 # Mutation
 
-The only way to actually change state in a Store is by committing a mutation.   
-Define a function that returns Mutation object.   
+The only way to actually change state in a Store is by committing a mutation.  
+Define a function that returns Mutation object.  
 That expresses that function is Mutation
 
 {% hint style="success" %}
@@ -29,21 +29,21 @@ class MyDispatcher: DispatcherBase<RootState> {
       state.todos.append(Todo(title: title, hasCompleted: false))
     }
   }
-  
+
 }
 ```
 
 {% hint style="info" %}
 AnyMutation object provides several factory methods.  
-`.mutation` is also a part of those.  
-  
+`.mutation` is also a part of those.
+
 To check more methods, starting type `.mutation` and see the code completion in Xcode.
 {% endhint %}
 
 {% hint style="danger" %}
 In Swift 5.1, we can return value without typing **return** keyword.  
-But it causes problems on SourceKit, we may lose the code completion in the state properties.  
-  
+But it causes problems on SourceKit, we may lose the code completion in the state properties.
+
 If you faced this issue, please try to type return keyword explicitly.
 {% endhint %}
 
@@ -58,6 +58,4 @@ dispatcher.accept { $0.addNewTodo(title: "Create SwiftUI App") }
 print(store.state.todos)
 // store.state.todos => [Todo(title: "Create SwiftUI App", hasCompleted: false)]
 ```
-
-
 
