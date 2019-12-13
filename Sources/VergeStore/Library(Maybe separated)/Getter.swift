@@ -15,6 +15,9 @@ public final class MemoizeGetter<Source, Destination> {
   private var computedValue: Destination
   private let checker: (Source) -> Bool
   
+  private let willUpdateEmitter = EventEmitter<Void>()
+  private let didUpdateEmitter = EventEmitter<Destination>()
+  
   public init<Key>(
     source: Source,
     equality: EqualityComputer<Source, Key>,
@@ -31,12 +34,88 @@ public final class MemoizeGetter<Source, Destination> {
     computedValue
   }
   
-  public func accept(_ value: Source) {
+  func accept(_ value: Source) {
     guard !checker(value) else { return }
+    willUpdateEmitter.accept(())
     let newValue = selector(value)
     computedValue = newValue
+    didUpdateEmitter.accept(newValue)
   }
+  
+  /// Register observer with closure.
+  /// Storage tells got a newValue.
+  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
+  @discardableResult
+  public func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
+    willUpdateEmitter.add(subscriber)
+  }
+  
+  /// Register observer with closure.
+  /// Storage tells got a newValue.
+  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
+  @discardableResult
+  public func addDidUpdate(subscriber: @escaping (Destination) -> Void) -> EventEmitterSubscribeToken {
+    didUpdateEmitter.add(subscriber)
+  }
+  
 }
+
+#if canImport(Combine)
+
+import Combine
+
+fileprivate var _willChangeAssociated: Void?
+fileprivate var _didChangeAssociated: Void?
+
+@available(iOS 13.0, macOS 10.15, *)
+extension MemoizeGetter: ObservableObject {
+  
+  public var objectWillChange: ObservableObjectPublisher {
+    if let associated = objc_getAssociatedObject(self, &_willChangeAssociated) as? ObservableObjectPublisher {
+      return associated
+    } else {
+      let associated = ObservableObjectPublisher()
+      objc_setAssociatedObject(self, &_willChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
+      
+      addWillUpdate {
+        if Thread.isMainThread {
+          associated.send()
+        } else {
+          DispatchQueue.main.async {
+            associated.send()
+          }
+        }
+      }
+      
+      return associated
+    }
+  }
+  
+  public var didChangePublisher: AnyPublisher<Destination, Never> {
+    
+    if let associated = objc_getAssociatedObject(self, &_didChangeAssociated) as? PassthroughSubject<Destination, Never> {
+      return associated.eraseToAnyPublisher()
+    } else {
+      let associated = PassthroughSubject<Destination, Never>()
+      objc_setAssociatedObject(self, &_didChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
+      
+      addDidUpdate { s in
+        if Thread.isMainThread {
+          associated.send(s)
+        } else {
+          DispatchQueue.main.async {
+            associated.send(s)
+          }
+        }
+      }
+      
+      return associated.eraseToAnyPublisher()
+    }
+  }
+  
+}
+
+#endif
 
 public final class EqualityComputer<Value, Key> {
   
@@ -117,19 +196,8 @@ extension StoreBase {
     equality: EqualityComputer<State, Key>,
     selector: @escaping (State) -> Destination
   ) -> MemoizeGetter<State, Destination> {
-    
-    let getter = MemoizeGetter(
-      source: state,
-      equality: equality,
-      selector: selector
-    )
-    
-    backingStorage.addDidUpdate { (newValue) in
-      getter.accept(newValue)
-    }
-    
-    return getter
-    
+        
+    backingStorage.makeMemoizeGetter(equality: equality, selector: selector)
   }
   
 }

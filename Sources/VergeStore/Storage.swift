@@ -21,17 +21,12 @@
 
 
 import Foundation
-import os
-
-public struct StorageSubscribeToken : Hashable {
-  private let identifier = UUID().uuidString
-}
 
 @propertyWrapper
 public final class Storage<Value>: CustomReflectable {
-  
-  private var willUpdateSubscribers: [StorageSubscribeToken : (Value) -> Void] = [:]
-  private var didUpdateSubscribers: [StorageSubscribeToken : (Value) -> Void] = [:]
+    
+  private let willUpdateEmitter = EventEmitter<Void>()
+  private let didUpdateEmitter = EventEmitter<Value>()
   
   public var wrappedValue: Value {
     return value
@@ -103,52 +98,31 @@ public final class Storage<Value>: CustomReflectable {
   /// Storage tells got a newValue.
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
-  public func addWillUpdate(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
-    lock.lock()
-    defer { lock.unlock() }
-    
-    let token = StorageSubscribeToken()
-    willUpdateSubscribers[token] = subscriber
-    return token
+  public func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
+    willUpdateEmitter.add(subscriber)
   }
   
   /// Register observer with closure.
   /// Storage tells got a newValue.
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
-  public func addDidUpdate(subscriber: @escaping (Value) -> Void) -> StorageSubscribeToken {
-    lock.lock()
-    defer { lock.unlock() }
-    
-    let token = StorageSubscribeToken()
-    didUpdateSubscribers[token] = subscriber
-    return token
+  public func addDidUpdate(subscriber: @escaping (Value) -> Void) -> EventEmitterSubscribeToken {
+    didUpdateEmitter.add(subscriber)
   }
   
-  public func remove(subscriber: StorageSubscribeToken) {
-    lock.lock()
-    defer { lock.unlock() }
-    
-    didUpdateSubscribers.removeValue(forKey: subscriber)
-    willUpdateSubscribers.removeValue(forKey: subscriber)
+  public func remove(subscribe token: EventEmitterSubscribeToken) {
+    didUpdateEmitter.remove(token)
+    willUpdateEmitter.remove(token)
   }
     
   @inline(__always)
   fileprivate func notifyWillUpdate(value: Value) {
-    lock.lock()
-    let subscribers: [StorageSubscribeToken : (Value) -> Void] = self.willUpdateSubscribers
-    lock.unlock()
-    
-    subscribers.forEach { $0.value(value) }
+    willUpdateEmitter.accept(())
   }
   
   @inline(__always)
   fileprivate func notifyDidUpdate(value: Value) {
-    lock.lock()
-    let subscribers: [StorageSubscribeToken : (Value) -> Void] = self.didUpdateSubscribers
-    lock.unlock()
-    
-    subscribers.forEach { $0.value(value) }
+    didUpdateEmitter.accept(value)
   }
   
   public var customMirror: Mirror {

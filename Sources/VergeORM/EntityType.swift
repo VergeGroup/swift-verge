@@ -46,6 +46,5 @@ public protocol EntityType: VergeTypedIdentifiable {
   typealias Table = VergeORM.EntityTable<Self, Read>
   typealias EntityTableKey = VergeORM.EntityTableKey<Self>
   typealias OrderTableKey = VergeORM.OrderTableKey<Self>
-  // TODO: Add some methods for updating entity.
 }
 

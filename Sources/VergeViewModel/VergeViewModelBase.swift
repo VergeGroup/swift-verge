@@ -52,7 +52,7 @@ open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State>, Disp
 open class VergeViewModelBase<State, StoreState, Activity>: StandaloneVergeViewModelBase<State, Activity> {
     
   public let parent: StoreBase<StoreState>
-  private var subscription: StorageSubscribeToken?
+  private var subscription: EventEmitterSubscribeToken?
   
   public init(
     initialState: State,
@@ -75,7 +75,7 @@ open class VergeViewModelBase<State, StoreState, Activity>: StandaloneVergeViewM
   
   deinit {
     if let subscription = self.subscription {
-      parent.backingStorage.remove(subscriber: subscription)
+      parent.backingStorage.remove(subscribe: subscription)
     }
   }
   

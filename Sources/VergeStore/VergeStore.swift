@@ -139,19 +139,20 @@ open class StoreBase<State>: CustomReflectable, VergeStoreType {
 import Foundation
 import Combine
 
-private var _associated: Void?
+fileprivate var _willChangeAssociated: Void?
+fileprivate var _didChangeAssociated: Void?
 
 @available(iOS 13.0, macOS 10.15, *)
 extension Storage: ObservableObject {
   
   public var objectWillChange: ObservableObjectPublisher {
-    if let associated = objc_getAssociatedObject(self, &_associated) as? ObservableObjectPublisher {
+    if let associated = objc_getAssociatedObject(self, &_willChangeAssociated) as? ObservableObjectPublisher {
       return associated
     } else {
       let associated = ObservableObjectPublisher()
-      objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN)
+      objc_setAssociatedObject(self, &_willChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
       
-      addWillUpdate { _ in
+      addWillUpdate {
         if Thread.isMainThread {
           associated.send()
         } else {
@@ -167,11 +168,11 @@ extension Storage: ObservableObject {
   
   public var didChangePublisher: AnyPublisher<Value, Never> {
     
-    if let associated = objc_getAssociatedObject(self, &_associated) as? PassthroughSubject<Value, Never> {
+    if let associated = objc_getAssociatedObject(self, &_didChangeAssociated) as? PassthroughSubject<Value, Never> {
       return associated.eraseToAnyPublisher()
     } else {
       let associated = PassthroughSubject<Value, Never>()
-      objc_setAssociatedObject(self, &_associated, associated, .OBJC_ASSOCIATION_RETAIN)
+      objc_setAssociatedObject(self, &_didChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
       
       addDidUpdate { s in
         if Thread.isMainThread {

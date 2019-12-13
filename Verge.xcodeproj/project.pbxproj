@@ -19,6 +19,7 @@
 		4B475BC0239AB983008A03E1 /* VergeORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BBE239AB97F008A03E1 /* VergeORM.swift */; };
 		4B475BC8239ADE1C008A03E1 /* VergeNormalizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BC7239ADE1C008A03E1 /* VergeNormalizerTests.swift */; };
 		4B475BD0239ADEB4008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
+		4B52B22F23A3418E008A3B5A /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */; };
 		4B54E2791FE3646B001736D2 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E2781FE3646B001736D2 /* Storage.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityStorage.swift */; };
@@ -96,7 +97,6 @@
 		4BF2BCCC238A64C600F70CDA /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4BF2BCCB238A64C600F70CDA /* RxSwift */; };
 		4BF2BCCE238A658400F70CDA /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* Verge.framework */; };
 		4BF2BCD6238A68CE00F70CDA /* VergeViewModelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD5238A68CE00F70CDA /* VergeViewModelBase.swift */; };
-		4BF2BCDA238A7B6900F70CDA /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */; };
 		4BF2BCE2238A85A700F70CDA /* VergeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCE1238A85A700F70CDA /* VergeViewModelTests.swift */; };
 		4BF2BCE4238A85A700F70CDA /* VergeViewModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BF2BCA0238A63FB00F70CDA /* VergeViewModel.framework */; };
 /* End PBXBuildFile section */
@@ -584,6 +584,7 @@
 			children = (
 				4B786322233912AB009B9C1B /* VergeStore.h */,
 				4B786323233912AB009B9C1B /* Info.plist */,
+				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
 				4B427418236F269C00C302C8 /* VergeStore.swift */,
 				4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */,
@@ -750,7 +751,6 @@
 				4BF2BCA2238A63FB00F70CDA /* VergeViewModel.h */,
 				4BF2BCA3238A63FB00F70CDA /* Info.plist */,
 				4BF2BCD5238A68CE00F70CDA /* VergeViewModelBase.swift */,
-				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
 			);
 			path = VergeViewModel;
 			sourceTree = "<group>";
@@ -1343,6 +1343,7 @@
 				4B427419236F269C00C302C8 /* VergeStore.swift in Sources */,
 				4B94915D239C35D300370067 /* Action.swift in Sources */,
 				4B427412236F1D2D00C302C8 /* Storage.swift in Sources */,
+				4B52B22F23A3418E008A3B5A /* EventEmitter.swift in Sources */,
 				4BCBCA8D2381CC2B00F33B15 /* DispatcherContext.swift in Sources */,
 				4B23275F239E67EE0043D3F9 /* Getter.swift in Sources */,
 				4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */,
@@ -1410,7 +1411,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BF2BCD6238A68CE00F70CDA /* VergeViewModelBase.swift in Sources */,
-				4BF2BCDA238A7B6900F70CDA /* EventEmitter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
