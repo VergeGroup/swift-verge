@@ -21,7 +21,7 @@
 
 import Foundation
 
-public class SelectorBase<Destination> {
+open class SelectorBase<Destination> {
   
   let willUpdateEmitter: EventEmitter<Void>
   let didUpdateEmitter: EventEmitter<Destination>
@@ -70,7 +70,7 @@ public final class AnySelector<Destination>: SelectorBase<Destination> {
   
 }
 
-public final class MemoizeSelector<Source, Destination>: SelectorBase<Destination> {
+open class MemoizeSelector<Source, Destination>: SelectorBase<Destination> {
   
   let source: Source
   let selector: (Source) -> Destination
