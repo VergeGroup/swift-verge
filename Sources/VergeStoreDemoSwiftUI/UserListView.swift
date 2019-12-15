@@ -9,12 +9,13 @@
 import Foundation
 import SwiftUI
 import VergeStore
+import VergeCore
 
 struct UserListView: View {
   
   @EnvironmentObject var session: Session
   
-  private var users: MemoizeGetter<SessionState, [Entity.User]> {
+  private var users: MemoizeSelector<SessionState, [Entity.User]> {
     session.users
   }
            

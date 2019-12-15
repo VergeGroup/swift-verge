@@ -22,16 +22,17 @@ final class Session: ObservableObject {
   let store = SessionStore()
   private(set) lazy var sessionDispatcher = SessionDispatcher(target: store)
   
-  private(set) lazy var users = self.store.makeMemoizeGetter(
-  equality: .init(selector: { $0.db.entities.user }),
-  selector: { state in
-  state.db.entities.user.find(in: state.db.orderTables.userIDs)
-  })
+  private(set) lazy var users = self.store.selector(
+    selector: { state in
+      state.db.entities.user.find(in: state.db.orderTables.userIDs)
+  },
+    equality: .init(selector: { $0.db.entities.user })
+  )
   
   init() {
     
   }
-    
+  
 }
 
 enum Entity {
