@@ -98,7 +98,7 @@ class VergeNormalizerTests: XCTestCase {
     
     print(state.db.orderTables.bookA)
     
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdate { (context) -> Void in
       context.deletes.book.insert(Book.ID.init(raw: "some"))
     }
     
@@ -141,34 +141,82 @@ class VergeNormalizerTests: XCTestCase {
     
     let storage = Storage<RootState>(.init())
     
-    let selector = storage.entitySelector(
+    let id = Book.ID.init(raw: "some")
+    
+    let nullableSelector = storage.entitySelector(
       entityTableSelector: { $0.db.entities.book },
-      entityID: Book.ID.init(raw: "some")
+      entityID: id
     )
-    
-    let waiter = XCTWaiter()
-    
-    let didUpdate = XCTestExpectation()
-    
-    selector.addDidUpdate { (book) in
-      didUpdate.fulfill()
-    }
-    
-    XCTAssertNil(selector.value)
-    
-    storage.update { state in
-      state.db.performBatchUpdate { (context) in
         
-        let book = Book(rawID: "some")
-        context.insertsOrUpdates.book.insert(book)
-        context.orderTables.bookA.append(book.id)
+    XCTContext.runActivity(named: "simple") { (a) -> Void in
+      let waiter = XCTWaiter()
+      
+      let didUpdate = XCTestExpectation()
+      
+      nullableSelector.addDidUpdate { (book) in
+        didUpdate.fulfill()
+      }
+      
+      XCTAssertNil(nullableSelector.value)
+      
+      var book: Book!
+            
+      storage.update { state in
+        let createdBook = state.db.performBatchUpdate { (context) -> Book in
+          
+          let book = Book(rawID: id.raw)
+          context.insertsOrUpdates.book.insert(book)
+          context.orderTables.bookA.append(book.id)
+          
+          return book
+        }
+        
+        book = createdBook
+      }
+      
+      let selector = storage.nonNullEntitySelector(
+        entityTableSelector: { $0.db.entities.book },
+        entity: book
+      )
+      
+      XCTAssertNotNil(nullableSelector.value)
+      XCTAssertNotNil(selector.value)
+      
+      waiter.wait(for: [didUpdate], timeout: 2)
+      
+      XCTContext.runActivity(named: "modify") { (_) -> Void in
+                
+        storage.update { state in
+          state.db.performBatchUpdate { (context) -> Void in
+            
+            var book = context.current.entities.book.find(by: id)!
+            book.name = "Hey"
+            context.insertsOrUpdates.book.insert(book)
+            
+          }
+        }
+        
+        XCTAssertEqual(selector.value.name, "Hey")
+        XCTAssertEqual(nullableSelector.value!.name, "Hey")
+        
+      }
+      
+      XCTContext.runActivity(named: "delete") { (_) -> Void in
+        
+        storage.update { state in
+          state.db.performBatchUpdate { (context) -> Void in
+            
+            context.deletes.book.insert(id)
+            
+          }
+        }
+        
+        XCTAssertEqual(selector.value.name, "Hey")
+        XCTAssertEqual(nullableSelector.value == nil, true)
+        
       }
     }
-    
-    XCTAssertNotNil(selector.value)
-    
-    waiter.wait(for: [didUpdate], timeout: 2)
-    
+      
   }
   
   func testPerformanceExample() {

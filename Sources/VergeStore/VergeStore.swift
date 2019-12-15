@@ -81,7 +81,9 @@ public protocol VergeStoreType {
 ///   }
 /// }
 /// ```
-open class StoreBase<State>: CustomReflectable, VergeStoreType {
+open class StoreBase<State>: CustomReflectable, VergeStoreType, ValueContainerType {
+  
+  public typealias Value = State
     
   /// A current state.
   public var state: State {

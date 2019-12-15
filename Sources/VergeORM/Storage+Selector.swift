@@ -25,7 +25,7 @@ import Foundation
 import VergeCore
 #endif
 
-extension Storage {
+extension ValueContainerType {
   
   public func entitySelector<E: EntityType>(
     entityTableSelector: @escaping (Value) -> EntityTable<E, Read>,
@@ -52,7 +52,50 @@ extension Storage {
     )
     
   }
+    
+  /// A selector that if get nil then return latest non-null value
+  /// - Parameters:
+  ///   - entityTableSelector:
+  ///   - entity:
+  public func nonNullEntitySelector<E: EntityType>(
+    entityTableSelector: @escaping (Value) -> EntityTable<E, Read>,
+    entity: E
+  ) -> MemoizeSelector<Value, E> {
+    
+    var fetched: E = entity
+    
+    return selector(selector: { (value) -> E in
+      let table = entityTableSelector(value)
+      if let e = table.find(by: entity.id) {
+        fetched = e
+      }
+      return fetched
+    }, equality: .alwaysDifferent()
+    )
+    
+  }
+  
+  /// A selector that if get nil then return latest non-null value
+  /// - Parameters:
+  ///   - entityTableSelector:
+  ///   - entity:
+  public func nonNullEntitySelector<E: EntityType & Equatable>(
+    entityTableSelector: @escaping (Value) -> EntityTable<E, Read>,
+    entity: E
+  ) -> MemoizeSelector<Value, E> {
+    
+    var fetched: E = entity
+    
+    return selector(selector: { (value) -> E in
+      let table = entityTableSelector(value)
+      if let e = table.find(by: entity.id) {
+        fetched = e
+      }
+      return fetched
+    }, equality: .init(selector: entityTableSelector, equals: { $0 == $1 })
+    )
+    
+  }
   
 }
-
 

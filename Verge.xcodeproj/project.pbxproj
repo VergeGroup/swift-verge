@@ -18,6 +18,7 @@
 		4B475BC0239AB983008A03E1 /* VergeORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BBE239AB97F008A03E1 /* VergeORM.swift */; };
 		4B475BC8239ADE1C008A03E1 /* VergeORMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */; };
 		4B475BD0239ADEB4008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
+		4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityStorage.swift */; };
 		4B57FD1823A29CCB00E41D06 /* OrderTableStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1723A29CCB00E41D06 /* OrderTableStorage.swift */; };
@@ -326,6 +327,7 @@
 		4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeORMTests.swift; sourceTree = "<group>"; };
 		4B475BC9239ADE1C008A03E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B495D092332B5170098F7B4 /* NetworkImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
+		4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueContainerType.swift; sourceTree = "<group>"; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityStorage.swift; sourceTree = "<group>"; };
 		4B57FD1723A29CCB00E41D06 /* OrderTableStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderTableStorage.swift; sourceTree = "<group>"; };
@@ -825,6 +827,7 @@
 				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
 				4B23275E239E67EE0043D3F9 /* Selector.swift */,
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
+				4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */,
 				4BFA229F23A63B56008D7BCB /* Info.plist */,
 			);
 			path = VergeCore;
@@ -1600,6 +1603,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BFA22B223A63BE1008D7BCB /* Selector.swift in Sources */,
+				4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */,
 				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
 				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,
 			);

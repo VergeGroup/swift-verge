@@ -23,7 +23,7 @@
 import Foundation
 
 @propertyWrapper
-public final class Storage<Value>: CustomReflectable {
+public final class Storage<Value>: CustomReflectable, ValueContainerType {
     
   private let willUpdateEmitter = EventEmitter<Void>()
   private let didUpdateEmitter = EventEmitter<Value>()
@@ -54,7 +54,7 @@ public final class Storage<Value>: CustomReflectable {
   
   @discardableResult
   @inline(__always)
-  public func update(_ update: (inout Value) throws -> Void) rethrows -> Value {
+  public func update<Result>(_ update: (inout Value) throws -> Result) rethrows -> Result {
     do {
       let notifyValue: Value
       lock.lock()
@@ -65,11 +65,11 @@ public final class Storage<Value>: CustomReflectable {
     
     lock.lock()
     do {
-      try update(&nonatomicValue)
+      let r = try update(&nonatomicValue)
       let notifyValue = nonatomicValue
       lock.unlock()
       notifyDidUpdate(value: notifyValue)
-      return notifyValue
+      return r
     } catch {
       lock.unlock()
       throw error

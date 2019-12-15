@@ -72,8 +72,7 @@ public final class AnySelector<Destination>: SelectorBase<Destination> {
 
 open class MemoizeSelector<Source, Destination>: SelectorBase<Destination> {
   
-  let source: Source
-  let selector: (Source) -> Destination
+  private let selector: (Source) -> Destination
   private var computedValue: Destination
   private let checker: (Source) -> Bool
     
@@ -82,7 +81,7 @@ open class MemoizeSelector<Source, Destination>: SelectorBase<Destination> {
     selector: @escaping (Source) -> Destination,
     equality: EqualityComputer<Source, Key>
   ) {
-    self.source = initialSource
+    
     self.selector = selector
     self.checker = equality.input
     

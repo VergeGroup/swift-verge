@@ -120,11 +120,11 @@ public final class DatabaseBatchUpdateContext<Database: DatabaseType> {
 
 extension DatabaseType {
   
-  public mutating func performBatchUpdate(_ update: (DatabaseBatchUpdateContext<Self>) throws -> Void) rethrows {
+  public mutating func performBatchUpdate<Result>(_ update: (DatabaseBatchUpdateContext<Self>) throws -> Result) rethrows -> Result {
             
     let context = DatabaseBatchUpdateContext<Self>(current: self)
     do {
-      try update(context)
+      let result = try update(context)
       var target = self._backingStorage.entityBackingStorage.makeWriable()
       target.merge(otherStorage: context.insertsOrUpdates)
       target.subtract(otherStorage: context.deletes)
@@ -148,6 +148,8 @@ extension DatabaseType {
       }
                   
       self._backingStorage.entityBackingStorage = target.makeReadonly()
+      
+      return result
     } catch {
       throw error
     }
