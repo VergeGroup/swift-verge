@@ -19,15 +19,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import Foundation
 
-#import <Foundation/Foundation.h>
+#if !COCOAPODS
+import VergeCore
+#endif
 
-//! Project version number for VergeViewModel.
-FOUNDATION_EXPORT double VergeViewModelVersionNumber;
-
-//! Project version string for VergeViewModel.
-FOUNDATION_EXPORT const unsigned char VergeViewModelVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <VergeViewModel/PublicHeader.h>
-
-
+extension Storage {
+  
+  public func entitySelector<E: EntityType>(
+    entityTableSelector: @escaping (Value) -> EntityTable<E, Read>,
+    entityID: E.ID
+  ) -> MemoizeSelector<Value, E?> {
+    
+    selector(selector: { (value) -> E? in
+      let table = entityTableSelector(value)
+      return table.find(by: entityID)
+    }, equality: .alwaysDifferent()
+    )
+           
+  }
+  
+  public func entitySelector<E: EntityType & Equatable>(
+    entityTableSelector: @escaping (Value) -> EntityTable<E, Read>,
+    entityID: E.ID
+  ) -> MemoizeSelector<Value, E?> {
+    
+    selector(selector: { (value) -> E? in
+      let table = entityTableSelector(value)
+      return table.find(by: entityID)
+    }, equality: .init(selector: entityTableSelector, equals: { $0 == $1 })
+    )
+    
+  }
+  
+}

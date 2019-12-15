@@ -4,6 +4,10 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+#if !COCOAPODS
+import VergeCore
+#endif
+
 private var storage_subject: Void?
 private var storage_diposeBag: Void?
 
@@ -20,7 +24,7 @@ extension Storage {
       let associated = BehaviorRelay<Value>.init(value: value)
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
 
-      add(subscriber: { (value) in
+      addDidUpdate(subscriber: { (value) in
         associated.accept(value)
       })
 
@@ -172,23 +176,4 @@ extension Storage {
     }
   }
 
-  /// Projects each property of Value into a new form.
-  ///
-  /// - Parameter keyPath:
-  /// - Returns: 
-  public func map<U>(_ closure: @escaping (Value) -> U) -> Storage<U> {
-        
-    let m_state = Storage<U>.init(closure(value))
-
-    let subscription = asObservable()
-      .map(closure)
-      .subscribe(onNext: { [weak m_state] o in
-        m_state?.replace(o)
-      })
-
-    m_state.disposeBag.insert(subscription)
-    disposeBag.insert(subscription)
-
-    return m_state
-  }
 }

@@ -2,6 +2,10 @@
 import Foundation
 import ObjectiveC
 
+#if !COCOAPODS
+import VergeCore
+#endif
+
 @_exported import RxSwift
 @_exported import RxCocoa
 

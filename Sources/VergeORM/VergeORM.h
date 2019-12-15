@@ -19,15 +19,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
 #import <Foundation/Foundation.h>
 
-//! Project version number for VergeViewModel.
-FOUNDATION_EXPORT double VergeViewModelVersionNumber;
+//! Project version number for VergeNormalizer.
+FOUNDATION_EXPORT double VergeNormalizerVersionNumber;
 
-//! Project version string for VergeViewModel.
-FOUNDATION_EXPORT const unsigned char VergeViewModelVersionString[];
+//! Project version string for VergeNormalizer.
+FOUNDATION_EXPORT const unsigned char VergeNormalizerVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <VergeViewModel/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <VergeNormalizer/PublicHeader.h>
 
 

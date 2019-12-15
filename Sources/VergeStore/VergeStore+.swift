@@ -19,15 +19,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import Foundation
 
-#import <Foundation/Foundation.h>
+#if COCOAPODS || canImport(VergeCore)
 
-//! Project version number for VergeViewModel.
-FOUNDATION_EXPORT double VergeViewModelVersionNumber;
+#if !COCOAPODS
+import VergeCore
+#endif
 
-//! Project version string for VergeViewModel.
-FOUNDATION_EXPORT const unsigned char VergeViewModelVersionString[];
+extension StoreBase {
+  
+  public func selector<Key, Destination>(
+    selector: @escaping (State) -> Destination,
+    equality: EqualityComputer<State, Key>
+  ) -> MemoizeSelector<State, Destination> {
+    
+    _backingStorage.selector(selector: selector, equality: equality)
+  }
+  
+}
 
-// In this header, you should import all the public headers of your framework using statements like #import <VergeViewModel/PublicHeader.h>
-
-
+#endif

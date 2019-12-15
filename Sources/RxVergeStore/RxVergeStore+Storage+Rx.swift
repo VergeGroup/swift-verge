@@ -3,6 +3,7 @@ import Foundation
 
 #if !COCOAPODS
 import VergeStore
+import VergeCore
 #endif
 
 import RxSwift
@@ -14,7 +15,7 @@ private var storage_diposeBag: Void?
 extension StoreBase where State : StateType {
   
   public func statePublisher() -> Observable<State> {
-    backingStorage.asObservable()
+    _backingStorage.asObservable()
   }
   
 }

@@ -23,6 +23,7 @@ import Foundation
 
 #if !COCOAPODS
 @_exported import VergeStore
+import VergeCore
 #endif
 
 public protocol _StandaloneVergeViewModelBaseType {
@@ -64,9 +65,9 @@ open class VergeViewModelBase<State, StoreState, Activity>: StandaloneVergeViewM
     
     super.init(initialState: initialState, logger: logger)
     
-    self.subscription = parent.backingStorage.addDidUpdate { [weak self] (state) in
+    self.subscription = parent._backingStorage.addDidUpdate { [weak self] (state) in
       guard let self = self else { return }
-      self.backingStorage.update { s in
+      self._backingStorage.update { s in
         self.updateState(state: &s, by: state)
       }
     }
@@ -75,7 +76,7 @@ open class VergeViewModelBase<State, StoreState, Activity>: StandaloneVergeViewM
   
   deinit {
     if let subscription = self.subscription {
-      parent.backingStorage.remove(subscribe: subscription)
+      parent._backingStorage.remove(subscribe: subscription)
     }
   }
   

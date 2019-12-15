@@ -43,8 +43,14 @@ public struct VergeTypedIdentifier<T: VergeTypedIdentifiable> : Hashable {
 }
 
 public protocol EntityType: VergeTypedIdentifiable {
-  typealias Table = VergeORM.EntityTable<Self, Read>
+  #if COCOAPODS
+  typealias EntityTable = Verge.EntityTable<Self, Read>
+  typealias EntityTableKey = Verge.EntityTableKey<Self>
+  typealias OrderTableKey = Verge.OrderTableKey<Self>
+  #else
+  typealias EntityTable = VergeORM.EntityTable<Self, Read>
   typealias EntityTableKey = VergeORM.EntityTableKey<Self>
   typealias OrderTableKey = VergeORM.OrderTableKey<Self>
+  #endif
 }
 

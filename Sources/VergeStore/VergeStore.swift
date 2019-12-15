@@ -21,6 +21,10 @@
 
 import Foundation
 
+#if !COCOAPODS
+import VergeCore
+#endif
+
 /// A metadata object that indicates the name of the mutation and where it was caused.
 public struct MutationMetadata {
   
@@ -81,12 +85,12 @@ open class StoreBase<State>: CustomReflectable, VergeStoreType {
     
   /// A current state.
   public var state: State {
-    backingStorage.value
+    _backingStorage.value
   }
 
   /// A backing storage that manages current state.
   /// You shouldn't access this directly unless special case.
-  public let backingStorage: Storage<State>
+  public let _backingStorage: Storage<State>
   
   public private(set) var logger: VergeStoreLogger?
     
@@ -99,13 +103,13 @@ open class StoreBase<State>: CustomReflectable, VergeStoreType {
     logger: VergeStoreLogger?
   ) {
     
-    self.backingStorage = .init(initialState)
+    self._backingStorage = .init(initialState)
     self.logger = logger
     
   }
   
   @inline(__always)
-  func receive<FromDispatcher: DispatcherType>(
+  func _receive<FromDispatcher: DispatcherType>(
     context: VergeStoreDispatcherContext<FromDispatcher>?,
     mutation: AnyMutation<FromDispatcher>
   ) where FromDispatcher.State == State {
@@ -113,7 +117,7 @@ open class StoreBase<State>: CustomReflectable, VergeStoreType {
     logger?.willCommit(store: self, state: self.state, mutation: mutation.metadata, context: context)
     
     let startedTime = CFAbsoluteTimeGetCurrent()
-    let result = backingStorage.update { (state) in
+    let result = _backingStorage.update { (state) in
       mutation._mutate(&state)
     }
     let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
@@ -193,11 +197,11 @@ extension Storage: ObservableObject {
 @available(iOS 13.0, macOS 10.15, *)
 extension StoreBase: ObservableObject {
   public var objectWillChange: ObservableObjectPublisher {
-    backingStorage.objectWillChange
+    _backingStorage.objectWillChange
   }
   
   public var didChangePublisher: AnyPublisher<State, Never> {
-    backingStorage.didChangePublisher
+    _backingStorage.didChangePublisher
   }
 }
 

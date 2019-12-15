@@ -8,6 +8,7 @@
 
 import XCTest
 
+import VergeCore
 import VergeORM
 
 struct Book: EntityType, Equatable {
@@ -24,7 +25,7 @@ struct Author: EntityType {
 struct RootState {
   
   struct Entity: DatabaseType {
-              
+                  
     struct Schema: EntitySchemaType {
       let book = EntityTableKey<Book>()
       let author = EntityTableKey<Author>()
@@ -34,7 +35,7 @@ struct RootState {
       let bookA = OrderTableKey<Book>(name: "bookA")
     }
     
-    var storage: Storage = .init()
+    var _backingStorage: BackingStorage = .init()
   }
   
   var db = Entity()
@@ -134,6 +135,30 @@ class VergeNormalizerTests: XCTestCase {
     XCTAssertNotNil(state.db.entities.book.find(by: id))
     XCTAssertNotNil(state.db.entities.book.find(by: id)!.name == "hello")
 
+  }
+  
+  func testSelector() {
+    
+    let storage = Storage<RootState>(.init())
+    
+    let selector = storage.entitySelector(
+      entityTableSelector: { $0.db.entities.book },
+      entityID: Book.ID.init(raw: "some")
+    )
+    
+    XCTAssertNil(selector.value)
+    
+    storage.update { state in
+      state.db.performBatchUpdate { (context) in
+        
+        let book = Book(rawID: "some")
+        context.insertsOrUpdates.book.insert(book)
+        context.orderTables.bookA.append(book.id)
+      }
+    }
+    
+    XCTAssertNotNil(selector.value)   
+    
   }
   
   func testPerformanceExample() {

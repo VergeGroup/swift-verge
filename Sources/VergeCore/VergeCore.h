@@ -22,12 +22,12 @@
 
 #import <Foundation/Foundation.h>
 
-//! Project version number for VergeViewModel.
-FOUNDATION_EXPORT double VergeViewModelVersionNumber;
+//! Project version number for VergeSelector.
+FOUNDATION_EXPORT double VergeSelectorVersionNumber;
 
-//! Project version string for VergeViewModel.
-FOUNDATION_EXPORT const unsigned char VergeViewModelVersionString[];
+//! Project version string for VergeSelector.
+FOUNDATION_EXPORT const unsigned char VergeSelectorVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <VergeViewModel/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <VergeSelector/PublicHeader.h>
 
 

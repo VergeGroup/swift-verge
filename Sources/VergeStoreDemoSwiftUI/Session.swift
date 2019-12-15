@@ -70,7 +70,7 @@ struct SessionState: StateType {
       let postIDs = Entity.Post.OrderTableKey(name: "postIDs")
     }
        
-    var storage: DatabaseStorage<SessionState.Database.Schema, SessionState.Database.OrderTables> = .init()
+    var _backingStorage: DatabaseStorage<SessionState.Database.Schema, SessionState.Database.OrderTables> = .init()
   }
     
   var db: Database = .init()
