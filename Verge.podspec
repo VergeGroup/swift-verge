@@ -17,6 +17,8 @@ Pod::Spec.new do |s|
   
   s.swift_version = '5.1'
 
+  s.default_subspec = 'Core'
+
   s.subspec 'Classic' do |ss|
     ss.dependency 'RxSwift', '~> 5.0.0'
     ss.dependency 'RxCocoa', '~> 5.0.0'   

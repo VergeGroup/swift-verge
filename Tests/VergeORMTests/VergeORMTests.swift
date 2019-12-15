@@ -146,6 +146,14 @@ class VergeNormalizerTests: XCTestCase {
       entityID: Book.ID.init(raw: "some")
     )
     
+    let waiter = XCTWaiter()
+    
+    let didUpdate = XCTestExpectation()
+    
+    selector.addDidUpdate { (book) in
+      didUpdate.fulfill()
+    }
+    
     XCTAssertNil(selector.value)
     
     storage.update { state in
@@ -157,7 +165,9 @@ class VergeNormalizerTests: XCTestCase {
       }
     }
     
-    XCTAssertNotNil(selector.value)   
+    XCTAssertNotNil(selector.value)
+    
+    waiter.wait(for: [didUpdate], timeout: 2)
     
   }
   
