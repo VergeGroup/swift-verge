@@ -10,7 +10,7 @@ import XCTest
 
 import VergeORM
 
-struct Book: EntityType {
+struct Book: EntityType, Equatable {
   
   let rawID: String
   var name: String = ""
@@ -48,6 +48,23 @@ class VergeNormalizerTests: XCTestCase {
   
   override func tearDown() {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+  }
+  
+  func testEqualityEntityTable() {
+    
+    var state = RootState()
+    
+    state.db.performBatchUpdate { (context) in
+      
+      let book = Book(rawID: "some")
+      context.insertsOrUpdates.book.insert(book)
+    }
+    
+    let a = state.db.entities.book
+    let b = state.db.entities.book
+    
+    XCTAssertEqual(a, b)
+        
   }
   
   func testSimpleInsert() {
