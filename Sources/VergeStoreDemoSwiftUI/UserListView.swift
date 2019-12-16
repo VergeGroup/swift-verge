@@ -82,7 +82,7 @@ struct AllPostsView: View {
   @EnvironmentObject var session: Session
   
   private var posts: [Entity.Post] {
-    session.store.state.db.entities.post.find(in: session.store.state.db.orderTables.postIDs)
+    session.store.state.db.entities.post.find(in: session.store.state.db.indexes.postIDs)
   }
     
   var body: some View {

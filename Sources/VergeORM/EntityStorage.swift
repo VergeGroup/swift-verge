@@ -23,10 +23,6 @@ import Foundation
 
 public struct EntityTableKey<S: EntityType> {
   
-  public var typeName: String {
-    String(reflecting: S.self)
-  }
-  
   public init() {
     
   }
@@ -106,15 +102,13 @@ public protocol EntitySchemaType {
 public struct EntityStorage<Schema: EntitySchemaType, Trait: AccessControlType> {
   
   typealias RawTable = [AnyHashable : Any]
-  private(set) var entityTableStorage: [String : RawTable]
-  
-  private let schema = Schema()
-  
+  private(set) var entityTableStorage: [EntityName : RawTable]
+      
   public init() {
     self.entityTableStorage = [:]
   }
   
-  private init(entityTableStorage: [String : RawTable]) {
+  private init(entityTableStorage: [EntityName : RawTable]) {
     self.entityTableStorage = entityTableStorage
   }
      
@@ -128,8 +122,7 @@ extension EntityStorage where Trait == Read {
   
   public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<U, Trait> {
     get {
-      let key = schema[keyPath: keyPath]
-      guard let rawTable = entityTableStorage[key.typeName] else {
+      guard let rawTable = entityTableStorage[U.entityName] else {
         return EntityTable<U, Trait>(buffer: [:])
       }
       return EntityTable<U, Trait>(buffer: rawTable)
@@ -141,15 +134,13 @@ extension EntityStorage where Trait == Write {
   
   public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<U, Trait> {
     get {
-      let key = schema[keyPath: keyPath]
-      guard let rawTable = entityTableStorage[key.typeName] else {
+      guard let rawTable = entityTableStorage[U.entityName] else {
         return EntityTable<U, Trait>(buffer: [:])
       }
       return EntityTable<U, Trait>(buffer: rawTable)
     }
     set {
-      let key = schema[keyPath: keyPath]
-      entityTableStorage[key.typeName] = newValue.entities
+      entityTableStorage[U.entityName] = newValue.entities
     }
   }
   
@@ -192,30 +183,30 @@ extension EntityStorage where Trait == Write {
 public struct BackingRemovingEntityStorage<Schema: EntitySchemaType> {
   
   typealias RawTable = Set<AnyHashable>
-  private(set) var entityTableStorage: [String : RawTable]
-  
-  private let schema = Schema()
-  
+  private(set) var entityTableStorage: [EntityName : RawTable]
+    
   public init() {
     self.entityTableStorage = [:]
   }
   
-  private init(entityTableStorage: [String : RawTable]) {
+  private init(entityTableStorage: [EntityName : RawTable]) {
     self.entityTableStorage = entityTableStorage
   }
   
   public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> Set<U.ID> {
     get {
-      let key = schema[keyPath: keyPath]
-      guard let rawTable = entityTableStorage[key.typeName] else {
+      guard let rawTable = entityTableStorage[U.entityName] else {
         return Set<U.ID>([])
       }
       return rawTable as! Set<U.ID>
     }
     set {
-      let key = schema[keyPath: keyPath]
-      entityTableStorage[key.typeName] = newValue
+      entityTableStorage[U.entityName] = newValue
     }
+  }
+  
+  func getTable<E: EntityType>(_ type: E.Type) -> Set<E.ID>? {
+    entityTableStorage[E.entityName] as? Set<E.ID>
   }
   
 }

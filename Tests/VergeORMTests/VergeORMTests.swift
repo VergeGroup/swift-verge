@@ -94,16 +94,16 @@ class VergeNormalizerTests: XCTestCase {
     }
         
     XCTAssertEqual(state.db.entities.book.count, 1)
-    XCTAssertEqual(state.db.orderTables.bookA.count, 1)
+    XCTAssertEqual(state.db.indexes.bookA.count, 1)
     
-    print(state.db.orderTables.bookA)
+    print(state.db.indexes.bookA)
     
     state.db.performBatchUpdate { (context) -> Void in
       context.deletes.book.insert(Book.ID.init(raw: "some"))
     }
     
     XCTAssertEqual(state.db.entities.book.count, 0)
-    XCTAssertEqual(state.db.orderTables.bookA.count, 0)
+    XCTAssertEqual(state.db.indexes.bookA.count, 0)
     
   }
   

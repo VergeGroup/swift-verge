@@ -34,21 +34,15 @@ public enum Write: AccessControlType {
 public protocol DatabaseType {
   
   associatedtype Schema: EntitySchemaType
-  associatedtype OrderTables: OrderTablesType
-  typealias BackingStorage = DatabaseStorage<Schema, OrderTables>
+  associatedtype Indexes: IndexesType
+  typealias BackingStorage = DatabaseStorage<Schema, Indexes>
   var _backingStorage: BackingStorage { get set }
 }
 
-public struct DatabaseStorage<Schema: EntitySchemaType, OrderTables: OrderTablesType> {
-  
-  public typealias EntityBackingStorage = EntityStorage<Schema, Read>
-  public typealias OrderTableBackingStorage = OrderTableStorage<OrderTables, Read>
-  
-  public typealias WritableBackingStorage = EntityStorage<Schema, Write>
-  public typealias WritableOrderTableBackingStorage = OrderTableStorage<OrderTables, Write>
- 
-  var entityBackingStorage: EntityBackingStorage = .init()
-  var orderTableBackingStorage: OrderTableBackingStorage = .init()
+public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
+      
+  var entityBackingStorage: EntityStorage<Schema, Read> = .init()
+  var indexedStorage: IndexesStorage<Schema, Indexes> = .init()
   
   public init() {
     
@@ -68,13 +62,13 @@ public struct EntityPropertyAdapter<DB: DatabaseType> {
 }
 
 @dynamicMemberLookup
-public struct OrderTablePropertyAdapter<DB: DatabaseType> {
+public struct IndexesPropertyAdapter<DB: DatabaseType> {
   
   let get: () -> DB
   
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.OrderTables, OrderTableKey<U>>) -> OrderTable<U, Read> {
+  public subscript <Index: IndexType>(dynamicMember keyPath: KeyPath<DB.Indexes, IndexKey<Index>>) -> Index where DB.Schema == Index.Schema {
     get {
-      get()._backingStorage.orderTableBackingStorage[dynamicMember: keyPath]
+      get()._backingStorage.indexedStorage[dynamicMember: keyPath]
     }
   }
 }
@@ -87,7 +81,7 @@ extension DatabaseType {
     }
   }
   
-  public var orderTables: OrderTablePropertyAdapter<Self> {
+  public var indexes: IndexesPropertyAdapter<Self> {
     .init {
       self
     }
@@ -103,14 +97,13 @@ public final class DatabaseBatchUpdateContext<Database: DatabaseType> {
   
   public let current: Database
   
-  public var insertsOrUpdates: Database.BackingStorage.WritableBackingStorage = .init()
+  public var insertsOrUpdates: EntityStorage<Database.Schema, Write> = .init()
   public var deletes: BackingRemovingEntityStorage<Database.Schema> = .init()
-  
-  public var orderTables: Database.BackingStorage.WritableOrderTableBackingStorage
-  
+  public var indexes: IndexesStorage<Database.Schema, Database.Indexes>
+    
   init(current: Database) {
     self.current = current
-    self.orderTables = current._backingStorage.orderTableBackingStorage.makeWriable()
+    self.indexes = current._backingStorage.indexedStorage
   }
   
   public func abort() throws -> Never {
@@ -125,30 +118,19 @@ extension DatabaseType {
     let context = DatabaseBatchUpdateContext<Self>(current: self)
     do {
       let result = try update(context)
-      var target = self._backingStorage.entityBackingStorage.makeWriable()
-      target.merge(otherStorage: context.insertsOrUpdates)
-      target.subtract(otherStorage: context.deletes)
       
-      updateOrderTable: do {
-        
-        self._backingStorage.orderTableBackingStorage = context.orderTables.makeReadonly()
-        
-        context.deletes.entityTableStorage.forEach { key, value in
-          
-          if let table = context.orderTables.orderTableStorage[key] {
-            var modified = table
-            
-            modified.removeAll { value.contains($0) }
-            
-            self._backingStorage.orderTableBackingStorage.orderTableStorage[key] = modified
-          }
-          
-        }
-        
+      do {
+        var target = self._backingStorage.entityBackingStorage.makeWriable()
+        target.merge(otherStorage: context.insertsOrUpdates)
+        target.subtract(otherStorage: context.deletes)
+        self._backingStorage.entityBackingStorage = target.makeReadonly()
       }
-                  
-      self._backingStorage.entityBackingStorage = target.makeReadonly()
-      
+                 
+      do {
+        context.indexes.apply(removing: context.deletes)
+        self._backingStorage.indexedStorage = context.indexes
+      }
+            
       return result
     } catch {
       throw error

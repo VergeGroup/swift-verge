@@ -24,7 +24,7 @@ final class Session: ObservableObject {
   
   private(set) lazy var users = self.store.selector(
     selector: { state in
-      state.db.entities.user.find(in: state.db.orderTables.userIDs)
+      state.db.entities.user.find(in: state.db.indexes.userIDs)
   },
     equality: .init(selector: { $0.db.entities.user })
   )
@@ -66,12 +66,12 @@ struct SessionState: StateType {
       let comment = Entity.Comment.EntityTableKey()
     }
     
-    struct OrderTables: OrderTablesType {
-      let userIDs = Entity.User.OrderTableKey(name: "userIDs")
-      let postIDs = Entity.Post.OrderTableKey(name: "postIDs")
+    struct Indexes: IndexesType {
+      let userIDs = IndexKey<OrderedIDIndex<Schema, Entity.User>>()
+      let postIDs = IndexKey<OrderedIDIndex<Schema, Entity.Post>>()
     }
        
-    var _backingStorage: DatabaseStorage<SessionState.Database.Schema, SessionState.Database.OrderTables> = .init()
+    var _backingStorage: BackingStorage = .init()
   }
     
   var db: Database = .init()
@@ -102,9 +102,9 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
           pat,
           eric
         ])
-
-        context.orderTables.userIDs.removeAll()
-        context.orderTables.userIDs.append(contentsOf: ids)
+        
+        context.indexes.userIDs.removeAll()
+        context.indexes.userIDs.append(contentsOf: ids)
         
       }
     }
@@ -115,7 +115,7 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
       let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.id)
       s.db.performBatchUpdate { (context) in
         let id = context.insertsOrUpdates.post.insert(post)
-        context.orderTables.postIDs.append(id)
+        context.indexes.postIDs.append(id)
         
         if let _ = s.postIDsByUser[user.id] {
           s.postIDsByUser[user.id]!.append(id)
