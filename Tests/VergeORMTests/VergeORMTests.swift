@@ -31,8 +31,8 @@ struct RootState {
       let author = EntityTableKey<Author>()
     }
     
-    struct OrderTables: OrderTablesType {
-      let bookA = OrderTableKey<Book>(name: "bookA")
+    struct Indexes: IndexesType {
+      let bookA = IndexKey<OrderedIDIndex<Schema, Book>>()
     }
     
     var _backingStorage: BackingStorage = .init()
@@ -90,7 +90,7 @@ class VergeNormalizerTests: XCTestCase {
       
       let book = Book(rawID: "some")
       context.insertsOrUpdates.book.insert(book)
-      context.orderTables.bookA.append(book.id)
+      context.indexes.bookA.append(book.id)
     }
         
     XCTAssertEqual(state.db.entities.book.count, 1)
@@ -166,7 +166,7 @@ class VergeNormalizerTests: XCTestCase {
           
           let book = Book(rawID: id.raw)
           context.insertsOrUpdates.book.insert(book)
-          context.orderTables.bookA.append(book.id)
+          context.indexes.bookA.append(book.id)
           
           return book
         }
