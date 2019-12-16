@@ -62,15 +62,7 @@ public struct EntityTable<Entity: EntityType, Trait: AccessControlType> {
       buf.append(entity as! Entity)
     }
   }
-  
-  public mutating func remove(_ id: Entity.ID) {
-    entities.removeValue(forKey: id)
-  }
-  
-  public mutating func removeAll() {
-    entities.removeAll(keepingCapacity: false)
-  }
-  
+    
 }
 
 extension EntityTable: Equatable where Entity : Equatable {
@@ -95,6 +87,14 @@ extension EntityTable where Trait == Write {
       ids.append(entity.id)
     }
     return ids
+  }
+  
+  public mutating func remove(_ id: Entity.ID) {
+    entities.removeValue(forKey: id)
+  }
+  
+  public mutating func removeAll() {
+    entities.removeAll(keepingCapacity: false)
   }
 }
 

@@ -24,7 +24,7 @@ struct Author: EntityType {
 
 struct RootState {
   
-  struct Entity: DatabaseType {
+  struct Database: DatabaseType {
                   
     struct Schema: EntitySchemaType {
       let book = EntityTableKey<Book>()
@@ -38,13 +38,13 @@ struct RootState {
     var _backingStorage: BackingStorage = .init()
   }
   
-  var db = Entity()
+  var db = Database()
 }
 
 class VergeNormalizerTests: XCTestCase {
   
   override func setUp() {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+    // Put setup code here. This method is called before the invocation of each test method in the class.        
   }
   
   override func tearDown() {
