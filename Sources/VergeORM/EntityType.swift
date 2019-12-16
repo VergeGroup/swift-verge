@@ -44,10 +44,10 @@ public struct VergeTypedIdentifier<T: VergeTypedIdentifiable> : Hashable {
 
 public protocol EntityType: VergeTypedIdentifiable {
   #if COCOAPODS
-  typealias EntityTable = Verge.EntityTable<Self, Read>
+  typealias EntityTable = Verge.EntityTable<Self>
   typealias EntityTableKey = Verge.EntityTableKey<Self>
   #else
-  typealias EntityTable = VergeORM.EntityTable<Self, Read>
+  typealias EntityTable = VergeORM.EntityTable<Self>
   typealias EntityTableKey = VergeORM.EntityTableKey<Self>
   #endif
 }

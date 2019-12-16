@@ -41,7 +41,7 @@ public protocol DatabaseType {
 
 public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
       
-  var entityBackingStorage: EntityStorage<Schema, Read> = .init()
+  var entityBackingStorage: EntityStorage<Schema> = .init()
   var indexedStorage: IndexesStorage<Schema, Indexes> = .init()
   
   public init() {
@@ -54,7 +54,7 @@ public struct EntityPropertyAdapter<DB: DatabaseType> {
   
   let get: () -> DB
   
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.Schema, EntityTableKey<U>>) -> EntityTable<U, Read> {
+  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.Schema, EntityTableKey<U>>) -> EntityTable<U> {
     get {
       get()._backingStorage.entityBackingStorage[dynamicMember: keyPath]
     }
@@ -97,7 +97,7 @@ public final class DatabaseBatchUpdateContext<Database: DatabaseType> {
   
   public let current: Database
   
-  public var insertsOrUpdates: EntityStorage<Database.Schema, Write> = .init()
+  public var insertsOrUpdates: EntityStorage<Database.Schema> = .init()
   public var deletes: BackingRemovingEntityStorage<Database.Schema> = .init()
   public var indexes: IndexesStorage<Database.Schema, Database.Indexes>
     
@@ -120,10 +120,10 @@ extension DatabaseType {
       let result = try update(context)
       
       do {
-        var target = self._backingStorage.entityBackingStorage.makeWriable()
-        target.merge(otherStorage: context.insertsOrUpdates)
-        target.subtract(otherStorage: context.deletes)
-        self._backingStorage.entityBackingStorage = target.makeReadonly()
+        var target = self._backingStorage.entityBackingStorage
+        target._merge(otherStorage: context.insertsOrUpdates)
+        target._subtract(otherStorage: context.deletes)
+        self._backingStorage.entityBackingStorage = target
       }
                  
       do {

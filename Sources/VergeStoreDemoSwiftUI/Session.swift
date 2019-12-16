@@ -106,7 +106,7 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
         context.indexes.userIDs.removeAll()
         context.indexes.userIDs.append(contentsOf: ids)
         
-      }
+      }      
     }
   }
   

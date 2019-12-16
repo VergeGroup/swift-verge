@@ -28,7 +28,7 @@ public struct EntityTableKey<S: EntityType> {
   }
 }
 
-public struct EntityTable<Entity: EntityType, Trait: AccessControlType> {
+public struct EntityTable<Entity: EntityType> {
   
   public var count: Int {
     entities.count
@@ -59,22 +59,12 @@ public struct EntityTable<Entity: EntityType, Trait: AccessControlType> {
     }
   }
     
-}
-
-extension EntityTable: Equatable where Entity : Equatable {
-  public static func == (lhs: EntityTable<Entity, Trait>, rhs: EntityTable<Entity, Trait>) -> Bool {
-    (lhs.entities as! [AnyHashable : Entity]) == (rhs.entities as! [AnyHashable : Entity])
-  }
-}
-
-extension EntityTable where Trait == Write {
-  
   @discardableResult
   public mutating func insert(_ entity: Entity) -> Entity.ID {
     entities[entity.id] = entity
     return entity.id
   }
-    
+  
   @discardableResult
   public mutating func insert<S: Sequence>(_ addingEntities: S) -> [Entity.ID] where S.Element == Entity {
     var ids: [Entity.ID] = []
@@ -94,12 +84,18 @@ extension EntityTable where Trait == Write {
   }
 }
 
+extension EntityTable: Equatable where Entity : Equatable {
+  public static func == (lhs: EntityTable<Entity>, rhs: EntityTable<Entity>) -> Bool {
+    (lhs.entities as! [AnyHashable : Entity]) == (rhs.entities as! [AnyHashable : Entity])
+  }
+}
+
 public protocol EntitySchemaType {
   init()
 }
 
 @dynamicMemberLookup
-public struct EntityStorage<Schema: EntitySchemaType, Trait: AccessControlType> {
+public struct EntityStorage<Schema: EntitySchemaType> {
   
   typealias RawTable = [AnyHashable : Any]
   private(set) var entityTableStorage: [EntityName : RawTable]
@@ -111,44 +107,20 @@ public struct EntityStorage<Schema: EntitySchemaType, Trait: AccessControlType> 
   private init(entityTableStorage: [EntityName : RawTable]) {
     self.entityTableStorage = entityTableStorage
   }
-     
-}
-
-extension EntityStorage where Trait == Read {
-  
-  func makeWriable() -> EntityStorage<Schema, Write> {
-    .init(entityTableStorage: entityTableStorage)
-  }
-  
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<U, Trait> {
+    
+  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<U> {
     get {
       guard let rawTable = entityTableStorage[U.entityName] else {
-        return EntityTable<U, Trait>(buffer: [:])
+        return EntityTable<U>(buffer: [:])
       }
-      return EntityTable<U, Trait>(buffer: rawTable)
-    }
-  }
-}
-
-extension EntityStorage where Trait == Write {
-  
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<U, Trait> {
-    get {
-      guard let rawTable = entityTableStorage[U.entityName] else {
-        return EntityTable<U, Trait>(buffer: [:])
-      }
-      return EntityTable<U, Trait>(buffer: rawTable)
+      return EntityTable<U>(buffer: rawTable)
     }
     set {
       entityTableStorage[U.entityName] = newValue.entities
     }
   }
   
-  func makeReadonly() -> EntityStorage<Schema, Read> {
-    .init(entityTableStorage: entityTableStorage)
-  }
-  
-  mutating func merge<T>(otherStorage: EntityStorage<Schema, T>) {
+  mutating func _merge(otherStorage: EntityStorage<Schema>) {
     otherStorage.entityTableStorage.forEach { key, value in
       if let table = entityTableStorage[key] {
         var modified = table
@@ -164,7 +136,7 @@ extension EntityStorage where Trait == Write {
     }
   }
   
-  mutating func subtract(otherStorage: BackingRemovingEntityStorage<Schema>) {
+  mutating func _subtract(otherStorage: BackingRemovingEntityStorage<Schema>) {
     otherStorage.entityTableStorage.forEach { key, value in
       if let table = entityTableStorage[key] {
         var modified = table
@@ -205,7 +177,7 @@ public struct BackingRemovingEntityStorage<Schema: EntitySchemaType> {
     }
   }
   
-  func getTable<E: EntityType>(_ type: E.Type) -> Set<E.ID>? {
+  func _getTable<E: EntityType>(_ type: E.Type) -> Set<E.ID>? {
     entityTableStorage[E.entityName] as? Set<E.ID>
   }
   

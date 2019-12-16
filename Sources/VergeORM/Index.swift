@@ -116,7 +116,7 @@ public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: Inde
   }
   
   public mutating func apply(removing: BackingRemovingEntityStorage<Schema>) {
-    guard let ids = removing.getTable(Entity.self) else {
+    guard let ids = removing._getTable(Entity.self) else {
       return
     }
     backing.removeAll { ids.contains($0) }

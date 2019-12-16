@@ -28,7 +28,7 @@ import VergeCore
 extension ValueContainerType {
   
   public func entitySelector<E: EntityType>(
-    entityTableSelector: @escaping (Value) -> EntityTable<E, Read>,
+    entityTableSelector: @escaping (Value) -> EntityTable<E>,
     entityID: E.ID
   ) -> MemoizeSelector<Value, E?> {
     
@@ -41,7 +41,7 @@ extension ValueContainerType {
   }
   
   public func entitySelector<E: EntityType & Equatable>(
-    entityTableSelector: @escaping (Value) -> EntityTable<E, Read>,
+    entityTableSelector: @escaping (Value) -> EntityTable<E>,
     entityID: E.ID
   ) -> MemoizeSelector<Value, E?> {
     
@@ -58,7 +58,7 @@ extension ValueContainerType {
   ///   - entityTableSelector:
   ///   - entity:
   public func nonNullEntitySelector<E: EntityType>(
-    entityTableSelector: @escaping (Value) -> EntityTable<E, Read>,
+    entityTableSelector: @escaping (Value) -> EntityTable<E>,
     entity: E
   ) -> MemoizeSelector<Value, E> {
     
@@ -80,7 +80,7 @@ extension ValueContainerType {
   ///   - entityTableSelector:
   ///   - entity:
   public func nonNullEntitySelector<E: EntityType & Equatable>(
-    entityTableSelector: @escaping (Value) -> EntityTable<E, Read>,
+    entityTableSelector: @escaping (Value) -> EntityTable<E>,
     entity: E
   ) -> MemoizeSelector<Value, E> {
     
