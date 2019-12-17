@@ -9,5 +9,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: webfactory/ssh-agent
+      uses: webfactory/ssh-agent@v0.1.1
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: Run test
       run: fastlane test_all
