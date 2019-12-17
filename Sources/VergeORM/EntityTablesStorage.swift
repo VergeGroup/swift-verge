@@ -60,10 +60,8 @@ public struct EntityTable<Entity: EntityType> {
   
   @discardableResult
   public mutating func insert<S: Sequence>(_ addingEntities: S) -> [Entity.ID] where S.Element == Entity {
-    var ids: [Entity.ID] = []
-    addingEntities.forEach { entity in
-      entities[entity.id] = entity
-      ids.append(entity.id)
+    let ids = addingEntities.map {
+      insert($0)
     }
     return ids
   }

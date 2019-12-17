@@ -48,11 +48,11 @@ extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplac
   }
   
   public subscript(position: Int) -> Entity.ID {
-    get {
-      backing[position]
+    _read {
+      yield backing[position]
     }
-    set(newValue) {
-      backing[position] = newValue
+    _modify {
+      yield &backing[position]
     }
   }
   
