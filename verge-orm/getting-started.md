@@ -21,20 +21,20 @@ To satisfy those constraints, make it like following
 
 ```swift
 struct Database: DatabaseType {
-    
+
   struct Schema: EntitySchemaType {
-       
+
   }
-  
+
   struct OrderTables: OrderTablesType {
 
   }
-     
+
   var _backingStorage: BackingStorage = .init()
 }
 ```
 
-### Add EntityTable
+### Register EntityTable
 
 As an example, suppose we have Book and Author entities.
 
@@ -55,16 +55,16 @@ And then, add these entities to Schema object.
 
 ```swift
 struct Database: DatabaseType {
-    
+
   struct Schema: EntitySchemaType {
     let book = Book.EntityTableKey()
     let author = Book.EntityTableKey()
   }
-  
-  struct OrderTables: OrderTablesType {
 
+  struct Indexes: IndexesType {
+    // In this time, we don't touch here.
   }
-     
+
   var _backingStorage: BackingStorage = .init()
 }
 ```

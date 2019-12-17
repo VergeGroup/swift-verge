@@ -7,12 +7,12 @@
 
 ## Verge Store <a id="vergestore"></a>
 
-* [VergeStore Core Concepts](vergestore/core-concepts/README.md)
-  * [State](vergestore/core-concepts/state.md)
-  * [Store](vergestore/core-concepts/store.md)
-  * [Dispatcher](vergestore/core-concepts/dispatcher.md)
-  * [Mutation](vergestore/core-concepts/mutation.md)
-  * [Action](vergestore/core-concepts/action.md)
+* [VergeStore Core Concepts](vergestore/core-concepts.md)
+* [Store](vergestore/store.md)
+* [State](vergestore/state.md)
+* [Mutation](vergestore/mutation.md)
+* [Action](vergestore/action.md)
+* [Dispatcher](vergestore/dispatcher.md)
 * [Logging](vergestore/logging.md)
 * [Selector and Memoization](vergestore/memoization.md)
 * [Advanced](vergestore/advanced/README.md)
@@ -26,6 +26,8 @@
 
 * [VergeORM Core Concepts](verge-orm/core-concepts.md)
 * [Getting Started](verge-orm/getting-started.md)
+* [Index](verge-orm/index.md)
+* [Middleware](verge-orm/middleware.md)
 
 ## Verge Store Rx
 
