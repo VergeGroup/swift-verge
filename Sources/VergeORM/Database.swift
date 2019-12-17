@@ -21,16 +21,28 @@
 
 import Foundation
 
-public protocol AccessControlType {}
-
-public enum Read: AccessControlType {
+public struct EntityTableKey<S: EntityType> {
   
+  public init() {
+    
+  }
 }
 
-public enum Write: AccessControlType {
+public struct IndexKey<Index: IndexType> {
   
+  public init() {}
 }
 
+public protocol IndexesType {
+  init()
+}
+
+public protocol EntitySchemaType {
+  init()
+}
+
+/// A protocol indicates it is a root object as a Database
+/// As a Database, it provides the tables of the entity, the index storage.
 public protocol DatabaseType {
   
   associatedtype Schema: EntitySchemaType
@@ -40,8 +52,8 @@ public protocol DatabaseType {
 }
 
 public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
-      
-  var entityBackingStorage: EntityStorage<Schema> = .init()
+  
+  var entityBackingStorage: EntityTablesStorage<Schema> = .init()
   var indexedStorage: IndexesStorage<Schema, Indexes> = .init()
   
   public init() {
@@ -74,7 +86,7 @@ public struct IndexesPropertyAdapter<DB: DatabaseType> {
 }
 
 extension DatabaseType {
-    
+  
   public var entities: EntityPropertyAdapter<Self> {
     .init {
       self
@@ -87,53 +99,4 @@ extension DatabaseType {
     }
   }
   
-}
-
-public enum ORMError: Error {
-  case aborted
-}
-
-public final class DatabaseBatchUpdateContext<Database: DatabaseType> {
-  
-  public let current: Database
-  
-  public var insertsOrUpdates: EntityStorage<Database.Schema> = .init()
-  public var deletes: BackingRemovingEntityStorage<Database.Schema> = .init()
-  public var indexes: IndexesStorage<Database.Schema, Database.Indexes>
-    
-  init(current: Database) {
-    self.current = current
-    self.indexes = current._backingStorage.indexedStorage
-  }
-  
-  public func abort() throws -> Never {
-    throw ORMError.aborted
-  }
-}
-
-extension DatabaseType {
-  
-  public mutating func performBatchUpdate<Result>(_ update: (DatabaseBatchUpdateContext<Self>) throws -> Result) rethrows -> Result {
-            
-    let context = DatabaseBatchUpdateContext<Self>(current: self)
-    do {
-      let result = try update(context)
-      
-      do {
-        var target = self._backingStorage.entityBackingStorage
-        target._merge(otherStorage: context.insertsOrUpdates)
-        target._subtract(otherStorage: context.deletes)
-        self._backingStorage.entityBackingStorage = target
-      }
-                 
-      do {
-        context.indexes.apply(removing: context.deletes)
-        self._backingStorage.indexedStorage = context.indexes
-      }
-            
-      return result
-    } catch {
-      throw error
-    }
-  }
 }

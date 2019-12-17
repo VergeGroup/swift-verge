@@ -69,14 +69,14 @@ struct SessionState: StateType {
     struct Indexes: IndexesType {
       let userIDs = IndexKey<OrderedIDIndex<Schema, Entity.User>>()
       let postIDs = IndexKey<OrderedIDIndex<Schema, Entity.Post>>()
+      let postIDsAuthorGrouped = IndexKey<GroupByIndex<Schema, Entity.User, Entity.Post>>()
     }
        
     var _backingStorage: BackingStorage = .init()
   }
     
   var db: Database = .init()
-  
-  var postIDsByUser: [Entity.User.ID : [Entity.Post.ID]] = [:]
+
 }
 
 final class SessionStore: StoreBase<SessionState> {
@@ -114,13 +114,12 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
     return .mutation { (s) in
       let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.id)
       s.db.performBatchUpdate { (context) in
-        let id = context.insertsOrUpdates.post.insert(post)
-        context.indexes.postIDs.append(id)
         
-        if let _ = s.postIDsByUser[user.id] {
-          s.postIDsByUser[user.id]!.append(id)
-        } else {
-          s.postIDsByUser[user.id] = [id]
+        let postID = context.insertsOrUpdates.post.insert(post)
+        context.indexes.postIDs.append(postID)
+        
+        context.indexes.postIDsAuthorGrouped.update(in: user.id) { (index) in
+          index.append(postID)
         }
       }
     }

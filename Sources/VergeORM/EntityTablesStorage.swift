@@ -21,13 +21,6 @@
 
 import Foundation
 
-public struct EntityTableKey<S: EntityType> {
-  
-  public init() {
-    
-  }
-}
-
 public struct EntityTable<Entity: EntityType> {
   
   public var count: Int {
@@ -90,12 +83,9 @@ extension EntityTable: Equatable where Entity : Equatable {
   }
 }
 
-public protocol EntitySchemaType {
-  init()
-}
 
 @dynamicMemberLookup
-public struct EntityStorage<Schema: EntitySchemaType> {
+public struct EntityTablesStorage<Schema: EntitySchemaType> {
   
   typealias RawTable = [AnyHashable : Any]
   private(set) var entityTableStorage: [EntityName : RawTable]
@@ -120,7 +110,7 @@ public struct EntityStorage<Schema: EntitySchemaType> {
     }
   }
   
-  mutating func _merge(otherStorage: EntityStorage<Schema>) {
+  mutating func _merge(otherStorage: EntityTablesStorage<Schema>) {
     otherStorage.entityTableStorage.forEach { key, value in
       if let table = entityTableStorage[key] {
         var modified = table
