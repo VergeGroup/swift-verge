@@ -35,7 +35,7 @@ public final class DatabaseBatchUpdateContext<Database: DatabaseType> {
     
   init(current: Database) {
     self.current = current
-    self.indexes = current._backingStorage.indexedStorage
+    self.indexes = current._backingStorage.indexesStorage
   }
   
   public func abort() throws -> Never {
@@ -49,11 +49,15 @@ extension DatabaseType {
   /// If can be run on background thread with locking.
   ///
   /// - Parameter update:
-  public mutating func performBatchUpdate<Result>(_ update: (DatabaseBatchUpdateContext<Self>) throws -> Result) rethrows -> Result {
+  public mutating func performBatchUpdates<Result>(_ update: (DatabaseBatchUpdateContext<Self>) throws -> Result) rethrows -> Result {
             
     let context = DatabaseBatchUpdateContext<Self>(current: self)
     do {
       let result = try update(context)
+      
+      middlewares.forEach {
+        $0.performAfterUpdates(context: context)
+      }
       
       do {
         var target = self._backingStorage.entityBackingStorage
@@ -64,7 +68,7 @@ extension DatabaseType {
                  
       do {
         context.indexes.apply(removing: context.deletes)
-        self._backingStorage.indexedStorage = context.indexes
+        self._backingStorage.indexesStorage = context.indexes
       }
             
       return result

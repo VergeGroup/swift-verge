@@ -129,10 +129,9 @@ open class StoreBase<State>: CustomReflectable, VergeStoreType, ValueContainerTy
   }
      
   public var customMirror: Mirror {
-    Mirror(
+    return Mirror(
       self,
       children: [
-        "state": state
       ],
       displayStyle: .struct
     )

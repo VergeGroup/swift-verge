@@ -36,6 +36,16 @@ struct RootState {
     struct Indexes: IndexesType {
       let bookA = IndexKey<OrderedIDIndex<Schema, Book>>()
       let authorGroupedBook = IndexKey<GroupByIndex<Schema, Author, Book>>()
+      let bookMiddleware = IndexKey<OrderedIDIndex<Schema, Author>>()
+    }
+    
+    var middlewares: [AnyMiddleware<RootState.Database>] {
+      [
+        AnyMiddleware<RootState.Database>(performAfterUpdates: { (context) in
+          let ids = context.insertsOrUpdates.author.all().map { $0.id }
+          context.indexes.bookMiddleware.append(contentsOf: ids)
+        })
+      ]
     }
     
     var _backingStorage: BackingStorage = .init()

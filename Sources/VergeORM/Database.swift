@@ -23,9 +23,7 @@ import Foundation
 
 public struct EntityTableKey<S: EntityType> {
   
-  public init() {
-    
-  }
+  public init() {}
 }
 
 public struct IndexKey<Index: IndexType> {
@@ -41,6 +39,29 @@ public protocol EntitySchemaType {
   init()
 }
 
+public protocol MiddlewareType {
+  associatedtype Database: DatabaseType
+  
+  func performAfterUpdates(context: DatabaseBatchUpdateContext<Database>)
+}
+
+public struct AnyMiddleware<Database: DatabaseType>: MiddlewareType {
+  
+  private let _performAfterUpdates: (DatabaseBatchUpdateContext<Database>) -> ()
+  
+  public init<Base: MiddlewareType>(_ base: Base) where Base.Database == Database {
+    self._performAfterUpdates = base.performAfterUpdates
+  }
+  
+  public init(performAfterUpdates: @escaping (DatabaseBatchUpdateContext<Database>) -> ()) {
+    self._performAfterUpdates = performAfterUpdates
+  }
+  
+  public func performAfterUpdates(context: DatabaseBatchUpdateContext<Database>) {
+    _performAfterUpdates(context)
+  }
+}
+
 /// A protocol indicates it is a root object as a Database
 /// As a Database, it provides the tables of the entity, the index storage.
 public protocol DatabaseType {
@@ -49,12 +70,19 @@ public protocol DatabaseType {
   associatedtype Indexes: IndexesType
   typealias BackingStorage = DatabaseStorage<Schema, Indexes>
   var _backingStorage: BackingStorage { get set }
+  
+  var middlewares: [AnyMiddleware<Self>] { get }
+}
+
+extension DatabaseType {
+  
+  public var middlewares: [AnyMiddleware<Self>] { [] }
 }
 
 public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
   
   var entityBackingStorage: EntityTablesStorage<Schema> = .init()
-  var indexedStorage: IndexesStorage<Schema, Indexes> = .init()
+  var indexesStorage: IndexesStorage<Schema, Indexes> = .init()
   
   public init() {
     
@@ -80,7 +108,7 @@ public struct IndexesPropertyAdapter<DB: DatabaseType> {
   
   public subscript <Index: IndexType>(dynamicMember keyPath: KeyPath<DB.Indexes, IndexKey<Index>>) -> Index where DB.Schema == Index.Schema {
     get {
-      get()._backingStorage.indexedStorage[dynamicMember: keyPath]
+      get()._backingStorage.indexesStorage[dynamicMember: keyPath]
     }
   }
 }

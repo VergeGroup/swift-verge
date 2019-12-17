@@ -90,7 +90,7 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
   
   func insertSampleUsers() -> Mutation {
     return .mutation { s in
-      s.db.performBatchUpdate { (context) in
+      s.db.performBatchUpdates { (context) in
         let paul = Entity.User(rawID: "paul", name: "Paul Gilbert")
         let billy = Entity.User(rawID: "billy", name: "Billy Sheehan")
         let pat = Entity.User(rawID: "pat", name: "Pat Torpey")
@@ -113,7 +113,7 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
   func submitNewPost(title: String, from user: Entity.User) -> Mutation {
     return .mutation { (s) in
       let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.id)
-      s.db.performBatchUpdate { (context) in
+      s.db.performBatchUpdates { (context) in
         
         let postID = context.insertsOrUpdates.post.insert(post)
         context.indexes.postIDs.append(postID)

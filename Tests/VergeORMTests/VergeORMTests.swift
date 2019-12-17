@@ -25,7 +25,7 @@ class VergeORMTests: XCTestCase {
     
     var state = RootState()
     
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
       let book = Book(rawID: "some", authorID: Author.anonymous.id)
       context.insertsOrUpdates.book.insert(book)
@@ -42,7 +42,7 @@ class VergeORMTests: XCTestCase {
     
     var state = RootState()
     
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
       let book = Book(rawID: "some", authorID: Author.anonymous.id)
       context.insertsOrUpdates.book.insert(book)
@@ -56,7 +56,7 @@ class VergeORMTests: XCTestCase {
     
     var state = RootState()
     
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
       let book = Book(rawID: "some", authorID: Author.anonymous.id)
       context.insertsOrUpdates.book.insert(book)
@@ -68,7 +68,7 @@ class VergeORMTests: XCTestCase {
     
     print(state.db.indexes.bookA)
     
-    state.db.performBatchUpdate { (context) -> Void in
+    state.db.performBatchUpdates { (context) -> Void in
       context.deletes.book.insert(Book.ID.init(raw: "some"))
     }
     
@@ -83,7 +83,7 @@ class VergeORMTests: XCTestCase {
     
     let id = Book.ID.init(raw: "some")
     
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
       let book = Book(rawID: id.raw, authorID: Author.anonymous.id)
       context.insertsOrUpdates.book.insert(book)
@@ -91,7 +91,7 @@ class VergeORMTests: XCTestCase {
     
     XCTAssertNotNil(state.db.entities.book.find(by: id))
     
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
       guard var book = context.current.entities.book.find(by: id) else {
         XCTFail()
@@ -132,7 +132,7 @@ class VergeORMTests: XCTestCase {
       var book: Book!
             
       storage.update { state in
-        let createdBook = state.db.performBatchUpdate { (context) -> Book in
+        let createdBook = state.db.performBatchUpdates { (context) -> Book in
           
           let book = Book(rawID: id.raw, authorID: Author.anonymous.id)
           context.insertsOrUpdates.book.insert(book)
@@ -157,7 +157,7 @@ class VergeORMTests: XCTestCase {
       XCTContext.runActivity(named: "modify") { (_) -> Void in
                 
         storage.update { state in
-          state.db.performBatchUpdate { (context) -> Void in
+          state.db.performBatchUpdates { (context) -> Void in
             
             var book = context.current.entities.book.find(by: id)!
             book.name = "Hey"
@@ -174,7 +174,7 @@ class VergeORMTests: XCTestCase {
       XCTContext.runActivity(named: "delete") { (_) -> Void in
         
         storage.update { state in
-          state.db.performBatchUpdate { (context) -> Void in
+          state.db.performBatchUpdates { (context) -> Void in
             
             context.deletes.book.insert(id)
             

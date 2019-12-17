@@ -17,7 +17,7 @@ class OrderedIDIndexTests: XCTestCase {
   var state = RootState()
   
   override func setUp() {
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
       let author = Author(rawID: "author.1")
       context.insertsOrUpdates.author.insert(author)
@@ -53,7 +53,7 @@ class OrderedIDIndexTests: XCTestCase {
   
   func testRemoveBook() {
     
-    state.db.performBatchUpdate { (context) -> Void in
+    state.db.performBatchUpdates { (context) -> Void in
       
       context.deletes.book.insert(.init(raw: "some"))
     }
@@ -72,7 +72,7 @@ class OrderedIDIndexTests: XCTestCase {
   
   func testRemoveAuthor() {
     
-    state.db.performBatchUpdate { (context) -> Void in
+    state.db.performBatchUpdates { (context) -> Void in
       
       context.deletes.author.insert(.init(raw: "author.1"))
     }

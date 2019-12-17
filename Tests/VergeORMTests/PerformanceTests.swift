@@ -17,7 +17,7 @@ class PerformanceTests: XCTestCase {
   func testInsertMany() {
     
     measure {
-      state.db.performBatchUpdate { (context) in
+      state.db.performBatchUpdates { (context) in
         
         for i in 0..<1000 {
           let author = Author(rawID: "author.\(i)")
@@ -32,7 +32,7 @@ class PerformanceTests: XCTestCase {
   func testInsertSoMany() {
     
     measure {
-      state.db.performBatchUpdate { (context) in
+      state.db.performBatchUpdates { (context) in
         
         for i in 0..<10000 {
           let author = Author(rawID: "author.\(i)")
@@ -47,7 +47,7 @@ class PerformanceTests: XCTestCase {
   func testInsertSoManyUseCollection() {
     
     measure {
-      state.db.performBatchUpdate { (context) in
+      state.db.performBatchUpdates { (context) in
         
         let authors = (0..<10000).map { i in
           Author(rawID: "author.\(i)")
@@ -64,7 +64,7 @@ class PerformanceTests: XCTestCase {
         
     measure {
       for l in 0..<10 {
-        state.db.performBatchUpdate { (context) in
+        state.db.performBatchUpdates { (context) in
           
           for i in 0..<1000 {
             let author = Author(rawID: "author.\(l)-\(i)")
@@ -81,7 +81,7 @@ class PerformanceTests: XCTestCase {
     measure {
       
       for i in 0..<1000 {
-        state.db.performBatchUpdate { (context) in
+        state.db.performBatchUpdates { (context) in
           let author = Author(rawID: "author.\(i)")
           context.insertsOrUpdates.author.insert(author)
         }
@@ -97,7 +97,7 @@ class FindPerformanceTests: XCTestCase {
   var state = RootState()
   
   override func setUp() {
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
       for i in 0..<10000 {
         let author = Author(rawID: "author.\(i)")
