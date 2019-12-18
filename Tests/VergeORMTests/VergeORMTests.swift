@@ -60,20 +60,20 @@ class VergeORMTests: XCTestCase {
       
       let book = Book(rawID: "some", authorID: Author.anonymous.id)
       context.insertsOrUpdates.book.insert(book)
-      context.indexes.bookA.append(book.id)
+      context.indexes.allBooks.append(book.id)
     }
         
     XCTAssertEqual(state.db.entities.book.count, 1)
-    XCTAssertEqual(state.db.indexes.bookA.count, 1)
+    XCTAssertEqual(state.db.indexes.allBooks.count, 1)
     
-    print(state.db.indexes.bookA)
+    print(state.db.indexes.allBooks)
     
     state.db.performBatchUpdates { (context) -> Void in
       context.deletes.book.insert(Book.ID.init(raw: "some"))
     }
     
     XCTAssertEqual(state.db.entities.book.count, 0)
-    XCTAssertEqual(state.db.indexes.bookA.count, 0)
+    XCTAssertEqual(state.db.indexes.allBooks.count, 0)
     
   }
   
@@ -136,7 +136,7 @@ class VergeORMTests: XCTestCase {
           
           let book = Book(rawID: id.raw, authorID: Author.anonymous.id)
           context.insertsOrUpdates.book.insert(book)
-          context.indexes.bookA.append(book.id)
+          context.indexes.allBooks.append(book.id)
           
           return book
         }

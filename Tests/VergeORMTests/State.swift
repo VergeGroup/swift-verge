@@ -29,14 +29,14 @@ struct RootState {
   struct Database: DatabaseType {
     
     struct Schema: EntitySchemaType {
-      let book = EntityTableKey<Book>()
-      let author = EntityTableKey<Author>()
+      let book = Book.EntityTableKey()
+      let author = Author.EntityTableKey()
     }
     
     struct Indexes: IndexesType {
-      let bookA = IndexKey<OrderedIDIndex<Schema, Book>>()
-      let authorGroupedBook = IndexKey<GroupByIndex<Schema, Author, Book>>()
-      let bookMiddleware = IndexKey<OrderedIDIndex<Schema, Author>>()
+      let allBooks = OrderedIDIndex<Schema, Book>.Key()
+      let authorGroupedBook = GroupByIndex<Schema, Author, Book>.Key()
+      let bookMiddleware = OrderedIDIndex<Schema, Author>.Key()
     }
     
     var middlewares: [AnyMiddleware<RootState.Database>] {

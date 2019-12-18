@@ -84,6 +84,8 @@ extension IndexesStorage {
 
 public protocol IndexType {
   
+  typealias Key = IndexKey<Self>
+  
   associatedtype Schema : EntitySchemaType
   
   init()
