@@ -93,7 +93,7 @@ If you have curiosity, please check out the source-code.
 
 ## Update Database
 
-To update Database object\(Insert, Update, Delete\), use `performbatchUpdate` method.
+To update Database object\(Insert, Update, Delete\), use `performbatchUpdates` method.
 
 ```swift
 db.performBatchUpdates { (context) in
