@@ -2,7 +2,7 @@
 
 ## To find the entity faster, Index.
 
-As Getting Started section touched, we can get the entities by following code.
+As shown in the Getting Started section, we can get entities by the following code.
 
 ```swift
 let db = RootState.Database()
@@ -12,28 +12,28 @@ db.bookEntityTable.find(by: <#T##VergeTypedIdentifier<Book>#>)
 db.bookEntityTable.find(in: <#T##Sequence#>)
 ```
 
-To do this, we need to have the Identifier of the entity and additionally, if get an array of entities, needs to manage the order of Identifier.
+To do this, we need to manage the Identifier of the entity and additionally, to get an array of entities, we need to manage the order of Identifier.
 
-To do this, VergeORM provides Index function. Index manages the set of identifiers in several structures.
+To do this, VergeORM provides Index feature. Index manages the set of identifiers in several structures.
 
 {% hint style="info" %}
-Index meaning might be a bit different than RDB's Index.  
+Meaning of Index might be a bit different than RDB's Index.  
 At least, Index manages identifiers to find the entity faster than linear search.
 {% endhint %}
 
-Currently, we have the following ways,
+Currently, we have the following types,
 
 * OrderedIDIndex 
   * e.g. \[Book.ID\]
-  * Manages identifiers in the ordered collection
+  * Manages identifiers in an ordered collection
 * GroupByIndex
   * e.g. \[Author.ID : \[Book.ID\]\]
-  * Manages identifiers that grouped by another identifier
+  * Manages identifiers that are grouped by another identifier
 
 ## Register Index
 
 Let's take a look at how to register Index.  
-The whole of database is here.
+The whole index is here.
 
 ```swift
 struct Database: DatabaseType {
@@ -51,9 +51,9 @@ struct Database: DatabaseType {
 }
 ```
 
-Indexes struct describes the set of indexes. All of the indexes that are managed by VergeORM would be here.
+Indexes struct describes the set of indexes. All of the indexes managed by VergeORM would be here.
 
-For now, we add a simple index that ordered just like this.
+For now, we add a simple ordered index just like this.
 
 ```swift
 struct Indexes: IndexesType {
@@ -109,6 +109,6 @@ state.db.performBatchUpdates { (context) -> Book in
 }
 ```
 
-Since Index would be updated manually, if you want to manage automatically.  
-With using **Middleware**, **** it's possible.
+Since Index is updated manually here, you might want to manage it automatically.  
+Using **Middleware**, **** it's possible.
 

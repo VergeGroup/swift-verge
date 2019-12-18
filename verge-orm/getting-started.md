@@ -2,7 +2,7 @@
 
 ## Create Database struct
 
-**Database struct** contains the tables for each the Entity.  
+**Database struct** contains the tables for each Entity.  
 As a struct object, that allows to manage history and it can be embedded on the state that application uses.
 
 * Database struct
@@ -48,8 +48,8 @@ struct Author: EntityType {
 }
 ```
 
-`EntityType` protocol make Database can use it as Entity.  
-It needs `rawID` and you can set type what that Entity needs.
+By conforming to  `EntityType` protocol, it can be used by Database as Entity.  
+It needs `rawID` and you can set whatever type your Entity needs.
 
 And then, add these entities to Schema object.
 
@@ -69,7 +69,7 @@ struct Database: DatabaseType {
 }
 ```
 
-Finally, you can use Database object like followings.
+Finally, you can use Database object like this.
 
 ```swift
 let db = RootState.Database()
@@ -78,7 +78,7 @@ let bookEntityTable: EntityTable<Book, Read> = db.entities.book
 ```
 
 You can get a`EntityTable` object for Book.  
-And then you can do this like followings.
+And then you can use these methods.
 
 ```swift
 bookEntityTable.all()
