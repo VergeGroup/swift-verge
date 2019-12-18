@@ -28,6 +28,7 @@
 * [Getting Started](verge-orm/getting-started.md)
 * [Index](verge-orm/index.md)
 * [Middleware](verge-orm/middleware.md)
+* [Selector](verge-orm/selector.md)
 
 ## Verge Store Rx
 
