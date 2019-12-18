@@ -96,13 +96,13 @@ If you have curiosity, please check out the source-code.
 To update Database object\(Insert, Update, Delete\), use `performbatchUpdate` method.
 
 ```swift
-db.performBatchUpdate { (context) in
+db.performBatchUpdates { (context) in
   // Put the updating code here
 }
 ```
 
 ```swift
-db.performBatchUpdate { (context) in
+db.performBatchUpdates { (context) in
   let book = Book(rawID: "some")
   context.insertsOrUpdates.book.insert(book)
 }
