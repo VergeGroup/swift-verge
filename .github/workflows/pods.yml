@@ -1,0 +1,17 @@
+name: Cocoapods
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macOS-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: webfactory/ssh-agent
+      uses: webfactory/ssh-agent@v0.1.1
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Lint Cocoapods
+      run: pod lib lint
