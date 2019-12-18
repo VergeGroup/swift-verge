@@ -9,5 +9,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: webfactory/ssh-agent
+      uses: webfactory/ssh-agent@v0.1.1
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Preparation for SwiftPM
+      run: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
     - name: Run test
       run: fastlane test_all

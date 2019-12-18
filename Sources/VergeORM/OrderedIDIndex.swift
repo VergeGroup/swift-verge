@@ -21,46 +21,47 @@
 
 import Foundation
 
-public protocol VergeTypedIdentifiable: Identifiable {
-  associatedtype RawValue: Hashable
-  var rawID: RawValue { get }
-}
-
-extension VergeTypedIdentifiable {
+public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: IndexType, Equatable {
   
-  public var id: VergeTypedIdentifier<Self> {
-    .init(raw: rawID)
+  private var backing: [Entity.ID] = []
+  
+  public init() {
   }
-}
-
-public struct VergeTypedIdentifier<T: VergeTypedIdentifiable> : Hashable {
   
-  public let raw: T.RawValue
-  
-  public init(raw: T.RawValue) {
-    self.raw = raw
-  }
-}
-
-public protocol EntityType: VergeTypedIdentifiable {
-  #if COCOAPODS
-  typealias EntityTable = Verge.EntityTable<Self>
-  typealias EntityTableKey = Verge.EntityTableKey<Self>
-  #else
-  typealias EntityTable = VergeORM.EntityTable<Self>
-  typealias EntityTableKey = VergeORM.EntityTableKey<Self>
-  #endif
-}
-
-struct EntityName: Hashable {
-  let name: String
-}
-
-extension EntityType {
-     
-  static var entityName: EntityName {
-    .init(name: String(reflecting: self))
+  public mutating func _apply(removing: BackingRemovingEntityStorage<Schema>) {
+    guard let ids = removing._getTable(Entity.self) else {
+      return
+    }
+    backing.removeAll { ids.contains($0) }
   }
   
 }
 
+extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplaceableCollection {
+  
+  public typealias Element = Entity.ID
+  public typealias Index = Int
+  public typealias SubSequence = ArraySlice<Entity.ID>
+  
+  public mutating func append(_ newElement: __owned Entity.ID) {
+    backing.append(newElement)
+  }
+  
+  public subscript(position: Int) -> Entity.ID {
+    _read {
+      yield backing[position]
+    }
+    _modify {
+      yield &backing[position]
+    }
+  }
+  
+  public var startIndex: Int {
+    backing.startIndex
+  }
+  
+  public var endIndex: Int {
+    backing.endIndex
+  }
+  
+}

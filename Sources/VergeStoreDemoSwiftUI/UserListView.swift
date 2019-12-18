@@ -58,7 +58,10 @@ struct SubmitView: View {
   let user: Entity.User
   
   private var posts: [Entity.Post] {
-    session.store.state.db.entities.post.find(in: session.store.state.postIDsByUser[user.id] ?? [])
+    
+    session.store.state.db.entities.post.find(in:
+      session.store.state.db.indexes.postIDsAuthorGrouped.orderedID(in: user.id)
+    )
   }
   
   var body: some View {
@@ -82,7 +85,7 @@ struct AllPostsView: View {
   @EnvironmentObject var session: Session
   
   private var posts: [Entity.Post] {
-    session.store.state.db.entities.post.find(in: session.store.state.db.orderTables.postIDs)
+    session.store.state.db.entities.post.find(in: session.store.state.db.indexes.postIDs)
   }
     
   var body: some View {

@@ -21,18 +21,7 @@
 
 import Foundation
 
-public struct EntityTableKey<S: EntityType> {
-  
-  public var typeName: String {
-    String(reflecting: S.self)
-  }
-  
-  public init() {
-    
-  }
-}
-
-public struct EntityTable<Entity: EntityType, Trait: AccessControlType> {
+public struct EntityTable<Entity: EntityType> {
   
   public var count: Int {
     entities.count
@@ -63,28 +52,16 @@ public struct EntityTable<Entity: EntityType, Trait: AccessControlType> {
     }
   }
     
-}
-
-extension EntityTable: Equatable where Entity : Equatable {
-  public static func == (lhs: EntityTable<Entity, Trait>, rhs: EntityTable<Entity, Trait>) -> Bool {
-    (lhs.entities as! [AnyHashable : Entity]) == (rhs.entities as! [AnyHashable : Entity])
-  }
-}
-
-extension EntityTable where Trait == Write {
-  
   @discardableResult
   public mutating func insert(_ entity: Entity) -> Entity.ID {
     entities[entity.id] = entity
     return entity.id
   }
-    
+  
   @discardableResult
   public mutating func insert<S: Sequence>(_ addingEntities: S) -> [Entity.ID] where S.Element == Entity {
-    var ids: [Entity.ID] = []
-    addingEntities.forEach { entity in
-      entities[entity.id] = entity
-      ids.append(entity.id)
+    let ids = addingEntities.map {
+      insert($0)
     }
     return ids
   }
@@ -98,66 +75,40 @@ extension EntityTable where Trait == Write {
   }
 }
 
-public protocol EntitySchemaType {
-  init()
+extension EntityTable: Equatable where Entity : Equatable {
+  public static func == (lhs: EntityTable<Entity>, rhs: EntityTable<Entity>) -> Bool {
+    (lhs.entities as! [AnyHashable : Entity]) == (rhs.entities as! [AnyHashable : Entity])
+  }
 }
 
+
 @dynamicMemberLookup
-public struct EntityStorage<Schema: EntitySchemaType, Trait: AccessControlType> {
+public struct EntityTablesStorage<Schema: EntitySchemaType> {
   
   typealias RawTable = [AnyHashable : Any]
-  private(set) var entityTableStorage: [String : RawTable]
-  
-  private let schema = Schema()
-  
+  private(set) var entityTableStorage: [EntityName : RawTable]
+      
   public init() {
     self.entityTableStorage = [:]
   }
   
-  private init(entityTableStorage: [String : RawTable]) {
+  private init(entityTableStorage: [EntityName : RawTable]) {
     self.entityTableStorage = entityTableStorage
   }
-     
-}
-
-extension EntityStorage where Trait == Read {
-  
-  func makeWriable() -> EntityStorage<Schema, Write> {
-    .init(entityTableStorage: entityTableStorage)
-  }
-  
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<U, Trait> {
+    
+  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<U> {
     get {
-      let key = schema[keyPath: keyPath]
-      guard let rawTable = entityTableStorage[key.typeName] else {
-        return EntityTable<U, Trait>(buffer: [:])
+      guard let rawTable = entityTableStorage[U.entityName] else {
+        return EntityTable<U>(buffer: [:])
       }
-      return EntityTable<U, Trait>(buffer: rawTable)
-    }
-  }
-}
-
-extension EntityStorage where Trait == Write {
-  
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<U, Trait> {
-    get {
-      let key = schema[keyPath: keyPath]
-      guard let rawTable = entityTableStorage[key.typeName] else {
-        return EntityTable<U, Trait>(buffer: [:])
-      }
-      return EntityTable<U, Trait>(buffer: rawTable)
+      return EntityTable<U>(buffer: rawTable)
     }
     set {
-      let key = schema[keyPath: keyPath]
-      entityTableStorage[key.typeName] = newValue.entities
+      entityTableStorage[U.entityName] = newValue.entities
     }
   }
   
-  func makeReadonly() -> EntityStorage<Schema, Read> {
-    .init(entityTableStorage: entityTableStorage)
-  }
-  
-  mutating func merge<T>(otherStorage: EntityStorage<Schema, T>) {
+  mutating func _merge(otherStorage: EntityTablesStorage<Schema>) {
     otherStorage.entityTableStorage.forEach { key, value in
       if let table = entityTableStorage[key] {
         var modified = table
@@ -173,7 +124,7 @@ extension EntityStorage where Trait == Write {
     }
   }
   
-  mutating func subtract(otherStorage: BackingRemovingEntityStorage<Schema>) {
+  mutating func _subtract(otherStorage: BackingRemovingEntityStorage<Schema>) {
     otherStorage.entityTableStorage.forEach { key, value in
       if let table = entityTableStorage[key] {
         var modified = table
@@ -192,30 +143,30 @@ extension EntityStorage where Trait == Write {
 public struct BackingRemovingEntityStorage<Schema: EntitySchemaType> {
   
   typealias RawTable = Set<AnyHashable>
-  private(set) var entityTableStorage: [String : RawTable]
-  
-  private let schema = Schema()
-  
+  private(set) var entityTableStorage: [EntityName : RawTable]
+    
   public init() {
     self.entityTableStorage = [:]
   }
   
-  private init(entityTableStorage: [String : RawTable]) {
+  private init(entityTableStorage: [EntityName : RawTable]) {
     self.entityTableStorage = entityTableStorage
   }
   
   public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> Set<U.ID> {
     get {
-      let key = schema[keyPath: keyPath]
-      guard let rawTable = entityTableStorage[key.typeName] else {
+      guard let rawTable = entityTableStorage[U.entityName] else {
         return Set<U.ID>([])
       }
       return rawTable as! Set<U.ID>
     }
     set {
-      let key = schema[keyPath: keyPath]
-      entityTableStorage[key.typeName] = newValue
+      entityTableStorage[U.entityName] = newValue
     }
+  }
+  
+  func _getTable<E: EntityType>(_ type: E.Type) -> Set<E.ID>? {
+    entityTableStorage[E.entityName] as? Set<E.ID>
   }
   
 }

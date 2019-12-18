@@ -24,7 +24,7 @@ final class Session: ObservableObject {
   
   private(set) lazy var users = self.store.selector(
     selector: { state in
-      state.db.entities.user.find(in: state.db.orderTables.userIDs)
+      state.db.entities.user.find(in: state.db.indexes.userIDs)
   },
     equality: .init(selector: { $0.db.entities.user })
   )
@@ -66,17 +66,17 @@ struct SessionState: StateType {
       let comment = Entity.Comment.EntityTableKey()
     }
     
-    struct OrderTables: OrderTablesType {
-      let userIDs = Entity.User.OrderTableKey(name: "userIDs")
-      let postIDs = Entity.Post.OrderTableKey(name: "postIDs")
+    struct Indexes: IndexesType {
+      let userIDs = IndexKey<OrderedIDIndex<Schema, Entity.User>>()
+      let postIDs = IndexKey<OrderedIDIndex<Schema, Entity.Post>>()
+      let postIDsAuthorGrouped = IndexKey<GroupByIndex<Schema, Entity.User, Entity.Post>>()
     }
        
-    var _backingStorage: DatabaseStorage<SessionState.Database.Schema, SessionState.Database.OrderTables> = .init()
+    var _backingStorage: BackingStorage = .init()
   }
     
   var db: Database = .init()
-  
-  var postIDsByUser: [Entity.User.ID : [Entity.Post.ID]] = [:]
+
 }
 
 final class SessionStore: StoreBase<SessionState> {
@@ -90,7 +90,7 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
   
   func insertSampleUsers() -> Mutation {
     return .mutation { s in
-      s.db.performBatchUpdate { (context) in
+      s.db.performBatchUpdates { (context) in
         let paul = Entity.User(rawID: "paul", name: "Paul Gilbert")
         let billy = Entity.User(rawID: "billy", name: "Billy Sheehan")
         let pat = Entity.User(rawID: "pat", name: "Pat Torpey")
@@ -102,25 +102,24 @@ final class SessionDispatcher: DispatcherBase<SessionState> {
           pat,
           eric
         ])
-
-        context.orderTables.userIDs.removeAll()
-        context.orderTables.userIDs.append(contentsOf: ids)
         
-      }
+        context.indexes.userIDs.removeAll()
+        context.indexes.userIDs.append(contentsOf: ids)
+        
+      }      
     }
   }
   
   func submitNewPost(title: String, from user: Entity.User) -> Mutation {
     return .mutation { (s) in
       let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.id)
-      s.db.performBatchUpdate { (context) in
-        let id = context.insertsOrUpdates.post.insert(post)
-        context.orderTables.postIDs.append(id)
+      s.db.performBatchUpdates { (context) in
         
-        if let _ = s.postIDsByUser[user.id] {
-          s.postIDsByUser[user.id]!.append(id)
-        } else {
-          s.postIDsByUser[user.id] = [id]
+        let postID = context.insertsOrUpdates.post.insert(post)
+        context.indexes.postIDs.append(postID)
+        
+        context.indexes.postIDsAuthorGrouped.update(in: user.id) { (index) in
+          index.append(postID)
         }
       }
     }

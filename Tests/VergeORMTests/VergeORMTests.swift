@@ -11,37 +11,7 @@ import XCTest
 import VergeCore
 import VergeORM
 
-struct Book: EntityType, Equatable {
-  
-  let rawID: String
-  var name: String = ""
-}
-
-struct Author: EntityType {
-  
-  let rawID: String
-}
-
-struct RootState {
-  
-  struct Database: DatabaseType {
-                  
-    struct Schema: EntitySchemaType {
-      let book = EntityTableKey<Book>()
-      let author = EntityTableKey<Author>()
-    }
-    
-    struct OrderTables: OrderTablesType {
-      let bookA = OrderTableKey<Book>(name: "bookA")
-    }
-    
-    var _backingStorage: BackingStorage = .init()
-  }
-  
-  var db = Database()
-}
-
-class VergeNormalizerTests: XCTestCase {
+class VergeORMTests: XCTestCase {
   
   override func setUp() {
     // Put setup code here. This method is called before the invocation of each test method in the class.        
@@ -55,9 +25,9 @@ class VergeNormalizerTests: XCTestCase {
     
     var state = RootState()
     
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
-      let book = Book(rawID: "some")
+      let book = Book(rawID: "some", authorID: Author.anonymous.id)
       context.insertsOrUpdates.book.insert(book)
     }
     
@@ -72,9 +42,9 @@ class VergeNormalizerTests: XCTestCase {
     
     var state = RootState()
     
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
-      let book = Book(rawID: "some")
+      let book = Book(rawID: "some", authorID: Author.anonymous.id)
       context.insertsOrUpdates.book.insert(book)
     }
     
@@ -86,24 +56,24 @@ class VergeNormalizerTests: XCTestCase {
     
     var state = RootState()
     
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
-      let book = Book(rawID: "some")
+      let book = Book(rawID: "some", authorID: Author.anonymous.id)
       context.insertsOrUpdates.book.insert(book)
-      context.orderTables.bookA.append(book.id)
+      context.indexes.bookA.append(book.id)
     }
         
     XCTAssertEqual(state.db.entities.book.count, 1)
-    XCTAssertEqual(state.db.orderTables.bookA.count, 1)
+    XCTAssertEqual(state.db.indexes.bookA.count, 1)
     
-    print(state.db.orderTables.bookA)
+    print(state.db.indexes.bookA)
     
-    state.db.performBatchUpdate { (context) -> Void in
+    state.db.performBatchUpdates { (context) -> Void in
       context.deletes.book.insert(Book.ID.init(raw: "some"))
     }
     
     XCTAssertEqual(state.db.entities.book.count, 0)
-    XCTAssertEqual(state.db.orderTables.bookA.count, 0)
+    XCTAssertEqual(state.db.indexes.bookA.count, 0)
     
   }
   
@@ -113,15 +83,15 @@ class VergeNormalizerTests: XCTestCase {
     
     let id = Book.ID.init(raw: "some")
     
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
-      let book = Book(rawID: id.raw)
+      let book = Book(rawID: id.raw, authorID: Author.anonymous.id)
       context.insertsOrUpdates.book.insert(book)
     }
     
     XCTAssertNotNil(state.db.entities.book.find(by: id))
     
-    state.db.performBatchUpdate { (context) in
+    state.db.performBatchUpdates { (context) in
       
       guard var book = context.current.entities.book.find(by: id) else {
         XCTFail()
@@ -162,11 +132,11 @@ class VergeNormalizerTests: XCTestCase {
       var book: Book!
             
       storage.update { state in
-        let createdBook = state.db.performBatchUpdate { (context) -> Book in
+        let createdBook = state.db.performBatchUpdates { (context) -> Book in
           
-          let book = Book(rawID: id.raw)
+          let book = Book(rawID: id.raw, authorID: Author.anonymous.id)
           context.insertsOrUpdates.book.insert(book)
-          context.orderTables.bookA.append(book.id)
+          context.indexes.bookA.append(book.id)
           
           return book
         }
@@ -187,7 +157,7 @@ class VergeNormalizerTests: XCTestCase {
       XCTContext.runActivity(named: "modify") { (_) -> Void in
                 
         storage.update { state in
-          state.db.performBatchUpdate { (context) -> Void in
+          state.db.performBatchUpdates { (context) -> Void in
             
             var book = context.current.entities.book.find(by: id)!
             book.name = "Hey"
@@ -204,7 +174,7 @@ class VergeNormalizerTests: XCTestCase {
       XCTContext.runActivity(named: "delete") { (_) -> Void in
         
         storage.update { state in
-          state.db.performBatchUpdate { (context) -> Void in
+          state.db.performBatchUpdates { (context) -> Void in
             
             context.deletes.book.insert(id)
             
