@@ -26,7 +26,7 @@ struct Database: DatabaseType {
 
   }
 
-  struct OrderTables: OrderTablesType {
+  struct Indexes: IndexesType {
 
   }
 

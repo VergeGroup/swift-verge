@@ -32,5 +32,83 @@ Currently, we have the following ways,
 
 ## Register Index
 
+Let's take a look at how to register Index.  
+The whole of database is here.
 
+```swift
+struct Database: DatabaseType {
+
+  struct Schema: EntitySchemaType {
+    let book = Book.EntityTableKey()
+    let author = Book.EntityTableKey()
+  }
+
+  struct Indexes: IndexesType {
+    // 👋 Here!
+  }
+
+  var _backingStorage: BackingStorage = .init()
+}
+```
+
+Indexes struct describes the set of indexes. All of the indexes that are managed by VergeORM would be here.
+
+For now, we add a simple index that ordered just like this.
+
+```swift
+struct Indexes: IndexesType {
+  let allBooks = IndexKey<OrderedIDIndex<Schema, Book>>()
+  // or OrderedIDIndex<Schema, Book>.Key()
+}
+```
+
+With this, now we have index property on `DatabaseType.indexes`.
+
+```swift
+let allBooks = state.db.indexes.allBooks
+// allBooks: OrderedIDIndex<Database.Schema, Book>
+```
+
+## Read Index
+
+**Accessing indexes**
+
+```swift
+// Get the number of ids
+allBooks.count
+
+// Take all ids
+allBooks.forEach { id in ... }
+
+// Get the id with location
+let id: Book.ID = allBooks[0]
+```
+
+**Fetch the entities from index**
+
+```swift
+let books: [Book] = state.db.entities.book.find(in: state.db.indexes.allBooks)
+// This syntax looks is a bit verbose.
+// We will take shorter syntax.
+```
+
+## Write Index
+
+To write index is similar with updating entities.  
+Using `performBatchUpdates` , add or delete index through the `context` .
+
+```swift
+state.db.performBatchUpdates { (context) -> Book in
+          
+  let book = Book(rawID: id.raw, authorID: Author.anonymous.id)
+  context.insertsOrUpdates.book.insert(book)
+  
+  // Here 👋
+  context.indexes.allBooks.append(book.id)
+
+}
+```
+
+Since Index would be updated manually, if you want to manage automatically.  
+With using **Middleware**, **** it's possible.
 
