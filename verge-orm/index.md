@@ -23,12 +23,15 @@ At least, Index manages identifiers to find the entity faster than linear search
 
 Currently, we have the following types,
 
-* OrderedIDIndex 
+* **OrderedIDIndex** 
   * e.g. \[Book.ID\]
   * Manages identifiers in an ordered collection
-* GroupByIndex
+* **GroupByIndex**
   * e.g. \[Author.ID : \[Book.ID\]\]
   * Manages identifiers that are grouped by another identifier
+* **HashIndex**
+  * e.g. \[Key : Entity.ID\]
+  * Manages identifiers with hashable keys
 
 ## Register Index
 
