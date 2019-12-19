@@ -21,8 +21,10 @@
 
 import Foundation
 
+/// Ordered Collection based index storage
 public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: IndexType, Equatable {
   
+  // FIXME: To be faster filter, use BTree
   private var backing: [Entity.ID] = []
   
   public init() {
