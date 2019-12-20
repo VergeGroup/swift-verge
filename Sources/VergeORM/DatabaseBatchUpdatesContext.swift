@@ -25,22 +25,26 @@ public enum BatchUpdateError: Error {
   case aborted
 }
 
-public final class DatabaseBatchUpdateContext<Database: DatabaseType> {
+public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
+  
+  public var insertsOrUpdates: EntityTablesStorage<Schema> = .init()
+  public var deletes: BackingRemovingEntityStorage<Schema> = .init()
+  
+  public func abort() throws -> Never {
+    throw BatchUpdateError.aborted
+  }
+}
+
+public final class DatabaseBatchUpdatesContext<Database: DatabaseType>: DatabaseEntityBatchUpdatesContext<Database.Schema> {
   
   public let current: Database
-  
-  public var insertsOrUpdates: EntityTablesStorage<Database.Schema> = .init()
-  public var deletes: BackingRemovingEntityStorage<Database.Schema> = .init()
   public var indexes: IndexesStorage<Database.Schema, Database.Indexes>
-    
+  
   init(current: Database) {
     self.current = current
     self.indexes = current._backingStorage.indexesStorage
   }
   
-  public func abort() throws -> Never {
-    throw BatchUpdateError.aborted
-  }
 }
 
 extension DatabaseType {
@@ -49,9 +53,9 @@ extension DatabaseType {
   /// If can be run on background thread with locking.
   ///
   /// - Parameter update:
-  public mutating func performBatchUpdates<Result>(_ update: (DatabaseBatchUpdateContext<Self>) throws -> Result) rethrows -> Result {
+  public mutating func performBatchUpdates<Result>(_ update: (DatabaseBatchUpdatesContext<Self>) throws -> Result) rethrows -> Result {
             
-    let context = DatabaseBatchUpdateContext<Self>(current: self)
+    let context = DatabaseBatchUpdatesContext<Self>(current: self)
     do {
       let result = try update(context)
       

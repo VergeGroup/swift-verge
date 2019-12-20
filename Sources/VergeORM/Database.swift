@@ -42,22 +42,22 @@ public protocol EntitySchemaType {
 public protocol MiddlewareType {
   associatedtype Database: DatabaseType
   
-  func performAfterUpdates(context: DatabaseBatchUpdateContext<Database>)
+  func performAfterUpdates(context: DatabaseBatchUpdatesContext<Database>)
 }
 
 public struct AnyMiddleware<Database: DatabaseType>: MiddlewareType {
   
-  private let _performAfterUpdates: (DatabaseBatchUpdateContext<Database>) -> ()
+  private let _performAfterUpdates: (DatabaseBatchUpdatesContext<Database>) -> ()
   
   public init<Base: MiddlewareType>(_ base: Base) where Base.Database == Database {
     self._performAfterUpdates = base.performAfterUpdates
   }
   
-  public init(performAfterUpdates: @escaping (DatabaseBatchUpdateContext<Database>) -> ()) {
+  public init(performAfterUpdates: @escaping (DatabaseBatchUpdatesContext<Database>) -> ()) {
     self._performAfterUpdates = performAfterUpdates
   }
   
-  public func performAfterUpdates(context: DatabaseBatchUpdateContext<Database>) {
+  public func performAfterUpdates(context: DatabaseBatchUpdatesContext<Database>) {
     _performAfterUpdates(context)
   }
 }
