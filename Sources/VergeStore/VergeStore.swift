@@ -73,6 +73,8 @@ public protocol VergeStoreType: AnyObject {
   associatedtype Activity
 }
 
+public typealias NoActivityStoreBase<State> = StoreBase<State, Never>
+
 /// A base object to create store.
 /// You may create subclass of VergeDefaultStore
 /// ```
@@ -83,6 +85,8 @@ public protocol VergeStoreType: AnyObject {
 /// }
 /// ```
 open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType, ValueContainerType {
+  
+  public typealias Dispatcher = DispatcherBase<State, Activity>
   
   public typealias Value = State
     
