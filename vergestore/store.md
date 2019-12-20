@@ -29,7 +29,7 @@ struct State {
 
 }
 
-final class MyStore: StoreBase<State> {
+final class MyStore: StoreBase<State, Never> {
 
   init() {
     super.init(initialState: .init(), logger: nil)

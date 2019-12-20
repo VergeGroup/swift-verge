@@ -22,7 +22,7 @@ Mutation object is simple struct that has a closure what passes current state to
 **To define mutations in the Store**
 
 ```swift
-class MyDispatcher: DispatcherBase<RootState> {
+class MyDispatcher: MyStore.Dispatcher {
 
   func addNewTodo(title: String) -> Mutation {
     .mutation { (state: inout RootState) in

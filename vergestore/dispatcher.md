@@ -5,7 +5,7 @@ Dispatcher's needs is **to update the state that Store manages** and to **manage
 **Simple example**
 
 ```swift
-class MyDispatcher: DispatcherBase<RootState> {
+class MyDispatcher: MyStore.Dispatcher {
 
 }
 
@@ -13,10 +13,16 @@ let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 ```
 
+{% hint style="info" %}
+`Actual type of MyStore.Dispatcher` is `DispatcherBase<State, Never>` 
+
+It is a typealias to write shortly.
+{% endhint %}
+
 **Managing dependencies code**
 
 ```swift
-class MyDispatcher: DispatcherBase<RootState> {
+class MyDispatcher: MyStore.Dispatcher {
 
   let apiClient: APIClient
 
@@ -42,7 +48,7 @@ For example, In case the timing of getting dependencies that to be needed by run
 In this case, creating multiple dispatchers will help us. Define the dispatcher each the timing of getting dependencies.
 
 ```swift
-class LoggedInDispatcher: DispatcherBase<RootState> {
+class LoggedInDispatcher: MyStore.Dispatcher {
   
   let apiClientNeedsAuthToken = ...
   ...

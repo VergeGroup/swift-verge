@@ -17,7 +17,7 @@ public struct AnyAction<Dispatcher, Return> where Dispatcher : VergeStore.Dispat
 Firstly, let's take a look creating Action.
 
 ```swift
-class MyDispatcher: DispatcherBase<RootState> {
+class MyDispatcher: MyStore.Dispatcher {
 
   func someAsyncOperation() -> Action<Void> {
     .action { context in
@@ -40,9 +40,7 @@ dispatcher.accept { $0.someAsyncOperation() }
 To commit Mutation, do it from context.
 
 ```swift
-  
-  
-class MyDispatcher: DispatcherBase<RootState> {
+class MyDispatcher: MyStore.Dispatcher {
 
   func someMutation() -> Mutation<Void> {
     ...
@@ -60,7 +58,7 @@ class MyDispatcher: DispatcherBase<RootState> {
 Since Action can contain asynchronous operation, we can do following.
 
 ```swift
-class MyDispatcher: DispatcherBase<RootState> {
+class MyDispatcher: MyStore.Dispatcher {
 
   func someMutation() -> Mutation<Void> {
     ...
@@ -85,7 +83,7 @@ This feature is super inspired by **Vuex**
 Just like this,
 
 ```swift
-class MyDispatcher: DispatcherBase<RootState> {
+class MyDispatcher: MyStore.Dispatcher {
 
   var subscriptions = Set<AnyCancellable>()
 
