@@ -146,6 +146,20 @@
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4BE9454E23AD1B180060F977"
+               BuildableName = "VergeCoreTests.xctest"
+               BlueprintName = "VergeCoreTests"
+               ReferencedContainer = "container:Verge.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -181,6 +195,16 @@
                BlueprintIdentifier = "4BF2BCDE238A85A700F70CDA"
                BuildableName = "VergeViewModelTests.xctest"
                BlueprintName = "VergeViewModelTests"
+               ReferencedContainer = "container:Verge.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4BE9454E23AD1B180060F977"
+               BuildableName = "VergeCoreTests.xctest"
+               BlueprintName = "VergeCoreTests"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </TestableReference>

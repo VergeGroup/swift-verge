@@ -21,25 +21,11 @@
 
 import Foundation
 
-/// A protocol to create type-safe identifier object
-public protocol VergeTypedIdentifiable {
-  associatedtype RawValue: Hashable
-  var rawID: RawValue { get }
-  typealias ID = VergeTypedIdentifier<Self>
-}
-
-extension VergeTypedIdentifiable {
+public struct EntityIdentifier<Entity: EntityType> : Hashable {
   
-  public var id: VergeTypedIdentifier<Self> {
-    .init(raw: rawID)
-  }
-}
-
-public struct VergeTypedIdentifier<T: VergeTypedIdentifiable> : Hashable {
+  public let raw: Entity.IdentifierType
   
-  public let raw: T.RawValue
-  
-  public init(raw: T.RawValue) {
+  public init(_ raw: Entity.IdentifierType) {
     self.raw = raw
   }
 }
@@ -48,7 +34,12 @@ public struct VergeTypedIdentifier<T: VergeTypedIdentifiable> : Hashable {
 ///
 /// EntityType has VergeTypedIdentifiable.
 /// You might use IdentifiableEntityType instead, if you create SwiftUI app.
-public protocol EntityType: VergeTypedIdentifiable {
+public protocol EntityType {
+  
+  associatedtype IdentifierType: Hashable
+   
+  var id: Identifier { get }
+  
   #if COCOAPODS
   typealias EntityTable = Verge.EntityTable<Self>
   typealias EntityTableKey = Verge.EntityTableKey<Self>
@@ -58,10 +49,12 @@ public protocol EntityType: VergeTypedIdentifiable {
   #endif
 }
 
-/// A protocol combined `EntityType` protocol and `Swift.Identifiable` protocol.
-@available(iOS 13, *)
-public protocol IdentifiableEntityType: EntityType, Identifiable {
- 
+extension EntityType {
+  
+  public typealias Identifier = EntityIdentifier<Self>
+  
+  public typealias ID = Identifier
+  
 }
 
 struct EntityName: Hashable {

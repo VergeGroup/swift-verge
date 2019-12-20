@@ -39,7 +39,7 @@ class OrderedIDIndexTests: XCTestCase {
       )
       
       XCTAssertEqual(
-        state.db.indexes.authorGroupedBook.orderedID(in: .init(raw: "author.1")).count,
+        state.db.indexes.authorGroupedBook.orderedID(in: .init("author.1")).count,
         1
       )
       
@@ -55,7 +55,7 @@ class OrderedIDIndexTests: XCTestCase {
     
     state.db.performBatchUpdates { (context) -> Void in
       
-      context.deletes.book.insert(.init(raw: "some"))
+      context.deletes.book.insert(.init("some"))
     }
     
     XCTAssertEqual(
@@ -64,7 +64,7 @@ class OrderedIDIndexTests: XCTestCase {
     )
     
     XCTAssertEqual(
-      state.db.indexes.authorGroupedBook.orderedID(in: .init(raw: "author.1")).count,
+      state.db.indexes.authorGroupedBook.orderedID(in: .init("author.1")).count,
       0
     )
     
@@ -74,7 +74,7 @@ class OrderedIDIndexTests: XCTestCase {
     
     state.db.performBatchUpdates { (context) -> Void in
       
-      context.deletes.author.insert(.init(raw: "author.1"))
+      context.deletes.author.insert(.init("author.1"))
     }
     
     XCTAssertEqual(
@@ -83,7 +83,7 @@ class OrderedIDIndexTests: XCTestCase {
     )
     
     XCTAssertEqual(
-      state.db.indexes.authorGroupedBook.orderedID(in: .init(raw: "author.1")).count,
+      state.db.indexes.authorGroupedBook.orderedID(in: .init("author.1")).count,
       0
     )
     

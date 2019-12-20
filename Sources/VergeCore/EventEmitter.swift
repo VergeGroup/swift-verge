@@ -34,6 +34,8 @@ public final class EventEmitterSubscribeToken: Hashable {
 
 public final class EventEmitter<Event> {
   
+  private var __publisher: Any?
+  
   private var lock = os_unfair_lock_s()
   
   private var subscribers: [EventEmitterSubscribeToken : (Event) -> Void] = [:]
@@ -67,3 +69,79 @@ public final class EventEmitter<Event> {
     os_unfair_lock_unlock(&lock)
   }
 }
+
+#if canImport(Combine)
+
+import Combine
+
+extension EventEmitter {
+  
+  @available(iOS 13, macOS 10.15, *)
+  public struct Publisher: Combine.Publisher {
+           
+    public typealias Output = Event
+    
+    public typealias Failure = Never
+    
+    private let eventEmitter: EventEmitter<Event>
+    
+    public init(eventEmitter: EventEmitter<Event>) {
+      self.eventEmitter = eventEmitter
+    }
+
+    public func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
+      
+      let anySubscriber = AnySubscriber(subscriber)
+      let subscription = Subscription(subscriber: anySubscriber, eventEmitter: eventEmitter)
+      subscriber.receive(subscription: subscription)
+      
+    }
+    
+  }
+  
+  @available(iOS 13, macOS 10.15, *)
+  public struct Subscription: Combine.Subscription {
+        
+    public let combineIdentifier: CombineIdentifier = .init()
+    
+    private let subscriber: AnySubscriber<Event, Never>
+    private let eventEmitterSubscription: EventEmitterSubscribeToken
+    private weak var eventEmitter: EventEmitter<Event>?
+    
+    init(subscriber: AnySubscriber<Event, Never>, eventEmitter: EventEmitter<Event>) {
+      
+      self.subscriber = subscriber
+      self.eventEmitter = eventEmitter
+      
+      self.eventEmitterSubscription = eventEmitter.add { (event) in
+        _ = subscriber.receive(event)
+      }
+    }
+
+    public func request(_ demand: Subscribers.Demand) {
+      
+    }
+    
+    public func cancel() {
+      eventEmitter?.remove(eventEmitterSubscription)
+    }
+            
+  }
+  
+}
+
+extension EventEmitter {
+  
+  @available(iOS 13, macOS 10.15, *)
+  public var publisher: Publisher {
+    if let publisher = __publisher as? Publisher {
+      return publisher
+    }
+    let newPublisher = Publisher(eventEmitter: self)
+    __publisher = newPublisher
+    return newPublisher
+  }
+  
+}
+
+#endif

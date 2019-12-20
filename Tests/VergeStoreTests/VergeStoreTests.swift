@@ -22,14 +22,14 @@ struct State: StateType {
   var nested: NestedState = .init()
 }
 
-final class Store: StoreBase<State> {
+final class Store: StoreBase<State, Never> {
   
   init() {
     super.init(initialState: .init(), logger: DefaultLogger.shared)
   }
 }
 
-class RootDispatcher: DispatcherBase<State> {
+class RootDispatcher: DispatcherBase<State, Never> {
   
   func resetCount() -> Mutation {
     return .mutation { s in
@@ -72,7 +72,7 @@ class RootDispatcher: DispatcherBase<State> {
   
 }
 
-final class OptionalNestedDispatcher: DispatcherBase<State>, ScopedDispatching {
+final class OptionalNestedDispatcher: DispatcherBase<State, Never>, ScopedDispatching {
       
   static var scopedStateKeyPath: WritableKeyPath<State, State.NestedState?> {
     \.optionalNested
@@ -86,7 +86,7 @@ final class OptionalNestedDispatcher: DispatcherBase<State>, ScopedDispatching {
   
 }
 
-final class NestedDispatcher: DispatcherBase<State>, ScopedDispatching {
+final class NestedDispatcher: DispatcherBase<State, Never>, ScopedDispatching {
   
   static var scopedStateKeyPath: WritableKeyPath<State, State.NestedState> {
     \.nested

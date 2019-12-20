@@ -36,19 +36,31 @@ final class Session: ObservableObject {
 }
 
 enum Entity {
-  struct Post: EntityType, Equatable {
+  struct Post: EntityType, Identifiable, Equatable {
+    typealias IdentifierType = String
+    var id: ID {
+      ID(rawID)
+    }
     let rawID: String
     var title: String
     var userID: User.ID
     var commentIDs: [Comment.ID] = []
   }
   
-  struct User: EntityType, Equatable {
+  struct User: EntityType, Identifiable, Equatable {
+    typealias IdentifierType = String
+    var id: ID {
+      ID(rawID)
+    }
     let rawID: String
     var name: String
   }
   
-  struct Comment: EntityType, Equatable {
+  struct Comment: EntityType, Identifiable, Equatable {
+    typealias IdentifierType = String
+    var id: ID {
+      ID(rawID)
+    }
     let rawID: String
     var text: String
     var postID: Post.ID
@@ -79,14 +91,14 @@ struct SessionState: StateType {
 
 }
 
-final class SessionStore: StoreBase<SessionState> {
+final class SessionStore: StoreBase<SessionState, Never> {
       
   init() {
     super.init(initialState: .init(), logger: DefaultLogger.shared)
   }
 }
 
-final class SessionDispatcher: DispatcherBase<SessionState> {
+final class SessionDispatcher: SessionStore.Dispatcher {
   
   func insertSampleUsers() -> Mutation {
     return .mutation { s in

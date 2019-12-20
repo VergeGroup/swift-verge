@@ -48,7 +48,7 @@ struct BViewModelState {
   var count: Int = 0
 }
 
-final class BViewModel: VergeViewModelBase<ViewModelState, AViewModelState, Never> {
+final class BViewModel: VergeViewModelBase<ViewModelState, AViewModelState, Never, Never> {
   
   init(viewModel: AViewModel) {
     super.init(

@@ -110,7 +110,7 @@ class FindPerformanceTests: XCTestCase {
   func testFindOne() {
 
     measure {
-      _ = state.db.entities.author.find(by: .init(raw: "author.199"))
+      _ = state.db.entities.author.find(by: .init("author.199"))
     }
     
   }
@@ -118,9 +118,9 @@ class FindPerformanceTests: XCTestCase {
   func testFindMultiple() {
     
     let ids = Set<Author.ID>([
-      .init(raw: "author.11"),
-      .init(raw: "author.199"),
-      .init(raw: "author.399")
+      .init("author.11"),
+      .init("author.199"),
+      .init("author.399")
     ])
     
     measure {

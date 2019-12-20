@@ -19,16 +19,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
 import Foundation
 
-public final class VergeStoreDispatcherContext<Dispatcher: DispatcherType> {
+public final class DispatcherContext<Dispatcher: DispatcherType> {
   
   public typealias State = Dispatcher.State
   
   public let dispatcher: Dispatcher
   public let metadata: ActionMetadata
-  private let parent: VergeStoreDispatcherContext<Dispatcher>?
+  private let parent: DispatcherContext<Dispatcher>?
   
   public var state: State {
     return dispatcher.dispatchTarget.state
@@ -37,7 +36,7 @@ public final class VergeStoreDispatcherContext<Dispatcher: DispatcherType> {
   init(
     dispatcher: Dispatcher,
     metadata: ActionMetadata,
-    parent: VergeStoreDispatcherContext<Dispatcher>?
+    parent: DispatcherContext<Dispatcher>?
   ) {
     self.dispatcher = dispatcher
     self.metadata = metadata
@@ -46,25 +45,34 @@ public final class VergeStoreDispatcherContext<Dispatcher: DispatcherType> {
      
 }
 
-extension VergeStoreDispatcherContext {
-  
+extension DispatcherContext {
+    
+  /// Run Mutation
+  /// - Parameter get: returns Mutation
   public func accept(_ get: (Dispatcher) -> Dispatcher.Mutation) {
     dispatcher.accept(get)
   }
   
+  /// Run Action
   @discardableResult
   public func accept<Return>(_ get: (Dispatcher) -> Dispatcher.Action<Return>) -> Return {
     let action = get(dispatcher)
-    let context = VergeStoreDispatcherContext<Dispatcher>.init(
+    let context = DispatcherContext<Dispatcher>.init(
       dispatcher: dispatcher,
       metadata: action.metadata,
       parent: self
     )
     return action._action(context)
   }
+    
+  /// Send activity
+  /// - Parameter activity:
+  public func send(_ activity: Dispatcher.Activity) {
+    dispatcher.dispatchTarget._send(activity: activity)
+  }
 }
 
-extension VergeStoreDispatcherContext: CustomReflectable {
+extension DispatcherContext: CustomReflectable {
   
   public var customMirror: Mirror {
     Mirror(
@@ -78,7 +86,7 @@ extension VergeStoreDispatcherContext: CustomReflectable {
   }
 }
 
-extension VergeStoreDispatcherContext where Dispatcher : ScopedDispatching {
+extension DispatcherContext where Dispatcher : ScopedDispatching {
   
   public var scopedState: Dispatcher.Scoped {
     state[keyPath: Dispatcher.scopedStateKeyPath]

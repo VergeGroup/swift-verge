@@ -69,7 +69,7 @@ class VergeORMTests: XCTestCase {
     print(state.db.indexes.allBooks)
     
     state.db.performBatchUpdates { (context) -> Void in
-      context.deletes.book.insert(Book.ID.init(raw: "some"))
+      context.deletes.book.insert(Book.ID.init("some"))
     }
     
     XCTAssertEqual(state.db.entities.book.count, 0)
@@ -81,7 +81,7 @@ class VergeORMTests: XCTestCase {
     
     var state = RootState()
     
-    let id = Book.ID.init(raw: "some")
+    let id = Book.ID.init("some")
     
     state.db.performBatchUpdates { (context) in
       
@@ -111,7 +111,7 @@ class VergeORMTests: XCTestCase {
     
     let storage = Storage<RootState>(.init())
     
-    let id = Book.ID.init(raw: "some")
+    let id = Book.ID.init("some")
     
     let nullableSelector = storage.entitySelector(
       entityTableSelector: { $0.db.entities.book },
