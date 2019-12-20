@@ -31,9 +31,9 @@ public protocol _StandaloneVergeViewModelBaseType {
   associatedtype State
 }
 
-open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State>, DispatcherType, _StandaloneVergeViewModelBaseType {
+open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State, Activity>, DispatcherType, _StandaloneVergeViewModelBaseType {
   
-  public var dispatchTarget: StoreBase<State> { self }
+  public var dispatchTarget: StoreBase<State, Activity> { self }
   
   let activityEmitter: EventEmitter<Activity> = .init()
   
@@ -50,14 +50,14 @@ open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State>, Disp
   
 }
 
-open class VergeViewModelBase<State, StoreState, Activity>: StandaloneVergeViewModelBase<State, Activity> {
+open class VergeViewModelBase<State, StoreState, Activity, StoreActivity>: StandaloneVergeViewModelBase<State, Activity> {
     
-  public let parent: StoreBase<StoreState>
+  public let parent: StoreBase<StoreState, StoreActivity>
   private var subscription: EventEmitterSubscribeToken?
   
   public init(
     initialState: State,
-    parent: StoreBase<StoreState>,
+    parent: StoreBase<StoreState, StoreActivity>,
     logger: VergeStoreLogger?
   ) {
     
@@ -88,11 +88,15 @@ open class VergeViewModelBase<State, StoreState, Activity>: StandaloneVergeViewM
     
   }
   
+  open func receiveStoreActivity(_ activity: StoreActivity) {
+    
+  }
+  
 }
 
-extension VergeStoreDispatcherContext where Dispatcher : _StandaloneVergeViewModelBaseType {
+extension DispatcherContext where Dispatcher : _StandaloneVergeViewModelBaseType {
   
-  public func emit(_ activity: Dispatcher.Activity) {
+  public func send(_ activity: Dispatcher.Activity) {
     guard let target = self.dispatcher.dispatchTarget as? StandaloneVergeViewModelBase<Dispatcher.State, Dispatcher.Activity> else {
       assertionFailure("")
       return

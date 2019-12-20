@@ -23,7 +23,7 @@ import Foundation
 
 public struct AnyAction<Dispatcher: DispatcherType, Return> {
   
-  let _action: (VergeStoreDispatcherContext<Dispatcher>) -> Return
+  let _action: (DispatcherContext<Dispatcher>) -> Return
   public let metadata: ActionMetadata
   
   public init(
@@ -31,7 +31,7 @@ public struct AnyAction<Dispatcher: DispatcherType, Return> {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ action: @escaping (VergeStoreDispatcherContext<Dispatcher>) -> Return
+    _ action: @escaping (DispatcherContext<Dispatcher>) -> Return
   ) {
     
     self.metadata = .init(name: name, file: file, function: function, line: line)
@@ -47,7 +47,7 @@ extension AnyAction {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ action: @escaping (VergeStoreDispatcherContext<Dispatcher>) -> Return
+    _ action: @escaping (DispatcherContext<Dispatcher>) -> Return
   ) -> Self {
     self.init(name, file, function, line, action)
   }

@@ -20,14 +20,14 @@ class MemoizeGetterTests: XCTestCase {
     var name: String = ""
   }
   
-  final class Store: StoreBase<State> {
+  final class Store: StoreBase<State, Never> {
     
     init() {
       super.init(initialState: .init(), logger: DefaultLogger.shared)
     }
   }
   
-  final class RootDispatcher: DispatcherBase<State> {
+  final class RootDispatcher: DispatcherBase<State, Never> {
         
     func increment() -> Mutation  {
       .mutation {

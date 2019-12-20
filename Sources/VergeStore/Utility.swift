@@ -26,9 +26,7 @@ public protocol StateType {
 }
 
 extension StateType {
-    
-  public typealias Dispatcher = DispatcherBase<Self>
-  
+      
   public mutating func updateIfPresent<T: _VergeStore_OptionalProtocol>(target keyPath: WritableKeyPath<Self, T>, update: (inout T.Wrapped) throws -> Void) rethrows {
     guard self[keyPath: keyPath]._vergestore_wrappedValue != nil else { return }
     try update(&self[keyPath: keyPath]._vergestore_wrappedValue!)

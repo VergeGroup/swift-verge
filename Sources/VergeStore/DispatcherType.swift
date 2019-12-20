@@ -24,10 +24,10 @@ import Foundation
 public protocol DispatcherType {
     
   associatedtype State
-  typealias Store = StoreBase<State>
+  associatedtype Activity
   typealias Mutation = AnyMutation<Self>
   typealias Action<Return> = AnyAction<Self, Return>
-  var dispatchTarget: Store { get }
+  var dispatchTarget: StoreBase<State, Activity> { get }
   
 }
 
@@ -38,7 +38,7 @@ extension DispatcherType {
   public func accept(_ get: (Self) -> Mutation) {
     let mutation = get(self)
     dispatchTarget._receive(
-      context: Optional<VergeStoreDispatcherContext<Self>>.none,
+      context: Optional<DispatcherContext<Self>>.none,
       mutation: mutation
     )
   }
@@ -48,7 +48,7 @@ extension DispatcherType {
   @discardableResult
   public func accept<Return>(_ get: (Self) -> Action<Return>) -> Return {
     let action = get(self)
-    let context = VergeStoreDispatcherContext<Self>.init(
+    let context = DispatcherContext<Self>.init(
       dispatcher: self,
       metadata: action.metadata,
       parent: nil

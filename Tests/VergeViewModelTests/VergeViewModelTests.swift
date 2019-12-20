@@ -15,11 +15,11 @@ struct RootState {
   var count: Int = 0
 }
 
-final class RootStore: StoreBase<RootState> {
+final class RootStore: StoreBase<RootState, Never> {
   
 }
 
-final class RootDispatcher: DispatcherBase<RootState> {
+final class RootDispatcher: DispatcherBase<RootState, Never> {
     
   func increment() -> Mutation {
     .mutation {
@@ -33,7 +33,7 @@ struct MyViewModelState {
   var count: Int = 0
 }
 
-final class MyViewModel: VergeViewModelBase<MyViewModelState, RootState, Never> {
+final class MyViewModel: VergeViewModelBase<MyViewModelState, RootState, Never, Never> {
   
   override func updateState(state: inout MyViewModelState, by storeState: RootState) {
     state.rootCount = storeState.count

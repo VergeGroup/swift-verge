@@ -14,8 +14,12 @@ private var storage_diposeBag: Void?
 
 extension StoreBase where State : StateType {
   
-  public func statePublisher() -> Observable<State> {
+  public var stateObservable: Observable<State> {
     _backingStorage.asObservable()
+  }
+  
+  public var activitySignal: Signal<Activity> {
+    _eventEmitter.asSignal()
   }
   
 }
@@ -113,6 +117,33 @@ extension ObservableType where Element : StateType {
   /// - Returns: Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
   public func changedDriver<S : Equatable>(_ selector: KeyPath<Element, S>) -> Driver<S> {
     return changedDriver(selector, ==)
+  }
+  
+}
+
+extension EventEmitter {
+  
+  private var subject: PublishRelay<Event> {
+    
+    if let associated = objc_getAssociatedObject(self, &storage_subject) as? PublishRelay<Event> {
+      
+      return associated
+      
+    } else {
+      
+      let associated = PublishRelay<Event>()
+      objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
+      
+      add { (event) in
+        associated.accept(event)
+      }
+      
+      return associated
+    }
+  }
+  
+  public func asSignal() -> Signal<Event> {
+    return subject.asSignal()
   }
   
 }

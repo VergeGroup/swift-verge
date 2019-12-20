@@ -68,8 +68,9 @@ public protocol VergeStoreLogger {
   func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
 }
 
-public protocol VergeStoreType {
+public protocol VergeStoreType: AnyObject {
   associatedtype State
+  associatedtype Activity
 }
 
 /// A base object to create store.
@@ -81,7 +82,7 @@ public protocol VergeStoreType {
 ///   }
 /// }
 /// ```
-open class StoreBase<State>: CustomReflectable, VergeStoreType, ValueContainerType {
+open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType, ValueContainerType {
   
   public typealias Value = State
     
@@ -93,6 +94,7 @@ open class StoreBase<State>: CustomReflectable, VergeStoreType, ValueContainerTy
   /// A backing storage that manages current state.
   /// You shouldn't access this directly unless special case.
   public let _backingStorage: Storage<State>
+  public let _eventEmitter: EventEmitter<Activity> = .init()
   
   public private(set) var logger: VergeStoreLogger?
     
@@ -112,7 +114,7 @@ open class StoreBase<State>: CustomReflectable, VergeStoreType, ValueContainerTy
   
   @inline(__always)
   func _receive<FromDispatcher: DispatcherType>(
-    context: VergeStoreDispatcherContext<FromDispatcher>?,
+    context: DispatcherContext<FromDispatcher>?,
     mutation: AnyMutation<FromDispatcher>
   ) where FromDispatcher.State == State {
     
@@ -128,6 +130,12 @@ open class StoreBase<State>: CustomReflectable, VergeStoreType, ValueContainerTy
     
     logger?.didCommit(store: self, state: currentState!, mutation: mutation.metadata, context: context, time: elapsed)
     
+  }
+  
+  @inline(__always)
+  func _send(activity: Activity) {
+    
+    _eventEmitter.accept(activity)
   }
      
   public var customMirror: Mirror {
@@ -199,12 +207,23 @@ extension Storage: ObservableObject {
 
 @available(iOS 13.0, macOS 10.15, *)
 extension StoreBase: ObservableObject {
+  
+  /// A Publisher to compatible SwiftUI
   public var objectWillChange: ObservableObjectPublisher {
     _backingStorage.objectWillChange
   }
+    
+}
+
+@available(iOS 13.0, macOS 10.15, *)
+extension StoreBase {
   
   public var didChangePublisher: AnyPublisher<State, Never> {
     _backingStorage.didChangePublisher
+  }
+  
+  public var activityPublisher: EventEmitter<Activity>.Publisher {
+    _eventEmitter.publisher
   }
 }
 
