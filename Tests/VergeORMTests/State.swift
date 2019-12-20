@@ -12,6 +12,12 @@ import VergeORM
 
 struct Book: EntityType, Equatable {
   
+  typealias IdentifierType = String
+  
+  var id: Identifier {
+    .init(rawID)
+  }
+  
   let rawID: String
   let authorID: Author.ID
   var name: String = ""
@@ -19,6 +25,12 @@ struct Book: EntityType, Equatable {
 
 struct Author: EntityType {
   
+  typealias IdentifierType = String
+  
+  var id: Identifier {
+    .init(rawID)
+  }
+    
   let rawID: String
   
   static let anonymous: Author = .init(rawID: "anonymous")

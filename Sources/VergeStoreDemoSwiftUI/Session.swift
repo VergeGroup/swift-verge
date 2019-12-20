@@ -39,7 +39,7 @@ enum Entity {
   struct Post: EntityType, Identifiable, Equatable {
     typealias IdentifierType = String
     var id: ID {
-      ID(raw: rawID)
+      ID(rawID)
     }
     let rawID: String
     var title: String
@@ -50,7 +50,7 @@ enum Entity {
   struct User: EntityType, Identifiable, Equatable {
     typealias IdentifierType = String
     var id: ID {
-      ID(raw: rawID)
+      ID(rawID)
     }
     let rawID: String
     var name: String
@@ -59,7 +59,7 @@ enum Entity {
   struct Comment: EntityType, Identifiable, Equatable {
     typealias IdentifierType = String
     var id: ID {
-      ID(raw: rawID)
+      ID(rawID)
     }
     let rawID: String
     var text: String

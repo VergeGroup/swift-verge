@@ -21,11 +21,11 @@
 
 import Foundation
 
-public struct Identifier<RawIdentifierType: Hashable> : Hashable {
+public struct EntityIdentifier<Entity: EntityType> : Hashable {
   
-  public let raw: RawIdentifierType
+  public let raw: Entity.IdentifierType
   
-  public init(raw: RawIdentifierType) {
+  public init(_ raw: Entity.IdentifierType) {
     self.raw = raw
   }
 }
@@ -38,7 +38,7 @@ public protocol EntityType {
   
   associatedtype IdentifierType: Hashable
    
-  var id: Identifier<IdentifierType> { get }
+  var id: Identifier { get }
   
   #if COCOAPODS
   typealias EntityTable = Verge.EntityTable<Self>
@@ -51,7 +51,9 @@ public protocol EntityType {
 
 extension EntityType {
   
-  public typealias ID = Identifier<IdentifierType>
+  public typealias Identifier = EntityIdentifier<Self>
+  
+  public typealias ID = Identifier
   
 }
 
