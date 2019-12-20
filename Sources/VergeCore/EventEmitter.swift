@@ -76,7 +76,7 @@ import Combine
 
 extension EventEmitter {
   
-  @available(iOS 13, *)
+  @available(iOS 13, macOS 10.15, *)
   public struct Publisher: Combine.Publisher {
            
     public typealias Output = Event
@@ -99,7 +99,7 @@ extension EventEmitter {
     
   }
   
-  @available(iOS 13, *)
+  @available(iOS 13, macOS 10.15, *)
   public struct Subscription: Combine.Subscription {
         
     public let combineIdentifier: CombineIdentifier = .init()
@@ -132,7 +132,7 @@ extension EventEmitter {
 
 extension EventEmitter {
   
-  @available(iOS 13, *)
+  @available(iOS 13, macOS 10.15, *)
   public var publisher: Publisher {
     if let publisher = __publisher as? Publisher {
       return publisher
