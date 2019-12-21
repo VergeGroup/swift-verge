@@ -21,7 +21,7 @@ class PerformanceTests: XCTestCase {
         
         for i in 0..<1000 {
           let author = Author(rawID: "author.\(i)")
-          context.insertsOrUpdates.author.insert(author)
+          context.author.insertsOrUpdates.insert(author)
         }
         
       }
@@ -34,9 +34,9 @@ class PerformanceTests: XCTestCase {
     measure {
       state.db.performBatchUpdates { (context) in
         
-        for i in 0..<10000 {
+        for i in 0..<3000 {
           let author = Author(rawID: "author.\(i)")
-          context.insertsOrUpdates.author.insert(author)
+          context.author.insertsOrUpdates.insert(author)
         }
         
       }
@@ -53,7 +53,7 @@ class PerformanceTests: XCTestCase {
           Author(rawID: "author.\(i)")
         }
         
-        context.insertsOrUpdates.author.insert(authors)
+        context.author.insertsOrUpdates.insert(authors)
         
       }
     }
@@ -68,7 +68,7 @@ class PerformanceTests: XCTestCase {
           
           for i in 0..<1000 {
             let author = Author(rawID: "author.\(l)-\(i)")
-            context.insertsOrUpdates.author.insert(author)
+            context.author.insertsOrUpdates.insert(author)
           }
           
         }
@@ -83,7 +83,7 @@ class PerformanceTests: XCTestCase {
       for i in 0..<1000 {
         state.db.performBatchUpdates { (context) in
           let author = Author(rawID: "author.\(i)")
-          context.insertsOrUpdates.author.insert(author)
+          context.author.insertsOrUpdates.insert(author)
         }
         
       }
@@ -97,13 +97,12 @@ class FindPerformanceTests: XCTestCase {
   var state = RootState()
   
   override func setUp() {
-    state.db.performBatchUpdates { (context) in
+    state.db.performBatchUpdates { (context) -> Void in
       
-      for i in 0..<10000 {
-        let author = Author(rawID: "author.\(i)")
-        context.insertsOrUpdates.author.insert(author)
-      }
-      
+      context.author.insertsOrUpdates.insert((0..<10000).map { i in
+        Author(rawID: "author.\(i)")
+      })
+            
     }
   }
   
@@ -129,4 +128,20 @@ class FindPerformanceTests: XCTestCase {
     
   }
   
+}
+
+class ModifyPerformanceTests: XCTestCase {
+  
+  var state = RootState()
+  
+  override func setUp() {
+    state.db.performBatchUpdates { (context) -> Void in
+      
+      context.author.insertsOrUpdates.insert((0..<10000).map { i in
+        Author(rawID: "author.\(i)")
+      })
+      
+    }
+  }
+
 }

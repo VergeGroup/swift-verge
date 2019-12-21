@@ -29,6 +29,7 @@
 		4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B68394623705ACD002FFC5A /* VergeStoreTests.swift */; };
 		4B68394923705ACE002FFC5A /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B683950237062F7002FFC5A /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B68394F237062F7002FFC5A /* Utility.swift */; };
+		4B6BF62B23AD7B74001E5361 /* CollectionPerformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6BF62923AD7B55001E5361 /* CollectionPerformance.swift */; };
 		4B6E361023A7ED1900EB490C /* IndexType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6E360F23A7ED1900EB490C /* IndexType.swift */; };
 		4B786324233912AB009B9C1B /* VergeStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B786322233912AB009B9C1B /* VergeStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B786327233912AB009B9C1B /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
@@ -359,6 +360,7 @@
 		4B68394623705ACD002FFC5A /* VergeStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeStoreTests.swift; sourceTree = "<group>"; };
 		4B68394823705ACE002FFC5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B68394F237062F7002FFC5A /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
+		4B6BF62923AD7B55001E5361 /* CollectionPerformance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionPerformance.swift; sourceTree = "<group>"; };
 		4B6E360F23A7ED1900EB490C /* IndexType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexType.swift; sourceTree = "<group>"; };
 		4B786320233912AB009B9C1B /* VergeStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B786322233912AB009B9C1B /* VergeStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeStore.h; sourceTree = "<group>"; };
@@ -637,6 +639,7 @@
 			isa = PBXGroup;
 			children = (
 				4BC6EFB423A8C99900EFD688 /* State.swift */,
+				4B6BF62923AD7B55001E5361 /* CollectionPerformance.swift */,
 				4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */,
 				4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */,
 				4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */,
@@ -1587,6 +1590,7 @@
 				4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */,
 				4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */,
 				4BC6EFB523A8C99900EFD688 /* State.swift in Sources */,
+				4B6BF62B23AD7B74001E5361 /* CollectionPerformance.swift in Sources */,
 				4BAF902F23A92B69004D6356 /* MiddlewareTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

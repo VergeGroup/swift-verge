@@ -57,7 +57,7 @@ extension EntityType {
   
 }
 
-struct EntityName: Hashable {
+public struct EntityName: Hashable {
   let name: String
 }
 

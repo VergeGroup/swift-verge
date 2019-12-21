@@ -27,7 +27,7 @@ public struct GroupByIndex<
   GroupedEntity: EntityType
 >: IndexType {
   
-  private var backing: [GroupEntity.ID : OrderedIDIndex<Schema, GroupedEntity>] = [:]
+  private var backing: [AnyHashable : OrderedIDIndex<Schema, GroupedEntity>] = [:]
   
   public init() {
     
@@ -35,8 +35,12 @@ public struct GroupByIndex<
   
   // MARK: - Querying
   
-  public func groups() -> Dictionary<GroupEntity.ID, OrderedIDIndex<Schema, GroupedEntity>>.Keys {
-    backing.keys
+  public func groupCount() -> Int {
+    backing.keys.count
+  }
+  
+  public func groups() -> Set<GroupEntity.ID> {
+    Set(backing.keys.map { $0 as! GroupEntity.ID })
   }
   
   public func orderedID(in groupEntityID: GroupEntity.ID) -> OrderedIDIndex<Schema, GroupedEntity> {
@@ -44,30 +48,31 @@ public struct GroupByIndex<
   }
   
   // MARK: - Mutating
+  
+  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityName) {
     
-  public mutating func _apply(removing: BackingRemovingEntityStorage<Schema>) {
-    
-    let group = removing._getTable(GroupEntity.self)
-    group?.forEach {
-      backing.removeValue(forKey: $0)
-    }
-        
-    backing.keys.forEach { key in
-      backing[key]?._apply(removing: removing)
-      
-      cleanup: do {
-        
-        if backing[key]?.isEmpty == true {
-          backing.removeValue(forKey: key)
-        }
-        
+    if GroupEntity.entityName == entityName {
+      removing.forEach {
+        backing.removeValue(forKey: $0 as! GroupEntity.ID)
       }
     }
     
-   
+    if GroupedEntity.entityName == entityName {
+      backing.keys.forEach { key in
+        backing[key]?._apply(removing: removing, entityName: entityName)
+        
+        cleanup: do {
+          
+          if backing[key]?.isEmpty == true {
+            backing.removeValue(forKey: key)
+          }
+          
+        }
+      }
+    }
     
   }
-  
+      
   public mutating func update(in groupEntityID: GroupEntity.ID, update: (inout OrderedIDIndex<Schema, GroupedEntity>) -> Void) {
     update(&backing[groupEntityID, default: .init()])
   }

@@ -24,21 +24,21 @@ import Foundation
 fileprivate struct Wrapper<Schema: EntitySchemaType> {
   
   var base: Any
-  private let _apply: (Any, BackingRemovingEntityStorage<Schema>) -> Any
+  private let _apply: (Any, _ removing: Set<AnyHashable>, _ entityName: EntityName) -> Any
   
   init<I: IndexType>(
     base: I,
-    apply: @escaping (I, BackingRemovingEntityStorage<Schema>) -> I
+    apply: @escaping (I, _ removing: Set<AnyHashable>, _ entityName: EntityName) -> I
   ) {
     
     self.base = base
-    self._apply = { base, removing -> Any in
-      apply(base as! I, removing)
+    self._apply = { base, removing, entityName -> Any in
+      apply(base as! I, removing, entityName)
     }
   }
   
-  mutating func apply(removing: BackingRemovingEntityStorage<Schema>) {
-    self.base = _apply(base, removing)
+  mutating func apply(removing: Set<AnyHashable>, entityName: EntityName) {
+    self.base = _apply(base, removing, entityName)
   }
 }
 
@@ -63,9 +63,9 @@ public struct IndexesStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
 
 extension IndexesStorage {
   
-  mutating func apply(removing: BackingRemovingEntityStorage<Schema>) {
+  mutating func apply(removing: Set<AnyHashable>, entityName: EntityName) {
     backing.keys.forEach { key in
-      backing[key]?.apply(removing: removing)
+      backing[key]?.apply(removing: removing, entityName: entityName)
     }
   }
     
@@ -90,7 +90,7 @@ public protocol IndexType {
   
   init()
     
-  mutating func _apply(removing: BackingRemovingEntityStorage<Schema>)
+  mutating func _apply(removing: Set<AnyHashable>, entityName: EntityName)
 }
 
 extension IndexType {
@@ -98,9 +98,9 @@ extension IndexType {
   fileprivate func wrapped() -> Wrapper<Schema> {
     return .init(
       base: self,
-      apply: { (base: Self, removing: BackingRemovingEntityStorage<Schema>) in
+      apply: { (base: Self, removing: Set<AnyHashable>, entityName: EntityName) in
         var b = base
-        b._apply(removing: removing)
+        b._apply(removing: removing, entityName: entityName)
         return b
     })
   }

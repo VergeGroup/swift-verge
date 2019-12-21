@@ -25,18 +25,19 @@ import Foundation
 public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: IndexType, Equatable {
   
   // FIXME: To be faster filter, use BTree
-  private var backing: [Entity.ID] = []
+  private var backing: [AnyHashable] = []
   
   public init() {
   }
   
-  public mutating func _apply(removing: BackingRemovingEntityStorage<Schema>) {
-    guard let ids = removing._getTable(Entity.self) else {
-      return
+  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityName) {
+    
+    if Entity.entityName == entityName, !removing.isEmpty {
+      backing.removeAll { removing.contains($0) }
     }
-    backing.removeAll { ids.contains($0) }
+
   }
-  
+     
 }
 
 extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplaceableCollection {
@@ -50,11 +51,11 @@ extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplac
   }
   
   public subscript(position: Int) -> Entity.ID {
-    _read {
-      yield backing[position]
+    get {
+      backing[position] as! Entity.ID
     }
-    _modify {
-      yield &backing[position]
+    set {
+      backing[position] = newValue as AnyHashable
     }
   }
   
