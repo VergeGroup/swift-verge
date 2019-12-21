@@ -29,7 +29,7 @@ class PerformanceTests: XCTestCase {
            
   }
   
-  func testInsertSoMany() {
+  func testInsert3000() {
     
     measure {
       state.db.performBatchUpdates { (context) in
@@ -44,12 +44,44 @@ class PerformanceTests: XCTestCase {
     
   }
   
-  func testInsertSoManyUseCollection() {
+  func testInsert3000UseCollection() {
+    
+    measure {
+      state.db.performBatchUpdates { (context) in
+        
+        let authors = (0..<1000).map { i in
+          Author(rawID: "author.\(i)")
+        }
+        
+        context.author.insertsOrUpdates.insert(authors)
+        
+      }
+    }
+    
+  }
+  
+  func testInsert10000UseCollection() {
     
     measure {
       state.db.performBatchUpdates { (context) in
         
         let authors = (0..<10000).map { i in
+          Author(rawID: "author.\(i)")
+        }
+        
+        context.author.insertsOrUpdates.insert(authors)
+        
+      }
+    }
+    
+  }
+  
+  func testInsert100000UseCollection() {
+    
+    measure {
+      state.db.performBatchUpdates { (context) in
+        
+        let authors = (0..<100000).map { i in
           Author(rawID: "author.\(i)")
         }
         
