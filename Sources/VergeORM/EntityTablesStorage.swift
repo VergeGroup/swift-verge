@@ -47,8 +47,8 @@ public struct EntityTable<Entity: EntityType>: EntityTableType {
     self.entities = buffer
   }
   
-  public func all() -> [Entity] {
-    entities.map { $0.value as! Entity }
+  public func all() -> AnySequence<Entity> {
+    .init(entities.lazy.map { $0.value as! Entity })
   }
   
   public func find(by id: Entity.ID) -> Entity? {
