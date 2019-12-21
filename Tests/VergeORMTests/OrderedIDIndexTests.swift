@@ -20,10 +20,10 @@ class OrderedIDIndexTests: XCTestCase {
     state.db.performBatchUpdates { (context) in
       
       let author = Author(rawID: "author.1")
-      context.insertsOrUpdates.author.insert(author)
+      context.author.insertsOrUpdates.insert(author)
       
       let book = Book(rawID: "some", authorID: author.id)
-      context.insertsOrUpdates.book.insert(book)
+      context.book.insertsOrUpdates.insert(book)
       
       context.indexes.authorGroupedBook
         .update(in: author.id) { (index) in
@@ -55,7 +55,7 @@ class OrderedIDIndexTests: XCTestCase {
     
     state.db.performBatchUpdates { (context) -> Void in
       
-      context.deletes.book.insert(.init("some"))
+      context.book.deletes.insert(.init("some"))
     }
     
     XCTAssertEqual(
@@ -74,7 +74,7 @@ class OrderedIDIndexTests: XCTestCase {
     
     state.db.performBatchUpdates { (context) -> Void in
       
-      context.deletes.author.insert(.init("author.1"))
+      context.author.deletes.insert(.init("author.1"))
     }
     
     XCTAssertEqual(

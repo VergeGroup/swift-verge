@@ -24,36 +24,35 @@ import Foundation
 public struct HashIndex<Schema: EntitySchemaType, HashKey: Hashable, Entity: EntityType>: IndexType, Equatable {
   
   // FIXME: To be faster filter, use BTree
-  @usableFromInline
-  var backing: [HashKey : Entity.ID] = [:]
+  private var backing: [HashKey : AnyHashable] = [:]
   
   public init() {
   }
   
-  public mutating func _apply(removing: BackingRemovingEntityStorage<Schema>) {
-    guard let ids = removing._getTable(Entity.self) else {
-      return
-    }
+  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityName) {
     
-    var keys: Set<HashKey> = .init()
-    backing.forEach { key, value in
-      if ids.contains(value) {
-        keys.insert(key)
+    if Entity.entityName == entityName {
+      
+      var keys: Set<HashKey> = .init()
+      backing.forEach { key, value in
+        if removing.contains(value) {
+          keys.insert(key)
+        }
+      }
+      
+      keys.forEach {
+        backing.removeValue(forKey: $0)
       }
     }
     
-    keys.forEach {
-      backing.removeValue(forKey: $0)
-    }
-                
   }
-  
-  @inlinable public subscript(key: HashKey) -> Entity.ID? {
-    _read {
-      yield backing[key]
+    
+  public subscript(key: HashKey) -> Entity.ID? {
+    get {
+      backing[key] as? Entity.ID
     }
-    _modify {
-      yield &backing[key]
+    set {
+      backing[key] = newValue as AnyHashable
     }
   }
   

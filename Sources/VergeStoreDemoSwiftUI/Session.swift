@@ -108,7 +108,7 @@ final class SessionDispatcher: SessionStore.Dispatcher {
         let pat = Entity.User(rawID: "pat", name: "Pat Torpey")
         let eric = Entity.User(rawID: "eric", name: "Eric Martin")
         
-        let ids = context.insertsOrUpdates.user.insert([
+        let ids = context.user.insertsOrUpdates.insert([
           paul,
           billy,
           pat,
@@ -127,7 +127,7 @@ final class SessionDispatcher: SessionStore.Dispatcher {
       let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.id)
       s.db.performBatchUpdates { (context) in
         
-        let postID = context.insertsOrUpdates.post.insert(post)
+        let postID = context.post.insertsOrUpdates.insert(post)
         context.indexes.postIDs.append(postID)
         
         context.indexes.postIDsAuthorGrouped.update(in: user.id) { (index) in

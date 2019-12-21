@@ -20,7 +20,7 @@ class MiddlewareTests: XCTestCase {
     state.db.performBatchUpdates { (context) in
       
       let author = Author(rawID: "author.1")
-      context.insertsOrUpdates.author.insert(author)
+      context.author.insertsOrUpdates.insert(author)
     }
     
     XCTAssertEqual(state.db.indexes.bookMiddleware.count, 1)

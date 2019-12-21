@@ -21,7 +21,17 @@
 
 import Foundation
 
-public struct EntityTable<Entity: EntityType> {
+protocol EntityTableType {
+  typealias RawTable = [AnyHashable : Any]
+  var entities: RawTable { get }
+  var entityName: EntityName { get }
+}
+
+public struct EntityTable<Entity: EntityType>: EntityTableType {
+  
+  var entityName: EntityName {
+    Entity.entityName
+  }
   
   public var count: Int {
     entities.count
@@ -49,6 +59,15 @@ public struct EntityTable<Entity: EntityType> {
     ids.reduce(into: [Entity]()) { (buf, id) in
       guard let entity = entities[id] else { return }
       buf.append(entity as! Entity)
+    }
+  }
+  
+  public mutating func updateIfExists(by id: Entity.ID, update: (inout Entity) -> Void) {
+    guard entities.keys.contains(id) else { return }
+    withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Void in
+      var entity = pointer.pointee as! Entity
+      update(&entity)
+      pointer.pointee = entity
     }
   }
     
@@ -85,14 +104,13 @@ extension EntityTable: Equatable where Entity : Equatable {
 @dynamicMemberLookup
 public struct EntityTablesStorage<Schema: EntitySchemaType> {
   
-  typealias RawTable = [AnyHashable : Any]
-  private(set) var entityTableStorage: [EntityName : RawTable]
+  private(set) var entityTableStorage: [EntityName : EntityTableType.RawTable]
       
   public init() {
     self.entityTableStorage = [:]
   }
   
-  private init(entityTableStorage: [EntityName : RawTable]) {
+  private init(entityTableStorage: [EntityName : EntityTableType.RawTable]) {
     self.entityTableStorage = entityTableStorage
   }
     
@@ -108,66 +126,37 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
     }
   }
   
-  mutating func _merge(otherStorage: EntityTablesStorage<Schema>) {
-    otherStorage.entityTableStorage.forEach { key, value in
-      if let table = entityTableStorage[key] {
-        var modified = table
-        
-        value.forEach { key, value in
-          modified[key] = value
-        }
-        
-        entityTableStorage[key] = modified
-      } else {
-        entityTableStorage[key] = value
-      }
-    }
+  mutating func apply(modifier: EntityModifierType) {
+    _merge(anyEntityTable: modifier._insertsOrUpdates)
+    _subtract(ids: modifier._deletes, entityName: modifier.entityName)
   }
   
-  mutating func _subtract(otherStorage: BackingRemovingEntityStorage<Schema>) {
-    otherStorage.entityTableStorage.forEach { key, value in
-      if let table = entityTableStorage[key] {
-        var modified = table
-        
-        value.forEach { key in
-          modified.removeValue(forKey: key)
-        }
-        
-        entityTableStorage[key] = modified
+  private mutating func _merge(anyEntityTable: EntityTableType) {
+    let value = anyEntityTable.entities
+    let entityName = anyEntityTable.entityName
+    if let table = entityTableStorage[entityName] {
+      var modified = table
+      
+      value.forEach { key, value in
+        modified[key] = value
       }
+      
+      entityTableStorage[entityName] = modified
+    } else {
+      entityTableStorage[entityName] = value
     }
   }
-}
 
-@dynamicMemberLookup
-public struct BackingRemovingEntityStorage<Schema: EntitySchemaType> {
-  
-  typealias RawTable = Set<AnyHashable>
-  private(set) var entityTableStorage: [EntityName : RawTable]
+  private mutating func _subtract(ids: Set<AnyHashable>, entityName: EntityName) {
+    guard let table = entityTableStorage[entityName] else {
+      return
+    }
+    var modified = table
     
-  public init() {
-    self.entityTableStorage = [:]
-  }
-  
-  private init(entityTableStorage: [EntityName : RawTable]) {
-    self.entityTableStorage = entityTableStorage
-  }
-  
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> Set<U.ID> {
-    get {
-      guard let rawTable = entityTableStorage[U.entityName] else {
-        return Set<U.ID>([])
-      }
-      return rawTable as! Set<U.ID>
+    ids.forEach { key in
+      modified.removeValue(forKey: key)
     }
-    set {
-      entityTableStorage[U.entityName] = newValue
-    }
+    
+    entityTableStorage[entityName] = modified
   }
-  
-  func _getTable<E: EntityType>(_ type: E.Type) -> Set<E.ID>? {
-    entityTableStorage[E.entityName] as? Set<E.ID>
-  }
-  
 }
-

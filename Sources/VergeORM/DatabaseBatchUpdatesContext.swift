@@ -25,24 +25,72 @@ public enum BatchUpdateError: Error {
   case aborted
 }
 
+protocol EntityModifierType: AnyObject {
+  
+  var entityName: EntityName { get }
+  var _insertsOrUpdates: EntityTableType { get }
+  var _deletes: Set<AnyHashable> { get }
+}
+
+public final class EntityModifier<E: EntityType>: EntityModifierType {
+  
+  var _current: EntityTableType {
+    current
+  }
+  
+  var _insertsOrUpdates: EntityTableType {
+    insertsOrUpdates
+  }
+  
+  var _deletes: Set<AnyHashable> {
+    deletes
+  }
+    
+  let entityName = E.entityName
+  
+  public let current: EntityTable<E>
+  public var insertsOrUpdates: EntityTable<E> = .init()
+  public var deletes: Set<E.ID> = .init()
+  
+  init(current: EntityTable<E>) {
+    self.current = current
+  }
+}
+
+@dynamicMemberLookup
 public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
   
-  public var insertsOrUpdates: EntityTablesStorage<Schema> = .init()
-  public var deletes: BackingRemovingEntityStorage<Schema> = .init()
+  private let current: EntityTablesStorage<Schema>
+  var editing: [EntityName : EntityModifierType] = [:]
+    
+  init(current: EntityTablesStorage<Schema>) {
+    self.current = current
+  }
   
   public func abort() throws -> Never {
     throw BatchUpdateError.aborted
   }
+  
+  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityModifier<U> {
+    get {
+      guard let rawTable = editing[U.entityName] else {
+        let modifier = EntityModifier(current: current[dynamicMember: keyPath])
+        editing[U.entityName] = modifier
+        return modifier
+      }
+      return rawTable as! EntityModifier<U>
+    }
+  }
+  
 }
 
 public final class DatabaseBatchUpdatesContext<Database: DatabaseType>: DatabaseEntityBatchUpdatesContext<Database.Schema> {
   
-  public let current: Database
   public var indexes: IndexesStorage<Database.Schema, Database.Indexes>
   
   init(current: Database) {
-    self.current = current
     self.indexes = current._backingStorage.indexesStorage
+    super.init(current: current._backingStorage.entityBackingStorage)
   }
   
 }
@@ -65,16 +113,15 @@ extension DatabaseType {
       
       do {
         var target = self._backingStorage.entityBackingStorage
-        target._merge(otherStorage: context.insertsOrUpdates)
-        target._subtract(otherStorage: context.deletes)
+        context.editing.forEach { _, value in
+          
+          target.apply(modifier: value)
+          context.indexes.apply(removing: value._deletes, entityName: value.entityName)
+        }
         self._backingStorage.entityBackingStorage = target
-      }
-                 
-      do {
-        context.indexes.apply(removing: context.deletes)
         self._backingStorage.indexesStorage = context.indexes
       }
-            
+                             
       return result
     } catch {
       throw error

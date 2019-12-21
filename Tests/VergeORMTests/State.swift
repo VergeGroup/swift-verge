@@ -54,7 +54,7 @@ struct RootState {
     var middlewares: [AnyMiddleware<RootState.Database>] {
       [
         AnyMiddleware<RootState.Database>(performAfterUpdates: { (context) in
-          let ids = context.insertsOrUpdates.author.all().map { $0.id }
+          let ids = context.author.insertsOrUpdates.all().map { $0.id }
           context.indexes.bookMiddleware.append(contentsOf: ids)
         })
       ]
