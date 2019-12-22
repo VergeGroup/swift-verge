@@ -50,7 +50,7 @@ class MemoizeGetterTests: XCTestCase {
     
     var callCount = 0
         
-    let getter = store.selector(selector: { (state) -> Int in
+    let getter = store.getter(selector: { (state) -> Int in
       callCount += 1
       return state.count * 2
     }, equality: .init(selector: { $0.count }, equals: ==))

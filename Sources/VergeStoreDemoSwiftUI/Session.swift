@@ -22,7 +22,7 @@ final class Session: ObservableObject {
   let store = SessionStore()
   private(set) lazy var sessionDispatcher = SessionDispatcher(target: store)
   
-  private(set) lazy var users = self.store.selector(
+  private(set) lazy var users = self.store.getter(
     selector: { state in
       state.db.entities.user.find(in: state.db.indexes.userIDs)
   },

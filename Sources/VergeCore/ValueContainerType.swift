@@ -11,7 +11,7 @@ import Foundation
 public protocol ValueContainerType {
   associatedtype Value
   
-  func selector<Key, Destination>(
+  func getter<Key, Destination>(
     selector: @escaping (Value) -> Destination,
     equality: EqualityComputer<Value, Key>
   ) -> Getter<Value, Destination>

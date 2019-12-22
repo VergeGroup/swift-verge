@@ -44,7 +44,7 @@ extension ValueContainerType {
     entityID: E.ID
   ) -> Getter<Value, E?> {
     
-    selector(selector: { (value) -> E? in
+    getter(selector: { (value) -> E? in
       let table = entityTableSelector(value)
       return table.find(by: entityID)
     }, equality: .alwaysDifferent()
@@ -57,7 +57,7 @@ extension ValueContainerType {
     entityID: E.ID
   ) -> Getter<Value, E?> {
     
-    selector(selector: { (value) -> E? in
+    getter(selector: { (value) -> E? in
       let table = entityTableSelector(value)
       return table.find(by: entityID)
     }, equality: .init(selector: entityTableSelector, equals: { $0 == $1 })
@@ -76,7 +76,7 @@ extension ValueContainerType {
     
     var fetched: E = entity
     
-    return selector(selector: { (value) -> E in
+    return getter(selector: { (value) -> E in
       let table = entityTableSelector(value)
       if let e = table.find(by: entity.id) {
         fetched = e
@@ -98,7 +98,7 @@ extension ValueContainerType {
     
     var fetched: E = entity
     
-    return selector(selector: { (value) -> E in
+    return getter(selector: { (value) -> E in
       let table = entityTableSelector(value)
       if let e = table.find(by: entity.id) {
         fetched = e
@@ -129,8 +129,8 @@ extension ValueContainerType where Value : HasDatabaseStateType {
     var fetched: E = insertionResult.entity
     let id = fetched.id
     
-    let _s = insertionResult.selector(Value.keyPathToDatabase)
-    return selector(selector: { (value) -> E in
+    let _s = insertionResult.makeSelector(Value.keyPathToDatabase)
+    return getter(selector: { (value) -> E in
       let table = _s(value)
       if let e = table.find(by: id) {
         fetched = e
@@ -147,8 +147,8 @@ extension ValueContainerType where Value : HasDatabaseStateType {
     var fetched: E = insertionResult.entity
     let id = fetched.id
     
-    let _s = insertionResult.selector(Value.keyPathToDatabase)
-    return selector(selector: { (value) -> E in
+    let _s = insertionResult.makeSelector(Value.keyPathToDatabase)
+    return getter(selector: { (value) -> E in
       let table = _s(value)
       if let e = table.find(by: id) {
         fetched = e

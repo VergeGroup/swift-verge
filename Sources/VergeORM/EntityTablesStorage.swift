@@ -36,7 +36,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     public let entity: Entity
     internal let keyPath: KeyPath<Schema, EntityTableKey<Entity>>
     
-    public func selector<Source, DB: DatabaseType>(_ accessor: @escaping (Source) -> DB) -> (Source) -> EntityTable<Schema, Entity> where DB.Schema == Schema {
+    func makeSelector<Source, DB: DatabaseType>(_ accessor: @escaping (Source) -> DB) -> (Source) -> EntityTable<Schema, Entity> where DB.Schema == Schema {
       return { source in
         let a = accessor(source).entities[dynamicMember: self.keyPath]
         return a
