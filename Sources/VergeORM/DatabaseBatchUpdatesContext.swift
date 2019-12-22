@@ -32,7 +32,7 @@ protocol EntityModifierType: AnyObject {
   var _deletes: Set<AnyHashable> { get }
 }
 
-public final class EntityModifier<E: EntityType>: EntityModifierType {
+public final class EntityModifier<Schema: EntitySchemaType, E: EntityType>: EntityModifierType {
   
   var _current: EntityTableType {
     current
@@ -48,12 +48,15 @@ public final class EntityModifier<E: EntityType>: EntityModifierType {
     
   let entityName = E.entityName
   
-  public let current: EntityTable<E>
-  public var insertsOrUpdates: EntityTable<E> = .init()
+  private let keyPath: KeyPath<Schema, EntityTableKey<E>>
+  public let current: EntityTable<Schema, E>
+  public var insertsOrUpdates: EntityTable<Schema, E>
   public var deletes: Set<E.ID> = .init()
   
-  init(current: EntityTable<E>) {
+  init(current: EntityTable<Schema, E>, keyPath: KeyPath<Schema, EntityTableKey<E>>) {
     self.current = current
+    self.keyPath = keyPath
+    self.insertsOrUpdates = .init(keyPath: keyPath)
   }
 }
 
@@ -71,14 +74,14 @@ public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
     throw BatchUpdateError.aborted
   }
   
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityModifier<U> {
+  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityModifier<Schema, U> {
     get {
       guard let rawTable = editing[U.entityName] else {
-        let modifier = EntityModifier(current: current[dynamicMember: keyPath])
+        let modifier = EntityModifier<Schema, U>(current: current[dynamicMember: keyPath], keyPath: keyPath)
         editing[U.entityName] = modifier
         return modifier
       }
-      return rawTable as! EntityModifier<U>
+      return rawTable as! EntityModifier<Schema, U>
     }
   }
   
