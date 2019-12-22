@@ -31,40 +31,34 @@ final class Store: StoreBase<State, Never> {
 
 class RootDispatcher: DispatcherBase<State, Never> {
   
-  func resetCount() -> Mutation {
+  func resetCount() -> Mutation<Void> {
     return .mutation { s in
       s.count = 0
     }
   }
   
-  func increment() -> Mutation  {
+  func increment() -> Mutation<Void> {
     .mutation {
       $0.count += 1
     }
   }
   
-  func setNestedState() -> Mutation  {
+  func setNestedState() -> Mutation<Void> {
     .mutation {
       $0.optionalNested = .init()
     }
   }
   
-  func setMyName() -> Mutation  {
+  func setMyName() -> Mutation<Void> {
     .mutation {
-      $0.updateIfPresent(target: \.optionalNested) {
+      try? $0.updateTryPresent(target: \.optionalNested) {
         $0.myName = "Muuk"
       }
     }
   }
-  
-  func setMyNameUsingTargetingCommit() -> Mutation  {
-    .mutationIfPresent(\.optionalNested) {
-      $0.myName = "Target"
-    }
-  }
-  
+      
   func continuousIncrement() -> Action<Void> {
-    .action { c in
+    return .action { c in     
       c.accept { $0.increment() }
       c.accept { $0.increment() }
     }
@@ -78,9 +72,9 @@ final class OptionalNestedDispatcher: DispatcherBase<State, Never>, ScopedDispat
     \.optionalNested
   }
      
-  func setMyName() -> Mutation {
-    .mutationScopedIfPresent {
-      $0.myName = "Hello"
+  func setMyName() -> Mutation<Void> {
+    return .mutationScoped { (s) in
+      s?.myName = "Hello"
     }
   }
   
@@ -92,7 +86,7 @@ final class NestedDispatcher: DispatcherBase<State, Never>, ScopedDispatching {
     \.nested
   }
     
-  func setMyName() -> Mutation {
+  func setMyName() -> Mutation<Void> {
     .mutationScoped {
       $0.myName = "Hello"
     }
@@ -154,8 +148,8 @@ final class VergeStoreTests: XCTestCase {
   func testTargetingCommit() {
     
     dispatcher.accept { $0.setNestedState() }
-    dispatcher.accept { $0.setMyNameUsingTargetingCommit() }
-    XCTAssertEqual(store.state.optionalNested?.myName, "Target")
+    dispatcher.accept { $0.setMyName() }
+    XCTAssertEqual(store.state.optionalNested?.myName, "Muuk")
   }
   
   func testPerformanceExample() {

@@ -23,7 +23,7 @@ final class ViewModel: StandaloneVergeViewModelBase<ViewModelState, Never> {
     super.init(initialState: .init(), logger: nil)
   }
   
-  func increment() -> Mutation {
+  func increment() -> Mutation<Void> {
     .mutation {
       $0.count += 1
     }

@@ -29,13 +29,13 @@ final class AViewModel: StandaloneVergeViewModelBase<AViewModelState, Never> {
     print("deinit", self)
   }
   
-  func increment() -> Mutation {
+  func increment() -> Mutation<Void> {
     .mutation {
       $0.count += 1
     }
   }
   
-  func makeB() -> Mutation {
+  func makeB() -> Mutation<Void> {
     .mutation {
       $0.bViewModel = .init(viewModel: self)
     }

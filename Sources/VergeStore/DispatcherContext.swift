@@ -46,10 +46,15 @@ public final class DispatcherContext<Dispatcher: DispatcherType> {
 }
 
 extension DispatcherContext {
+  
+  /// Dummy Method to work Xcode code completion
+  public func accept(_ get: (Dispatcher) -> Never) -> Never {
+    fatalError()
+  }
     
   /// Run Mutation
   /// - Parameter get: returns Mutation
-  public func accept(_ get: (Dispatcher) -> Dispatcher.Mutation) {
+  public func accept<Return>(_ get: (Dispatcher) -> Dispatcher.Mutation<Return>) -> Return {
     dispatcher.accept(get)
   }
   

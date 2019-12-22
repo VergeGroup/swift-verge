@@ -29,13 +29,13 @@ class MemoizeGetterTests: XCTestCase {
   
   final class RootDispatcher: DispatcherBase<State, Never> {
         
-    func increment() -> Mutation  {
+    func increment() -> Mutation<Void> {
       .mutation {
         $0.count += 1
       }
     }
       
-    func setMyName() -> Mutation  {
+    func setMyName() -> Mutation<Void> {
       .mutation {
         $0.name = UUID().uuidString
       }

@@ -117,23 +117,24 @@ open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType, ValueC
   }
   
   @inline(__always)
-  func _receive<FromDispatcher: DispatcherType>(
+  func _receive<FromDispatcher: DispatcherType, Return>(
     context: DispatcherContext<FromDispatcher>?,
-    mutation: AnyMutation<FromDispatcher>
-  ) where FromDispatcher.State == State {
+    mutation: AnyMutation<FromDispatcher, Return>
+  ) -> Return where FromDispatcher.State == State {
     
     logger?.willCommit(store: self, state: self.state, mutation: mutation.metadata, context: context)
     
     let startedTime = CFAbsoluteTimeGetCurrent()
     var currentState: State!
-    _backingStorage.update { (state) in
-      mutation._mutate(&state)
+    let returnValue = try _backingStorage.update { (state) -> Return in
+      let r = mutation._mutate(&state)
       currentState = state
+      return r
     }
     let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
     
     logger?.didCommit(store: self, state: currentState!, mutation: mutation.metadata, context: context, time: elapsed)
-    
+    return returnValue
   }
   
   @inline(__always)
