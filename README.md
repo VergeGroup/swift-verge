@@ -1,8 +1,10 @@
 ---
-description: A Store-Pattern based data-flow architecture.
+description: >-
+  A Store-Pattern based data-flow architecture for iOS Application with UIKit /
+  SwiftUI
 ---
 
-# Verge \(v6.0.0-beta.1\)
+# Verge - Flux pattern for iOS + Swift \(UIKit/SwiftUI\)
 
 📖[**Open Documentation on GitBook**](https://muukii-app.gitbook.io/verge/)  
 **For viewing on GitHub repo,  

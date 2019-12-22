@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Verge \(v6.0.0-beta.1\)](README.md)
+* [Verge - Flux pattern for iOS + Swift \(UIKit/SwiftUI\)](README.md)
 * [Installation](installation.md)
 * [Gallery](gallery.md)
 * [About VergeClassic](about-vergeclassic.md)

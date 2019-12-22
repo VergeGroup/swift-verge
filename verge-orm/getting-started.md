@@ -48,7 +48,7 @@ struct Author: EntityType {
 }
 ```
 
-By conforming to  `EntityType` protocol, it can be used by Database as Entity.  
+By conforming to `EntityType` protocol, it can be used by Database as Entity.  
 It needs `rawID` and you can set whatever type your Entity needs.
 
 And then, add these entities to Schema object.

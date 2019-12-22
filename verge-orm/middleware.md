@@ -10,14 +10,14 @@ For example,
 
 ## Register Middleware
 
-In DatabaseType protocol, we can return the set of middlewares.   
+In DatabaseType protocol, we can return the set of middlewares.  
 This property would be called for each update.
 
 ```swift
 struct Database: DatabaseType {
-  
+
   ...
-  
+
   var middlewares: [AnyMiddleware<RootState.Database>] {
     [
       // Here
@@ -59,7 +59,7 @@ AnyMiddleware<Database>(middleware)
 AnyMiddleware<Database>(performAfterUpdates: { (context) in
 
   // ... any operation
-  
+
 })
 ```
 
@@ -75,7 +75,7 @@ let autoIndex = AnyMiddleware<RootState.Database>(performAfterUpdates: { (contex
 
   let ids = context.insertsOrUpdates.author.all().map { $0.id }
   context.indexes.bookMiddleware.append(contentsOf: ids)
-  
+
 })
 ```
 
@@ -88,9 +88,9 @@ Finally, returns this object on middlewares property.
 let autoIndex = ...
 
 struct Database: DatabaseType {
-  
+
   ...
-  
+
   var middlewares: [AnyMiddleware<RootState.Database>] {
     [
       autoIndex

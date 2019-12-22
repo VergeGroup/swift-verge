@@ -102,10 +102,10 @@ Using `performBatchUpdates` , add or delete index through the `context` .
 
 ```swift
 state.db.performBatchUpdates { (context) -> Book in
-          
+
   let book = Book(rawID: id.raw, authorID: Author.anonymous.id)
   context.insertsOrUpdates.book.insert(book)
-  
+
   // Here 👋
   context.indexes.allBooks.append(book.id)
 
@@ -113,5 +113,5 @@ state.db.performBatchUpdates { (context) -> Book in
 ```
 
 Since Index is updated manually here, you might want to manage it automatically.  
-Using **Middleware**, **** it's possible.
+Using **Middleware**, _\*\*_ it's possible.
 
