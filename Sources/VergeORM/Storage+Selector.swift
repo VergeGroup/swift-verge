@@ -122,7 +122,7 @@ public protocol HasDatabaseStateType {
 extension ValueContainerType where Value : HasDatabaseStateType {
   
   public func nonNullEntitySelector<E: EntityType>(
-    insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
+    from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
   ) -> MemoizeSelector<Value, E> {
     
     var fetched: E = insertionResult.entity
@@ -141,7 +141,7 @@ extension ValueContainerType where Value : HasDatabaseStateType {
   }
   
   public func nonNullEntitySelector<E: EntityType & Equatable>(
-    insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
+    from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
   ) -> MemoizeSelector<Value, E> {
     
     var fetched: E = insertionResult.entity

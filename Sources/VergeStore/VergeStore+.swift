@@ -29,6 +29,7 @@ import VergeCore
 
 extension StoreBase {
   
+  @inlinable
   public func selector<Key, Output>(
     selector: @escaping (State) -> Output,
     equality: EqualityComputer<State, Key>

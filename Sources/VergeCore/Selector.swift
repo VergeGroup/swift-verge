@@ -224,6 +224,7 @@ extension EqualityComputer where Key : Equatable, Value == Key {
 
 extension Storage {
   
+  @inlinable
   public func selector<Key, Destination>(
     selector: @escaping (Value) -> Destination,
     equality: EqualityComputer<Value, Key>

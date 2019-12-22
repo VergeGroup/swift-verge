@@ -114,7 +114,7 @@ class SelectorTests: XCTestCase {
         }
       }
       
-      let selector = storage.nonNullEntitySelector(insertionResult: result)
+      let selector = storage.nonNullEntitySelector(from: result)
             
       XCTAssertEqual(selector.value.rawID, "some")
       XCTAssertEqual(selector.value.name, "")
