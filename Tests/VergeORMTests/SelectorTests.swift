@@ -21,7 +21,7 @@ class SelectorTests: XCTestCase {
     
     let id = Book.ID.init("some")
     
-    let nullableSelector = storage.entitySelector(
+    let nullableSelector = storage.entityGetter(
       entityTableSelector: { $0.db.entities.book },
       entityID: id
     )
@@ -52,7 +52,7 @@ class SelectorTests: XCTestCase {
         book = createdBook
       }
       
-      let selector = storage.nonNullEntitySelector(
+      let selector = storage.nonNullEntityGetter(
         entityTableSelector: { $0.db.entities.book },
         entity: book
       )
@@ -114,7 +114,7 @@ class SelectorTests: XCTestCase {
         }
       }
       
-      let selector = storage.nonNullEntitySelector(from: result)
+      let selector = storage.nonNullEntityGetter(from: result)
             
       XCTAssertEqual(selector.value.rawID, "some")
       XCTAssertEqual(selector.value.name, "")

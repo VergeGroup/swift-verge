@@ -39,7 +39,7 @@ extension EntityType {
 
 extension ValueContainerType {
   
-  public func entitySelector<Schema: EntitySchemaType, E: EntityType>(
+  public func entityGetter<Schema: EntitySchemaType, E: EntityType>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entityID: E.ID
   ) -> Getter<Value, E?> {
@@ -52,7 +52,7 @@ extension ValueContainerType {
            
   }
   
-  public func entitySelector<Schema: EntitySchemaType, E: EntityType & Equatable>(
+  public func entityGetter<Schema: EntitySchemaType, E: EntityType & Equatable>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entityID: E.ID
   ) -> Getter<Value, E?> {
@@ -69,7 +69,7 @@ extension ValueContainerType {
   /// - Parameters:
   ///   - entityTableSelector:
   ///   - entity:
-  public func nonNullEntitySelector<Schema: EntitySchemaType, E: EntityType>(
+  public func nonNullEntityGetter<Schema: EntitySchemaType, E: EntityType>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entity: E
   ) -> Getter<Value, E> {
@@ -91,7 +91,7 @@ extension ValueContainerType {
   /// - Parameters:
   ///   - entityTableSelector:
   ///   - entity:
-  public func nonNullEntitySelector<Schema: EntitySchemaType, E: EntityType & Equatable>(
+  public func nonNullEntityGetter<Schema: EntitySchemaType, E: EntityType & Equatable>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entity: E
   ) -> Getter<Value, E> {
@@ -122,7 +122,7 @@ public protocol HasDatabaseStateType {
 
 extension ValueContainerType where Value : HasDatabaseStateType {
   
-  public func nonNullEntitySelector<E: EntityType>(
+  public func nonNullEntityGetter<E: EntityType>(
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
   ) -> Getter<Value, E> {
     
@@ -140,7 +140,7 @@ extension ValueContainerType where Value : HasDatabaseStateType {
     )
   }
   
-  public func nonNullEntitySelector<E: EntityType & Equatable>(
+  public func nonNullEntityGetter<E: EntityType & Equatable>(
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
   ) -> Getter<Value, E> {
     
