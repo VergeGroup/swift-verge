@@ -25,6 +25,17 @@ import Foundation
 import VergeCore
 #endif
 
+extension EntityType {
+  
+  #if COCOAPODS
+  public typealias AnySelector = Verge.AnySelector<Self>
+  #else
+  public typealias AnySelector = VergeCore.AnySelector<Self>
+  #endif
+  public typealias Selector<Source> = MemoizeSelector<Source, Self>
+  
+}
+
 extension ValueContainerType {
   
   public func entitySelector<E: EntityType>(

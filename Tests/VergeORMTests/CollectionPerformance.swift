@@ -63,4 +63,8 @@ class CollectionPerformance: XCTestCase {
     }
     
   }
+  
+  func testLoop() {
+         
+  }
 }
