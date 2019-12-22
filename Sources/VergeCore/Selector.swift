@@ -48,11 +48,11 @@ open class SelectorBase<Output> {
   }
 }
 
-public final class AnySelector<Destination>: SelectorBase<Destination> {
+public final class AnySelector<Output>: SelectorBase<Output> {
   
-  private let valueGetter: () -> Destination
+  private let valueGetter: () -> Output
   
-  public init<Source>(_ source: MemoizeSelector<Source, Destination>) {
+  public init<Source>(_ source: MemoizeSelector<Source, Output>) {
     
     self.valueGetter = {
       source.value
@@ -64,7 +64,7 @@ public final class AnySelector<Destination>: SelectorBase<Destination> {
     )
   }
   
-  public var value: Destination {
+  public var value: Output {
     valueGetter()
   }
   
