@@ -9,11 +9,11 @@ Mutation does not run asynchronous operation.
 {% endhint %}
 
 ```swift
-public struct AnyMutation<From> where From : VergeStore.DispatcherType {
+public struct AnyMutation<Dispatcher, Return> where Dispatcher : VergeStore.DispatcherType {
 
   public let metadata: MutationMetadata
 
-  public init(_ name: StaticString = "", mutate: @escaping (inout From.State) -> Void)
+  public init(_ name: StaticString = "", mutate: @escaping (inout Dispatcher.State) -> Return)
 }
 ```
 
@@ -24,7 +24,7 @@ Mutation object is simple struct that has a closure what passes current state to
 ```swift
 class MyDispatcher: MyStore.Dispatcher {
 
-  func addNewTodo(title: String) -> Mutation {
+  func addNewTodo(title: String) -> Mutation<Void> {
     .mutation { (state: inout RootState) in
       state.todos.append(Todo(title: title, hasCompleted: false))
     }
