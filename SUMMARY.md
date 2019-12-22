@@ -15,7 +15,7 @@
 * [Action](vergestore/action.md)
 * [Logging](vergestore/logging.md)
 * [Activity](vergestore/activity.md)
-* [Selector and Memoization](vergestore/memoization.md)
+* [Getter\(Selector\) and Memoization](vergestore/memoization.md)
 * [Advanced](vergestore/advanced/README.md)
   * [Scoped Dispatcher](vergestore/advanced/scoped-dispatcher.md)
 
@@ -29,7 +29,7 @@
 * [Getting Started](verge-orm/getting-started.md)
 * [Index](verge-orm/index.md)
 * [Middleware](verge-orm/middleware.md)
-* [Selector](verge-orm/selector.md)
+* [Getter \(Selector\)](verge-orm/selector.md)
 * [Tips](verge-orm/tips.md)
 
 ## Verge Store Rx
