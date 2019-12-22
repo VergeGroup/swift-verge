@@ -100,7 +100,7 @@ final class SessionStore: StoreBase<SessionState, Never> {
 
 final class SessionDispatcher: SessionStore.Dispatcher {
   
-  func insertSampleUsers() -> Mutation {
+  func insertSampleUsers() -> Mutation<Void> {
     return .mutation { s in
       s.db.performBatchUpdates { (context) in
         let paul = Entity.User(rawID: "paul", name: "Paul Gilbert")
@@ -108,7 +108,7 @@ final class SessionDispatcher: SessionStore.Dispatcher {
         let pat = Entity.User(rawID: "pat", name: "Pat Torpey")
         let eric = Entity.User(rawID: "eric", name: "Eric Martin")
         
-        let ids = context.user.insertsOrUpdates.insert([
+        let results = context.user.insertsOrUpdates.insert([
           paul,
           billy,
           pat,
@@ -116,18 +116,18 @@ final class SessionDispatcher: SessionStore.Dispatcher {
         ])
         
         context.indexes.userIDs.removeAll()
-        context.indexes.userIDs.append(contentsOf: ids)
+        context.indexes.userIDs.append(contentsOf: results.map { $0.entityID })
         
       }      
     }
   }
   
-  func submitNewPost(title: String, from user: Entity.User) -> Mutation {
+  func submitNewPost(title: String, from user: Entity.User) -> Mutation<Void> {
     return .mutation { (s) in
       let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.id)
       s.db.performBatchUpdates { (context) in
         
-        let postID = context.post.insertsOrUpdates.insert(post)
+        let postID = context.post.insertsOrUpdates.insert(post).entityID
         context.indexes.postIDs.append(postID)
         
         context.indexes.postIDsAuthorGrouped.update(in: user.id) { (index) in
