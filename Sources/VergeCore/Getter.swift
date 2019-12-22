@@ -21,10 +21,14 @@
 
 import Foundation
 
-open class SelectorBase<Output> {
+open class GetterBase<Output> {
   
   let willUpdateEmitter: EventEmitter<Void>
   let didUpdateEmitter: EventEmitter<Output>
+  
+  public var value: Output {
+    fatalError()
+  }
   
   init(willUpdateEmitter: EventEmitter<Void>, didUpdateEmitter: EventEmitter<Output>) {
     self.willUpdateEmitter = willUpdateEmitter
@@ -48,13 +52,14 @@ open class SelectorBase<Output> {
   }
 }
 
-public final class AnySelector<Output>: SelectorBase<Output> {
+public final class AnyGetter<Output>: GetterBase<Output> {
   
   private let valueGetter: () -> Output
   
-  public init<Source>(_ source: MemoizeSelector<Source, Output>) {
+  public init<Source>(_ source: Getter<Source, Output>) {
     
     self.valueGetter = {
+      // retains source
       source.value
     }
     
@@ -64,45 +69,58 @@ public final class AnySelector<Output>: SelectorBase<Output> {
     )
   }
   
-  public var value: Output {
+  public override var value: Output {
     valueGetter()
   }
   
 }
 
-open class MemoizeSelector<Input, Output>: SelectorBase<Output> {
+open class Getter<Input, Output>: GetterBase<Output> {
   
   private let selector: (Input) -> Output
   private var computedValue: Output
+  private let memoizes: Bool
   private let checker: (Input) -> Bool
-    
+  private let onDeinit: () -> Void
+       
   public init<Key>(
     initialSource: Input,
     selector: @escaping (Input) -> Output,
-    equality: EqualityComputer<Input, Key>
+    equality: EqualityComputer<Input, Key>,
+    memoizes: Bool = true,
+    onDeinit: @escaping () -> Void
   ) {
     
+    self.onDeinit = onDeinit
     self.selector = selector
+    self.memoizes = memoizes
     self.checker = equality.input
     
     self.computedValue = selector(initialSource)
     
     super.init(willUpdateEmitter: .init(), didUpdateEmitter: .init())
+    
+    // To store previous value
+    _ = self.checker(initialSource)
   }
   
-  public var value: Output {
+  deinit {
+    onDeinit()
+  }
+  
+  public override var value: Output {
     computedValue
   }
   
   public func _accept(sourceValue: Input) {
-    guard !checker(sourceValue) else { return }
+    guard !memoizes || !checker(sourceValue) else { return }
     willUpdateEmitter.accept(())
     let newValue = selector(sourceValue)
     computedValue = newValue
     didUpdateEmitter.accept(newValue)
   }
     
-  public func asAny() -> AnySelector<Output> {
+  public func asAny() -> AnyGetter<Output> {
     .init(self)
   }
   
@@ -116,7 +134,7 @@ fileprivate var _willChangeAssociated: Void?
 fileprivate var _didChangeAssociated: Void?
 
 @available(iOS 13.0, macOS 10.15, *)
-extension SelectorBase: ObservableObject {
+extension GetterBase: ObservableObject {
   
   public var objectWillChange: ObservableObjectPublisher {
     if let associated = objc_getAssociatedObject(self, &_willChangeAssociated) as? ObservableObjectPublisher {
@@ -228,19 +246,27 @@ extension Storage {
   public func selector<Key, Destination>(
     selector: @escaping (Value) -> Destination,
     equality: EqualityComputer<Value, Key>
-  ) -> MemoizeSelector<Value, Destination> {
+  ) -> Getter<Value, Destination> {
     
-    let getter = MemoizeSelector(
+    var token: EventEmitterSubscribeToken?
+    
+    let selector = Getter(
       initialSource: value,
       selector: selector,
-      equality: equality
-    )
+      equality: equality,
+      onDeinit: { [weak self] in
+        guard let token = token else {
+          assertionFailure()
+          return
+        }
+        self?.remove(subscribe: token)
+    })
     
-    addDidUpdate { (newValue) in
-      getter._accept(sourceValue: newValue)
+    token = addDidUpdate { [weak selector] (newValue) in
+      selector?._accept(sourceValue: newValue)
     }
     
-    return getter
+    return selector
     
   }
 }

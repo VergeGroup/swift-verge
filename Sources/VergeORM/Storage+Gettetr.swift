@@ -28,11 +28,12 @@ import VergeCore
 extension EntityType {
   
   #if COCOAPODS
-  public typealias AnySelector = Verge.AnySelector<Self>
+  public typealias AnyGetter = Verge.AnyGetter<Self>
+  public typealias Getter<Source> = Verge.Getter<Source, Self>
   #else
-  public typealias AnySelector = VergeCore.AnySelector<Self>
+  public typealias AnyGetter = VergeCore.AnyGetter<Self>
+  public typealias Getter<Source> = VergeCore.Getter<Source, Self>
   #endif
-  public typealias Selector<Source> = MemoizeSelector<Source, Self>
   
 }
 
@@ -41,7 +42,7 @@ extension ValueContainerType {
   public func entitySelector<Schema: EntitySchemaType, E: EntityType>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entityID: E.ID
-  ) -> MemoizeSelector<Value, E?> {
+  ) -> Getter<Value, E?> {
     
     selector(selector: { (value) -> E? in
       let table = entityTableSelector(value)
@@ -54,7 +55,7 @@ extension ValueContainerType {
   public func entitySelector<Schema: EntitySchemaType, E: EntityType & Equatable>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entityID: E.ID
-  ) -> MemoizeSelector<Value, E?> {
+  ) -> Getter<Value, E?> {
     
     selector(selector: { (value) -> E? in
       let table = entityTableSelector(value)
@@ -71,7 +72,7 @@ extension ValueContainerType {
   public func nonNullEntitySelector<Schema: EntitySchemaType, E: EntityType>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entity: E
-  ) -> MemoizeSelector<Value, E> {
+  ) -> Getter<Value, E> {
     
     var fetched: E = entity
     
@@ -93,7 +94,7 @@ extension ValueContainerType {
   public func nonNullEntitySelector<Schema: EntitySchemaType, E: EntityType & Equatable>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entity: E
-  ) -> MemoizeSelector<Value, E> {
+  ) -> Getter<Value, E> {
     
     var fetched: E = entity
     
@@ -123,7 +124,7 @@ extension ValueContainerType where Value : HasDatabaseStateType {
   
   public func nonNullEntitySelector<E: EntityType>(
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
-  ) -> MemoizeSelector<Value, E> {
+  ) -> Getter<Value, E> {
     
     var fetched: E = insertionResult.entity
     let id = fetched.id
@@ -137,12 +138,11 @@ extension ValueContainerType where Value : HasDatabaseStateType {
       return fetched
     }, equality: .alwaysDifferent()
     )
-    
   }
   
   public func nonNullEntitySelector<E: EntityType & Equatable>(
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
-  ) -> MemoizeSelector<Value, E> {
+  ) -> Getter<Value, E> {
     
     var fetched: E = insertionResult.entity
     let id = fetched.id

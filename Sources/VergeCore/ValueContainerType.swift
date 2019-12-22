@@ -14,5 +14,5 @@ public protocol ValueContainerType {
   func selector<Key, Destination>(
     selector: @escaping (Value) -> Destination,
     equality: EqualityComputer<Value, Key>
-  ) -> MemoizeSelector<Value, Destination>
+  ) -> Getter<Value, Destination>
 }
