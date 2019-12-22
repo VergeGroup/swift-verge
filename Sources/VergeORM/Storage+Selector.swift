@@ -38,8 +38,8 @@ extension EntityType {
 
 extension ValueContainerType {
   
-  public func entitySelector<E: EntityType>(
-    entityTableSelector: @escaping (Value) -> EntityTable<E>,
+  public func entitySelector<Schema: EntitySchemaType, E: EntityType>(
+    entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entityID: E.ID
   ) -> MemoizeSelector<Value, E?> {
     
@@ -51,8 +51,8 @@ extension ValueContainerType {
            
   }
   
-  public func entitySelector<E: EntityType & Equatable>(
-    entityTableSelector: @escaping (Value) -> EntityTable<E>,
+  public func entitySelector<Schema: EntitySchemaType, E: EntityType & Equatable>(
+    entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entityID: E.ID
   ) -> MemoizeSelector<Value, E?> {
     
@@ -68,8 +68,8 @@ extension ValueContainerType {
   /// - Parameters:
   ///   - entityTableSelector:
   ///   - entity:
-  public func nonNullEntitySelector<E: EntityType>(
-    entityTableSelector: @escaping (Value) -> EntityTable<E>,
+  public func nonNullEntitySelector<Schema: EntitySchemaType, E: EntityType>(
+    entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entity: E
   ) -> MemoizeSelector<Value, E> {
     
@@ -90,8 +90,8 @@ extension ValueContainerType {
   /// - Parameters:
   ///   - entityTableSelector:
   ///   - entity:
-  public func nonNullEntitySelector<E: EntityType & Equatable>(
-    entityTableSelector: @escaping (Value) -> EntityTable<E>,
+  public func nonNullEntitySelector<Schema: EntitySchemaType, E: EntityType & Equatable>(
+    entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entity: E
   ) -> MemoizeSelector<Value, E> {
     
@@ -108,5 +108,54 @@ extension ValueContainerType {
     
   }
   
+   
 }
 
+public protocol HasDatabaseStateType {
+  
+  associatedtype Database: DatabaseType
+  
+  static var keyPathToDatabase: (Self) -> Database { get }
+  
+}
+
+extension ValueContainerType where Value : HasDatabaseStateType {
+  
+  public func nonNullEntitySelector<E: EntityType>(
+    insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
+  ) -> MemoizeSelector<Value, E> {
+    
+    var fetched: E = insertionResult.entity
+    let id = fetched.id
+    
+    let _s = insertionResult.selector(Value.keyPathToDatabase)
+    return selector(selector: { (value) -> E in
+      let table = _s(value)
+      if let e = table.find(by: id) {
+        fetched = e
+      }
+      return fetched
+    }, equality: .alwaysDifferent()
+    )
+    
+  }
+  
+  public func nonNullEntitySelector<E: EntityType & Equatable>(
+    insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
+  ) -> MemoizeSelector<Value, E> {
+    
+    var fetched: E = insertionResult.entity
+    let id = fetched.id
+    
+    let _s = insertionResult.selector(Value.keyPathToDatabase)
+    return selector(selector: { (value) -> E in
+      let table = _s(value)
+      if let e = table.find(by: id) {
+        fetched = e
+      }
+      return fetched
+    }, equality: .init(selector: _s, equals: { $0 == $1 })
+    )
+    
+  }
+}

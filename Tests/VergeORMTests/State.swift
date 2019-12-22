@@ -36,7 +36,9 @@ struct Author: EntityType {
   static let anonymous: Author = .init(rawID: "anonymous")
 }
 
-struct RootState {
+struct RootState: HasDatabaseStateType {
+  
+  static let keyPathToDatabase: (RootState) -> RootState.Database = { $0.db }
   
   struct Database: DatabaseType {
     

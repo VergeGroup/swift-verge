@@ -25,18 +25,26 @@ public protocol StateType {
   
 }
 
+public enum StateUpdatingError: Swift.Error {
+  case targetWasNull
+}
+
 extension StateType {
       
-  public mutating func updateIfPresent<T: _VergeStore_OptionalProtocol>(target keyPath: WritableKeyPath<Self, T>, update: (inout T.Wrapped) throws -> Void) rethrows {
-    guard self[keyPath: keyPath]._vergestore_wrappedValue != nil else { return }
-    try update(&self[keyPath: keyPath]._vergestore_wrappedValue!)
+  public mutating func updateTryPresent<T: _VergeStore_OptionalProtocol, Return>(
+    target keyPath: WritableKeyPath<Self, T>,
+    update: (inout T.Wrapped) throws -> Return
+  ) throws -> Return {
+    
+    guard self[keyPath: keyPath]._vergestore_wrappedValue != nil else { throw StateUpdatingError.targetWasNull }
+    return try update(&self[keyPath: keyPath]._vergestore_wrappedValue!)
   }
   
-  public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T) throws -> Void) rethrows {
+  public mutating func update<T, Return>(target keyPath: WritableKeyPath<Self, T>, update: (inout T) throws -> Return) rethrows -> Return {
     try update(&self[keyPath: keyPath])
   }
   
-  public mutating func update(update: (inout Self) throws -> Void) rethrows {
+  public mutating func update<Return>(update: (inout Self) throws -> Return) rethrows -> Return {
     try update(&self)
   }
   

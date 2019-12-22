@@ -94,7 +94,7 @@ public struct EntityPropertyAdapter<DB: DatabaseType> {
   
   let get: () -> DB
   
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.Schema, EntityTableKey<U>>) -> EntityTable<U> {
+  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.Schema, EntityTableKey<U>>) -> EntityTable<DB.Schema, U> {
     get {
       get()._backingStorage.entityBackingStorage[dynamicMember: keyPath]
     }

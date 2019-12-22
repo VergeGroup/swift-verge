@@ -25,7 +25,7 @@ public protocol DispatcherType {
     
   associatedtype State
   associatedtype Activity
-  typealias Mutation = AnyMutation<Self>
+  typealias Mutation<Return> = AnyMutation<Self, Return>
   typealias Action<Return> = AnyAction<Self, Return>
   var dispatchTarget: StoreBase<State, Activity> { get }
   
@@ -33,11 +33,16 @@ public protocol DispatcherType {
 
 extension DispatcherType {
   
+  /// Dummy Method to work Xcode code completion
+  public func accept(_ get: (Self) -> Never) -> Never {
+    fatalError()
+  }
+  
   ///
   /// - Parameter get: Return Mutation Object
-  public func accept(_ get: (Self) -> Mutation) {
+  public func accept<Return>(_ get: (Self) -> Mutation<Return>) -> Return {
     let mutation = get(self)
-    dispatchTarget._receive(
+    return dispatchTarget._receive(
       context: Optional<DispatcherContext<Self>>.none,
       mutation: mutation
     )

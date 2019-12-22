@@ -27,7 +27,22 @@ protocol EntityTableType {
   var entityName: EntityName { get }
 }
 
-public struct EntityTable<Entity: EntityType>: EntityTableType {
+public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityTableType {
+  
+  public struct InsertionResult {
+    public var entityID: Entity.ID {
+      entity.id
+    }
+    public let entity: Entity
+    internal let keyPath: KeyPath<Schema, EntityTableKey<Entity>>
+    
+    public func selector<Source, DB: DatabaseType>(_ accessor: @escaping (Source) -> DB) -> (Source) -> EntityTable<Schema, Entity> where DB.Schema == Schema {
+      return { source in
+        let a = accessor(source).entities[dynamicMember: self.keyPath]
+        return a
+      }
+    }
+  }
   
   var entityName: EntityName {
     Entity.entityName
@@ -39,12 +54,15 @@ public struct EntityTable<Entity: EntityType>: EntityTableType {
   
   internal var entities: [AnyHashable : Any] = [:]
   
-  init() {
-    
+  internal let keyPath: KeyPath<Schema, EntityTableKey<Entity>>
+  
+  init(keyPath: KeyPath<Schema, EntityTableKey<Entity>>) {
+    self.keyPath = keyPath
   }
   
-  init(buffer: [AnyHashable : Any]) {
+  init(buffer: [AnyHashable : Any], keyPath: KeyPath<Schema, EntityTableKey<Entity>>) {
     self.entities = buffer
+    self.keyPath = keyPath
   }
   
   public func all() -> AnyCollection<Entity> {
@@ -62,27 +80,18 @@ public struct EntityTable<Entity: EntityType>: EntityTableType {
     }
   }
   
-  public mutating func updateIfExists(by id: Entity.ID, update: (inout Entity) -> Void) {
-    guard entities.keys.contains(id) else { return }
-    withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Void in
-      var entity = pointer.pointee as! Entity
-      update(&entity)
-      pointer.pointee = entity
-    }
-  }
-    
   @discardableResult
-  public mutating func insert(_ entity: Entity) -> Entity.ID {
+  public mutating func insert(_ entity: Entity) -> InsertionResult {
     entities[entity.id] = entity
-    return entity.id
+    return .init(entity: entity, keyPath: keyPath)
   }
   
   @discardableResult
-  public mutating func insert<S: Sequence>(_ addingEntities: S) -> [Entity.ID] where S.Element == Entity {
-    let ids = addingEntities.map {
+  public mutating func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
+    let results = addingEntities.map {
       insert($0)
     }
-    return ids
+    return results
   }
   
   public mutating func remove(_ id: Entity.ID) {
@@ -95,7 +104,7 @@ public struct EntityTable<Entity: EntityType>: EntityTableType {
 }
 
 extension EntityTable: Equatable where Entity : Equatable {
-  public static func == (lhs: EntityTable<Entity>, rhs: EntityTable<Entity>) -> Bool {
+  public static func == (lhs: EntityTable<Schema, Entity>, rhs: EntityTable<Schema, Entity>) -> Bool {
     (lhs.entities as! [AnyHashable : Entity]) == (rhs.entities as! [AnyHashable : Entity])
   }
 }
@@ -114,12 +123,12 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
     self.entityTableStorage = entityTableStorage
   }
     
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<U> {
+  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<Schema, U> {
     get {
       guard let rawTable = entityTableStorage[U.entityName] else {
-        return EntityTable<U>(buffer: [:])
+        return EntityTable<Schema, U>(buffer: [:], keyPath: keyPath)
       }
-      return EntityTable<U>(buffer: rawTable)
+      return EntityTable<Schema, U>(buffer: rawTable, keyPath: keyPath)
     }
     set {
       entityTableStorage[U.entityName] = newValue.entities
