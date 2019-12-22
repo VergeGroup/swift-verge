@@ -30,12 +30,12 @@ import VergeCore
 extension StoreBase {
   
   @inlinable
-  public func selector<Key, Output>(
+  public func getter<Key, Output>(
     selector: @escaping (State) -> Output,
     equality: EqualityComputer<State, Key>
-  ) -> MemoizeSelector<State, Output> {
+  ) -> Getter<State, Output> {
     
-    _backingStorage.selector(selector: selector, equality: equality)
+    _backingStorage.getter(selector: selector, equality: equality)
   }
   
 }

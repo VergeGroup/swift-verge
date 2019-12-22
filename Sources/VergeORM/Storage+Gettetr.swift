@@ -28,11 +28,12 @@ import VergeCore
 extension EntityType {
   
   #if COCOAPODS
-  public typealias AnySelector = Verge.AnySelector<Self>
+  public typealias AnyGetter = Verge.AnyGetter<Self>
+  public typealias Getter<Source> = Verge.Getter<Source, Self>
   #else
-  public typealias AnySelector = VergeCore.AnySelector<Self>
+  public typealias AnyGetter = VergeCore.AnyGetter<Self>
+  public typealias Getter<Source> = VergeCore.Getter<Source, Self>
   #endif
-  public typealias Selector<Source> = MemoizeSelector<Source, Self>
   
 }
 
@@ -41,9 +42,9 @@ extension ValueContainerType {
   public func entitySelector<Schema: EntitySchemaType, E: EntityType>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entityID: E.ID
-  ) -> MemoizeSelector<Value, E?> {
+  ) -> Getter<Value, E?> {
     
-    selector(selector: { (value) -> E? in
+    getter(selector: { (value) -> E? in
       let table = entityTableSelector(value)
       return table.find(by: entityID)
     }, equality: .alwaysDifferent()
@@ -54,9 +55,9 @@ extension ValueContainerType {
   public func entitySelector<Schema: EntitySchemaType, E: EntityType & Equatable>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entityID: E.ID
-  ) -> MemoizeSelector<Value, E?> {
+  ) -> Getter<Value, E?> {
     
-    selector(selector: { (value) -> E? in
+    getter(selector: { (value) -> E? in
       let table = entityTableSelector(value)
       return table.find(by: entityID)
     }, equality: .init(selector: entityTableSelector, equals: { $0 == $1 })
@@ -71,11 +72,11 @@ extension ValueContainerType {
   public func nonNullEntitySelector<Schema: EntitySchemaType, E: EntityType>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entity: E
-  ) -> MemoizeSelector<Value, E> {
+  ) -> Getter<Value, E> {
     
     var fetched: E = entity
     
-    return selector(selector: { (value) -> E in
+    return getter(selector: { (value) -> E in
       let table = entityTableSelector(value)
       if let e = table.find(by: entity.id) {
         fetched = e
@@ -93,11 +94,11 @@ extension ValueContainerType {
   public func nonNullEntitySelector<Schema: EntitySchemaType, E: EntityType & Equatable>(
     entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
     entity: E
-  ) -> MemoizeSelector<Value, E> {
+  ) -> Getter<Value, E> {
     
     var fetched: E = entity
     
-    return selector(selector: { (value) -> E in
+    return getter(selector: { (value) -> E in
       let table = entityTableSelector(value)
       if let e = table.find(by: entity.id) {
         fetched = e
@@ -123,13 +124,13 @@ extension ValueContainerType where Value : HasDatabaseStateType {
   
   public func nonNullEntitySelector<E: EntityType>(
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
-  ) -> MemoizeSelector<Value, E> {
+  ) -> Getter<Value, E> {
     
     var fetched: E = insertionResult.entity
     let id = fetched.id
     
-    let _s = insertionResult.selector(Value.keyPathToDatabase)
-    return selector(selector: { (value) -> E in
+    let _s = insertionResult.makeSelector(Value.keyPathToDatabase)
+    return getter(selector: { (value) -> E in
       let table = _s(value)
       if let e = table.find(by: id) {
         fetched = e
@@ -137,18 +138,17 @@ extension ValueContainerType where Value : HasDatabaseStateType {
       return fetched
     }, equality: .alwaysDifferent()
     )
-    
   }
   
   public func nonNullEntitySelector<E: EntityType & Equatable>(
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
-  ) -> MemoizeSelector<Value, E> {
+  ) -> Getter<Value, E> {
     
     var fetched: E = insertionResult.entity
     let id = fetched.id
     
-    let _s = insertionResult.selector(Value.keyPathToDatabase)
-    return selector(selector: { (value) -> E in
+    let _s = insertionResult.makeSelector(Value.keyPathToDatabase)
+    return getter(selector: { (value) -> E in
       let table = _s(value)
       if let e = table.find(by: id) {
         fetched = e

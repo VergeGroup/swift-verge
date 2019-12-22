@@ -20,6 +20,7 @@
 		4B475BC8239ADE1C008A03E1 /* VergeORMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */; };
 		4B475BD0239ADEB4008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
 		4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */; };
+		4B52362723B00CEE0055199D /* GetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B52362623B00CEE0055199D /* GetterTests.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
@@ -113,11 +114,11 @@
 		4BFA22A423A63B56008D7BCB /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BFA22A823A63B83008D7BCB /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4BFA22AD23A63BB9008D7BCB /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
-		4BFA22B223A63BE1008D7BCB /* Selector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B23275E239E67EE0043D3F9 /* Selector.swift */; };
+		4BFA22B223A63BE1008D7BCB /* Getter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B23275E239E67EE0043D3F9 /* Getter.swift */; };
 		4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */; };
 		4BFA22B523A63C59008D7BCB /* VergeStore+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFA22B423A63C59008D7BCB /* VergeStore+.swift */; };
 		4BFA22B623A63D3F008D7BCB /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
-		4BFA22BB23A64289008D7BCB /* Storage+Selector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFA22BA23A64289008D7BCB /* Storage+Selector.swift */; };
+		4BFA22BB23A64289008D7BCB /* Storage+Gettetr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFA22BA23A64289008D7BCB /* Storage+Gettetr.swift */; };
 		4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B42740C236F1D2D00C302C8 /* Storage.swift */; };
 		D24B7E15E78E08E4CEBFAC54 /* libPods-Demo-VergeViewModelDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C978374E89754D5FFCDD7F2D /* libPods-Demo-VergeViewModelDemo.a */; };
 		EAE0782BC63B2E19D3990686 /* libPods-Demo-VergeStoreDemoSwiftUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E2A6A1FF04035BD5748A5F19 /* libPods-Demo-VergeStoreDemoSwiftUI.a */; };
@@ -336,7 +337,7 @@
 		49853C9BFD678DAB19D85FBD /* Pods-VergeStoreAdvancedDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeStoreAdvancedDemo.release.xcconfig"; path = "Target Support Files/Pods-VergeStoreAdvancedDemo/Pods-VergeStoreAdvancedDemo.release.xcconfig"; sourceTree = "<group>"; };
 		4B07360123AA35F800866430 /* HashIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashIndex.swift; sourceTree = "<group>"; };
 		4B0AFD6C2388643400AABA90 /* DefaultLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLogger.swift; sourceTree = "<group>"; };
-		4B23275E239E67EE0043D3F9 /* Selector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selector.swift; sourceTree = "<group>"; };
+		4B23275E239E67EE0043D3F9 /* Getter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Getter.swift; sourceTree = "<group>"; };
 		4B232761239E71530043D3F9 /* MemoizeGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoizeGetterTests.swift; sourceTree = "<group>"; };
 		4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizeDisplayValueTests.swift; sourceTree = "<group>"; };
 		4B42740C236F1D2D00C302C8 /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
@@ -350,6 +351,7 @@
 		4B475BC9239ADE1C008A03E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B495D092332B5170098F7B4 /* NetworkImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
 		4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueContainerType.swift; sourceTree = "<group>"; };
+		4B52362623B00CEE0055199D /* GetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterTests.swift; sourceTree = "<group>"; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
 		4B57FD1923A29DAD00E41D06 /* EntityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityType.swift; sourceTree = "<group>"; };
@@ -441,7 +443,7 @@
 		4BFA229E23A63B56008D7BCB /* VergeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeCore.h; sourceTree = "<group>"; };
 		4BFA229F23A63B56008D7BCB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BFA22B423A63C59008D7BCB /* VergeStore+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VergeStore+.swift"; sourceTree = "<group>"; };
-		4BFA22BA23A64289008D7BCB /* Storage+Selector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Selector.swift"; sourceTree = "<group>"; };
+		4BFA22BA23A64289008D7BCB /* Storage+Gettetr.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Gettetr.swift"; sourceTree = "<group>"; };
 		5D038BA7FA5507FA05A55370 /* Pods-VergeStoreAdvancedDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeStoreAdvancedDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeStoreAdvancedDemo/Pods-VergeStoreAdvancedDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		7B62E8CCCD40B10F63A2177D /* Pods-Demo-VergeViewModelDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeViewModelDemo.release.xcconfig"; path = "Target Support Files/Pods-Demo-VergeViewModelDemo/Pods-Demo-VergeViewModelDemo.release.xcconfig"; sourceTree = "<group>"; };
 		90328BAB4D46D9567CA1EE36 /* Pods-VergeNeueAdvancedDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VergeNeueAdvancedDemo.debug.xcconfig"; path = "Target Support Files/Pods-VergeNeueAdvancedDemo/Pods-VergeNeueAdvancedDemo.debug.xcconfig"; sourceTree = "<group>"; };
@@ -634,7 +636,7 @@
 				4BC6EFB623A8D1AF00EFD688 /* Database.swift */,
 				4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */,
 				4B07360323AB2E0300866430 /* Index */,
-				4BFA22BA23A64289008D7BCB /* Storage+Selector.swift */,
+				4BFA22BA23A64289008D7BCB /* Storage+Gettetr.swift */,
 			);
 			path = VergeORM;
 			sourceTree = "<group>";
@@ -847,6 +849,7 @@
 			isa = PBXGroup;
 			children = (
 				4BE9455123AD1B180060F977 /* VergeCoreTests.swift */,
+				4B52362623B00CEE0055199D /* GetterTests.swift */,
 				4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */,
 				4BE9455323AD1B180060F977 /* Info.plist */,
 			);
@@ -900,7 +903,7 @@
 			children = (
 				4BFA229E23A63B56008D7BCB /* VergeCore.h */,
 				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
-				4B23275E239E67EE0043D3F9 /* Selector.swift */,
+				4B23275E239E67EE0043D3F9 /* Getter.swift */,
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
 				4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */,
 				4BFA229F23A63B56008D7BCB /* Info.plist */,
@@ -1580,7 +1583,7 @@
 				4BC6EFB123A8BFAF00EFD688 /* GroupByIndex.swift in Sources */,
 				4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */,
 				4B6E361023A7ED1900EB490C /* IndexType.swift in Sources */,
-				4BFA22BB23A64289008D7BCB /* Storage+Selector.swift in Sources */,
+				4BFA22BB23A64289008D7BCB /* Storage+Gettetr.swift in Sources */,
 				4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */,
 				4B475BC0239AB983008A03E1 /* DatabaseBatchUpdatesContext.swift in Sources */,
 				4BC6EFB823A8D1B500EFD688 /* Database.swift in Sources */,
@@ -1692,6 +1695,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B52362723B00CEE0055199D /* GetterTests.swift in Sources */,
 				4BE9455223AD1B180060F977 /* VergeCoreTests.swift in Sources */,
 				4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */,
 			);
@@ -1726,7 +1730,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BFA22B223A63BE1008D7BCB /* Selector.swift in Sources */,
+				4BFA22B223A63BE1008D7BCB /* Getter.swift in Sources */,
 				4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */,
 				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
 				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,
