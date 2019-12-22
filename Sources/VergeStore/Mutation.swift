@@ -22,9 +22,9 @@
 
 import Foundation
 
-public struct AnyMutation<From: DispatcherType> {
+public struct AnyMutation<Dispatcher: DispatcherType> {
   
-  let _mutate: (inout From.State) -> Void
+  let _mutate: (inout Dispatcher.State) -> Void
   
   public let metadata: MutationMetadata
   
@@ -33,7 +33,7 @@ public struct AnyMutation<From: DispatcherType> {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutate: @escaping (inout From.State) -> Void
+    mutate: @escaping (inout Dispatcher.State) -> Void
   ) {
     
     self.metadata = .init(name: name, file: file, function: function, line: line)
@@ -49,7 +49,7 @@ extension AnyMutation {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    inlineMutation: @escaping (inout From.State) -> Void
+    inlineMutation: @escaping (inout Dispatcher.State) -> Void
   ) -> Self {
     
     self.init(name, file, function, line, mutate: inlineMutation)
@@ -58,10 +58,10 @@ extension AnyMutation {
   
 }
 
-extension AnyMutation where From.State : StateType {
+extension AnyMutation where Dispatcher.State : StateType {
   
   public static func mutation<Target>(
-    _ target: WritableKeyPath<From.State, Target>,
+    _ target: WritableKeyPath<Dispatcher.State, Target>,
     _ name: StaticString = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
@@ -69,14 +69,14 @@ extension AnyMutation where From.State : StateType {
     inlineMutation: @escaping (inout Target) -> Void
   ) -> Self {
         
-    AnyMutation.init(name, file, function, line) { (state: inout From.State) in
+    AnyMutation.init(name, file, function, line) { (state: inout Dispatcher.State) in
       state.update(target: target, update: inlineMutation)
     }
            
   }
   
   public static func mutationIfPresent<Target: _VergeStore_OptionalProtocol>(
-    _ target: WritableKeyPath<From.State, Target>,
+    _ target: WritableKeyPath<Dispatcher.State, Target>,
     _ name: StaticString = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
@@ -84,25 +84,25 @@ extension AnyMutation where From.State : StateType {
     inlineMutation: @escaping (inout Target.Wrapped) -> Void
   ) -> Self {
     
-    AnyMutation.init(name, file, function, line) { (state: inout From.State) in
+    AnyMutation.init(name, file, function, line) { (state: inout Dispatcher.State) in
       state.updateIfPresent(target: target, update: inlineMutation)
     }
     
   }
 }
 
-extension AnyMutation where From : ScopedDispatching {
+extension AnyMutation where Dispatcher : ScopedDispatching {
   
   public static func mutationScoped(
     _ name: StaticString = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    inlineMutation: @escaping (inout From.Scoped) -> Void
+    inlineMutation: @escaping (inout Dispatcher.Scoped) -> Void
   ) -> Self {
     
     self.mutation(
-      From.scopedStateKeyPath,
+      Dispatcher.scopedStateKeyPath,
       name,
       file,
       function,
@@ -114,17 +114,17 @@ extension AnyMutation where From : ScopedDispatching {
   
 }
 
-extension AnyMutation where From : ScopedDispatching, From.Scoped : _VergeStore_OptionalProtocol {
+extension AnyMutation where Dispatcher : ScopedDispatching, Dispatcher.Scoped : _VergeStore_OptionalProtocol {
   
   public static func mutationScopedIfPresent(
     _ name: StaticString = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    inlineMutation: @escaping  (inout From.Scoped.Wrapped) -> Void) -> Self {
+    inlineMutation: @escaping  (inout Dispatcher.Scoped.Wrapped) -> Void) -> Self {
     
     self.mutationIfPresent(
-      From.scopedStateKeyPath,
+      Dispatcher.scopedStateKeyPath,
       name,
       file,
       function,
