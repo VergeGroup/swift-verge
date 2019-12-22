@@ -65,6 +65,7 @@
 		4B94915F239CF1CF00370067 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B94915E239CF1CF00370067 /* UserListView.swift */; };
 		4B956D18211483E7003AA189 /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */; };
 		4B956D19211483E7003AA189 /* VergeClassic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B99D69323AF6C4300E26127 /* ProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B99D69223AF6C4300E26127 /* ProtocolTests.swift */; };
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
@@ -394,6 +395,7 @@
 		4B949158239C35BB00370067 /* Mutation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mutation.swift; sourceTree = "<group>"; };
 		4B94915A239C35CB00370067 /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		4B94915E239CF1CF00370067 /* UserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
+		4B99D69223AF6C4300E26127 /* ProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolTests.swift; sourceTree = "<group>"; };
 		4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherType.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -645,6 +647,7 @@
 				4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */,
 				4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */,
 				4B475BC9239ADE1C008A03E1 /* Info.plist */,
+				4B99D69223AF6C4300E26127 /* ProtocolTests.swift */,
 			);
 			path = VergeORMTests;
 			sourceTree = "<group>";
@@ -1586,6 +1589,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B99D69323AF6C4300E26127 /* ProtocolTests.swift in Sources */,
 				4B475BC8239ADE1C008A03E1 /* VergeORMTests.swift in Sources */,
 				4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */,
 				4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */,

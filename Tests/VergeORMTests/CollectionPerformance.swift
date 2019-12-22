@@ -11,7 +11,25 @@ import Foundation
 import XCTest
 
 class CollectionPerformance: XCTestCase {
- 
+  
+  func testMakeCollection() {
+    measure {
+      _ = AnyCollection((0..<100000).map { $0 })
+    }
+  }
+  
+  func testMakeLazySequence() {
+    measure {
+      _ = (0..<100000).lazy.map { $0 }
+    }
+  }
+  
+  func testMakeLazyCollection() {
+    measure {
+      _ = AnyCollection((0..<100000).lazy.map { $0 })
+    }
+  }
+  
   func testArrayCast() {
     
     let a = (0..<10000).map { Int($0) }
