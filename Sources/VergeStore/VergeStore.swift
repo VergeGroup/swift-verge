@@ -126,7 +126,7 @@ open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType, ValueC
     
     let startedTime = CFAbsoluteTimeGetCurrent()
     var currentState: State!
-    let returnValue = try _backingStorage.update { (state) -> Return in
+    let returnValue = _backingStorage.update { (state) -> Return in
       let r = mutation._mutate(&state)
       currentState = state
       return r
