@@ -29,10 +29,10 @@ import VergeCore
 
 extension StoreBase {
   
-  public func selector<Key, Destination>(
-    selector: @escaping (State) -> Destination,
+  public func selector<Key, Output>(
+    selector: @escaping (State) -> Output,
     equality: EqualityComputer<State, Key>
-  ) -> MemoizeSelector<State, Destination> {
+  ) -> MemoizeSelector<State, Output> {
     
     _backingStorage.selector(selector: selector, equality: equality)
   }

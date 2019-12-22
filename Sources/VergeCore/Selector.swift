@@ -21,12 +21,12 @@
 
 import Foundation
 
-open class SelectorBase<Destination> {
+open class SelectorBase<Output> {
   
   let willUpdateEmitter: EventEmitter<Void>
-  let didUpdateEmitter: EventEmitter<Destination>
+  let didUpdateEmitter: EventEmitter<Output>
   
-  init(willUpdateEmitter: EventEmitter<Void>, didUpdateEmitter: EventEmitter<Destination>) {
+  init(willUpdateEmitter: EventEmitter<Void>, didUpdateEmitter: EventEmitter<Output>) {
     self.willUpdateEmitter = willUpdateEmitter
     self.didUpdateEmitter = didUpdateEmitter
   }
@@ -43,7 +43,7 @@ open class SelectorBase<Destination> {
   /// Storage tells got a newValue.
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
-  public func addDidUpdate(subscriber: @escaping (Destination) -> Void) -> EventEmitterSubscribeToken {
+  public func addDidUpdate(subscriber: @escaping (Output) -> Void) -> EventEmitterSubscribeToken {
     didUpdateEmitter.add(subscriber)
   }
 }
@@ -70,16 +70,16 @@ public final class AnySelector<Destination>: SelectorBase<Destination> {
   
 }
 
-open class MemoizeSelector<Source, Destination>: SelectorBase<Destination> {
+open class MemoizeSelector<Input, Output>: SelectorBase<Output> {
   
-  private let selector: (Source) -> Destination
-  private var computedValue: Destination
-  private let checker: (Source) -> Bool
+  private let selector: (Input) -> Output
+  private var computedValue: Output
+  private let checker: (Input) -> Bool
     
   public init<Key>(
-    initialSource: Source,
-    selector: @escaping (Source) -> Destination,
-    equality: EqualityComputer<Source, Key>
+    initialSource: Input,
+    selector: @escaping (Input) -> Output,
+    equality: EqualityComputer<Input, Key>
   ) {
     
     self.selector = selector
@@ -90,11 +90,11 @@ open class MemoizeSelector<Source, Destination>: SelectorBase<Destination> {
     super.init(willUpdateEmitter: .init(), didUpdateEmitter: .init())
   }
   
-  public var value: Destination {
+  public var value: Output {
     computedValue
   }
   
-  public func _accept(sourceValue: Source) {
+  public func _accept(sourceValue: Input) {
     guard !checker(sourceValue) else { return }
     willUpdateEmitter.accept(())
     let newValue = selector(sourceValue)
@@ -102,7 +102,7 @@ open class MemoizeSelector<Source, Destination>: SelectorBase<Destination> {
     didUpdateEmitter.accept(newValue)
   }
     
-  public func asAny() -> AnySelector<Destination> {
+  public func asAny() -> AnySelector<Output> {
     .init(self)
   }
   
@@ -139,12 +139,12 @@ extension SelectorBase: ObservableObject {
     }
   }
   
-  public var didChangePublisher: AnyPublisher<Destination, Never> {
+  public var didChangePublisher: AnyPublisher<Output, Never> {
     
-    if let associated = objc_getAssociatedObject(self, &_didChangeAssociated) as? PassthroughSubject<Destination, Never> {
+    if let associated = objc_getAssociatedObject(self, &_didChangeAssociated) as? PassthroughSubject<Output, Never> {
       return associated.eraseToAnyPublisher()
     } else {
-      let associated = PassthroughSubject<Destination, Never>()
+      let associated = PassthroughSubject<Output, Never>()
       objc_setAssociatedObject(self, &_didChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
       
       addDidUpdate { s in
