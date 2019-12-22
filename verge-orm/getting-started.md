@@ -40,10 +40,24 @@ As an example, suppose we have Book and Author entities.
 
 ```swift
 struct Book: EntityType {
+
+  typealias IdentifierType = String
+  
+  var id: Identifier {
+    .init(rawID)
+  }
+  
   let rawID: String
 }
 
 struct Author: EntityType {
+
+  typealias IdentifierType = String
+  
+  var id: Identifier {
+    .init(rawID)
+  }
+  
   let rawID: String
 }
 ```
