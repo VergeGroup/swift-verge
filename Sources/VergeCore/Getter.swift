@@ -209,11 +209,12 @@ public final class EqualityComputer<Value, Key> {
   func input(value: Value) -> Bool {
     
     let key = selector(value)
-    
+    defer {
+      previousValue = key
+    }
     if let previousValue = previousValue {
       return equals(previousValue, key)
     } else {
-      previousValue = key
       return false
     }
     
