@@ -26,7 +26,7 @@ public final class DispatcherContext<Dispatcher: DispatcherType> {
   public typealias State = Dispatcher.State
   
   public let dispatcher: Dispatcher
-  public let metadata: ActionMetadata
+  public let action: ActionBaseType
   private let parent: DispatcherContext<Dispatcher>?
   
   public var state: State {
@@ -35,11 +35,11 @@ public final class DispatcherContext<Dispatcher: DispatcherType> {
   
   init(
     dispatcher: Dispatcher,
-    metadata: ActionMetadata,
+    action: ActionBaseType,
     parent: DispatcherContext<Dispatcher>?
   ) {
     self.dispatcher = dispatcher
-    self.metadata = metadata
+    self.action = action
     self.parent = parent
   }
      
@@ -54,20 +54,20 @@ extension DispatcherContext {
     
   /// Run Mutation
   /// - Parameter get: returns Mutation
-  public func accept<Return>(_ get: (Dispatcher) -> Dispatcher.Mutation<Return>) -> Return {
+  public func accept<Mutation: MutationType>(_ get: (Dispatcher) -> Mutation) -> Mutation.Result where Mutation.State == State {
     dispatcher.accept(get)
   }
   
   /// Run Action
   @discardableResult
-  public func accept<Return>(_ get: (Dispatcher) -> Dispatcher.Action<Return>) -> Return {
+  public func accept<Action: ActionType>(_ get: (Dispatcher) -> Action) -> Action.Result where Action.Dispatcher == Dispatcher {
     let action = get(dispatcher)
     let context = DispatcherContext<Dispatcher>.init(
       dispatcher: dispatcher,
-      metadata: action.metadata,
+      action: action,
       parent: self
     )
-    return action._action(context)
+    return action.run(context: context)
   }
     
   /// Send activity
@@ -83,7 +83,7 @@ extension DispatcherContext: CustomReflectable {
     Mirror(
       self,
       children: [
-        "metadata": metadata,
+        "action": action,
         "parent" : parent as Any
       ],
       displayStyle: .struct
