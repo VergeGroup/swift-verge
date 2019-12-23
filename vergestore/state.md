@@ -54,3 +54,5 @@ Please check VergeORM module**
 
 {% page-ref page="../verge-orm/core-concepts.md" %}
 
+{% embed url="https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/" %}
+
