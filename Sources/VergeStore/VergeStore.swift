@@ -70,7 +70,7 @@ public protocol VergeStoreLogger {
 
 public protocol VergeStoreType: AnyObject {
   associatedtype State
-  associatedtype Activity
+  associatedtype Activity  
 }
 
 public typealias NoActivityStoreBase<State> = StoreBase<State, Never>
