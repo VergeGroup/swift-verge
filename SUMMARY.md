@@ -14,6 +14,7 @@
 * [Mutation](vergestore/mutation.md)
 * [Action](vergestore/action.md)
 * [Logging](vergestore/logging.md)
+* [Middleware](vergestore/middleware.md)
 * [Activity](vergestore/activity.md)
 * [Getter\(Selector\) and Memoization](vergestore/memoization.md)
 * [Advanced](vergestore/advanced/README.md)

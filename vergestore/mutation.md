@@ -9,7 +9,7 @@ Mutation does not run asynchronous operation.
 {% endhint %}
 
 ```swift
-public struct AnyMutation<Dispatcher, Return> where Dispatcher : VergeStore.DispatcherType {
+public struct AnyMutation<Dispatcher, Result>: MutationType where Dispatcher : VergeStore.DispatcherType {
 
   public let metadata: MutationMetadata
 
