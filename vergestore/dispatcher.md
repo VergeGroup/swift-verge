@@ -1,6 +1,4 @@
-# 🚀 Dispatcher - Perform Mutation / Action
-
-## What Dispatcher does
+# Dispatcher
 
 Dispatcher's needs is **to update the state that Store manages** and to **manage dependencies to create Mutation and Action**
 
@@ -39,7 +37,7 @@ let apiClient = APIClient()
 let dispatcher = MyDispatcher(apiClient: apiClient, target: store)
 ```
 
-## Create multiple Dispatcher
+### Create multiple Dispatcher
 
 ![](../.gitbook/assets/image%20%283%29.png)
 
@@ -65,33 +63,5 @@ class LoggedOutDispatcher: DispatcherBase<RootState> {
 let store = MyStore()
 let loggedInDispatcher = LoggedInDispatcher(...)
 let loggedOutDispatcher = LoggedOutDispatcher(...)
-```
-
-## Apply DispatcherType to Store
-
-**If you create the application not so much complicated, you don't need separate Store and Dispatcher.**
-
-```swift
-final class Store: StoreBase<State, Activity>, DispatcherType {
-  
-  var dispatchTarget: StoreBase<State, Activity> { self }
-  
-  init() {
-    super.init(initialState: .init(), logger: DefaultLogger.shared)
-  }
-  
-  func sendMessage() -> Action<Void> {
-    return .action { context in
-      context.send(.didSendMessage)
-    }
-  }
-}
-```
-
-* Add DispatcherType to your store
-* Implement dispatchTarget like following
-
-```swift
-var dispatchTarget: StoreBase<State, Activity> { self }
 ```
 

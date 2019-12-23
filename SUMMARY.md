@@ -4,6 +4,7 @@
 * [Installation](installation.md)
 * [Gallery](gallery.md)
 * [About VergeClassic](about-vergeclassic.md)
+* [Changelog](changelog.md)
 
 ## Verge Store <a id="vergestore"></a>
 
