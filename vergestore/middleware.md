@@ -1,4 +1,4 @@
-# Middleware
+# ☂️ Middleware
 
 {% hint style="success" %}
 VergeStore does not yet support Middleware.  
