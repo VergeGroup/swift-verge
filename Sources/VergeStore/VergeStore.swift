@@ -60,8 +60,8 @@ public struct ActionMetadata {
 /// A protocol to register logger and get the event VergeStore emits.
 public protocol VergeStoreLogger {
   
-  func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?)
-  func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?, time: CFTimeInterval)
+  func willCommit(store: AnyObject, state: Any, mutation: MutationBaseType, context: Any?)
+  func didCommit(store: AnyObject, state: Any, mutation: MutationBaseType, context: Any?, time: CFTimeInterval)
   func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: Any?)
   
   func didCreateDispatcher(store: AnyObject, dispatcher: Any)
@@ -117,23 +117,23 @@ open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType, ValueC
   }
   
   @inline(__always)
-  func _receive<FromDispatcher: DispatcherType, Return>(
+  func _receive<FromDispatcher: DispatcherType, Mutation: MutationType>(
     context: DispatcherContext<FromDispatcher>?,
-    mutation: AnyMutation<FromDispatcher, Return>
-  ) -> Return where FromDispatcher.State == State {
+    mutation: Mutation
+  ) -> Mutation.Result where FromDispatcher.State == State, Mutation.State == State {
     
-    logger?.willCommit(store: self, state: self.state, mutation: mutation.metadata, context: context)
+    logger?.willCommit(store: self, state: self.state, mutation: mutation, context: context)
     
     let startedTime = CFAbsoluteTimeGetCurrent()
     var currentState: State!
-    let returnValue = _backingStorage.update { (state) -> Return in
-      let r = mutation._mutate(&state)
+    let returnValue = _backingStorage.update { (state) -> Mutation.Result in
+      let r = mutation.mutate(state: &state)
       currentState = state
       return r
     }
     let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
     
-    logger?.didCommit(store: self, state: currentState!, mutation: mutation.metadata, context: context, time: elapsed)
+    logger?.didCommit(store: self, state: currentState!, mutation: mutation, context: context, time: elapsed)
     return returnValue
   }
   

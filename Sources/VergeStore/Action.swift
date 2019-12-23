@@ -21,9 +21,20 @@
 
 import Foundation
 
-public struct AnyAction<Dispatcher: DispatcherType, Return> {
+public protocol ActionBaseType {
   
-  let _action: (DispatcherContext<Dispatcher>) -> Return
+}
+
+public protocol ActionType: ActionBaseType {
+  
+  associatedtype Dispatcher: DispatcherType
+  associatedtype Result
+  func run(context: DispatcherContext<Dispatcher>) -> Result
+}
+
+public struct AnyAction<Dispatcher: DispatcherType, Result>: ActionType {
+  
+  let _action: (DispatcherContext<Dispatcher>) -> Result
   public let metadata: ActionMetadata
   
   public init(
@@ -31,12 +42,16 @@ public struct AnyAction<Dispatcher: DispatcherType, Return> {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ action: @escaping (DispatcherContext<Dispatcher>) -> Return
+    _ action: @escaping (DispatcherContext<Dispatcher>) -> Result
   ) {
     
     self.metadata = .init(name: name, file: file, function: function, line: line)
     self._action = action
     
+  }
+  
+  public func run(context: DispatcherContext<Dispatcher>) -> Result {
+    _action(context)
   }
 }
 
@@ -47,7 +62,7 @@ extension AnyAction {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ action: @escaping (DispatcherContext<Dispatcher>) -> Return
+    _ action: @escaping (DispatcherContext<Dispatcher>) -> Result
   ) -> Self {
     self.init(name, file, function, line, action)
   }

@@ -40,7 +40,7 @@ extension DispatcherType {
   
   ///
   /// - Parameter get: Return Mutation Object
-  public func accept<Return>(_ get: (Self) -> Mutation<Return>) -> Return {
+  public func accept<Mutation: MutationType>(_ get: (Self) -> Mutation) -> Mutation.Result where Mutation.State == State {
     let mutation = get(self)
     return dispatchTarget._receive(
       context: Optional<DispatcherContext<Self>>.none,
@@ -51,14 +51,14 @@ extension DispatcherType {
   ///
   /// - Parameter get: Return Action object
   @discardableResult
-  public func accept<Return>(_ get: (Self) -> Action<Return>) -> Return {
+  public func accept<Action: ActionType>(_ get: (Self) -> Action) -> Action.Result where Action.Dispatcher == Self {
     let action = get(self)
     let context = DispatcherContext<Self>.init(
       dispatcher: self,
-      metadata: action.metadata,
+      action: action,
       parent: nil
     )
-    return action._action(context)
+    return action.run(context: context)
   }
 
 }

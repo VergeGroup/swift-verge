@@ -42,10 +42,10 @@ public final class DefaultLogger: VergeStoreLogger {
     
   }
   
-  public func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?) {
+  public func willCommit(store: AnyObject, state: Any, mutation: MutationBaseType, context: Any?) {
   }
   
-  public func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?, time: CFTimeInterval) {
+  public func didCommit(store: AnyObject, state: Any, mutation: MutationBaseType, context: Any?, time: CFTimeInterval) {
     
     let message = """
     {

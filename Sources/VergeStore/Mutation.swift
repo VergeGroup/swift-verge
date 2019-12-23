@@ -22,9 +22,19 @@
 
 import Foundation
 
-public struct AnyMutation<Dispatcher: DispatcherType, Return> {
+public protocol MutationBaseType {
   
-  let _mutate: (inout Dispatcher.State) -> Return
+}
+
+public protocol MutationType: MutationBaseType {
+  associatedtype Result
+  associatedtype State
+  func mutate(state: inout State) -> Result
+}
+
+public struct AnyMutation<Dispatcher: DispatcherType, Result>: MutationType {
+  
+  let _mutate: (inout Dispatcher.State) -> Result
   
   public let metadata: MutationMetadata
   
@@ -33,11 +43,15 @@ public struct AnyMutation<Dispatcher: DispatcherType, Return> {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutate: @escaping (inout Dispatcher.State) -> Return
+    mutate: @escaping (inout Dispatcher.State) -> Result
   ) {
     
     self.metadata = .init(name: name, file: file, function: function, line: line)
     self._mutate = mutate
+  }
+  
+  public func mutate(state: inout Dispatcher.State) -> Result {
+    _mutate(&state)
   }
   
 }
@@ -49,7 +63,7 @@ extension AnyMutation {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    inlineMutation: @escaping (inout Dispatcher.State) -> Return
+    inlineMutation: @escaping (inout Dispatcher.State) -> Result
   ) -> Self {
     
     self.init(name, file, function, line, mutate: inlineMutation)
@@ -66,7 +80,7 @@ extension AnyMutation where Dispatcher.State : StateType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    inlineMutation: @escaping (inout Target) -> Return
+    inlineMutation: @escaping (inout Target) -> Result
   ) -> Self {
         
     AnyMutation.init(name, file, function, line) { (state: inout Dispatcher.State) in
@@ -84,7 +98,7 @@ extension AnyMutation where Dispatcher : ScopedDispatching {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    inlineMutation: @escaping (inout Dispatcher.Scoped) -> Return
+    inlineMutation: @escaping (inout Dispatcher.Scoped) -> Result
   ) -> Self {
     
     self.mutation(
