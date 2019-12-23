@@ -1,4 +1,4 @@
-# Mutation - Updates state
+# Mutation
 
 The only way to actually change state in a Store is by committing a mutation.   
 Define a function that returns Mutation object.   
@@ -9,7 +9,7 @@ Mutation does not run asynchronous operation.
 {% endhint %}
 
 ```swift
-public struct AnyMutation<Dispatcher, Result>: MutationType where Dispatcher : VergeStore.DispatcherType {
+public struct AnyMutation<Dispatcher, Return> where Dispatcher : VergeStore.DispatcherType {
 
   public let metadata: MutationMetadata
 

@@ -1,4 +1,4 @@
-# Dispatcher - Perform Mutation / Action
+# Dispatcher
 
 Dispatcher's needs is **to update the state that Store manages** and to **manage dependencies to create Mutation and Action**
 

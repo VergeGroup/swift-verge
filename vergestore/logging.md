@@ -1,4 +1,4 @@
-# Logging - Take logs performed Mutation and Action
+# Logging
 
 {% hint style="warning" %}
 Sorry, this documentation is currently working in progress.
