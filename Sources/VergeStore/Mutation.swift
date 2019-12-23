@@ -90,26 +90,3 @@ extension AnyMutation where Dispatcher.State : StateType {
   }
   
 }
-
-extension AnyMutation where Dispatcher : ScopedDispatching {
-  
-  public static func mutationScoped(
-    _ name: StaticString = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    inlineMutation: @escaping (inout Dispatcher.Scoped) -> Result
-  ) -> Self {
-    
-    self.mutation(
-      Dispatcher.scopedStateKeyPath,
-      name,
-      file,
-      function,
-      line,
-      inlineMutation: inlineMutation
-    )
-    
-  }
-  
-}
