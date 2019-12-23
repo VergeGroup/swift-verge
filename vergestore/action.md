@@ -1,4 +1,4 @@
-# Action
+# Action - Grouping mutation with async operations
 
 Action appears similar to Mutation. But actually it's not.  
 Action can contain arbitrary asynchronous operations and it can commit Mutation inside asynchronous operations.
