@@ -1,23 +1,13 @@
----
-description: Getting values from state tree with memoization(caching) to keep performance.
----
+# Selector and Memoization
 
-# Getter\(Selector\) and Memoization
-
-## Getter
-
-{% hint style="info" %}
-**Getter** is inspired by [redux/reselect](https://github.com/reduxjs/reselect).
-
-But naming uses **Getter** instead of **Selector**, because Objective-C also uses **Selector** and then this causes ambiguity with writing without module name.
-{% endhint %}
+## MemoizeSelector
 
 Memoization will be needed in some cases.
 
 * The cost of computing value from State is expensive.
 
 ```swift
-open class Getter<Input, Output>
+public final class MemoizeSelector<Input, Output>
 ```
 
 ```swift
@@ -26,24 +16,26 @@ struct State {
   var count: Int = 0
 
 }
+  
+let selector = store.selector(
+  equality: .init(selector: { $0.count },
+  equals: ==)
+  ) { (state) -> Int in
+  
+  state.count * 2
+  
+}
 
-let getter = store.getter(
-  selector: { (state) -> Int in
-    state.count * 2
-},  
-  equality: .init(selector: { $0.count }, equals: ==)
-)
-
-getter.value
+selector.value
 ```
 
-## AnyGetter
+## AnySelector
 
 AnySelector erases Input type and displays only Output type.
 
 ```swift
-let selector: Getter<Input, Output>
+let selector: MemoizeSelector<Input, Output>
 
-let anySelector: AnyGetter<Output> = selector.asAny()
+let anySelector: AnySelector<Output> = selector.asAny()
 ```
 
