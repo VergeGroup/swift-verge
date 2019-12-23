@@ -62,9 +62,3 @@ extension DispatcherType {
   }
 
 }
-
-public protocol ScopedDispatching: DispatcherType where State : StateType {
-  associatedtype Scoped
-  
-  static var scopedStateKeyPath: WritableKeyPath<State, Scoped> { get }
-}

@@ -72,29 +72,21 @@ class RootDispatcher: DispatcherBase<State, Never> {
   
 }
 
-final class OptionalNestedDispatcher: DispatcherBase<State, Never>, ScopedDispatching {
-      
-  static var scopedStateKeyPath: WritableKeyPath<State, State.NestedState?> {
-    \.optionalNested
-  }
-     
+final class OptionalNestedDispatcher: DispatcherBase<State, Never> {
+       
   func setMyName() -> Mutation<Void> {
-    return .mutationScoped { (s) in
+    return .mutation(\.optionalNested) { (s) in
       s?.myName = "Hello"
     }
   }
   
 }
 
-final class NestedDispatcher: DispatcherBase<State, Never>, ScopedDispatching {
+final class NestedDispatcher: DispatcherBase<State, Never> {
   
-  static var scopedStateKeyPath: WritableKeyPath<State, State.NestedState> {
-    \.nested
-  }
-    
   func setMyName() -> Mutation<Void> {
-    .mutationScoped {
-      $0.myName = "Hello"
+    return .mutation(\.nested) { (s) in
+      s.myName = "Hello"
     }
   }
   

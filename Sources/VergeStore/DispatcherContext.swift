@@ -90,11 +90,3 @@ extension DispatcherContext: CustomReflectable {
     )
   }
 }
-
-extension DispatcherContext where Dispatcher : ScopedDispatching {
-  
-  public var scopedState: Dispatcher.Scoped {
-    state[keyPath: Dispatcher.scopedStateKeyPath]
-  }
-  
-}
