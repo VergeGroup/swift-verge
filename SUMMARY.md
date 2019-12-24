@@ -6,7 +6,7 @@
 * [About VergeClassic](about-vergeclassic.md)
 * [Changelog](changelog.md)
 
-## Verge Store <a id="vergestore"></a>
+## 📦 Verge Store <a id="vergestore"></a>
 
 * [VergeStore Core Concepts](vergestore/core-concepts.md)
 * [🌑 Store - Manages State](vergestore/store.md)
@@ -21,11 +21,11 @@
 * [Advanced](vergestore/advanced/README.md)
   * [Scoped Dispatcher](vergestore/advanced/scoped-dispatcher.md)
 
-## Verge ViewModel <a id="concepts"></a>
+## 📦 Verge ViewModel <a id="concepts"></a>
 
 * [VergeViewModel Core Concepts](concepts/core-concepts.md)
 
-## Verge ORM
+## 📦 Verge ORM
 
 * [VergeORM Core Concepts](verge-orm/core-concepts.md)
 * [Getting Started](verge-orm/getting-started.md)
@@ -34,7 +34,7 @@
 * [Getter \(Selector\)](verge-orm/selector.md)
 * [Tips](verge-orm/tips.md)
 
-## Verge Store Rx
+## 📦 Verge Store Rx
 
 * [VergeStoreRx Core Concepts](verge-store-rx/core-concepts.md)
 

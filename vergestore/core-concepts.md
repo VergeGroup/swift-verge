@@ -13,4 +13,5 @@ The characteristics are
 * **No switch-case to handle Mutation and Action**
 * **Emits any events that isolated from State It's for SwiftUI's onReceive\(:\)**
 * **Supports Logging \(Commit, Action, Performance monitoring\)**
+* **Supports Middleware**
 
