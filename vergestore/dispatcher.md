@@ -74,7 +74,7 @@ let loggedOutDispatcher = LoggedOutDispatcher(...)
 ```swift
 final class Store: StoreBase<State, Activity>, DispatcherType {
   
-  var dispatchTarget: StoreBase<State, Activity> { self }
+  var target: StoreBase<State, Activity> { self }
   
   init() {
     super.init(initialState: .init(), logger: DefaultLogger.shared)
@@ -92,6 +92,6 @@ final class Store: StoreBase<State, Activity>, DispatcherType {
 * Implement dispatchTarget like following
 
 ```swift
-var dispatchTarget: StoreBase<State, Activity> { self }
+var target: StoreBase<State, Activity> { self }
 ```
 

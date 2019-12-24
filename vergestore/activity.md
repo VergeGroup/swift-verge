@@ -47,7 +47,7 @@ enum Activity {
 
 final class Store: StoreBase<State, Activity>, DispatcherType {
   
-  var dispatchTarget: StoreBase<State, Activity> { self }
+  var target: StoreBase<State, Activity> { self }
   
   init() {
     super.init(initialState: .init(), logger: DefaultLogger.shared)
