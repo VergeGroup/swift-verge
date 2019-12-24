@@ -2,6 +2,10 @@
 
 ## Master
 
+### Rename DispatcherType.dispatchTarget to target
+
+## 6.0.0-beta.4
+
 ### [Rename accept\(\) to commit\(\) and dispatch\(\)](https://github.com/muukii/Verge/pull/29)
 
 ```swift
