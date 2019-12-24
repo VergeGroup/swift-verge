@@ -62,13 +62,13 @@ class MemoizeGetterTests: XCTestCase {
     
     XCTAssertEqual(callCount, 1)
     
-    dispatcher.accept { $0.increment() }
+    dispatcher.commit { $0.increment() }
     
     XCTAssertEqual(getter.value, 2)
     
     XCTAssertEqual(callCount, 2)
     
-    dispatcher.accept { $0.setMyName() }
+    dispatcher.commit { $0.setMyName() }
     
     XCTAssertEqual(getter.value, 2)
     

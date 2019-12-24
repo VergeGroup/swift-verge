@@ -57,7 +57,7 @@ class ActivityTests: XCTestCase {
     }
     .store(in: &subscriptions)
     
-    store.accept { $0.sendMessage() }
+    store.dispatch { $0.sendMessage() }
     
     wait(for: [waiter], timeout: 10)
         

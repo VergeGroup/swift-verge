@@ -37,7 +37,7 @@ final class StandaloneVergeViewModelTests: XCTestCase {
     let viewModel = ViewModel()
     measure {
       DispatchQueue.concurrentPerform(iterations: 1000) { (_) in
-        viewModel.accept { $0.increment() }
+        viewModel.commit { $0.increment() }
       }
     }
               
@@ -47,7 +47,7 @@ final class StandaloneVergeViewModelTests: XCTestCase {
     
     let viewModel = ViewModel()
     DispatchQueue.concurrentPerform(iterations: 1000) { (_) in
-      viewModel.accept { $0.increment() }
+      viewModel.commit { $0.increment() }
     }
     XCTAssertEqual(viewModel.state.count, 1000)
     

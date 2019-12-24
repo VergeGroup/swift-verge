@@ -46,21 +46,22 @@ public final class DispatcherContext<Dispatcher: DispatcherType> {
 }
 
 extension DispatcherContext {
-  
-  /// Dummy Method to work Xcode code completion
-  public func accept(_ get: (Dispatcher) -> Never) -> Never {
-    fatalError()
+      
+  /// Send activity
+  /// - Parameter activity:
+  public func send(_ activity: Dispatcher.Activity) {
+    dispatcher.dispatchTarget._send(activity: activity)
   }
-    
+  
   /// Run Mutation
   /// - Parameter get: returns Mutation
-  public func accept<Mutation: MutationType>(_ get: (Dispatcher) -> Mutation) -> Mutation.Result where Mutation.State == State {
-    dispatcher.accept(get)
+  public func commit<Mutation: MutationType>(_ get: (Dispatcher) -> Mutation) -> Mutation.Result where Mutation.State == State {
+    dispatcher.commit(get)
   }
   
   /// Run Action
   @discardableResult
-  public func accept<Action: ActionType>(_ get: (Dispatcher) -> Action) -> Action.Result where Action.Dispatcher == Dispatcher {
+  public func dispatch<Action: ActionType>(_ get: (Dispatcher) -> Action) -> Action.Result where Action.Dispatcher == Dispatcher {
     let action = get(dispatcher)
     let context = DispatcherContext<Dispatcher>.init(
       dispatcher: dispatcher,
@@ -69,12 +70,19 @@ extension DispatcherContext {
     )
     return action.run(context: context)
   }
-    
-  /// Send activity
-  /// - Parameter activity:
-  public func send(_ activity: Dispatcher.Activity) {
-    dispatcher.dispatchTarget._send(activity: activity)
-  }
+  
+}
+
+// MARK: - Xcode Support
+extension DispatcherContext {
+  
+  /// Dummy Method to work Xcode code completion
+//  @available(*, unavailable)
+  public func commit(_ get: (Dispatcher) -> Never) -> Never { fatalError() }
+  
+  /// Dummy Method to work Xcode code completion
+//  @available(*, unavailable)
+  public func dispatch(_ get: (Dispatcher) -> Never) -> Never { fatalError() }
 }
 
 extension DispatcherContext: CustomReflectable {

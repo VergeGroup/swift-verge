@@ -64,9 +64,9 @@ class RootDispatcher: DispatcherBase<State, Never> {
   }
         
   func continuousIncrement() -> Action<Void> {
-    return .action { c in     
-      c.accept { $0.increment() }
-      c.accept { $0.increment() }
+    return .action { c in
+      c.commit { $0.increment() }
+      c.commit { $0.increment() }
     }
   }
   
@@ -107,52 +107,52 @@ final class VergeStoreTests: XCTestCase {
   
   func testDispatch() {
     
-    dispatcher.accept { $0.resetCount() }
-    dispatcher.accept { $0.resetCount() }
+    dispatcher.commit { $0.resetCount() }
+    dispatcher.commit { $0.resetCount() }
         
-    dispatcher.accept { $0.resetCount() }
-    dispatcher.accept { $0.continuousIncrement() }
+    dispatcher.commit { $0.resetCount() }
+    dispatcher.dispatch { $0.continuousIncrement() }
     XCTAssert(store.state.count == 2)
   }
   
   func testMutatingOptionalNestedState() {
     
     XCTAssert(store.state.optionalNested == nil)
-    dispatcher.accept { $0.setNestedState() }
-    dispatcher.accept { $0.setNestedState() }
+    dispatcher.commit { $0.setNestedState() }
+    dispatcher.commit { $0.setNestedState() }
     XCTAssert(store.state.optionalNested != nil)
-    dispatcher.accept { $0.setMyName() }
+    dispatcher.commit { $0.setMyName() }
     XCTAssertEqual(store.state.optionalNested?.myName, "Muuk")
     
     let d = OptionalNestedDispatcher(target: store)
-    d.accept { $0.setMyName() }
+    d.commit { $0.setMyName() }
     XCTAssertEqual(store.state.optionalNested?.myName, "Hello")
   }
   
   func testMutatingNestedState() {
                
     let d = NestedDispatcher(target: store)
-    d.accept { $0.setMyName() }
+    d.commit { $0.setMyName() }
     XCTAssertEqual(store.state.nested.myName, "Hello")
   }
   
   func testIncrement() {
     
-    dispatcher.accept { $0.increment() }
+    dispatcher.commit { $0.increment() }
     XCTAssertEqual(store.state.count, 1)
     
   }
   
   func testTargetingCommit() {
     
-    dispatcher.accept { $0.setNestedState() }
-    dispatcher.accept { $0.setMyName() }
+    dispatcher.commit { $0.setNestedState() }
+    dispatcher.commit { $0.setMyName() }
     XCTAssertEqual(store.state.optionalNested?.myName, "Muuk")
   }
   
   func testReturnAnyValueFromMutation() {
     
-    let r = dispatcher.accept { $0.returnSomeValue() }
+    let r = dispatcher.commit { $0.returnSomeValue() }
     
     XCTAssertEqual(r, "Hello, Verge")
     
