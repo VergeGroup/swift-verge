@@ -1,4 +1,4 @@
-# Mutation
+# ☄️ Mutation - Updates state
 
 The only way to actually change state in a Store is by committing a mutation.   
 Define a function that returns Mutation object.   
@@ -9,7 +9,7 @@ Mutation does not run asynchronous operation.
 {% endhint %}
 
 ```swift
-public struct AnyMutation<Dispatcher, Return> where Dispatcher : VergeStore.DispatcherType {
+public struct AnyMutation<Dispatcher, Result>: MutationType where Dispatcher : VergeStore.DispatcherType {
 
   public let metadata: MutationMetadata
 
@@ -53,7 +53,7 @@ If you faced this issue, please try to type return keyword explicitly.
 let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 
-dispatcher.accept { $0.addNewTodo(title: "Create SwiftUI App") }
+dispatcher.commit { $0.addNewTodo(title: "Create SwiftUI App") }
 
 print(store.state.todos)
 // store.state.todos => [Todo(title: "Create SwiftUI App", hasCompleted: false)]

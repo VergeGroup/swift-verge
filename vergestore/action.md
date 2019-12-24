@@ -1,4 +1,4 @@
-# Action
+# 🌟 Action - Grouping mutation with async operations
 
 Action appears similar to Mutation. But actually it's not.  
 Action can contain arbitrary asynchronous operations and it can commit Mutation inside asynchronous operations.
@@ -6,7 +6,7 @@ Action can contain arbitrary asynchronous operations and it can commit Mutation 
 Action object's looks
 
 ```swift
-public struct AnyAction<Dispatcher, Return> where Dispatcher : VergeStore.DispatcherType {
+public struct AnyAction<Dispatcher, Result>: ActionType where Dispatcher : VergeStore.DispatcherType {
 
   public let metadata: ActionMetadata
   
@@ -34,7 +34,7 @@ To run\(dispatch\) Action
 let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 
-dispatcher.accept { $0.someAsyncOperation() }
+dispatcher.dispatch { $0.someAsyncOperation() }
 ```
 
 To commit Mutation, do it from context.

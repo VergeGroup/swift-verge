@@ -1,4 +1,4 @@
-# Store
+# 🌑 Store - Manages State
 
 Store is a reference type object and it manages the state object that contains the application state.
 

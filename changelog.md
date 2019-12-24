@@ -2,6 +2,16 @@
 
 ## Master
 
+### [Rename accept\(\) to commit\(\) and dispatch\(\)](https://github.com/muukii/Verge/pull/29)
+
+```swift
+let dispatcher: MyDispatcher = ...
+
+dispatcher.commit { $0.increment() }
+
+dispatcher.dispatch { $0.asyncIncrement() }
+```
+
 ### Remove ScopedDispatching protocol
 
 Instead, use other Mutation factory method

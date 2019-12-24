@@ -1,4 +1,6 @@
-# State
+# 🪐 State
+
+## Using single state tree \(Not enforced\)
 
 VergeStore uses a **single state-tree. \(Recommended\)**  
 That means an object contains all of the application's state.  
@@ -20,7 +22,7 @@ VergeStore does support multiple state-tree as well.
 Depending on the case, we can create another Store instance.
 {% endhint %}
 
-### StateType protocol
+## StateType protocol helps updates \(Optional\)
 
 VergeStore provides `StateType` protocol as a helper.
 
@@ -42,4 +44,15 @@ extension StateType {
   public mutating func update(update: (inout Self) throws -> Void) rethrows
 }
 ```
+
+## Normalization
+
+**If you put the data that has relation-ship or complicated structure into state tree,   
+it would be needed normalization to keep performance.  
+  
+Please check VergeORM module**
+
+{% page-ref page="../verge-orm/core-concepts.md" %}
+
+{% embed url="https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/" %}
 

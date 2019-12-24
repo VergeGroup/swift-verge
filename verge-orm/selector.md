@@ -1,4 +1,4 @@
-# Selector
+# Getter \(Selector\)
 
 
 
@@ -17,7 +17,7 @@ let storage = Storage<RootState>(.init())
     
 let id = Book.ID.init("some")
 
-let selector = storage.entitySelector(
+let selector = storage.entityGetter(
   entityTableSelector: { $0.db.entities.book },
   entityID: id
 )
