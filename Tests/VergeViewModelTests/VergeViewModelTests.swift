@@ -63,13 +63,13 @@ class VergeViewModelTests: XCTestCase {
   }
   
   func testSyncRootStore() {
-    dispatcher.accept { $0.increment() }
+    dispatcher.commit { $0.increment() }
     XCTAssertEqual(viewModel.state.rootCount, 1)
   }
   
   func testIncrement() {
     
-    viewModel.accept { $0.increment() }
+    viewModel.commit { $0.increment() }
     XCTAssertEqual(viewModel.state.count, 1)
 
   }

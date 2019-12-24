@@ -21,6 +21,7 @@
 		4B475BD0239ADEB4008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
 		4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */; };
 		4B52362723B00CEE0055199D /* GetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B52362623B00CEE0055199D /* GetterTests.swift */; };
+		4B53B93F23B2823D0087183B /* Deprecates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B53B93E23B2823D0087183B /* Deprecates.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
@@ -353,6 +354,7 @@
 		4B495D092332B5170098F7B4 /* NetworkImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
 		4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueContainerType.swift; sourceTree = "<group>"; };
 		4B52362623B00CEE0055199D /* GetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterTests.swift; sourceTree = "<group>"; };
+		4B53B93E23B2823D0087183B /* Deprecates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deprecates.swift; sourceTree = "<group>"; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
 		4B57FD1923A29DAD00E41D06 /* EntityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityType.swift; sourceTree = "<group>"; };
@@ -694,6 +696,7 @@
 				4B68394F237062F7002FFC5A /* Utility.swift */,
 				4B0AFD6C2388643400AABA90 /* DefaultLogger.swift */,
 				4BFA22B423A63C59008D7BCB /* VergeStore+.swift */,
+				4B53B93E23B2823D0087183B /* Deprecates.swift */,
 			);
 			path = VergeStore;
 			sourceTree = "<group>";
@@ -1639,6 +1642,7 @@
 				4B94915C239C35D300370067 /* Mutation.swift in Sources */,
 				4B683950237062F7002FFC5A /* Utility.swift in Sources */,
 				4B0AFD6D2388643400AABA90 /* DefaultLogger.swift in Sources */,
+				4B53B93F23B2823D0087183B /* Deprecates.swift in Sources */,
 				4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */,
 				4BFA22B523A63C59008D7BCB /* VergeStore+.swift in Sources */,
 			);
