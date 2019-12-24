@@ -6,7 +6,7 @@ description: >-
 
 # Verge - Flux pattern for iOS + Swift \(UIKit/SwiftUI\)
 
-![](.gitbook/assets/carbon-2.svg)
+![Overview of VergeStore](.gitbook/assets/carbon-5.png)
 
 📖[**Open Documentation on GitBook**](https://muukii-app.gitbook.io/verge/)  
 **For viewing on GitHub repo,  
