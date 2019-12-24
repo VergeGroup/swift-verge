@@ -33,7 +33,7 @@ struct UserListView: View {
     }
     .edgesIgnoringSafeArea(.all)      
     .onAppear {
-      self.session.sessionDispatcher.accept { $0.insertSampleUsers() }
+      self.session.sessionDispatcher.commit { $0.insertSampleUsers() }
     }
   }
 }
@@ -67,7 +67,7 @@ struct SubmitView: View {
   var body: some View {
     VStack {
       Button(action: {
-        self.session.sessionDispatcher.accept { $0.submitNewPost(title: self.samples.randomElement()!, from: self.user) }
+        self.session.sessionDispatcher.commit { $0.submitNewPost(title: self.samples.randomElement()!, from: self.user) }
       }) {
         Text("Submit")
       }

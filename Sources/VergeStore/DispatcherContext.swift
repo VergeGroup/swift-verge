@@ -30,7 +30,7 @@ public final class DispatcherContext<Dispatcher: DispatcherType> {
   private let parent: DispatcherContext<Dispatcher>?
   
   public var state: State {
-    return dispatcher.dispatchTarget.state
+    return dispatcher.target.state
   }
   
   init(
@@ -50,7 +50,7 @@ extension DispatcherContext {
   /// Send activity
   /// - Parameter activity:
   public func send(_ activity: Dispatcher.Activity) {
-    dispatcher.dispatchTarget._send(activity: activity)
+    dispatcher.target._send(activity: activity)
   }
   
   /// Run Mutation

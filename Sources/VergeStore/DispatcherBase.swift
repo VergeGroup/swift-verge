@@ -23,20 +23,20 @@ open class DispatcherBase<State, Activity>: DispatcherType {
         
   public typealias Context = DispatcherContext<DispatcherBase<State, Activity>>
   
-  public let dispatchTarget: StoreBase<State, Activity>
+  public let target: StoreBase<State, Activity>
   
   private var logger: VergeStoreLogger? {
-    dispatchTarget.logger
+    target.logger
   }
   
   public init(target store: StoreBase<State, Activity>) {
-    self.dispatchTarget = store
+    self.target = store
     
     logger?.didCreateDispatcher(store: store, dispatcher: self)
   }
   
   deinit {
-    logger?.didDestroyDispatcher(store: dispatchTarget, dispatcher: self)
+    logger?.didDestroyDispatcher(store: target, dispatcher: self)
   }
     
 }

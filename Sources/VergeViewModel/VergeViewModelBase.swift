@@ -33,7 +33,7 @@ public protocol _StandaloneVergeViewModelBaseType {
 
 open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State, Activity>, DispatcherType, _StandaloneVergeViewModelBaseType {
   
-  public var dispatchTarget: StoreBase<State, Activity> { self }
+  public var target: StoreBase<State, Activity> { self }
   
   let activityEmitter: EventEmitter<Activity> = .init()
   
@@ -97,7 +97,7 @@ open class VergeViewModelBase<State, StoreState, Activity, StoreActivity>: Stand
 extension DispatcherContext where Dispatcher : _StandaloneVergeViewModelBaseType {
   
   public func send(_ activity: Dispatcher.Activity) {
-    guard let target = self.dispatcher.dispatchTarget as? StandaloneVergeViewModelBase<Dispatcher.State, Dispatcher.Activity> else {
+    guard let target = self.dispatcher.target as? StandaloneVergeViewModelBase<Dispatcher.State, Dispatcher.Activity> else {
       assertionFailure("")
       return
     }
