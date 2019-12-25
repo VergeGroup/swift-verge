@@ -6,20 +6,20 @@
 * [About VergeClassic](about-vergeclassic.md)
 * [Changelog](changelog.md)
 
-## 📦 Verge Store <a id="vergestore"></a>
+## 📦 Verge Store <a id="docs-vergestore"></a>
 
-* [VergeStore Core Concepts](vergestore/core-concepts.md)
-* [🌑 Store - Manages State](vergestore/store.md)
-* [🪐 State](vergestore/state.md)
-* [🚀 Dispatcher - Perform Mutation / Action](vergestore/dispatcher.md)
-* [☄️ Mutation - Updates state](vergestore/mutation.md)
-* [🌟 Action - Grouping mutation with async operations](vergestore/action.md)
-* [⚡️ Activity - Dispatching Volatile Events](vergestore/activity.md)
-* [🔭 Logging - Take logs performed Mutation and Action](vergestore/logging.md)
-* [☂️ Middleware](vergestore/middleware.md)
-* [Getter\(Selector\) and Memoization](vergestore/memoization.md)
-* [Advanced](vergestore/advanced/README.md)
-  * [Scoped Dispatcher](vergestore/advanced/scoped-dispatcher.md)
+* [VergeStore Core Concepts](docs-vergestore/core-concepts.md)
+* [🌑 Store - Manages State](docs-vergestore/store.md)
+* [🪐 State](docs-vergestore/state.md)
+* [🚀 Dispatcher - Perform Mutation / Action](docs-vergestore/dispatcher.md)
+* [☄️ Mutation - Updates state](docs-vergestore/mutation.md)
+* [🌟 Action - Grouping mutation with async operations](docs-vergestore/action.md)
+* [⚡️ Activity - Dispatching Volatile Events](docs-vergestore/activity.md)
+* [🔭 Logging - Take logs performed Mutation and Action](docs-vergestore/logging.md)
+* [☂️ Middleware](docs-vergestore/middleware.md)
+* [Getter\(Selector\) and Memoization](docs-vergestore/memoization.md)
+* [Advanced](docs-vergestore/advanced/README.md)
+  * [Scoped Dispatcher](docs-vergestore/advanced/scoped-dispatcher.md)
 
 ## 📦 Verge ViewModel <a id="concepts"></a>
 

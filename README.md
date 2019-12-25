@@ -46,7 +46,7 @@ The characteristics are
 
 Verge provides several packages each use-cases.
 
-{% page-ref page="vergestore/core-concepts.md" %}
+{% page-ref page="docs-vergestore/core-concepts.md" %}
 
 {% page-ref page="concepts/core-concepts.md" %}
 

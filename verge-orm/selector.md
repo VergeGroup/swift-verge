@@ -8,7 +8,7 @@ TODO
 
 VergeORM supports create MemoizeSelector from Storage or Store.
 
-{% page-ref page="../vergestore/memoization.md" %}
+{% page-ref page="../docs-vergestore/memoization.md" %}
 
 
 
