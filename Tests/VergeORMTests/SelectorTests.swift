@@ -22,7 +22,7 @@ class SelectorTests: XCTestCase {
     let id = Book.ID.init("some")
     
     let nullableSelector = storage.entityGetter(
-      entityTableSelector: { $0.db.entities.book },
+      tableSelector: { $0.entities.book },
       entityID: id
     )
     
@@ -53,7 +53,7 @@ class SelectorTests: XCTestCase {
       }
       
       let selector = storage.nonNullEntityGetter(
-        entityTableSelector: { $0.db.entities.book },
+        tableSelector: { $0.entities.book },
         entity: book
       )
       
@@ -149,6 +149,76 @@ class SelectorTests: XCTestCase {
         
       }
     }
+    
+  }
+  
+  func testEqualsWithNonEquatableEntity() {
+    
+    let storage = Storage<RootState>(.init())
+    
+    let result = storage.update { state in
+      state.db.performBatchUpdates { (context) -> EntityTable<RootState.Database.Schema, Author>.InsertionResult in
+        
+        let author = Author(rawID: "muukii", name: "muukii")
+        let r = context.author.insert(author)
+        return r
+      }
+    }
+    
+    var updatedCount = 0
+    
+    let authorGetter = storage.nonNullEntityGetter(from: result)
+    authorGetter.addDidUpdate { (_) in
+      updatedCount += 1
+    }
+    
+    XCTAssertEqual(authorGetter.value.name, "muukii")
+    
+    XCTContext.runActivity(named: "updateName") { _ in
+      
+      storage.update { state in
+        state.db.performBatchUpdates { (context) in
+          context.author.updateIfExists(id: .init("muukii")) { (author) in
+            author.name = "Hiroshi"
+          }
+        }
+      }
+      
+      XCTAssertEqual(authorGetter.value.name, "Hiroshi")
+      
+    }
+    
+    XCTAssertEqual(updatedCount, 1)
+    
+    XCTContext.runActivity(named: "updateName, but not changed") { _ in
+      
+      storage.update { state in
+        state.db.performBatchUpdates { (context) in
+          context.author.updateIfExists(id: .init("muukii")) { (author) in
+            author.name = "Hiroshi"
+          }
+        }
+      }
+      
+      XCTAssertEqual(authorGetter.value.name, "Hiroshi")
+      
+    }
+    
+    XCTAssertEqual(updatedCount, 2)
+        
+    XCTContext.runActivity(named: "Update other") { _ in
+      
+      for _ in 0..<10 {
+        
+        storage.update { state in
+          state.other.count += 1
+        }
+        
+      }
+      
+    }
+    
+    XCTAssertEqual(updatedCount, 2)
     
   }
 }

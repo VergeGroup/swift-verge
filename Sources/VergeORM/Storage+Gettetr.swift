@@ -37,81 +37,6 @@ extension EntityType {
   
 }
 
-extension ValueContainerType {
-  
-  public func entityGetter<Schema: EntitySchemaType, E: EntityType>(
-    entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
-    entityID: E.ID
-  ) -> Getter<Value, E?> {
-    
-    getter(selector: { (value) -> E? in
-      let table = entityTableSelector(value)
-      return table.find(by: entityID)
-    }, equality: .alwaysDifferent()
-    )
-           
-  }
-  
-  public func entityGetter<Schema: EntitySchemaType, E: EntityType & Equatable>(
-    entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
-    entityID: E.ID
-  ) -> Getter<Value, E?> {
-    
-    getter(selector: { (value) -> E? in
-      let table = entityTableSelector(value)
-      return table.find(by: entityID)
-    }, equality: .init(selector: entityTableSelector, equals: { $0 == $1 })
-    )
-    
-  }
-    
-  /// A selector that if get nil then return latest non-null value
-  /// - Parameters:
-  ///   - entityTableSelector:
-  ///   - entity:
-  public func nonNullEntityGetter<Schema: EntitySchemaType, E: EntityType>(
-    entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
-    entity: E
-  ) -> Getter<Value, E> {
-    
-    var fetched: E = entity
-    
-    return getter(selector: { (value) -> E in
-      let table = entityTableSelector(value)
-      if let e = table.find(by: entity.id) {
-        fetched = e
-      }
-      return fetched
-    }, equality: .alwaysDifferent()
-    )
-    
-  }
-  
-  /// A selector that if get nil then return latest non-null value
-  /// - Parameters:
-  ///   - entityTableSelector:
-  ///   - entity:
-  public func nonNullEntityGetter<Schema: EntitySchemaType, E: EntityType & Equatable>(
-    entityTableSelector: @escaping (Value) -> EntityTable<Schema, E>,
-    entity: E
-  ) -> Getter<Value, E> {
-    
-    var fetched: E = entity
-    
-    return getter(selector: { (value) -> E in
-      let table = entityTableSelector(value)
-      if let e = table.find(by: entity.id) {
-        fetched = e
-      }
-      return fetched
-    }, equality: .init(selector: entityTableSelector, equals: { $0 == $1 })
-    )
-    
-  }
-  
-   
-}
-
 public protocol HasDatabaseStateType {
   
   associatedtype Database: DatabaseType
@@ -122,40 +47,130 @@ public protocol HasDatabaseStateType {
 
 extension ValueContainerType where Value : HasDatabaseStateType {
   
+  public func entityGetter<Output>(
+    update: @escaping (Value.Database) -> Output,
+    additionalEqualityComputer: EqualityComputer<Value.Database>?
+  ) -> Getter<Value, Output> {
+    
+    let path = Value.keyPathToDatabase
+    
+    let baseComputer = EqualityComputer<Value.Database>.init(
+      selector: { input -> (Date, Date) in
+        let v = input
+        return (v._backingStorage.entityUpdatedAt, v._backingStorage.indexUpdatedAt)
+    },
+      equals: { (old, new) -> Bool in
+        old == new
+    })
+    
+    let _getter = getter(
+      selector: { (value) -> Output in
+        update(Value.keyPathToDatabase(value))
+    },
+      equality: EqualityComputer.init(selector: { path($0) }, equals: { (old, new) -> Bool in
+        guard !baseComputer.isEqual(value: new) else {
+          return true
+        }
+        return additionalEqualityComputer?.isEqual(value: new) ?? false
+      })
+    )
+        
+    return _getter
+  }
+  
+  public func entityGetter<E: EntityType>(
+    tableSelector: @escaping (Value.Database) -> EntityTable<Value.Database.Schema, E>,
+    entityID: E.ID
+  ) -> Getter<Value, E?> {
+    
+    return entityGetter(
+      update: { db in
+        tableSelector(db).find(by: entityID)
+    },
+      additionalEqualityComputer: nil
+    )
+    
+  }
+  
+  public func entityGetter<E: EntityType & Equatable>(
+    tableSelector: @escaping (Value.Database) -> EntityTable<Value.Database.Schema, E>,
+    entityID: E.ID
+  ) -> Getter<Value, E?> {
+    
+    return entityGetter(
+      update: { db in
+        tableSelector(db).find(by: entityID)
+    },
+      additionalEqualityComputer: .init(
+        selector: { tableSelector($0).find(by: entityID) },
+        equals: { $0 == $1 }
+      )
+    )
+    
+  }
+  
+  public func nonNullEntityGetter<E: EntityType>(
+    tableSelector: @escaping (Value.Database) -> EntityTable<Value.Database.Schema, E>,
+    entity: E
+  ) -> Getter<Value, E> {
+    
+    var fetched: E = entity
+    let entityID = entity.id
+    
+    return entityGetter(
+      update: { db in
+        let table = tableSelector(db)
+        if let e = table.find(by: entityID) {
+          fetched = e
+        }
+        return fetched
+    },
+      additionalEqualityComputer: nil
+    )
+    
+  }
+  
+  public func nonNullEntityGetter<E: EntityType & Equatable>(
+    tableSelector: @escaping (Value.Database) -> EntityTable<Value.Database.Schema, E>,
+    entity: E
+  ) -> Getter<Value, E> {
+    
+    var fetched: E = entity
+    let entityID = entity.id
+    
+    return entityGetter(
+      update: { db in
+        let table = tableSelector(db)
+        if let e = table.find(by: entityID) {
+          fetched = e
+        }
+        return fetched
+    },
+      additionalEqualityComputer: .init(
+        selector: { tableSelector($0).find(by: entityID) },
+        equals: { $0 == $1 }
+      )
+    )
+    
+  }
+  
+  /// A selector that if get nil then return latest non-null value
   public func nonNullEntityGetter<E: EntityType>(
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
   ) -> Getter<Value, E> {
-    
-    var fetched: E = insertionResult.entity
-    let id = fetched.id
-    
-    let _s = insertionResult.makeSelector(Value.keyPathToDatabase)
-    return getter(selector: { (value) -> E in
-      let table = _s(value)
-      if let e = table.find(by: id) {
-        fetched = e
-      }
-      return fetched
-    }, equality: .alwaysDifferent()
-    )
+            
+    let selector = insertionResult.makeSelector(Value.Database.self)
+    return nonNullEntityGetter(tableSelector: selector, entity: insertionResult.entity)
+            
   }
   
   public func nonNullEntityGetter<E: EntityType & Equatable>(
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
   ) -> Getter<Value, E> {
-    
-    var fetched: E = insertionResult.entity
-    let id = fetched.id
-    
-    let _s = insertionResult.makeSelector(Value.keyPathToDatabase)
-    return getter(selector: { (value) -> E in
-      let table = _s(value)
-      if let e = table.find(by: id) {
-        fetched = e
-      }
-      return fetched
-    }, equality: .init(selector: _s, equals: { $0 == $1 })
-    )
+      
+    let selector = insertionResult.makeSelector(Value.Database.self)
+    return nonNullEntityGetter(tableSelector: selector, entity: insertionResult.entity)
     
   }
 }
+

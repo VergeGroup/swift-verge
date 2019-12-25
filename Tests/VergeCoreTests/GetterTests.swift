@@ -16,7 +16,13 @@ class GetterTests: XCTestCase {
   
   func testMemoization() {
     
-    let getter = Getter(initialSource: 0, selector: { $0 }, equality: .init(), memoizes: true, onDeinit: {})
+    let getter = Getter(
+      initialSource: 0,
+      selector: { $0 },
+      equality: EqualityComputer.init(),
+      memoizes: true,
+      onDeinit: {}
+    )
     getter.addDidUpdate { (v) in
       XCTFail()
     }
@@ -27,7 +33,14 @@ class GetterTests: XCTestCase {
   func testNonMemoization() {
     
     var count = 0
-    let getter = Getter(initialSource: 0, selector: { $0 }, equality: .init(), memoizes: false, onDeinit: {})
+    let getter = Getter(
+      initialSource: 0,
+      selector: { $0 },
+      equality: EqualityComputer.init(),
+      memoizes: false,
+      onDeinit: {}
+    )
+    
     getter.addDidUpdate { (v) in
       count += 1
     }

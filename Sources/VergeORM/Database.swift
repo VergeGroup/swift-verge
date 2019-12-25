@@ -64,8 +64,8 @@ public struct AnyMiddleware<Database: DatabaseType>: MiddlewareType {
 
 /// A protocol indicates it is a root object as a Database
 /// As a Database, it provides the tables of the entity, the index storage.
-public protocol DatabaseType {
-  
+public protocol DatabaseType: HasDatabaseStateType where Database == Self {
+    
   associatedtype Schema: EntitySchemaType
   associatedtype Indexes: IndexesType
   typealias BackingStorage = DatabaseStorage<Schema, Indexes>
@@ -75,14 +75,30 @@ public protocol DatabaseType {
 }
 
 extension DatabaseType {
+  public static var keyPathToDatabase: (Self) -> Self { { $0 } }
+}
+
+extension DatabaseType {
   
   public var middlewares: [AnyMiddleware<Self>] { [] }
 }
 
 public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
   
-  var entityBackingStorage: EntityTablesStorage<Schema> = .init()
-  var indexesStorage: IndexesStorage<Schema, Indexes> = .init()
+  var entityUpdatedAt: Date = .init()
+  var indexUpdatedAt: Date = .init()
+  
+  var entityBackingStorage: EntityTablesStorage<Schema> = .init() {
+    didSet {
+      entityUpdatedAt = .init()
+    }
+  }
+  
+  var indexesStorage: IndexesStorage<Schema, Indexes> = .init() {
+    didSet {
+      indexUpdatedAt = .init()
+    }
+  }
   
   public init() {
     

@@ -66,5 +66,10 @@ struct RootState: HasDatabaseStateType {
     var _backingStorage: BackingStorage = .init()
   }
   
+  struct Other {
+    var count: Int = 0
+  }
+  
   var db = Database()
+  var other = Other()
 }
