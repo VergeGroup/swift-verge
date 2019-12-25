@@ -48,9 +48,9 @@ Verge provides several packages each use-cases.
 
 {% page-ref page="docs-vergestore/core-concepts.md" %}
 
-{% page-ref page="concepts/core-concepts.md" %}
+{% page-ref page="docs-verge-viewmodel/core-concepts.md" %}
 
-{% page-ref page="verge-orm/core-concepts.md" %}
+{% page-ref page="docs-verge-orm/core-concepts.md" %}
 
 
 

@@ -21,24 +21,24 @@
 * [Advanced](docs-vergestore/advanced/README.md)
   * [Scoped Dispatcher](docs-vergestore/advanced/scoped-dispatcher.md)
 
-## 📦 Verge ViewModel <a id="concepts"></a>
+## 📦 Verge ViewModel <a id="docs-verge-viewmodel"></a>
 
-* [VergeViewModel Core Concepts](concepts/core-concepts.md)
+* [VergeViewModel Core Concepts](docs-verge-viewmodel/core-concepts.md)
 
-## 📦 Verge ORM
+## 📦 Verge ORM <a id="docs-verge-orm"></a>
 
-* [VergeORM Core Concepts](verge-orm/core-concepts.md)
-* [Getting Started](verge-orm/getting-started.md)
-* [Index](verge-orm/index.md)
-* [Middleware](verge-orm/middleware.md)
-* [Getter \(Selector\)](verge-orm/selector.md)
-* [Tips](verge-orm/tips.md)
+* [VergeORM Core Concepts](docs-verge-orm/core-concepts.md)
+* [Getting Started](docs-verge-orm/getting-started.md)
+* [Index](docs-verge-orm/index.md)
+* [Middleware](docs-verge-orm/middleware.md)
+* [Getter \(Selector\)](docs-verge-orm/selector.md)
+* [Tips](docs-verge-orm/tips.md)
 
-## 📦 Verge Store Rx
+## 📦 Verge Store Rx <a id="docs-verge-store-rx"></a>
 
-* [VergeStoreRx Core Concepts](verge-store-rx/core-concepts.md)
+* [VergeStoreRx Core Concepts](docs-verge-store-rx/core-concepts.md)
 
-## Additional Informations
+## Additional Informations <a id="docs-additional-informations"></a>
 
-* [Additional Informations](additional-informations/additional-informations.md)
+* [Additional Informations](docs-additional-informations/additional-informations.md)
 
