@@ -71,6 +71,7 @@
 		4B99D69323AF6C4300E26127 /* ProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B99D69223AF6C4300E26127 /* ProtocolTests.swift */; };
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
+		4B9FD3C923B3525000A35B4F /* Getter+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9FD3C823B3525000A35B4F /* Getter+Rx.swift */; };
 		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
 		4BAE9FEA21DFA75A003DDF3D /* Verge+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */; };
 		4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */; };
@@ -405,6 +406,7 @@
 		4B99D69223AF6C4300E26127 /* ProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolTests.swift; sourceTree = "<group>"; };
 		4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherType.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
+		4B9FD3C823B3525000A35B4F /* Getter+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Getter+Rx.swift"; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		4BADEB9A23380AE400E1D3F5 /* Lorem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lorem.swift; sourceTree = "<group>"; };
 		4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Verge+Extension.swift"; sourceTree = "<group>"; };
@@ -715,6 +717,7 @@
 			isa = PBXGroup;
 			children = (
 				4B7F385123895B24000B9ACF /* RxVergeStore+Storage+Rx.swift */,
+				4B9FD3C823B3525000A35B4F /* Getter+Rx.swift */,
 				4B7F3842238948CF000B9ACF /* RxVergeStore.h */,
 				4B7F3843238948CF000B9ACF /* Info.plist */,
 			);
@@ -1652,6 +1655,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B9FD3C923B3525000A35B4F /* Getter+Rx.swift in Sources */,
 				4B7F385223895B24000B9ACF /* RxVergeStore+Storage+Rx.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

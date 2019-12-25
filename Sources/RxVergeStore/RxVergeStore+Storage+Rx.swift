@@ -9,8 +9,8 @@ import VergeCore
 import RxSwift
 import RxCocoa
 
-private var storage_subject: Void?
-private var storage_diposeBag: Void?
+fileprivate var storage_subject: Void?
+fileprivate var storage_diposeBag: Void?
 
 extension StoreBase where State : StateType {
   
