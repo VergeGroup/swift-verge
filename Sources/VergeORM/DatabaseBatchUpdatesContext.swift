@@ -32,7 +32,10 @@ protocol EntityModifierType: AnyObject {
   var _deletes: Set<AnyHashable> { get }
 }
 
-public final class EntityModifier<Schema: EntitySchemaType, E: EntityType>: EntityModifierType {
+/// For performBatchUpdates
+public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>: EntityModifierType {
+  
+  public typealias InsertionResult = EntityTable<Schema, Entity>.InsertionResult
   
   var _current: EntityTableType {
     current
@@ -46,29 +49,95 @@ public final class EntityModifier<Schema: EntitySchemaType, E: EntityType>: Enti
     deletes
   }
     
-  let entityName = E.entityName
+  let entityName = Entity.entityName
   
-  private let keyPath: KeyPath<Schema, EntityTableKey<E>>
+  private let keyPath: KeyPath<Schema, EntityTableKey<Entity>>
   
   /// An EntityTable contains entities that stored currently.
-  public let current: EntityTable<Schema, E>
+  public let current: EntityTable<Schema, Entity>
+    
   /// An EntityTable contains entities that will be stored after batchUpdates finished.
-  public var insertsOrUpdates: EntityTable<Schema, E>
+  /// The objects this table contains would be applied, that's why it's mutable property.
+  public var insertsOrUpdates: EntityTable<Schema, Entity>
+    
   /// A set of entity ids that entity will be deleted after batchUpdates finished.
-  public var deletes: Set<E.ID> = .init()
+  /// The current entities will be deleted with this identifiers.
+  public var deletes: Set<Entity.ID> = .init()
   
-  init(current: EntityTable<Schema, E>, keyPath: KeyPath<Schema, EntityTableKey<E>>) {
+  init(current: EntityTable<Schema, Entity>, keyPath: KeyPath<Schema, EntityTableKey<Entity>>) {
     self.current = current
     self.keyPath = keyPath
     self.insertsOrUpdates = .init(keyPath: keyPath)
   }
+  
+  // MARK: - Querying
+    
+  /// Find entity from updates and current.
+  ///
+  /// Firstly, find from updates and then find from current.
+  /// - Parameter id:
+  public func find(by id: Entity.ID) -> Entity? {
+    insertsOrUpdates.find(by: id) ?? current.find(by: id)
+  }
+  
+  /// Find entities from updates and current.
+  ///
+  /// Firstly, find from updates and then find from current.
+  /// - Parameter id:
+  public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.ID {
+    insertsOrUpdates.find(in: ids) + current.find(in: ids)
+  }
+  
+  // MARK: - Mutating
+  
+  /// Set inserts entity
+  @discardableResult
+  public func insert(_ entity: Entity) -> InsertionResult {
+    insertsOrUpdates.insert(entity)
+  }
+  
+  /// Set inserts entities
+  @discardableResult
+  public func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
+    insertsOrUpdates.insert(addingEntities)
+  }
+    
+  /// Set deletes entity with entity object
+  /// - Parameter entity:
+  public func delete(_ entity: Entity) {
+    deletes.insert(entity.id)
+  }
+    
+  /// Set deletes entity with identifier
+  /// - Parameter entityID:
+  public func delete(_ entityID: Entity.ID) {
+    deletes.insert(entityID)
+  }
+  
+  /// Set deletes entities with passed entities.
+  /// - Parameter entities:
+  public func delete<S: Sequence>(_ entities: S) where S.Element == Entity {
+    deletes.formUnion(entities.lazy.map { $0.id })
+  }
+    
+  /// Set deletes entities with passed sequence of entity's identifier.
+  /// - Parameter entityIDs:
+  public func delete<S: Sequence>(_ entityIDs: S) where S.Element == Entity.ID {
+    deletes.formUnion(entityIDs)
+  }
+    
+  /// Set deletes all entities
+  public func deleteAll() {
+    deletes.formUnion(current.allIDs())
+  }
     
   /// Updates existing entity from insertsOrUpdates or current.
+  /// It's never been called update closure if the entity was not found.
   ///
   /// - Parameters:
   ///   - id:
   ///   - update:
-  public func updateIfExists(id: E.ID, update: (inout E) -> Void) {
+  public func updateIfExists(id: Entity.ID, update: (inout Entity) -> Void) {
     
     if var target = current.find(by: id) {
       update(&target)
@@ -79,6 +148,13 @@ public final class EntityModifier<Schema: EntitySchemaType, E: EntityType>: Enti
     insertsOrUpdates.updateIfExists(id: id, update: update)
   }
   
+}
+
+extension EntityModifier where Entity : Hashable {
+  
+  public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.ID {
+    insertsOrUpdates.find(in: ids).union(current.find(in: ids))
+  }
 }
 
 @dynamicMemberLookup

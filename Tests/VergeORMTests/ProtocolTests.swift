@@ -39,7 +39,7 @@ class ProtocolTests: XCTest {
     }
     
     func access<DB: DatabaseType>(db: DB) -> Int where DB.Schema : Partial {
-      db.entities.author.all().count
+      db.entities.author.count
     }
     
     XCTAssertEqual(access(db: db), 1)

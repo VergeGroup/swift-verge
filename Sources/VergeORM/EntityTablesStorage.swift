@@ -28,7 +28,9 @@ protocol EntityTableType {
 }
 
 public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityTableType {
-  
+    
+  /// An object indicates result of insertion
+  /// It can be used to create a getter object.
   public struct InsertionResult {
     public var entityID: Entity.ID {
       entity.id
@@ -47,7 +49,8 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   var entityName: EntityName {
     Entity.entityName
   }
-  
+    
+  /// The number of entities in table
   public var count: Int {
     entities.count
   }
@@ -64,22 +67,36 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     self.entities = buffer
     self.keyPath = keyPath
   }
+    
+  /// Returns all entity ids that stored.
+  ///
+  /// - TODO: It's expensive
+  public func allIDs() -> Set<Entity.ID> {
+    .init(entities.keys.map { $0 as! Entity.ID })
+  }
   
-  public func all() -> AnyCollection<Entity> {
-    .init(entities.lazy.map { $0.value as! Entity })
+  /// Returns all entity that stored.
+  ///
+  /// - TODO: It's expensive
+  public func allEntities() -> AnyCollection<Entity> {
+    .init(entities.values.lazy.map { $0 as! Entity })
   }
   
   public func find(by id: Entity.ID) -> Entity? {
     entities[id] as? Entity
   }
-  
+    
+  /// Find entities by set of ids.
+  /// The order of array would not be sorted, it depends on dictionary's buffer.
+  ///
+  /// - Parameter ids: sequence of Entity.ID
   public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.ID {
     ids.reduce(into: [Entity]()) { (buf, id) in
       guard let entity = entities[id] else { return }
       buf.append(entity as! Entity)
     }
   }
-  
+   
   public mutating func updateIfExists(id: Entity.ID, update: (inout Entity) -> Void) {
     guard entities.keys.contains(id) else { return }
     withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Void in
@@ -109,6 +126,16 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   public mutating func removeAll() {
     entities.removeAll(keepingCapacity: false)
+  }
+}
+
+extension EntityTable where Entity : Hashable {
+  
+  public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.ID {
+    ids.reduce(into: Set<Entity>()) { (buf, id) in
+      guard let entity = entities[id] else { return }
+      buf.insert(entity as! Entity)
+    }
   }
 }
 
