@@ -80,6 +80,15 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     }
   }
   
+  public mutating func updateIfExists(id: Entity.ID, update: (inout Entity) -> Void) {
+    guard entities.keys.contains(id) else { return }
+    withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Void in
+      var entity = pointer.pointee as! Entity
+      update(&entity)
+      pointer.pointee = entity
+    }
+  }
+  
   @discardableResult
   public mutating func insert(_ entity: Entity) -> InsertionResult {
     entities[entity.id] = entity
@@ -135,11 +144,20 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
     }
   }
   
-  mutating func apply(modifier: EntityModifierType) {
+  @inline(__always)
+  mutating func apply(edits: [EntityName : EntityModifierType]) {    
+    edits.forEach { _, value in
+      apply(modifier: value)
+    }
+  }
+  
+  @inline(__always)
+  private mutating func apply(modifier: EntityModifierType) {
     _merge(anyEntityTable: modifier._insertsOrUpdates)
     _subtract(ids: modifier._deletes, entityName: modifier.entityName)
   }
   
+  @inline(__always)
   private mutating func _merge(anyEntityTable: EntityTableType) {
     let value = anyEntityTable.entities
     let entityName = anyEntityTable.entityName
@@ -156,6 +174,7 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
     }
   }
 
+  @inline(__always)
   private mutating func _subtract(ids: Set<AnyHashable>, entityName: EntityName) {
     guard let table = entityTableStorage[entityName] else {
       return

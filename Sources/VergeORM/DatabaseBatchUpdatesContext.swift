@@ -49,8 +49,12 @@ public final class EntityModifier<Schema: EntitySchemaType, E: EntityType>: Enti
   let entityName = E.entityName
   
   private let keyPath: KeyPath<Schema, EntityTableKey<E>>
+  
+  /// An EntityTable contains entities that stored currently.
   public let current: EntityTable<Schema, E>
+  /// An EntityTable contains entities that will be stored after batchUpdates finished.
   public var insertsOrUpdates: EntityTable<Schema, E>
+  /// A set of entity ids that entity will be deleted after batchUpdates finished.
   public var deletes: Set<E.ID> = .init()
   
   init(current: EntityTable<Schema, E>, keyPath: KeyPath<Schema, EntityTableKey<E>>) {
@@ -58,6 +62,23 @@ public final class EntityModifier<Schema: EntitySchemaType, E: EntityType>: Enti
     self.keyPath = keyPath
     self.insertsOrUpdates = .init(keyPath: keyPath)
   }
+    
+  /// Updates existing entity from insertsOrUpdates or current.
+  ///
+  /// - Parameters:
+  ///   - id:
+  ///   - update:
+  public func updateIfExists(id: E.ID, update: (inout E) -> Void) {
+    
+    if var target = current.find(by: id) {
+      update(&target)
+      insertsOrUpdates.insert(target)
+      return
+    }
+    
+    insertsOrUpdates.updateIfExists(id: id, update: update)
+  }
+  
 }
 
 @dynamicMemberLookup
@@ -108,20 +129,18 @@ extension DatabaseType {
             
     let context = DatabaseBatchUpdatesContext<Self>(current: self)
     do {
+            
       let result = try update(context)
       
-      middlewares.forEach {
-        $0.performAfterUpdates(context: context)
+      middlewareAfter: do {
+        middlewares.forEach {
+          $0.performAfterUpdates(context: context)
+        }
       }
       
-      do {
-        var target = self._backingStorage.entityBackingStorage
-        context.editing.forEach { _, value in
-          
-          target.apply(modifier: value)
-          context.indexes.apply(removing: value._deletes, entityName: value.entityName)
-        }
-        self._backingStorage.entityBackingStorage = target
+      apply: do {        
+        self._backingStorage.entityBackingStorage.apply(edits: context.editing)
+        context.indexes.apply(edits: context.editing)
         self._backingStorage.indexesStorage = context.indexes
       }
                              

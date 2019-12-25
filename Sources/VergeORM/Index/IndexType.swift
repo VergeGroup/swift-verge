@@ -63,7 +63,17 @@ public struct IndexesStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
 
 extension IndexesStorage {
   
-  mutating func apply(removing: Set<AnyHashable>, entityName: EntityName) {
+  mutating func apply(edits: [EntityName : EntityModifierType]) {
+    edits.forEach { _, value in
+      apply(
+        removing: value._deletes,
+        entityName: value.entityName
+      )
+    }
+  }
+  
+  @inline(__always)
+  private mutating func apply(removing: Set<AnyHashable>, entityName: EntityName) {
     backing.keys.forEach { key in
       backing[key]?.apply(removing: removing, entityName: entityName)
     }

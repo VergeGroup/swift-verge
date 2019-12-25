@@ -32,6 +32,7 @@ struct Author: EntityType {
   }
     
   let rawID: String
+  var name: String = ""
   
   static let anonymous: Author = .init(rawID: "anonymous")
 }
