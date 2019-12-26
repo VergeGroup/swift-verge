@@ -11,7 +11,9 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+#if !COCOAPODS
 import VergeCore
+#endif
 
 fileprivate var getter_subject: Void?
 
