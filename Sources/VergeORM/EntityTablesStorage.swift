@@ -28,62 +28,76 @@ protocol EntityTableType {
 }
 
 public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityTableType {
-  
+    
+  /// An object indicates result of insertion
+  /// It can be used to create a getter object.
   public struct InsertionResult {
     public var entityID: Entity.ID {
       entity.id
     }
-    public let entity: Entity
-    internal let keyPath: KeyPath<Schema, EntityTableKey<Entity>>
-    
-    func makeSelector<Source, DB: DatabaseType>(_ accessor: @escaping (Source) -> DB) -> (Source) -> EntityTable<Schema, Entity> where DB.Schema == Schema {
-      return { source in
-        let a = accessor(source).entities[dynamicMember: self.keyPath]
-        return a
-      }
-    }
+    public let entity: Entity        
   }
   
   var entityName: EntityName {
     Entity.entityName
   }
-  
+    
+  /// The number of entities in table
   public var count: Int {
     entities.count
   }
   
   internal var entities: [AnyHashable : Any] = [:]
-  
-  internal let keyPath: KeyPath<Schema, EntityTableKey<Entity>>
-  
-  init(keyPath: KeyPath<Schema, EntityTableKey<Entity>>) {
-    self.keyPath = keyPath
+    
+  init() {
   }
   
-  init(buffer: [AnyHashable : Any], keyPath: KeyPath<Schema, EntityTableKey<Entity>>) {
+  init(buffer: [AnyHashable : Any]) {
     self.entities = buffer
-    self.keyPath = keyPath
+  }
+    
+  /// Returns all entity ids that stored.
+  ///
+  /// - TODO: It's expensive
+  public func allIDs() -> Set<Entity.ID> {
+    .init(entities.keys.map { $0 as! Entity.ID })
   }
   
-  public func all() -> AnyCollection<Entity> {
-    .init(entities.lazy.map { $0.value as! Entity })
+  /// Returns all entity that stored.
+  ///
+  /// - TODO: It's expensive
+  public func allEntities() -> AnyCollection<Entity> {
+    .init(entities.values.lazy.map { $0 as! Entity })
   }
   
   public func find(by id: Entity.ID) -> Entity? {
     entities[id] as? Entity
   }
-  
+    
+  /// Find entities by set of ids.
+  /// The order of array would not be sorted, it depends on dictionary's buffer.
+  ///
+  /// - Parameter ids: sequence of Entity.ID
   public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.ID {
     ids.reduce(into: [Entity]()) { (buf, id) in
       guard let entity = entities[id] else { return }
       buf.append(entity as! Entity)
     }
   }
+   
+  public mutating func updateIfExists(id: Entity.ID, update: (inout Entity) -> Void) {
+    guard entities.keys.contains(id) else { return }
+    withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Void in
+      var entity = pointer.pointee as! Entity
+      update(&entity)
+      pointer.pointee = entity
+    }
+  }
   
   @discardableResult
   public mutating func insert(_ entity: Entity) -> InsertionResult {
     entities[entity.id] = entity
-    return .init(entity: entity, keyPath: keyPath)
+    return .init(entity: entity)
   }
   
   @discardableResult
@@ -100,6 +114,16 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   public mutating func removeAll() {
     entities.removeAll(keepingCapacity: false)
+  }
+}
+
+extension EntityTable where Entity : Hashable {
+  
+  public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.ID {
+    ids.reduce(into: Set<Entity>()) { (buf, id) in
+      guard let entity = entities[id] else { return }
+      buf.insert(entity as! Entity)
+    }
   }
 }
 
@@ -122,24 +146,32 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
   private init(entityTableStorage: [EntityName : EntityTableType.RawTable]) {
     self.entityTableStorage = entityTableStorage
   }
-    
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<Schema, U> {
-    get {
-      guard let rawTable = entityTableStorage[U.entityName] else {
-        return EntityTable<Schema, U>(buffer: [:], keyPath: keyPath)
-      }
-      return EntityTable<Schema, U>(buffer: rawTable, keyPath: keyPath)
+  
+  public func table<E: EntityType>(_ entityType: E.Type) -> EntityTable<Schema, E> {
+    guard let rawTable = entityTableStorage[E.entityName] else {
+      return EntityTable<Schema, E>(buffer: [:])
     }
-    set {
-      entityTableStorage[U.entityName] = newValue.entities
+    return EntityTable<Schema, E>(buffer: rawTable)
+  }
+    
+  public subscript <E: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<E>>) -> EntityTable<Schema, E> {
+    table(E.self)
+  }
+  
+  @inline(__always)
+  mutating func apply(edits: [EntityName : EntityModifierType]) {    
+    edits.forEach { _, value in
+      apply(modifier: value)
     }
   }
   
-  mutating func apply(modifier: EntityModifierType) {
+  @inline(__always)
+  private mutating func apply(modifier: EntityModifierType) {
     _merge(anyEntityTable: modifier._insertsOrUpdates)
     _subtract(ids: modifier._deletes, entityName: modifier.entityName)
   }
   
+  @inline(__always)
   private mutating func _merge(anyEntityTable: EntityTableType) {
     let value = anyEntityTable.entities
     let entityName = anyEntityTable.entityName
@@ -156,6 +188,7 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
     }
   }
 
+  @inline(__always)
   private mutating func _subtract(ids: Set<AnyHashable>, entityName: EntityName) {
     guard let table = entityTableStorage[entityName] else {
       return

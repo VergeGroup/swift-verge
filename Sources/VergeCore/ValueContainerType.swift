@@ -10,9 +10,9 @@ import Foundation
 
 public protocol ValueContainerType {
   associatedtype Value
-  
-  func getter<Key, Destination>(
-    selector: @escaping (Value) -> Destination,
-    equality: EqualityComputer<Value, Key>
-  ) -> Getter<Value, Destination>
+    
+  func getter<Output>(
+    selector: @escaping (Value) -> Output,
+    equality: EqualityComputer<Value>
+  ) -> Getter<Value, Output>
 }

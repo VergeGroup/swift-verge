@@ -11,6 +11,7 @@ import Foundation
 import XCTest
 
 import VergeStore
+import VergeCore
 
 class MemoizeGetterTests: XCTestCase {
   
@@ -49,7 +50,7 @@ class MemoizeGetterTests: XCTestCase {
     let dispatcher = RootDispatcher(target: store)
     
     var callCount = 0
-        
+                    
     let getter = store.getter(
       selector: { (state) -> Int in
         callCount += 1

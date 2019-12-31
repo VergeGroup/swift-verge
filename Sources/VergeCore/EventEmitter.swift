@@ -32,6 +32,7 @@ public final class EventEmitterSubscribeToken: Hashable {
   }
 }
 
+/// Instead of Combine
 public final class EventEmitter<Event> {
   
   private var __publisher: Any?

@@ -14,6 +14,46 @@ class PerformanceTests: XCTestCase {
   
   var state = RootState()
   
+  func testUpdateFindAndStore() {
+    
+    state.db.performBatchUpdates { (context) in
+      
+      let authors = (0..<10000).map { i in
+        Author(rawID: "author.\(i)")
+      }
+      context.author.insertsOrUpdates.insert(authors)
+    }
+    
+    measure {
+      state.db.performBatchUpdates { context in
+        var author = context.author.current.find(by: .init("author.100"))!
+        author.name = "mmm"
+        context.author.insertsOrUpdates.insert(author)
+      }
+    }
+    
+  }
+  
+  func testUpdateInline() {
+    
+    state.db.performBatchUpdates { (context) in
+      
+      let authors = (0..<10000).map { i in
+        Author(rawID: "author.\(i)")
+      }
+      context.author.insertsOrUpdates.insert(authors)
+    }
+    
+    measure {
+      state.db.performBatchUpdates { context in
+        context.author.updateIfExists(id: .init("author.100")) { (author) in
+          author.name = "mmm"
+        }
+      }
+    }
+    
+  }
+  
   func testInsertMany() {
     
     measure {
@@ -77,6 +117,30 @@ class PerformanceTests: XCTestCase {
   }
   
   func testInsert100000UseCollection() {
+    
+    measure {
+      state.db.performBatchUpdates { (context) in
+        
+        let authors = (0..<100000).map { i in
+          Author(rawID: "author.\(i)")
+        }
+        
+        context.author.insertsOrUpdates.insert(authors)
+        
+      }
+    }
+    
+  }
+  
+  func testInsertToFatStore() {
+    
+    state.db.performBatchUpdates { (context) in
+      let authors = (0..<100000).map { i in
+        Author(rawID: "author.\(i)")
+      }
+      
+      context.author.insertsOrUpdates.insert(authors)
+    }
     
     measure {
       state.db.performBatchUpdates { (context) in

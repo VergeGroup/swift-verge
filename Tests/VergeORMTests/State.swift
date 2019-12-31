@@ -32,16 +32,17 @@ struct Author: EntityType {
   }
     
   let rawID: String
+  var name: String = ""
   
   static let anonymous: Author = .init(rawID: "anonymous")
 }
 
-struct RootState: HasDatabaseStateType {
+struct RootState: DatabaseEmbedding {
   
-  static let keyPathToDatabase: (RootState) -> RootState.Database = { $0.db }
+  static let getterToDatabase: (RootState) -> RootState.Database = { $0.db }
   
   struct Database: DatabaseType {
-    
+          
     struct Schema: EntitySchemaType {
       let book = Book.EntityTableKey()
       let author = Author.EntityTableKey()
@@ -56,7 +57,7 @@ struct RootState: HasDatabaseStateType {
     var middlewares: [AnyMiddleware<RootState.Database>] {
       [
         AnyMiddleware<RootState.Database>(performAfterUpdates: { (context) in
-          let ids = context.author.insertsOrUpdates.all().map { $0.id }
+          let ids = context.author.insertsOrUpdates.allIDs()
           context.indexes.bookMiddleware.append(contentsOf: ids)
         })
       ]
@@ -65,5 +66,10 @@ struct RootState: HasDatabaseStateType {
     var _backingStorage: BackingStorage = .init()
   }
   
+  struct Other {
+    var count: Int = 0
+  }
+  
   var db = Database()
+  var other = Other()
 }

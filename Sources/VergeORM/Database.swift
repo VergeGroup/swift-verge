@@ -64,14 +64,19 @@ public struct AnyMiddleware<Database: DatabaseType>: MiddlewareType {
 
 /// A protocol indicates it is a root object as a Database
 /// As a Database, it provides the tables of the entity, the index storage.
-public protocol DatabaseType {
-  
+public protocol DatabaseType: DatabaseEmbedding where Database == Self {
+    
   associatedtype Schema: EntitySchemaType
   associatedtype Indexes: IndexesType
   typealias BackingStorage = DatabaseStorage<Schema, Indexes>
   var _backingStorage: BackingStorage { get set }
   
   var middlewares: [AnyMiddleware<Self>] { get }
+}
+
+// MARK: - DatabaseEmbedding
+extension DatabaseType {
+  public static var getterToDatabase: (Self) -> Self { { $0 } }
 }
 
 extension DatabaseType {
@@ -81,8 +86,20 @@ extension DatabaseType {
 
 public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
   
-  var entityBackingStorage: EntityTablesStorage<Schema> = .init()
-  var indexesStorage: IndexesStorage<Schema, Indexes> = .init()
+  var entityUpdatedAt: Date = .init()
+  var indexUpdatedAt: Date = .init()
+  
+  var entityBackingStorage: EntityTablesStorage<Schema> = .init() {
+    didSet {
+      entityUpdatedAt = .init()
+    }
+  }
+  
+  var indexesStorage: IndexesStorage<Schema, Indexes> = .init() {
+    didSet {
+      indexUpdatedAt = .init()
+    }
+  }
   
   public init() {
     
@@ -94,10 +111,12 @@ public struct EntityPropertyAdapter<DB: DatabaseType> {
   
   let get: () -> DB
   
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<DB.Schema, EntityTableKey<U>>) -> EntityTable<DB.Schema, U> {
-    get {
-      get()._backingStorage.entityBackingStorage[dynamicMember: keyPath]
-    }
+  public func table<E: EntityType>(_ entityType: E.Type) -> EntityTable<DB.Schema, E> {
+    get()._backingStorage.entityBackingStorage.table(entityType)
+  }
+  
+  public subscript <E: EntityType>(dynamicMember keyPath: KeyPath<DB.Schema, EntityTableKey<E>>) -> EntityTable<DB.Schema, E> {
+    `get`()._backingStorage.entityBackingStorage.table(E.self)
   }
 }
 
@@ -107,9 +126,7 @@ public struct IndexesPropertyAdapter<DB: DatabaseType> {
   let get: () -> DB
   
   public subscript <Index: IndexType>(dynamicMember keyPath: KeyPath<DB.Indexes, IndexKey<Index>>) -> Index where DB.Schema == Index.Schema {
-    get {
-      get()._backingStorage.indexesStorage[dynamicMember: keyPath]
-    }
+    `get`()._backingStorage.indexesStorage[dynamicMember: keyPath]    
   }
 }
 

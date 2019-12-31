@@ -32,7 +32,10 @@ protocol EntityModifierType: AnyObject {
   var _deletes: Set<AnyHashable> { get }
 }
 
-public final class EntityModifier<Schema: EntitySchemaType, E: EntityType>: EntityModifierType {
+/// For performBatchUpdates
+public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>: EntityModifierType {
+  
+  public typealias InsertionResult = EntityTable<Schema, Entity>.InsertionResult
   
   var _current: EntityTableType {
     current
@@ -46,17 +49,108 @@ public final class EntityModifier<Schema: EntitySchemaType, E: EntityType>: Enti
     deletes
   }
     
-  let entityName = E.entityName
+  let entityName = Entity.entityName
+    
+  /// An EntityTable contains entities that stored currently.
+  public let current: EntityTable<Schema, Entity>
+    
+  /// An EntityTable contains entities that will be stored after batchUpdates finished.
+  /// The objects this table contains would be applied, that's why it's mutable property.
+  public var insertsOrUpdates: EntityTable<Schema, Entity>
+    
+  /// A set of entity ids that entity will be deleted after batchUpdates finished.
+  /// The current entities will be deleted with this identifiers.
+  public var deletes: Set<Entity.ID> = .init()
   
-  private let keyPath: KeyPath<Schema, EntityTableKey<E>>
-  public let current: EntityTable<Schema, E>
-  public var insertsOrUpdates: EntityTable<Schema, E>
-  public var deletes: Set<E.ID> = .init()
-  
-  init(current: EntityTable<Schema, E>, keyPath: KeyPath<Schema, EntityTableKey<E>>) {
+  init(current: EntityTable<Schema, Entity>) {
     self.current = current
-    self.keyPath = keyPath
-    self.insertsOrUpdates = .init(keyPath: keyPath)
+    self.insertsOrUpdates = .init()
+  }
+  
+  // MARK: - Querying
+    
+  /// Find entity from updates and current.
+  ///
+  /// Firstly, find from updates and then find from current.
+  /// - Parameter id:
+  public func find(by id: Entity.ID) -> Entity? {
+    insertsOrUpdates.find(by: id) ?? current.find(by: id)
+  }
+  
+  /// Find entities from updates and current.
+  ///
+  /// Firstly, find from updates and then find from current.
+  /// - Parameter id:
+  public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.ID {
+    insertsOrUpdates.find(in: ids) + current.find(in: ids)
+  }
+  
+  // MARK: - Mutating
+  
+  /// Set inserts entity
+  @discardableResult
+  public func insert(_ entity: Entity) -> InsertionResult {
+    insertsOrUpdates.insert(entity)
+  }
+  
+  /// Set inserts entities
+  @discardableResult
+  public func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
+    insertsOrUpdates.insert(addingEntities)
+  }
+    
+  /// Set deletes entity with entity object
+  /// - Parameter entity:
+  public func delete(_ entity: Entity) {
+    deletes.insert(entity.id)
+  }
+    
+  /// Set deletes entity with identifier
+  /// - Parameter entityID:
+  public func delete(_ entityID: Entity.ID) {
+    deletes.insert(entityID)
+  }
+  
+  /// Set deletes entities with passed entities.
+  /// - Parameter entities:
+  public func delete<S: Sequence>(_ entities: S) where S.Element == Entity {
+    deletes.formUnion(entities.lazy.map { $0.id })
+  }
+    
+  /// Set deletes entities with passed sequence of entity's identifier.
+  /// - Parameter entityIDs:
+  public func delete<S: Sequence>(_ entityIDs: S) where S.Element == Entity.ID {
+    deletes.formUnion(entityIDs)
+  }
+    
+  /// Set deletes all entities
+  public func deleteAll() {
+    deletes.formUnion(current.allIDs())
+  }
+    
+  /// Updates existing entity from insertsOrUpdates or current.
+  /// It's never been called update closure if the entity was not found.
+  ///
+  /// - Parameters:
+  ///   - id:
+  ///   - update:
+  public func updateIfExists(id: Entity.ID, update: (inout Entity) -> Void) {
+    
+    if var target = current.find(by: id) {
+      update(&target)
+      insertsOrUpdates.insert(target)
+      return
+    }
+    
+    insertsOrUpdates.updateIfExists(id: id, update: update)
+  }
+  
+}
+
+extension EntityModifier where Entity : Hashable {
+  
+  public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.ID {
+    insertsOrUpdates.find(in: ids).union(current.find(in: ids))
   }
 }
 
@@ -74,10 +168,19 @@ public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
     throw BatchUpdateError.aborted
   }
   
+  public func table<E: EntityType>(_ entityType: E.Type) -> EntityModifier<Schema, E> {
+    guard let rawTable = editing[E.entityName] else {
+      let modifier = EntityModifier<Schema, E>(current: current.table(E.self))
+      editing[E.entityName] = modifier
+      return modifier
+    }
+    return rawTable as! EntityModifier<Schema, E>
+  }
+  
   public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityModifier<Schema, U> {
     get {
       guard let rawTable = editing[U.entityName] else {
-        let modifier = EntityModifier<Schema, U>(current: current[dynamicMember: keyPath], keyPath: keyPath)
+        let modifier = EntityModifier<Schema, U>(current: current[dynamicMember: keyPath])
         editing[U.entityName] = modifier
         return modifier
       }
@@ -108,20 +211,18 @@ extension DatabaseType {
             
     let context = DatabaseBatchUpdatesContext<Self>(current: self)
     do {
+            
       let result = try update(context)
       
-      middlewares.forEach {
-        $0.performAfterUpdates(context: context)
+      middlewareAfter: do {
+        middlewares.forEach {
+          $0.performAfterUpdates(context: context)
+        }
       }
       
-      do {
-        var target = self._backingStorage.entityBackingStorage
-        context.editing.forEach { _, value in
-          
-          target.apply(modifier: value)
-          context.indexes.apply(removing: value._deletes, entityName: value.entityName)
-        }
-        self._backingStorage.entityBackingStorage = target
+      apply: do {        
+        self._backingStorage.entityBackingStorage.apply(edits: context.editing)
+        context.indexes.apply(edits: context.editing)
         self._backingStorage.indexesStorage = context.indexes
       }
                              

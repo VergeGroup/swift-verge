@@ -56,7 +56,7 @@ public final class AnyGetter<Output>: GetterBase<Output> {
   
   private let valueGetter: () -> Output
   
-  public init<Source>(_ source: Getter<Source, Output>) {
+  public init<Input>(_ source: Getter<Input, Output>) {
     
     self.valueGetter = {
       // retains source
@@ -68,7 +68,7 @@ public final class AnyGetter<Output>: GetterBase<Output> {
       didUpdateEmitter: source.didUpdateEmitter
     )
   }
-  
+      
   public override var value: Output {
     valueGetter()
   }
@@ -82,11 +82,11 @@ open class Getter<Input, Output>: GetterBase<Output> {
   private let memoizes: Bool
   private let checker: (Input) -> Bool
   private let onDeinit: () -> Void
-       
-  public init<Key>(
+         
+  public init(
     initialSource: Input,
     selector: @escaping (Input) -> Output,
-    equality: EqualityComputer<Input, Key>,
+    equality: EqualityComputer<Input>,
     memoizes: Bool = true,
     onDeinit: @escaping () -> Void
   ) {
@@ -94,7 +94,7 @@ open class Getter<Input, Output>: GetterBase<Output> {
     self.onDeinit = onDeinit
     self.selector = selector
     self.memoizes = memoizes
-    self.checker = equality.input
+    self.checker = equality.isEqual
     
     self.computedValue = selector(initialSource)
     
@@ -183,71 +183,75 @@ extension GetterBase: ObservableObject {
 
 #endif
 
-public final class EqualityComputer<Value, Key> {
+public final class EqualityComputer<Input> {
   
-  public static func alwaysDifferent() -> EqualityComputer<Value, Value> {
-    EqualityComputer<Value, Value>.init(selector: { $0 }) { (v, b) -> Bool in
+  public static func alwaysDifferent() -> EqualityComputer<Input> {
+    EqualityComputer<Input>.init(selector: { _ in () }) { (_, _) -> Bool in
       return false
     }
   }
   
-  private let selector: (Value) -> Key
-  private let equals: (Key, Key) -> Bool
+  public static func alwaysEquals() -> EqualityComputer<Input> {
+    EqualityComputer<Input>.init(selector: { _ in () }) { (_, _) -> Bool in
+      return true
+    }
+  }
+    
+  private let _isEqual: (Input) -> Bool
   
-  private var previousValue: Key?
+  public init(_ sources: [EqualityComputer<Input>]) {
+    self._isEqual = { input in
+      for source in sources {
+        guard source.isEqual(value: input) else {
+          return false
+        }
+      }
+      return true
+    }
+  }
   
-  public init(
-    selector: @escaping (Value) -> Key,
+  public init<Key>(
+    selector: @escaping (Input) -> Key,
     equals: @escaping (Key, Key) -> Bool
   ) {
     
-    self.selector = selector
-    self.equals = equals
+    var previousValue: Key?
     
+    self._isEqual = { input in
+
+      let key = selector(input)
+      defer {
+        previousValue = key
+      }
+      if let previousValue = previousValue {
+        return equals(previousValue, key)
+      } else {
+        return false
+      }
+      
+    }
+              
   }
      
-  func input(value: Value) -> Bool {
-    
-    let key = selector(value)
-    defer {
-      previousValue = key
-    }
-    if let previousValue = previousValue {
-      return equals(previousValue, key)
-    } else {
-      return false
-    }
-    
+  public func isEqual(value: Input) -> Bool {
+    _isEqual(value)
   }
+
 }
 
-extension EqualityComputer where Key : Equatable {
-  public convenience init(selector: @escaping (Value) -> Key) {
-    self.init(selector: selector, equals: ==)
-  }
-}
-
-extension EqualityComputer where Value == Key {
+extension EqualityComputer where Input : Equatable {
   
-  public convenience init(equals: @escaping (Key, Key) -> Bool) {
-    self.init(selector: { $0 }, equals: equals)
-  }
-}
-
-extension EqualityComputer where Key : Equatable, Value == Key {
-    
   public convenience init() {
-    self.init(equals: ==)
+    self.init(selector: { $0 }, equals: ==)
   }
 }
 
 extension Storage {
   
-  @inlinable
-  public func getter<Key, Destination>(
-    selector: @escaping (Value) -> Destination,
-    equality: EqualityComputer<Value, Key>
-  ) -> Getter<Value, Destination> {
+  public func getter<Output>(
+    selector: @escaping (Value) -> Output,
+    equality: EqualityComputer<Value>
+  ) -> Getter<Value, Output> {
     
     var token: EventEmitterSubscribeToken?
     
@@ -268,6 +272,6 @@ extension Storage {
     }
     
     return selector
-    
   }
+  
 }
