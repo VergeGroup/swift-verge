@@ -6,6 +6,7 @@ import RxCocoa
 
 #if !COCOAPODS
 import VergeCore
+import RxVergeStore
 #endif
 
 private var storage_subject: Void?
@@ -139,18 +140,6 @@ extension Storage {
   /// - Returns: Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
   public func changedDriver<S : Equatable>(_ selector: KeyPath<Value, S>) -> Driver<S> {
     return changedDriver(selector, ==)
-  }
-
-  /// Returns an observable sequence
-  ///
-  /// - Returns: Returns an observable sequence
-  public func asObservable() -> Observable<Value> {
-    return subject.asObservable()
-  }
-
-  public func asObservable<S>(keyPath: KeyPath<Value, S>) -> Observable<S> {
-    return asObservable()
-      .map { $0[keyPath: keyPath] }
   }
 
   /// Returns an observable sequence as Driver

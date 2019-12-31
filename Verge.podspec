@@ -25,6 +25,7 @@ Pod::Spec.new do |s|
     ss.dependency 'RxRelay', '~> 5.0.0'
     ss.source_files = 'Sources/VergeClassic/**/*.swift'    
     ss.dependency 'Verge/Core'
+    ss.dependency 'Verge/Rx'
   end
 
   s.subspec 'Core' do |ss|
