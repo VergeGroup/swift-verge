@@ -1,31 +1,45 @@
 # Getter \(Selector\)
 
+## To create getter, Add DatabaseEmbedding protocol to your state-tree.
 
+```swift
+struct RootState: DatabaseEmbedding {
+  
+  static let getterToDatabase: (RootState) -> RootState.Database = { $0.db }
+  
+  struct Database: DatabaseType {
+    ...       
+  }
+  
+  var db = Database()
+}
+```
 
-{% hint style="info" %}
-TODO
-{% endhint %}
+## Create getter from entity id
+
+```swift
+let id = Book.ID.init("some")
+    
+let getter = storage.entityGetter(
+  entityID: id
+)
+```
+
+## Get entity from Getter
+
+```swift
+getter.value
+```
+
+## Subscribe getter
+
+```swift
+getter.addDidUpdate { (entity) in
+  
+}
+```
 
 VergeORM supports create MemoizeSelector from Storage or Store.
 
 {% page-ref page="../docs-vergestore/memoization.md" %}
-
-
-
-```swift
-let storage = Storage<RootState>(.init())
-    
-let id = Book.ID.init("some")
-
-let selector = storage.entityGetter(
-  entityTableSelector: { $0.db.entities.book },
-  entityID: id
-)
-
-selector.value // => Optional<Book>.none (nil)
-
-// add entity with performBatchUpdates
-
-selector.value // => Optional<Book>.some
-```
 
