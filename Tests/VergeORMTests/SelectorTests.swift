@@ -22,7 +22,6 @@ class SelectorTests: XCTestCase {
     let id = Book.ID.init("some")
     
     let nullableSelector = storage.entityGetter(
-      tableSelector: { $0.entities.book },
       entityID: id
     )
     
@@ -53,7 +52,6 @@ class SelectorTests: XCTestCase {
       }
       
       let selector = storage.nonNullEntityGetter(
-        tableSelector: { $0.entities.book },
         entity: book
       )
       

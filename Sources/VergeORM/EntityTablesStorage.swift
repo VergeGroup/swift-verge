@@ -35,15 +35,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     public var entityID: Entity.ID {
       entity.id
     }
-    public let entity: Entity
-    internal let keyPath: KeyPath<Schema, EntityTableKey<Entity>>
-        
-    func makeSelector<DB: DatabaseType>(_ type: DB.Type) -> (DB) -> EntityTable<Schema, Entity> where DB.Schema == Schema {
-      return { db in
-        let a = db.entities[dynamicMember: self.keyPath]
-        return a
-      }
-    }
+    public let entity: Entity        
   }
   
   var entityName: EntityName {
@@ -56,16 +48,12 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   }
   
   internal var entities: [AnyHashable : Any] = [:]
-  
-  internal let keyPath: KeyPath<Schema, EntityTableKey<Entity>>
-  
-  init(keyPath: KeyPath<Schema, EntityTableKey<Entity>>) {
-    self.keyPath = keyPath
+    
+  init() {
   }
   
-  init(buffer: [AnyHashable : Any], keyPath: KeyPath<Schema, EntityTableKey<Entity>>) {
+  init(buffer: [AnyHashable : Any]) {
     self.entities = buffer
-    self.keyPath = keyPath
   }
     
   /// Returns all entity ids that stored.
@@ -109,7 +97,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   @discardableResult
   public mutating func insert(_ entity: Entity) -> InsertionResult {
     entities[entity.id] = entity
-    return .init(entity: entity, keyPath: keyPath)
+    return .init(entity: entity)
   }
   
   @discardableResult
@@ -158,17 +146,16 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
   private init(entityTableStorage: [EntityName : EntityTableType.RawTable]) {
     self.entityTableStorage = entityTableStorage
   }
+  
+  public func table<E: EntityType>(_ entityType: E.Type) -> EntityTable<Schema, E> {
+    guard let rawTable = entityTableStorage[E.entityName] else {
+      return EntityTable<Schema, E>(buffer: [:])
+    }
+    return EntityTable<Schema, E>(buffer: rawTable)
+  }
     
-  public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityTable<Schema, U> {
-    get {
-      guard let rawTable = entityTableStorage[U.entityName] else {
-        return EntityTable<Schema, U>(buffer: [:], keyPath: keyPath)
-      }
-      return EntityTable<Schema, U>(buffer: rawTable, keyPath: keyPath)
-    }
-    set {
-      entityTableStorage[U.entityName] = newValue.entities
-    }
+  public subscript <E: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<E>>) -> EntityTable<Schema, E> {
+    table(E.self)
   }
   
   @inline(__always)

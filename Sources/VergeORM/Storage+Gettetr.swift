@@ -37,22 +37,27 @@ extension EntityType {
   
 }
 
-public protocol HasDatabaseStateType {
+public protocol DatabaseEmbedding {
   
   associatedtype Database: DatabaseType
   
-  static var keyPathToDatabase: (Self) -> Database { get }
+  static var getterToDatabase: (Self) -> Database { get }
   
 }
 
-extension ValueContainerType where Value : HasDatabaseStateType {
-  
+extension ValueContainerType where Value : DatabaseEmbedding {
+    
+  /// Make getter to select value with update closure
+  ///
+  /// - Parameters:
+  ///   - update: Updating output value each Input value updated.
+  ///   - additionalEqualityComputer: Check to necessory of needs to update to reduce number of updating.
   public func entityGetter<Output>(
     update: @escaping (Value.Database) -> Output,
     additionalEqualityComputer: EqualityComputer<Value.Database>?
   ) -> Getter<Value, Output> {
     
-    let path = Value.keyPathToDatabase
+    let path = Value.getterToDatabase
     
     let baseComputer = EqualityComputer<Value.Database>.init(
       selector: { input -> (Date, Date) in
@@ -65,7 +70,7 @@ extension ValueContainerType where Value : HasDatabaseStateType {
     
     let _getter = getter(
       selector: { (value) -> Output in
-        update(Value.keyPathToDatabase(value))
+        update(Value.getterToDatabase(value))
     },
       equality: EqualityComputer.init(selector: { path($0) }, equals: { (old, new) -> Bool in
         guard !baseComputer.isEqual(value: new) else {
@@ -77,15 +82,16 @@ extension ValueContainerType where Value : HasDatabaseStateType {
         
     return _getter
   }
-  
-  public func entityGetter<E: EntityType>(
-    tableSelector: @escaping (Value.Database) -> EntityTable<Value.Database.Schema, E>,
-    entityID: E.ID
-  ) -> Getter<Value, E?> {
+    
+  /// A entity getter that entity id based.
+  /// - Parameters:
+  ///   - tableSelector:
+  ///   - entityID:
+  public func entityGetter<E: EntityType>(entityID: E.ID) -> Getter<Value, E?> {
     
     return entityGetter(
       update: { db in
-        tableSelector(db).find(by: entityID)
+        db.entities.table(E.self).find(by: entityID)
     },
       additionalEqualityComputer: nil
     )
@@ -93,33 +99,29 @@ extension ValueContainerType where Value : HasDatabaseStateType {
   }
   
   public func entityGetter<E: EntityType & Equatable>(
-    tableSelector: @escaping (Value.Database) -> EntityTable<Value.Database.Schema, E>,
     entityID: E.ID
   ) -> Getter<Value, E?> {
     
     return entityGetter(
       update: { db in
-        tableSelector(db).find(by: entityID)
+        db.entities.table(E.self).find(by: entityID)
     },
       additionalEqualityComputer: .init(
-        selector: { tableSelector($0).find(by: entityID) },
+        selector: { db in db.entities.table(E.self).find(by: entityID) },
         equals: { $0 == $1 }
       )
     )
     
   }
   
-  public func nonNullEntityGetter<E: EntityType>(
-    tableSelector: @escaping (Value.Database) -> EntityTable<Value.Database.Schema, E>,
-    entity: E
-  ) -> Getter<Value, E> {
+  public func nonNullEntityGetter<E: EntityType>(entity: E) -> Getter<Value, E> {
     
     var fetched: E = entity
     let entityID = entity.id
     
     return entityGetter(
       update: { db in
-        let table = tableSelector(db)
+        let table = db.entities.table(E.self)
         if let e = table.find(by: entityID) {
           fetched = e
         }
@@ -131,7 +133,6 @@ extension ValueContainerType where Value : HasDatabaseStateType {
   }
   
   public func nonNullEntityGetter<E: EntityType & Equatable>(
-    tableSelector: @escaping (Value.Database) -> EntityTable<Value.Database.Schema, E>,
     entity: E
   ) -> Getter<Value, E> {
     
@@ -140,14 +141,14 @@ extension ValueContainerType where Value : HasDatabaseStateType {
     
     return entityGetter(
       update: { db in
-        let table = tableSelector(db)
+        let table = db.entities.table(E.self)
         if let e = table.find(by: entityID) {
           fetched = e
         }
         return fetched
     },
       additionalEqualityComputer: .init(
-        selector: { tableSelector($0).find(by: entityID) },
+        selector: { db in db.entities.table(E.self).find(by: entityID) },
         equals: { $0 == $1 }
       )
     )
@@ -159,8 +160,7 @@ extension ValueContainerType where Value : HasDatabaseStateType {
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
   ) -> Getter<Value, E> {
             
-    let selector = insertionResult.makeSelector(Value.Database.self)
-    return nonNullEntityGetter(tableSelector: selector, entity: insertionResult.entity)
+    return nonNullEntityGetter(entity: insertionResult.entity)
             
   }
   
@@ -168,8 +168,7 @@ extension ValueContainerType where Value : HasDatabaseStateType {
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
   ) -> Getter<Value, E> {
       
-    let selector = insertionResult.makeSelector(Value.Database.self)
-    return nonNullEntityGetter(tableSelector: selector, entity: insertionResult.entity)
+    return nonNullEntityGetter(entity: insertionResult.entity)
     
   }
 }

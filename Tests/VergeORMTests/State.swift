@@ -37,12 +37,12 @@ struct Author: EntityType {
   static let anonymous: Author = .init(rawID: "anonymous")
 }
 
-struct RootState: HasDatabaseStateType {
+struct RootState: DatabaseEmbedding {
   
-  static let keyPathToDatabase: (RootState) -> RootState.Database = { $0.db }
+  static let getterToDatabase: (RootState) -> RootState.Database = { $0.db }
   
   struct Database: DatabaseType {
-    
+          
     struct Schema: EntitySchemaType {
       let book = Book.EntityTableKey()
       let author = Author.EntityTableKey()

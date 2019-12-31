@@ -50,9 +50,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   }
     
   let entityName = Entity.entityName
-  
-  private let keyPath: KeyPath<Schema, EntityTableKey<Entity>>
-  
+    
   /// An EntityTable contains entities that stored currently.
   public let current: EntityTable<Schema, Entity>
     
@@ -64,10 +62,9 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   /// The current entities will be deleted with this identifiers.
   public var deletes: Set<Entity.ID> = .init()
   
-  init(current: EntityTable<Schema, Entity>, keyPath: KeyPath<Schema, EntityTableKey<Entity>>) {
+  init(current: EntityTable<Schema, Entity>) {
     self.current = current
-    self.keyPath = keyPath
-    self.insertsOrUpdates = .init(keyPath: keyPath)
+    self.insertsOrUpdates = .init()
   }
   
   // MARK: - Querying
@@ -171,10 +168,19 @@ public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
     throw BatchUpdateError.aborted
   }
   
+  public func table<E: EntityType>(_ entityType: E.Type) -> EntityModifier<Schema, E> {
+    guard let rawTable = editing[E.entityName] else {
+      let modifier = EntityModifier<Schema, E>(current: current.table(E.self))
+      editing[E.entityName] = modifier
+      return modifier
+    }
+    return rawTable as! EntityModifier<Schema, E>
+  }
+  
   public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityModifier<Schema, U> {
     get {
       guard let rawTable = editing[U.entityName] else {
-        let modifier = EntityModifier<Schema, U>(current: current[dynamicMember: keyPath], keyPath: keyPath)
+        let modifier = EntityModifier<Schema, U>(current: current[dynamicMember: keyPath])
         editing[U.entityName] = modifier
         return modifier
       }
