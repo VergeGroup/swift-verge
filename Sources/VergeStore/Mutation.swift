@@ -39,7 +39,7 @@ public struct AnyMutation<Dispatcher: DispatcherType, Result>: MutationType {
   public let metadata: MutationMetadata
   
   public init(
-    _ name: StaticString = "",
+    _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
@@ -59,7 +59,7 @@ public struct AnyMutation<Dispatcher: DispatcherType, Result>: MutationType {
 extension AnyMutation {
   
   public static func mutation(
-    _ name: StaticString = "",
+    _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
@@ -83,7 +83,7 @@ extension AnyMutation where Dispatcher.State : StateType {
     inlineMutation: @escaping (inout Target) -> Result
   ) -> Self {
         
-    AnyMutation.init(name, file, function, line) { (state: inout Dispatcher.State) in
+    AnyMutation.init(name.description, file, function, line) { (state: inout Dispatcher.State) in
       state.update(target: target, update: inlineMutation)
     }
            

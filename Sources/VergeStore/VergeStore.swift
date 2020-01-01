@@ -28,12 +28,12 @@ import VergeCore
 /// A metadata object that indicates the name of the mutation and where it was caused.
 public struct MutationMetadata {
   
-  public let name: StaticString
+  public let name: String
   public let file: StaticString
   public let function: StaticString
   public let line: UInt
   
-  public init(name: StaticString, file: StaticString, function: StaticString, line: UInt) {
+  public init(name: String, file: StaticString, function: StaticString, line: UInt) {
     self.name = name
     self.file = file
     self.function = function
@@ -44,12 +44,12 @@ public struct MutationMetadata {
 /// A metadata object that indicates the name of the action and where it was caused.
 public struct ActionMetadata {
   
-  public let name: StaticString
+  public let name: String
   public let file: StaticString
   public let function: StaticString
   public let line: UInt
   
-  public init(name: StaticString, file: StaticString, function: StaticString, line: UInt) {
+  public init(name: String, file: StaticString, function: StaticString, line: UInt) {
     self.name = name
     self.file = file
     self.function = function

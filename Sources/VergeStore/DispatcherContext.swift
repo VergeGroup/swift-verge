@@ -60,9 +60,14 @@ extension DispatcherContext {
   }
   
   /// Run Mutation that created inline
-  public func commitInline<Result>(_ mutate: @escaping (inout State) -> Result) -> Result {
+  public func commitInline<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ mutate: @escaping (inout State) -> Result) -> Result {
     dispatcher.commit { _ in
-      Dispatcher.Mutation<Result>.init(mutate: mutate)
+      Dispatcher.Mutation<Result>.init("inline_" + name, file, function, line, mutate: mutate)
     }
   }
   

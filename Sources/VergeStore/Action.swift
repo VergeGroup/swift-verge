@@ -38,7 +38,7 @@ public struct AnyAction<Dispatcher: DispatcherType, Result>: ActionType {
   public let metadata: ActionMetadata
   
   public init(
-    _ name: StaticString = "",
+    _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
@@ -58,7 +58,7 @@ public struct AnyAction<Dispatcher: DispatcherType, Result>: ActionType {
 extension AnyAction {
   
   public static func action(
-    _ name: StaticString = "",
+    _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
