@@ -45,6 +45,8 @@ public protocol DatabaseEmbedding {
   
 }
 
+// MARK: - Core Functions
+
 extension ValueContainerType where Value : DatabaseEmbedding {
     
   /// Make getter to select value with update closure
@@ -59,7 +61,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
     let path = Value.getterToDatabase
     
-    let baseComputer = EqualityComputer<Value.Database>.init(
+    let updatedAtEquality = EqualityComputer<Value.Database>.init(
       selector: { input -> (Date, Date) in
         let v = input
         return (v._backingStorage.entityUpdatedAt, v._backingStorage.indexUpdatedAt)
@@ -73,7 +75,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
         update(Value.getterToDatabase(value))
     },
       equality: EqualityComputer.init(selector: { path($0) }, equals: { (old, new) -> Bool in
-        guard !baseComputer.isEqual(value: new) else {
+        guard !updatedAtEquality.isEqual(value: new) else {
           return true
         }
         return additionalEqualityComputer?.isEqual(value: new) ?? false
@@ -114,6 +116,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
   }
   
+  @inline(__always)
   public func nonNullEntityGetter<E: EntityType>(entity: E) -> Getter<Value, E> {
     
     var fetched: E = entity
@@ -132,6 +135,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
   }
   
+  @inline(__always)
   public func nonNullEntityGetter<E: EntityType & Equatable>(
     entity: E
   ) -> Getter<Value, E> {
@@ -154,22 +158,44 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     )
     
   }
-  
+   
+}
+
+// MARK: - Wrapper Functions
+
+extension ValueContainerType where Value : DatabaseEmbedding {
+    
   /// A selector that if get nil then return latest non-null value
+  @inline(__always)
   public func nonNullEntityGetter<E: EntityType>(
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
   ) -> Getter<Value, E> {
-            
-    return nonNullEntityGetter(entity: insertionResult.entity)
-            
-  }
-  
-  public func nonNullEntityGetter<E: EntityType & Equatable>(
-    from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
-  ) -> Getter<Value, E> {
-      
+    
     return nonNullEntityGetter(entity: insertionResult.entity)
     
   }
+    
+  @inline(__always)
+  public func nonNullEntityGetter<E: EntityType & Equatable>(
+    from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
+  ) -> Getter<Value, E> {
+    
+    return nonNullEntityGetter(entity: insertionResult.entity)
+  }
+  
+  public func nonNullEntityGetters<E: EntityType, S: Sequence>(
+    from insertionResults: S
+  ) -> [Getter<Value, E>] where S.Element == EntityTable<Value.Database.Schema, E>.InsertionResult {
+    insertionResults.map {
+      nonNullEntityGetter(from: $0)
+    }
+  }
+  
+  public func nonNullEntityGetters<E: EntityType & Equatable, S: Sequence>(
+    from insertionResults: S
+  ) -> [Getter<Value, E>] where S.Element == EntityTable<Value.Database.Schema, E>.InsertionResult {
+    insertionResults.map {
+      nonNullEntityGetter(from: $0)
+    }
+  }
 }
-
