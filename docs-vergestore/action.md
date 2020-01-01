@@ -3,6 +3,8 @@
 Action appears similar to Mutation. But actually it's not.  
 Action can contain arbitrary asynchronous operations and it can commit Mutation inside asynchronous operations.
 
+## Create AnyAction object
+
 Action object's looks
 
 ```swift
@@ -28,6 +30,8 @@ class MyDispatcher: MyStore.Dispatcher {
 }
 ```
 
+## Run action
+
 To run\(dispatch\) Action
 
 ```swift
@@ -36,6 +40,8 @@ let dispatcher = MyDispatcher(target: store)
 
 dispatcher.dispatch { $0.someAsyncOperation() }
 ```
+
+## Commit mutation inside of action
 
 To commit Mutation, do it from context.
 
@@ -48,7 +54,7 @@ class MyDispatcher: MyStore.Dispatcher {
   
   func someAsyncOperation() -> Action<Void> {
     .action { context in
-      context.accept { $0.someMutation() }
+      context.commit { $0.someMutation() }
     }
   }
 
@@ -67,7 +73,7 @@ class MyDispatcher: MyStore.Dispatcher {
   func someAsyncOperation() -> Action<Void> {
     .action { context in
       DispatchQueue.global().async {
-        context.accept { $0.someMutation() }
+        context.commit { $0.someMutation() }
       }
     }
   }
@@ -75,7 +81,22 @@ class MyDispatcher: MyStore.Dispatcher {
 }
 ```
 
+## Create and Commit mutation inside of action
 
+The context supports to commit mutation that created in inline.  
+ We can commit trivial mutations without to declare mutation.
+
+```swift
+func someAsyncOperation() -> Action<Void> {
+  .action { context in
+    context.commitInline { state in
+      ...    
+    }
+  }
+}
+```
+
+## Return value to caller
 
 You may already notice that, Action can return anything you need outside.  
 This feature is super inspired by **Vuex**
