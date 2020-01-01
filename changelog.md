@@ -4,6 +4,14 @@
 
 ### Rename DispatcherType.dispatchTarget to target
 
+### \[Breaking change\] Getter for ORM
+
+{% embed url="https://github.com/muukii/Verge/pull/30" %}
+
+### Rename HasDatabaseType to DatabaseEmbedding
+
+### Add several ways of creating getter for ORM
+
 ## 6.0.0-beta.4
 
 ### [Rename accept\(\) to commit\(\) and dispatch\(\)](https://github.com/muukii/Verge/pull/29)
