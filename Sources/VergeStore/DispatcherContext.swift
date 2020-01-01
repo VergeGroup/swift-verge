@@ -59,6 +59,13 @@ extension DispatcherContext {
     dispatcher.commit(get)
   }
   
+  /// Run Mutation that created inline
+  public func commitInline<Result>(_ mutate: @escaping (inout State) -> Result) -> Result {
+    dispatcher.commit { _ in
+      Dispatcher.Mutation<Result>.init(mutate: mutate)
+    }
+  }
+  
   /// Run Action
   @discardableResult
   public func dispatch<Action: ActionType>(_ get: (Dispatcher) -> Action) -> Action.Result where Action.Dispatcher == Dispatcher {
