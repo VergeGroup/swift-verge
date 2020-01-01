@@ -21,6 +21,24 @@ class VergeORMTests: XCTestCase {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
   
+  func testCommit() {
+    
+    var state = RootState()
+    
+    let context = state.db.beginBatchUpdates()
+    
+    let book = Book(rawID: "some", authorID: Author.anonymous.id)
+    context.book.insertsOrUpdates.insert(book)
+    
+    state.db.commitBatchUpdates(context: context)
+    
+    let a = state.db.entities.book
+    let b = state.db.entities.book
+    
+    XCTAssertEqual(a, b)
+    
+  }
+  
   func testEqualityEntityTable() {
     
     var state = RootState()

@@ -202,30 +202,35 @@ public final class DatabaseBatchUpdatesContext<Database: DatabaseType>: Database
 }
 
 extension DatabaseType {
+  
+  public func beginBatchUpdates() -> DatabaseBatchUpdatesContext<Self> {
+    let context = DatabaseBatchUpdatesContext<Self>(current: self)
+    return context
+  }
+  
+  public mutating func commitBatchUpdates(context: DatabaseBatchUpdatesContext<Self>) {
+    middlewareAfter: do {
+      middlewares.forEach {
+        $0.performAfterUpdates(context: context)
+      }
+    }
+    
+    apply: do {
+      self._backingStorage.entityBackingStorage.apply(edits: context.editing)
+      context.indexes.apply(edits: context.editing)
+      self._backingStorage.indexesStorage = context.indexes
+    }
+  }
     
   /// Performs operations to update entities and indexes
   /// If can be run on background thread with locking.
   ///
   /// - Parameter update:
-  public mutating func performBatchUpdates<Result>(_ update: (DatabaseBatchUpdatesContext<Self>) throws -> Result) rethrows -> Result {
-            
-    let context = DatabaseBatchUpdatesContext<Self>(current: self)
+  public mutating func performBatchUpdates<Result>(_ update: (DatabaseBatchUpdatesContext<Self>) throws -> Result) rethrows -> Result {               
     do {
-            
+      let context = beginBatchUpdates()
       let result = try update(context)
-      
-      middlewareAfter: do {
-        middlewares.forEach {
-          $0.performAfterUpdates(context: context)
-        }
-      }
-      
-      apply: do {        
-        self._backingStorage.entityBackingStorage.apply(edits: context.editing)
-        context.indexes.apply(edits: context.editing)
-        self._backingStorage.indexesStorage = context.indexes
-      }
-                             
+      commitBatchUpdates(context: context)
       return result
     } catch {
       throw error
