@@ -134,19 +134,20 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   /// - Parameters:
   ///   - id:
   ///   - update:
-  public func updateIfExists(id: Entity.ID, update: (inout Entity) throws -> Void) rethrows {
+  @discardableResult
+  public func updateIfExists(id: Entity.ID, update: (inout Entity) throws -> Void) rethrows -> Entity? {
     
     if insertsOrUpdates.find(by: id) != nil {
-      try insertsOrUpdates.updateIfExists(id: id, update: update)
-      return
+      return try insertsOrUpdates.updateIfExists(id: id, update: update)
     }
     
     if var target = current.find(by: id) {
       try update(&target)
       insertsOrUpdates.insert(target)
-      return
+      return target
     }
         
+    return nil
   }
   
 }
