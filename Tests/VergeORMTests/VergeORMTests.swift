@@ -125,4 +125,34 @@ class VergeORMTests: XCTestCase {
 
   }
   
+  func testUpdateIfExists() {
+    
+    var state = RootState()
+    
+    state.db.performBatchUpdates { (context) -> Void in
+      
+      context.author.insert(Author(rawID: "muukii", name: "muukii"))
+          
+    }
+    
+    state.db.performBatchUpdates { context in
+      
+      context.author.updateIfExists(id: .init("muukii")) { (author) in
+        XCTAssertEqual(author.name, "muukii")
+        author.name = "Hiroshi"
+      }
+      
+      context.author.updateIfExists(id: .init("muukii")) { (author) in
+        XCTAssertEqual(author.name, "Hiroshi")
+        author.name = "Kimura"
+      }
+      
+      context.author.updateIfExists(id: .init("muukii")) { (author) in
+        XCTAssertEqual(author.name, "Kimura")
+      }
+      
+    }
+    
+  }
+  
 }

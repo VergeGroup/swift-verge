@@ -45,7 +45,7 @@ class PerformanceTests: XCTestCase {
     }
     
     measure {
-      state.db.performBatchUpdates { context in
+      state.db.performBatchUpdates { context -> Void in
         context.author.updateIfExists(id: .init("author.100")) { (author) in
           author.name = "mmm"
         }
