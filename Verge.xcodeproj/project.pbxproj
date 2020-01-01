@@ -19,6 +19,7 @@
 		4B475BC0239AB983008A03E1 /* DatabaseBatchUpdatesContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BBE239AB97F008A03E1 /* DatabaseBatchUpdatesContext.swift */; };
 		4B475BC8239ADE1C008A03E1 /* VergeORMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */; };
 		4B475BD0239ADEB4008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
+		4B4BF71123BC4E8300532E04 /* RxVergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B7F3840238948CF000B9ACF /* RxVergeStore.framework */; };
 		4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */; };
 		4B52362723B00CEE0055199D /* GetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B52362623B00CEE0055199D /* GetterTests.swift */; };
 		4B53B93F23B2823D0087183B /* Deprecates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B53B93E23B2823D0087183B /* Deprecates.swift */; };
@@ -148,6 +149,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
+		};
+		4B4BF71323BC4E8300532E04 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B7F383F238948CF000B9ACF;
+			remoteInfo = RxVergeStore;
 		};
 		4B65F8F21FB4C0DC00A90A67 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -521,6 +529,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BF2BCCC238A64C600F70CDA /* RxSwift in Frameworks */,
+				4B4BF71123BC4E8300532E04 /* RxVergeStore.framework in Frameworks */,
 				4B3DC06F23A66840008A4627 /* VergeCore.framework in Frameworks */,
 				4BF2BCCA238A64C600F70CDA /* RxRelay in Frameworks */,
 				4BF2BCC8238A64C600F70CDA /* RxCocoa in Frameworks */,
@@ -1111,6 +1120,7 @@
 			);
 			dependencies = (
 				4B3DC07223A66840008A4627 /* PBXTargetDependency */,
+				4B4BF71423BC4E8300532E04 /* PBXTargetDependency */,
 			);
 			name = VergeClassic;
 			packageProductDependencies = (
@@ -1767,6 +1777,11 @@
 			target = 4B78631F233912AB009B9C1B /* VergeStore */;
 			targetProxy = 4B475BCB239ADE1C008A03E1 /* PBXContainerItemProxy */;
 		};
+		4B4BF71423BC4E8300532E04 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B7F383F238948CF000B9ACF /* RxVergeStore */;
+			targetProxy = 4B4BF71323BC4E8300532E04 /* PBXContainerItemProxy */;
+		};
 		4B65F8F31FB4C0DC00A90A67 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4B86A4851F969AD5002D54FE /* VergeClassic */;
@@ -2161,6 +2176,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -2178,6 +2194,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2190,6 +2207,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -2206,6 +2224,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
