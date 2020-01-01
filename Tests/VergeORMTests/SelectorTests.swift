@@ -219,4 +219,37 @@ class SelectorTests: XCTestCase {
     XCTAssertEqual(updatedCount, 2)
     
   }
+  
+  func testGetterCache() {
+    
+    let storage = Storage<RootState>(.init())
+    
+    let getter1 = storage.entityGetter(entityID: Author.ID("Hoo"))
+    let getter2 = storage.entityGetter(entityID: Author.ID("Hoo"))
+    
+    XCTAssert(getter1 === getter2)
+    
+  }
+  
+  func testPerformanceGetterCreationIncludesFirstTime() {
+    
+    let storage = Storage<RootState>(.init())
+    
+    measure {
+      let _ = storage.entityGetter(entityID: Author.ID("Hoo"))
+    }
+    
+  }
+  
+  func testPerformanceGetterCreationWithCache() {
+        
+    let storage = Storage<RootState>(.init())
+    
+    let _ = storage.entityGetter(entityID: Author.ID("Hoo"))
+    
+    measure {
+      let _ = storage.entityGetter(entityID: Author.ID("Hoo"))
+    }
+                
+  }
 }
