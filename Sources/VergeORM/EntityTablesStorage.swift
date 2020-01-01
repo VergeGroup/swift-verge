@@ -27,6 +27,7 @@ protocol EntityTableType {
   var entityName: EntityName { get }
 }
 
+/// A wrapper of raw table
 public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityTableType {
     
   /// An object indicates result of insertion
@@ -38,13 +39,11 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     public let entity: Entity        
   }
   
-  var entityName: EntityName {
-    Entity.entityName
-  }
+  let entityName: EntityName = Entity.entityName
     
   /// The number of entities in table
   public var count: Int {
-    entities.count
+    _read { yield entities.count }
   }
   
   internal var entities: [AnyHashable : Any] = [:]
@@ -90,7 +89,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Void in
       var entity = pointer.pointee as! Entity
       update(&entity)
-      pointer.pointee = entity
+      pointer.pointee = entity as Any
     }
   }
   
@@ -173,27 +172,25 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
   
   @inline(__always)
   private mutating func _merge(anyEntityTable: EntityTableType) {
-    let value = anyEntityTable.entities
+    let entityRawTable = anyEntityTable.entities
     let entityName = anyEntityTable.entityName
-    if let table = entityTableStorage[entityName] {
-      var modified = table
+    if var modified = entityTableStorage[entityName] {
       
-      value.forEach { key, value in
+      entityRawTable.forEach { key, value in
         modified[key] = value
       }
       
       entityTableStorage[entityName] = modified
     } else {
-      entityTableStorage[entityName] = value
+      entityTableStorage[entityName] = entityRawTable
     }
   }
 
   @inline(__always)
   private mutating func _subtract(ids: Set<AnyHashable>, entityName: EntityName) {
-    guard let table = entityTableStorage[entityName] else {
+    guard var modified = entityTableStorage[entityName] else {
       return
     }
-    var modified = table
     
     ids.forEach { key in
       modified.removeValue(forKey: key)
