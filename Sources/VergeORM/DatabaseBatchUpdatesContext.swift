@@ -21,10 +21,6 @@
 
 import Foundation
 
-public enum BatchUpdateError: Error {
-  case aborted
-}
-
 protocol EntityModifierType: AnyObject {
   
   var entityName: EntityName { get }
@@ -127,6 +123,24 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   public func deleteAll() {
     deletes.formUnion(current.allIDs())
   }
+  
+  /// Update existing entity. it throws if does not exsist.
+  @inline(__always)
+  public func updateExists(id: Entity.ID, update: (inout Entity) throws -> Void) throws -> Entity {
+    
+    if insertsOrUpdates.find(by: id) != nil {
+      return try insertsOrUpdates.updateExists(id: id, update: update)
+    }
+    
+    if var target = current.find(by: id) {
+      try update(&target)
+      insertsOrUpdates.insert(target)
+      return target
+    }
+    
+    throw BatchUpdatesError.storedEntityNotFound
+    
+  }
     
   /// Updates existing entity from insertsOrUpdates or current.
   /// It's never been called update closure if the entity was not found.
@@ -136,18 +150,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   ///   - update:
   @discardableResult
   public func updateIfExists(id: Entity.ID, update: (inout Entity) throws -> Void) rethrows -> Entity? {
-    
-    if insertsOrUpdates.find(by: id) != nil {
-      return try insertsOrUpdates.updateIfExists(id: id, update: update)
-    }
-    
-    if var target = current.find(by: id) {
-      try update(&target)
-      insertsOrUpdates.insert(target)
-      return target
-    }
-        
-    return nil
+    try? updateExists(id: id, update: update)
   }
   
 }
@@ -170,7 +173,7 @@ public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
   }
   
   public func abort() throws -> Never {
-    throw BatchUpdateError.aborted
+    throw BatchUpdatesError.aborted
   }
   
   public func table<E: EntityType>(_ entityType: E.Type) -> EntityModifier<Schema, E> {

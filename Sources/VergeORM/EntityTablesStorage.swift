@@ -83,11 +83,14 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
       buf.append(entity as! Entity)
     }
   }
-   
+  
   @discardableResult
-  public mutating func updateIfExists(id: Entity.ID, update: (inout Entity) throws -> Void) rethrows -> Entity? {
+  @inline(__always)
+  public mutating func updateExists(id: Entity.ID, update: (inout Entity) throws -> Void) throws -> Entity {
     
-    guard entities.keys.contains(id) else { return nil }
+    guard entities.keys.contains(id) else {
+      throw BatchUpdatesError.storedEntityNotFound
+    }
     
     return try withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Entity in
       var entity = pointer.pointee as! Entity
@@ -95,6 +98,11 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
       pointer.pointee = entity as Any
       return entity
     }
+  }
+   
+  @discardableResult
+  public mutating func updateIfExists(id: Entity.ID, update: (inout Entity) throws -> Void) rethrows -> Entity? {    
+    try? updateExists(id: id, update: update)
   }
   
   @discardableResult
