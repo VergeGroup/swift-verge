@@ -84,11 +84,11 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     }
   }
    
-  public mutating func updateIfExists(id: Entity.ID, update: (inout Entity) -> Void) {
+  public mutating func updateIfExists(id: Entity.ID, update: (inout Entity) throws -> Void) rethrows {
     guard entities.keys.contains(id) else { return }
-    withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Void in
+    try withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Void in
       var entity = pointer.pointee as! Entity
-      update(&entity)
+      try update(&entity)
       pointer.pointee = entity as Any
     }
   }
