@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol ValueContainerType {
+public protocol ValueContainerType: AnyObject {
   associatedtype Value
     
   func getter<Output>(
