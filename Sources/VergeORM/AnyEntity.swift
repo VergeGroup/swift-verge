@@ -30,8 +30,8 @@ struct AnyEntity : Hashable {
   }
     
   var base: Any {
-    get {
-      box.base
+    _read {
+      yield box.base
     }
     set {
       if isKnownUniquelyReferenced(&box) {
@@ -47,7 +47,7 @@ struct AnyEntity : Hashable {
     
   init<Base: EntityType>(_ base: Base) {
     self.box = .init(base)
-    self.identifier = base.id
+    self.identifier = base.entityID
   }
   
 }

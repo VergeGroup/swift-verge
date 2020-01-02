@@ -56,7 +56,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
     
   /// A set of entity ids that entity will be deleted after batchUpdates finished.
   /// The current entities will be deleted with this identifiers.
-  public var deletes: Set<Entity.ID> = .init()
+  public var deletes: Set<Entity.EntityID> = .init()
   
   init(current: EntityTable<Schema, Entity>) {
     self.current = current
@@ -83,7 +83,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   ///
   /// Firstly, find from updates and then find from current.
   /// - Parameter id:
-  public func find(by id: Entity.ID) -> Entity? {
+  public func find(by id: Entity.EntityID) -> Entity? {
     insertsOrUpdates.find(by: id) ?? current.find(by: id)
   }
   
@@ -91,7 +91,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   ///
   /// Firstly, find from updates and then find from current.
   /// - Parameter id:
-  public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.ID {
+  public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.EntityID {
     insertsOrUpdates.find(in: ids) + current.find(in: ids)
   }
   
@@ -112,24 +112,24 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   /// Set deletes entity with entity object
   /// - Parameter entity:
   public func delete(_ entity: Entity) {
-    deletes.insert(entity.id)
+    deletes.insert(entity.entityID)
   }
     
   /// Set deletes entity with identifier
   /// - Parameter entityID:
-  public func delete(_ entityID: Entity.ID) {
+  public func delete(_ entityID: Entity.EntityID) {
     deletes.insert(entityID)
   }
   
   /// Set deletes entities with passed entities.
   /// - Parameter entities:
   public func delete<S: Sequence>(_ entities: S) where S.Element == Entity {
-    deletes.formUnion(entities.lazy.map { $0.id })
+    deletes.formUnion(entities.lazy.map { $0.entityID })
   }
     
   /// Set deletes entities with passed sequence of entity's identifier.
   /// - Parameter entityIDs:
-  public func delete<S: Sequence>(_ entityIDs: S) where S.Element == Entity.ID {
+  public func delete<S: Sequence>(_ entityIDs: S) where S.Element == Entity.EntityID {
     deletes.formUnion(entityIDs)
   }
     
@@ -141,7 +141,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   /// Update existing entity. it throws if does not exsist.
   @discardableResult
   @inline(__always)
-  public func updateExists(id: Entity.ID, update: (inout Entity) throws -> Void) throws -> Entity {
+  public func updateExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) throws -> Entity {
     
     if insertsOrUpdates.find(by: id) != nil {
       return try insertsOrUpdates.updateExists(id: id, update: update)
@@ -164,7 +164,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   ///   - id:
   ///   - update:
   @discardableResult
-  public func updateIfExists(id: Entity.ID, update: (inout Entity) throws -> Void) rethrows -> Entity? {
+  public func updateIfExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) rethrows -> Entity? {
     try? updateExists(id: id, update: update)
   }
   
@@ -172,7 +172,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
 
 extension EntityModifier where Entity : Hashable {
   
-  public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.ID {
+  public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.EntityID {
     insertsOrUpdates.find(in: ids).union(current.find(in: ids))
   }
 }

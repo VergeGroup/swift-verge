@@ -33,8 +33,8 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   /// An object indicates result of insertion
   /// It can be used to create a getter object.
   public struct InsertionResult {
-    public var entityID: Entity.ID {
-      entity.id
+    public var entityID: Entity.EntityID {
+      entity.entityID
     }
     public let entity: Entity        
   }
@@ -58,8 +58,8 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   /// Returns all entity ids that stored.
   ///
   /// - TODO: It's expensive
-  public func allIDs() -> Set<Entity.ID> {
-    .init(entities.keys.map { $0 as! Entity.ID })
+  public func allIDs() -> Set<Entity.EntityID> {
+    .init(entities.keys.map { $0 as! Entity.EntityID })
   }
   
   /// Returns all entity that stored.
@@ -69,7 +69,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     .init(entities.values.lazy.map { $0.base as! Entity })
   }
   
-  public func find(by id: Entity.ID) -> Entity? {
+  public func find(by id: Entity.EntityID) -> Entity? {
     entities[id]?.base as? Entity
   }
     
@@ -77,7 +77,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   /// The order of array would not be sorted, it depends on dictionary's buffer.
   ///
   /// - Parameter ids: sequence of Entity.ID
-  public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.ID {
+  public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.EntityID {
     ids.reduce(into: [Entity]()) { (buf, id) in
       guard let entity = entities[id] else { return }
       buf.append(entity.base as! Entity)
@@ -86,7 +86,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   @discardableResult
   @inline(__always)
-  public mutating func updateExists(id: Entity.ID, update: (inout Entity) throws -> Void) throws -> Entity {
+  public mutating func updateExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) throws -> Entity {
     
     guard entities.keys.contains(id) else {
       throw BatchUpdatesError.storedEntityNotFound
@@ -101,13 +101,13 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   }
    
   @discardableResult
-  public mutating func updateIfExists(id: Entity.ID, update: (inout Entity) throws -> Void) rethrows -> Entity? {    
+  public mutating func updateIfExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) rethrows -> Entity? {
     try? updateExists(id: id, update: update)
   }
   
   @discardableResult
   public mutating func insert(_ entity: Entity) -> InsertionResult {
-    entities[entity.id] = .init(entity)
+    entities[entity.entityID] = .init(entity)
     return .init(entity: entity)
   }
   
@@ -119,7 +119,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     return results
   }
   
-  public mutating func remove(_ id: Entity.ID) {
+  public mutating func remove(_ id: Entity.EntityID) {
     entities.removeValue(forKey: id)
   }
   
@@ -130,7 +130,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
 
 extension EntityTable where Entity : Hashable {
   
-  public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.ID {
+  public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.EntityID {
     ids.reduce(into: Set<Entity>()) { (buf, id) in
       guard let entity = entities[id] else { return }
       buf.insert(entity as! Entity)
@@ -157,6 +157,7 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
     self.entityTableStorage = entityTableStorage
   }
   
+  @inline(__always)
   public func table<E: EntityType>(_ entityType: E.Type) -> EntityTable<Schema, E> {
     guard let rawTable = entityTableStorage[E.entityName] else {
       return EntityTable<Schema, E>(buffer: [:])

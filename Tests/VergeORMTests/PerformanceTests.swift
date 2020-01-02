@@ -212,7 +212,7 @@ class FindPerformanceTests: XCTestCase {
   
   func testFindMultiple() {
     
-    let ids = Set<Author.ID>([
+    let ids = Set<Author.EntityID>([
       .init("author.11"),
       .init("author.199"),
       .init("author.399")

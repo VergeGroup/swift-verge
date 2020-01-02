@@ -27,7 +27,7 @@ class VergeORMTests: XCTestCase {
     
     let context = state.db.beginBatchUpdates()
     
-    let book = Book(rawID: "some", authorID: Author.anonymous.id)
+    let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
     context.book.insertsOrUpdates.insert(book)
     
     state.db.commitBatchUpdates(context: context)
@@ -45,7 +45,7 @@ class VergeORMTests: XCTestCase {
     
     state.db.performBatchUpdates { (context) in
       
-      let book = Book(rawID: "some", authorID: Author.anonymous.id)
+      let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
       context.book.insertsOrUpdates.insert(book)
     }
     
@@ -62,7 +62,7 @@ class VergeORMTests: XCTestCase {
     
     state.db.performBatchUpdates { (context) in
       
-      let book = Book(rawID: "some", authorID: Author.anonymous.id)
+      let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
       context.book.insertsOrUpdates.insert(book)
     }
     
@@ -76,9 +76,9 @@ class VergeORMTests: XCTestCase {
     
     state.db.performBatchUpdates { (context) in
       
-      let book = Book(rawID: "some", authorID: Author.anonymous.id)
+      let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
       context.book.insertsOrUpdates.insert(book)
-      context.indexes.allBooks.append(book.id)
+      context.indexes.allBooks.append(book.entityID)
     }
         
     XCTAssertEqual(state.db.entities.book.count, 1)
@@ -87,7 +87,7 @@ class VergeORMTests: XCTestCase {
     print(state.db.indexes.allBooks)
     
     state.db.performBatchUpdates { (context) -> Void in
-      context.book.deletes.insert(Book.ID.init("some"))
+      context.book.deletes.insert(Book.EntityID.init("some"))
     }
     
     XCTAssertEqual(state.db.entities.book.count, 0)
@@ -99,11 +99,11 @@ class VergeORMTests: XCTestCase {
     
     var state = RootState()
     
-    let id = Book.ID.init("some")
+    let id = Book.EntityID.init("some")
     
     state.db.performBatchUpdates { (context) in
       
-      let book = Book(rawID: id.raw, authorID: Author.anonymous.id)
+      let book = Book(rawID: id.raw, authorID: Author.anonymous.entityID)
       context.book.insertsOrUpdates.insert(book)
     }
     
