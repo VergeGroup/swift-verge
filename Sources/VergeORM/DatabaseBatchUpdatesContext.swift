@@ -65,6 +65,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   
   // MARK: - Querying
   
+  /// All entities from context and current
   ///
   /// - TODO: Expensive
   public func all() -> AnyCollection<Entity> {

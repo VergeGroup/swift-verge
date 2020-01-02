@@ -8,6 +8,8 @@
 
 import Foundation
 
+/// Type erased container
+/// Identifier based Equality
 struct AnyEntity : Hashable {
   
   final class AnyBox {
