@@ -65,6 +65,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   
   // MARK: - Querying
   
+  /// All entities from context and current
   ///
   /// - TODO: Expensive
   public func all() -> AnyCollection<Entity> {
@@ -74,7 +75,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
         .merging(current.entities, uniquingKeysWith: { e, _ in e })
         .values
         .lazy
-        .map { $0 as! Entity }
+        .map { $0.base as! Entity }
     )
   }
     

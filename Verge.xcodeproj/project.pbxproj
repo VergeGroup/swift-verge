@@ -86,6 +86,7 @@
 		4BC6EFB823A8D1B500EFD688 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB623A8D1AF00EFD688 /* Database.swift */; };
 		4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */; };
 		4BCBCA8D2381CC2B00F33B15 /* DispatcherContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */; };
+		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
 		4BE76219239AA4A1009EB209 /* ChainingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE76218239AA4A1009EB209 /* ChainingViewModelTests.swift */; };
 		4BE76221239AAE09009EB209 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE76220239AAE09009EB209 /* AppDelegate.swift */; };
 		4BE76225239AAE09009EB209 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE76224239AAE09009EB209 /* ViewController.swift */; };
@@ -430,6 +431,7 @@
 		4BC6EFB623A8D1AF00EFD688 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherBase.swift; sourceTree = "<group>"; };
 		4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherContext.swift; sourceTree = "<group>"; };
+		4BD379EC23BD94D800CE474C /* AnyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEntity.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		4BE76218239AA4A1009EB209 /* ChainingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChainingViewModelTests.swift; sourceTree = "<group>"; };
 		4BE7621E239AAE09009EB209 /* VergeViewModelDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeViewModelDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -653,6 +655,7 @@
 				4BC6EFB623A8D1AF00EFD688 /* Database.swift */,
 				4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */,
 				4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */,
+				4BD379EC23BD94D800CE474C /* AnyEntity.swift */,
 				4B07360323AB2E0300866430 /* Index */,
 				4BFA22BA23A64289008D7BCB /* Storage+Gettetr.swift */,
 			);
@@ -1608,6 +1611,7 @@
 				4BFA22BB23A64289008D7BCB /* Storage+Gettetr.swift in Sources */,
 				4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */,
 				4B475BC0239AB983008A03E1 /* DatabaseBatchUpdatesContext.swift in Sources */,
+				4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */,
 				4BC6EFB823A8D1B500EFD688 /* Database.swift in Sources */,
 				4BC6EFAF23A8BF7800EFD688 /* OrderedIDIndex.swift in Sources */,
 				4B264EF823BD13BC001BD9A0 /* DatabaseError.swift in Sources */,
@@ -2238,6 +2242,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -2300,6 +2305,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";

@@ -22,7 +22,7 @@
 import Foundation
 
 protocol EntityTableType {
-  typealias RawTable = [AnyHashable : Any]
+  typealias RawTable = [AnyHashable : AnyEntity]
   var entities: RawTable { get }
   var entityName: EntityName { get }
 }
@@ -46,12 +46,12 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     _read { yield entities.count }
   }
   
-  internal var entities: [AnyHashable : Any] = [:]
+  internal var entities: RawTable = [:]
     
   init() {
   }
   
-  init(buffer: [AnyHashable : Any]) {
+  init(buffer: RawTable) {
     self.entities = buffer
   }
     
@@ -66,11 +66,11 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   ///
   /// - TODO: It's expensive
   public func allEntities() -> AnyCollection<Entity> {
-    .init(entities.values.lazy.map { $0 as! Entity })
+    .init(entities.values.lazy.map { $0.base as! Entity })
   }
   
   public func find(by id: Entity.ID) -> Entity? {
-    entities[id] as? Entity
+    entities[id]?.base as? Entity
   }
     
   /// Find entities by set of ids.
@@ -80,7 +80,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.ID {
     ids.reduce(into: [Entity]()) { (buf, id) in
       guard let entity = entities[id] else { return }
-      buf.append(entity as! Entity)
+      buf.append(entity.base as! Entity)
     }
   }
   
@@ -93,9 +93,9 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     }
     
     return try withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Entity in
-      var entity = pointer.pointee as! Entity
+      var entity = pointer.pointee.base as! Entity
       try update(&entity)
-      pointer.pointee = entity as Any
+      pointer.pointee.base = entity as Any
       return entity
     }
   }
@@ -107,7 +107,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   @discardableResult
   public mutating func insert(_ entity: Entity) -> InsertionResult {
-    entities[entity.id] = entity
+    entities[entity.id] = .init(entity)
     return .init(entity: entity)
   }
   
@@ -140,10 +140,9 @@ extension EntityTable where Entity : Hashable {
 
 extension EntityTable: Equatable where Entity : Equatable {
   public static func == (lhs: EntityTable<Schema, Entity>, rhs: EntityTable<Schema, Entity>) -> Bool {
-    (lhs.entities as! [AnyHashable : Entity]) == (rhs.entities as! [AnyHashable : Entity])
+    (lhs.entities) == (rhs.entities)
   }
 }
-
 
 @dynamicMemberLookup
 public struct EntityTablesStorage<Schema: EntitySchemaType> {
