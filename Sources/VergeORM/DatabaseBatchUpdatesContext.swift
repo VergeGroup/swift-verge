@@ -139,6 +139,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   }
   
   /// Update existing entity. it throws if does not exsist.
+  @discardableResult
   @inline(__always)
   public func updateExists(id: Entity.ID, update: (inout Entity) throws -> Void) throws -> Entity {
     
