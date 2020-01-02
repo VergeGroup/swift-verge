@@ -64,6 +64,19 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   }
   
   // MARK: - Querying
+  
+  ///
+  /// - TODO: Expensive
+  public func all() -> AnyCollection<Entity> {
+    AnyCollection(
+      insertsOrUpdates
+        .entities
+        .merging(current.entities, uniquingKeysWith: { e, _ in e })
+        .values
+        .lazy
+        .map { $0 as! Entity }
+    )
+  }
     
   /// Find entity from updates and current.
   ///
