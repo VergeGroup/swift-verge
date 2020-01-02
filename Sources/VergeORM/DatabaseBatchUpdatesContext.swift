@@ -74,7 +74,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
         .merging(current.entities, uniquingKeysWith: { e, _ in e })
         .values
         .lazy
-        .map { $0 as! Entity }
+        .map { $0.base as! Entity }
     )
   }
     
