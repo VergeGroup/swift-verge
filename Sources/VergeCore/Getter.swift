@@ -52,7 +52,12 @@ open class GetterBase<Output> {
   }
 }
 
-public final class AnyGetter<Output>: GetterBase<Output> {
+public protocol AnyGetterType: AnyObject {
+  associatedtype Output
+  var value: Output { get }
+}
+
+public final class AnyGetter<Output>: GetterBase<Output>, AnyGetterType {
   
   private let valueGetter: () -> Output
   
@@ -75,7 +80,13 @@ public final class AnyGetter<Output>: GetterBase<Output> {
   
 }
 
-open class Getter<Input, Output>: GetterBase<Output> {
+public protocol GetterType: AnyGetterType {
+  associatedtype Input
+  associatedtype Output
+  var value: Output { get }
+}
+
+open class Getter<Input, Output>: GetterBase<Output>, GetterType {
   
   private let selector: (Input) -> Output
   private var computedValue: Output
