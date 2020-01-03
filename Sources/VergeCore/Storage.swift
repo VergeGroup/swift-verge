@@ -22,21 +22,16 @@
 
 import Foundation
 
-@propertyWrapper
-public final class Storage<Value>: CustomReflectable {
+open class Storage<Value>: CustomReflectable {
     
   private let willUpdateEmitter = EventEmitter<Void>()
   private let didUpdateEmitter = EventEmitter<Value>()
   
-  public var wrappedValue: Value {
+  public final var wrappedValue: Value {
     return value
   }
   
-  public var projectedValue: Storage<Value> {
-    self
-  }
-  
-  public var value: Value {
+  public final var value: Value {
     lock.lock()
     defer {
       lock.unlock()
@@ -54,7 +49,7 @@ public final class Storage<Value>: CustomReflectable {
   
   @discardableResult
   @inline(__always)
-  public func update<Result>(_ update: (inout Value) throws -> Result) rethrows -> Result {
+  public final func update<Result>(_ update: (inout Value) throws -> Result) rethrows -> Result {
     do {
       let notifyValue: Value
       lock.lock()
@@ -76,7 +71,7 @@ public final class Storage<Value>: CustomReflectable {
     }
   }
   
-  public func replace(_ value: Value) {
+  public final func replace(_ value: Value) {
     do {
       let notifyValue: Value
       lock.lock()
@@ -98,7 +93,7 @@ public final class Storage<Value>: CustomReflectable {
   /// Storage tells got a newValue.
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
-  public func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
+  public final func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
     willUpdateEmitter.add(subscriber)
   }
   
@@ -106,11 +101,11 @@ public final class Storage<Value>: CustomReflectable {
   /// Storage tells got a newValue.
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
-  public func addDidUpdate(subscriber: @escaping (Value) -> Void) -> EventEmitterSubscribeToken {
+  public final func addDidUpdate(subscriber: @escaping (Value) -> Void) -> EventEmitterSubscribeToken {
     didUpdateEmitter.add(subscriber)
   }
   
-  public func remove(subscribe token: EventEmitterSubscribeToken) {
+  public final func remove(subscribe token: EventEmitterSubscribeToken) {
     didUpdateEmitter.remove(token)
     willUpdateEmitter.remove(token)
   }
