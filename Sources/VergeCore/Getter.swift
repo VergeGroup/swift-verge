@@ -21,7 +21,15 @@
 
 import Foundation
 
-open class GetterBase<Output> {
+open class GetterBase<Output>: Hashable {
+  
+  public static func == (lhs: GetterBase<Output>, rhs: GetterBase<Output>) -> Bool {
+    lhs === rhs
+  }
+    
+  public func hash(into hasher: inout Hasher) {
+    ObjectIdentifier(self).hash(into: &hasher)
+  }
     
   public var value: Output {
     _read { yield storage.value }
