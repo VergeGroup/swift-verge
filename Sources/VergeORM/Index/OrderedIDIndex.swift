@@ -42,17 +42,17 @@ public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: Inde
 
 extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplaceableCollection {
   
-  public typealias Element = Entity.ID
+  public typealias Element = Entity.EntityID
   public typealias Index = Int
-  public typealias SubSequence = ArraySlice<Entity.ID>
+  public typealias SubSequence = ArraySlice<Entity.EntityID>
   
-  public mutating func append(_ newElement: __owned Entity.ID) {
+  public mutating func append(_ newElement: __owned Entity.EntityID) {
     backing.append(newElement)
   }
   
-  public subscript(position: Int) -> Entity.ID {
+  public subscript(position: Int) -> Entity.EntityID {
     get {
-      backing[position] as! Entity.ID
+      backing[position] as! Entity.EntityID
     }
     set {
       backing[position] = newValue as AnyHashable

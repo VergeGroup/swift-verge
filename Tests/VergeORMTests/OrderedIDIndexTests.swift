@@ -22,12 +22,12 @@ class OrderedIDIndexTests: XCTestCase {
       let author = Author(rawID: "author.1")
       context.author.insertsOrUpdates.insert(author)
       
-      let book = Book(rawID: "some", authorID: author.id)
+      let book = Book(rawID: "some", authorID: author.entityID)
       context.book.insertsOrUpdates.insert(book)
       
       context.indexes.authorGroupedBook
-        .update(in: author.id) { (index) in
-          index.append(book.id)
+        .update(in: author.entityID) { (index) in
+          index.append(book.entityID)
       }
     }
     

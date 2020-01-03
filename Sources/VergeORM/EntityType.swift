@@ -38,7 +38,7 @@ public protocol EntityType {
   
   associatedtype IdentifierType: Hashable
    
-  var id: Identifier { get }
+  var entityID: EntityID { get }
   
   #if COCOAPODS
   typealias EntityTableKey = Verge.EntityTableKey<Self>
@@ -48,11 +48,16 @@ public protocol EntityType {
 }
 
 extension EntityType {
+    
+  public typealias EntityID = EntityIdentifier<Self>
+    
+  @available(*, deprecated, renamed: "EntityID")
+  public typealias ID = EntityID
   
-  public typealias Identifier = EntityIdentifier<Self>
-  
-  public typealias ID = Identifier
-  
+  @available(*, deprecated, renamed: "entityID")
+  public var id: EntityID {
+    _read { yield entityID }
+  }
 }
 
 public struct EntityName: Hashable {

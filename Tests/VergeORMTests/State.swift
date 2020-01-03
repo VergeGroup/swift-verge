@@ -14,12 +14,12 @@ struct Book: EntityType, Equatable {
   
   typealias IdentifierType = String
   
-  var id: Identifier {
+  var entityID: EntityID {
     .init(rawID)
   }
   
   let rawID: String
-  let authorID: Author.ID
+  let authorID: Author.EntityID
   var name: String = ""
 }
 
@@ -27,7 +27,7 @@ struct Author: EntityType {
   
   typealias IdentifierType = String
   
-  var id: Identifier {
+  var entityID: EntityID {
     .init(rawID)
   }
     

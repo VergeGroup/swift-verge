@@ -57,15 +57,15 @@ fileprivate final class _GetterCache {
   private let cache = NSCache<NSString, AnyObject>()
   
   @inline(__always)
-  private func key<E: EntityType>(entityID: E.ID) -> NSString {
+  private func key<E: EntityType>(entityID: E.EntityID) -> NSString {
     "\(entityID)" as NSString
   }
   
-  func getter<E: EntityType>(entityID: E.ID) -> AnyObject? {
+  func getter<E: EntityType>(entityID: E.EntityID) -> AnyObject? {
     cache.object(forKey: key(entityID: entityID))
   }
   
-  func setGetter<E: EntityType>(_ getter: AnyObject, entityID: E.ID) {
+  func setGetter<E: EntityType>(_ getter: AnyObject, entityID: E.EntityID) {
     cache.setObject(getter, forKey: key(entityID: entityID))
   }
   
@@ -131,7 +131,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   /// - Parameters:
   ///   - tableSelector:
   ///   - entityID:
-  public func entityGetter<E: EntityType>(entityID: E.ID) -> Getter<Value, E?> {
+  public func entityGetter<E: EntityType>(entityID: E.EntityID) -> Getter<Value, E?> {
     
     let _cache = cache
     
@@ -151,7 +151,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   }
   
   public func entityGetter<E: EntityType & Equatable>(
-    entityID: E.ID
+    entityID: E.EntityID
   ) -> Getter<Value, E?> {
     
     let _cache = cache
@@ -179,9 +179,9 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
     let _cache = cache
     
-    guard let getter = _cache.getter(entityID: entity.id) as? Getter<Value, E> else {
+    guard let getter = _cache.getter(entityID: entity.entityID) as? Getter<Value, E> else {
       let box = _RefBox(entity)
-      let entityID = entity.id
+      let entityID = entity.entityID
       
       let newGetter = entityGetter(
         update: { db -> E in
@@ -207,9 +207,9 @@ extension ValueContainerType where Value : DatabaseEmbedding {
        
     let _cache = cache
     
-    guard let getter = _cache.getter(entityID: entity.id) as? Getter<Value, E> else {
+    guard let getter = _cache.getter(entityID: entity.entityID) as? Getter<Value, E> else {
       let box = _RefBox(entity)
-      let entityID = entity.id
+      let entityID = entity.entityID
             
       let newGetter = entityGetter(
         update: { db -> E in

@@ -47,9 +47,9 @@ public struct HashIndex<Schema: EntitySchemaType, HashKey: Hashable, Entity: Ent
     
   }
     
-  public subscript(key: HashKey) -> Entity.ID? {
+  public subscript(key: HashKey) -> Entity.EntityID? {
     get {
-      backing[key] as? Entity.ID
+      backing[key] as? Entity.EntityID
     }
     set {
       backing[key] = newValue as AnyHashable

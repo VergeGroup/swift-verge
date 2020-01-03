@@ -19,7 +19,7 @@ class SelectorTests: XCTestCase {
     
     let storage = Storage<RootState>(.init())
     
-    let id = Book.ID.init("some")
+    let id = Book.EntityID.init("some")
     
     let nullableSelector = storage.entityGetter(
       entityID: id
@@ -41,9 +41,9 @@ class SelectorTests: XCTestCase {
       storage.update { state in
         let createdBook = state.db.performBatchUpdates { (context) -> Book in
           
-          let book = Book(rawID: id.raw, authorID: Author.anonymous.id)
+          let book = Book(rawID: id.raw, authorID: Author.anonymous.entityID)
           context.book.insertsOrUpdates.insert(book)
-          context.indexes.allBooks.append(book.id)
+          context.indexes.allBooks.append(book.entityID)
           
           return book
         }
@@ -104,9 +104,9 @@ class SelectorTests: XCTestCase {
       let result = storage.update { state in
         state.db.performBatchUpdates { (context) -> EntityTable<RootState.Database.Schema, Book>.InsertionResult in
           
-          let book = Book(rawID: "some", authorID: Author.anonymous.id)
+          let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
           let r = context.book.insertsOrUpdates.insert(book)
-          context.indexes.allBooks.append(book.id)
+          context.indexes.allBooks.append(book.entityID)
           
           return r
         }
@@ -224,8 +224,8 @@ class SelectorTests: XCTestCase {
     
     let storage = Storage<RootState>(.init())
     
-    let getter1 = storage.entityGetter(entityID: Author.ID("Hoo"))
-    let getter2 = storage.entityGetter(entityID: Author.ID("Hoo"))
+    let getter1 = storage.entityGetter(entityID: Author.EntityID("Hoo"))
+    let getter2 = storage.entityGetter(entityID: Author.EntityID("Hoo"))
     
     XCTAssert(getter1 === getter2)
     
@@ -236,7 +236,7 @@ class SelectorTests: XCTestCase {
     let storage = Storage<RootState>(.init())
     
     measure {
-      let _ = storage.entityGetter(entityID: Author.ID("Hoo"))
+      let _ = storage.entityGetter(entityID: Author.EntityID("Hoo"))
     }
     
   }
@@ -245,10 +245,10 @@ class SelectorTests: XCTestCase {
         
     let storage = Storage<RootState>(.init())
     
-    let _ = storage.entityGetter(entityID: Author.ID("Hoo"))
+    let _ = storage.entityGetter(entityID: Author.EntityID("Hoo"))
     
     measure {
-      let _ = storage.entityGetter(entityID: Author.ID("Hoo"))
+      let _ = storage.entityGetter(entityID: Author.EntityID("Hoo"))
     }
                 
   }

@@ -39,11 +39,11 @@ public struct GroupByIndex<
     backing.keys.count
   }
   
-  public func groups() -> Set<GroupEntity.ID> {
-    Set(backing.keys.map { $0 as! GroupEntity.ID })
+  public func groups() -> Set<GroupEntity.EntityID> {
+    Set(backing.keys.map { $0 as! GroupEntity.EntityID })
   }
   
-  public func orderedID(in groupEntityID: GroupEntity.ID) -> OrderedIDIndex<Schema, GroupedEntity> {
+  public func orderedID(in groupEntityID: GroupEntity.EntityID) -> OrderedIDIndex<Schema, GroupedEntity> {
     backing[groupEntityID, default: .init()]
   }
   
@@ -53,7 +53,7 @@ public struct GroupByIndex<
     
     if GroupEntity.entityName == entityName {
       removing.forEach {
-        backing.removeValue(forKey: $0 as! GroupEntity.ID)
+        backing.removeValue(forKey: $0 as! GroupEntity.EntityID)
       }
     }
     
@@ -73,11 +73,11 @@ public struct GroupByIndex<
     
   }
       
-  public mutating func update(in groupEntityID: GroupEntity.ID, update: (inout OrderedIDIndex<Schema, GroupedEntity>) -> Void) {
+  public mutating func update(in groupEntityID: GroupEntity.EntityID, update: (inout OrderedIDIndex<Schema, GroupedEntity>) -> Void) {
     update(&backing[groupEntityID, default: .init()])
   }
       
-  public mutating func removeGroup(_ groupEntityID: GroupEntity.ID) {
+  public mutating func removeGroup(_ groupEntityID: GroupEntity.EntityID) {
     backing.removeValue(forKey: groupEntityID)
   }
       
