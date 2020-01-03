@@ -132,14 +132,14 @@ open class Getter<Input, Output>: GetterBase<Output>, GetterType {
     onDeinit()
   }
   
-  func _receive(newValue: Input) {
+  final func _receive(newValue: Input) {
     
     guard !filter(newValue) else { return }
     let nextValue = map(newValue)
     storage.replace(nextValue)
   }
     
-  public func asAny() -> AnyGetter<Output> {
+  public final func asAny() -> AnyGetter<Output> {
     .init(self)
   }
   
