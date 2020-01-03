@@ -10,42 +10,39 @@ import Foundation
 
 import XCTest
 
-import VergeCore
+@testable import VergeCore
 
 class GetterTests: XCTestCase {
   
   func testMemoization() {
     
     let getter = Getter(
-      initialSource: 0,
-      selector: { $0 },
-      equality: EqualityComputer.init(),
-      memoizes: true,
-      onDeinit: {}
+      input: 0,
+      filter: EqualityComputer.init(),
+      map: { $0 }
     )
     getter.addDidUpdate { (v) in
       XCTFail()
     }
-    getter._accept(sourceValue: 0)
+    getter._receive(newValue: 0)
     
   }
   
   func testNonMemoization() {
     
     var count = 0
+        
     let getter = Getter(
-      initialSource: 0,
-      selector: { $0 },
-      equality: EqualityComputer.init(),
-      memoizes: false,
-      onDeinit: {}
+      input: 0,
+      filter: .alwaysDifferent(),
+      map: { $0 }
     )
     
     getter.addDidUpdate { (v) in
       count += 1
     }
     XCTAssert(count == 0)
-    getter._accept(sourceValue: 0)
+    getter._receive(newValue: 0)
     XCTAssert(count == 1)
   }
 }

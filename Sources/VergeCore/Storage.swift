@@ -23,7 +23,7 @@
 import Foundation
 
 @propertyWrapper
-public final class Storage<Value>: CustomReflectable, ValueContainerType {
+public final class Storage<Value>: CustomReflectable {
     
   private let willUpdateEmitter = EventEmitter<Void>()
   private let didUpdateEmitter = EventEmitter<Value>()
