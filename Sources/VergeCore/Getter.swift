@@ -22,33 +22,31 @@
 import Foundation
 
 open class GetterBase<Output> {
-  
-  let willUpdateEmitter: EventEmitter<Void>
-  let didUpdateEmitter: EventEmitter<Output>
-  
+    
   public var value: Output {
-    fatalError()
+    _read { yield storage.value }
   }
   
-  init(willUpdateEmitter: EventEmitter<Void>, didUpdateEmitter: EventEmitter<Output>) {
-    self.willUpdateEmitter = willUpdateEmitter
-    self.didUpdateEmitter = didUpdateEmitter
-  }
+  let storage: Storage<Output>
   
-  /// Register observer with closure.
-  /// Storage tells got a newValue.
-  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
-  @discardableResult
-  public func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
-    willUpdateEmitter.add(subscriber)
+  init(storage: Storage<Output>) {
+    self.storage = storage
   }
   
   /// Register observer with closure.
   /// Storage tells got a newValue.
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
-  public func addDidUpdate(subscriber: @escaping (Output) -> Void) -> EventEmitterSubscribeToken {
-    didUpdateEmitter.add(subscriber)
+  public final func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
+    storage.addWillUpdate(subscriber: subscriber)
+  }
+  
+  /// Register observer with closure.
+  /// Storage tells got a newValue.
+  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
+  @discardableResult
+  public final func addDidUpdate(subscriber: @escaping (Output) -> Void) -> EventEmitterSubscribeToken {
+    storage.addDidUpdate(subscriber: subscriber)
   }
 }
 
@@ -68,10 +66,7 @@ public final class AnyGetter<Output>: GetterBase<Output>, AnyGetterType {
       source.value
     }
     
-    super.init(
-      willUpdateEmitter: source.willUpdateEmitter,
-      didUpdateEmitter: source.didUpdateEmitter
-    )
+    super.init(storage: source.storage)
   }
       
   public override var value: Output {
@@ -91,13 +86,7 @@ open class Getter<Input, Output>: GetterBase<Output>, GetterType {
   private var didUpdates: [(Output) -> Void] = []
   
   var onDeinit: () -> Void = {}
-  
-  public override var value: Output {
-    _read { yield storage.value }
-  }
-    
-  private let storage: Storage<Output>
-    
+      
   private let map: (Input) -> Output
   private let filter: (Input) -> Bool
   private let ratainUpstream: () -> Void
@@ -111,11 +100,10 @@ open class Getter<Input, Output>: GetterBase<Output>, GetterType {
     _ = filter.isEqual(value: input)
     
     self.map = map
-    self.storage = .init(map(input))
     self.filter = filter.isEqual
     self.ratainUpstream = {}
     
-    super.init(willUpdateEmitter: .init(), didUpdateEmitter: .init())
+    super.init(storage: .init(map(input)))
   }
   
   public init<UpstreamInput>(
@@ -124,7 +112,6 @@ open class Getter<Input, Output>: GetterBase<Output>, GetterType {
     map: @escaping (Input) -> Output
   ) {
             
-    self.storage = .init(map(upstream.value))
     self.map = map
     self.filter = filter.isEqual
     
@@ -134,7 +121,7 @@ open class Getter<Input, Output>: GetterBase<Output>, GetterType {
       withExtendedLifetime(upstream) {}
     }
     
-    super.init(willUpdateEmitter: .init(), didUpdateEmitter: .init())
+    super.init(storage: .init(map(upstream.value)))
     
     upstream.addDidUpdate { [weak self] value in
       self?._receive(newValue: value)
@@ -148,10 +135,8 @@ open class Getter<Input, Output>: GetterBase<Output>, GetterType {
   func _receive(newValue: Input) {
     
     guard !filter(newValue) else { return }
-    willUpdateEmitter.accept(())
     let nextValue = map(newValue)
     storage.replace(nextValue)
-    didUpdateEmitter.accept(nextValue)
   }
     
   public func asAny() -> AnyGetter<Output> {
