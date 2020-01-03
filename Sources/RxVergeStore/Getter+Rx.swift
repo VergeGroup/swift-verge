@@ -17,7 +17,7 @@ import VergeCore
 
 fileprivate var getter_subject: Void?
 
-extension GetterBase {
+extension AnyGetterType {
   
   private var subject: BehaviorRelay<Output> {
     

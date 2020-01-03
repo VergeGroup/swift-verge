@@ -53,6 +53,15 @@ open class GetterBase<Output> {
 public protocol AnyGetterType: AnyObject {
   associatedtype Output
   var value: Output { get }
+  
+  @discardableResult
+  func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken
+  
+  /// Register observer with closure.
+  /// Storage tells got a newValue.
+  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
+  @discardableResult
+  func addDidUpdate(subscriber: @escaping (Output) -> Void) -> EventEmitterSubscribeToken
 }
 
 public final class AnyGetter<Output>: GetterBase<Output>, AnyGetterType {
