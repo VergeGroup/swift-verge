@@ -32,16 +32,16 @@ open class Storage<Value>: CustomReflectable {
   }
   
   public final var value: Value {
-    lock.lock()
+    _lock.lock()
     defer {
-      lock.unlock()
+      _lock.unlock()
     }
     return nonatomicValue
   }
   
   private var nonatomicValue: Value
   
-  private let lock = NSRecursiveLock()
+  let _lock = NSRecursiveLock()
   
   public init(_ value: Value) {
     self.nonatomicValue = value
@@ -52,21 +52,21 @@ open class Storage<Value>: CustomReflectable {
   public final func update<Result>(_ update: (inout Value) throws -> Result) rethrows -> Result {
     do {
       let notifyValue: Value
-      lock.lock()
+      _lock.lock()
       notifyValue = nonatomicValue
-      lock.unlock()
+      _lock.unlock()
       notifyWillUpdate(value: notifyValue)
     }
     
-    lock.lock()
+    _lock.lock()
     do {
       let r = try update(&nonatomicValue)
       let notifyValue = nonatomicValue
-      lock.unlock()
+      _lock.unlock()
       notifyDidUpdate(value: notifyValue)
       return r
     } catch {
-      lock.unlock()
+      _lock.unlock()
       throw error
     }
   }
@@ -74,17 +74,17 @@ open class Storage<Value>: CustomReflectable {
   public final func replace(_ value: Value) {
     do {
       let notifyValue: Value
-      lock.lock()
+      _lock.lock()
       notifyValue = nonatomicValue
-      lock.unlock()
+      _lock.unlock()
       notifyWillUpdate(value: notifyValue)
     }
     
     do {
-      lock.lock()
+      _lock.lock()
       nonatomicValue = value
       let notifyValue = nonatomicValue
-      lock.unlock()
+      _lock.unlock()
       notifyDidUpdate(value: notifyValue)
     }
   }

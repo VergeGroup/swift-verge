@@ -22,7 +22,7 @@ class SelectorTests: XCTestCase {
     let id = Book.EntityID.init("some")
     
     let nullableSelector = storage.entityGetter(
-      entityID: id
+      from: id
     )
     
     XCTContext.runActivity(named: "simple") { (a) -> Void in
@@ -52,7 +52,7 @@ class SelectorTests: XCTestCase {
       }
       
       let selector = storage.nonNullEntityGetter(
-        entity: book
+        from: book
       )
       
       XCTAssertNotNil(nullableSelector.value)
@@ -224,8 +224,8 @@ class SelectorTests: XCTestCase {
     
     let storage = Storage<RootState>(.init())
     
-    let getter1 = storage.entityGetter(entityID: Author.EntityID("Hoo"))
-    let getter2 = storage.entityGetter(entityID: Author.EntityID("Hoo"))
+    let getter1 = storage.entityGetter(from: Author.EntityID("Hoo"))
+    let getter2 = storage.entityGetter(from: Author.EntityID("Hoo"))
     
     XCTAssert(getter1 === getter2)
     
@@ -236,7 +236,7 @@ class SelectorTests: XCTestCase {
     let storage = Storage<RootState>(.init())
     
     measure {
-      let _ = storage.entityGetter(entityID: Author.EntityID("Hoo"))
+      let _ = storage.entityGetter(from: Author.EntityID("Hoo"))
     }
     
   }
@@ -245,10 +245,10 @@ class SelectorTests: XCTestCase {
         
     let storage = Storage<RootState>(.init())
     
-    let _ = storage.entityGetter(entityID: Author.EntityID("Hoo"))
+    let _ = storage.entityGetter(from: Author.EntityID("Hoo"))
     
     measure {
-      let _ = storage.entityGetter(entityID: Author.EntityID("Hoo"))
+      let _ = storage.entityGetter(from: Author.EntityID("Hoo"))
     }
                 
   }
