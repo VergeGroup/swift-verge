@@ -28,11 +28,10 @@ struct State {
 }
 
 let getter = store.getter(
-  selector: { (state) -> Int in
+  filter: .init(selector: { $0.count }, equals: ==)
+  map: { (state) -> Int in
     state.count * 2
-},  
-  equality: .init(selector: { $0.count }, equals: ==)
-)
+})
 
 getter.value
 ```

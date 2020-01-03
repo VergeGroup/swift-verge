@@ -43,7 +43,7 @@ struct Book: EntityType {
 
   typealias IdentifierType = String
   
-  var id: Identifier {
+  var entityID: EntityID {
     .init(rawID)
   }
   
@@ -54,7 +54,7 @@ struct Author: EntityType {
 
   typealias IdentifierType = String
   
-  var id: Identifier {
+  var entityID: EntityID {
     .init(rawID)
   }
   

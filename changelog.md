@@ -2,6 +2,32 @@
 
 ## Master
 
+### Improve Getter
+
+{% embed url="https://github.com/muukii/Verge/pull/37" %}
+
+
+
+### Add AnyGetterType GetterType protocol
+
+{% embed url="https://github.com/muukii/Verge/commit/c864deb23f2fa7d14bda93fa567845d82b28f784" %}
+
+
+
+### Rename
+
+{% embed url="https://github.com/muukii/Verge/pull/36" %}
+
+
+
+### Add commitInline to context
+
+{% embed url="https://github.com/muukii/Verge/pull/32" %}
+
+
+
+## 6.0.0-beta.5
+
 ### Rename DispatcherType.dispatchTarget to target
 
 ### \[Breaking change\] Getter for ORM
