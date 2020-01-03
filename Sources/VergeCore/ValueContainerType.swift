@@ -10,6 +10,8 @@ import Foundation
 
 public protocol ValueContainerType: AnyObject {
   associatedtype Value
+  
+  var wrappedValue: Value { get }
     
   func getter<Output>(
     filter: EqualityComputer<Value>,

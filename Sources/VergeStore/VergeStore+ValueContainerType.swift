@@ -29,6 +29,10 @@ import VergeCore
 
 extension StoreBase: ValueContainerType {
   
+  public var wrappedValue: State {
+    _read { yield state }
+  }
+  
   public func getter<Output>(filter: EqualityComputer<State>, map: @escaping (State) -> Output) -> Getter<State, Output> {
     _backingStorage.getter(filter: filter, map: map)
   }
