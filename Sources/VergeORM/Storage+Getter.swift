@@ -113,17 +113,16 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     })
     
     let _getter = getter(
-      selector: { (value) -> Output in
-        update(Value.getterToDatabase(value))
-    },
-      equality: EqualityComputer.init(selector: { path($0) }, equals: { (old, new) -> Bool in
+      filter: EqualityComputer.init(selector: { path($0) }, equals: { (old, new) -> Bool in
         guard !updatedAtEquality.isEqual(value: new) else {
           return true
         }
         return additionalEqualityComputer?.isEqual(value: new) ?? false
-      })
-    )
-        
+      }),
+      map: { (value) -> Output in
+        update(Value.getterToDatabase(value))
+    })
+    
     return _getter
   }
     

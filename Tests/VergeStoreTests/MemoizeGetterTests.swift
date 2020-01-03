@@ -52,12 +52,11 @@ class MemoizeGetterTests: XCTestCase {
     var callCount = 0
                     
     let getter = store.getter(
-      selector: { (state) -> Int in
+      filter: .init(selector: { $0.count }, equals: ==),
+      map: { (state) -> Int in
         callCount += 1
         return state.count * 2
-    },
-      equality: .init(selector: { $0.count }, equals: ==)
-    )
+    })
         
     XCTAssertEqual(getter.value, 0)
     

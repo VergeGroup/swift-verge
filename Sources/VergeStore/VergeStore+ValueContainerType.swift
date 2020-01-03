@@ -27,15 +27,10 @@ import Foundation
 import VergeCore
 #endif
 
-extension StoreBase {
+extension StoreBase: ValueContainerType {
   
-  @inlinable
-  public func getter<Output>(
-    selector: @escaping (State) -> Output,
-    equality: EqualityComputer<State>
-  ) -> Getter<State, Output> {
-    
-    _backingStorage.getter(selector: selector, equality: equality)
+  public func getter<Output>(filter: EqualityComputer<State>, map: @escaping (State) -> Output) -> Getter<State, Output> {
+    _backingStorage.getter(filter: filter, map: map)
   }
   
 }

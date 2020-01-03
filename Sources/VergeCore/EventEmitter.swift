@@ -94,8 +94,7 @@ extension EventEmitter {
       
       let anySubscriber = AnySubscriber(subscriber)
       let subscription = Subscription(subscriber: anySubscriber, eventEmitter: eventEmitter)
-      subscriber.receive(subscription: subscription)
-      
+      subscriber.receive(subscription: subscription)      
     }
     
   }

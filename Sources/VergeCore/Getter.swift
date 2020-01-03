@@ -22,33 +22,31 @@
 import Foundation
 
 open class GetterBase<Output> {
-  
-  let willUpdateEmitter: EventEmitter<Void>
-  let didUpdateEmitter: EventEmitter<Output>
-  
+    
   public var value: Output {
-    fatalError()
+    _read { yield storage.value }
   }
   
-  init(willUpdateEmitter: EventEmitter<Void>, didUpdateEmitter: EventEmitter<Output>) {
-    self.willUpdateEmitter = willUpdateEmitter
-    self.didUpdateEmitter = didUpdateEmitter
-  }
+  let storage: Storage<Output>
   
-  /// Register observer with closure.
-  /// Storage tells got a newValue.
-  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
-  @discardableResult
-  public func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
-    willUpdateEmitter.add(subscriber)
+  init(storage: Storage<Output>) {
+    self.storage = storage
   }
   
   /// Register observer with closure.
   /// Storage tells got a newValue.
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
-  public func addDidUpdate(subscriber: @escaping (Output) -> Void) -> EventEmitterSubscribeToken {
-    didUpdateEmitter.add(subscriber)
+  public final func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
+    storage.addWillUpdate(subscriber: subscriber)
+  }
+  
+  /// Register observer with closure.
+  /// Storage tells got a newValue.
+  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
+  @discardableResult
+  public final func addDidUpdate(subscriber: @escaping (Output) -> Void) -> EventEmitterSubscribeToken {
+    storage.addDidUpdate(subscriber: subscriber)
   }
 }
 
@@ -68,10 +66,7 @@ public final class AnyGetter<Output>: GetterBase<Output>, AnyGetterType {
       source.value
     }
     
-    super.init(
-      willUpdateEmitter: source.willUpdateEmitter,
-      didUpdateEmitter: source.didUpdateEmitter
-    )
+    super.init(storage: source.storage)
   }
       
   public override var value: Output {
@@ -88,50 +83,63 @@ public protocol GetterType: AnyGetterType {
 
 open class Getter<Input, Output>: GetterBase<Output>, GetterType {
   
-  private let selector: (Input) -> Output
-  private var computedValue: Output
-  private let memoizes: Bool
-  private let checker: (Input) -> Bool
-  private let onDeinit: () -> Void
-         
+  private var didUpdates: [(Output) -> Void] = []
+  
+  var onDeinit: () -> Void = {}
+      
+  private let map: (Input) -> Output
+  private let filter: (Input) -> Bool
+  private let ratainUpstream: () -> Void
+  
   public init(
-    initialSource: Input,
-    selector: @escaping (Input) -> Output,
-    equality: EqualityComputer<Input>,
-    memoizes: Bool = true,
-    onDeinit: @escaping () -> Void
+    input: Input,
+    filter: EqualityComputer<Input>,
+    map: @escaping (Input) -> Output
   ) {
     
-    self.onDeinit = onDeinit
-    self.selector = selector
-    self.memoizes = memoizes
-    self.checker = equality.isEqual
+    _ = filter.isEqual(value: input)
     
-    self.computedValue = selector(initialSource)
+    self.map = map
+    self.filter = filter.isEqual
+    self.ratainUpstream = {}
     
-    super.init(willUpdateEmitter: .init(), didUpdateEmitter: .init())
+    super.init(storage: .init(map(input)))
+  }
+  
+  public init<UpstreamInput>(
+    upstream: Getter<UpstreamInput, Input>,
+    filter: EqualityComputer<Input>,
+    map: @escaping (Input) -> Output
+  ) {
+            
+    self.map = map
+    self.filter = filter.isEqual
     
-    // To store previous value
-    _ = self.checker(initialSource)
+    _ = filter.isEqual(value: upstream.value)
+    
+    self.ratainUpstream = {
+      withExtendedLifetime(upstream) {}
+    }
+    
+    super.init(storage: .init(map(upstream.value)))
+    
+    upstream.addDidUpdate { [weak self] value in
+      self?._receive(newValue: value)
+    }
   }
   
   deinit {
     onDeinit()
   }
   
-  public override var value: Output {
-    computedValue
-  }
-  
-  public func _accept(sourceValue: Input) {
-    guard !memoizes || !checker(sourceValue) else { return }
-    willUpdateEmitter.accept(())
-    let newValue = selector(sourceValue)
-    computedValue = newValue
-    didUpdateEmitter.accept(newValue)
+  final func _receive(newValue: Input) {
+    
+    guard !filter(newValue) else { return }
+    let nextValue = map(newValue)
+    storage.replace(nextValue)
   }
     
-  public func asAny() -> AnyGetter<Output> {
+  public final func asAny() -> AnyGetter<Output> {
     .init(self)
   }
   
@@ -255,34 +263,4 @@ extension EqualityComputer where Input : Equatable {
   public convenience init() {
     self.init(selector: { $0 }, equals: ==)
   }
-}
-
-extension Storage {
-  
-  public func getter<Output>(
-    selector: @escaping (Value) -> Output,
-    equality: EqualityComputer<Value>
-  ) -> Getter<Value, Output> {
-    
-    var token: EventEmitterSubscribeToken?
-    
-    let selector = Getter(
-      initialSource: value,
-      selector: selector,
-      equality: equality,
-      onDeinit: { [weak self] in
-        guard let token = token else {
-          assertionFailure()
-          return
-        }
-        self?.remove(subscribe: token)
-    })
-    
-    token = addDidUpdate { [weak selector] (newValue) in
-      selector?._accept(sourceValue: newValue)
-    }
-    
-    return selector
-  }
-  
 }

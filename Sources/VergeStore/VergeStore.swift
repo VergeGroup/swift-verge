@@ -84,7 +84,7 @@ public typealias NoActivityStoreBase<State> = StoreBase<State, Never>
 ///   }
 /// }
 /// ```
-open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType, ValueContainerType {
+open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType {
   
   public typealias Dispatcher = DispatcherBase<State, Activity>
   
