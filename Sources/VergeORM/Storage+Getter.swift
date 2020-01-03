@@ -71,6 +71,14 @@ fileprivate final class _GetterCache {
   
 }
 
+extension AnyGetterType where Output : EntityType {
+  
+  public var entityID: Output.EntityID {
+    value.entityID
+  }
+  
+}
+
 // MARK: - Core Functions
 
 fileprivate var _valueContainerAssociated: Void?
