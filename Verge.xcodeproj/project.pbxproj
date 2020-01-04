@@ -54,6 +54,15 @@
 		4B86A49F1F969C7D002D54FE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A49D1F969C7D002D54FE /* Main.storyboard */; };
 		4B86A4A11F969C7D002D54FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A01F969C7D002D54FE /* Assets.xcassets */; };
 		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
+		4B8EB50323C03D7000035B2A /* VergeGetterRx.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8EB50123C03D7000035B2A /* VergeGetterRx.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B8EB50623C03D7000035B2A /* VergeGetterRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8EB4FF23C03D7000035B2A /* VergeGetterRx.framework */; };
+		4B8EB50723C03D7000035B2A /* VergeGetterRx.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8EB4FF23C03D7000035B2A /* VergeGetterRx.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B8EB51423C03D9800035B2A /* VergeGetterCombine.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8EB51223C03D9800035B2A /* VergeGetterCombine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B8EB51723C03D9800035B2A /* VergeGetterCombine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8EB51023C03D9800035B2A /* VergeGetterCombine.framework */; };
+		4B8EB51823C03D9800035B2A /* VergeGetterCombine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8EB51023C03D9800035B2A /* VergeGetterCombine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B8EB51D23C03DE900035B2A /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4B8EB51C23C03DE900035B2A /* RxSwift */; };
+		4B8EB51E23C03DF900035B2A /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
+		4B8EB52323C03E0300035B2A /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4B94913C239C25C600370067 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B94913D239C25C600370067 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B949141239C25CA00370067 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
@@ -194,6 +203,34 @@
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
 		};
+		4B8EB50423C03D7000035B2A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B8EB4FE23C03D7000035B2A;
+			remoteInfo = VergeGetterRx;
+		};
+		4B8EB51523C03D9800035B2A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B8EB50F23C03D9800035B2A;
+			remoteInfo = VergeGetterCombine;
+		};
+		4B8EB52023C03DF900035B2A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
+			remoteInfo = VergeCore;
+		};
+		4B8EB52523C03E0300035B2A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
+			remoteInfo = VergeCore;
+		};
 		4B94913E239C25C600370067 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -321,7 +358,9 @@
 			dstSubfolderSpec = 10;
 			files = (
 				4BF2BCA8238A63FB00F70CDA /* VergeViewModel.framework in Embed Frameworks */,
+				4B8EB50723C03D7000035B2A /* VergeGetterRx.framework in Embed Frameworks */,
 				4BF2BCBE238A643C00F70CDA /* RxVergeViewModel.framework in Embed Frameworks */,
+				4B8EB51823C03D9800035B2A /* VergeGetterCombine.framework in Embed Frameworks */,
 				4B786328233912AB009B9C1B /* VergeStore.framework in Embed Frameworks */,
 				4B956D19211483E7003AA189 /* VergeClassic.framework in Embed Frameworks */,
 				4BFA22A423A63B56008D7BCB /* VergeCore.framework in Embed Frameworks */,
@@ -401,6 +440,12 @@
 		4B86A4A01F969C7D002D54FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B86A4A31F969C7D002D54FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B86A4A51F969C7D002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B8EB4FF23C03D7000035B2A /* VergeGetterRx.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeGetterRx.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B8EB50123C03D7000035B2A /* VergeGetterRx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeGetterRx.h; sourceTree = "<group>"; };
+		4B8EB50223C03D7000035B2A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B8EB51023C03D9800035B2A /* VergeGetterCombine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeGetterCombine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B8EB51223C03D9800035B2A /* VergeGetterCombine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeGetterCombine.h; sourceTree = "<group>"; };
+		4B8EB51323C03D9800035B2A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B949146239C264D00370067 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -545,12 +590,31 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B956D18211483E7003AA189 /* VergeClassic.framework in Frameworks */,
+				4B8EB50623C03D7000035B2A /* VergeGetterRx.framework in Frameworks */,
 				4BF2BCA7238A63FB00F70CDA /* VergeViewModel.framework in Frameworks */,
+				4B8EB51723C03D9800035B2A /* VergeGetterCombine.framework in Frameworks */,
 				4B786327233912AB009B9C1B /* VergeStore.framework in Frameworks */,
 				4B7F3847238948CF000B9ACF /* RxVergeStore.framework in Frameworks */,
 				4BFA22A323A63B56008D7BCB /* VergeCore.framework in Frameworks */,
 				4BF2BCBD238A643C00F70CDA /* RxVergeViewModel.framework in Frameworks */,
 				4B475BB9239AB954008A03E1 /* VergeORM.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B8EB4FC23C03D7000035B2A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B8EB51D23C03DE900035B2A /* RxSwift in Frameworks */,
+				4B8EB51E23C03DF900035B2A /* VergeCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B8EB50D23C03D9800035B2A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B8EB52323C03E0300035B2A /* VergeCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -742,6 +806,8 @@
 		4B84F3B02388066F00D8BC75 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				4B8EB50023C03D7000035B2A /* VergeGetterRx */,
+				4B8EB51123C03D9800035B2A /* VergeGetterCombine */,
 				4B949145239C264D00370067 /* VergeStoreDemoSwiftUI */,
 				4BE7621F239AAE09009EB209 /* VergeViewModelDemo */,
 				4B86A4981F969C7D002D54FE /* Verge-Demo */,
@@ -787,6 +853,8 @@
 				4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */,
 				4BFA229C23A63B55008D7BCB /* VergeCore.framework */,
 				4BE9454F23AD1B180060F977 /* VergeCoreTests.xctest */,
+				4B8EB4FF23C03D7000035B2A /* VergeGetterRx.framework */,
+				4B8EB51023C03D9800035B2A /* VergeGetterCombine.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -830,6 +898,24 @@
 				C978374E89754D5FFCDD7F2D /* libPods-Demo-VergeViewModelDemo.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4B8EB50023C03D7000035B2A /* VergeGetterRx */ = {
+			isa = PBXGroup;
+			children = (
+				4B8EB50123C03D7000035B2A /* VergeGetterRx.h */,
+				4B8EB50223C03D7000035B2A /* Info.plist */,
+			);
+			path = VergeGetterRx;
+			sourceTree = "<group>";
+		};
+		4B8EB51123C03D9800035B2A /* VergeGetterCombine */ = {
+			isa = PBXGroup;
+			children = (
+				4B8EB51223C03D9800035B2A /* VergeGetterCombine.h */,
+				4B8EB51323C03D9800035B2A /* Info.plist */,
+			);
+			path = VergeGetterCombine;
 			sourceTree = "<group>";
 		};
 		4B949145239C264D00370067 /* VergeStoreDemoSwiftUI */ = {
@@ -967,6 +1053,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B86A48B1F969AD6002D54FE /* Verge.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B8EB4FA23C03D7000035B2A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B8EB50323C03D7000035B2A /* VergeGetterRx.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B8EB50B23C03D9800035B2A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B8EB51423C03D9800035B2A /* VergeGetterCombine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1157,11 +1259,54 @@
 				4BF2BCBC238A643C00F70CDA /* PBXTargetDependency */,
 				4B475BB8239AB954008A03E1 /* PBXTargetDependency */,
 				4BFA22A223A63B56008D7BCB /* PBXTargetDependency */,
+				4B8EB50523C03D7000035B2A /* PBXTargetDependency */,
+				4B8EB51623C03D9800035B2A /* PBXTargetDependency */,
 			);
 			name = "Verge-Demo";
 			productName = "CycleViewModel-Demo";
 			productReference = 4B86A4971F969C7D002D54FE /* Verge-Demo.app */;
 			productType = "com.apple.product-type.application";
+		};
+		4B8EB4FE23C03D7000035B2A /* VergeGetterRx */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B8EB50A23C03D7000035B2A /* Build configuration list for PBXNativeTarget "VergeGetterRx" */;
+			buildPhases = (
+				4B8EB4FA23C03D7000035B2A /* Headers */,
+				4B8EB4FB23C03D7000035B2A /* Sources */,
+				4B8EB4FC23C03D7000035B2A /* Frameworks */,
+				4B8EB4FD23C03D7000035B2A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4B8EB52123C03DF900035B2A /* PBXTargetDependency */,
+			);
+			name = VergeGetterRx;
+			packageProductDependencies = (
+				4B8EB51C23C03DE900035B2A /* RxSwift */,
+			);
+			productName = VergeGetterRx;
+			productReference = 4B8EB4FF23C03D7000035B2A /* VergeGetterRx.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		4B8EB50F23C03D9800035B2A /* VergeGetterCombine */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B8EB51923C03D9800035B2A /* Build configuration list for PBXNativeTarget "VergeGetterCombine" */;
+			buildPhases = (
+				4B8EB50B23C03D9800035B2A /* Headers */,
+				4B8EB50C23C03D9800035B2A /* Sources */,
+				4B8EB50D23C03D9800035B2A /* Frameworks */,
+				4B8EB50E23C03D9800035B2A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4B8EB52623C03E0300035B2A /* PBXTargetDependency */,
+			);
+			name = VergeGetterCombine;
+			productName = VergeGetterCombine;
+			productReference = 4B8EB51023C03D9800035B2A /* VergeGetterCombine.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		4B949127239C257500370067 /* VergeStoreDemoSwiftUI */ = {
 			isa = PBXNativeTarget;
@@ -1341,6 +1486,12 @@
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Automatic;
 					};
+					4B8EB4FE23C03D7000035B2A = {
+						CreatedOnToolsVersion = 11.3;
+					};
+					4B8EB50F23C03D9800035B2A = {
+						CreatedOnToolsVersion = 11.3;
+					};
 					4B949127239C257500370067 = {
 						CreatedOnToolsVersion = 11.2.1;
 					};
@@ -1383,6 +1534,8 @@
 			projectRoot = "";
 			targets = (
 				4BFA229B23A63B55008D7BCB /* VergeCore */,
+				4B8EB4FE23C03D7000035B2A /* VergeGetterRx */,
+				4B8EB50F23C03D9800035B2A /* VergeGetterCombine */,
 				4B78631F233912AB009B9C1B /* VergeStore */,
 				4B475BB1239AB954008A03E1 /* VergeORM */,
 				4B7F383F238948CF000B9ACF /* RxVergeStore */,
@@ -1458,6 +1611,20 @@
 				4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */,
 				4B86A4A11F969C7D002D54FE /* Assets.xcassets in Resources */,
 				4B86A49F1F969C7D002D54FE /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B8EB4FD23C03D7000035B2A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B8EB50E23C03D9800035B2A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1700,6 +1867,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B8EB4FB23C03D7000035B2A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B8EB50C23C03D9800035B2A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B949124239C257500370067 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1814,6 +1995,26 @@
 			isa = PBXTargetDependency;
 			target = 4B78631F233912AB009B9C1B /* VergeStore */;
 			targetProxy = 4B7F384E238948F3000B9ACF /* PBXContainerItemProxy */;
+		};
+		4B8EB50523C03D7000035B2A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B8EB4FE23C03D7000035B2A /* VergeGetterRx */;
+			targetProxy = 4B8EB50423C03D7000035B2A /* PBXContainerItemProxy */;
+		};
+		4B8EB51623C03D9800035B2A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B8EB50F23C03D9800035B2A /* VergeGetterCombine */;
+			targetProxy = 4B8EB51523C03D9800035B2A /* PBXContainerItemProxy */;
+		};
+		4B8EB52123C03DF900035B2A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
+			targetProxy = 4B8EB52023C03DF900035B2A /* PBXContainerItemProxy */;
+		};
+		4B8EB52623C03E0300035B2A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
+			targetProxy = 4B8EB52523C03E0300035B2A /* PBXContainerItemProxy */;
 		};
 		4B94913F239C25C600370067 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2453,6 +2654,124 @@
 			};
 			name = Release;
 		};
+		4B8EB50823C03D7000035B2A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeGetterRx/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeGetterRx;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B8EB50923C03D7000035B2A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeGetterRx/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeGetterRx;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4B8EB51A23C03D9800035B2A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeGetterCombine/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeGetterCombine;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B8EB51B23C03D9800035B2A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeGetterCombine/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeGetterCombine;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		4B94913A239C257700370067 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DA21B879DB85E987502655DE /* Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig */;
@@ -2900,6 +3219,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		4B8EB50A23C03D7000035B2A /* Build configuration list for PBXNativeTarget "VergeGetterRx" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B8EB50823C03D7000035B2A /* Debug */,
+				4B8EB50923C03D7000035B2A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B8EB51923C03D9800035B2A /* Build configuration list for PBXNativeTarget "VergeGetterCombine" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B8EB51A23C03D9800035B2A /* Debug */,
+				4B8EB51B23C03D9800035B2A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4B949139239C257700370067 /* Build configuration list for PBXNativeTarget "VergeStoreDemoSwiftUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2991,6 +3328,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxCocoa;
+		};
+		4B8EB51C23C03DE900035B2A /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
 		};
 		4BF2BCC7238A64C600F70CDA /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
