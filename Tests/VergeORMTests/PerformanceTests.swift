@@ -14,6 +14,18 @@ class PerformanceTests: XCTestCase {
   
   var state = RootState()
   
+  func testReflectionObjectIdentifier() {
+    measure {
+      _ = ObjectIdentifier(Author.self)
+    }
+  }
+  
+  func testReflectionString() {
+    measure {
+      _ = String(reflecting: Author.self)
+    }
+  }
+  
   func testUpdateFindAndStore() {
     
     state.db.performBatchUpdates { (context) in

@@ -61,12 +61,12 @@ extension EntityType {
 }
 
 public struct EntityName: Hashable {
-  let name: String
+  public let name: String
 }
 
 extension EntityType {
      
-  static var entityName: EntityName {
+  public static var entityName: EntityName {
     .init(name: String(reflecting: self))
   }
   

@@ -182,6 +182,26 @@
 					<string>Local Baseline</string>
 				</dict>
 			</dict>
+			<key>testReflectionObjectIdentifier()</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>3.1578e-05</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Local Baseline</string>
+				</dict>
+			</dict>
+			<key>testReflectionString()</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.000139</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Local Baseline</string>
+				</dict>
+			</dict>
 			<key>testUpdateFindAndStore()</key>
 			<dict>
 				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>

@@ -58,7 +58,7 @@ fileprivate final class _GetterCache {
   
   @inline(__always)
   private func key<E: EntityType>(entityID: E.EntityID) -> NSString {
-    "\(E.entityName.name)_\(entityID)" as NSString
+    "\(ObjectIdentifier(E.self))_\(entityID)" as NSString
   }
   
   func getter<E: EntityType>(entityID: E.EntityID) -> AnyObject? {
