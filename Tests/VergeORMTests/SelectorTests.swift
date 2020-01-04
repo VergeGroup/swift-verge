@@ -226,8 +226,10 @@ class SelectorTests: XCTestCase {
     
     let getter1 = storage.entityGetter(from: Author.EntityID("Hoo"))
     let getter2 = storage.entityGetter(from: Author.EntityID("Hoo"))
+    let getter3 = storage.entityGetter(from: Book.EntityID("Hoo"))
     
     XCTAssert(getter1 === getter2)
+    XCTAssert(getter3 !== getter2)
     
   }
   
