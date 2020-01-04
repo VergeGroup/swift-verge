@@ -22,10 +22,49 @@ class GetterTests: XCTestCase {
       map: { $0 }
     )
     getter.addDidUpdate { (v) in
-      XCTFail()
+      XCTFail("It would not be called after created getter")
     }
     getter._receive(newValue: 0)
     
+  }
+  
+  func testRatain() {
+    
+    var storage: Storage! = Storage<Int>(0)
+    weak var storageRef = storage
+    
+    XCTAssertNotNil(storageRef)
+    
+    var _first: Getter! = storage.getter(filter: .alwaysDifferent(), map: { $0 })
+               
+    weak var firstRef = _first
+          
+    var second: AnyGetter! = firstRef!.map(transform: { $0 })
+    
+    XCTAssertEqual(second.value, 0)
+    
+    storage.replace(1)
+    
+    XCTAssertEqual(second.value, 1)
+    
+    XCTAssertNotNil(firstRef)
+
+    _first = nil
+    
+    XCTAssertNotNil(firstRef) // Because, second ratains
+        
+    storage.replace(10)
+    
+    storage = nil
+    
+    XCTAssertNotNil(storageRef) // Because, first retains storage
+    XCTAssertEqual(second.value, 10)
+    
+    second = nil
+    
+    XCTAssertNil(firstRef)
+    XCTAssertNil(storageRef)
+           
   }
   
   func testNonMemoization() {

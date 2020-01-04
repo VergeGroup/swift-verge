@@ -158,7 +158,7 @@ extension Storage {
   ///
   /// - Parameter keyPath:
   /// - Returns:
-  public func map<U>(_ keyPath: KeyPath<Value, U>) -> Storage<U> {
+  public func map<U>(_ keyPath: KeyPath<Value, U>) -> ReadonlyStorage<U> {
     return
       map {
         $0[keyPath: keyPath]

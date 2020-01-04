@@ -39,7 +39,7 @@ extension Storage: ValueContainerType {
     
     var token: EventEmitterSubscribeToken?
     
-    let getter = Getter(input: value, filter: filter, map: map)
+    let getter = Getter(input: value, filter: filter, map: map, upstreams: [self])
     
     getter.onDeinit = { [weak self] in
       guard let token = token else {
