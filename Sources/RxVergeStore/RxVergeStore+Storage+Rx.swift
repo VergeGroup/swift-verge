@@ -148,7 +148,7 @@ extension EventEmitter {
   
 }
 
-extension Storage {
+extension ReadonlyStorage {
 
   private var subject: BehaviorRelay<Value> {
 
