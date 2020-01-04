@@ -138,7 +138,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   /// - Parameters:
   ///   - tableSelector:
   ///   - entityID:
-  public func entityGetter<E: EntityType>(entityID: E.EntityID) -> Getter<Value, E?> {
+  public func entityGetter<E: EntityType>(from entityID: E.EntityID) -> Getter<Value, E?> {
     
     let _cache = cache
     
@@ -158,7 +158,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   }
   
   public func entityGetter<E: EntityType & Equatable>(
-    entityID: E.EntityID
+    from entityID: E.EntityID
   ) -> Getter<Value, E?> {
     
     let _cache = cache
@@ -182,7 +182,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   }
   
   @inline(__always)
-  public func nonNullEntityGetter<E: EntityType>(entity: E) -> Getter<Value, E> {
+  public func nonNullEntityGetter<E: EntityType>(from entity: E) -> Getter<Value, E> {
     
     let _cache = cache
     
@@ -209,7 +209,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   
   @inline(__always)
   public func nonNullEntityGetter<E: EntityType & Equatable>(
-    entity: E
+    from entity: E
   ) -> Getter<Value, E> {
        
     let _cache = cache
@@ -243,6 +243,43 @@ extension ValueContainerType where Value : DatabaseEmbedding {
 // MARK: - Wrapper Functions
 
 extension ValueContainerType where Value : DatabaseEmbedding {
+  
+  /// A selector that if get nil then return latest non-null value
+  @inline(__always)
+  public func nonNullEntityGetters<S: Sequence, E: EntityType>(
+    from entities: S
+  ) -> [Getter<Value, E>] where S.Element == E {
+    entities.map {
+      nonNullEntityGetter(from: $0)
+    }
+  }
+  
+  @inline(__always)
+  public func nonNullEntityGetter<E: EntityType & Equatable>(
+    from entityID: E.EntityID
+  ) -> Getter<Value, E>? {
+        
+    lock(); defer { unlock() }
+    
+    let db = Value.getterToDatabase(wrappedValue)
+    guard let entity = db.entities.table(E.self).find(by: entityID) else { return nil }
+    return nonNullEntityGetter(from: entity)
+  }
+  
+  @inline(__always)
+  public func nonNullEntityGetters<S: Sequence, E: EntityType>(
+    from entityIDs: S
+  ) -> [E.EntityID : Getter<Value, E>] where S.Element == E.EntityID {
+    
+    lock(); defer { unlock() }
+    
+    let db = Value.getterToDatabase(wrappedValue)
+    
+    return db.entities.table(E.self).find(in: entityIDs)
+      .reduce(into: [E.EntityID : Getter<Value, E>](), { (container, entity) in
+        container[entity.entityID] = nonNullEntityGetter(from: entity)
+      })
+  }
     
   /// A selector that if get nil then return latest non-null value
   @inline(__always)
@@ -250,7 +287,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
   ) -> Getter<Value, E> {
     
-    return nonNullEntityGetter(entity: insertionResult.entity)
+    return nonNullEntityGetter(from: insertionResult.entity)
     
   }
     
@@ -259,7 +296,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     from insertionResult: EntityTable<Value.Database.Schema, E>.InsertionResult
   ) -> Getter<Value, E> {
     
-    return nonNullEntityGetter(entity: insertionResult.entity)
+    return nonNullEntityGetter(from: insertionResult.entity)
   }
   
   public func nonNullEntityGetters<E: EntityType, S: Sequence>(

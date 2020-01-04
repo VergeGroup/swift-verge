@@ -28,7 +28,14 @@ import VergeCore
 #endif
 
 extension StoreBase: ValueContainerType {
+  public func lock() {
+    _backingStorage.lock()
+  }
   
+  public func unlock() {
+    _backingStorage.unlock()
+  }
+    
   public var wrappedValue: State {
     _read { yield state }
   }

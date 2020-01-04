@@ -12,6 +12,9 @@ public protocol ValueContainerType: AnyObject {
   associatedtype Value
   
   var wrappedValue: Value { get }
+  
+  func lock()
+  func unlock()
     
   func getter<Output>(
     filter: EqualityComputer<Value>,
@@ -21,6 +24,14 @@ public protocol ValueContainerType: AnyObject {
 
 extension Storage: ValueContainerType {
   
+  public func lock() {
+    _lock.lock()
+  }
+
+  public func unlock() {
+    _lock.unlock()
+  }
+    
   public func getter<Output>(
     filter: EqualityComputer<Value>,
     map: @escaping (Value) -> Output
