@@ -19,13 +19,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
 import Foundation
 
-open class Storage<Value>: CustomReflectable {
+open class ReadonlyStorage<Value>: CustomReflectable {
     
   private let willUpdateEmitter = EventEmitter<Void>()
   private let didUpdateEmitter = EventEmitter<Value>()
+  private let deinitEmitter = EventEmitter<Void>()
   
   public final var wrappedValue: Value {
     return value
@@ -39,13 +39,69 @@ open class Storage<Value>: CustomReflectable {
     return nonatomicValue
   }
   
-  private var nonatomicValue: Value
+  fileprivate var nonatomicValue: Value
   
   let _lock = NSRecursiveLock()
   
-  public init(_ value: Value) {
+  fileprivate let upstreams: [AnyObject]
+  
+  public init(_ value: Value, upstreams: [AnyObject] = []) {
     self.nonatomicValue = value
+    self.upstreams = upstreams
   }
+  
+  deinit {
+    deinitEmitter.accept(())
+  }
+    
+  /// Register observer with closure.
+  /// Storage tells got a newValue.
+  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
+  @discardableResult
+  public final func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
+    willUpdateEmitter.add(subscriber)
+  }
+  
+  /// Register observer with closure.
+  /// Storage tells got a newValue.
+  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
+  @discardableResult
+  public final func addDidUpdate(subscriber: @escaping (Value) -> Void) -> EventEmitterSubscribeToken {
+    didUpdateEmitter.add(subscriber)
+  }
+  
+  @discardableResult
+  public final func addDeinit(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
+    deinitEmitter.add(subscriber)
+  }
+  
+  public final func remove(subscribe token: EventEmitterSubscribeToken) {
+    didUpdateEmitter.remove(token)
+    willUpdateEmitter.remove(token)
+    deinitEmitter.remove(token)
+  }
+    
+  @inline(__always)
+  fileprivate func notifyWillUpdate(value: Value) {
+    willUpdateEmitter.accept(())
+  }
+  
+  @inline(__always)
+  fileprivate func notifyDidUpdate(value: Value) {
+    didUpdateEmitter.accept(value)
+  }
+  
+  public var customMirror: Mirror {
+    Mirror(
+      self,
+      children: ["value": value],
+      displayStyle: .struct
+    )
+  }
+  
+}
+
+open class Storage<Value>: ReadonlyStorage<Value> {
   
   @discardableResult
   @inline(__always)
@@ -89,55 +145,29 @@ open class Storage<Value>: CustomReflectable {
     }
   }
   
-  /// Register observer with closure.
-  /// Storage tells got a newValue.
-  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
-  @discardableResult
-  public final func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
-    willUpdateEmitter.add(subscriber)
-  }
-  
-  /// Register observer with closure.
-  /// Storage tells got a newValue.
-  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
-  @discardableResult
-  public final func addDidUpdate(subscriber: @escaping (Value) -> Void) -> EventEmitterSubscribeToken {
-    didUpdateEmitter.add(subscriber)
-  }
-  
-  public final func remove(subscribe token: EventEmitterSubscribeToken) {
-    didUpdateEmitter.remove(token)
-    willUpdateEmitter.remove(token)
-  }
-    
-  @inline(__always)
-  fileprivate func notifyWillUpdate(value: Value) {
-    willUpdateEmitter.accept(())
-  }
-  
-  @inline(__always)
-  fileprivate func notifyDidUpdate(value: Value) {
-    didUpdateEmitter.accept(value)
-  }
-  
-  public var customMirror: Mirror {
-    Mirror(
-      self,
-      children: ["value": value],
-      displayStyle: .struct
-    )
-  }
-  
 }
 
-extension Storage {
+extension ReadonlyStorage {
   
-  public func map<U>(selector: @escaping (Value) -> U) -> Storage<U> {
-    let initialValue = selector(value)
-    let newStorage = Storage<U>.init(initialValue)
-    self.addDidUpdate { (newValue) in
-      newStorage.replace(selector(newValue))
+  /// Transform value with filtering.
+  /// - Attention: Retains upstream storage
+  public func map<U>(
+    filter: @escaping (Value) -> Bool = { _ in false },
+    transform: @escaping (Value) -> U
+  ) -> ReadonlyStorage<U> {
+    
+    let initialValue = transform(value)
+    let newStorage = Storage<U>.init(initialValue, upstreams: [self])
+    
+    let token = addDidUpdate { [weak newStorage] (newValue) in
+      guard !filter(newValue) else { return }
+      newStorage?.replace(transform(newValue))
     }
+    
+    newStorage.addDeinit { [weak self] in
+      self?.remove(subscribe: token)
+    }
+    
     return newStorage
   }
 }

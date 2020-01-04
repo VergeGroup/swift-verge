@@ -31,13 +31,15 @@ open class GetterBase<Output>: Hashable {
     ObjectIdentifier(self).hash(into: &hasher)
   }
     
-  public var value: Output {
+  public final var value: Output {
     _read { yield storage.value }
   }
   
-  let storage: Storage<Output>
+  let storage: ReadonlyStorage<Output>
+  let upstreams: [AnyObject]
   
-  init(storage: Storage<Output>) {
+  init(storage: ReadonlyStorage<Output>, upstreams: [AnyObject]) {
+    self.upstreams = upstreams
     self.storage = storage
   }
   
@@ -56,6 +58,26 @@ open class GetterBase<Output>: Hashable {
   public final func addDidUpdate(subscriber: @escaping (Output) -> Void) -> EventEmitterSubscribeToken {
     storage.addDidUpdate(subscriber: subscriber)
   }
+  
+  /// Transform output value with filtering.
+  /// - Attention: Retains upstream getter
+  @inline(__always)
+  public func map<U>(
+    filter: @escaping (Output) -> Bool = { _ in false },
+    transform: @escaping (Output) -> U
+  ) -> AnyGetter<U> {
+    .init(storage.map(filter: filter, transform: transform), upstreams: [self])
+  }
+  
+  /// Transform output value with filtering.
+  /// - Attention: Retains upstream getter
+  public func map<U>(
+    filter: EqualityComputer<Output>,
+    transform: @escaping (Output) -> U
+  ) -> AnyGetter<U> {
+    map(filter: filter.isEqual, transform: transform)
+  }
+  
 }
 
 public protocol AnyGetterType: AnyObject {
@@ -70,26 +92,20 @@ public protocol AnyGetterType: AnyObject {
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
   func addDidUpdate(subscriber: @escaping (Output) -> Void) -> EventEmitterSubscribeToken
+  
+
 }
 
 public final class AnyGetter<Output>: GetterBase<Output>, AnyGetterType {
-  
-  private let valueGetter: () -> Output
-  
-  public init<Input>(_ source: Getter<Input, Output>) {
-    
-    self.valueGetter = {
-      // retains source
-      source.value
-    }
-    
-    super.init(storage: source.storage)
-  }
       
-  public override var value: Output {
-    valueGetter()
+  public init<Input>(_ source: Getter<Input, Output>) {            
+    super.init(storage: source.storage, upstreams: [source])
   }
   
+  init(_ storage: ReadonlyStorage<Output>, upstreams: [AnyObject]) {
+    super.init(storage: storage, upstreams: upstreams)
+  }
+          
 }
 
 public protocol GetterType: AnyGetterType {
@@ -103,57 +119,33 @@ open class Getter<Input, Output>: GetterBase<Output>, GetterType {
   private var didUpdates: [(Output) -> Void] = []
   
   var onDeinit: () -> Void = {}
-      
-  private let map: (Input) -> Output
-  private let filter: (Input) -> Bool
-  private let ratainUpstream: () -> Void
   
+  private let sourceStorage: Storage<Input>
+        
   public init(
     input: Input,
     filter: EqualityComputer<Input>,
-    map: @escaping (Input) -> Output
+    map: @escaping (Input) -> Output,
+    upstreams: [AnyObject] = []
   ) {
     
-    _ = filter.isEqual(value: input)
+    sourceStorage = .init(input)
+    filter.registerFirstValue(input)
     
-    self.map = map
-    self.filter = filter.isEqual
-    self.ratainUpstream = {}
-    
-    super.init(storage: .init(map(input)))
+    let storage = sourceStorage.map(
+      filter: filter.isEqual,
+      transform: map
+    )
+          
+    super.init(storage: storage, upstreams: upstreams)
   }
-  
-  public init<UpstreamInput>(
-    upstream: Getter<UpstreamInput, Input>,
-    filter: EqualityComputer<Input>,
-    map: @escaping (Input) -> Output
-  ) {
-            
-    self.map = map
-    self.filter = filter.isEqual
     
-    _ = filter.isEqual(value: upstream.value)
-    
-    self.ratainUpstream = {
-      withExtendedLifetime(upstream) {}
-    }
-    
-    super.init(storage: .init(map(upstream.value)))
-    
-    upstream.addDidUpdate { [weak self] value in
-      self?._receive(newValue: value)
-    }
-  }
-  
   deinit {
     onDeinit()
   }
   
   final func _receive(newValue: Input) {
-    
-    guard !filter(newValue) else { return }
-    let nextValue = map(newValue)
-    storage.replace(nextValue)
+    sourceStorage.replace(newValue)
   }
     
   public final func asAny() -> AnyGetter<Output> {
@@ -218,66 +210,3 @@ extension GetterBase: ObservableObject {
 }
 
 #endif
-
-public final class EqualityComputer<Input> {
-  
-  public static func alwaysDifferent() -> EqualityComputer<Input> {
-    EqualityComputer<Input>.init(selector: { _ in () }) { (_, _) -> Bool in
-      return false
-    }
-  }
-  
-  public static func alwaysEquals() -> EqualityComputer<Input> {
-    EqualityComputer<Input>.init(selector: { _ in () }) { (_, _) -> Bool in
-      return true
-    }
-  }
-    
-  private let _isEqual: (Input) -> Bool
-  
-  public init(_ sources: [EqualityComputer<Input>]) {
-    self._isEqual = { input in
-      for source in sources {
-        guard source.isEqual(value: input) else {
-          return false
-        }
-      }
-      return true
-    }
-  }
-  
-  public init<Key>(
-    selector: @escaping (Input) -> Key,
-    equals: @escaping (Key, Key) -> Bool
-  ) {
-    
-    var previousValue: Key?
-    
-    self._isEqual = { input in
-
-      let key = selector(input)
-      defer {
-        previousValue = key
-      }
-      if let previousValue = previousValue {
-        return equals(previousValue, key)
-      } else {
-        return false
-      }
-      
-    }
-              
-  }
-     
-  public func isEqual(value: Input) -> Bool {
-    _isEqual(value)
-  }
-
-}
-
-extension EqualityComputer where Input : Equatable {
-  
-  public convenience init() {
-    self.init(selector: { $0 }, equals: ==)
-  }
-}
