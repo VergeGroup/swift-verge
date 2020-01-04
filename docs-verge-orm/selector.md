@@ -4,13 +4,13 @@
 
 ```swift
 struct RootState: DatabaseEmbedding {
-  
+
   static let getterToDatabase: (RootState) -> RootState.Database = { $0.db }
-  
+
   struct Database: DatabaseType {
     ...       
   }
-  
+
   var db = Database()
 }
 ```
@@ -19,9 +19,9 @@ struct RootState: DatabaseEmbedding {
 
 ```swift
 let id = Book.EntityID.init("some")
-    
+
 let getter = storage.entityGetter(
-  entityID: id
+  from: id
 )
 ```
 
@@ -35,7 +35,7 @@ getter.value
 
 ```swift
 getter.addDidUpdate { (entity) in
-  
+
 }
 ```
 
