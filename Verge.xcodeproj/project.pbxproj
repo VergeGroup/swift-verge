@@ -54,6 +54,7 @@
 		4B86A49F1F969C7D002D54FE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A49D1F969C7D002D54FE /* Main.storyboard */; };
 		4B86A4A11F969C7D002D54FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A01F969C7D002D54FE /* Assets.xcassets */; };
 		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
+		4B8EB4F923C034A900035B2A /* EqualityComputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8EB4F823C034A900035B2A /* EqualityComputer.swift */; };
 		4B8EB50323C03D7000035B2A /* VergeGetterRx.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8EB50123C03D7000035B2A /* VergeGetterRx.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B8EB50623C03D7000035B2A /* VergeGetterRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8EB4FF23C03D7000035B2A /* VergeGetterRx.framework */; };
 		4B8EB50723C03D7000035B2A /* VergeGetterRx.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8EB4FF23C03D7000035B2A /* VergeGetterRx.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -63,7 +64,6 @@
 		4B8EB51D23C03DE900035B2A /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4B8EB51C23C03DE900035B2A /* RxSwift */; };
 		4B8EB51E23C03DF900035B2A /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4B8EB52323C03E0300035B2A /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
-		4B8EB4F923C034A900035B2A /* EqualityComputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8EB4F823C034A900035B2A /* EqualityComputer.swift */; };
 		4B94913C239C25C600370067 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B94913D239C25C600370067 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B949141239C25CA00370067 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
@@ -84,6 +84,7 @@
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4B9FD3C923B3525000A35B4F /* Getter+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9FD3C823B3525000A35B4F /* Getter+Rx.swift */; };
+		4BA3E1A523C359F40095629B /* Signpost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA3E1A423C359F40095629B /* Signpost.swift */; };
 		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
 		4BAE9FEA21DFA75A003DDF3D /* Verge+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */; };
 		4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */; };
@@ -440,13 +441,13 @@
 		4B86A4A01F969C7D002D54FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B86A4A31F969C7D002D54FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B86A4A51F969C7D002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B8EB4F823C034A900035B2A /* EqualityComputer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqualityComputer.swift; sourceTree = "<group>"; };
 		4B8EB4FF23C03D7000035B2A /* VergeGetterRx.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeGetterRx.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B8EB50123C03D7000035B2A /* VergeGetterRx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeGetterRx.h; sourceTree = "<group>"; };
 		4B8EB50223C03D7000035B2A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B8EB51023C03D9800035B2A /* VergeGetterCombine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeGetterCombine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B8EB51223C03D9800035B2A /* VergeGetterCombine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeGetterCombine.h; sourceTree = "<group>"; };
 		4B8EB51323C03D9800035B2A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B8EB4F823C034A900035B2A /* EqualityComputer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqualityComputer.swift; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B949146239C264D00370067 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -464,6 +465,7 @@
 		4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherType.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		4B9FD3C823B3525000A35B4F /* Getter+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Getter+Rx.swift"; sourceTree = "<group>"; };
+		4BA3E1A423C359F40095629B /* Signpost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signpost.swift; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		4BADEB9A23380AE400E1D3F5 /* Lorem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lorem.swift; sourceTree = "<group>"; };
 		4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Verge+Extension.swift"; sourceTree = "<group>"; };
@@ -1011,6 +1013,7 @@
 			isa = PBXGroup;
 			children = (
 				4BFA229E23A63B56008D7BCB /* VergeCore.h */,
+				4BA3E1A423C359F40095629B /* Signpost.swift */,
 				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
 				4B23275E239E67EE0043D3F9 /* Getter.swift */,
 				4B8EB4F823C034A900035B2A /* EqualityComputer.swift */,
@@ -1940,6 +1943,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BA3E1A523C359F40095629B /* Signpost.swift in Sources */,
 				4BFA22B223A63BE1008D7BCB /* Getter.swift in Sources */,
 				4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */,
 				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
