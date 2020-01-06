@@ -81,8 +81,14 @@ public final class EqualityComputer<Input> {
   
 }
 
+extension EqualityComputer {
+  public convenience init<Key: Equatable>(selector: @escaping (Input) -> Key) {
+    self.init(selector: selector, equals: ==)
+  }
+}
+
 extension EqualityComputer where Input : Equatable {
-  
+    
   public convenience init() {
     self.init(selector: { $0 }, equals: ==)
   }
