@@ -21,12 +21,16 @@
 
 import Foundation
 
-public struct EntityIdentifier<Entity: EntityType> : Hashable {
+public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConvertible {
   
   public let raw: Entity.IdentifierType
   
   public init(_ raw: Entity.IdentifierType) {
     self.raw = raw
+  }
+  
+  public var description: String {
+    "<\(String(reflecting: Entity.self))>(\(raw))"
   }
 }
 
