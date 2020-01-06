@@ -2,29 +2,31 @@
 
 ## Master
 
+### Add updateExists
+
+{% embed url="https://github.com/muukii/Verge/pull/34" %}
+
+### Fix updateIfExists
+
+{% embed url="https://github.com/muukii/Verge/pull/33" %}
+
+
+
 ### Improve Getter
 
-{% embed url="https://github.com/muukii/Verge/pull/37" %}
-
-
+{% embed url="https://github.com/muukii/Verge/pull/37" caption="" %}
 
 ### Add AnyGetterType GetterType protocol
 
-{% embed url="https://github.com/muukii/Verge/commit/c864deb23f2fa7d14bda93fa567845d82b28f784" %}
-
-
+{% embed url="https://github.com/muukii/Verge/commit/c864deb23f2fa7d14bda93fa567845d82b28f784" caption="" %}
 
 ### Rename
 
-{% embed url="https://github.com/muukii/Verge/pull/36" %}
-
-
+{% embed url="https://github.com/muukii/Verge/pull/36" caption="" %}
 
 ### Add commitInline to context
 
-{% embed url="https://github.com/muukii/Verge/pull/32" %}
-
-
+{% embed url="https://github.com/muukii/Verge/pull/32" caption="" %}
 
 ## 6.0.0-beta.5
 
@@ -32,7 +34,7 @@
 
 ### \[Breaking change\] Getter for ORM
 
-{% embed url="https://github.com/muukii/Verge/pull/30" %}
+{% embed url="https://github.com/muukii/Verge/pull/30" caption="" %}
 
 ### Rename HasDatabaseType to DatabaseEmbedding
 
