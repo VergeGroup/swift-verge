@@ -129,6 +129,11 @@ open class Getter<Input, Output>: GetterBase<Output>, GetterType {
     upstreams: [AnyObject] = []
   ) {
     
+    let t = SignpostTransaction("Getter.Init")
+    defer {
+      t.end()
+    }
+    
     sourceStorage = .init(input)
     filter.registerFirstValue(input)
     
@@ -145,6 +150,10 @@ open class Getter<Input, Output>: GetterBase<Output>, GetterType {
   }
   
   final func _receive(newValue: Input) {
+    let t = SignpostTransaction("Getter.Receive")
+    defer {
+      t.end()
+    }
     sourceStorage.replace(newValue)
   }
     

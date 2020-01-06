@@ -21,6 +21,10 @@
 
 import Foundation
 
+#if !COCOAPODS
+import VergeCore
+#endif
+
 protocol EntityModifierType: AnyObject {
   
   var entityName: EntityName { get }
@@ -232,6 +236,12 @@ extension DatabaseType {
   }
   
   public mutating func commitBatchUpdates(context: DatabaseBatchUpdatesContext<Self>) {
+    
+    let t = SignpostTransaction("DatabaseType.commit")
+    defer {
+      t.end()
+    }
+    
     middlewareAfter: do {
       middlewares.forEach {
         $0.performAfterUpdates(context: context)

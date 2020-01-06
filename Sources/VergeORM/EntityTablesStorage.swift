@@ -21,6 +21,10 @@
 
 import Foundation
 
+#if !COCOAPODS
+import VergeCore
+#endif
+
 protocol EntityTableType {
   typealias RawTable = [AnyHashable : AnyEntity]
   var entities: RawTable { get }
@@ -70,7 +74,11 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   }
   
   public func find(by id: Entity.EntityID) -> Entity? {
-    entities[id]?.base as? Entity
+    let t = SignpostTransaction("EntityTable.findBy")
+    defer {
+      t.end()
+    }
+    return entities[id]?.base as? Entity
   }
     
   /// Find entities by set of ids.
@@ -78,7 +86,11 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   ///
   /// - Parameter ids: sequence of Entity.ID
   public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.EntityID {
-    ids.reduce(into: [Entity]()) { (buf, id) in
+    let t = SignpostTransaction("EntityTable.findIn")
+    defer {
+      t.end()
+    }
+    return ids.reduce(into: [Entity]()) { (buf, id) in
       guard let entity = entities[id] else { return }
       buf.append(entity.base as! Entity)
     }
@@ -131,7 +143,11 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
 extension EntityTable where Entity : Hashable {
   
   public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.EntityID {
-    ids.reduce(into: Set<Entity>()) { (buf, id) in
+    let t = SignpostTransaction("EntityTable.findIn")
+    defer {
+      t.end()
+    }
+    return ids.reduce(into: Set<Entity>()) { (buf, id) in
       guard let entity = entities[id] else { return }
       buf.insert(entity as! Entity)
     }

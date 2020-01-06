@@ -23,11 +23,10 @@ final class Session: ObservableObject {
   private(set) lazy var sessionDispatcher = SessionDispatcher(target: store)
   
   private(set) lazy var users = self.store.getter(
-    selector: { state in
+    filter: .init(selector: { $0.db.entities.user }),
+    map: { state in
       state.db.entities.user.find(in: state.db.indexes.userIDs)
-  },
-    equality: .init(selector: { $0.db.entities.user })
-  )
+  })
   
   init() {
     
@@ -37,20 +36,21 @@ final class Session: ObservableObject {
 
 enum Entity {
   struct Post: EntityType, Identifiable, Equatable {
+    
     typealias IdentifierType = String
-    var id: ID {
-      ID(rawID)
+    var entityID: EntityID {
+      .init(rawID)
     }
     let rawID: String
     var title: String
-    var userID: User.ID
-    var commentIDs: [Comment.ID] = []
+    var userID: User.EntityID
+    var commentIDs: [Comment.EntityID] = []
   }
   
   struct User: EntityType, Identifiable, Equatable {
     typealias IdentifierType = String
-    var id: ID {
-      ID(rawID)
+    var entityID: EntityID {
+      .init(rawID)
     }
     let rawID: String
     var name: String
@@ -58,12 +58,12 @@ enum Entity {
   
   struct Comment: EntityType, Identifiable, Equatable {
     typealias IdentifierType = String
-    var id: ID {
-      ID(rawID)
+    var entityID: EntityID {
+      .init(rawID)
     }
     let rawID: String
     var text: String
-    var postID: Post.ID
+    var postID: Post.EntityID
   }
 }
 
@@ -124,13 +124,13 @@ final class SessionDispatcher: SessionStore.Dispatcher {
   
   func submitNewPost(title: String, from user: Entity.User) -> Mutation<Void> {
     return .mutation { (s) in
-      let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.id)
+      let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.entityID)
       s.db.performBatchUpdates { (context) in
         
         let postID = context.post.insertsOrUpdates.insert(post).entityID
         context.indexes.postIDs.append(postID)
         
-        context.indexes.postIDsAuthorGrouped.update(in: user.id) { (index) in
+        context.indexes.postIDsAuthorGrouped.update(in: user.entityID) { (index) in
           index.append(postID)
         }
       }
