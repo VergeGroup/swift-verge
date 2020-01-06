@@ -191,4 +191,10 @@ class VergeORMTests: XCTestCase {
     
   }
   
+  func testDescription() {
+    
+    let authorID = Author.EntityID("author.id")
+    XCTAssertEqual(authorID.description, "<VergeORMTests.Author>(author.id)")
+  }
+  
 }
