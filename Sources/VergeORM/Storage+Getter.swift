@@ -152,7 +152,11 @@ extension ValueContainerType where Value : DatabaseEmbedding {
         computer.isEqual(value: new)
       }),
       map: { (value) -> Output in
-        update(Value.getterToDatabase(value))
+        let t = SignpostTransaction("ORM.Getter.update")
+        defer {
+          t.end()
+        }
+        return update(Value.getterToDatabase(value))
     })
     
     return _getter
