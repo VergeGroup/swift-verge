@@ -75,8 +75,9 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   public func all() -> AnyCollection<Entity> {
     AnyCollection(
       insertsOrUpdates
+        .rawTable
         .entities
-        .merging(current.entities, uniquingKeysWith: { e, _ in e })
+        .merging(current.rawTable.entities, uniquingKeysWith: { e, _ in e })
         .values
         .lazy
         .map { $0.base as! Entity }

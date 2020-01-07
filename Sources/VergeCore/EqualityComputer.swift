@@ -37,7 +37,7 @@ public final class EqualityComputer<Input> {
   
   private let _isEqual: (Input) -> Bool
   
-  public init(_ sources: [EqualityComputer<Input>]) {
+  public init(and sources: [EqualityComputer<Input>]) {
     self._isEqual = { input in
       for source in sources {
         guard source.isEqual(value: input) else {
@@ -45,6 +45,17 @@ public final class EqualityComputer<Input> {
         }
       }
       return true
+    }
+  }
+  
+  public init(or sources: [EqualityComputer<Input>]) {
+    self._isEqual = { input in
+      for source in sources {
+        if source.isEqual(value: input) {
+          return true
+        }
+      }
+      return false
     }
   }
   

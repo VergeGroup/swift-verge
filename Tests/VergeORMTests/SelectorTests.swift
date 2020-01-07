@@ -204,7 +204,7 @@ class SelectorTests: XCTestCase {
     
     XCTAssertEqual(updatedCount, 2)
         
-    XCTContext.runActivity(named: "Update other") { _ in
+    XCTContext.runActivity(named: "Update other, getter would not emit changes") { _ in
       
       for _ in 0..<10 {
         
@@ -213,6 +213,18 @@ class SelectorTests: XCTestCase {
         }
         
       }
+      
+    }
+    
+    XCTContext.runActivity(named: "Adding book, getter would not emit changes") { _ -> Void in
+      
+      storage.update { state in
+        state.db.performBatchUpdates { (context) in
+          context.book.insert(Book(rawID: "Verge", authorID: .init("muukii")))
+        }
+      }
+      
+      return
       
     }
     

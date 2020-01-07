@@ -26,9 +26,31 @@ import VergeCore
 #endif
 
 protocol EntityTableType {
-  typealias RawTable = [AnyHashable : AnyEntity]
-  var entities: RawTable { get }
+  typealias RawTable = EntityRawTable
+  var rawTable: RawTable { get }
   var entityName: EntityName { get }
+}
+
+struct EntityRawTable: Equatable {
+  
+  static func == (lhs: EntityRawTable, rhs: EntityRawTable) -> Bool {
+    guard lhs.updatedAt == rhs.updatedAt else { return false }
+    guard lhs.entities == rhs.entities else { return false }
+    return true
+  }
+  
+  typealias RawTable = [AnyHashable : AnyEntity]
+  
+  var updatedAt: Date = .init()
+
+  private(set) var entities: RawTable = [:]
+  
+  mutating func updateEntity<Result>(_ update: (inout RawTable) throws -> Result) rethrows -> Result {    
+    let r = try update(&entities)
+    updatedAt = .init()
+    return r
+  }
+    
 }
 
 /// A wrapper of raw table
@@ -44,33 +66,37 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   }
   
   let entityName: EntityName = Entity.entityName
+  
+  public var updatedAt: Date {
+    _read { yield rawTable.updatedAt }
+  }
     
   /// The number of entities in table
   public var count: Int {
-    _read { yield entities.count }
+    _read { yield rawTable.entities.count }
   }
   
-  internal var entities: RawTable = [:]
+  internal var rawTable: RawTable = .init()
     
   init() {
   }
   
-  init(buffer: RawTable) {
-    self.entities = buffer
+  init(rawTable: RawTable) {
+    self.rawTable = rawTable
   }
     
   /// Returns all entity ids that stored.
   ///
   /// - TODO: It's expensive
   public func allIDs() -> Set<Entity.EntityID> {
-    .init(entities.keys.map { $0 as! Entity.EntityID })
+    .init(rawTable.entities.keys.map { $0 as! Entity.EntityID })
   }
   
   /// Returns all entity that stored.
   ///
   /// - TODO: It's expensive
   public func allEntities() -> AnyCollection<Entity> {
-    .init(entities.values.lazy.map { $0.base as! Entity })
+    .init(rawTable.entities.values.lazy.map { $0.base as! Entity })
   }
   
   public func find(by id: Entity.EntityID) -> Entity? {
@@ -78,7 +104,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     defer {
       t.end()
     }
-    return entities[id]?.base as? Entity
+    return rawTable.entities[id]?.base as? Entity
   }
     
   /// Find entities by set of ids.
@@ -91,7 +117,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
       t.end()
     }
     return ids.reduce(into: [Entity]()) { (buf, id) in
-      guard let entity = entities[id] else { return }
+      guard let entity = rawTable.entities[id] else { return }
       buf.append(entity.base as! Entity)
     }
   }
@@ -100,16 +126,20 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   @inline(__always)
   public mutating func updateExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) throws -> Entity {
     
-    guard entities.keys.contains(id) else {
+    guard rawTable.entities.keys.contains(id) else {
       throw BatchUpdatesError.storedEntityNotFound
     }
     
-    return try withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Entity in
-      var entity = pointer.pointee.base as! Entity
-      try update(&entity)
-      pointer.pointee.base = entity as Any
-      return entity
+    let e = try rawTable.updateEntity { (entities) -> Entity in
+      return try withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Entity in
+        var entity = pointer.pointee.base as! Entity
+        try update(&entity)
+        pointer.pointee.base = entity as Any
+        return entity
+      }
     }
+    
+    return e
   }
    
   @discardableResult
@@ -119,12 +149,22 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   @discardableResult
   public mutating func insert(_ entity: Entity) -> InsertionResult {
-    entities[entity.entityID] = .init(entity)
+    let t = SignpostTransaction("ORM.EntityTable.insertOne")
+    defer {
+      t.end()
+    }
+    rawTable.updateEntity { (entities) in
+      entities[entity.entityID] = .init(entity)
+    }
     return .init(entity: entity)
   }
   
   @discardableResult
   public mutating func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
+    let t = SignpostTransaction("ORM.EntityTable.insertSequence")
+    defer {
+      t.end()
+    }
     let results = addingEntities.map {
       insert($0)
     }
@@ -132,11 +172,15 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   }
   
   public mutating func remove(_ id: Entity.EntityID) {
-    entities.removeValue(forKey: id)
+    rawTable.updateEntity { (entities) -> Void in
+      entities.removeValue(forKey: id)
+    }
   }
   
   public mutating func removeAll() {
-    entities.removeAll(keepingCapacity: false)
+    rawTable.updateEntity { (entities) in
+      entities.removeAll(keepingCapacity: false)
+    }
   }
 }
 
@@ -148,7 +192,7 @@ extension EntityTable where Entity : Hashable {
       t.end()
     }
     return ids.reduce(into: Set<Entity>()) { (buf, id) in
-      guard let entity = entities[id] else { return }
+      guard let entity = rawTable.entities[id] else { return }
       buf.insert(entity as! Entity)
     }
   }
@@ -156,7 +200,7 @@ extension EntityTable where Entity : Hashable {
 
 extension EntityTable: Equatable where Entity : Equatable {
   public static func == (lhs: EntityTable<Schema, Entity>, rhs: EntityTable<Schema, Entity>) -> Bool {
-    (lhs.entities) == (rhs.entities)
+    (lhs.rawTable) == (rhs.rawTable)
   }
 }
 
@@ -176,9 +220,9 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
   @inline(__always)
   public func table<E: EntityType>(_ entityType: E.Type) -> EntityTable<Schema, E> {
     guard let rawTable = entityTableStorage[E.entityName] else {
-      return EntityTable<Schema, E>(buffer: [:])
+      return EntityTable<Schema, E>(rawTable: .init())
     }
-    return EntityTable<Schema, E>(buffer: rawTable)
+    return EntityTable<Schema, E>(rawTable: rawTable)
   }
     
   public subscript <E: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<E>>) -> EntityTable<Schema, E> {
@@ -200,30 +244,44 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
   
   @inline(__always)
   private mutating func _merge(anyEntityTable: EntityTableType) {
-    let entityRawTable = anyEntityTable.entities
+    let rawTable = anyEntityTable.rawTable
     let entityName = anyEntityTable.entityName
-    if var modified = entityTableStorage[entityName] {
+    
+    guard !rawTable.entities.isEmpty else { return }
+    
+    if entityTableStorage.keys.contains(entityName) {
       
-      entityRawTable.forEach { key, value in
-        modified[key] = value
+      withUnsafeMutablePointer(to: &entityTableStorage[entityName]!) { (pointer) -> Void in
+        pointer.pointee.updateEntity { (entities) -> Void in
+          rawTable.entities.forEach { key, value in
+            entities[key] = value
+          }
+        }
       }
       
-      entityTableStorage[entityName] = modified
     } else {
-      entityTableStorage[entityName] = entityRawTable
+      entityTableStorage[entityName] = rawTable
     }
+    
   }
-
+  
   @inline(__always)
   private mutating func _subtract(ids: Set<AnyHashable>, entityName: EntityName) {
-    guard var modified = entityTableStorage[entityName] else {
+   
+    guard entityTableStorage.keys.contains(entityName) else {
       return
     }
     
-    ids.forEach { key in
-      modified.removeValue(forKey: key)
+    guard !ids.isEmpty else {
+      return
     }
     
-    entityTableStorage[entityName] = modified
+    withUnsafeMutablePointer(to: &entityTableStorage[entityName]!) { (pointer) -> Void in
+      pointer.pointee.updateEntity { (entities) -> Void in
+        ids.forEach { key in
+          entities.removeValue(forKey: key)
+        }
+      }
+    }
   }
 }

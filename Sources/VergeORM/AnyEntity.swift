@@ -22,11 +22,17 @@ struct AnyEntity : Hashable {
   }
   
   static func == (lhs: AnyEntity, rhs: AnyEntity) -> Bool {
-    lhs.identifier == rhs.identifier
+    if lhs.box === rhs.box {
+      return true
+    }
+    if lhs.identifier == rhs.identifier {
+      return true
+    }
+    return false
   }
   
   func hash(into hasher: inout Hasher) {
-    identifier.hash(into: &hasher)
+    makeHash(&hasher)
   }
     
   var base: Any {
@@ -44,9 +50,12 @@ struct AnyEntity : Hashable {
   
   private var box: AnyBox
   private let identifier: AnyHashable
+  
+  private let makeHash: (inout Hasher) -> Void
     
   init<Base: EntityType>(_ base: Base) {
     self.box = .init(base)
+    self.makeHash = base.entityID.hash
     self.identifier = base.entityID
   }
   
