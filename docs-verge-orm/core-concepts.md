@@ -1,3 +1,9 @@
+---
+description: >-
+  A library to enable Object-Relational Mapping access to the value-type state
+  for Swift (UIKit / SwiftUI)
+---
+
 # VergeORM Core Concepts
 
 {% hint style="warning" %}
