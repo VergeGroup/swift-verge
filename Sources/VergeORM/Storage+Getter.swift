@@ -83,6 +83,28 @@ extension AnyGetterType where Output : EntityType {
 
 fileprivate var _valueContainerAssociated: Void?
 
+extension EqualityComputer where Input : DatabaseType {
+  
+  public static func tableEqual<E: EntityType>(_ entityType: E.Type) -> EqualityComputer<Input> {
+    let checkTableUpdated = EqualityComputer<Input>.init(
+      selector: { input -> Date in
+        return input._backingStorage.entityBackingStorage.table(E.self).updatedAt
+    },
+      equals: { (old, new) -> Bool in
+        old == new
+    })
+    return checkTableUpdated
+  }
+  
+  public static func entityEqual<E: EntityType & Equatable>(_ entityID: E.EntityID) -> EqualityComputer<Input> {
+    return .init(
+      selector: { db in db.entities.table(E.self).find(by: entityID) },
+      equals: { $0 == $1 }
+    )
+  }
+  
+}
+
 extension ValueContainerType where Value : DatabaseEmbedding {
   
   private var cache: _GetterCache {
@@ -104,14 +126,14 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   /// - Parameters:
   ///   - update: Updating output value each Input value updated.
   ///   - additionalEqualityComputer: Check to necessory of needs to update to reduce number of updating.
-  public func entityGetter<Output>(
+  public func makeEntityGetter<Output>(
     update: @escaping (Value.Database) -> Output,
     additionalEqualityComputer: EqualityComputer<Value.Database>?
   ) -> Getter<Value, Output> {
     
     let path = Value.getterToDatabase
     
-    let updatedAtEquality = EqualityComputer<Value.Database>.init(
+    let checkDatabaseUpdated = EqualityComputer<Value.Database>.init(
       selector: { input -> (Date, Date) in
         let v = input
         return (v._backingStorage.entityUpdatedAt, v._backingStorage.indexUpdatedAt)
@@ -120,20 +142,71 @@ extension ValueContainerType where Value : DatabaseEmbedding {
         old == new
     })
     
+    let computer = EqualityComputer.init(or: [
+      checkDatabaseUpdated,
+      additionalEqualityComputer
+      ].compactMap { $0 })
+                   
     let _getter = getter(
       filter: EqualityComputer.init(selector: { path($0) }, equals: { (old, new) -> Bool in
-        guard !updatedAtEquality.isEqual(value: new) else {
-          return true
-        }
-        return additionalEqualityComputer?.isEqual(value: new) ?? false
+        computer.isEqual(value: new)
       }),
       map: { (value) -> Output in
-        update(Value.getterToDatabase(value))
+        let t = SignpostTransaction("ORM.Getter.update")
+        defer {
+          t.end()
+        }
+        return update(Value.getterToDatabase(value))
     })
     
     return _getter
   }
+  
+  public func makeEntityGetter<E: EntityType>(
+    from entityID: E.EntityID,
+    additionalEqualityComputer: EqualityComputer<Value.Database>?
+  ) -> Getter<Value, E?> {
     
+    let newGetter = makeEntityGetter(
+      update: { db in
+        db.entities.table(E.self).find(by: entityID)
+    },
+      additionalEqualityComputer: .init(or: [
+        .tableEqual(E.self),
+        additionalEqualityComputer
+        ].compactMap { $0 }
+      )
+    )
+    return newGetter
+    
+  }
+  
+  public func makeNonNullEntityGetter<E: EntityType>(
+    from entity: E,
+    additionalEqualityComputer: EqualityComputer<Value.Database>?
+  ) -> Getter<Value, E> {
+    
+    let box = _RefBox(entity)
+    let entityID = entity.entityID
+    
+    let newGetter = makeEntityGetter(
+      update: { db -> E in
+        let table = db.entities.table(E.self)
+        if let e = table.find(by: entityID) {
+          box.value = e
+        }
+        return box.value
+    },
+      additionalEqualityComputer: .init(or: [
+        .tableEqual(E.self),
+        additionalEqualityComputer
+        ].compactMap { $0 }
+      )
+    )
+    return newGetter
+    
+  }
+      
   /// A entity getter that entity id based.
   /// - Parameters:
   ///   - tableSelector:
@@ -141,14 +214,9 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   public func entityGetter<E: EntityType>(from entityID: E.EntityID) -> Getter<Value, E?> {
     
     let _cache = cache
-    
+              
     guard let getter = _cache.getter(entityID: entityID) as? Getter<Value, E?> else {
-      let newGetter = entityGetter(
-        update: { db in
-          db.entities.table(E.self).find(by: entityID)
-      },
-        additionalEqualityComputer: nil
-      )
+      let newGetter = makeEntityGetter(from: entityID, additionalEqualityComputer: nil)
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -164,21 +232,13 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     let _cache = cache
     
     guard let getter = _cache.getter(entityID: entityID) as? Getter<Value, E?> else {
-      let newGetter = entityGetter(
-        update: { db in
-          db.entities.table(E.self).find(by: entityID)
-      },
-        additionalEqualityComputer: .init(
-          selector: { db in db.entities.table(E.self).find(by: entityID) },
-          equals: { $0 == $1 }
-        )
-      )
+      let newGetter = makeEntityGetter(from: entityID, additionalEqualityComputer: .entityEqual(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
     
     return getter
-      
+             
   }
   
   @inline(__always)
@@ -187,19 +247,9 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     let _cache = cache
     
     guard let getter = _cache.getter(entityID: entity.entityID) as? Getter<Value, E> else {
-      let box = _RefBox(entity)
       let entityID = entity.entityID
-      
-      let newGetter = entityGetter(
-        update: { db -> E in
-          let table = db.entities.table(E.self)
-          if let e = table.find(by: entityID) {
-            box.value = e
-          }
-          return box.value
-      },
-        additionalEqualityComputer: nil
-      )
+      let newGetter = makeNonNullEntityGetter(from: entity, additionalEqualityComputer: nil)
+      _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
     
@@ -215,22 +265,9 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     let _cache = cache
     
     guard let getter = _cache.getter(entityID: entity.entityID) as? Getter<Value, E> else {
-      let box = _RefBox(entity)
       let entityID = entity.entityID
-            
-      let newGetter = entityGetter(
-        update: { db -> E in
-          let table = db.entities.table(E.self)
-          if let e = table.find(by: entityID) {
-            box.value = e
-          }
-          return box.value
-      },
-        additionalEqualityComputer: .init(
-          selector: { db in db.entities.table(E.self).find(by: entityID) },
-          equals: { $0 == $1 }
-        )
-      )
+      let newGetter = makeNonNullEntityGetter(from: entity, additionalEqualityComputer: .entityEqual(entityID))
+      _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
     

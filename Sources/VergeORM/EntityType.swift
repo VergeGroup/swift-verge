@@ -40,7 +40,7 @@ public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConve
 /// You might use IdentifiableEntityType instead, if you create SwiftUI app.
 public protocol EntityType {
   
-  associatedtype IdentifierType: Hashable
+  associatedtype IdentifierType: Hashable, CustomStringConvertible
    
   var entityID: EntityID { get }
   
