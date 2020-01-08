@@ -6,11 +6,35 @@ description: >-
 
 # VergeORM Core Concepts
 
-{% hint style="warning" %}
-Sorry, this documentation is currently working in progress.
-{% endhint %}
+## What VergeORM is
 
-VergeORM is entity management system.
+VergeORM is a library to manage Object-Relational Mapping in the value-type struct.
+
+It provides to store with **Normalization and accessing easier way.**
+
+_Basically, If we do Normalization without any tool, accessing would be complicated._
+
+The datastore can be stored anywhere because it's built by struct type.  
+It allows that to adapt to state-shape already exists.
+
+```swift
+struct YourAppState: StateType {
+  
+  // VergeORM's datastore 
+  struct Database: DatabaseType {
+  
+    ...
+    // We will explain this later.
+  }
+      
+  // Put Database anywhere you'd like  
+  var db: Database = .init()
+
+  ... other states
+}
+```
+
+## Store with normalization
 
 Many applications manage a lot of entities.  
 Single state-tree requires work similar to creating database schema.  
