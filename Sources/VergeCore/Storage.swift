@@ -152,6 +152,8 @@ extension ReadonlyStorage {
   /// Transform value with filtering.
   /// - Attention: Retains upstream storage
   public func map<U>(
+    onUpdated: @escaping (Value) -> Void = { _ in },
+    onPassed: @escaping (Value) -> Void = { _ in },
     filter: @escaping (Value) -> Bool = { _ in false },
     transform: @escaping (Value) -> U
   ) -> ReadonlyStorage<U> {
@@ -160,8 +162,12 @@ extension ReadonlyStorage {
     let newStorage = Storage<U>.init(initialValue, upstreams: [self])
     
     let token = addDidUpdate { [weak newStorage] (newValue) in
-      guard !filter(newValue) else { return }
+      guard !filter(newValue) else {
+        onPassed(newValue)
+        return
+      }
       newStorage?.replace(transform(newValue))
+      onUpdated(newValue)
     }
     
     newStorage.addDeinit { [weak self] in
