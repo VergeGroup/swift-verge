@@ -10,10 +10,11 @@ import Foundation
 
 import XCTest
 
+import VergeRx
 import VergeCore
 import VergeORM
 
-class SelectorTests: XCTestCase {
+class ORMGetterTests: XCTestCase {
   
   func testSelector() {
     
@@ -21,7 +22,7 @@ class SelectorTests: XCTestCase {
     
     let id = Book.EntityID.init("some")
     
-    let nullableSelector = storage.entityGetter(
+    let nullableSelector = storage.rx.entityGetter(
       from: id
     )
     
@@ -30,10 +31,10 @@ class SelectorTests: XCTestCase {
       
       let didUpdate = XCTestExpectation()
       
-      nullableSelector.addDidUpdate { (book) in
+      _ = nullableSelector.subscribe(onNext: { book in
         didUpdate.fulfill()
-      }
-      
+      })
+            
       XCTAssertNil(nullableSelector.value)
       
       var book: Book!
@@ -51,7 +52,7 @@ class SelectorTests: XCTestCase {
         book = createdBook
       }
       
-      let selector = storage.nonNullEntityGetter(
+      let selector = storage.rx.nonNullEntityGetter(
         from: book
       )
       
@@ -112,7 +113,7 @@ class SelectorTests: XCTestCase {
         }
       }
       
-      let selector = storage.nonNullEntityGetter(from: result)
+      let selector = storage.rx.nonNullEntityGetter(from: result)
             
       XCTAssertEqual(selector.value.rawID, "some")
       XCTAssertEqual(selector.value.name, "")
@@ -165,10 +166,11 @@ class SelectorTests: XCTestCase {
     
     var updatedCount = 0
     
-    let authorGetter = storage.nonNullEntityGetter(from: result)
-    authorGetter.addDidUpdate { (_) in
+    let authorGetter = storage.rx.nonNullEntityGetter(from: result)
+    
+    _ = authorGetter.skip(1).subscribe(onNext: { _ in
       updatedCount += 1
-    }
+    })
     
     XCTAssertEqual(authorGetter.value.name, "muukii")
     
@@ -236,9 +238,9 @@ class SelectorTests: XCTestCase {
     
     let storage = Storage<RootState>(.init())
     
-    let getter1 = storage.entityGetter(from: Author.EntityID("Hoo"))
-    let getter2 = storage.entityGetter(from: Author.EntityID("Hoo"))
-    let getter3 = storage.entityGetter(from: Book.EntityID("Hoo"))
+    let getter1 = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
+    let getter2 = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
+    let getter3 = storage.rx.entityGetter(from: Book.EntityID("Hoo"))
     
     XCTAssert(getter1 === getter2)
     XCTAssert(getter3 !== getter2)
@@ -250,7 +252,7 @@ class SelectorTests: XCTestCase {
     let storage = Storage<RootState>(.init())
     
     measure {
-      let _ = storage.entityGetter(from: Author.EntityID("Hoo"))
+      let _ = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
     }
     
   }
@@ -259,10 +261,10 @@ class SelectorTests: XCTestCase {
         
     let storage = Storage<RootState>(.init())
     
-    let _ = storage.entityGetter(from: Author.EntityID("Hoo"))
+    let _ = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
     
     measure {
-      let _ = storage.entityGetter(from: Author.EntityID("Hoo"))
+      let _ = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
     }
                 
   }

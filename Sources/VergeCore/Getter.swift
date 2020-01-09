@@ -1,35 +1,14 @@
 //
-// Copyright (c) 2019 muukii
+//  Getter.swift
+//  VergeCore
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
+//  Created by muukii on 2020/01/10.
+//  Copyright © 2020 muukii. All rights reserved.
 //
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 
 import Foundation
 
-open class _Getter<Output>: Hashable {
-    
-  public static func == (lhs: _Getter<Output>, rhs: _Getter<Output>) -> Bool {
-    lhs === rhs
-  }
-  
-  public func hash(into hasher: inout Hasher) {
-    ObjectIdentifier(self).hash(into: &hasher)
-  }
+open class GetterBase<Output> {
   
   open var value: Output {
     fatalError()
@@ -39,149 +18,79 @@ open class _Getter<Output>: Hashable {
   
 }
 
-open class GetterBase<Output>: _Getter<Output> {
-      
-  public final override var value: Output {
-    _read { yield storage.value }
-  }
-  
-  let storage: ReadonlyStorage<Output>
-  let upstreams: [AnyObject]
-  
-  init(storage: ReadonlyStorage<Output>, upstreams: [AnyObject]) {
-    self.upstreams = upstreams
-    self.storage = storage
-  }
-  
-  /// Register observer with closure.
-  /// Storage tells got a newValue.
-  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
-  @discardableResult
-  public final func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
-    storage.addWillUpdate(subscriber: subscriber)
-  }
-  
-  /// Register observer with closure.
-  /// Storage tells got a newValue.
-  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
-  @discardableResult
-  public final func addDidUpdate(subscriber: @escaping (Output) -> Void) -> EventEmitterSubscribeToken {
-    storage.addDidUpdate(subscriber: subscriber)
-  }
-  
-  /// Transform output value with filtering.
-  /// - Attention: Retains upstream getter
-  @inline(__always)
-  public func map<U>(
-    filter: @escaping (Output) -> Bool = { _ in false },
-    transform: @escaping (Output) -> U
-  ) -> AnyGetter<U> {
-    .init(storage.map(filter: filter, transform: transform), upstreams: [self])
-  }
-  
-  /// Transform output value with filtering.
-  /// - Attention: Retains upstream getter
-  public func map<U>(
-    filter: EqualityComputer<Output>,
-    transform: @escaping (Output) -> U
-  ) -> AnyGetter<U> {
-    map(filter: filter.isEqual, transform: transform)
-  }
-  
-}
-
-public protocol AnyGetterType: AnyObject {
-  associatedtype Output
-  var value: Output { get }
-  
-  @discardableResult
-  func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken
-  
-  /// Register observer with closure.
-  /// Storage tells got a newValue.
-  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
-  @discardableResult
-  func addDidUpdate(subscriber: @escaping (Output) -> Void) -> EventEmitterSubscribeToken
-  
-
-}
-
-public final class AnyGetter<Output>: GetterBase<Output>, AnyGetterType {
-      
-  public init<Input>(_ source: Getter<Input, Output>) {            
-    super.init(storage: source.storage, upstreams: [source])
-  }
-  
-  init(_ storage: ReadonlyStorage<Output>, upstreams: [AnyObject]) {
-    super.init(storage: storage, upstreams: upstreams)
-  }
-          
-}
-
-public protocol GetterType: AnyGetterType {
-  associatedtype Input
-  associatedtype Output
-  var value: Output { get }
-}
-
-open class Getter<Input, Output>: GetterBase<Output>, GetterType {
-  
-  private var didUpdates: [(Output) -> Void] = []
-  
-  var onDeinit: () -> Void = {}
-  
-  private let sourceStorage: Storage<Input>
-        
-  public init(
-    input: Input,
-    filter: EqualityComputer<Input>,
-    map: @escaping (Input) -> Output,
-    upstreams: [AnyObject] = []
-  ) {
-    
-    let t = SignpostTransaction("Getter.Init")
-    defer {
-      t.end()
-    }
-    
-    sourceStorage = .init(input)
-    filter.registerFirstValue(input)
-    
-    let storage = sourceStorage.map(
-      filter: filter.isEqual,
-      transform: map
-    )
-          
-    super.init(storage: storage, upstreams: upstreams)
-  }
-    
-  deinit {
-    onDeinit()
-  }
-  
-  final func _receive(newValue: Input) {
-    let t = SignpostTransaction("Getter.Receive")
-    defer {
-      t.end()
-    }
-    sourceStorage.replace(newValue)
-  }
-    
-  public final func asAny() -> AnyGetter<Output> {
-    .init(self)
-  }
-  
-}
-
 #if canImport(Combine)
 
 import Combine
+
+@available(iOS 13, macOS 10.15, *)
+public class Getter<Output>: GetterBase<Output>, Publisher {
+  
+  public typealias Failure = Never
+  
+  let output: CurrentValueSubject<Output, Never>
+  
+  public override var value: Output {
+    output.value
+  }
+  
+  private var subscriptions = Set<AnyCancellable>()
+  
+  public convenience init<O: Publisher>(from publisher: () -> O) where O.Output == Output, O.Failure == Never {
+    self.init(from: publisher())
+  }
+  
+  public init<O: Publisher>(from publisher: O) where O.Output == Output, O.Failure == Never {
+    
+    let pipe = publisher.buffer(size: 1, prefetch: .byRequest, whenFull: .dropOldest).makeConnectable()
+    
+    pipe.connect().store(in: &subscriptions)
+    
+    var initialValue: Output!
+    
+    publisher.sink { value in
+      initialValue = value
+    }
+    .store(in: &subscriptions)
+        
+    let _output = CurrentValueSubject<Output, Never>.init(initialValue)
+        
+    publisher.sink { (value) in
+      _output.send(value)
+    }
+    .store(in: &subscriptions)
+    
+    self.output = _output
+  }
+  
+  public func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
+
+    output.receive(subscriber: subscriber)
+  }
+    
+}
+
+@available(iOS 13, macOS 10.15, *)
+public final class GetterSource<Input, Output>: Getter<Output> {
+  
+  init<O: Publisher>(
+    input: O
+  ) where O.Output == Output, O.Failure == Never {
+    
+    super.init(from: input)
+    
+  }
+  
+  public func asGetter() -> Getter<Output> {
+    self
+  }
+  
+}
 
 fileprivate var _willChangeAssociated: Void?
 fileprivate var _didChangeAssociated: Void?
 
 @available(iOS 13.0, macOS 10.15, *)
-extension GetterBase: ObservableObject {
+extension Storage: ObservableObject {
   
   public var objectWillChange: ObservableObjectPublisher {
     if let associated = objc_getAssociatedObject(self, &_willChangeAssociated) as? ObservableObjectPublisher {
@@ -204,12 +113,12 @@ extension GetterBase: ObservableObject {
     }
   }
   
-  public var didChangePublisher: AnyPublisher<Output, Never> {
+  public var publisher: AnyPublisher<Value, Never> {
     
-    if let associated = objc_getAssociatedObject(self, &_didChangeAssociated) as? PassthroughSubject<Output, Never> {
+    if let associated = objc_getAssociatedObject(self, &_didChangeAssociated) as? CurrentValueSubject<Value, Never> {
       return associated.eraseToAnyPublisher()
     } else {
-      let associated = PassthroughSubject<Output, Never>()
+      let associated = CurrentValueSubject<Value, Never>(value)
       objc_setAssociatedObject(self, &_didChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
       
       addDidUpdate { s in
@@ -224,6 +133,41 @@ extension GetterBase: ObservableObject {
       
       return associated.eraseToAnyPublisher()
     }
+  }
+  
+  public var didChangePublisher: AnyPublisher<Value, Never> {
+    publisher.dropFirst().eraseToAnyPublisher()
+  }
+  
+}
+
+@available(iOS 13, macOS 10.15, *)
+extension Publisher {
+  
+  public func removeDuplicates(_ computer: EqualityComputer<Output>) -> Publishers.Filter<Self> {
+    filter {
+      !computer.isEqual(value: $0)
+    }
+  }
+  
+}
+
+extension Storage {
+  
+  @available(iOS 13, macOS 10.15, *)
+  public func getter<Output>(
+    filter: EqualityComputer<Value>,
+    map: @escaping (Value) -> Output
+  ) -> GetterSource<Value, Output> {
+    
+    let pipe = publisher
+      .removeDuplicates(filter)
+      .map(map)
+        
+    let getter = GetterSource<Value, Output>.init(input: pipe)
+    
+    return getter
+    
   }
   
 }

@@ -15,7 +15,7 @@ import VergeStore
 import VergeCore
 #endif
 
-public class RxGetter<Output>: _Getter<Output>, ObservableType {
+public class RxGetter<Output>: ObservableType {
   
   public typealias Element = Output
   
@@ -23,7 +23,7 @@ public class RxGetter<Output>: _Getter<Output>, ObservableType {
   
   private let disposeBag = DisposeBag()
   
-  public override var value: Output {
+  public final var value: Output {
     try! output.value()
   }
   
@@ -48,10 +48,6 @@ public class RxGetter<Output>: _Getter<Output>, ObservableType {
     pipe.subscribe(self.output).disposed(by: disposeBag)
     
   }
-    
-  init(output: BehaviorSubject<Output>) {
-    self.output = output
-  }
   
   public func subscribe<Observer>(_ observer: Observer) -> Disposable where Observer : ObserverType, Element == Observer.Element {
     output.subscribe(observer)   
@@ -60,9 +56,7 @@ public class RxGetter<Output>: _Getter<Output>, ObservableType {
 }
 
 public final class RxGetterSource<Input, Output>: RxGetter<Output> {
-      
-  private let disposeBag = DisposeBag()
-  
+          
   init(
     input: Observable<Output>
   ) {
@@ -102,6 +96,18 @@ extension Reactive where Base : RxValueContainerType {
 #if !COCOAPODS
 import VergeORM
 #endif
+
+extension EntityType {
+  
+  #if COCOAPODS
+  public typealias RxGetter = Verge.RxGetter<Self>
+  public typealias RxGetterSource<Source> = Verge.RxGetterSource<Source, Self>
+  #else
+  public typealias RxGetter = VergeRx.RxGetter<Self>
+  public typealias RxGetterSource<Source> = VergeRx.RxGetterSource<Source, Self>
+  #endif
+  
+}
 
 fileprivate final class _GetterCache {
   

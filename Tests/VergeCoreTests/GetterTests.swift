@@ -2,86 +2,94 @@
 //  GetterTests.swift
 //  VergeCoreTests
 //
-//  Created by muukii on 2019/12/23.
-//  Copyright © 2019 muukii. All rights reserved.
+//  Created by muukii on 2020/01/10.
+//  Copyright © 2020 muukii. All rights reserved.
 //
 
 import Foundation
 
 import XCTest
-
-@testable import VergeCore
+import VergeCore
 
 class GetterTests: XCTestCase {
   
-  func testMemoization() {
+  func testSimple() {
     
-    let getter = Getter(
-      input: 0,
-      filter: EqualityComputer.init(),
-      map: { $0 }
-    )
-    getter.addDidUpdate { (v) in
-      XCTFail("It would not be called after created getter")
+    let storage = Storage<Int>(1)
+    
+    var updateCount = 0
+    
+    let g = storage.getter(filter: .init(), map: { $0 * 2})
+    
+    g.sink { _ in
+      updateCount += 1
     }
-    getter._receive(newValue: 0)
+       
+    XCTAssertEqual(g.value, 2)
+    
+    storage.update {
+      $0 = 2
+    }
+    
+    XCTAssertEqual(storage.value, 2)
+    
+    XCTAssertEqual(g.value, 4)
+    
+    storage.update {
+      $0 = 2
+    }
+    
+    XCTAssertEqual(updateCount, 2)
     
   }
   
-  func testRatain() {
+  func testChain() {
     
-    var storage: Storage! = Storage<Int>(0)
-    weak var storageRef = storage
+    let storage = Storage<Int>(1)
     
-    XCTAssertNotNil(storageRef)
+    var first: GetterSource<Int, Int>! = storage.getter(filter: .init(), map: { $0 })
     
-    var _first: Getter! = storage.getter(filter: .alwaysDifferent(), map: { $0 })
-               
-    weak var firstRef = _first
-          
-    var second: AnyGetter! = firstRef!.map(transform: { $0 })
+    weak var weakFirst = first
     
-    XCTAssertEqual(second.value, 0)
+    var second: Getter! = Getter {
+      first
+        .map { $0 }
+    }
     
-    storage.replace(1)
-    
+    XCTAssertNotNil(weakFirst)
     XCTAssertEqual(second.value, 1)
     
-    XCTAssertNotNil(firstRef)
-
-    _first = nil
+    first = nil
     
-    XCTAssertNotNil(firstRef) // Because, second ratains
-        
-    storage.replace(10)
+    XCTAssertNotNil(weakFirst)
     
-    storage = nil
+    storage.update {
+      $0 = 2
+    }
     
-    XCTAssertNotNil(storageRef) // Because, first retains storage
-    XCTAssertEqual(second.value, 10)
+    XCTAssertEqual(second.value, 2)
     
     second = nil
     
-    XCTAssertNil(firstRef)
-    XCTAssertNil(storageRef)
-           
+    XCTAssertNil(weakFirst)
+    
   }
   
-  func testNonMemoization() {
+  func testCombine() {
     
-    var count = 0
-        
-    let getter = Getter(
-      input: 0,
-      filter: .alwaysDifferent(),
-      map: { $0 }
-    )
+    let storage = Storage<Int>(1)
     
-    getter.addDidUpdate { (v) in
-      count += 1
+    let first = storage.getter(filter: .init(), map: { $0 })
+    let second = storage.getter(filter: .init(), map: { -$0 })
+    
+    let combined = Getter {
+      first.combineLatest(second)
+        .map { $0 + $1 }
+        .removeDuplicates()
     }
-    XCTAssert(count == 0)
-    getter._receive(newValue: 0)
-    XCTAssert(count == 1)
+    
+    XCTAssertEqual(combined.value, 0)
+    
   }
+  
 }
