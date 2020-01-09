@@ -13,7 +13,6 @@ import VergeCore
 
 import Combine
 
-@available(iOS 13.0, *)
 class GetterTests: XCTestCase {
   
   private var subs = Set<AnyCancellable>()
@@ -77,8 +76,15 @@ class GetterTests: XCTestCase {
     
     second = nil
     
-    XCTAssertNil(weakFirst)
+    let waiter = XCTestExpectation()
     
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+      
+      XCTAssertNil(weakFirst)
+      waiter.fulfill()
+    }
+    
+    wait(for: [waiter], timeout: 1)
   }
   
   func testShare() {

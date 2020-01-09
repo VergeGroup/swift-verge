@@ -13,7 +13,6 @@ import VergeCore
 import Combine
 #endif
 
-@available(iOS 13.0, *)
 class EventEmitterTests: XCTestCase {
   
   private var subscriptions = Set<AnyCancellable>()
