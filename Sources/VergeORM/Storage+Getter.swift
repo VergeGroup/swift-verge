@@ -25,6 +25,8 @@ import Foundation
 import VergeCore
 #endif
 
+#if canImport(Combine)
+
 @available(iOS 13, macOS 10.15, *)
 extension EntityType {
   
@@ -37,6 +39,7 @@ extension EntityType {
   #endif
   
 }
+#endif
 
 public protocol DatabaseEmbedding {
   
