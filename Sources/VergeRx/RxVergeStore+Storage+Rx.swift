@@ -197,3 +197,17 @@ extension ReadonlyStorage {
   }
 
 }
+
+public protocol RxValueContainerType: ValueContainerType {
+  
+  func asObservable() -> Observable<Value>
+  
+}
+
+extension Storage: RxValueContainerType {}
+
+extension StoreBase: RxValueContainerType where State : StateType {
+  public func asObservable() -> Observable<State> {
+    stateObservable
+  }
+}

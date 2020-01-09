@@ -21,17 +21,27 @@
 
 import Foundation
 
-open class GetterBase<Output>: Hashable {
-  
-  public static func == (lhs: GetterBase<Output>, rhs: GetterBase<Output>) -> Bool {
+open class _Getter<Output>: Hashable {
+    
+  public static func == (lhs: _Getter<Output>, rhs: _Getter<Output>) -> Bool {
     lhs === rhs
   }
-    
+  
   public func hash(into hasher: inout Hasher) {
     ObjectIdentifier(self).hash(into: &hasher)
   }
-    
-  public final var value: Output {
+  
+  open var value: Output {
+    fatalError()
+  }
+  
+  public init() {}
+  
+}
+
+open class GetterBase<Output>: _Getter<Output> {
+      
+  public final override var value: Output {
     _read { yield storage.value }
   }
   

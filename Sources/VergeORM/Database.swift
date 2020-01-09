@@ -86,8 +86,8 @@ extension DatabaseType {
 
 public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
   
-  var entityUpdatedAt: Date = .init()
-  var indexUpdatedAt: Date = .init()
+  private(set) public var entityUpdatedAt: Date = .init()
+  private(set) public var indexUpdatedAt: Date = .init()
   
   var entityBackingStorage: EntityTablesStorage<Schema> = .init() {
     didSet {

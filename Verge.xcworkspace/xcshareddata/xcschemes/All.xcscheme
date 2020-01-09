@@ -70,34 +70,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B7F383F238948CF000B9ACF"
-               BuildableName = "RxVergeStore.framework"
-               BlueprintName = "RxVergeStore"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4BF2BCB5238A643C00F70CDA"
-               BuildableName = "RxVergeViewModel.framework"
-               BlueprintName = "RxVergeViewModel"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "4B86A4851F969AD5002D54FE"
                BuildableName = "VergeClassic.framework"
                BlueprintName = "VergeClassic"
@@ -115,20 +87,6 @@
                BlueprintIdentifier = "4B8EB50F23C03D9800035B2A"
                BuildableName = "VergeGetterCombine.framework"
                BlueprintName = "VergeGetterCombine"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B8EB4FE23C03D7000035B2A"
-               BuildableName = "VergeGetterRx.framework"
-               BlueprintName = "VergeGetterRx"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -185,6 +143,20 @@
                BlueprintIdentifier = "4BE9454E23AD1B180060F977"
                BuildableName = "VergeCoreTests.xctest"
                BlueprintName = "VergeCoreTests"
+               ReferencedContainer = "container:Verge.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4B1743A623C767670074C457"
+               BuildableName = "VergeRxTests.xctest"
+               BlueprintName = "VergeRxTests"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -233,6 +205,16 @@
                BlueprintIdentifier = "4BE9454E23AD1B180060F977"
                BuildableName = "VergeCoreTests.xctest"
                BlueprintName = "VergeCoreTests"
+               ReferencedContainer = "container:Verge.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4B1743A623C767670074C457"
+               BuildableName = "VergeRxTests.xctest"
+               BlueprintName = "VergeRxTests"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </TestableReference>
