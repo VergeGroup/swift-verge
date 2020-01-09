@@ -31,7 +31,7 @@
 * [Getting Started](docs-verge-orm/getting-started.md)
 * [Index](docs-verge-orm/index.md)
 * [Middleware](docs-verge-orm/middleware.md)
-* [Getter \(Selector\)](docs-verge-orm/getter.md)
+* [Getter \(Selector\)](docs-verge-orm/selector.md)
 * [Tips](docs-verge-orm/tips.md)
 
 ## 📦 Verge Store Rx <a id="docs-verge-store-rx"></a>
