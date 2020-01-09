@@ -15,3 +15,9 @@ The characteristics are
 * **Supports Logging \(Commit, Action, Performance monitoring\)**
 * **Supports Middleware**
 
+## Concept from...
+
+{% embed url="https://medium.com/eureka-engineering/thought-about-arch-for-swiftui-1b0496d8094" %}
+
+
+
