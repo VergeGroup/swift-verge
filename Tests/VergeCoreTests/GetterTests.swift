@@ -81,6 +81,32 @@ class GetterTests: XCTestCase {
     
   }
   
+  func testShare() {
+    
+    let storage = Storage<Int>(1)
+    
+    let first = storage.getter(filter: .init(), map: { $0 })
+    
+    let share1 = Getter {
+      first.map { $0 }
+    }
+    
+    let share2 = Getter {
+      first.map { $0 }
+    }
+    
+    XCTAssertEqual(share1.value, 1)
+    XCTAssertEqual(share2.value, 1)
+    
+    storage.update {
+      $0 = 2
+    }
+    
+    XCTAssertEqual(share1.value, 2)
+    XCTAssertEqual(share2.value, 2)
+    
+  }
+  
   func testCombine() {
     
     let storage = Storage<Int>(1)
