@@ -22,12 +22,12 @@ open class Getter<Input, Output>
 
 ```swift
 struct State {
-       
+
   var count: Int = 0
 
 }
 
-let getter = store.getter(
+let getter: Getter<State, Int> = store.getter(
   filter: .init(selector: { $0.count }, equals: ==)
   map: { (state) -> Int in
     state.count * 2
