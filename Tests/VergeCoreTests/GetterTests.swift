@@ -11,7 +11,11 @@ import Foundation
 import XCTest
 import VergeCore
 
+import Combine
+
 class GetterTests: XCTestCase {
+  
+  private var subs = Set<AnyCancellable>()
   
   func testSimple() {
     
@@ -24,6 +28,7 @@ class GetterTests: XCTestCase {
     g.sink { _ in
       updateCount += 1
     }
+    .store(in: &subs)
        
     XCTAssertEqual(g.value, 2)
     

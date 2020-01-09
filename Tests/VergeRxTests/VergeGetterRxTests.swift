@@ -41,6 +41,14 @@ class VergeGetterRxTests: XCTestCase {
       $0 = 2
     }
     
+    storage.update {
+      $0 = 2
+    }
+    
+    storage.update {
+      $0 = 2
+    }
+    
     XCTAssertEqual(updateCount, 2)
     
   }
@@ -75,6 +83,32 @@ class VergeGetterRxTests: XCTestCase {
     
     XCTAssertNil(weakFirst)
 
+  }
+  
+  func testShare() {
+    
+    let storage = Storage<Int>(1)
+    
+    let first = storage.rx.getter(filter: .init(), map: { $0 })
+        
+    let share1 = RxGetter {
+      first.map { $0 }
+    }
+    
+    let share2 = RxGetter {
+      first.map { $0 }
+    }
+    
+    XCTAssertEqual(share1.value, 1)
+    XCTAssertEqual(share2.value, 1)
+    
+    storage.update {
+      $0 = 2
+    }
+    
+    XCTAssertEqual(share1.value, 2)
+    XCTAssertEqual(share2.value, 2)
+    
   }
   
   func testCombine() {

@@ -15,7 +15,7 @@ struct UserListView: View {
   
   @EnvironmentObject var session: Session
   
-  private var users: Getter<SessionState, [Entity.User]> {
+  private var users: GetterSource<SessionState, [Entity.User]> {
     session.users
   }
            

@@ -25,6 +25,19 @@ import Foundation
 import VergeCore
 #endif
 
+@available(iOS 13, macOS 10.15, *)
+extension EntityType {
+  
+  #if COCOAPODS
+  public typealias Getter = Verge.Getter<Self>
+  public typealias GetterSource<Source> = Verge.GetterSource<Source, Self>
+  #else
+  public typealias Getter = VergeCore.Getter<Self>
+  public typealias GetterSource<Source> = VergeCore.GetterSource<Source, Self>
+  #endif
+  
+}
+
 public protocol DatabaseEmbedding {
   
   associatedtype Database: DatabaseType

@@ -47,17 +47,19 @@ public class Getter<Output>: GetterBase<Output>, Publisher {
     
     var initialValue: Output!
     
-    publisher.sink { value in
+    pipe.first().sink { value in
       initialValue = value
     }
     .store(in: &subscriptions)
         
     let _output = CurrentValueSubject<Output, Never>.init(initialValue)
         
-    publisher.sink { (value) in
-      _output.send(value)
+    pipe.sink { [weak _output] (value) in
+      _output?.send(value)
     }
     .store(in: &subscriptions)
+    
+    _output.send(initialValue)
     
     self.output = _output
   }

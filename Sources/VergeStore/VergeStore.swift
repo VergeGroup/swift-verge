@@ -179,6 +179,16 @@ extension StoreBase {
   public var activityPublisher: EventEmitter<Activity>.Publisher {
     _eventEmitter.publisher
   }
+  
+  @available(iOS 13, macOS 10.15, *)
+  public func getter<Output>(
+    filter: EqualityComputer<Value>,
+    map: @escaping (Value) -> Output
+  ) -> GetterSource<Value, Output> {
+    
+    _backingStorage.getter(filter: filter, map: map)
+    
+  }
 }
 
 @available(iOS 13.0, macOS 10.15, *)
