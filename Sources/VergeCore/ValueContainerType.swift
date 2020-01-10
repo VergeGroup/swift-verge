@@ -16,6 +16,11 @@ public protocol ValueContainerType: AnyObject {
   func lock()
   func unlock()
      
+  @available(iOS 13, macOS 10.15, *)
+  func getter<Output>(
+    filter: EqualityComputer<Value>,
+    map: @escaping (Value) -> Output
+  ) -> GetterSource<Value, Output>
 }
 
 extension Storage: ValueContainerType {

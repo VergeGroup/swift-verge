@@ -99,6 +99,7 @@
 		4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */; };
 		4BCBCA8D2381CC2B00F33B15 /* DispatcherContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */; };
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
+		4BD6850523C82E6C00D8A620 /* ORMGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */; };
 		4BE76219239AA4A1009EB209 /* ChainingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE76218239AA4A1009EB209 /* ChainingViewModelTests.swift */; };
 		4BE76221239AAE09009EB209 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE76220239AAE09009EB209 /* AppDelegate.swift */; };
 		4BE76225239AAE09009EB209 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE76224239AAE09009EB209 /* ViewController.swift */; };
@@ -432,6 +433,7 @@
 		4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherBase.swift; sourceTree = "<group>"; };
 		4BCBCA8C2381CC2B00F33B15 /* DispatcherContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherContext.swift; sourceTree = "<group>"; };
 		4BD379EC23BD94D800CE474C /* AnyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEntity.swift; sourceTree = "<group>"; };
+		4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORMGetterTests.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		4BE76218239AA4A1009EB209 /* ChainingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChainingViewModelTests.swift; sourceTree = "<group>"; };
 		4BE7621E239AAE09009EB209 /* VergeViewModelDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeViewModelDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -690,6 +692,7 @@
 			isa = PBXGroup;
 			children = (
 				4BC6EFB423A8C99900EFD688 /* State.swift */,
+				4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */,
 				4B6BF62923AD7B55001E5361 /* CollectionPerformance.swift */,
 				4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */,
 				4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */,
@@ -1652,6 +1655,7 @@
 				4B99D69323AF6C4300E26127 /* ProtocolTests.swift in Sources */,
 				4B475BC8239ADE1C008A03E1 /* VergeORMTests.swift in Sources */,
 				4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */,
+				4BD6850523C82E6C00D8A620 /* ORMGetterTests.swift in Sources */,
 				4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */,
 				4BC6EFB523A8C99900EFD688 /* State.swift in Sources */,
 				4B6BF62B23AD7B74001E5361 /* CollectionPerformance.swift in Sources */,
