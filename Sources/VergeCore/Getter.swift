@@ -51,6 +51,8 @@ public class Getter<Output>: GetterBase<Output>, Publisher {
       initialValue = value
     }
     .store(in: &subscriptions)
+    
+    precondition(initialValue != nil, "Don't use asynchronous operator in \(publisher), and it must emit the value immediately.")
         
     let _output = CurrentValueSubject<Output, Never>.init(initialValue)
         

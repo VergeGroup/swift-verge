@@ -41,7 +41,7 @@ public class RxGetter<Output>: GetterBase<Output>, ObservableType {
       initialValue = value
     })
     
-    precondition(initialValue != nil, "\(observable) can't use scheduler")
+    precondition(initialValue != nil, "Don't use asynchronous operator in \(observable), and it must emit the value immediately.")
     
     self.output = BehaviorSubject<Output>(value: initialValue)
     
