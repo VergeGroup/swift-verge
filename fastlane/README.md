@@ -26,6 +26,11 @@ Description of what the lane does
 fastlane ios test_all
 ```
 
+### ios test_rx
+```
+fastlane ios test_rx
+```
+
 
 ----
 

@@ -85,8 +85,6 @@
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4BA3E1A523C359F40095629B /* Signpost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA3E1A423C359F40095629B /* Signpost.swift */; };
-		4BAC16BB23C806B100BF49D9 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 4BAC16BA23C806B100BF49D9 /* RxCocoa */; };
-		4BAC16BD23C806B100BF49D9 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4BAC16BC23C806B100BF49D9 /* RxSwift */; };
 		4BAC16BF23C806E000BF49D9 /* EntityType+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAC16BE23C806E000BF49D9 /* EntityType+.swift */; };
 		4BAC16C223C8072300BF49D9 /* EntityGetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAC16C123C8072300BF49D9 /* EntityGetter.swift */; };
 		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
@@ -493,8 +491,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BAC16BD23C806B100BF49D9 /* RxSwift in Frameworks */,
-				4BAC16BB23C806B100BF49D9 /* RxCocoa in Frameworks */,
 				4B1743AC23C767670074C457 /* VergeRx.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1043,8 +1039,6 @@
 			);
 			name = VergeRxTests;
 			packageProductDependencies = (
-				4BAC16BA23C806B100BF49D9 /* RxCocoa */,
-				4BAC16BC23C806B100BF49D9 /* RxSwift */,
 			);
 			productName = VergeRxTests;
 			productReference = 4B1743A723C767670074C457 /* VergeRxTests.xctest */;
@@ -3029,16 +3023,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxCocoa;
-		};
-		4BAC16BA23C806B100BF49D9 /* RxCocoa */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxCocoa;
-		};
-		4BAC16BC23C806B100BF49D9 /* RxSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxSwift;
 		};
 		4BF2BCC7238A64C600F70CDA /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;

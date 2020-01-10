@@ -24,4 +24,8 @@ platform :ios do
   lane :test_all do
     scan(scheme: "All")
   end
+
+  lane :test_rx do
+    scan(scheme: "VergeRx")
+  end
 end
