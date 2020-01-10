@@ -51,6 +51,17 @@ public protocol DatabaseEmbedding {
 
 extension EqualityComputer where Input : DatabaseType {
   
+  public static func databaseEqual() -> EqualityComputer<Input> {
+    .init(
+      selector: { input -> (Date, Date) in
+        let v = input
+        return (v._backingStorage.entityUpdatedAt, v._backingStorage.indexUpdatedAt)
+    },
+      equals: { (old, new) -> Bool in
+        old == new
+    })
+  }
+  
   public static func tableEqual<E: EntityType>(_ entityType: E.Type) -> EqualityComputer<Input> {
     let checkTableUpdated = EqualityComputer<Input>.init(
       selector: { input -> Date in
@@ -67,6 +78,17 @@ extension EqualityComputer where Input : DatabaseType {
       selector: { db in db.entities.table(E.self).find(by: entityID) },
       equals: { $0 == $1 }
     )
+  }
+  
+  public static func changesContains<E: EntityType>(_ entityID: E.EntityID) -> EqualityComputer<Input> {
+    return .init(
+      selector: { $0 },
+      equals: { _, db -> Bool in
+        guard let result = db._backingStorage.lastUpdatesResult else { return false }
+        guard !result.wasUpdated(entityID) else { return false }
+        guard !result.wasDeleted(entityID) else { return false }
+        return true
+    })
   }
   
 }
@@ -163,6 +185,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     },
       additionalEqualityComputer: .init(or: [
         .tableEqual(E.self),
+        .changesContains(entityID),
         additionalEqualityComputer
         ].compactMap { $0 }
       )
@@ -189,6 +212,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     },
       additionalEqualityComputer: .init(or: [
         .tableEqual(E.self),
+        .changesContains(entityID),
         additionalEqualityComputer
         ].compactMap { $0 }
       )

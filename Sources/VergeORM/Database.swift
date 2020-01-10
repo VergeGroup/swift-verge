@@ -88,17 +88,15 @@ public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
   
   private(set) public var entityUpdatedAt: Date = .init()
   private(set) public var indexUpdatedAt: Date = .init()
+  internal(set) public var lastUpdatesResult: DatabaseEntityUpdatesResult<Schema>?
   
-  var entityBackingStorage: EntityTablesStorage<Schema> = .init() {
-    didSet {
-      entityUpdatedAt = .init()
-    }
-  }
+  var entityBackingStorage: EntityTablesStorage<Schema> = .init()
   
-  var indexesStorage: IndexesStorage<Schema, Indexes> = .init() {
-    didSet {
-      indexUpdatedAt = .init()
-    }
+  var indexesStorage: IndexesStorage<Schema, Indexes> = .init()
+  
+  mutating func markUpdated() {
+    entityUpdatedAt = .init()
+    indexUpdatedAt = .init()
   }
   
   public init() {

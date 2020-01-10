@@ -213,7 +213,7 @@ class ORMGetterTests: XCTestCase {
     }
     
     XCTAssertEqual(updatedCount, 2)
-        
+            
     XCTContext.runActivity(named: "Update other, getter would not emit changes") { _ in
       
       for _ in 0..<10 {
@@ -238,10 +238,20 @@ class ORMGetterTests: XCTestCase {
       
     }
     
+    XCTContext.runActivity(named: "Add other author") { _ in
+      
+      storage.update { state in
+        state.db.performBatchUpdates { (context) in
+          context.author.insert(.init(rawID: "John", name: "John"))
+        }
+      }
+            
+    }
+    
     XCTAssertEqual(updatedCount, 2)
     
   }
-  
+    
   func testGetterCache() {
     
     let storage = Storage<RootState>(.init())

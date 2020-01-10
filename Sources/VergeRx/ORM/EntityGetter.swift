@@ -104,6 +104,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
     },
       additionalEqualityComputer: .init(or: [
         .tableEqual(E.self),
+        .changesContains(entityID),
         additionalEqualityComputer
         ].compactMap { $0 }
       )
@@ -130,6 +131,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
     },
       additionalEqualityComputer: .init(or: [
         .tableEqual(E.self),
+        .changesContains(entityID),
         additionalEqualityComputer
         ].compactMap { $0 }
       )

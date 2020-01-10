@@ -182,6 +182,23 @@ extension EntityModifier where Entity : Hashable {
   }
 }
 
+public struct DatabaseEntityUpdatesResult<Schema: EntitySchemaType> {
+  
+  let updated: [EntityName : Set<AnyHashable>]
+  let deleted: [EntityName : Set<AnyHashable>]
+  
+  public func wasUpdated<E: EntityType>(_ id: E.EntityID) -> Bool {
+    guard let set = updated[E.entityName] else { return false }
+    return set.contains(id)
+  }
+  
+  public func wasDeleted<E: EntityType>(_ id: E.EntityID) -> Bool {
+    guard let set = deleted[E.entityName] else { return false }
+    return set.contains(id)
+  }
+  
+}
+
 @dynamicMemberLookup
 public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
   
@@ -206,14 +223,23 @@ public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
   }
   
   public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityModifier<Schema, U> {
-    get {
-      guard let rawTable = editing[U.entityName] else {
-        let modifier = EntityModifier<Schema, U>(current: current[dynamicMember: keyPath])
-        editing[U.entityName] = modifier
-        return modifier
-      }
-      return rawTable as! EntityModifier<Schema, U>
+    table(U.self)
+  }
+  
+  func makeResult() -> DatabaseEntityUpdatesResult<Schema> {
+    
+    var updated: [EntityName : Set<AnyHashable>] = [:]
+    var deleted: [EntityName : Set<AnyHashable>] = [:]
+    
+    for (entityName, rawEntityData) in editing {
+                  
+      deleted[entityName] = rawEntityData._deletes
+      updated[entityName] = Set(rawEntityData._insertsOrUpdates.rawTable.entities.keys)
+            
     }
+    
+    return .init(updated: updated, deleted: deleted)
+    
   }
   
 }
@@ -250,10 +276,13 @@ extension DatabaseType {
     }
     
     apply: do {
-      self._backingStorage.entityBackingStorage.apply(edits: context.editing)
+      _backingStorage.entityBackingStorage.apply(edits: context.editing)
       context.indexes.apply(edits: context.editing)
-      self._backingStorage.indexesStorage = context.indexes
+      _backingStorage.indexesStorage = context.indexes
     }
+    
+    _backingStorage.markUpdated()
+    _backingStorage.lastUpdatesResult = context.makeResult()
   }
     
   /// Performs operations to update entities and indexes
