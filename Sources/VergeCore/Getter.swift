@@ -8,11 +8,19 @@
 
 import Foundation
 
-public protocol GetterType {
+public protocol GetterType: Hashable {
   associatedtype Output
 }
 
 open class GetterBase<Output>: GetterType {
+  
+  public static func == (lhs: GetterBase<Output>, rhs: GetterBase<Output>) -> Bool {
+    lhs === rhs
+  }
+  
+  public func hash(into hasher: inout Hasher) {
+    ObjectIdentifier(self).hash(into: &hasher)
+  }
   
   open var value: Output {
     fatalError()

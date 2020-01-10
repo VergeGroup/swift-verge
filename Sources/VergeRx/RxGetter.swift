@@ -106,3 +106,9 @@ extension Reactive where Base : RxValueContainerType {
   
 }
 
+extension ObservableConvertibleType {
+  
+  public func unsafeGetterCast() -> RxGetter<Element> {
+    .init(from: self)
+  }
+}
