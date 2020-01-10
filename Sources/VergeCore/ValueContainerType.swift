@@ -15,11 +15,16 @@ public protocol ValueContainerType: AnyObject {
   
   func lock()
   func unlock()
-    
+  
+  #if canImport(Combine)
+     
+  @available(iOS 13, macOS 10.15, *)
   func getter<Output>(
     filter: EqualityComputer<Value>,
     map: @escaping (Value) -> Output
-  ) -> Getter<Value, Output>
+  ) -> GetterSource<Value, Output>
+  
+  #endif
 }
 
 extension Storage: ValueContainerType {
@@ -32,28 +37,4 @@ extension Storage: ValueContainerType {
     _lock.unlock()
   }
     
-  public func getter<Output>(
-    filter: EqualityComputer<Value>,
-    map: @escaping (Value) -> Output
-  ) -> Getter<Value, Output> {
-    
-    var token: EventEmitterSubscribeToken?
-    
-    let getter = Getter(input: value, filter: filter, map: map, upstreams: [self])
-    
-    getter.onDeinit = { [weak self] in
-      guard let token = token else {
-        assertionFailure()
-        return
-      }
-      self?.remove(subscribe: token)
-    }
-           
-    token = addDidUpdate { [weak getter] (newValue) in
-      getter?._receive(newValue: newValue)
-    }
-    
-    return getter
-  }
-  
 }

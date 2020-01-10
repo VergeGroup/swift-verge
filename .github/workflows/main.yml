@@ -5,9 +5,11 @@ on: [push]
 jobs:
   build:
 
-    runs-on: macOS-latest
+    runs-on: macos-latest
 
     steps:
+    - name: Force xcode 11.3
+      run: sudo xcode-select -switch /Applications/Xcode_11.3.app
     - uses: actions/checkout@v1
     - name: webfactory/ssh-agent
       uses: webfactory/ssh-agent@v0.1.1

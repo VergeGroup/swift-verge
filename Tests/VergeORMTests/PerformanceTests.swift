@@ -10,6 +10,7 @@ import Foundation
 
 import XCTest
 
+@available(iOS 13.0, *)
 class PerformanceTests: XCTestCase {
   
   var state = RootState()

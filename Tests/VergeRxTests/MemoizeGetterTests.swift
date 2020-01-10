@@ -12,6 +12,7 @@ import XCTest
 
 import VergeStore
 import VergeCore
+import VergeRx
 
 class MemoizeGetterTests: XCTestCase {
   
@@ -51,7 +52,7 @@ class MemoizeGetterTests: XCTestCase {
     
     var callCount = 0
                     
-    let getter = store.getter(
+    let getter = store.rx.getter(
       filter: .init(selector: { $0.count }, equals: ==),
       map: { (state) -> Int in
         callCount += 1

@@ -6,7 +6,7 @@ import RxCocoa
 
 #if !COCOAPODS
 import VergeCore
-import RxVergeStore
+import VergeRx
 #endif
 
 private var storage_subject: Void?

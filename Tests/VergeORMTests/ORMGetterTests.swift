@@ -13,7 +13,14 @@ import XCTest
 import VergeCore
 import VergeORM
 
-class SelectorTests: XCTestCase {
+#if canImport(Combine)
+import Combine
+#endif
+
+@available(iOS 13, macOS 10.15, *)
+class ORMGetterTests: XCTestCase {
+  
+  private var subscriptions = Set<AnyCancellable>()
   
   func testSelector() {
     
@@ -30,10 +37,11 @@ class SelectorTests: XCTestCase {
       
       let didUpdate = XCTestExpectation()
       
-      nullableSelector.addDidUpdate { (book) in
+      nullableSelector.dropFirst(1).sink { _ in
         didUpdate.fulfill()
       }
-      
+      .store(in: &subscriptions)
+            
       XCTAssertNil(nullableSelector.value)
       
       var book: Book!
@@ -54,7 +62,7 @@ class SelectorTests: XCTestCase {
       let selector = storage.nonNullEntityGetter(
         from: book
       )
-      
+               
       XCTAssertNotNil(nullableSelector.value)
       XCTAssertNotNil(selector.value)
       
@@ -166,10 +174,12 @@ class SelectorTests: XCTestCase {
     var updatedCount = 0
     
     let authorGetter = storage.nonNullEntityGetter(from: result)
-    authorGetter.addDidUpdate { (_) in
+    
+    authorGetter.dropFirst(1).sink { _ in
       updatedCount += 1
     }
-    
+    .store(in: &subscriptions)
+        
     XCTAssertEqual(authorGetter.value.name, "muukii")
     
     XCTContext.runActivity(named: "updateName") { _ in
