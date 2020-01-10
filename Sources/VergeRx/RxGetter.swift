@@ -31,7 +31,7 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
   public final override var value: Output {
     try! output.value()
   }
-    
+      
   /// Initialize from observable
   ///
   /// - Attension: Please don't use operator that dispatches asynchronously.
@@ -57,7 +57,7 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
     
     var initialValue: Output!
     
-    _ = pipe.debug().take(1).subscribe(onNext: { value in
+    _ = pipe.take(1).subscribe(onNext: { value in
       initialValue = value
     })
     
@@ -84,15 +84,7 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
 }
 
 public final class RxGetterSource<Input, Output>: RxGetter<Output> {
-          
-  init(
-    input: Observable<Output>
-  ) {
-        
-    super.init(from: input)
-            
-  }
-  
+             
   public func asGetter() -> RxGetter<Output> {
     self
   }
@@ -113,7 +105,7 @@ extension Reactive where Base : RxValueContainerType {
       .distinctUntilChanged(filter)
       .map(map)
     
-    let getter = RxGetterSource<Base.Value, Output>.init(input: pipe)
+    let getter = RxGetterSource<Base.Value, Output>.init(from: pipe)
     
     return getter
     
