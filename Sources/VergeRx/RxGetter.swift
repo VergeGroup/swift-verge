@@ -15,7 +15,12 @@ import VergeStore
 import VergeCore
 #endif
 
-public class RxGetter<Output>: GetterBase<Output>, ObservableType {
+public protocol RxGetterType: GetterType {
+  
+  func asObservable() -> Observable<Output>
+}
+
+public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType {
   
   public typealias Element = Output
   

@@ -8,7 +8,11 @@
 
 import Foundation
 
-open class GetterBase<Output> {
+public protocol GetterType {
+  associatedtype Output
+}
+
+open class GetterBase<Output>: GetterType {
   
   open var value: Output {
     fatalError()
