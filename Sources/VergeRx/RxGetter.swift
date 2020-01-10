@@ -122,7 +122,10 @@ extension Reactive where Base : RxValueContainerType {
 }
 
 extension ObservableConvertibleType {
-  
+    
+  /// Casts to Getter object from stream.
+  ///
+  /// - Attention: Stream object must be that emits event synchronously on subscribed to create RxGetter. Otherwise, this function would cause a crash.
   public func unsafeGetterCast() -> RxGetter<Element> {
     .init(from: self)
   }
