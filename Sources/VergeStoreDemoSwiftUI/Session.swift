@@ -37,7 +37,7 @@ final class Session: ObservableObject {
 enum Entity {
   struct Post: EntityType, Identifiable, Equatable {
     
-    typealias IdentifierType = String
+    typealias EntityIDRawType = String
     var entityID: EntityID {
       .init(rawID)
     }
@@ -48,7 +48,7 @@ enum Entity {
   }
   
   struct User: EntityType, Identifiable, Equatable {
-    typealias IdentifierType = String
+    typealias EntityIDRawType = String
     var entityID: EntityID {
       .init(rawID)
     }
@@ -57,7 +57,7 @@ enum Entity {
   }
   
   struct Comment: EntityType, Identifiable, Equatable {
-    typealias IdentifierType = String
+    typealias EntityIDRawType = String
     var entityID: EntityID {
       .init(rawID)
     }

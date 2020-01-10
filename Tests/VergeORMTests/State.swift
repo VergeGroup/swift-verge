@@ -12,7 +12,7 @@ import VergeORM
 
 struct Book: EntityType, Equatable {
   
-  typealias IdentifierType = String
+  typealias EntityIDRawType = String
   
   var entityID: EntityID {
     .init(rawID)
@@ -25,7 +25,7 @@ struct Book: EntityType, Equatable {
 
 struct Author: EntityType {
   
-  typealias IdentifierType = String
+  typealias EntityIDRawType = String
   
   var entityID: EntityID {
     .init(rawID)
