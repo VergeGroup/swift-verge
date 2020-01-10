@@ -79,13 +79,13 @@ class GetterTests: XCTestCase {
     
     let waiter = XCTestExpectation()
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+    DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
       
       XCTAssertNil(weakFirst)
       waiter.fulfill()
     }
     
-    wait(for: [waiter], timeout: 1)
+    wait(for: [waiter], timeout: 2)
   }
   
   func testShare() {
