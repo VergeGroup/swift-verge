@@ -15,12 +15,16 @@ public protocol ValueContainerType: AnyObject {
   
   func lock()
   func unlock()
+  
+  #if canImport(Combine)
      
   @available(iOS 13, macOS 10.15, *)
   func getter<Output>(
     filter: EqualityComputer<Value>,
     map: @escaping (Value) -> Output
   ) -> GetterSource<Value, Output>
+  
+  #endif
 }
 
 extension Storage: ValueContainerType {

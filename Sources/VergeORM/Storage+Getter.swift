@@ -90,6 +90,8 @@ fileprivate final class _GetterCache {
   
 }
 
+#if canImport(Combine)
+
 fileprivate var _valueContainerAssociated: Void?
 
 @available(iOS 13, macOS 10.15, *)
@@ -335,3 +337,5 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   }
   
 }
+
+#endif
