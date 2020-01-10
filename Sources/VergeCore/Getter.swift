@@ -35,10 +35,18 @@ public class Getter<Output>: GetterBase<Output>, Publisher {
   
   private var subscriptions = Set<AnyCancellable>()
   
+  /// Initialize from publisher
+  ///
+  /// - Attension: Please don't use operator that dispatches asynchronously.
+  /// - Parameter observable:
   public convenience init<O: Publisher>(from publisher: () -> O) where O.Output == Output, O.Failure == Never {
     self.init(from: publisher())
   }
   
+  /// Initialize from publisher
+  ///
+  /// - Attension: Please don't use operator that dispatches asynchronously.
+  /// - Parameter observable:
   public init<O: Publisher>(from publisher: O) where O.Output == Output, O.Failure == Never {
     
     let pipe = publisher.buffer(size: 1, prefetch: .byRequest, whenFull: .dropOldest).makeConnectable()

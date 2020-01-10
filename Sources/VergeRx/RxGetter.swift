@@ -26,11 +26,19 @@ public class RxGetter<Output>: GetterBase<Output>, ObservableType {
   public final override var value: Output {
     try! output.value()
   }
-  
+    
+  /// Initialize from observable
+  ///
+  /// - Attension: Please don't use operator that dispatches asynchronously.
+  /// - Parameter observable:
   public convenience init<O: ObservableConvertibleType>(from observable: () -> O) where O.Element == Output {
     self.init(from: observable())
   }
   
+  /// Initialize from observable
+  ///
+  /// - Attension: Please don't use operator that dispatches asynchronously.
+  /// - Parameter observable:
   public init<O: ObservableConvertibleType>(from observable: O) where O.Element == Output {
     
     let pipe = observable.asObservable().share(replay: 1, scope: .forever)
