@@ -46,7 +46,14 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
   /// - Parameter observable:
   public init<O: ObservableConvertibleType>(from observable: O) where O.Element == Output {
     
-    let pipe = observable.asObservable().share(replay: 1, scope: .forever)
+    vergeSignpostEvent("RxGetter.init")
+    
+    let pipe = observable
+      .asObservable()
+      .do(onNext: { _ in
+        vergeSignpostEvent("RxGetter.receiveNewValue")
+      })
+      .share(replay: 1, scope: .forever)
     
     var initialValue: Output!
     
@@ -62,8 +69,16 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
     
   }
   
+  deinit {
+    vergeSignpostEvent("RxGetter.deinit")
+  }
+  
   public func subscribe<Observer>(_ observer: Observer) -> Disposable where Observer : ObserverType, Element == Observer.Element {
-    output.subscribe(observer)   
+    output
+      .do(onDispose: {
+        vergeSignpostEvent("RxGetter.DisposedSubscription")
+      })
+      .subscribe(observer)
   }
         
 }

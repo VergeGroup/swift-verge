@@ -142,7 +142,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
         computer.isEqual(value: new)
       }),
       map: { (value) -> Output in
-        let t = SignpostTransaction("ORM.Getter.update")
+        let t = VergeSignpostTransaction("ORM.Getter.update")
         defer {
           t.end()
         }

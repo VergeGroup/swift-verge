@@ -238,7 +238,7 @@ extension DatabaseType {
   
   public mutating func commitBatchUpdates(context: DatabaseBatchUpdatesContext<Self>) {
     
-    let t = SignpostTransaction("DatabaseType.commit")
+    let t = VergeSignpostTransaction("DatabaseType.commit")
     defer {
       t.end()
     }

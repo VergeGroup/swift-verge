@@ -83,7 +83,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
         computer.isEqual(value: new)
       }),
       map: { (value) -> Output in
-        let t = SignpostTransaction("ORM.Getter.update")
+        let t = VergeSignpostTransaction("ORM.Getter.update")
         defer {
           t.end()
         }
