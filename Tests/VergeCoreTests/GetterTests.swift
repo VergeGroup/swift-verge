@@ -13,6 +13,7 @@ import VergeCore
 
 import Combine
 
+@available(iOS 13.0, *)
 class GetterTests: XCTestCase {
   
   private var subs = Set<AnyCancellable>()
