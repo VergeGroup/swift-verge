@@ -23,9 +23,9 @@ import Foundation
 
 public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConvertible {
   
-  public let raw: Entity.IdentifierType
+  public let raw: Entity.EntityIDRawType
   
-  public init(_ raw: Entity.IdentifierType) {
+  public init(_ raw: Entity.EntityIDRawType) {
     self.raw = raw
   }
   
@@ -40,7 +40,7 @@ public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConve
 /// You might use IdentifiableEntityType instead, if you create SwiftUI app.
 public protocol EntityType {
   
-  associatedtype IdentifierType: Hashable, CustomStringConvertible
+  associatedtype EntityIDRawType: Hashable, CustomStringConvertible
    
   var entityID: EntityID { get }
   
