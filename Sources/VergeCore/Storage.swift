@@ -106,6 +106,10 @@ open class Storage<Value>: ReadonlyStorage<Value> {
   @discardableResult
   @inline(__always)
   public final func update<Result>(_ update: (inout Value) throws -> Result) rethrows -> Result {
+    let signpost = VergeSignpostTransaction("Storage.update")
+    defer {
+      signpost.end()
+    }
     do {
       let notifyValue: Value
       _lock.lock()

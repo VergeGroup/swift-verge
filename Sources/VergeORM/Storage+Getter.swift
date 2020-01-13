@@ -53,9 +53,9 @@ extension EqualityComputer where Input : DatabaseType {
   
   public static func databaseEqual() -> EqualityComputer<Input> {
     .init(
-      selector: { input -> (Date, Date) in
+      selector: { input -> (UpdatedMarker, UpdatedMarker) in
         let v = input
-        return (v._backingStorage.entityUpdatedAt, v._backingStorage.indexUpdatedAt)
+        return (v._backingStorage.entityUpdatedMarker, v._backingStorage.indexUpdatedMarker)
     },
       equals: { (old, new) -> Bool in
         old == new
@@ -64,8 +64,8 @@ extension EqualityComputer where Input : DatabaseType {
   
   public static func tableEqual<E: EntityType>(_ entityType: E.Type) -> EqualityComputer<Input> {
     let checkTableUpdated = EqualityComputer<Input>.init(
-      selector: { input -> Date in
-        return input._backingStorage.entityBackingStorage.table(E.self).updatedAt
+      selector: { input -> UpdatedMarker in
+        return input._backingStorage.entityBackingStorage.table(E.self).updatedMarker
     },
       equals: { (old, new) -> Bool in
         old == new
@@ -144,18 +144,9 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   ) -> GetterSource<Value, Output> {
     
     let path = Value.getterToDatabase
-    
-    let checkDatabaseUpdated = EqualityComputer<Value.Database>.init(
-      selector: { input -> (Date, Date) in
-        let v = input
-        return (v._backingStorage.entityUpdatedAt, v._backingStorage.indexUpdatedAt)
-    },
-      equals: { (old, new) -> Bool in
-        old == new
-    })
-    
+           
     let computer = EqualityComputer.init(or: [
-      checkDatabaseUpdated,
+      .databaseEqual(),
       additionalEqualityComputer
       ].compactMap { $0 })
     
