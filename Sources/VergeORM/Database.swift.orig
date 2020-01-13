@@ -90,8 +90,9 @@ extension DatabaseType {
 
 public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
   
-  private(set) public var entityUpdatedMarker = UpdatedMarker()
-  private(set) public var indexUpdatedMarker = UpdatedMarker()
+<<<<<<< Updated upstream
+  private(set) public var entityUpdatedAt: Date = .init()
+  private(set) public var indexUpdatedAt: Date = .init()
   internal(set) public var lastUpdatesResult: DatabaseEntityUpdatesResult<Schema>?
   
   var entityBackingStorage: EntityTablesStorage<Schema> = .init()
@@ -99,8 +100,23 @@ public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
   var indexesStorage: IndexesStorage<Schema, Indexes> = .init()
   
   mutating func markUpdated() {
-    entityUpdatedMarker.markAsUpdated()
-    indexUpdatedMarker.markAsUpdated()
+    entityUpdatedAt = .init()
+    indexUpdatedAt = .init()
+=======
+  private(set) public var entityUpdatedAt = Counter()
+  private(set) public var indexUpdatedAt = Counter()
+  
+  var entityBackingStorage: EntityTablesStorage<Schema> = .init() {
+    didSet {
+      entityUpdatedAt.increment()
+    }
+  }
+  
+  var indexesStorage: IndexesStorage<Schema, Indexes> = .init() {
+    didSet {
+      indexUpdatedAt.increment()
+    }
+>>>>>>> Stashed changes
   }
   
   public init() {

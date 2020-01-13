@@ -34,20 +34,20 @@ protocol EntityTableType {
 struct EntityRawTable: Equatable {
   
   static func == (lhs: EntityRawTable, rhs: EntityRawTable) -> Bool {
-    guard lhs.updatedAt == rhs.updatedAt else { return false }
+    guard lhs.updatedMarker == rhs.updatedMarker else { return false }
     guard lhs.entities == rhs.entities else { return false }
     return true
   }
   
   typealias RawTable = [AnyHashable : AnyEntity]
   
-  var updatedAt: Date = .init()
+  private(set) var updatedMarker = UpdatedMarker()
 
   private(set) var entities: RawTable = [:]
   
   mutating func updateEntity<Result>(_ update: (inout RawTable) throws -> Result) rethrows -> Result {    
     let r = try update(&entities)
-    updatedAt = .init()
+    updatedMarker.markAsUpdated()
     return r
   }
     
@@ -67,8 +67,8 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   let entityName: EntityName = Entity.entityName
   
-  public var updatedAt: Date {
-    _read { yield rawTable.updatedAt }
+  public var updatedMarker: UpdatedMarker {
+    _read { yield rawTable.updatedMarker }
   }
     
   /// The number of entities in table

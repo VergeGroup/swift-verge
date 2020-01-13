@@ -63,18 +63,9 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
   ) -> RxGetterSource<Base.Value, Output> {
     
     let path = Base.Value.getterToDatabase
-    
-    let checkDatabaseUpdated = EqualityComputer<Base.Value.Database>.init(
-      selector: { input -> (Date, Date) in
-        let v = input
-        return (v._backingStorage.entityUpdatedAt, v._backingStorage.indexUpdatedAt)
-    },
-      equals: { (old, new) -> Bool in
-        old == new
-    })
-    
+      
     let computer = EqualityComputer.init(or: [
-      checkDatabaseUpdated,
+      .databaseEqual(),
       additionalEqualityComputer
       ].compactMap { $0 })
     
