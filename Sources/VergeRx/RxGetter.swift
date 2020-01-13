@@ -96,7 +96,7 @@ extension StoreBase: ReactiveCompatible {}
 
 extension Reactive where Base : RxValueContainerType {
   
-  public func getter<Output>(
+  public func makeGetter<Output>(
     filter: @escaping (Base.Value) -> Bool,
     map: @escaping (Base.Value) -> Output
   ) -> RxGetterSource<Base.Value, Output> {
@@ -112,7 +112,7 @@ extension Reactive where Base : RxValueContainerType {
   }
   
   public func makeGetter<Output>(from: GetterBuilder<Base.Value, Output>) -> RxGetterSource<Base.Value, Output> {
-    getter(filter: from.filter, map: from.map)
+    makeGetter(filter: from.filter, map: from.map)
   }
   
 }

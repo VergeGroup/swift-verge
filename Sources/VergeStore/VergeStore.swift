@@ -187,12 +187,12 @@ extension StoreBase {
   }
   
   @available(iOS 13, macOS 10.15, *)
-  public func getter<Output>(
+  public func makeGetter<Output>(
     filter: @escaping (Value) -> Bool,
     map: @escaping (Value) -> Output
   ) -> GetterSource<Value, Output> {
     
-    _backingStorage.getter(filter: filter, map: map)
+    _backingStorage.makeGetter(filter: filter, map: map)
     
   }
 }

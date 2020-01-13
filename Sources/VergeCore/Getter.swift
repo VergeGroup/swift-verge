@@ -168,7 +168,7 @@ extension Storage: ObservableObject {
 extension Storage {
   
   @available(iOS 13, macOS 10.15, *)
-  public func getter<Output>(
+  public func makeGetter<Output>(
     filter: @escaping (Value) -> Bool,
     map: @escaping (Value) -> Output
   ) -> GetterSource<Value, Output> {
@@ -177,9 +177,9 @@ extension Storage {
       .filter(filter)
       .map(map)
         
-    let getter = GetterSource<Value, Output>.init(input: pipe)
+    let makeGetter = GetterSource<Value, Output>.init(input: pipe)
     
-    return getter
+    return makeGetter
     
   }
   

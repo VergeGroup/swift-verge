@@ -254,13 +254,13 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
     let _cache = cache
     
-    guard let getter = _cache.getter(entityID: entityID) as? GetterSource<Value, E?> else {
+    guard let makeGetter = _cache.getter(entityID: entityID) as? GetterSource<Value, E?> else {
       let newGetter = makeEntityGetter(from: entityID, andFilter: nil)
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
     
-    return getter
+    return makeGetter
     
   }
   
@@ -270,13 +270,13 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
     let _cache = cache
     
-    guard let getter = _cache.getter(entityID: entityID) as? GetterSource<Value, E?> else {
+    guard let makeGetter = _cache.getter(entityID: entityID) as? GetterSource<Value, E?> else {
       let newGetter = makeEntityGetter(from: entityID, andFilter: Filters.Historical.entityUpdated(entityID).asFunction())
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
     
-    return getter
+    return makeGetter
     
   }
   
@@ -285,14 +285,14 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
     let _cache = cache
     
-    guard let getter = _cache.getter(entityID: entity.entityID) as? GetterSource<Value, E> else {
+    guard let makeGetter = _cache.getter(entityID: entity.entityID) as? GetterSource<Value, E> else {
       let entityID = entity.entityID
       let newGetter = makeNonNullEntityGetter(from: entity, andFilter: nil)
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
     
-    return getter
+    return makeGetter
     
   }
   
@@ -303,14 +303,14 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
     let _cache = cache
     
-    guard let getter = _cache.getter(entityID: entity.entityID) as? GetterSource<Value, E> else {
+    guard let makeGetter = _cache.getter(entityID: entity.entityID) as? GetterSource<Value, E> else {
       let entityID = entity.entityID
       let newGetter = makeNonNullEntityGetter(from: entity, andFilter: Filters.Historical.entityUpdated(entityID).asFunction())
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
     
-    return getter
+    return makeGetter
     
   }
   

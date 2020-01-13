@@ -28,9 +28,9 @@ public struct GetterBuilder<Input, Output> {
 #if canImport(Combine)
 extension ValueContainerType {
   
-  @available(iOS 13, *)
+  @available(iOS 13, macOS 10.15, *)
   public func makeGetter<Output>(from: GetterBuilder<Value, Output>) -> GetterSource<Value, Output> {
-    getter(filter: from.filter, map: from.map)
+    makeGetter(filter: from.filter, map: from.map)
   }
 }
 #endif
