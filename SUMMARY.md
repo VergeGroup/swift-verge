@@ -19,7 +19,7 @@
 * [☂️ Middleware](docs-vergestore/middleware.md)
 * [Getter\(Selector\) and Memoization](docs-vergestore/memoization.md)
 * [Advanced](docs-vergestore/advanced/README.md)
-  * [Scoped Dispatcher](docs-vergestore/advanced/scoped-dispatcher.md)
+  * [Fragment&lt;State&gt;](docs-vergestore/advanced/fragment-less-than-state-greater-than.md)
 
 ## 📦 Verge ViewModel <a id="docs-verge-viewmodel"></a>
 

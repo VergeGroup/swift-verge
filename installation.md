@@ -4,10 +4,9 @@
 
 * Core
   * Store
-    * Rx
-    * VM
-      * Rx
   * ORM
+  * Rx
+  * Classic
 
 ### CocoaPods
 
@@ -18,25 +17,25 @@ Verge 6.0.0 is in beta.
 #### VergeStore
 
 ```ruby
-pod 'Verge/Store', '6.0.0-beta.3'
+pod 'Verge/Store', '6.0.0-beta.7'
 ```
 
 #### VergeViewModel
 
 ```ruby
-pod 'Verge/VM', '6.0.0-beta.3'
+pod 'Verge/VM', '6.0.0-beta.7'
 ```
 
-#### VergeStoreRx
+#### VergeRx
 
 ```ruby
-pod 'Verge/Rx', '6.0.0-beta.3'
+pod 'Verge/Rx', '6.0.0-beta.7'
 ```
 
 #### VergeORM
 
 ```ruby
-pod 'Verge/ORM', '6.0.0-beta.3'
+pod 'Verge/ORM', '6.0.0-beta.7'
 ```
 
 ### Use latest
