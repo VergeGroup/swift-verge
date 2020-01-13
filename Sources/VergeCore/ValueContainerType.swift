@@ -19,8 +19,8 @@ public protocol ValueContainerType: AnyObject {
   #if canImport(Combine)
      
   @available(iOS 13, macOS 10.15, *)
-  func getter<Output>(
-    filter: EqualityComputer<Value>,
+  func makeGetter<Output>(
+    filter: @escaping (Value) -> Bool,
     map: @escaping (Value) -> Output
   ) -> GetterSource<Value, Output>
   

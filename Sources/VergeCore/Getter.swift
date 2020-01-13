@@ -165,32 +165,21 @@ extension Storage: ObservableObject {
   
 }
 
-@available(iOS 13, macOS 10.15, *)
-extension Publisher {
-  
-  public func removeDuplicates(_ computer: EqualityComputer<Output>) -> Publishers.Filter<Self> {
-    filter {
-      !computer.isEqual(value: $0)
-    }
-  }
-  
-}
-
 extension Storage {
   
   @available(iOS 13, macOS 10.15, *)
-  public func getter<Output>(
-    filter: EqualityComputer<Value>,
+  public func makeGetter<Output>(
+    filter: @escaping (Value) -> Bool,
     map: @escaping (Value) -> Output
   ) -> GetterSource<Value, Output> {
     
     let pipe = publisher
-      .removeDuplicates(filter)
+      .filter(filter)
       .map(map)
         
-    let getter = GetterSource<Value, Output>.init(input: pipe)
+    let makeGetter = GetterSource<Value, Output>.init(input: pipe)
     
-    return getter
+    return makeGetter
     
   }
   

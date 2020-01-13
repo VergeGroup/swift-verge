@@ -32,6 +32,18 @@ public struct VergeSignpostTransaction {
       _end = {}
     }
   }
+  
+  public init(_ name: StaticString, format: StaticString, arguments: CVarArg...) {
+    if #available(iOS 12, macOS 10.14, *) {
+      let id = OSSignpostID(log: Static.performanceLog)
+      os_signpost(.begin, log: Static.performanceLog, name: name, signpostID: id, format, arguments)
+      _end = {
+        os_signpost(.end, log: Static.performanceLog, name: name, signpostID: id, format, arguments)
+      }
+    } else {
+      _end = {}
+    }
+  }
     
   @inlinable
   public func end() {
