@@ -11,7 +11,7 @@ Action object's looks
 public struct AnyAction<Dispatcher, Result>: ActionType where Dispatcher : VergeStore.DispatcherType {
 
   public let metadata: ActionMetadata
-
+  
   public init(_ name: StaticString = "", _ action: @escaping (VergeStoreDispatcherContext<Dispatcher>) -> Return)
 }
 ```
@@ -51,7 +51,7 @@ class MyDispatcher: MyStore.Dispatcher {
   func someMutation() -> Mutation<Void> {
     ...
   }
-
+  
   func someAsyncOperation() -> Action<Void> {
     .action { context in
       context.commit { $0.someMutation() }
@@ -69,7 +69,7 @@ class MyDispatcher: MyStore.Dispatcher {
   func someMutation() -> Mutation<Void> {
     ...
   }
-
+  
   func someAsyncOperation() -> Action<Void> {
     .action { context in
       DispatchQueue.global().async {
@@ -84,7 +84,7 @@ class MyDispatcher: MyStore.Dispatcher {
 ## Create and Commit mutation inside of action
 
 The context supports to commit mutation that created in inline.  
-We can commit trivial mutations without to declare mutation.
+ We can commit trivial mutations without to declare mutation.
 
 ```swift
 func someAsyncOperation() -> Action<Void> {
@@ -110,17 +110,17 @@ class MyDispatcher: MyStore.Dispatcher {
 
   func fetchRemoteTodos() -> Action<Future<Void>> {
     .dispatch { context in
-
+    
       let future = Future<[Todo], Never> { ... }
         .sink { todos in
-
+    
           context.commit { state in
             state.todos = todos
           }
-
+    
        }
        .store(in: &self.subscriptions)
-
+       
        return future
     }
   }

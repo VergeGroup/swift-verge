@@ -21,10 +21,6 @@
 * [Advanced](docs-vergestore/advanced/README.md)
   * [Fragment&lt;State&gt;](docs-vergestore/advanced/fragment-less-than-state-greater-than.md)
 
-## 📦 Verge ViewModel <a id="docs-verge-viewmodel"></a>
-
-* [VergeViewModel Core Concepts](docs-verge-viewmodel/core-concepts.md)
-
 ## 📦 Verge ORM <a id="docs-verge-orm"></a>
 
 * [VergeORM Core Concepts](docs-verge-orm/core-concepts.md)
@@ -33,6 +29,10 @@
 * [Middleware](docs-verge-orm/middleware.md)
 * [Getter \(Selector\)](docs-verge-orm/selector.md)
 * [Tips](docs-verge-orm/tips.md)
+
+## 📦 Verge ViewModel <a id="docs-verge-viewmodel"></a>
+
+* [VergeViewModel Core Concepts](docs-verge-viewmodel/core-concepts.md)
 
 ## 📦 Verge Store Rx <a id="docs-verge-store-rx"></a>
 
