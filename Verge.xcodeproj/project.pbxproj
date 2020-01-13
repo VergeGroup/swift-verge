@@ -64,6 +64,7 @@
 		4B86A49F1F969C7D002D54FE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A49D1F969C7D002D54FE /* Main.storyboard */; };
 		4B86A4A11F969C7D002D54FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A01F969C7D002D54FE /* Assets.xcassets */; };
 		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
+		4B89538523CCE3B1002F95C8 /* FilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B89538423CCE3B1002F95C8 /* FilterTests.swift */; };
 		4B8EB4F923C034A900035B2A /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8EB4F823C034A900035B2A /* Filter.swift */; };
 		4B94913C239C25C600370067 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B94913D239C25C600370067 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -402,6 +403,7 @@
 		4B86A4A01F969C7D002D54FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B86A4A31F969C7D002D54FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B86A4A51F969C7D002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B89538423CCE3B1002F95C8 /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTests.swift; sourceTree = "<group>"; };
 		4B8EB4F823C034A900035B2A /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -903,6 +905,7 @@
 				4BE9455323AD1B180060F977 /* Info.plist */,
 				4B39AE5423C5DC84005F7BC8 /* CopyPerformance.swift */,
 				4B4011C023C7831900C582BC /* GetterTests.swift */,
+				4B89538423CCE3B1002F95C8 /* FilterTests.swift */,
 				4BF470CE23CC3949001A1D5D /* CounterTests.swift */,
 			);
 			path = VergeCoreTests;
@@ -1753,6 +1756,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B89538523CCE3B1002F95C8 /* FilterTests.swift in Sources */,
 				4B4011C123C7831900C582BC /* GetterTests.swift in Sources */,
 				4B39AE5623C5DC8D005F7BC8 /* CopyPerformance.swift in Sources */,
 				4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */,
