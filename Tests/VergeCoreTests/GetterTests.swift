@@ -24,7 +24,7 @@ class GetterTests: XCTestCase {
     
     var updateCount = 0
     
-    let g = storage.getter(filter: .init(), map: { $0 * 2})
+    let g = storage.getter(filter: Filters.Historical.init().asFunction(), map: { $0 * 2 })
     
     g.sink { _ in
       updateCount += 1
@@ -53,7 +53,7 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    var first: GetterSource<Int, Int>! = storage.getter(filter: .init(), map: { $0 })
+    var first: GetterSource<Int, Int>! = storage.getter(filter: Filters.Historical.init().asFunction(), map: { $0 })
     
     weak var weakFirst = first
     
@@ -92,7 +92,7 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.getter(filter: .init(), map: { $0 })
+    let first = storage.getter(filter: Filters.Historical.init().asFunction(), map: { $0 })
     
     let share1 = Getter {
       first.map { $0 }
@@ -118,8 +118,8 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.getter(filter: .init(), map: { $0 })
-    let second = storage.getter(filter: .init(), map: { -$0 })
+    let first = storage.getter(filter: Filters.Historical.init().asFunction(), map: { $0 })
+    let second = storage.getter(filter: Filters.Historical.init().asFunction(), map: { -$0 })
     
     let combined = Getter {
       first.combineLatest(second)

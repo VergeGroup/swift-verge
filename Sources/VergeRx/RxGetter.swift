@@ -97,18 +97,22 @@ extension StoreBase: ReactiveCompatible {}
 extension Reactive where Base : RxValueContainerType {
   
   public func getter<Output>(
-    filter: EqualityComputer<Base.Value>,
+    filter: @escaping (Base.Value) -> Bool,
     map: @escaping (Base.Value) -> Output
   ) -> RxGetterSource<Base.Value, Output> {
     
     let pipe = base.asObservable()
-      .distinctUntilChanged(filter)
+      .filter(filter)
       .map(map)
     
     let getter = RxGetterSource<Base.Value, Output>.init(from: pipe)
     
     return getter
     
+  }
+  
+  public func makeGetter<Output>(from: GetterBuilder<Base.Value, Output>) -> RxGetterSource<Base.Value, Output> {
+    getter(filter: from.filter, map: from.map)
   }
   
 }

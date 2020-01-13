@@ -56,79 +56,30 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
   ///
   /// - Parameters:
   ///   - update: Updating output value each Input value updated.
-  ///   - additionalEqualityComputer: Check to necessory of needs to update to reduce number of updating.
+  ///   - andFilter: Check to necessory of needs to update to reduce number of updating.
   public func makeEntityGetter<Output>(
     update: @escaping (Base.Value.Database) -> Output,
-    additionalEqualityComputer: EqualityComputer<Base.Value.Database>?
+    andFilter: ((Base.Value.Database) -> Bool)?
   ) -> RxGetterSource<Base.Value, Output> {
     
-    let path = Base.Value.getterToDatabase
-      
-    let computer = EqualityComputer.init(or: [
-      .databaseEqual(),
-      additionalEqualityComputer
-      ].compactMap { $0 })
+    return makeGetter(from: .makeEntityGetter(update: update, andFilter: andFilter))
     
-    let _getter = getter(
-      filter: EqualityComputer.init(selector: { path($0) }, equals: { (old, new) -> Bool in
-        computer.isEqual(value: new)
-      }),
-      map: { (value) -> Output in
-        let t = VergeSignpostTransaction("ORM.Getter.update")
-        defer {
-          t.end()
-        }
-        return update(Base.Value.getterToDatabase(value))
-    })
-    
-    return _getter
   }
   
   public func makeEntityGetter<E: EntityType>(
     from entityID: E.EntityID,
-    additionalEqualityComputer: EqualityComputer<Base.Value.Database>?
+    andFilter: ((Base.Value.Database) -> Bool)?
   ) -> RxGetterSource<Base.Value, E?> {
     
-    let newGetter = makeEntityGetter(
-      update: { db in
-        db.entities.table(E.self).find(by: entityID)
-    },
-      additionalEqualityComputer: .init(or: [
-        .tableEqual(E.self),
-        .changesContains(entityID),
-        additionalEqualityComputer
-        ].compactMap { $0 }
-      )
-    )
-    return newGetter
-    
+    return makeGetter(from: .makeEntityGetter(from: entityID, andFilter: andFilter))
   }
   
   public func makeNonNullEntityGetter<E: EntityType>(
     from entity: E,
-    additionalEqualityComputer: EqualityComputer<Base.Value.Database>?
+    andFilter: ((Base.Value.Database) -> Bool)?
   ) -> RxGetterSource<Base.Value, E> {
     
-    var box = entity
-    let entityID = entity.entityID
-    
-    let newGetter = makeEntityGetter(
-      update: { db -> E in
-        let table = db.entities.table(E.self)
-        if let e = table.find(by: entityID) {
-          box = e
-        }
-        return box
-    },
-      additionalEqualityComputer: .init(or: [
-        .tableEqual(E.self),
-        .changesContains(entityID),
-        additionalEqualityComputer
-        ].compactMap { $0 }
-      )
-    )
-    return newGetter
-    
+    return makeGetter(from: .makeNonNullEntityGetter(from: entity, andFilter: andFilter))
   }
   
   // MARK: -
@@ -142,7 +93,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
     let _cache = cache
     
     guard let getter = _cache.getter(entityID: entityID) as? RxGetterSource<Base.Value, E?> else {
-      let newGetter = makeEntityGetter(from: entityID, additionalEqualityComputer: nil)
+      let newGetter = makeEntityGetter(from: entityID, andFilter: nil)
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -158,7 +109,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
     let _cache = cache
     
     guard let getter = _cache.getter(entityID: entityID) as? RxGetterSource<Base.Value, E?> else {
-      let newGetter = makeEntityGetter(from: entityID, additionalEqualityComputer: .entityEqual(entityID))
+      let newGetter = makeEntityGetter(from: entityID, andFilter: Filters.Historical.entityUpdated(entityID).asFunction())
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -174,7 +125,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
     
     guard let getter = _cache.getter(entityID: entity.entityID) as? RxGetterSource<Base.Value, E> else {
       let entityID = entity.entityID
-      let newGetter = makeNonNullEntityGetter(from: entity, additionalEqualityComputer: nil)
+      let newGetter = makeNonNullEntityGetter(from: entity, andFilter: nil)
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -192,7 +143,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
     
     guard let getter = _cache.getter(entityID: entity.entityID) as? RxGetterSource<Base.Value, E> else {
       let entityID = entity.entityID
-      let newGetter = makeNonNullEntityGetter(from: entity, additionalEqualityComputer: .entityEqual(entityID))
+      let newGetter = makeNonNullEntityGetter(from: entity, andFilter: Filters.Historical.entityUpdated(entityID).asFunction())
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }

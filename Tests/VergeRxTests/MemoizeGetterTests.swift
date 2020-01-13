@@ -53,7 +53,7 @@ class MemoizeGetterTests: XCTestCase {
     var callCount = 0
                     
     let getter = store.rx.getter(
-      filter: .init(selector: { $0.count }, equals: ==),
+      filter: Filters.Historical.init(selector: { $0.count }, predicate: ==).asFunction(),
       map: { (state) -> Int in
         callCount += 1
         return state.count * 2

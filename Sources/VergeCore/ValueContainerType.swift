@@ -20,7 +20,7 @@ public protocol ValueContainerType: AnyObject {
      
   @available(iOS 13, macOS 10.15, *)
   func getter<Output>(
-    filter: EqualityComputer<Value>,
+    filter: @escaping (Value) -> Bool,
     map: @escaping (Value) -> Output
   ) -> GetterSource<Value, Output>
   
