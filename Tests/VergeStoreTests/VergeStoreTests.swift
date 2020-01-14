@@ -118,6 +118,7 @@ fileprivate final class VergeStoreTests: XCTestCase {
     var subs = Set<AnyCancellable>()
     
     store.makeGetter()
+      .dropFirst()
       .sink { (state) in
         
         XCTAssertEqual(state.count, 1)
