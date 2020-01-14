@@ -5,7 +5,7 @@ Define a function that returns Mutation object.
 That expresses that function is Mutation
 
 {% hint style="success" %}
-Mutation does not run asynchronous operation.
+Mutation does **NOT** allow to run asynchronous operation.
 {% endhint %}
 
 ```swift
