@@ -32,10 +32,10 @@ struct MyViewModelState {
   var count: Int = 0
 }
 
-final class MyViewModel: VergeViewModelBase<MyViewModelState, RootState, Never, Never> {
+final class MyViewModel: ViewModelBase<MyViewModelState, Never, RootState, Never> {
   
-  override func updateState(state: inout MyViewModelState, by storeState: RootState) {
-    state.rootCount = storeState.count
+  override func updateState(state: inout MyViewModelState, by parentState: RootState) {
+    state.rootCount = parentState.count
   }
     
   func increment() -> Mutation<Void> {

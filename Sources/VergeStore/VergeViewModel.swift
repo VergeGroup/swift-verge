@@ -29,14 +29,15 @@ import VergeCore
 open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State, Activity> {
 }
 
-open class VergeViewModelBase<State, StoreState, Activity, StoreActivity>: StandaloneVergeViewModelBase<State, Activity> {
+open class ViewModelBase<State, Activity, ParentState, ParentActivity>: StandaloneVergeViewModelBase<State, Activity> {
     
-  public let parent: StoreBase<StoreState, StoreActivity>
-  private var subscription: EventEmitterSubscribeToken?
+  public let parent: StoreBase<ParentState, ParentActivity>
+  private var parentStateSubscription: EventEmitterSubscribeToken?
+  private var parentActivitySubscription: EventEmitterSubscribeToken?
   
   public init(
     initialState: State,
-    parent: StoreBase<StoreState, StoreActivity>,
+    parent: StoreBase<ParentState, ParentActivity>,
     logger: VergeStoreLogger?
   ) {
     
@@ -44,31 +45,46 @@ open class VergeViewModelBase<State, StoreState, Activity, StoreActivity>: Stand
     
     super.init(initialState: initialState, logger: logger)
     
-    self.subscription = parent._backingStorage.addDidUpdate { [weak self] (state) in
+    self.parentStateSubscription = parent._backingStorage.addDidUpdate { [weak self] (state) in
       guard let self = self else { return }
       self._backingStorage.update { s in
         self.updateState(state: &s, by: state)
       }
     }
-    
+        
+    self.parentActivitySubscription = parent._eventEmitter.add { [weak self] (activity) in
+      guard let self = self else { return }
+      self.receiveParentActivity(activity)
+    }
+        
   }
   
   deinit {
-    if let subscription = self.subscription {
+    if let subscription = self.parentStateSubscription {
       parent._backingStorage.remove(subscribe: subscription)
     }
   }
   
+  /// Override method
   /// Tells you Store's state has been updated.
   /// It also called when initialized
   ///
   /// - Parameter storeState:
-  open func updateState(state: inout State, by storeState: StoreState) {
-    
+  open func updateState(state: inout State, by parentState: ParentState) {
   }
   
-  open func receiveStoreActivity(_ activity: StoreActivity) {
-    
+  /// Override method
+  open func receiveParentActivity(_ activity: ParentActivity) {
+   
   }
   
+}
+
+extension StoreBase {
+  
+  #if COCOAPODS
+  public typealias ViewModelBase<_State, _Activity> = Verge.ViewModelBase<_State, _Activity, State, Activity>
+  #else
+  public typealias ViewModelBase<_State, _Activity> = VergeStore.ViewModelBase<_State, _Activity, State, Activity>
+  #endif
 }
