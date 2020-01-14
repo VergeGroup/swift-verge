@@ -18,6 +18,23 @@ class GetterTests: XCTestCase {
   
   private var subs = Set<AnyCancellable>()
   
+  func testFirstCall() {
+    
+    let storage = Storage<Int>(1)
+    
+    var updateCount = 0
+    
+    let g = storage.makeGetter(filter: Filters.Historical.init().asFunction(), map: { $0 * 2 })
+    
+    g.sink { _ in
+      updateCount += 1
+    }
+    .store(in: &subs)
+          
+    XCTAssertEqual(updateCount, 1)
+
+  }
+  
   func testSimple() {
     
     let storage = Storage<Int>(1)

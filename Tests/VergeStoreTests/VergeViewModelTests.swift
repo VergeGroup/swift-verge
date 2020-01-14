@@ -10,43 +10,43 @@ import XCTest
 
 import VergeStore
 
-struct RootState {
-  var count: Int = 0
-}
-
-fileprivate final class RootStore: StoreBase<RootState, Never> {
+class VergeViewModelTests: XCTestCase {
   
-}
-
-fileprivate final class RootDispatcher: DispatcherBase<RootState, Never> {
+  struct RootState {
+    var count: Int = 0
+  }
+  
+  final class RootStore: StoreBase<RootState, Never> {
     
-  func increment() -> Mutation<Void> {
-    .mutation {
-      $0.count += 1
+  }
+  
+  final class RootDispatcher: DispatcherBase<RootState, Never> {
+    
+    func increment() -> Mutation<Void> {
+      .mutation {
+        $0.count += 1
+      }
     }
   }
-}
-
-struct MyViewModelState {
-  var rootCount: Int = 0
-  var count: Int = 0
-}
-
-final class MyViewModel: ViewModelBase<MyViewModelState, Never, RootState, Never> {
   
-  override func updateState(state: inout MyViewModelState, by parentState: RootState) {
-    state.rootCount = parentState.count
+  struct MyViewModelState {
+    var rootCount: Int = 0
+    var count: Int = 0
   }
+  
+  final class MyViewModel: ViewModelBase<MyViewModelState, Never, RootState, Never> {
     
-  func increment() -> Mutation<Void> {
-    .mutation {
-      $0.count += 1
+    override func updateState(state: inout MyViewModelState, by parentState: RootState) {
+      state.rootCount = parentState.count
+    }
+    
+    func increment() -> Mutation<Void> {
+      .mutation {
+        $0.count += 1
+      }
     }
   }
-}
-
-fileprivate class VergeViewModelTests: XCTestCase {
-  
+    
   let store = RootStore(initialState: .init(), logger: DefaultLogger.shared)
   lazy var dispatcher = RootDispatcher(target: store)
   lazy var viewModel = MyViewModel(initialState: .init(), parent: store, logger: DefaultLogger.shared)
