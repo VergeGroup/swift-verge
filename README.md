@@ -48,7 +48,7 @@ Verge provides several packages each use-cases.
 
 {% page-ref page="docs-vergestore/core-concepts.md" %}
 
-{% page-ref page="docs-verge-viewmodel/core-concepts.md" %}
+{% page-ref page="docs-vergestore/integrating-with-uikit/core-concepts.md" %}
 
 {% page-ref page="docs-verge-orm/core-concepts.md" %}
 

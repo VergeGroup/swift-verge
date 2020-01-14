@@ -17,6 +17,9 @@
 * [⚡️ Activity - Dispatching Volatile Events](docs-vergestore/activity.md)
 * [🔭 Logging - Take logs performed Mutation and Action](docs-vergestore/logging.md)
 * [☂️ Middleware](docs-vergestore/middleware.md)
+* [📱 Integrating with SwiftUI](docs-vergestore/integrating-with-swiftui.md)
+* [📱 Integrating with UIKit](docs-vergestore/integrating-with-uikit/README.md)
+  * [ViewModel](docs-vergestore/integrating-with-uikit/core-concepts.md)
 * [Getter\(Selector\) and Memoization](docs-vergestore/memoization.md)
 * [Advanced](docs-vergestore/advanced/README.md)
   * [Fragment&lt;State&gt;](docs-vergestore/advanced/fragment-less-than-state-greater-than.md)
@@ -29,10 +32,6 @@
 * [Middleware](docs-verge-orm/middleware.md)
 * [Getter \(Selector\)](docs-verge-orm/selector.md)
 * [Tips](docs-verge-orm/tips.md)
-
-## 📦 Verge ViewModel <a id="docs-verge-viewmodel"></a>
-
-* [VergeViewModel Core Concepts](docs-verge-viewmodel/core-concepts.md)
 
 ## 📦 Verge Store Rx <a id="docs-verge-store-rx"></a>
 

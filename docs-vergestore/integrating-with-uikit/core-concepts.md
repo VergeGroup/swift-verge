@@ -1,4 +1,4 @@
-# VergeViewModel Core Concepts
+# ViewModel
 
 
 
