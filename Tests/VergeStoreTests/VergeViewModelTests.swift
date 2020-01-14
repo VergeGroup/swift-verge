@@ -9,7 +9,6 @@
 import XCTest
 
 import VergeStore
-import VergeViewModel
 
 struct RootState {
   var count: Int = 0
