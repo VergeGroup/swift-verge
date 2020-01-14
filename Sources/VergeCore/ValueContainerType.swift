@@ -27,6 +27,16 @@ public protocol ValueContainerType: AnyObject {
   #endif
 }
 
+#if canImport(Combine)
+extension ValueContainerType {
+  
+  @available(iOS 13, macOS 10.15, *)
+  public func makeGetter() -> GetterSource<Value, Value> {
+    makeGetter(filter: { _ in true }, map: { $0 })
+  }
+}
+#endif
+
 extension Storage: ValueContainerType {
   
   public func lock() {

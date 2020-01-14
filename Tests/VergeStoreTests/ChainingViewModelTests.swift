@@ -10,7 +10,7 @@ import Foundation
 
 import XCTest
 
-import VergeViewModel
+import VergeStore
 
 struct AViewModelState {
   var count: Int = 0

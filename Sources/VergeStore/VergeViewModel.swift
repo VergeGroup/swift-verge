@@ -26,28 +26,7 @@ import Foundation
 import VergeCore
 #endif
 
-public protocol _StandaloneVergeViewModelBaseType {
-  associatedtype Activity
-  associatedtype State
-}
-
-open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State, Activity>, DispatcherType, _StandaloneVergeViewModelBaseType {
-  
-  public var target: StoreBase<State, Activity> { self }
-  
-  let activityEmitter: EventEmitter<Activity> = .init()
-  
-  public override init(
-    initialState: State,
-    logger: VergeStoreLogger?
-  ) {    
-    super.init(initialState: initialState, logger: logger)
-  }
-  
-  public func addActivityTarget(_ eventReceiver: @escaping (Activity) -> Void) {
-    activityEmitter.add(eventReceiver)
-  }
-  
+open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State, Activity> {
 }
 
 open class VergeViewModelBase<State, StoreState, Activity, StoreActivity>: StandaloneVergeViewModelBase<State, Activity> {
@@ -90,18 +69,6 @@ open class VergeViewModelBase<State, StoreState, Activity, StoreActivity>: Stand
   
   open func receiveStoreActivity(_ activity: StoreActivity) {
     
-  }
-  
-}
-
-extension DispatcherContext where Dispatcher : _StandaloneVergeViewModelBaseType {
-  
-  public func send(_ activity: Dispatcher.Activity) {
-    guard let target = self.dispatcher.target as? StandaloneVergeViewModelBase<Dispatcher.State, Dispatcher.Activity> else {
-      assertionFailure("")
-      return
-    }
-    target.activityEmitter.accept(activity)
   }
   
 }

@@ -12,14 +12,14 @@ import RxCocoa
 fileprivate var storage_subject: Void?
 fileprivate var storage_diposeBag: Void?
 
-extension StoreBase where State : StateType {
+extension Reactive where Base : VergeStoreType {
   
-  public var stateObservable: Observable<State> {
-    _backingStorage.asObservable()
+  public var stateObservable: Observable<Base.State> {
+    base.asStoreBase()._backingStorage.asObservable()
   }
   
-  public var activitySignal: Signal<Activity> {
-    _eventEmitter.asSignal()
+  public var activitySignal: Signal<Base.Activity> {
+    base.asStoreBase()._eventEmitter.asSignal()
   }
   
 }
@@ -208,6 +208,6 @@ extension Storage: RxValueContainerType {}
 
 extension StoreBase: RxValueContainerType where State : StateType {
   public func asObservable() -> Observable<State> {
-    stateObservable
+    rx.stateObservable
   }
 }

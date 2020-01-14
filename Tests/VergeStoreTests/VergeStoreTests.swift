@@ -29,7 +29,7 @@ final class Store: StoreBase<State, Never> {
   }
 }
 
-class RootDispatcher: DispatcherBase<State, Never> {
+fileprivate class RootDispatcher: DispatcherBase<State, Never> {
   
   func resetCount() -> Mutation<Void> {
     return .mutation { s in
@@ -92,7 +92,9 @@ final class NestedDispatcher: DispatcherBase<State, Never> {
   
 }
 
-final class VergeStoreTests: XCTestCase {
+import Combine
+
+fileprivate final class VergeStoreTests: XCTestCase {
   
   let store = Store()
   lazy var dispatcher = RootDispatcher(target: self.store)
@@ -103,6 +105,33 @@ final class VergeStoreTests: XCTestCase {
   
   override func tearDown() {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+  }
+  
+  @available(iOS 13.0, *)
+  func testStateSubscription() {
+    
+    let store = Store()
+    let dispatcher = RootDispatcher(target: store)
+    
+    let expectation = XCTestExpectation()
+    
+    var subs = Set<AnyCancellable>()
+    
+    store.makeGetter()
+      .sink { (state) in
+        
+        XCTAssertEqual(state.count, 1)
+        expectation.fulfill()
+        
+        withExtendedLifetime(subs) {}
+    }
+    .store(in: &subs)
+    
+    DispatchQueue.global().async {
+      dispatcher.commit { $0.increment() }
+    }
+    
+    wait(for: [expectation], timeout: 1)
   }
   
   func testDispatch() {

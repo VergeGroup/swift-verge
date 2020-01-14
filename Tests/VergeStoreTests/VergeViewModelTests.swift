@@ -15,11 +15,11 @@ struct RootState {
   var count: Int = 0
 }
 
-final class RootStore: StoreBase<RootState, Never> {
+fileprivate final class RootStore: StoreBase<RootState, Never> {
   
 }
 
-final class RootDispatcher: DispatcherBase<RootState, Never> {
+fileprivate final class RootDispatcher: DispatcherBase<RootState, Never> {
     
   func increment() -> Mutation<Void> {
     .mutation {
@@ -46,7 +46,7 @@ final class MyViewModel: VergeViewModelBase<MyViewModelState, RootState, Never, 
   }
 }
 
-class VergeViewModelTests: XCTestCase {
+fileprivate class VergeViewModelTests: XCTestCase {
   
   let store = RootStore(initialState: .init(), logger: DefaultLogger.shared)
   lazy var dispatcher = RootDispatcher(target: store)
