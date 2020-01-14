@@ -20,12 +20,6 @@ Verge 6.0.0 is in beta.
 pod 'Verge/Store', '6.0.0-beta.7'
 ```
 
-#### VergeViewModel
-
-```ruby
-pod 'Verge/VM', '6.0.0-beta.7'
-```
-
 #### VergeRx
 
 ```ruby

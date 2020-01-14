@@ -56,7 +56,3 @@ Please check VergeORM module**
 
 {% embed url="https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/" %}
 
-## Subscribing the state
-
-
-
