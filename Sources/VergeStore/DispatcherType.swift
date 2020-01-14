@@ -55,6 +55,21 @@ extension DispatcherType {
     )
     return action.run(context: context)
   }
+  
+  @discardableResult
+  public func dispatchInline<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: @escaping ((DispatcherContext<Self>) -> Result)
+  ) -> Result {
+    
+    dispatch { _ in
+      Action(name, file, function, line, action)
+    }
+    
+  }
 
 }
 

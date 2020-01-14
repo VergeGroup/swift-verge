@@ -1,0 +1,60 @@
+{
+  "configurations" : [
+    {
+      "id" : "753AFC3C-AC37-46FD-9542-03F5F7FADE28",
+      "name" : "Basic",
+      "options" : {
+
+      }
+    },
+    {
+      "enabled" : false,
+      "id" : "FBE3236D-F5B4-46E6-B9B9-2107E35C65DD",
+      "name" : "Configuration 2",
+      "options" : {
+        "addressSanitizer" : {
+          "enabled" : true
+        },
+        "threadSanitizerEnabled" : false,
+        "undefinedBehaviorSanitizerEnabled" : true
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Verge.xcodeproj",
+        "identifier" : "4B475BC4239ADE1C008A03E1",
+        "name" : "VergeORMTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Verge.xcodeproj",
+        "identifier" : "4B68394323705ACD002FFC5A",
+        "name" : "VergeStoreTests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "GetterTests\/testChain()"
+      ],
+      "target" : {
+        "containerPath" : "container:Verge.xcodeproj",
+        "identifier" : "4BE9454E23AD1B180060F977",
+        "name" : "VergeCoreTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Verge.xcodeproj",
+        "identifier" : "4B1743A623C767670074C457",
+        "name" : "VergeRxTests"
+      }
+    }
+  ],
+  "version" : 1
+}

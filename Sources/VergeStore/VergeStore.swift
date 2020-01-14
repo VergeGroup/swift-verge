@@ -70,7 +70,9 @@ public protocol VergeStoreLogger {
 
 public protocol VergeStoreType: AnyObject {
   associatedtype State
-  associatedtype Activity  
+  associatedtype Activity
+  
+  func asStoreBase() -> StoreBase<State, Activity>
 }
 
 public typealias NoActivityStoreBase<State> = StoreBase<State, Never>
@@ -84,11 +86,13 @@ public typealias NoActivityStoreBase<State> = StoreBase<State, Never>
 ///   }
 /// }
 /// ```
-open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType {
+open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType, DispatcherType {
   
   public typealias Dispatcher = DispatcherBase<State, Activity>
   
   public typealias Value = State
+  
+  public var target: StoreBase<State, Activity> { self }
     
   /// A current state.
   public var state: State {
@@ -156,6 +160,10 @@ open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType {
       ],
       displayStyle: .struct
     )
+  }
+  
+  public func asStoreBase() -> StoreBase<State, Activity> {
+    self
   }
       
 }

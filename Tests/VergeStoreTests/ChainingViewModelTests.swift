@@ -10,7 +10,7 @@ import Foundation
 
 import XCTest
 
-import VergeViewModel
+import VergeStore
 
 struct AViewModelState {
   var count: Int = 0
@@ -48,7 +48,7 @@ struct BViewModelState {
   var count: Int = 0
 }
 
-final class BViewModel: VergeViewModelBase<ViewModelState, AViewModelState, Never, Never> {
+final class BViewModel: ViewModelBase<ViewModelState, Never, AViewModelState, Never> {
   
   init(viewModel: AViewModel) {
     super.init(
@@ -58,8 +58,8 @@ final class BViewModel: VergeViewModelBase<ViewModelState, AViewModelState, Neve
     )
   }
   
-  override func updateState(state: inout ViewModelState, by storeState: AViewModelState) {
-    state.count = storeState.count
+  override func updateState(state: inout ViewModelState, by parentState: AViewModelState) {
+    state.count = parentState.count
   }
   
   deinit {

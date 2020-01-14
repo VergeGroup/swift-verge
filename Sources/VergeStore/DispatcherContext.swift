@@ -21,14 +21,22 @@
 
 import Foundation
 
+/// A context object created from an action.
 public final class DispatcherContext<Dispatcher: DispatcherType> {
   
   public typealias State = Dispatcher.State
-  
+    
+  /// Target dispatcher
   public let dispatcher: Dispatcher
+  
+  /// From Action
   public let action: ActionBaseType
+  
+  /// Parent context.
+  /// non-nil means this context's action has been dispatched another context
   private let parent: DispatcherContext<Dispatcher>?
   
+  /// Returns current state from target store
   public var state: State {
     return dispatcher.target.state
   }

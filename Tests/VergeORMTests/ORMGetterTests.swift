@@ -245,7 +245,7 @@ class ORMGetterTests: XCTestCase {
           context.author.insert(.init(rawID: "John", name: "John"))
         }
       }
-            
+      return
     }
     
     XCTAssertEqual(updatedCount, 2)

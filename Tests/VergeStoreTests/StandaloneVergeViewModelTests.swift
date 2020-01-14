@@ -11,7 +11,6 @@ import Foundation
 import XCTest
 
 import VergeStore
-import VergeViewModel
 
 struct ViewModelState {
   var count: Int = 0

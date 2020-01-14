@@ -26,10 +26,8 @@ class ActivityTests: XCTestCase {
     case didSendMessage
   }
   
-  final class Store: StoreBase<State, Activity>, DispatcherType {
-    
-    var target: StoreBase<State, Activity> { self }
-    
+  final class Store: StoreBase<State, Activity> {
+        
     init() {
       super.init(initialState: .init(), logger: DefaultLogger.shared)
     }

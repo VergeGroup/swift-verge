@@ -115,6 +115,10 @@ extension Reactive where Base : RxValueContainerType {
     makeGetter(filter: from.filter, map: from.map)
   }
   
+  public func makeGetter() -> RxGetterSource<Base.Value, Base.Value> {
+    makeGetter(filter: { _ in true }, map: { $0 })
+  }
+  
 }
 
 extension ObservableConvertibleType {
