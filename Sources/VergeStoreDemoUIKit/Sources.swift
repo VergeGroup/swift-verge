@@ -22,7 +22,7 @@ enum RootActivity {
 final class RootStore: StoreBase<RootState, RootActivity> {
   
   init() {
-    super.init(initialState: .init(), logger: DefaultLogger.shared)
+    super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
   }
   
   func increment() -> Mutation<Void> {

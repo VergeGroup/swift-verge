@@ -94,7 +94,7 @@ struct SessionState: StateType {
 final class SessionStore: StoreBase<SessionState, Never> {
       
   init() {
-    super.init(initialState: .init(), logger: DefaultLogger.shared)
+    super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
   }
 }
 

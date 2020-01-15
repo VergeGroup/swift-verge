@@ -23,7 +23,7 @@ import Foundation
 
 public protocol DispatcherType {
     
-  associatedtype State
+  associatedtype State: StateType
   associatedtype Activity
   typealias Mutation<Return> = AnyMutation<Self, Return>
   typealias Action<Return> = AnyAction<Self, Return>

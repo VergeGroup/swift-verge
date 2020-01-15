@@ -12,7 +12,7 @@ import RxCocoa
 fileprivate var storage_subject: Void?
 fileprivate var storage_diposeBag: Void?
 
-extension Reactive where Base : VergeStoreType {
+extension Reactive where Base : StoreType {
   
   public var stateObservable: Observable<Base.State> {
     base.asStoreBase()._backingStorage.asObservable()

@@ -12,7 +12,7 @@ import XCTest
 
 import VergeStore
 
-struct ViewModelState {
+struct ViewModelState: StateType {
   var count: Int = 0
 }
 

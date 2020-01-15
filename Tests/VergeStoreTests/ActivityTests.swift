@@ -18,7 +18,7 @@ import Combine
 @available(iOS 13, macOS 10.15, *)
 class ActivityTests: XCTestCase {
   
-  struct State {
+  struct State: StateType {
     
   }
   
@@ -29,7 +29,7 @@ class ActivityTests: XCTestCase {
   final class Store: StoreBase<State, Activity> {
         
     init() {
-      super.init(initialState: .init(), logger: DefaultLogger.shared)
+      super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
     }
     
     func sendMessage() -> Action<Void> {
