@@ -2,9 +2,11 @@
 
 ## What Dispatcher does
 
-Dispatcher's needs is **to update the state that Store manages** and to **manage dependencies to create Mutation and Action**
+Dispatcher's needs is **to update the state that Store manages** and to **manage dependencies to create Mutation and Action.**
 
-**Simple example**
+**Dispatcher does not have own state. Dispatcher runs with Store.**
+
+**Example**
 
 ```swift
 class MyDispatcher: MyStore.Dispatcher {

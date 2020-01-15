@@ -1,47 +1,77 @@
 # 🌑 Store - Manages State
 
-Store is a reference type object and it manages the state object that contains the application state.
+## **Store** is ...
 
-To get current state, use `Store.state`
+* a reference type object 
+* manages the state object that contains the application state
+* commits **Mutation** to update the state
+* dispatches **Action** to run arbitrary async operation 
 
-  
-Basically, Store focuses to manage the state only.  
-To update the state with **Mutation** from **Dispatcher.**  
-  
-We can create multiple Dispatcher that for same Store.  
-To see more the detail of Dispatcher, move to Dispatcher page.
-
-![Updating the state from multiple dispatcher](../.gitbook/assets/image%20%281%29.png)
-
-{% page-ref page="dispatcher.md" %}
-
-
+### Define Store
 
 ```swift
-struct State {
-
-  struct Todo {
-    var title: String
-    var hasCompleted: Bool
-  }
-
-  var todos: [Todo] = []
-
+struct State: StateType {
+  var count: Int = 0
 }
 
-final class MyStore: StoreBase<State, Never> {
+enum Activity {
+  case happen
+}
 
+final class MyStore: StoreBase<State, Activity> {
+  
   init() {
-    super.init(initialState: .init(), logger: nil)
+    super.init(
+      initialState: .init(),
+      logger: DefaultStoreLogger.shared
+    )
   }
+    
 }
+```
 
-let store = MyStore()
+### Add Mutation
+
+```swift
+final class MyStore: StoreBase<State, Activity> {
+
+  func increment() -> Mutation<Void> {
+    return .mutation {
+      $0.count += 0
+    }
+  }
+  
+}
+```
+
+### Add Action
+
+```swift
+final class MyStore: StoreBase<State, Activity> {
+  
+  func delayedIncrement() -> Action<Void> {
+    return .action { context in
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        context.commit { $0.increment() }
+        
+        context.send(.happen)
+      }
+    }
+  }
+  
+}
 ```
 
 
 
-{% hint style="info" %}
-If you need only one Dispatcher, you can add `DispatcherType` protocol to Store object.
-{% endhint %}
+## Scaling up
+
+Becoming large application, Store would have more mutations and actions.  
+It's might be hard to manage these.  
+  
+Therefore, Verge provides **Dispatcher**
+
+![Updating the state from multiple dispatcher](../.gitbook/assets/image%20%281%29.png)
+
+{% page-ref page="dispatcher.md" %}
 

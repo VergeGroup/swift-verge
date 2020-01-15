@@ -10,11 +10,11 @@
 
 * [VergeStore Core Concepts](docs-vergestore/core-concepts.md)
 * [🌑 Store - Manages State](docs-vergestore/store.md)
-* [🪐 State](docs-vergestore/state.md)
-* [🚀 Dispatcher - Perform Mutation / Action](docs-vergestore/dispatcher.md)
 * [☄️ Mutation - Updates state](docs-vergestore/mutation.md)
 * [🌟 Action - Grouping mutation with async operations](docs-vergestore/action.md)
 * [⚡️ Activity - Dispatching Volatile Events](docs-vergestore/activity.md)
+* [🪐 State and shape](docs-vergestore/state.md)
+* [🚀 Dispatcher - Perform Mutation / Action](docs-vergestore/dispatcher.md)
 * [🔭 Logging - Take logs performed Mutation and Action](docs-vergestore/logging.md)
 * [☂️ Middleware](docs-vergestore/middleware.md)
 * [📱 Integrating with SwiftUI](docs-vergestore/integrating-with-swiftui.md)
