@@ -17,19 +17,19 @@ Verge 6.0.0 is in beta.
 #### VergeStore
 
 ```ruby
-pod 'Verge/Store', '6.0.0-beta.7'
+pod 'Verge/Store', '6.0.0-beta.8'
 ```
 
 #### VergeRx
 
 ```ruby
-pod 'Verge/Rx', '6.0.0-beta.7'
+pod 'Verge/Rx', '6.0.0-beta.8'
 ```
 
 #### VergeORM
 
 ```ruby
-pod 'Verge/ORM', '6.0.0-beta.7'
+pod 'Verge/ORM', '6.0.0-beta.8'
 ```
 
 ### Use latest
