@@ -22,6 +22,22 @@ VergeStore does support multiple state-tree as well.
 Depending on the case, we can create another Store instance.
 {% endhint %}
 
+## Add computed property
+
+If you have a property that does not need to be stored, that can be computed with other property.
+
+```swift
+struct State: StateType {
+  
+  var count: Int = 0
+  
+  var countText: String {
+    return count.description
+  }
+  
+}
+```
+
 ## StateType protocol helps to modify
 
 VergeStore provides `StateType` protocol as a helper.

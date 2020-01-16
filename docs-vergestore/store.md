@@ -44,6 +44,14 @@ final class MyStore: StoreBase<State, Activity> {
 }
 ```
 
+### Commit mutation
+
+```swift
+let store = MyStore()
+
+store.commit { $0.increment() }
+```
+
 ### Add Action
 
 ```swift
@@ -62,7 +70,13 @@ final class MyStore: StoreBase<State, Activity> {
 }
 ```
 
+### Dispatch Action
 
+```swift
+let store = MyStore()
+
+store.dispatch { $0.delayedIncrement() }
+```
 
 ## Scaling up
 
