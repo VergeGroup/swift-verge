@@ -33,7 +33,7 @@ Now, almost of iOS Applications are developed on top of UIKit. And We can't say 
 
 It's better to use the state management that fits SwiftUI from now. It's not only for that, current UIKit based applications can get more productivity as well.
 
-## Overview
+## Overview Verge Store
 
 ### **Declare**
 
@@ -129,7 +129,19 @@ struct MyView: View {
 
 Of course Verge supports UIKit based application.
 
-### 
+## Normalizing State Shape
+
+Most important thing in using state-tree is **Normalization.**
+
+**We can get detail of normalization from Redux documentation**
+
+{% embed url="https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/" %}
+
+### Verge supports ORM
+
+{% page-ref page="docs-verge-orm/core-concepts.md" %}
+
+
 
 ## Concept from...
 
