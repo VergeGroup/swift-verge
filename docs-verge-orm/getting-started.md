@@ -42,22 +42,22 @@ As an example, suppose we have Book and Author entities.
 struct Book: EntityType {
 
   typealias IdentifierType = String
-
+  
   var entityID: EntityID {
     .init(rawID)
   }
-
+  
   let rawID: String
 }
 
 struct Author: EntityType {
 
   typealias IdentifierType = String
-
+  
   var entityID: EntityID {
     .init(rawID)
   }
-
+  
   let rawID: String
 }
 ```

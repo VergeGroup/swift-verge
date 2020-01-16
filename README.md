@@ -12,7 +12,7 @@ description: >-
 
 **A Store-Pattern based data-flow architecture.**
 
-The concept of VergeStore is inspired by [Redux](https://redux.js.org/) and [Vuex](https://vuex.vuejs.org/).
+The concept of Verge Store is inspired by [Redux](https://redux.js.org/) and [Vuex](https://vuex.vuejs.org/).
 
 The characteristics are
 
@@ -25,7 +25,13 @@ The characteristics are
 
 ## Prepare moving to SwiftUI from now with Verge
 
+SwiftUI's concept is similar to the concept of React, Vue, and Elm. Therefore, the concept of state management will become to be similar as well.
 
+That is Redux or Vuex and more.
+
+Now, almost of iOS Applications are developed on top of UIKit. And We can't say SwiftUI is ready for top production. However, it would be changed.
+
+It's better to use the state management that fits SwiftUI from now. It's not only for that, current UIKit based applications can get more productivity as well.
 
 ## Overview
 
@@ -73,14 +79,29 @@ let store = MyStore()
 store.commit { $0.increment() }
 
 store.dispatch { $0.delayedIncrement() }
+```
 
-// Get value from current State
+### Read the state
+
+```swift
 let count = store.state.count
+```
 
-// Subscribe state
+### Subscribe the state
+
+```swift
+// Using combine
 store.makeGetter()
   .sink { state in
-    
+        
+}
+
+// or Using RxSwift
+
+import VergeRx
+store.rx.makeGetter()
+  .bind { state in
+        
 }
 ```
 
@@ -107,6 +128,8 @@ struct MyView: View {
 ### Integrate with UIKit
 
 Of course Verge supports UIKit based application.
+
+### 
 
 ## Concept from...
 

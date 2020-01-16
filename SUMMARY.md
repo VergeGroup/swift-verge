@@ -18,7 +18,7 @@
 * [☂️ Middleware](docs-vergestore/middleware.md)
 * [📱 Integrating with SwiftUI](docs-vergestore/integrating-with-swiftui.md)
 * [📱 Integrating with UIKit](docs-vergestore/integrating-with-uikit/README.md)
-  * [ViewModel](docs-vergestore/integrating-with-uikit/core-concepts.md)
+  * [ViewModel](docs-verge-viewmodel/core-concepts.md)
 * [Getter\(Selector\) and Memoization](docs-vergestore/memoization.md)
 * [Advanced](docs-vergestore/advanced/README.md)
   * [Fragment&lt;State&gt;](docs-vergestore/advanced/fragment-less-than-state-greater-than.md)

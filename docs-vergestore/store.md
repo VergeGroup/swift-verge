@@ -1,91 +1,47 @@
 # 🌑 Store - Manages State
 
-## **Store** is ...
+Store is a reference type object and it manages the state object that contains the application state.
 
-* a reference type object 
-* manages the state object that contains the application state
-* commits **Mutation** to update the state
-* dispatches **Action** to run arbitrary async operation 
+To get current state, use `Store.state`
 
-### Define Store
-
-```swift
-struct State: StateType {
-  var count: Int = 0
-}
-
-enum Activity {
-  case happen
-}
-
-final class MyStore: StoreBase<State, Activity> {
   
-  init() {
-    super.init(
-      initialState: .init(),
-      logger: DefaultStoreLogger.shared
-    )
-  }
-    
-}
-```
-
-### Add Mutation
-
-```swift
-final class MyStore: StoreBase<State, Activity> {
-
-  func increment() -> Mutation<Void> {
-    return .mutation {
-      $0.count += 0
-    }
-  }
+Basically, Store focuses to manage the state only.  
+To update the state with **Mutation** from **Dispatcher.**  
   
-}
-```
-
-### Commit mutation
-
-```swift
-let store = MyStore()
-
-store.commit { $0.increment() }
-```
-
-### Add Action
-
-```swift
-final class MyStore: StoreBase<State, Activity> {
-  
-  func delayedIncrement() -> Action<Void> {
-    return .action { context in
-      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-        context.commit { $0.increment() }
-        
-        context.send(.happen)
-      }
-    }
-  }
-  
-}
-```
-
-### Dispatch Action
-
-```swift
-let store = MyStore()
-
-store.dispatch { $0.delayedIncrement() }
-```
-
-## Scaling up
-
-Becoming large application, Store would have more mutations and actions.  
-It's might be hard to manage these.  
-  
-Therefore, Verge provides **Dispatcher**
+We can create multiple Dispatcher that for same Store.  
+To see more the detail of Dispatcher, move to Dispatcher page.
 
 ![Updating the state from multiple dispatcher](../.gitbook/assets/image%20%281%29.png)
 
 {% page-ref page="dispatcher.md" %}
+
+
+
+```swift
+struct State {
+
+  struct Todo {
+    var title: String
+    var hasCompleted: Bool
+  }
+
+  var todos: [Todo] = []
+
+}
+
+final class MyStore: StoreBase<State, Never> {
+
+  init() {
+    super.init(initialState: .init(), logger: nil)
+  }
+}
+
+let store = MyStore()
+```
+
+
+
+{% hint style="info" %}
+If you need only one Dispatcher, you can add `DispatcherType` protocol to Store object.
+{% endhint %}
 

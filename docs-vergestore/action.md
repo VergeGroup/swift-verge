@@ -1,7 +1,5 @@
 # 🌟 Action - Grouping mutation with async operations
 
-## What Action is
-
 Action appears similar to Mutation. But actually it's not.
 
 If the app can be created with synchronous operations only, that would be so easy, but it's not really.   

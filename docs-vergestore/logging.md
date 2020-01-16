@@ -9,7 +9,7 @@ With creating an object that using `VergeStoreLogger`, we can get the log that V
 As a default implementation, we can use `DefaultLogger.shared`.
 
 ```swift
-public protocol StoreLogger {
+public protocol VergeStoreLogger {
 
   func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?)
   func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: AnyObject?, time: CFTimeInterval)
