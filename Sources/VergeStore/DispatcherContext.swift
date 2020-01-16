@@ -111,6 +111,18 @@ extension DispatcherContext {
     return action.run(context: context)
   }
   
+  /// Run Action
+  @discardableResult
+  public func dispatch<TryAction: TryActionType>(_ get: (Dispatcher) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Dispatcher {
+    let action = get(dispatcher)
+    let context = DispatcherContext<Dispatcher>.init(
+      dispatcher: dispatcher,
+      action: action,
+      parent: self
+    )
+    return try action.run(context: context)
+  }
+  
 }
 
 // MARK: - Xcode Support

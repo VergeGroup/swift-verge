@@ -28,6 +28,7 @@ public protocol DispatcherType {
   typealias Mutation<Return> = AnyMutation<Self, Return>
   typealias TryMutation<Return> = TryAnyMutation<Self, Return>
   typealias Action<Return> = AnyAction<Self, Return>
+  typealias TryAction<Return> = TryAnyAction<Self, Return>
   var target: StoreBase<State, Activity> { get }
   
 }
@@ -67,6 +68,19 @@ extension DispatcherType {
     return action.run(context: context)
   }
   
+  ///
+  /// - Parameter get: Return Action object
+  @discardableResult
+  public func dispatch<TryAction: TryActionType>(_ get: (Self) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Self {
+    let action = get(self)
+    let context = DispatcherContext<Self>.init(
+      dispatcher: self,
+      action: action,
+      parent: nil
+    )
+    return try action.run(context: context)
+  }
+  
   @discardableResult
   public func dispatchInline<Result>(
     _ name: String = "",
@@ -78,6 +92,21 @@ extension DispatcherType {
     
     dispatch { _ in
       Action(name, file, function, line, action)
+    }
+    
+  }
+  
+  @discardableResult
+  public func dispatchInline<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: @escaping ((DispatcherContext<Self>) throws -> Result)
+  ) throws -> Result {
+    
+    try dispatch { _ in
+      TryAction(name, file, function, line, action)
     }
     
   }

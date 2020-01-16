@@ -14,7 +14,7 @@ import Combine
 
 @available(iOS 13.0, *)
 final class VergeStoreTests: XCTestCase {
-  
+      
   struct State: StateType {
     
     struct NestedState {
@@ -35,6 +35,10 @@ final class VergeStoreTests: XCTestCase {
   }
   
   class RootDispatcher: DispatcherBase<State, Never> {
+    
+    enum Error: Swift.Error {
+      case something
+    }
     
     func resetCount() -> Mutation<Void> {
       return .mutation { s in
@@ -72,6 +76,12 @@ final class VergeStoreTests: XCTestCase {
       return .action { c in
         c.commit { $0.increment() }
         c.commit { $0.increment() }
+      }
+    }
+    
+    func failableIncrement() -> TryMutation<Void> {
+      return .tryMutation { state in
+        throw Error.something
       }
     }
     
@@ -143,6 +153,17 @@ final class VergeStoreTests: XCTestCase {
     dispatcher.commit { $0.resetCount() }
     dispatcher.dispatch { $0.continuousIncrement() }
     XCTAssert(store.state.count == 2)
+  }
+  
+  func testTryMutation() {
+    
+    do {
+      try dispatcher.commit { $0.failableIncrement() }
+      XCTFail()
+    } catch {
+      
+    }
+    
   }
   
   func testMutatingOptionalNestedState() {
