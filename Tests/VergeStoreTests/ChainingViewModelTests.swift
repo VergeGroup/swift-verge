@@ -12,7 +12,7 @@ import XCTest
 
 import VergeStore
 
-struct AViewModelState {
+struct AViewModelState: StateType {
   var count: Int = 0
   var bViewModel: BViewModel?
 }
@@ -44,7 +44,7 @@ final class AViewModel: StandaloneVergeViewModelBase<AViewModelState, Never> {
  
 }
 
-struct BViewModelState {
+struct BViewModelState: StateType {
   var count: Int = 0
 }
 

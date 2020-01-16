@@ -27,9 +27,9 @@ import os
 /// It uses `os_log` to print inside.
 /// There are OSLog object each type of action.
 /// You can turn off logging each OSLog object.
-public final class DefaultLogger: VergeStoreLogger {
+public final class DefaultStoreLogger: StoreLogger {
   
-  public static let shared = DefaultLogger()
+  public static let shared = DefaultStoreLogger()
   
   public let commitLog = OSLog(subsystem: "VergeStore", category: "Commit")
   public let dispatchLog = OSLog(subsystem: "VergeStore", category: "Dispatch")

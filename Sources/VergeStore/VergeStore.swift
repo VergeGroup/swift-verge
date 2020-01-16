@@ -58,7 +58,7 @@ public struct ActionMetadata {
 }
 
 /// A protocol to register logger and get the event VergeStore emits.
-public protocol VergeStoreLogger {
+public protocol StoreLogger {
   
   func willCommit(store: AnyObject, state: Any, mutation: MutationBaseType, context: Any?)
   func didCommit(store: AnyObject, state: Any, mutation: MutationBaseType, context: Any?, time: CFTimeInterval)
@@ -68,14 +68,14 @@ public protocol VergeStoreLogger {
   func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
 }
 
-public protocol VergeStoreType: AnyObject {
-  associatedtype State
+public protocol StoreType: AnyObject {
+  associatedtype State: StateType
   associatedtype Activity
   
   func asStoreBase() -> StoreBase<State, Activity>
 }
 
-public typealias NoActivityStoreBase<State> = StoreBase<State, Never>
+public typealias NoActivityStoreBase<State: StateType> = StoreBase<State, Never>
 
 /// A base object to create store.
 /// You may create subclass of VergeDefaultStore
@@ -86,7 +86,7 @@ public typealias NoActivityStoreBase<State> = StoreBase<State, Never>
 ///   }
 /// }
 /// ```
-open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType, DispatcherType {
+open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, DispatcherType {
   
   public typealias Dispatcher = DispatcherBase<State, Activity>
   
@@ -104,7 +104,7 @@ open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType, Dispat
   public let _backingStorage: Storage<State>
   public let _eventEmitter: EventEmitter<Activity> = .init()
   
-  public private(set) var logger: VergeStoreLogger?
+  public private(set) var logger: StoreLogger?
     
   /// An initializer
   /// - Parameters:
@@ -112,7 +112,7 @@ open class StoreBase<State, Activity>: CustomReflectable, VergeStoreType, Dispat
   ///   - logger: You can also use `DefaultLogger.shared`.
   public init(
     initialState: State,
-    logger: VergeStoreLogger?
+    logger: StoreLogger?
   ) {
     
     self._backingStorage = .init(initialState)

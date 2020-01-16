@@ -12,7 +12,7 @@ import VergeStore
 
 class VergeViewModelTests: XCTestCase {
   
-  struct RootState {
+  struct RootState: StateType {
     var count: Int = 0
   }
   
@@ -29,7 +29,7 @@ class VergeViewModelTests: XCTestCase {
     }
   }
   
-  struct MyViewModelState {
+  struct MyViewModelState: StateType {
     var rootCount: Int = 0
     var count: Int = 0
   }
@@ -47,9 +47,9 @@ class VergeViewModelTests: XCTestCase {
     }
   }
     
-  let store = RootStore(initialState: .init(), logger: DefaultLogger.shared)
+  let store = RootStore(initialState: .init(), logger: DefaultStoreLogger.shared)
   lazy var dispatcher = RootDispatcher(target: store)
-  lazy var viewModel = MyViewModel(initialState: .init(), parent: store, logger: DefaultLogger.shared)
+  lazy var viewModel = MyViewModel(initialState: .init(), parent: store, logger: DefaultStoreLogger.shared)
     
   override func setUp() {
     // Put setup code here. This method is called before the invocation of each test method in the class.

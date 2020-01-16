@@ -19,13 +19,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-open class DispatcherBase<State, Activity>: DispatcherType {
+open class DispatcherBase<State: StateType, Activity>: DispatcherType {
         
   public typealias Context = DispatcherContext<DispatcherBase<State, Activity>>
   
   public let target: StoreBase<State, Activity>
   
-  private var logger: VergeStoreLogger? {
+  private var logger: StoreLogger? {
     target.logger
   }
   

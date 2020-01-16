@@ -25,7 +25,7 @@ class MemoizeGetterTests: XCTestCase {
   final class Store: StoreBase<State, Never> {
     
     init() {
-      super.init(initialState: .init(), logger: DefaultLogger.shared)
+      super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
     }
   }
   

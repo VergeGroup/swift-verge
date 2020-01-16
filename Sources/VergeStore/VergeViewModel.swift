@@ -26,10 +26,10 @@ import Foundation
 import VergeCore
 #endif
 
-open class StandaloneVergeViewModelBase<State, Activity>: StoreBase<State, Activity> {
+open class StandaloneVergeViewModelBase<State: StateType, Activity>: StoreBase<State, Activity> {
 }
 
-open class ViewModelBase<State, Activity, ParentState, ParentActivity>: StandaloneVergeViewModelBase<State, Activity> {
+open class ViewModelBase<State: StateType, Activity, ParentState: StateType, ParentActivity>: StandaloneVergeViewModelBase<State, Activity> {
     
   public let parent: StoreBase<ParentState, ParentActivity>
   private var parentStateSubscription: EventEmitterSubscribeToken?
@@ -38,7 +38,7 @@ open class ViewModelBase<State, Activity, ParentState, ParentActivity>: Standalo
   public init(
     initialState: State,
     parent: StoreBase<ParentState, ParentActivity>,
-    logger: VergeStoreLogger?
+    logger: StoreLogger?
   ) {
     
     self.parent = parent
@@ -83,8 +83,8 @@ open class ViewModelBase<State, Activity, ParentState, ParentActivity>: Standalo
 extension StoreBase {
   
   #if COCOAPODS
-  public typealias ViewModelBase<_State, _Activity> = Verge.ViewModelBase<_State, _Activity, State, Activity>
+  public typealias ViewModelBase<_State: StateType, _Activity> = Verge.ViewModelBase<_State, _Activity, State, Activity>
   #else
-  public typealias ViewModelBase<_State, _Activity> = VergeStore.ViewModelBase<_State, _Activity, State, Activity>
+  public typealias ViewModelBase<_State: StateType, _Activity> = VergeStore.ViewModelBase<_State, _Activity, State, Activity>
   #endif
 }
