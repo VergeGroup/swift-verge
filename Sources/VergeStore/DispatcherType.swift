@@ -26,6 +26,7 @@ public protocol DispatcherType {
   associatedtype State: StateType
   associatedtype Activity
   typealias Mutation<Return> = AnyMutation<Self, Return>
+  typealias TryMutation<Return> = TryAnyMutation<Self, Return>
   typealias Action<Return> = AnyAction<Self, Return>
   var target: StoreBase<State, Activity> { get }
   
@@ -38,6 +39,16 @@ extension DispatcherType {
   public func commit<Mutation: MutationType>(_ get: (Self) -> Mutation) -> Mutation.Result where Mutation.State == State {
     let mutation = get(self)
     return target._receive(
+      context: Optional<DispatcherContext<Self>>.none,
+      mutation: mutation
+    )
+  }
+  
+  /// Run Mutation
+  /// - Parameter get: returns Mutation
+  public func commit<TryMutation: TryMutationType>(_ get: (Self) -> TryMutation) throws -> TryMutation.Result where TryMutation.State == State {
+    let mutation = get(self)
+    return try target._receive(
       context: Optional<DispatcherContext<Self>>.none,
       mutation: mutation
     )

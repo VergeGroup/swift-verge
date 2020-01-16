@@ -67,15 +67,35 @@ extension DispatcherContext {
     dispatcher.commit(get)
   }
   
+  /// Run Mutation
+  /// - Parameter get: returns Mutation
+  public func commit<TryMutation: TryMutationType>(_ get: (Dispatcher) -> TryMutation) throws -> TryMutation.Result where TryMutation.State == State {
+    try dispatcher.commit(get)
+  }
+  
   /// Run Mutation that created inline
   public func commitInline<Result>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ mutate: @escaping (inout State) -> Result) -> Result {
+    _ mutate: @escaping (inout State) -> Result
+  ) -> Result {
     dispatcher.commit { _ in
       Dispatcher.Mutation<Result>.init("inline_" + name, file, function, line, mutate: mutate)
+    }
+  }
+  
+  /// Run Mutation that created inline
+  public func commitInline<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ mutate: @escaping (inout State) throws -> Result
+  ) throws -> Result {
+    try dispatcher.commit { _ in
+      Dispatcher.TryMutation<Result>.init("inline_" + name, file, function, line, mutate: mutate)
     }
   }
   

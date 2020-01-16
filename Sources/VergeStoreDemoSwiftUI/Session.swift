@@ -10,6 +10,7 @@ import Foundation
 
 import Combine
 
+import VergeCore
 import VergeStore
 import VergeORM
 
@@ -22,8 +23,8 @@ final class Session: ObservableObject {
   let store = SessionStore()
   private(set) lazy var sessionDispatcher = SessionDispatcher(target: store)
   
-  private(set) lazy var users = self.store.getter(
-    filter: .init(selector: { $0.db.entities.user }),
+  private(set) lazy var users = self.store.makeGetter(
+    filter: Filters.Historical.init(selector: { $0.db.entities.user }).asFunction(),
     map: { state in
       state.db.entities.user.find(in: state.db.indexes.userIDs)
   })
