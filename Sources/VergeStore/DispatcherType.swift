@@ -26,7 +26,9 @@ public protocol DispatcherType {
   associatedtype State: StateType
   associatedtype Activity
   typealias Mutation<Return> = AnyMutation<Self, Return>
+  typealias TryMutation<Return> = TryAnyMutation<Self, Return>
   typealias Action<Return> = AnyAction<Self, Return>
+  typealias TryAction<Return> = TryAnyAction<Self, Return>
   var target: StoreBase<State, Activity> { get }
   
 }
@@ -38,6 +40,16 @@ extension DispatcherType {
   public func commit<Mutation: MutationType>(_ get: (Self) -> Mutation) -> Mutation.Result where Mutation.State == State {
     let mutation = get(self)
     return target._receive(
+      context: Optional<DispatcherContext<Self>>.none,
+      mutation: mutation
+    )
+  }
+  
+  /// Run Mutation
+  /// - Parameter get: returns Mutation
+  public func commit<TryMutation: TryMutationType>(_ get: (Self) -> TryMutation) throws -> TryMutation.Result where TryMutation.State == State {
+    let mutation = get(self)
+    return try target._receive(
       context: Optional<DispatcherContext<Self>>.none,
       mutation: mutation
     )
@@ -56,6 +68,19 @@ extension DispatcherType {
     return action.run(context: context)
   }
   
+  ///
+  /// - Parameter get: Return Action object
+  @discardableResult
+  public func dispatch<TryAction: TryActionType>(_ get: (Self) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Self {
+    let action = get(self)
+    let context = DispatcherContext<Self>.init(
+      dispatcher: self,
+      action: action,
+      parent: nil
+    )
+    return try action.run(context: context)
+  }
+  
   @discardableResult
   public func dispatchInline<Result>(
     _ name: String = "",
@@ -67,6 +92,21 @@ extension DispatcherType {
     
     dispatch { _ in
       Action(name, file, function, line, action)
+    }
+    
+  }
+  
+  @discardableResult
+  public func dispatchInline<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: @escaping ((DispatcherContext<Self>) throws -> Result)
+  ) throws -> Result {
+    
+    try dispatch { _ in
+      TryAction(name, file, function, line, action)
     }
     
   }

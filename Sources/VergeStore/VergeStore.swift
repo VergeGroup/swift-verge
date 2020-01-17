@@ -148,6 +148,33 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
   }
   
   @inline(__always)
+  func _receive<FromDispatcher: DispatcherType, Mutation: TryMutationType>(
+    context: DispatcherContext<FromDispatcher>?,
+    mutation: Mutation
+  ) throws -> Mutation.Result where FromDispatcher.State == State, Mutation.State == State {
+    
+    logger?.willCommit(store: self, state: self.state, mutation: mutation, context: context)
+    
+    let startedTime = CFAbsoluteTimeGetCurrent()
+    var currentState: State!
+    
+    let signpost = VergeSignpostTransaction("Store.commit")
+    
+    let returnValue = try _backingStorage.update { (state) -> Mutation.Result in
+      let r = try mutation.mutate(state: &state)
+      currentState = state
+      return r
+    }
+    
+    signpost.end()
+    
+    let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
+    
+    logger?.didCommit(store: self, state: currentState!, mutation: mutation, context: context, time: elapsed)
+    return returnValue
+  }
+  
+  @inline(__always)
   func _send(activity: Activity) {
     
     _eventEmitter.accept(activity)

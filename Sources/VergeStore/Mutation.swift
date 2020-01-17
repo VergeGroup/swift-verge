@@ -32,6 +32,12 @@ public protocol MutationType: MutationBaseType {
   func mutate(state: inout State) -> Result
 }
 
+public protocol TryMutationType: MutationBaseType {
+  associatedtype Result
+  associatedtype State
+  func mutate(state: inout State) throws -> Result
+}
+
 public struct AnyMutation<Dispatcher: DispatcherType, Result>: MutationType {
   
   let _mutate: (inout Dispatcher.State) -> Result
@@ -56,6 +62,30 @@ public struct AnyMutation<Dispatcher: DispatcherType, Result>: MutationType {
   
 }
 
+public struct TryAnyMutation<Dispatcher: DispatcherType, Result>: TryMutationType {
+  
+  let _mutate: (inout Dispatcher.State) throws -> Result
+  
+  public let metadata: MutationMetadata
+  
+  public init(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutate: @escaping (inout Dispatcher.State) throws -> Result
+  ) {
+    
+    self.metadata = .init(name: name, file: file, function: function, line: line)
+    self._mutate = mutate
+  }
+  
+  public func mutate(state: inout Dispatcher.State) throws -> Result {
+    try _mutate(&state)
+  }
+  
+}
+
 extension AnyMutation {
   
   public static func mutation(
@@ -70,10 +100,6 @@ extension AnyMutation {
     
   }
   
-}
-
-extension AnyMutation where Dispatcher.State : StateType {
-  
   public static func mutation<Target>(
     _ target: WritableKeyPath<Dispatcher.State, Target>,
     _ name: StaticString = "",
@@ -82,11 +108,42 @@ extension AnyMutation where Dispatcher.State : StateType {
     _ line: UInt = #line,
     inlineMutation: @escaping (inout Target) -> Result
   ) -> Self {
-        
-    AnyMutation.init(name.description, file, function, line) { (state: inout Dispatcher.State) in
+    
+    self.init(name.description, file, function, line) { (state: inout Dispatcher.State) in
       state.update(target: target, update: inlineMutation)
     }
-           
+    
+  }
+  
+}
+
+extension TryAnyMutation {
+  
+  public static func tryMutation(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    inlineMutation: @escaping (inout Dispatcher.State) throws -> Result
+  ) -> Self {
+    
+    self.init(name, file, function, line, mutate: inlineMutation)
+    
+  }
+  
+  public static func tryMutation<Target>(
+    _ target: WritableKeyPath<Dispatcher.State, Target>,
+    _ name: StaticString = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    inlineMutation: @escaping (inout Target) throws -> Result
+  ) -> Self {
+    
+    self.init(name.description, file, function, line) { (state: inout Dispatcher.State) in
+      try state.update(target: target, update: inlineMutation)
+    }
+    
   }
   
 }

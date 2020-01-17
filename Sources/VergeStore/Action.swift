@@ -32,6 +32,13 @@ public protocol ActionType: ActionBaseType {
   func run(context: DispatcherContext<Dispatcher>) -> Result
 }
 
+public protocol TryActionType: ActionBaseType {
+  
+  associatedtype Dispatcher: DispatcherType
+  associatedtype Result
+  func run(context: DispatcherContext<Dispatcher>) throws -> Result
+}
+
 public struct AnyAction<Dispatcher: DispatcherType, Result>: ActionType {
   
   let _action: (DispatcherContext<Dispatcher>) -> Result
@@ -55,6 +62,29 @@ public struct AnyAction<Dispatcher: DispatcherType, Result>: ActionType {
   }
 }
 
+public struct TryAnyAction<Dispatcher: DispatcherType, Result>: TryActionType {
+  
+  let _action: (DispatcherContext<Dispatcher>) throws -> Result
+  public let metadata: ActionMetadata
+  
+  public init(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: @escaping (DispatcherContext<Dispatcher>) throws -> Result
+  ) {
+    
+    self.metadata = .init(name: name, file: file, function: function, line: line)
+    self._action = action
+    
+  }
+  
+  public func run(context: DispatcherContext<Dispatcher>) throws -> Result {
+    try _action(context)
+  }
+}
+
 extension AnyAction {
   
   public static func action(
@@ -63,6 +93,20 @@ extension AnyAction {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     _ action: @escaping (DispatcherContext<Dispatcher>) -> Result
+  ) -> Self {
+    self.init(name, file, function, line, action)
+  }
+  
+}
+
+extension TryAnyAction {
+  
+  public static func tryAction(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    _ action: @escaping (DispatcherContext<Dispatcher>) throws -> Result
   ) -> Self {
     self.init(name, file, function, line, action)
   }
