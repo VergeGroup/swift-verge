@@ -1,16 +1,30 @@
 PODS:
+  - Alamofire (4.9.1)
+  - Moya (13.0.1):
+    - Moya/Core (= 13.0.1)
+  - Moya/Core (13.0.1):
+    - Alamofire (~> 4.1)
+    - Result (~> 4.1)
+  - Result (4.1.0)
   - Reveal-SDK (24)
 
 DEPENDENCIES:
+  - Moya
   - Reveal-SDK
 
 SPEC REPOS:
   trunk:
+    - Alamofire
+    - Moya
+    - Result
     - Reveal-SDK
 
 SPEC CHECKSUMS:
+  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
+  Moya: f4a4b80ff2f8a4ffc208dfb31cd91636622fee6e
+  Result: bd966fac789cc6c1563440b348ab2598cc24d5c7
   Reveal-SDK: 5d7e56b8f018c0a88b3a2c10bf68d598bbd3b071
 
-PODFILE CHECKSUM: ea6bf2cca0fb2d6ef73b2d6153fc6a01f1f2793d
+PODFILE CHECKSUM: d78d5d063da5f5680f4d78632f02d27b922ae5e7
 
 COCOAPODS: 1.8.4
