@@ -27,7 +27,7 @@ public protocol DispacherContextType {
 }
 
 /// A context object created from an action.
-public final class DispatcherContext<Dispatcher: DispatcherType>: DispacherContextType {
+public class DispatcherContext<Dispatcher: DispatcherType>: DispacherContextType {
 
   public typealias State = Dispatcher.State
     
@@ -58,6 +58,29 @@ public final class DispatcherContext<Dispatcher: DispatcherType>: DispacherConte
      
 }
 
+/*
+public final class ScopedDispatcherContext<Dispatcher: DispatcherType, Scope>: DispatcherContext<Dispatcher> {
+  
+  public let scope: WritableKeyPath<Dispatcher.State, Scope>
+  
+  /// Returns current state from target store
+  public var scopedState: Scope {
+    return dispatcher.target.state[keyPath: scope]
+  }
+  
+  init(
+    scope: WritableKeyPath<Dispatcher.State, Scope>,
+    dispatcher: Dispatcher,
+    action: ActionBaseType,
+    parent: DispatcherContext<Dispatcher>?
+  ) {
+    self.scope = scope
+    super.init(dispatcher: dispatcher, action: action, parent: parent)
+  }
+  
+}
+ */
+
 extension DispatcherContext {
       
   /// Send activity
@@ -69,13 +92,13 @@ extension DispatcherContext {
   /// Run Mutation
   /// - Parameter mutation: returns Mutation
   public func commit<Mutation: MutationType>(mutation: (Dispatcher) -> Mutation) -> Mutation.Result where Mutation.State == State {
-    dispatcher.commit(mutation: mutation)
+    dispatcher.target._receive(context: self, mutation: mutation(dispatcher))
   }
   
   /// Run Mutation
   /// - Parameter mutation: returns Mutation
   public func commit<TryMutation: TryMutationType>(mutation: (Dispatcher) -> TryMutation) throws -> TryMutation.Result where TryMutation.State == State {
-    try dispatcher.commit(mutation: mutation)
+    try dispatcher.target._receive(context: self, mutation: mutation(dispatcher))
   }
   
   /// Run Mutation that created inline
@@ -86,7 +109,7 @@ extension DispatcherContext {
     _ line: UInt = #line,
     mutate: @escaping (inout State) -> Result
   ) -> Result {
-    dispatcher.commit { _ in
+    commit { _ in
       Dispatcher.Mutation<Result>.init("inline_" + name, file, function, line, mutate: mutate)
     }
   }
@@ -99,7 +122,7 @@ extension DispatcherContext {
     _ line: UInt = #line,
     mutate: @escaping (inout State) throws -> Result
   ) throws -> Result {
-    try dispatcher.commit { _ in
+    try commit { _ in
       Dispatcher.TryMutation<Result>.init("inline_" + name, file, function, line, mutate: mutate)
     }
   }

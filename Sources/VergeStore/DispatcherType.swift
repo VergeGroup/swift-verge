@@ -25,8 +25,13 @@ public protocol DispatcherType {
     
   associatedtype State: StateType
   associatedtype Activity
-  typealias Mutation<Return> = AnyMutation<Self, Return>
-  typealias TryMutation<Return> = TryAnyMutation<Self, Return>
+  #if COCOAPODS
+  typealias StateScope<Target> = Verge.StateScope<State, Target>
+  #else
+  typealias StateScope<Target> = VergeStore.StateScope<State, Target>
+  #endif
+  typealias Mutation<Return> = AnyMutation<State, Return>
+  typealias TryMutation<Return> = TryAnyMutation<State, Return>
   typealias Action<Return> = AnyAction<Self, Return>
   typealias TryAction<Return> = TryAnyAction<Self, Return>
   var target: StoreBase<State, Activity> { get }

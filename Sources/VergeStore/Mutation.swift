@@ -38,9 +38,9 @@ public protocol TryMutationType: MutationBaseType {
   func mutate(state: inout State) throws -> Result
 }
 
-public struct AnyMutation<Dispatcher: DispatcherType, Result>: MutationType {
+public struct AnyMutation<State: StateType, Result>: MutationType {
   
-  let _mutate: (inout Dispatcher.State) -> Result
+  let _mutate: (inout State) -> Result
   
   public let metadata: MutationMetadata
   
@@ -49,22 +49,22 @@ public struct AnyMutation<Dispatcher: DispatcherType, Result>: MutationType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutate: @escaping (inout Dispatcher.State) -> Result
+    mutate: @escaping (inout State) -> Result
   ) {
     
     self.metadata = .init(name: name, file: file, function: function, line: line)
     self._mutate = mutate
   }
   
-  public func mutate(state: inout Dispatcher.State) -> Result {
+  public func mutate(state: inout State) -> Result {
     _mutate(&state)
   }
   
 }
 
-public struct TryAnyMutation<Dispatcher: DispatcherType, Result>: TryMutationType {
+public struct TryAnyMutation<State: StateType, Result>: TryMutationType {
   
-  let _mutate: (inout Dispatcher.State) throws -> Result
+  let _mutate: (inout State) throws -> Result
   
   public let metadata: MutationMetadata
   
@@ -73,14 +73,14 @@ public struct TryAnyMutation<Dispatcher: DispatcherType, Result>: TryMutationTyp
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutate: @escaping (inout Dispatcher.State) throws -> Result
+    mutate: @escaping (inout State) throws -> Result
   ) {
     
     self.metadata = .init(name: name, file: file, function: function, line: line)
     self._mutate = mutate
   }
   
-  public func mutate(state: inout Dispatcher.State) throws -> Result {
+  public func mutate(state: inout State) throws -> Result {
     try _mutate(&state)
   }
   
@@ -93,7 +93,7 @@ extension AnyMutation {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    inlineMutation: @escaping (inout Dispatcher.State) -> Result
+    inlineMutation: @escaping (inout State) -> Result
   ) -> Self {
     
     self.init(name, file, function, line, mutate: inlineMutation)
@@ -101,7 +101,7 @@ extension AnyMutation {
   }
   
   public static func mutation<Target>(
-    _ target: WritableKeyPath<Dispatcher.State, Target>,
+    _ target: WritableKeyPath<State, Target>,
     _ name: StaticString = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
@@ -109,7 +109,7 @@ extension AnyMutation {
     inlineMutation: @escaping (inout Target) -> Result
   ) -> Self {
     
-    self.init(name.description, file, function, line) { (state: inout Dispatcher.State) in
+    self.init(name.description, file, function, line) { (state: inout State) in
       state.update(target: target, update: inlineMutation)
     }
     
@@ -124,7 +124,7 @@ extension TryAnyMutation {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    inlineMutation: @escaping (inout Dispatcher.State) throws -> Result
+    inlineMutation: @escaping (inout State) throws -> Result
   ) -> Self {
     
     self.init(name, file, function, line, mutate: inlineMutation)
@@ -132,7 +132,7 @@ extension TryAnyMutation {
   }
   
   public static func tryMutation<Target>(
-    _ target: WritableKeyPath<Dispatcher.State, Target>,
+    _ target: WritableKeyPath<State, Target>,
     _ name: StaticString = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
@@ -140,7 +140,7 @@ extension TryAnyMutation {
     inlineMutation: @escaping (inout Target) throws -> Result
   ) -> Self {
     
-    self.init(name.description, file, function, line) { (state: inout Dispatcher.State) in
+    self.init(name.description, file, function, line) { (state: inout State) in
       try state.update(target: target, update: inlineMutation)
     }
     
