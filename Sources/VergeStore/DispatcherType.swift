@@ -25,8 +25,10 @@ public protocol DispatcherType {
     
   associatedtype State: StateType
   associatedtype Activity
-  var target: StoreBase<State, Activity> { get }
+  associatedtype Scope
   
+  var target: StoreBase<State, Activity> { get }
+  var scope: WritableKeyPath<State, Scope> { get }
 }
 
 extension DispatcherType {
@@ -45,26 +47,27 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout State) throws -> Result
+    mutation: (inout Scope) throws -> Result
   ) rethrows -> Result {
     let meta = MutationMetadata(name: name, file: file, function: function, line: line)
     return try target._receive(
       context: self,
       metadata: meta,
-      mutation: mutation
-    )
+      mutation: { state in
+        try state.update(target: scope, update: mutation)
+    })
   }
-  
+      
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func commit<Scope, Result>(
+  public func commit<Result, NewScope>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    scope: WritableKeyPath<State, Scope>,
-    mutation: (inout Scope) throws -> Result
+    scope: WritableKeyPath<State, NewScope>,
+    mutation: (inout NewScope) throws -> Result
   ) rethrows -> Result {
     let meta = MutationMetadata(name: name, file: file, function: function, line: line)
     return try target._receive(
@@ -83,12 +86,13 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    action: ((ContextualDispatcher<Self>) throws -> Result)
+    action: ((ContextualDispatcher<Self, Scope>) throws -> Result)
   ) rethrows -> Result {
     
     let meta = ActionMetadata(name: name, file: file, function: function, line: line)
     
-    let context = ContextualDispatcher<Self>.init(
+    let context = ContextualDispatcher<Self, Scope>.init(
+      scope: scope,
       dispatcher: self,
       actionMetadata: meta
     )
@@ -97,5 +101,27 @@ extension DispatcherType {
         
   }
   
+  /// Run action that created inline
+  @discardableResult
+  public func dispatch<Result, NewScope>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    scope: WritableKeyPath<State, NewScope>,
+    action: ((ContextualDispatcher<Self, NewScope>) throws -> Result)
+  ) rethrows -> Result {
+    
+    let meta = ActionMetadata(name: name, file: file, function: function, line: line)
+    
+    let context = ContextualDispatcher<Self, NewScope>.init(
+      scope: scope,
+      dispatcher: self,
+      actionMetadata: meta
+    )
+    
+    return try action(context)
+    
+  }
+  
 }
-

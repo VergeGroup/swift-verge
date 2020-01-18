@@ -17,14 +17,35 @@ final class VergeStoreTests: XCTestCase {
       
   struct State: StateType {
     
+    struct TreeA {
+      
+    }
+    
+    struct TreeB {
+      
+    }
+    
+    struct TreeC {
+      
+    }
+    
     struct NestedState {
       
       var myName: String = ""
     }
     
+    struct OptionalNestedState {
+      
+      var myName: String = ""
+    }
+    
     var count: Int = 0
-    var optionalNested: NestedState?
+    var optionalNested: OptionalNestedState?
     var nested: NestedState = .init()
+    
+    var treeA = TreeA()
+    var treeB = TreeB()
+    var treeC = TreeC()
   }
   
   final class Store: StoreBase<State, Never> {
@@ -34,7 +55,7 @@ final class VergeStoreTests: XCTestCase {
     }
   }
   
-  class RootDispatcher: DispatcherBase<State, Never> {
+  class RootDispatcher: Store.Dispatcher {
     
     enum Error: Swift.Error {
       case something
@@ -85,9 +106,81 @@ final class VergeStoreTests: XCTestCase {
       }
     }
     
+    func hoge() {
+      
+      dispatch(scope: \.nested) { (c) -> Void in
+        
+        let _: State.NestedState = c.state
+        
+        c.commit { state in
+          let _: State.NestedState = state
+          
+        }
+        
+        c.dispatch(scope: \.optionalNested) { c in
+          
+          let _: State.OptionalNestedState? = c.state
+          
+          c.commit { state in
+            let _: State.OptionalNestedState? = state
+            
+          }
+          
+        }
+                
+      }
+      
+    }
+    
   }
   
-  final class OptionalNestedDispatcher: DispatcherBase<State, Never> {
+  final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
+    
+    init(store: Store) {
+      super.init(target: store, scope: \.treeA)
+    }
+    
+    func operation() {
+      
+      commit { state in
+        let _: State.TreeA = state
+      }
+      
+      commit(scope: \.treeB) { state in
+        let _: State.TreeB = state
+      }
+      
+      dispatch { context in
+        let _: State.TreeA = context.state
+        
+        context.commit { state in
+          let _: State.TreeA = state
+        }
+      }
+      
+      dispatch(scope: \.treeB) { context in
+        let _: State.TreeB = context.state
+        
+        context.commit { state in
+          let _: State.TreeB = state
+        }
+      }
+      
+      dispatch { context in
+
+        context.dispatch { _context in
+           let _: State.TreeA = _context.state
+        }
+        
+        context.dispatch(scope: \.treeB) { _context in
+          let _: State.TreeB = _context.state
+        }
+      }
+      
+    }
+  }
+  
+  final class OptionalNestedDispatcher: Store.Dispatcher {
    
     func setMyName() {
       commit(scope: \.optionalNested) {
@@ -97,7 +190,7 @@ final class VergeStoreTests: XCTestCase {
     
   }
   
-  final class NestedDispatcher: DispatcherBase<State, Never> {
+  final class NestedDispatcher: Store.Dispatcher {
     
     func setMyName() {
        commit(scope: \.nested) { (s) in
@@ -118,6 +211,12 @@ final class VergeStoreTests: XCTestCase {
   
   override func tearDown() {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+  }
+  
+  func testScope() {
+    
+    let store = Store()
+    
   }
   
   @available(iOS 13.0, *)

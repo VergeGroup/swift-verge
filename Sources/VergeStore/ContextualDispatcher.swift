@@ -27,59 +27,44 @@ public protocol DispacherContextType {
 }
 
 /// A context object created from an action.
-public struct ContextualDispatcher<Dispatcher: DispatcherType>: DispacherContextType, DispatcherType {
+public struct ContextualDispatcher<Dispatcher: DispatcherType, Scope>: DispacherContextType, DispatcherType {
   
-  public var target: StoreBase<Dispatcher.State, Dispatcher.Activity> {
-    dispatcher.target
-  }
-    
   public typealias Activity = Dispatcher.Activity
   
   public typealias State = Dispatcher.State
     
+  public let scope: WritableKeyPath<Dispatcher.State, Scope>
+  
   /// Target dispatcher
   public let dispatcher: Dispatcher
   
   /// From Action
   public let actionMetadata: ActionMetadata
-    
-  /// Returns current state from target store
-  public var state: State {
-    return dispatcher.target.state
+  
+  public var target: StoreBase<Dispatcher.State, Dispatcher.Activity> {
+    dispatcher.target
   }
-  
-  init(
-    dispatcher: Dispatcher,
-    actionMetadata: ActionMetadata
-  ) {
-    self.dispatcher = dispatcher
-    self.actionMetadata = actionMetadata
-  }
-     
-}
-
-/*
-public final class ScopedDispatcherContext<Dispatcher: DispatcherType, Scope>: DispatcherContext<Dispatcher> {
-  
-  public let scope: WritableKeyPath<Dispatcher.State, Scope>
-  
   /// Returns current state from target store
-  public var scopedState: Scope {
+  public var state: Scope {
     return dispatcher.target.state[keyPath: scope]
+  }
+            
+  /// Returns current state from target store
+  public var rootState: State {
+    return dispatcher.target.state
   }
   
   init(
     scope: WritableKeyPath<Dispatcher.State, Scope>,
     dispatcher: Dispatcher,
-    action: ActionBaseType,
-    parent: DispatcherContext<Dispatcher>?
+    actionMetadata: ActionMetadata
   ) {
     self.scope = scope
-    super.init(dispatcher: dispatcher, action: action, parent: parent)
+    self.dispatcher = dispatcher
+    self.actionMetadata = actionMetadata
   }
-  
+     
 }
- */
 
 extension ContextualDispatcher {
  

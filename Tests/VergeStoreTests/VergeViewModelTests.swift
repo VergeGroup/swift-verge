@@ -20,7 +20,7 @@ class VergeViewModelTests: XCTestCase {
     
   }
   
-  final class RootDispatcher: DispatcherBase<RootState, Never> {
+  final class RootDispatcher: RootStore.Dispatcher {
     
     func increment() {
       commit {

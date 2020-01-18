@@ -29,7 +29,7 @@ class MemoizeGetterTests: XCTestCase {
     }
   }
   
-  final class RootDispatcher: DispatcherBase<State, Never> {
+  final class RootDispatcher: Store.Dispatcher {
         
     func increment() {
       commit {

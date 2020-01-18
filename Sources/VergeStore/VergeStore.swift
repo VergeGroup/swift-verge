@@ -88,7 +88,12 @@ public typealias NoActivityStoreBase<State: StateType> = StoreBase<State, Never>
 /// ```
 open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, DispatcherType {
   
+  public var scope: WritableKeyPath<State, State> = \State.self
+    
+  public typealias Scope = State
+    
   public typealias Dispatcher = DispatcherBase<State, Activity>
+  public typealias ScopedDispatcher<Scope> = ScopedDispatcherBase<State, Activity, Scope>
   
   public typealias Value = State
   
