@@ -102,7 +102,18 @@ extension DispatcherContext {
   /// Run Action
   @discardableResult
   public func dispatch<Action: ActionType>(_ get: (Dispatcher) -> Action) -> Action.Result where Action.Dispatcher == Dispatcher {
-    let action = get(dispatcher)
+    dispatch(get(dispatcher))
+  }
+  
+  /// Run Action
+  @discardableResult
+  public func dispatch<TryAction: TryActionType>(_ get: (Dispatcher) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Dispatcher {
+    try dispatch(get(dispatcher))
+  }
+  
+  /// Run Action
+  @discardableResult
+  public func dispatch<Action: ActionType>(_ action: Action) -> Action.Result where Action.Dispatcher == Dispatcher {
     let context = DispatcherContext<Dispatcher>.init(
       dispatcher: dispatcher,
       action: action,
@@ -113,8 +124,7 @@ extension DispatcherContext {
   
   /// Run Action
   @discardableResult
-  public func dispatch<TryAction: TryActionType>(_ get: (Dispatcher) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Dispatcher {
-    let action = get(dispatcher)
+  public func dispatch<TryAction: TryActionType>(_ action: TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Dispatcher {
     let context = DispatcherContext<Dispatcher>.init(
       dispatcher: dispatcher,
       action: action,

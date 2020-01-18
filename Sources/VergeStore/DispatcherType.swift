@@ -59,7 +59,19 @@ extension DispatcherType {
   /// - Parameter get: Return Action object
   @discardableResult
   public func dispatch<Action: ActionType>(_ get: (Self) -> Action) -> Action.Result where Action.Dispatcher == Self {
-    let action = get(self)
+    dispatch(get(self))
+  }
+  
+  ///
+  /// - Parameter get: Return Action object
+  @discardableResult
+  public func dispatch<TryAction: TryActionType>(_ get: (Self) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Self {
+    try dispatch(get(self))
+  }
+  
+  @discardableResult
+  @inline(__always)
+  public func dispatch<Action: ActionType>(_ action: Action) -> Action.Result where Action.Dispatcher == Self {
     let context = DispatcherContext<Self>.init(
       dispatcher: self,
       action: action,
@@ -71,8 +83,8 @@ extension DispatcherType {
   ///
   /// - Parameter get: Return Action object
   @discardableResult
-  public func dispatch<TryAction: TryActionType>(_ get: (Self) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Self {
-    let action = get(self)
+  @inline(__always)
+  public func dispatch<TryAction: TryActionType>(_ action: TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Self {
     let context = DispatcherContext<Self>.init(
       dispatcher: self,
       action: action,
