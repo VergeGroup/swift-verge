@@ -36,9 +36,9 @@ public protocol DispatcherType {
 extension DispatcherType {
       
   /// Run Mutation
-  /// - Parameter get: returns Mutation
-  public func commit<Mutation: MutationType>(_ get: (Self) -> Mutation) -> Mutation.Result where Mutation.State == State {
-    let mutation = get(self)
+  /// - Parameter mutation: returns Mutation
+  public func commit<Mutation: MutationType>(mutation: (Self) -> Mutation) -> Mutation.Result where Mutation.State == State {
+    let mutation = mutation(self)
     return target._receive(
       context: Optional<DispatcherContext<Self>>.none,
       mutation: mutation
@@ -46,32 +46,63 @@ extension DispatcherType {
   }
   
   /// Run Mutation
-  /// - Parameter get: returns Mutation
-  public func commit<TryMutation: TryMutationType>(_ get: (Self) -> TryMutation) throws -> TryMutation.Result where TryMutation.State == State {
-    let mutation = get(self)
+  /// - Parameter mutation: returns Mutation
+  public func commit<TryMutation: TryMutationType>(mutation: (Self) -> TryMutation) throws -> TryMutation.Result where TryMutation.State == State {
+    let mutation = mutation(self)
     return try target._receive(
       context: Optional<DispatcherContext<Self>>.none,
       mutation: mutation
     )
   }
+  
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func commitInline<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutate: @escaping (inout State) -> Result
+  ) -> Result {
+    commit { _ in
+      Mutation<Result>.init("inline_" + name, file, function, line, mutate: mutate)
+    }
+  }
+  
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func commitInline<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutate: @escaping (inout State) throws -> Result
+  ) throws -> Result {
+    try commit { _ in
+      TryMutation<Result>.init("inline_" + name, file, function, line, mutate: mutate)
+    }
+  }
       
-  ///
+  /// Run action
   /// - Parameter get: Return Action object
   @discardableResult
-  public func dispatch<Action: ActionType>(_ get: (Self) -> Action) -> Action.Result where Action.Dispatcher == Self {
-    dispatch(get(self))
+  public func dispatch<Action: ActionType>(action: (Self) -> Action) -> Action.Result where Action.Dispatcher == Self {
+    dispatch(action: action(self))
   }
   
-  ///
+  /// Run action
   /// - Parameter get: Return Action object
   @discardableResult
-  public func dispatch<TryAction: TryActionType>(_ get: (Self) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Self {
-    try dispatch(get(self))
+  public func dispatch<TryAction: TryActionType>(action: (Self) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Self {
+    try dispatch(action: action(self))
   }
   
+  /// Run action
   @discardableResult
   @inline(__always)
-  public func dispatch<Action: ActionType>(_ action: Action) -> Action.Result where Action.Dispatcher == Self {
+  public func dispatch<Action: ActionType>(action: Action) -> Action.Result where Action.Dispatcher == Self {
     let context = DispatcherContext<Self>.init(
       dispatcher: self,
       action: action,
@@ -80,11 +111,11 @@ extension DispatcherType {
     return action.run(context: context)
   }
   
-  ///
+  /// Run action
   /// - Parameter get: Return Action object
   @discardableResult
   @inline(__always)
-  public func dispatch<TryAction: TryActionType>(_ action: TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Self {
+  public func dispatch<TryAction: TryActionType>(action: TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Self {
     let context = DispatcherContext<Self>.init(
       dispatcher: self,
       action: action,
@@ -93,6 +124,7 @@ extension DispatcherType {
     return try action.run(context: context)
   }
   
+  /// Run action that created inline
   @discardableResult
   public func dispatchInline<Result>(
     _ name: String = "",
@@ -108,6 +140,7 @@ extension DispatcherType {
     
   }
   
+  /// Run action that created inline
   @discardableResult
   public func dispatchInline<Result>(
     _ name: String = "",

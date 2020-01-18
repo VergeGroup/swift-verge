@@ -21,9 +21,14 @@
 
 import Foundation
 
+public protocol DispacherContextType {
+  associatedtype Dispatcher: DispatcherType
+  var dispatcher: Dispatcher { get }
+}
+
 /// A context object created from an action.
-public final class DispatcherContext<Dispatcher: DispatcherType> {
-  
+public final class DispatcherContext<Dispatcher: DispatcherType>: DispacherContextType {
+
   public typealias State = Dispatcher.State
     
   /// Target dispatcher
@@ -62,15 +67,15 @@ extension DispatcherContext {
   }
   
   /// Run Mutation
-  /// - Parameter get: returns Mutation
-  public func commit<Mutation: MutationType>(_ get: (Dispatcher) -> Mutation) -> Mutation.Result where Mutation.State == State {
-    dispatcher.commit(get)
+  /// - Parameter mutation: returns Mutation
+  public func commit<Mutation: MutationType>(mutation: (Dispatcher) -> Mutation) -> Mutation.Result where Mutation.State == State {
+    dispatcher.commit(mutation: mutation)
   }
   
   /// Run Mutation
-  /// - Parameter get: returns Mutation
-  public func commit<TryMutation: TryMutationType>(_ get: (Dispatcher) -> TryMutation) throws -> TryMutation.Result where TryMutation.State == State {
-    try dispatcher.commit(get)
+  /// - Parameter mutation: returns Mutation
+  public func commit<TryMutation: TryMutationType>(mutation: (Dispatcher) -> TryMutation) throws -> TryMutation.Result where TryMutation.State == State {
+    try dispatcher.commit(mutation: mutation)
   }
   
   /// Run Mutation that created inline
@@ -79,7 +84,7 @@ extension DispatcherContext {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ mutate: @escaping (inout State) -> Result
+    mutate: @escaping (inout State) -> Result
   ) -> Result {
     dispatcher.commit { _ in
       Dispatcher.Mutation<Result>.init("inline_" + name, file, function, line, mutate: mutate)
@@ -92,7 +97,7 @@ extension DispatcherContext {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ mutate: @escaping (inout State) throws -> Result
+    mutate: @escaping (inout State) throws -> Result
   ) throws -> Result {
     try dispatcher.commit { _ in
       Dispatcher.TryMutation<Result>.init("inline_" + name, file, function, line, mutate: mutate)
@@ -101,19 +106,19 @@ extension DispatcherContext {
   
   /// Run Action
   @discardableResult
-  public func dispatch<Action: ActionType>(_ get: (Dispatcher) -> Action) -> Action.Result where Action.Dispatcher == Dispatcher {
-    dispatch(get(dispatcher))
+  public func dispatch<Action: ActionType>(action: (Dispatcher) -> Action) -> Action.Result where Action.Dispatcher == Dispatcher {
+    dispatch(action: action(dispatcher))
   }
   
   /// Run Action
   @discardableResult
-  public func dispatch<TryAction: TryActionType>(_ get: (Dispatcher) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Dispatcher {
-    try dispatch(get(dispatcher))
+  public func dispatch<TryAction: TryActionType>(action: (Dispatcher) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Dispatcher {
+    try dispatch(action: action(dispatcher))
   }
   
   /// Run Action
   @discardableResult
-  public func dispatch<Action: ActionType>(_ action: Action) -> Action.Result where Action.Dispatcher == Dispatcher {
+  public func dispatch<Action: ActionType>(action: Action) -> Action.Result where Action.Dispatcher == Dispatcher {
     let context = DispatcherContext<Dispatcher>.init(
       dispatcher: dispatcher,
       action: action,
@@ -124,7 +129,7 @@ extension DispatcherContext {
   
   /// Run Action
   @discardableResult
-  public func dispatch<TryAction: TryActionType>(_ action: TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Dispatcher {
+  public func dispatch<TryAction: TryActionType>(action: TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Dispatcher {
     let context = DispatcherContext<Dispatcher>.init(
       dispatcher: dispatcher,
       action: action,
