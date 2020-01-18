@@ -61,7 +61,7 @@ final class MyStore: StoreBase<State, Activity> {
   func delayedIncrement() {
     dispatch { context in
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-        context.commit { $0.increment() }
+        context.redirect { $0.increment() }
         
         context.send(.happen)
       }
@@ -116,7 +116,7 @@ struct MyView: View {
     Group {
       Text(store.state.count.description)
       Button(action: {
-        self.store.commit { $0.increment() }
+        self.store.increment()
       }) {
         Text("Increment")
       }
