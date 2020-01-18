@@ -22,7 +22,6 @@
 import Foundation
 
 #if !COCOAPODS
-@_exported import VergeStore
 import VergeCore
 #endif
 

@@ -10,13 +10,15 @@ let package = Package(
     .watchOS(.v3)
   ],
   products: [
+    .library(name: "VergeCore", targets: ["VergeCore"]),
     .library(name: "VergeStore", targets: ["VergeStore"]),
-    .library(name: "VergeViewModel", targets: ["VergeViewModel"]),
+    .library(name: "VergeORM", targets: ["VergeORM"]),
   ],
   dependencies: [
   ],
   targets: [
-    .target(name: "VergeStore", dependencies: []),
-    .target(name: "VergeViewModel", dependencies: []),
+    .target(name: "VergeCore", dependencies: []),
+    .target(name: "VergeStore", dependencies: ["VergeCore"]),
+    .target(name: "VergeORM", dependencies: ["VergeCore"]),
   ]
 )

@@ -22,7 +22,7 @@
 import Foundation
 
 #if !COCOAPODS
-import VergeCore
+@_exported import VergeCore
 #endif
 
 /// A metadata object that indicates the name of the mutation and where it was caused.
