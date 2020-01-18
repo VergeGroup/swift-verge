@@ -38,5 +38,3 @@
 
 ## Additional Informations <a id="docs-additional-informations"></a>
 
-* [Additional Informations](docs-additional-informations/additional-informations.md)
-

@@ -81,8 +81,9 @@ final class Store: StoreBase<State, Activity>, DispatcherType {
     super.init(initialState: .init(), logger: DefaultLogger.shared)
   }
   
-  func sendMessage() -> Action<Void> {
-    return .action { context in
+  func sendMessage() {
+    dispatch { context in
+      // some operations to send message
       context.send(.didSendMessage)
     }
   }
