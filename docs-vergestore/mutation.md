@@ -1,5 +1,7 @@
 # ☄️ Mutation - Updates state
 
+## What Mutation is
+
 The only way to actually change state in a Store is by committing a mutation.   
 Define a function that returns Mutation object.   
 That expresses that function is Mutation

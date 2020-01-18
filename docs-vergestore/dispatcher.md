@@ -2,9 +2,11 @@
 
 ## What Dispatcher does
 
-Dispatcher's needs is **to update the state that Store manages** and to **manage dependencies to create Mutation and Action**
+Dispatcher's needs is **to update the state that Store manages** and to **manage dependencies to create Mutation and Action.**
 
-**Simple example**
+**Dispatcher does not have own state. Dispatcher runs with Store.**
+
+**Example**
 
 ```swift
 class MyDispatcher: MyStore.Dispatcher {
@@ -16,8 +18,7 @@ let dispatcher = MyDispatcher(target: store)
 ```
 
 {% hint style="info" %}
-`Actual type of MyStore.Dispatcher` is `DispatcherBase<State, Never>` 
-
+Actual type of MyStore.Dispatcher is DispatcherBase&lt;State, Never&gt;   
 It is a typealias to write shortly.
 {% endhint %}
 

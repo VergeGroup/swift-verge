@@ -1,4 +1,4 @@
-# 🪐 State
+# 🪐 State and shape
 
 ## Using single state tree \(Not enforced\)
 
@@ -7,7 +7,7 @@ That means an object contains all of the application's state.
 With this, we can get to achieve **"single source of truth"**
 
 ```swift
-struct State {
+struct State: StateType {
   
   var count: Int = 0
   
@@ -22,7 +22,23 @@ VergeStore does support multiple state-tree as well.
 Depending on the case, we can create another Store instance.
 {% endhint %}
 
-## StateType protocol helps updates \(Optional\)
+## Add computed property
+
+If you have a property that does not need to be stored, that can be computed with other property.
+
+```swift
+struct State: StateType {
+  
+  var count: Int = 0
+  
+  var countText: String {
+    return count.description
+  }
+  
+}
+```
+
+## StateType protocol helps to modify
 
 VergeStore provides `StateType` protocol as a helper.
 
@@ -55,4 +71,8 @@ Please check VergeORM module**
 {% page-ref page="../docs-verge-orm/core-concepts.md" %}
 
 {% embed url="https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/" %}
+
+## Subscribing the state
+
+
 
