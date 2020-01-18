@@ -52,14 +52,14 @@ final class MyStore: StoreBase<State, Activity> {
     super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
   }
   
-  func increment() -> Mutation<Void> {
-    return .mutation {
+  func increment() {
+    commit {
       $0.count += 0
     }
   }
   
-  func delayedIncrement() -> Action<Void> {
-    return .action { context in
+  func delayedIncrement() {
+    dispatch { context in
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
         context.commit { $0.increment() }
         
@@ -76,9 +76,9 @@ final class MyStore: StoreBase<State, Activity> {
 ```swift
 let store = MyStore()
 
-store.commit { $0.increment() }
+store.increment()
 
-store.dispatch { $0.delayedIncrement() }
+store.delayedIncrement()
 ```
 
 ### Read the state
