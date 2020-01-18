@@ -32,8 +32,8 @@ class ActivityTests: XCTestCase {
       super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
     }
     
-    func sendMessage() -> Action<Void> {
-      return .action { context in
+    func sendMessage() {
+      dispatch { context in
         context.send(.didSendMessage)
       }
     }
@@ -55,7 +55,7 @@ class ActivityTests: XCTestCase {
     }
     .store(in: &subscriptions)
     
-    store.dispatch { $0.sendMessage() }
+    store.sendMessage()
     
     wait(for: [waiter], timeout: 10)
         

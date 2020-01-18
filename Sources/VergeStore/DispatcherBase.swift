@@ -21,7 +21,7 @@
 
 open class DispatcherBase<State: StateType, Activity>: DispatcherType {
         
-  public typealias Context = DispatcherContext<DispatcherBase<State, Activity>>
+  public typealias Context = ContextualDispatcher<DispatcherBase<State, Activity>>
   
   public let target: StoreBase<State, Activity>
   

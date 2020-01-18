@@ -31,14 +31,14 @@ class MemoizeGetterTests: XCTestCase {
   
   final class RootDispatcher: DispatcherBase<State, Never> {
         
-    func increment() -> Mutation<Void> {
-      .mutation {
+    func increment() {
+      commit {
         $0.count += 1
       }
     }
       
-    func setMyName() -> Mutation<Void> {
-      .mutation {
+    func setMyName() {
+      commit {
         $0.name = UUID().uuidString
       }
     }
@@ -63,13 +63,13 @@ class MemoizeGetterTests: XCTestCase {
     
     XCTAssertEqual(callCount, 1)
     
-    dispatcher.commit { $0.increment() }
+    dispatcher.increment()
     
     XCTAssertEqual(getter.value, 2)
     
     XCTAssertEqual(callCount, 2)
     
-    dispatcher.commit { $0.setMyName() }
+    dispatcher.setMyName()
     
     XCTAssertEqual(getter.value, 2)
     

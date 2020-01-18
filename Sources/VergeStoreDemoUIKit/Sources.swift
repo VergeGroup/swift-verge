@@ -25,8 +25,8 @@ final class RootStore: StoreBase<RootState, RootActivity> {
     super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
   }
   
-  func increment() -> Mutation<Void> {
-    .mutation {
+  func increment() {
+    commit {
       $0.count += 1
     }
   }
