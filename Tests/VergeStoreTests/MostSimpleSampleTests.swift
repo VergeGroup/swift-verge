@@ -29,16 +29,16 @@ enum Sample {
       super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
     }
     
-    func increment() -> Mutation<Void> {
-      return .mutation {
+    func increment() {
+      return commit {
         $0.count += 0
       }
     }
     
-    func delayedIncrement() -> Action<Void> {
-      return .action { context in
+    func delayedIncrement() {
+      dispatch { context in
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-          context.commit { $0.increment() }
+          self.increment()
           
           context.send(.happen)
         }
@@ -51,9 +51,9 @@ enum Sample {
     
     let store = MyStore()
     
-    store.commit { $0.increment() }
+    store.increment()
     
-    store.dispatch { $0.delayedIncrement() }
+    store.delayedIncrement()
     
     // Get value from current State
     let count = store.state.count
@@ -74,7 +74,7 @@ enum Sample {
       Group {
         Text(store.state.count.description)
         Button(action: {
-          self.store.commit { $0.increment() }
+          self.store.increment()
         }) {
           Text("Increment")
         }

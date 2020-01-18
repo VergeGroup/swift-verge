@@ -25,152 +25,103 @@ public protocol DispatcherType {
     
   associatedtype State: StateType
   associatedtype Activity
-  #if COCOAPODS
-  typealias StateScope<Target> = Verge.StateScope<State, Target>
-  #else
-  typealias StateScope<Target> = VergeStore.StateScope<State, Target>
-  #endif
-  typealias Mutation<Return> = AnyMutation<State, Return>
-  typealias TryMutation<Return> = TryAnyMutation<State, Return>
-  typealias Action<Return> = AnyAction<Self, Return>
-  typealias TryAction<Return> = TryAnyAction<Self, Return>
+  associatedtype Scope
+  
   var target: StoreBase<State, Activity> { get }
-  
+  var scope: WritableKeyPath<State, Scope> { get }
 }
 
 extension DispatcherType {
-      
-  /// Run Mutation
-  /// - Parameter mutation: returns Mutation
-  public func commit<Mutation: MutationType>(mutation: (Self) -> Mutation) -> Mutation.Result where Mutation.State == State {
-    let mutation = mutation(self)
-    return target._receive(
-      context: Optional<DispatcherContext<Self>>.none,
-      mutation: mutation
-    )
-  }
   
-  /// Run Mutation
-  /// - Parameter mutation: returns Mutation
-  public func commit<TryMutation: TryMutationType>(mutation: (Self) -> TryMutation) throws -> TryMutation.Result where TryMutation.State == State {
-    let mutation = mutation(self)
+  /// Send activity
+  /// - Parameter activity:
+  public func send(_ activity: Activity) {
+    target._send(activity: activity)
+  }
+      
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func commit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout Scope) throws -> Result
+  ) rethrows -> Result {
+    let meta = MutationMetadata(name: name, file: file, function: function, line: line)
     return try target._receive(
-      context: Optional<DispatcherContext<Self>>.none,
-      mutation: mutation
-    )
-  }
-  
-  /// Run Mutation that created inline
-  ///
-  /// Throwable
-  public func commitInline<Result>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    mutate: @escaping (inout State) -> Result
-  ) -> Result {
-    commit { _ in
-      Mutation<Result>.init("inline_" + name, file, function, line, mutate: mutate)
-    }
-  }
-  
-  /// Run Mutation that created inline
-  ///
-  /// Throwable
-  public func commitInline<Result>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    mutate: @escaping (inout State) throws -> Result
-  ) throws -> Result {
-    try commit { _ in
-      TryMutation<Result>.init("inline_" + name, file, function, line, mutate: mutate)
-    }
+      context: self,
+      metadata: meta,
+      mutation: { state in
+        try state.update(target: scope, update: mutation)
+    })
   }
       
-  /// Run action
-  /// - Parameter get: Return Action object
-  @discardableResult
-  public func dispatch<Action: ActionType>(action: (Self) -> Action) -> Action.Result where Action.Dispatcher == Self {
-    dispatch(action: action(self))
-  }
-  
-  /// Run action
-  /// - Parameter get: Return Action object
-  @discardableResult
-  public func dispatch<TryAction: TryActionType>(action: (Self) -> TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Self {
-    try dispatch(action: action(self))
-  }
-  
-  /// Run action
-  @discardableResult
-  @inline(__always)
-  public func dispatch<Action: ActionType>(action: Action) -> Action.Result where Action.Dispatcher == Self {
-    let context = DispatcherContext<Self>.init(
-      dispatcher: self,
-      action: action,
-      parent: nil
-    )
-    return action.run(context: context)
-  }
-  
-  /// Run action
-  /// - Parameter get: Return Action object
-  @discardableResult
-  @inline(__always)
-  public func dispatch<TryAction: TryActionType>(action: TryAction) throws -> TryAction.Result where TryAction.Dispatcher == Self {
-    let context = DispatcherContext<Self>.init(
-      dispatcher: self,
-      action: action,
-      parent: nil
-    )
-    return try action.run(context: context)
-  }
-  
-  /// Run action that created inline
-  @discardableResult
-  public func dispatchInline<Result>(
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func commit<Result, NewScope>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ action: @escaping ((DispatcherContext<Self>) -> Result)
-  ) -> Result {
-    
-    dispatch { _ in
-      Action(name, file, function, line, action)
+    scope: WritableKeyPath<State, NewScope>,
+    mutation: (inout NewScope) throws -> Result
+  ) rethrows -> Result {
+    let meta = MutationMetadata(name: name, file: file, function: function, line: line)
+    return try target._receive(
+      context: self,
+      metadata: meta,
+      mutation: { state in
+        try state.update(target: scope, update: mutation)
     }
-    
+    )
   }
-  
+      
   /// Run action that created inline
   @discardableResult
-  public func dispatchInline<Result>(
+  public func dispatch<Result>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    _ action: @escaping ((DispatcherContext<Self>) throws -> Result)
-  ) throws -> Result {
+    action: ((ContextualDispatcher<Self, Scope>) throws -> Result)
+  ) rethrows -> Result {
     
-    try dispatch { _ in
-      TryAction(name, file, function, line, action)
-    }
+    let meta = ActionMetadata(name: name, file: file, function: function, line: line)
+    
+    let context = ContextualDispatcher<Self, Scope>.init(
+      scope: scope,
+      dispatcher: self,
+      actionMetadata: meta
+    )
+    
+    return try action(context)
+        
+  }
+  
+  /// Run action that created inline
+  @discardableResult
+  public func dispatch<Result, NewScope>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    scope: WritableKeyPath<State, NewScope>,
+    action: ((ContextualDispatcher<Self, NewScope>) throws -> Result)
+  ) rethrows -> Result {
+    
+    let meta = ActionMetadata(name: name, file: file, function: function, line: line)
+    
+    let context = ContextualDispatcher<Self, NewScope>.init(
+      scope: scope,
+      dispatcher: self,
+      actionMetadata: meta
+    )
+    
+    return try action(context)
     
   }
-
-}
-
-// MARK: - Xcode Support
-extension DispatcherType {
   
-  /// Dummy Method to work Xcode code completion
-//  @available(*, unavailable)
-  public func commit(_ get: (Self) -> Never) -> Never { fatalError() }
-  
-  /// Dummy Method to work Xcode code completion
-//  @available(*, unavailable)
-  public func dispatch(_ get: (Self) -> Never) -> Never { fatalError() }
 }

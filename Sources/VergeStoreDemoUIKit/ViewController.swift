@@ -85,7 +85,7 @@ final class ViewModel: RootStore.ViewModelBase<ViewModelState, ViewModelActivity
   }
   
   override func receiveParentActivity(_ activity: RootActivity) {
-    dispatchInline { context in
+    dispatch { context in
       switch activity {
       case .bomb:
         context.send(.somethingHappen)
@@ -95,7 +95,7 @@ final class ViewModel: RootStore.ViewModelBase<ViewModelState, ViewModelActivity
   
   func increment() {
     
-    rootStore.dispatch { $0.incrementWithNotification() }
+    rootStore.incrementWithNotification()
     
   }
       

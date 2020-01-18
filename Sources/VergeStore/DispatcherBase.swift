@@ -19,18 +19,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-open class DispatcherBase<State: StateType, Activity>: DispatcherType {
-        
-  public typealias Context = DispatcherContext<DispatcherBase<State, Activity>>
+open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherType {
+  
+  public var scope: WritableKeyPath<State, Scope>
+          
+  public typealias Context = ContextualDispatcher<Self, Scope>
   
   public let target: StoreBase<State, Activity>
   
   private var logger: StoreLogger? {
     target.logger
   }
-  
-  public init(target store: StoreBase<State, Activity>) {
+   
+  public init(
+    target store: StoreBase<State, Activity>,
+    scope: WritableKeyPath<State, Scope>
+  ) {
     self.target = store
+    self.scope = scope
     
     logger?.didCreateDispatcher(store: store, dispatcher: self)
   }
@@ -39,6 +45,16 @@ open class DispatcherBase<State: StateType, Activity>: DispatcherType {
     logger?.didDestroyDispatcher(store: target, dispatcher: self)
   }
     
+}
+
+open class DispatcherBase<State: StateType, Activity>: ScopedDispatcherBase<State, Activity, State> {
+      
+  public init(
+    target store: StoreBase<State, Activity>
+  ) {
+    super.init(target: store, scope: \State.self)
+  }
+
 }
 
 public protocol _VergeStore_OptionalProtocol {

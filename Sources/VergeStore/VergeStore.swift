@@ -60,8 +60,8 @@ public struct ActionMetadata {
 /// A protocol to register logger and get the event VergeStore emits.
 public protocol StoreLogger {
   
-  func willCommit(store: AnyObject, state: Any, mutation: MutationBaseType, context: Any?)
-  func didCommit(store: AnyObject, state: Any, mutation: MutationBaseType, context: Any?, time: CFTimeInterval)
+  func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?)
+  func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?, time: CFTimeInterval)
   func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: Any?)
   
   func didCreateDispatcher(store: AnyObject, dispatcher: Any)
@@ -88,7 +88,12 @@ public typealias NoActivityStoreBase<State: StateType> = StoreBase<State, Never>
 /// ```
 open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, DispatcherType {
   
+  public var scope: WritableKeyPath<State, State> = \State.self
+    
+  public typealias Scope = State
+    
   public typealias Dispatcher = DispatcherBase<State, Activity>
+  public typealias ScopedDispatcher<Scope> = ScopedDispatcherBase<State, Activity, Scope>
   
   public typealias Value = State
   
@@ -121,59 +126,33 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
   }
   
   @inline(__always)
-  func _receive<FromDispatcher: DispatcherType, Mutation: MutationType>(
-    context: DispatcherContext<FromDispatcher>?,
-    mutation: Mutation
-  ) -> Mutation.Result where FromDispatcher.State == State, Mutation.State == State {
+  func _receive<FromDispatcher: DispatcherType, Result>(
+    context: FromDispatcher,
+    metadata: MutationMetadata,
+    mutation: (inout State) throws -> Result
+  ) rethrows -> Result {
     
-    logger?.willCommit(store: self, state: self.state, mutation: mutation, context: context)
-    
-    let startedTime = CFAbsoluteTimeGetCurrent()
-    var currentState: State!
-    
-    let signpost = VergeSignpostTransaction("Store.commit")
-    
-    let returnValue = _backingStorage.update { (state) -> Mutation.Result in
-      let r = mutation.mutate(state: &state)
-      currentState = state
-      return r
-    }
-    
-    signpost.end()
-    
-    let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
-    
-    logger?.didCommit(store: self, state: currentState!, mutation: mutation, context: context, time: elapsed)
-    return returnValue
-  }
-  
-  @inline(__always)
-  func _receive<FromDispatcher: DispatcherType, Mutation: TryMutationType>(
-    context: DispatcherContext<FromDispatcher>?,
-    mutation: Mutation
-  ) throws -> Mutation.Result where FromDispatcher.State == State, Mutation.State == State {
-    
-    logger?.willCommit(store: self, state: self.state, mutation: mutation, context: context)
+    logger?.willCommit(store: self, state: self.state, mutation: metadata, context: context)
     
     let startedTime = CFAbsoluteTimeGetCurrent()
     var currentState: State!
     
     let signpost = VergeSignpostTransaction("Store.commit")
+    var elapsed: CFTimeInterval = 0
     
-    let returnValue = try _backingStorage.update { (state) -> Mutation.Result in
-      let r = try mutation.mutate(state: &state)
+    let returnValue = try _backingStorage.update { (state) -> Result in
+      let r = try mutation(&state)
+      elapsed = CFAbsoluteTimeGetCurrent() - startedTime
       currentState = state
       return r
     }
     
     signpost.end()
-    
-    let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
-    
-    logger?.didCommit(store: self, state: currentState!, mutation: mutation, context: context, time: elapsed)
+        
+    logger?.didCommit(store: self, state: currentState!, mutation: metadata, context: context, time: elapsed)
     return returnValue
   }
-  
+ 
   @inline(__always)
   func _send(activity: Activity) {
     

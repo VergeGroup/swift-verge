@@ -17,14 +17,35 @@ final class VergeStoreTests: XCTestCase {
       
   struct State: StateType {
     
+    struct TreeA {
+      
+    }
+    
+    struct TreeB {
+      
+    }
+    
+    struct TreeC {
+      
+    }
+    
     struct NestedState {
       
       var myName: String = ""
     }
     
+    struct OptionalNestedState {
+      
+      var myName: String = ""
+    }
+    
     var count: Int = 0
-    var optionalNested: NestedState?
+    var optionalNested: OptionalNestedState?
     var nested: NestedState = .init()
+    
+    var treeA = TreeA()
+    var treeB = TreeB()
+    var treeC = TreeC()
   }
   
   final class Store: StoreBase<State, Never> {
@@ -34,81 +55,145 @@ final class VergeStoreTests: XCTestCase {
     }
   }
   
-  class RootDispatcher: DispatcherBase<State, Never> {
+  class RootDispatcher: Store.Dispatcher {
     
     enum Error: Swift.Error {
       case something
     }
     
-    func resetCount() -> Mutation<Void> {
-      return .mutation { s in
+    func resetCount() {
+      return commit { s in
         s.count = 0
       }
     }
     
-    func increment() -> Mutation<Void> {
-      .mutation {
+    func increment() {
+      commit {
         $0.count += 1
       }
     }
     
-    func setNestedState() -> Mutation<Void> {
-      .mutation {
+    func setNestedState() {
+      commit {
         $0.optionalNested = .init()
       }
     }
     
-    func setMyName() -> Mutation<Void> {
-      .mutation {
+    func setMyName() {
+      commit {
         try? $0.updateTryPresent(target: \.optionalNested) {
           $0.myName = "Muuk"
         }
       }
     }
     
-    func returnSomeValue() -> Mutation<String> {
-      return .mutation { _ in
+    func returnSomeValue() -> String {
+      return commit { _ in
         return "Hello, Verge"
       }
     }
     
-    func continuousIncrement() -> Action<Void> {
-      return .action { c in
-        c.commit { $0.increment() }
-        c.commit { $0.increment() }
+    func continuousIncrement() {
+      dispatch { c -> Void in
+        c.redirect { $0.increment() }
+        c.redirect { $0.increment() }
       }
     }
     
-    func failableIncrement() -> TryMutation<Void> {
-      return .tryMutation { state in
+    func failableIncrement() throws {
+      try commit { state in
         throw Error.something
       }
     }
     
+    func hoge() {
+      
+      dispatch(scope: \.nested) { (c) -> Void in
+        
+        let _: State.NestedState = c.state
+        
+        c.commit { state in
+          let _: State.NestedState = state
+          
+        }
+        
+        c.dispatch(scope: \.optionalNested) { c in
+          
+          let _: State.OptionalNestedState? = c.state
+          
+          c.commit { state in
+            let _: State.OptionalNestedState? = state
+            
+          }
+          
+        }
+                
+      }
+      
+    }
+    
   }
   
-  final class OptionalNestedDispatcher: DispatcherBase<State, Never> {
+  final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
     
-    private let scope = StateScope.init(keyPath: \.optionalNested)
+    init(store: Store) {
+      super.init(target: store, scope: \.treeA)
+    }
     
-    func setMyNameAnotherWay() -> Mutation<Void> {
-      .mutation(\.optionalNested) { s in
-        s?.myName = "Hello"
+    func operation() {
+      
+      commit { state in
+        let _: State.TreeA = state
+      }
+      
+      commit(scope: \.treeB) { state in
+        let _: State.TreeB = state
+      }
+      
+      dispatch { context in
+        let _: State.TreeA = context.state
+        
+        context.commit { state in
+          let _: State.TreeA = state
+        }
+      }
+      
+      dispatch(scope: \.treeB) { context in
+        let _: State.TreeB = context.state
+        
+        context.commit { state in
+          let _: State.TreeB = state
+        }
+      }
+      
+      dispatch { context in
+
+        context.dispatch { _context in
+           let _: State.TreeA = _context.state
+        }
+        
+        context.dispatch(scope: \.treeB) { _context in
+          let _: State.TreeB = _context.state
+        }
+      }
+      
+    }
+  }
+  
+  final class OptionalNestedDispatcher: Store.Dispatcher {
+   
+    func setMyName() {
+      commit(scope: \.optionalNested) {
+        $0?.myName = "Hello"
       }
     }
     
-    func setMyName() -> Mutation<Void> {
-      scope.mutation { s in
-        s?.myName = "Hello"
-      }
-    }
-    
   }
   
-  final class NestedDispatcher: DispatcherBase<State, Never> {
+  final class NestedDispatcher: Store.Dispatcher {
     
-    func setMyName() -> Mutation<Void> {
-      return .mutation(\.nested) { (s) in
+    func setMyName() {
+       commit(scope: \.nested) { (s) in
         s.myName = "Hello"
       }
     }
@@ -126,6 +211,12 @@ final class VergeStoreTests: XCTestCase {
   
   override func tearDown() {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+  }
+  
+  func testScope() {
+    
+    let store = Store()
+    
   }
   
   @available(iOS 13.0, *)
@@ -147,7 +238,7 @@ final class VergeStoreTests: XCTestCase {
     .store(in: &subs)
     
     DispatchQueue.global().async {
-      dispatcher.commit { $0.increment() }
+      dispatcher.increment()
     }
     
     wait(for: [expectation], timeout: 1)
@@ -155,18 +246,18 @@ final class VergeStoreTests: XCTestCase {
   
   func testDispatch() {
     
-    dispatcher.commit { $0.resetCount() }
-    dispatcher.commit { $0.resetCount() }
+    dispatcher.resetCount()
+    dispatcher.resetCount()
         
-    dispatcher.commit { $0.resetCount() }
-    dispatcher.dispatch { $0.continuousIncrement() }
+    dispatcher.resetCount()
+    dispatcher.continuousIncrement()
     XCTAssert(store.state.count == 2)
   }
   
   func testTryMutation() {
     
     do {
-      try dispatcher.commit { $0.failableIncrement() }
+      try dispatcher.failableIncrement()
       XCTFail()
     } catch {
       
@@ -177,41 +268,41 @@ final class VergeStoreTests: XCTestCase {
   func testMutatingOptionalNestedState() {
     
     XCTAssert(store.state.optionalNested == nil)
-    dispatcher.commit { $0.setNestedState() }
-    dispatcher.commit { $0.setNestedState() }
+    dispatcher.setNestedState()
+    dispatcher.setNestedState()
     XCTAssert(store.state.optionalNested != nil)
-    dispatcher.commit { $0.setMyName() }
+    dispatcher.setMyName()
     XCTAssertEqual(store.state.optionalNested?.myName, "Muuk")
     
     let d = OptionalNestedDispatcher(target: store)
-    d.commit { $0.setMyName() }
+    d.setMyName()
     XCTAssertEqual(store.state.optionalNested?.myName, "Hello")
   }
   
   func testMutatingNestedState() {
                
     let d = NestedDispatcher(target: store)
-    d.commit { $0.setMyName() }
+    d.setMyName()
     XCTAssertEqual(store.state.nested.myName, "Hello")
   }
   
   func testIncrement() {
     
-    dispatcher.commit { $0.increment() }
+    dispatcher.increment()
     XCTAssertEqual(store.state.count, 1)
     
   }
   
   func testTargetingCommit() {
     
-    dispatcher.commit { $0.setNestedState() }
-    dispatcher.commit { $0.setMyName() }
+    dispatcher.setNestedState()
+    dispatcher.setMyName()
     XCTAssertEqual(store.state.optionalNested?.myName, "Muuk")
   }
   
   func testReturnAnyValueFromMutation() {
     
-    let r = dispatcher.commit { $0.returnSomeValue() }
+    let r = dispatcher.returnSomeValue()
     
     XCTAssertEqual(r, "Hello, Verge")
     

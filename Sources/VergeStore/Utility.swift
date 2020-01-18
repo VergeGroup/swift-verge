@@ -44,9 +44,22 @@ extension StateType {
     try update(&self[keyPath: keyPath])
   }
   
+  public mutating func updateIfValid<T: TransientType, Result, FinalResult>(
+    target keyPath: WritableKeyPath<Self, T>,
+    update: (inout T.State) throws -> Result,
+    completion: (Result) -> FinalResult
+  ) rethrows -> FinalResult? {
+    
+    switch self[keyPath: keyPath].box {
+    case .none:
+      return nil
+    case .some:
+      return completion(try update(&self[keyPath: keyPath].unsafelyUnwrap))
+    }
+  }
+  
   public mutating func update<Return>(update: (inout Self) throws -> Return) rethrows -> Return {
     try update(&self)
   }
   
 }
-
