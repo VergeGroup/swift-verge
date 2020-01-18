@@ -102,7 +102,7 @@ final class SessionStore: StoreBase<SessionState, Never> {
 final class SessionDispatcher: SessionStore.Dispatcher {
   
   func insertSampleUsers() {
-    return commit { s in
+    commit { s in
       s.db.performBatchUpdates { (context) in
         let paul = Entity.User(rawID: "paul", name: "Paul Gilbert")
         let billy = Entity.User(rawID: "billy", name: "Billy Sheehan")
@@ -124,7 +124,7 @@ final class SessionDispatcher: SessionStore.Dispatcher {
   }
   
   func submitNewPost(title: String, from user: Entity.User) {
-    return commit { (s) in
+    commit { (s) in
       let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.entityID)
       s.db.performBatchUpdates { (context) in
         

@@ -10,7 +10,7 @@ import Foundation
 
 import VergeStore
 
-struct RootState {
+struct RootState: StateType {
   
   var count: Int = 0
 }
@@ -31,13 +31,13 @@ final class RootStore: StoreBase<RootState, RootActivity> {
     }
   }
   
-  func incrementWithNotification() -> Action<Void> {
-    return .action { context in
+  func incrementWithNotification() {
+    dispatch { context in
       
       /// This is sample async task
       DispatchQueue.main.async {
         
-        context.commit { $0.increment() }
+        context.redirect { $0.increment() }
         if context.state.count > 10 {
           context.send(.bomb)
         }

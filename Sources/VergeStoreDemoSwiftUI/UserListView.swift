@@ -33,7 +33,7 @@ struct UserListView: View {
     }
     .edgesIgnoringSafeArea(.all)      
     .onAppear {
-      self.session.sessionDispatcher.commit { $0.insertSampleUsers() }
+      self.session.sessionDispatcher.insertSampleUsers()
     }
   }
 }
@@ -60,14 +60,14 @@ struct SubmitView: View {
   private var posts: [Entity.Post] {
     
     session.store.state.db.entities.post.find(in:
-      session.store.state.db.indexes.postIDsAuthorGrouped.orderedID(in: user.id)
+      session.store.state.db.indexes.postIDsAuthorGrouped.orderedID(in: user.entityID)
     )
   }
   
   var body: some View {
     VStack {
       Button(action: {
-        self.session.sessionDispatcher.commit { $0.submitNewPost(title: self.samples.randomElement()!, from: self.user) }
+        self.session.sessionDispatcher.submitNewPost(title: self.samples.randomElement()!, from: self.user)
       }) {
         Text("Submit")
       }

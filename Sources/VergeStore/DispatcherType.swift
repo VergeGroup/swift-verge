@@ -99,14 +99,3 @@ extension DispatcherType {
   
 }
 
-// MARK: - Xcode Support
-extension DispatcherType {
-  
-  /// Dummy Method to work Xcode code completion
-//  @available(*, unavailable)
-  public func commit(_ get: (Self) -> Never) -> Never { fatalError() }
-  
-  /// Dummy Method to work Xcode code completion
-//  @available(*, unavailable)
-  public func dispatch(_ get: (Self) -> Never) -> Never { fatalError() }
-}

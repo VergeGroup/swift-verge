@@ -133,17 +133,17 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     var currentState: State!
     
     let signpost = VergeSignpostTransaction("Store.commit")
+    var elapsed: CFTimeInterval = 0
     
     let returnValue = try _backingStorage.update { (state) -> Result in
       let r = try mutation(&state)
+      elapsed = CFAbsoluteTimeGetCurrent() - startedTime
       currentState = state
       return r
     }
     
     signpost.end()
-    
-    let elapsed = CFAbsoluteTimeGetCurrent() - startedTime
-    
+        
     logger?.didCommit(store: self, state: currentState!, mutation: metadata, context: context, time: elapsed)
     return returnValue
   }

@@ -25,7 +25,7 @@ final class LoggedOutService<State: ServiceStateType>: DispatcherBase<State, Nev
   let apiProvider = MoyaProvider<MultiTarget>()
   
   func fetchToken(code: Auth.AuthCode) {
-    dispatchInline { _ in
+    dispatch { _ in
       self.apiProvider.request(.init(APIRequests.token(code: code))) { (result) in
         print(result)
       }
