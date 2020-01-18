@@ -89,8 +89,16 @@ final class VergeStoreTests: XCTestCase {
   
   final class OptionalNestedDispatcher: DispatcherBase<State, Never> {
     
+    private let scope = StateScope.init(keyPath: \.optionalNested)
+    
+    func setMyNameAnotherWay() -> Mutation<Void> {
+      .mutation(\.optionalNested) { s in
+        s?.myName = "Hello"
+      }
+    }
+    
     func setMyName() -> Mutation<Void> {
-      return .mutation(\.optionalNested) { (s) in
+      scope.mutation { s in
         s?.myName = "Hello"
       }
     }
