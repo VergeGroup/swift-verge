@@ -14,13 +14,42 @@ struct SessionRootView: View {
   
   @EnvironmentObject var session: Session
   
-  var body: some View {
-    LoginView()
+  private var loggedInStack: AppLoggedInStack? {
+    switch session.stackContainer.stack {
+    case .loggedIn(let stack):
+      return stack
+    case .loggedOut:
+      return nil
+    }
   }
+  
+  private var loggedOutStack: AppLoggedOutStack? {
+    switch session.stackContainer.stack {
+    case .loggedIn:
+      return nil
+    case .loggedOut(let stack):
+      return stack
+    }
+  }
+  
+  var body: some View {
+    ZStack {
+      if loggedInStack != nil {
+        LoggedInView()
+          .environmentObject(loggedInStack!)
+      }
+      if loggedOutStack != nil {
+        LoggedOutView()
+          .environmentObject(loggedOutStack!)
+      }
+    }
+  }
+  
 }
 
-struct LoginView: View {
+struct LoggedOutView: View {
   
+  @EnvironmentObject var stack: AppLoggedOutStack
   @State private var isConnecting = false
   
   var body: some View {
@@ -37,4 +66,17 @@ struct LoginView: View {
     }
   }
 }
+
+struct LoggedInView: View {
+  
+  @EnvironmentObject var stack: AppLoggedInStack
+    
+  var body: some View {
+    Text("Logged In!")
+      .onAppear {
+        self.stack.service.fetchMe()
+    }
+  }
+}
+
 

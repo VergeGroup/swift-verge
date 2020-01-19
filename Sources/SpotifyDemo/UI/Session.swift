@@ -8,21 +8,31 @@
 
 import Foundation
 
+import Combine
+
+typealias AppLoggedInStack = LoggedInStack<LoggedInSessionState>
+typealias AppLoggedOutStack = LoggedOutStack<LoggedOutSessionState>
+
 final class Session: ObservableObject {
   
-  let store: SessionStore
-  let service: Service<SessionStore.State>
-  let loggedOutService: LoggedOutService<SessionStore.State>
+  var objectWillChange: ObservableObjectPublisher = .init()
+      
+  let stackContainer: StackContainer<LoggedInSessionState, LoggedOutSessionState>
+  
+  private var subscriptions = Set<AnyCancellable>()
   
   init() {
     
-    let _store = SessionStore()
-    self.store = _store    
-    self.service = .init(target: _store)
-    self.loggedOutService = .init(target: _store)
+    self.stackContainer = .init(auth: nil)
+    
+    stackContainer.$stack.sink { [weak self] _ in
+      self?.objectWillChange.send()
+    }
+    .store(in: &subscriptions)
+        
   }
   
   func receiveAuthCode(_ code: Auth.AuthCode) {
-    loggedOutService.fetchToken(code: code)
+    stackContainer.receiveAuthCode(code)
   }
 }
