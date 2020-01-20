@@ -67,9 +67,14 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
     
     precondition(initialValue != nil, "Don't use asynchronous operator in \(observable), and it must emit the value immediately.")
     
-    self.output = BehaviorSubject<Output>(value: initialValue)
+    let subject = BehaviorSubject<Output>(value: initialValue)
     
-    pipe.subscribe(self.output).disposed(by: disposeBag)
+    self.output = subject
+    
+    pipe.subscribe(onNext: {
+      subject.onNext($0)
+    })
+    .disposed(by: disposeBag)
     
   }
   

@@ -35,6 +35,21 @@ class GetterTests: XCTestCase {
 
   }
   
+  func testConstant() {
+    
+    let getter = Getter<String>.constant("Hello")
+    
+    let waiter = XCTestExpectation()
+    
+    getter.sink { value in
+      XCTAssertEqual(value, "Hello")
+      waiter.fulfill()
+    }
+    .store(in: &subs)
+    
+    wait(for: [waiter], timeout: 1)
+  }
+  
   func testSimple() {
     
     let storage = Storage<Int>(1)

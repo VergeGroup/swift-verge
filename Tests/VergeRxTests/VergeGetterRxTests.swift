@@ -14,6 +14,21 @@ import VergeCore
 import VergeRx
 
 class VergeGetterRxTests: XCTestCase {
+  
+  func testConstant() {
+    
+    let getter = RxGetter<String>.constant("Hello")
+    
+    let waiter = XCTestExpectation()
+    
+    _ = getter.bind { value in
+      XCTAssertEqual(value, "Hello")
+      waiter.fulfill()
+    }
+    
+    wait(for: [waiter], timeout: 1)
+    
+  }
     
   func testSimple() {
 
