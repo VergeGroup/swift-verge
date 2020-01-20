@@ -10,9 +10,18 @@ description: >-
 
 ## Verge - Store
 
+{% hint style="danger" %}
+Verge 7.0 is still in development. API and the concept of Verge might be changed a bit.
+{% endhint %}
+
 **A Store-Pattern based data-flow architecture.**
 
 The concept of Verge Store is inspired by [Redux](https://redux.js.org/) and [Vuex](https://vuex.vuejs.org/).
+
+Plus, releasing from so many definition of the actions.  
+To be more Swift's Style on the writing code.
+
+`store.myOperation()` instead of `store.dispatch(.myOperation)`
 
 The characteristics are
 
@@ -52,16 +61,16 @@ final class MyStore: StoreBase<State, Activity> {
     super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
   }
   
-  func increment() -> Mutation<Void> {
-    return .mutation {
+  func increment() {
+    commit {
       $0.count += 0
     }
   }
   
-  func delayedIncrement() -> Action<Void> {
-    return .action { context in
+  func delayedIncrement() {
+    dispatch { context in
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-        context.commit { $0.increment() }
+        context.redirect { $0.increment() }
         
         context.send(.happen)
       }
@@ -76,9 +85,9 @@ final class MyStore: StoreBase<State, Activity> {
 ```swift
 let store = MyStore()
 
-store.commit { $0.increment() }
+store.increment()
 
-store.dispatch { $0.delayedIncrement() }
+store.delayedIncrement()
 ```
 
 ### Read the state
@@ -116,7 +125,7 @@ struct MyView: View {
     Group {
       Text(store.state.count.description)
       Button(action: {
-        self.store.commit { $0.increment() }
+        self.store.increment()
       }) {
         Text("Increment")
       }
