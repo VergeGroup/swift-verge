@@ -29,6 +29,8 @@ public protocol DispatcherType {
   
   var target: StoreBase<State, Activity> { get }
   var scope: WritableKeyPath<State, Scope> { get }
+  var metadata: DispatcherMetadata { get }
+  
 }
 
 extension DispatcherType {
@@ -49,7 +51,13 @@ extension DispatcherType {
     _ line: UInt = #line,
     mutation: (inout Scope) throws -> Result
   ) rethrows -> Result {
-    let meta = MutationMetadata(name: name, file: file, function: function, line: line)
+    let meta = MutationMetadata.makeOnCurrentThread(
+      name: name,
+      file: file,
+      function: function,
+      line: line,
+      context: metadata
+    )
     return try target._receive(
       context: self,
       metadata: meta,
@@ -69,7 +77,13 @@ extension DispatcherType {
     scope: WritableKeyPath<State, NewScope>,
     mutation: (inout NewScope) throws -> Result
   ) rethrows -> Result {
-    let meta = MutationMetadata(name: name, file: file, function: function, line: line)
+    let meta = MutationMetadata.makeOnCurrentThread(
+      name: name,
+      file: file,
+      function: function,
+      line: line,
+      context: metadata
+    )
     return try target._receive(
       context: self,
       metadata: meta,
@@ -88,8 +102,14 @@ extension DispatcherType {
     _ line: UInt = #line,
     action: ((ContextualDispatcher<Self, Scope>) throws -> Result)
   ) rethrows -> Result {
-    
-    let meta = ActionMetadata(name: name, file: file, function: function, line: line)
+           
+    let meta = ActionMetadata.makeOnCurrentThread(
+      name: name,
+      file: file,
+      function: function,
+      line: line,
+      context: metadata
+    )
     
     let context = ContextualDispatcher<Self, Scope>.init(
       scope: scope,
@@ -112,7 +132,13 @@ extension DispatcherType {
     action: ((ContextualDispatcher<Self, NewScope>) throws -> Result)
   ) rethrows -> Result {
     
-    let meta = ActionMetadata(name: name, file: file, function: function, line: line)
+    let meta = ActionMetadata.makeOnCurrentThread(
+      name: name,
+      file: file,
+      function: function,
+      line: line,
+      context: metadata
+    )
     
     let context = ContextualDispatcher<Self, NewScope>.init(
       scope: scope,
