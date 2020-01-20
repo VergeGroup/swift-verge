@@ -39,6 +39,10 @@ public class Getter<Output>: GetterBase<Output>, Publisher {
   
   public typealias Failure = Never
   
+  public static func constant<Output>(_ value: Output) -> Getter<Output> {
+    .init(from: Just(value))
+  }
+  
   let output: CurrentValueSubject<Output, Never>
   
   public override var value: Output {

@@ -21,8 +21,12 @@ public protocol RxGetterType: GetterType {
 }
 
 public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType {
-  
+    
   public typealias Element = Output
+  
+  public static func constant<Output>(_ value: Output) -> RxGetter<Output> {
+    .init(from: Observable.just(value))
+  }
   
   let output: BehaviorSubject<Output>
   
