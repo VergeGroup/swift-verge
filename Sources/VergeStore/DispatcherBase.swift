@@ -21,6 +21,8 @@
 
 open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherType {
   
+  public let metadata: DispatcherMetadata
+    
   public var scope: WritableKeyPath<State, Scope>
           
   public typealias Context = ContextualDispatcher<Self, Scope>
@@ -37,6 +39,7 @@ open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherTy
   ) {
     self.target = store
     self.scope = scope
+    self.metadata = .init(fromAction: nil)
     
     logger?.didCreateDispatcher(store: store, dispatcher: self)
   }

@@ -25,49 +25,6 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-/// A metadata object that indicates the name of the mutation and where it was caused.
-public struct MutationMetadata {
-  
-  public let name: String
-  public let file: StaticString
-  public let function: StaticString
-  public let line: UInt
-  
-  public init(name: String, file: StaticString, function: StaticString, line: UInt) {
-    self.name = name
-    self.file = file
-    self.function = function
-    self.line = line
-  }
-}
-
-/// A metadata object that indicates the name of the action and where it was caused.
-public struct ActionMetadata {
-  
-  public let name: String
-  public let file: StaticString
-  public let function: StaticString
-  public let line: UInt
-  
-  public init(name: String, file: StaticString, function: StaticString, line: UInt) {
-    self.name = name
-    self.file = file
-    self.function = function
-    self.line = line
-  }
-}
-
-/// A protocol to register logger and get the event VergeStore emits.
-public protocol StoreLogger {
-  
-  func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?)
-  func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?, time: CFTimeInterval)
-  func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: Any?)
-  
-  func didCreateDispatcher(store: AnyObject, dispatcher: Any)
-  func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
-}
-
 public protocol StoreType: AnyObject {
   associatedtype State: StateType
   associatedtype Activity
@@ -98,6 +55,8 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
   public typealias Value = State
   
   public var target: StoreBase<State, Activity> { self }
+  
+  public let metadata: DispatcherMetadata
     
   /// A current state.
   public var state: State {
@@ -122,6 +81,7 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     
     self._backingStorage = .init(initialState)
     self.logger = logger
+    self.metadata = .init(fromAction: nil)
     
   }
   
