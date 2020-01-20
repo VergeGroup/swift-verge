@@ -1,21 +1,14 @@
-//
-//  Transient.swift
-//  SpotifyDemo
-//
-//  Created by muukii on 2020/01/19.
-//  Copyright © 2020 muukii. All rights reserved.
-//
 
 import Foundation
 
-public protocol TransientType {
+public protocol VolatileType {
   associatedtype State
   
-  var box: Transient<State> { get set }
+  var box: Volatile<State> { get set }
   var unsafelyUnwrap: State { get set }
 }
 
-public enum Transient<State>: TransientType {
+public enum Volatile<State>: VolatileType {
   
   case some(State)
   case none
@@ -34,7 +27,7 @@ public enum Transient<State>: TransientType {
     }
   }
   
-  public var box: Transient<State> {
+  public var box: Volatile<State> {
     get {
       self
     }

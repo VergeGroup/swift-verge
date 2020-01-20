@@ -44,7 +44,7 @@ extension StateType {
     try update(&self[keyPath: keyPath])
   }
   
-  public mutating func updateIfValid<T: TransientType, Result, FinalResult>(
+  public mutating func updateIfValid<T: VolatileType, Result, FinalResult>(
     target keyPath: WritableKeyPath<Self, T>,
     update: (inout T.State) throws -> Result,
     completion: (Result) -> FinalResult
