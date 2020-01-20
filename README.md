@@ -52,16 +52,16 @@ final class MyStore: StoreBase<State, Activity> {
     super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
   }
   
-  func increment() {
-    commit {
+  func increment() -> Mutation<Void> {
+    return .mutation {
       $0.count += 0
     }
   }
   
-  func delayedIncrement() {
-    dispatch { context in
+  func delayedIncrement() -> Action<Void> {
+    return .action { context in
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-        context.redirect { $0.increment() }
+        context.commit { $0.increment() }
         
         context.send(.happen)
       }
@@ -76,9 +76,9 @@ final class MyStore: StoreBase<State, Activity> {
 ```swift
 let store = MyStore()
 
-store.increment()
+store.commit { $0.increment() }
 
-store.delayedIncrement()
+store.dispatch { $0.delayedIncrement() }
 ```
 
 ### Read the state
@@ -116,7 +116,7 @@ struct MyView: View {
     Group {
       Text(store.state.count.description)
       Button(action: {
-        self.store.increment()
+        self.store.commit { $0.increment() }
       }) {
         Text("Increment")
       }

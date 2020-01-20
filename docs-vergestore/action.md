@@ -28,16 +28,11 @@ Action does commit mutation asynchronously or synchronously with other operation
 class MyDispatcher: MyStore.Dispatcher {
 
   func someAsyncOperation() -> Action<Void> {
-    dispatch { context -> Void in
-    
-      // Call other mutation
-      context.redirect { $0.someMutation() }
+    return .action { context -> Void in
+      // Do something async operation.
+      context.commit { $0.someMutation() }
       
-      // or inline mutation
-      context.commit { state in
-        // state.xxx = ...      
-      }
-
+      context.commit { $0.someMutation() }
     }
   }
 
@@ -52,10 +47,94 @@ To run\(dispatch\) Action
 let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 
-dispatcher.someAsyncOperation()
+dispatcher.dispatch { $0.someAsyncOperation() }
 ```
 
-## Return value to caller
+## Detail
+
+### AnyAction object
+
+Action object's looks
+
+```swift
+public struct AnyAction<Dispatcher, Result>: ActionType where Dispatcher : VergeStore.DispatcherType {
+
+  public let metadata: ActionMetadata
+
+  public init(_ name: StaticString = "", _ action: @escaping (VergeStoreDispatcherContext<Dispatcher>) -> Return)
+}
+```
+
+Firstly, let's take a look creating Action.
+
+```swift
+class MyDispatcher: MyStore.Dispatcher {
+
+  func someAsyncOperation() -> Action<Void> {
+    .action { context in
+      // Do something async operation.
+    }
+  }
+
+}
+```
+
+### Commit mutation inside of action
+
+To commit Mutation, do it from context.
+
+```swift
+class MyDispatcher: MyStore.Dispatcher {
+
+  func someMutation() -> Mutation<Void> {
+    ...
+  }
+
+  func someAsyncOperation() -> Action<Void> {
+    .action { context in
+      context.commit { $0.someMutation() }
+    }
+  }
+
+}
+```
+
+Since Action can contain asynchronous operation, we can do following.
+
+```swift
+class MyDispatcher: MyStore.Dispatcher {
+
+  func someMutation() -> Mutation<Void> {
+    ...
+  }
+
+  func someAsyncOperation() -> Action<Void> {
+    .action { context in
+      DispatchQueue.global().async {
+        context.commit { $0.someMutation() }
+      }
+    }
+  }
+
+}
+```
+
+### Create and Commit mutation inside of action
+
+The context supports to commit mutation that created in inline.  
+We can commit trivial mutations without to declare mutation.
+
+```swift
+func someAsyncOperation() -> Action<Void> {
+  .action { context in
+    context.commitInline { state in
+      ...    
+    }
+  }
+}
+```
+
+### Return value to caller
 
 You may already notice that, Action can return anything you need outside.  
 This feature is super inspired by **Vuex**
@@ -67,8 +146,8 @@ class MyDispatcher: MyStore.Dispatcher {
 
   var subscriptions = Set<AnyCancellable>()
 
-  func fetchRemoteTodos() -> Future<Void> {
-    dispatch { context in
+  func fetchRemoteTodos() -> Action<Future<Void>> {
+    .dispatch { context in
 
       let future = Future<[Todo], Never> { ... }
         .sink { todos in
@@ -89,7 +168,7 @@ class MyDispatcher: MyStore.Dispatcher {
 Actions are often asynchronous, So we may need to know the timing action completed inside the view.
 
 ```swift
-dispatcher.someAsyncOperation()
+dispatcher.accept { $0.someAsyncOperation() }
   .sink { 
     // completed action
   }
