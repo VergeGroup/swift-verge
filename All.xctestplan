@@ -4,19 +4,7 @@
       "id" : "753AFC3C-AC37-46FD-9542-03F5F7FADE28",
       "name" : "Basic",
       "options" : {
-
-      }
-    },
-    {
-      "enabled" : false,
-      "id" : "FBE3236D-F5B4-46E6-B9B9-2107E35C65DD",
-      "name" : "Configuration 2",
-      "options" : {
-        "addressSanitizer" : {
-          "enabled" : true
-        },
-        "threadSanitizerEnabled" : false,
-        "undefinedBehaviorSanitizerEnabled" : true
+        "mainThreadCheckerEnabled" : false
       }
     }
   ],
