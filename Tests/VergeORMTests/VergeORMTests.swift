@@ -197,4 +197,41 @@ class VergeORMTests: XCTestCase {
     XCTAssertEqual(authorID.description, "<VergeORMTests.Author>(author.id)")
   }
   
+  func testFind() {
+    
+    var state = RootState()
+    
+    state.db.performBatchUpdates { (context) -> Void in
+      
+      for i in 0..<100 {
+        
+        let a = Author(rawID: "\(i)", name: "\(i)")
+        
+        context.author.insert(a)
+        context.book.insert(Book(rawID: "\(i)", authorID: a.entityID))
+        
+      }
+            
+    }
+    
+    XCTAssertNotNil(
+      state.db.entities.book.find(by: .init("\(1)"))
+    )
+    
+    XCTAssertEqual(
+      state.db.entities.book.find(in: [.init("\(1)"), .init("\(2)")]).count,
+      2
+    )
+
+    XCTAssertNotNil(
+      state.db.entities.author.find(by: .init("\(1)"))
+    )
+    
+    XCTAssertEqual(
+      state.db.entities.author.find(in: [.init("\(1)"), .init("\(2)")]).count,
+      2
+    )
+    
+  }
+  
 }

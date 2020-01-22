@@ -198,7 +198,7 @@ extension EntityTable where Entity : Hashable {
     }
     return ids.reduce(into: Set<Entity>()) { (buf, id) in
       guard let entity = rawTable.entities[id] else { return }
-      buf.insert(entity as! Entity)
+      buf.insert(entity.base as! Entity)
     }
   }
 }

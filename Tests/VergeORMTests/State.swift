@@ -10,7 +10,7 @@ import Foundation
 
 import VergeORM
 
-struct Book: EntityType, Equatable {
+struct Book: EntityType, Hashable {
   
   typealias EntityIDRawType = String
   
