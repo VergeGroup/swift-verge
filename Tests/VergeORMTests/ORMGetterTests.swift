@@ -50,7 +50,7 @@ class ORMGetterTests: XCTestCase {
         let createdBook = state.db.performBatchUpdates { (context) -> Book in
           
           let book = Book(rawID: id.raw, authorID: Author.anonymous.entityID)
-          context.book.insertsOrUpdates.insert(book)
+          context.book.insert(book)
           context.indexes.allBooks.append(book.entityID)
           
           return book
@@ -75,7 +75,7 @@ class ORMGetterTests: XCTestCase {
             
             var book = context.book.current.find(by: id)!
             book.name = "Hey"
-            context.book.insertsOrUpdates.insert(book)
+            context.book.insert(book)
             
           }
         }
@@ -113,7 +113,7 @@ class ORMGetterTests: XCTestCase {
         state.db.performBatchUpdates { (context) -> EntityTable<RootState.Database.Schema, Book>.InsertionResult in
           
           let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
-          let r = context.book.insertsOrUpdates.insert(book)
+          let r = context.book.insert(book)
           context.indexes.allBooks.append(book.entityID)
           
           return r
@@ -132,7 +132,7 @@ class ORMGetterTests: XCTestCase {
             
             var book = context.book.current.find(by: .init("some"))!
             book.name = "Hey"
-            context.book.insertsOrUpdates.insert(book)
+            context.book.insert(book)
             
           }
         }

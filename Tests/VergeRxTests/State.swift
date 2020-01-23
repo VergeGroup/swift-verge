@@ -57,7 +57,7 @@ struct RootState: DatabaseEmbedding {
     var middlewares: [AnyMiddleware<RootState.Database>] {
       [
         AnyMiddleware<RootState.Database>(performAfterUpdates: { (context) in
-          let ids = context.author.insertsOrUpdates.allIDs()
+          let ids = context.author.all().map { $0.id }
           context.indexes.bookMiddleware.append(contentsOf: ids)
         })
       ]

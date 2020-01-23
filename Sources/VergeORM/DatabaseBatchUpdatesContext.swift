@@ -56,7 +56,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
     
   /// An EntityTable contains entities that will be stored after batchUpdates finished.
   /// The objects this table contains would be applied, that's why it's mutable property.
-  public var insertsOrUpdates: EntityTable<Schema, Entity>
+  private var insertsOrUpdates: EntityTable<Schema, Entity>
     
   /// A set of entity ids that entity will be deleted after batchUpdates finished.
   /// The current entities will be deleted with this identifiers.
