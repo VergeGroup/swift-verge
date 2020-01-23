@@ -181,3 +181,66 @@ extension ReadonlyStorage {
     return newStorage
   }
 }
+
+#if canImport(Combine)
+
+import Combine
+
+// MARK: - Integrate with Combine
+
+fileprivate var _willChangeAssociated: Void?
+fileprivate var _didChangeAssociated: Void?
+
+@available(iOS 13.0, macOS 10.15, *)
+extension Storage: ObservableObject {
+  
+  public var objectWillChange: ObservableObjectPublisher {
+    if let associated = objc_getAssociatedObject(self, &_willChangeAssociated) as? ObservableObjectPublisher {
+      return associated
+    } else {
+      let associated = ObservableObjectPublisher()
+      objc_setAssociatedObject(self, &_willChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
+      
+      addWillUpdate {
+        if Thread.isMainThread {
+          associated.send()
+        } else {
+          DispatchQueue.main.async {
+            associated.send()
+          }
+        }
+      }
+      
+      return associated
+    }
+  }
+  
+  public var publisher: AnyPublisher<Value, Never> {
+    
+    if let associated = objc_getAssociatedObject(self, &_didChangeAssociated) as? CurrentValueSubject<Value, Never> {
+      return associated.eraseToAnyPublisher()
+    } else {
+      let associated = CurrentValueSubject<Value, Never>(value)
+      objc_setAssociatedObject(self, &_didChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
+      
+      addDidUpdate { s in
+        if Thread.isMainThread {
+          associated.send(s)
+        } else {
+          DispatchQueue.main.async {
+            associated.send(s)
+          }
+        }
+      }
+      
+      return associated.eraseToAnyPublisher()
+    }
+  }
+  
+  public var didChangePublisher: AnyPublisher<Value, Never> {
+    publisher.dropFirst().eraseToAnyPublisher()
+  }
+  
+}
+
+#endif
