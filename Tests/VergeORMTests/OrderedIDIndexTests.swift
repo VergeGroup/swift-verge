@@ -20,10 +20,10 @@ class OrderedIDIndexTests: XCTestCase {
     state.db.performBatchUpdates { (context) in
       
       let author = Author(rawID: "author.1")
-      context.author.insertsOrUpdates.insert(author)
+      context.author.insert(author)
       
       let book = Book(rawID: "some", authorID: author.entityID)
-      context.book.insertsOrUpdates.insert(book)
+      context.book.insert(book)
       
       context.indexes.authorGroupedBook
         .update(in: author.entityID) { (index) in

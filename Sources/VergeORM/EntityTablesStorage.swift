@@ -143,12 +143,12 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   }
    
   @discardableResult
-  public mutating func updateIfExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) rethrows -> Entity? {
+  mutating func updateIfExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) rethrows -> Entity? {
     try? updateExists(id: id, update: update)
   }
   
   @discardableResult
-  public mutating func insert(_ entity: Entity) -> InsertionResult {
+  mutating func insert(_ entity: Entity) -> InsertionResult {
     let t = VergeSignpostTransaction("ORM.EntityTable.insertOne", format: "EntityType:%@", arguments: Entity.entityName.name)
     defer {
       t.end()
@@ -160,7 +160,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   }
   
   @discardableResult
-  public mutating func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
+  mutating func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
     let t = VergeSignpostTransaction("ORM.EntityTable.insertSequence", format: "EntityType:%@", arguments: Entity.entityName.name)
     defer {
       t.end()
@@ -176,13 +176,13 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     return results
   }
   
-  public mutating func remove(_ id: Entity.EntityID) {
+  mutating func remove(_ id: Entity.EntityID) {
     rawTable.updateEntity { (entities) -> Void in
       entities.removeValue(forKey: id)
     }
   }
   
-  public mutating func removeAll() {
+  mutating func removeAll() {
     rawTable.updateEntity { (entities) in
       entities.removeAll(keepingCapacity: false)
     }
