@@ -118,7 +118,7 @@ db.performBatchUpdates { (context) in
 ```swift
 db.performBatchUpdates { (context) in
   let book = Book(rawID: "some")
-  context.insertsOrUpdates.book.insert(book)
+  context.book.insert(book)
 }
 
 // db.entities.book.count == 1
