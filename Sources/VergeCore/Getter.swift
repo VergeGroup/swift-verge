@@ -10,6 +10,7 @@ import Foundation
 
 public protocol GetterType: Hashable {
   associatedtype Output
+  var value: Output { get }
 }
 
 open class GetterBase<Output>: GetterType {
@@ -35,13 +36,15 @@ open class GetterBase<Output>: GetterType {
 import Combine
 
 @available(iOS 13, macOS 10.15, *)
-public class Getter<Output>: GetterBase<Output>, Publisher {
-  
+public class Getter<Output>: GetterBase<Output>, Publisher, ObservableObject {
+    
   public typealias Failure = Never
   
   public static func constant<Output>(_ value: Output) -> Getter<Output> {
     .init(from: Just(value))
   }
+  
+  public let objectWillChange: ObservableObjectPublisher
   
   let output: CurrentValueSubject<Output, Never>
   
@@ -79,15 +82,18 @@ public class Getter<Output>: GetterBase<Output>, Publisher {
     precondition(initialValue != nil, "Don't use asynchronous operator in \(publisher), and it must emit the value immediately.")
         
     let _output = CurrentValueSubject<Output, Never>.init(initialValue)
+    let _objectWillChange = ObservableObjectPublisher()
         
-    pipe.sink { [weak _output] (value) in
+    pipe.sink { [weak _output, weak _objectWillChange] (value) in
       _output?.send(value)
+      _objectWillChange?.send()
     }
     .store(in: &subscriptions)
     
     _output.send(initialValue)
     
     self.output = _output
+    self.objectWillChange = _objectWillChange
   }
   
   public func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
@@ -110,61 +116,6 @@ public final class GetterSource<Input, Output>: Getter<Output> {
   
   public func asGetter() -> Getter<Output> {
     self
-  }
-  
-}
-
-fileprivate var _willChangeAssociated: Void?
-fileprivate var _didChangeAssociated: Void?
-
-@available(iOS 13.0, macOS 10.15, *)
-extension Storage: ObservableObject {
-  
-  public var objectWillChange: ObservableObjectPublisher {
-    if let associated = objc_getAssociatedObject(self, &_willChangeAssociated) as? ObservableObjectPublisher {
-      return associated
-    } else {
-      let associated = ObservableObjectPublisher()
-      objc_setAssociatedObject(self, &_willChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
-      
-      addWillUpdate {
-        if Thread.isMainThread {
-          associated.send()
-        } else {
-          DispatchQueue.main.async {
-            associated.send()
-          }
-        }
-      }
-      
-      return associated
-    }
-  }
-  
-  public var publisher: AnyPublisher<Value, Never> {
-    
-    if let associated = objc_getAssociatedObject(self, &_didChangeAssociated) as? CurrentValueSubject<Value, Never> {
-      return associated.eraseToAnyPublisher()
-    } else {
-      let associated = CurrentValueSubject<Value, Never>(value)
-      objc_setAssociatedObject(self, &_didChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
-      
-      addDidUpdate { s in
-        if Thread.isMainThread {
-          associated.send(s)
-        } else {
-          DispatchQueue.main.async {
-            associated.send(s)
-          }
-        }
-      }
-      
-      return associated.eraseToAnyPublisher()
-    }
-  }
-  
-  public var didChangePublisher: AnyPublisher<Value, Never> {
-    publisher.dropFirst().eraseToAnyPublisher()
   }
   
 }
