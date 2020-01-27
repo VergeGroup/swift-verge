@@ -2,7 +2,7 @@
 description: Getting values from state tree with memoization(caching) to keep performance.
 ---
 
-# 💫 Getter\(Selector\) and Memoization
+# Getter\(Selector\) and Memoization
 
 {% hint style="danger" %}
 Because Getter does provide the latest computed value and emits a new value. it's like a stream with buffer. Of course, the stream will need several operators. Verge stopped implementing this from scratch. Instead, using Combine or other Reactive Framework. Currently, Combine.framework is used as a standard implementation and RxSwift's support.
@@ -132,15 +132,7 @@ let combined = Getter {
 XCTAssertEqual(combined.value, 0)
 ```
 
-## Make Getter from constant value
 
-{% hint style="info" %}
-Inspired by SwiftUI.Binding&lt;Value&gt;
-{% endhint %}
-
-```swift
-Getter<String>.constant("hello")
-```
 
 ## With RxSwift, Use Getter on less than iOS 13
 
@@ -172,46 +164,4 @@ It's unsafe to create RxGetter from any Observable object.
 ```swift
 let nextGetter: RxGetter<T> = getter.map { ... }.unsafeGetterCast()
 ```
-
-### 
-
-### SubscriptionGroup with DSL style
-
-With `SubscriptionGroup`, we can create Disposable object with DSL style declarations.
-
-```swift
-SubscriptionGroup {
-      
-  Single.just(1).subscribe()
-  
-}
-
-SubscriptionGroup {
-  
-  Single.just(1).subscribe()
-  Single.just(1).subscribe()
-        
-}
-
-SubscriptionGroup {
-  [
-  Single.just(1).subscribe(),
-  Single.just(1).subscribe()
-  ]
-}
-```
-
-`SubscriptionGroup` compatibles **Disposable** protocol.
-
-```swift
-SubscriptionGroup {
-
-  Single.just(1).subscribe()
-  Single.just(1).subscribe()
-            
-}
-.disposed(by: ...)
-```
-
-
 
