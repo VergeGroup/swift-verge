@@ -32,7 +32,7 @@
 * [Getter \(Selector\)](docs-verge-orm/selector.md)
 * [Tips](docs-verge-orm/tips.md)
 
-## 📦 Verge Store Rx <a id="docs-verge-store-rx"></a>
+## 📦 VergeRx <a id="docs-verge-store-rx"></a>
 
 * [VergeStoreRx Core Concepts](docs-verge-store-rx/core-concepts.md)
 
