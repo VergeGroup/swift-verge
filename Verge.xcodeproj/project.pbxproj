@@ -91,6 +91,8 @@
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4BA3E1A523C359F40095629B /* Signpost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA3E1A423C359F40095629B /* Signpost.swift */; };
+		4BA5914F23DF5146007F614C /* FunctionBuilders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA5914E23DF5146007F614C /* FunctionBuilders.swift */; };
+		4BA5915123DF536F007F614C /* FunctionBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA5915023DF536F007F614C /* FunctionBuilderTests.swift */; };
 		4BAC16BF23C806E000BF49D9 /* EntityType+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAC16BE23C806E000BF49D9 /* EntityType+.swift */; };
 		4BAC16C223C8072300BF49D9 /* EntityGetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAC16C123C8072300BF49D9 /* EntityGetter.swift */; };
 		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
@@ -470,6 +472,8 @@
 		4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherType.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		4BA3E1A423C359F40095629B /* Signpost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signpost.swift; sourceTree = "<group>"; };
+		4BA5914E23DF5146007F614C /* FunctionBuilders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionBuilders.swift; sourceTree = "<group>"; };
+		4BA5915023DF536F007F614C /* FunctionBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionBuilderTests.swift; sourceTree = "<group>"; };
 		4BAC16BE23C806E000BF49D9 /* EntityType+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EntityType+.swift"; sourceTree = "<group>"; };
 		4BAC16C123C8072300BF49D9 /* EntityGetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityGetter.swift; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -706,6 +710,7 @@
 				4BFC3A0E23C758FD00801CB4 /* RxGetter.swift */,
 				4BDBDF6E23CE067800EEA112 /* VergeStore+Rx.swift */,
 				4B7F385123895B24000B9ACF /* VergeStore+Storage+Rx.swift */,
+				4BA5914E23DF5146007F614C /* FunctionBuilders.swift */,
 				4B17439123C766D70074C457 /* VergeRx.h */,
 				4B17439223C766D70074C457 /* Info.plist */,
 			);
@@ -721,6 +726,7 @@
 				4BFC3A1623C762CB00801CB4 /* VergeGetterRxTests.swift */,
 				4B1743A923C767670074C457 /* VergeRxTests.swift */,
 				4B1743AB23C767670074C457 /* Info.plist */,
+				4BA5915023DF536F007F614C /* FunctionBuilderTests.swift */,
 			);
 			path = VergeRxTests;
 			sourceTree = "<group>";
@@ -1730,6 +1736,7 @@
 				4BDBDF6F23CE067800EEA112 /* VergeStore+Rx.swift in Sources */,
 				4B1743A123C7671C0074C457 /* VergeStore+Storage+Rx.swift in Sources */,
 				4BAC16BF23C806E000BF49D9 /* EntityType+.swift in Sources */,
+				4BA5914F23DF5146007F614C /* FunctionBuilders.swift in Sources */,
 				4BAC16C223C8072300BF49D9 /* EntityGetter.swift in Sources */,
 				4B1743A223C7671F0074C457 /* RxGetter.swift in Sources */,
 			);
@@ -1742,6 +1749,7 @@
 				4B4011B923C7797A00C582BC /* MemoizeGetterTests.swift in Sources */,
 				4B1743B223C7676E0074C457 /* VergeGetterRxTests.swift in Sources */,
 				4B1743AA23C767670074C457 /* VergeRxTests.swift in Sources */,
+				4BA5915123DF536F007F614C /* FunctionBuilderTests.swift in Sources */,
 				4B4011BD23C779D400C582BC /* State.swift in Sources */,
 				4B4011BB23C779BE00C582BC /* ORMGetterTests.swift in Sources */,
 			);
