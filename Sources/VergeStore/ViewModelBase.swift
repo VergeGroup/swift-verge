@@ -25,10 +25,11 @@ import Foundation
 import VergeCore
 #endif
 
+@available(*, deprecated, renamed: "StoreBase")
 open class StandaloneVergeViewModelBase<State: StateType, Activity>: StoreBase<State, Activity> {
 }
 
-open class ViewModelBase<State: StateType, Activity, ParentState: StateType, ParentActivity>: StandaloneVergeViewModelBase<State, Activity> {
+open class ViewModelBase<State: StateType, Activity, ParentState: StateType, ParentActivity>: StoreBase<State, Activity> {
     
   public let parent: StoreBase<ParentState, ParentActivity>
   private var parentStateSubscription: EventEmitterSubscribeToken?
@@ -60,7 +61,10 @@ open class ViewModelBase<State: StateType, Activity, ParentState: StateType, Par
   
   deinit {
     if let subscription = self.parentStateSubscription {
-      parent._backingStorage.remove(subscribe: subscription)
+      parent._backingStorage.remove(subscription)
+    }
+    if let subscription = self.parentActivitySubscription {
+      parent._eventEmitter.remove(subscription)
     }
   }
   

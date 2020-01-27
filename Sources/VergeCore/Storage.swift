@@ -75,7 +75,7 @@ open class ReadonlyStorage<Value>: CustomReflectable {
     deinitEmitter.add(subscriber)
   }
   
-  public final func remove(subscribe token: EventEmitterSubscribeToken) {
+  public final func remove(_ token: EventEmitterSubscribeToken) {
     didUpdateEmitter.remove(token)
     willUpdateEmitter.remove(token)
     deinitEmitter.remove(token)
@@ -175,7 +175,7 @@ extension ReadonlyStorage {
     }
     
     newStorage.addDeinit { [weak self] in
-      self?.remove(subscribe: token)
+      self?.remove(token)
     }
     
     return newStorage
