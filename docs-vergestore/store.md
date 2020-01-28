@@ -35,8 +35,8 @@ final class MyStore: StoreBase<State, Activity> {
 ```swift
 final class MyStore: StoreBase<State, Activity> {
 
-  func increment() -> Mutation<Void> {
-    return .mutation {
+  func increment() {
+    commit {
       $0.count += 0
     }
   }
@@ -49,7 +49,7 @@ final class MyStore: StoreBase<State, Activity> {
 ```swift
 let store = MyStore()
 
-store.commit { $0.increment() }
+store.increment()
 ```
 
 ### Add Action
@@ -57,8 +57,8 @@ store.commit { $0.increment() }
 ```swift
 final class MyStore: StoreBase<State, Activity> {
   
-  func delayedIncrement() -> Action<Void> {
-    return .action { context in
+  func delayedIncrement() {
+    dispatch { context in
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
         context.commit { $0.increment() }
         
@@ -75,7 +75,7 @@ final class MyStore: StoreBase<State, Activity> {
 ```swift
 let store = MyStore()
 
-store.dispatch { $0.delayedIncrement() }
+store.delayedIncrement()
 ```
 
 ## Scaling up

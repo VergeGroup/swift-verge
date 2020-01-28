@@ -53,8 +53,8 @@ final class Store: StoreBase<State, Activity>, DispatcherType {
     super.init(initialState: .init(), logger: DefaultLogger.shared)
   }
   
-  func sendMessage() -> Action<Void> {
-    return .action { context in
+  func sendMessage() {
+    dispatch { context in
       context.send(.didSendMessage)
     }
   }
@@ -69,8 +69,8 @@ If you create the application not so much complicated, you don't need separate S
 This is the point, this is only way to send Activity. Action only can do this.
 
 ```swift
-func sendMessage() -> Action<Void> {
-  return .action { context in
+func sendMessage() {
+  dispatch { context in
     context.send(.didSendMessage)
   }
 }

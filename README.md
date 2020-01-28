@@ -6,6 +6,8 @@ description: >-
 
 # Verge - a state management pattern library for iOS App
 
+
+
 ![](.gitbook/assets/loop-2x%20%281%29.png)
 
 ## Verge - Store
