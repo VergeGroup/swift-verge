@@ -21,54 +21,6 @@
 
 import Foundation
 
-fileprivate final class PreviousValueRef<T> {
-  var value: T?
-  init() {}
-}
-
-
-/// A Filter that compares with previous value.
-public final class HistoricalComparer<Input> {
-  
-  private let _isEqual: (Input) -> Bool
-  
-  public init<Key, C: Comparer>(
-    selector: @escaping (Input) -> Key,
-    comparer: C
-  ) where C.Input == Key {
-    
-    let ref = PreviousValueRef<Key>()
-    
-    self._isEqual = { input in
-      
-      let key = selector(input)
-      defer {
-        ref.value = key
-      }
-      if let previousValue = ref.value {
-        return comparer.equals(previousValue: previousValue, newValue: key)
-      } else {
-        return false
-      }
-      
-    }
-    
-  }
-  
-  public func equals(input: Input) -> Bool {
-    _isEqual(input)
-  }
-  
-  public func registerFirstValue(_ value: Input) {
-    _ = _isEqual(value)
-  }
-  
-  public func asFunction() -> (Input) -> Bool {
-    equals
-  }
-  
-}
-
 public protocol Comparer {
   associatedtype Input
   
@@ -83,7 +35,7 @@ extension Comparer {
   }
 }
 
-public struct AnyComparerFragment<Input>: Comparer {
+public struct AnyComparer<Input>: Comparer {
   private let equals: (Input, Input) -> Bool
   
   public init(_ equals: @escaping (Input, Input) -> Bool) {
@@ -95,13 +47,13 @@ public struct AnyComparerFragment<Input>: Comparer {
   }
 }
 
-public struct CombinedComparerFragment<Input>: Comparer {
+public struct CombinedComparer<Input>: Comparer {
   
   private let equals: (Input, Input) -> Bool
   
-  public init(and filters: [(Input, Input) -> Bool]) {
+  public init(and comparers: [(Input, Input) -> Bool]) {
     self.equals = { pre, new in
-      for filter in filters {
+      for filter in comparers {
         guard filter(pre, new) else {
           return false
         }
@@ -110,9 +62,9 @@ public struct CombinedComparerFragment<Input>: Comparer {
     }
   }
   
-  public init(or filters: [(Input, Input) -> Bool]) {
+  public init(or comparers: [(Input, Input) -> Bool]) {
     self.equals = { pre, new in
-      for filter in filters {
+      for filter in comparers {
         if filter(pre, new) {
           return true
         }
@@ -125,7 +77,7 @@ public struct CombinedComparerFragment<Input>: Comparer {
     equals(previousValue, newValue)
   }
   
-  public func asAny() -> AnyComparerFragment<Input> {
+  public func asAny() -> AnyComparer<Input> {
     .init(equals)
   }
   

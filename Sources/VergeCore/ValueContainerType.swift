@@ -31,7 +31,7 @@ extension ValueContainerType {
   
   @available(iOS 13, macOS 10.15, *)
   public func makeGetter() -> GetterSource<Value, Value> {
-    makeGetter(from: .init(equalityComparerBuilder: .alwaysDifferent, map: { $0 }))
+    makeGetter(from: .init(preFilter: .alwaysDifferent, map: { $0 }))
   }
 }
 #endif

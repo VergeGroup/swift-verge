@@ -25,9 +25,7 @@ class GetterTests: XCTestCase {
     var updateCount = 0
     
     let g = storage.makeGetter(from: .init(
-      equalityComparerBuilder: .init(
-        selector: { $0 },
-        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      preFilter: .make(),
       map: { $0 * 2})
     )
         
@@ -62,9 +60,7 @@ class GetterTests: XCTestCase {
     var updateCount = 0
     
     let g = storage.makeGetter(from: .init(
-      equalityComparerBuilder: .init(
-        selector: { $0 },
-        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      preFilter: .make(),
       map: { $0 * 2 })
     )
     
@@ -100,9 +96,7 @@ class GetterTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     var first: GetterSource<Int, Int>! = storage.makeGetter(from: .init(
-      equalityComparerBuilder: .init(
-        selector: { $0 },
-        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      preFilter: .make(),
       map: { $0 })
     )
     
@@ -143,12 +137,7 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.makeGetter(from: .init(
-      equalityComparerBuilder: .init(
-        selector: { $0 },
-        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
-      map: { $0 })
-    )
+    let first = storage.makeGetter(from: .make(map: { $0 }))
     
     let share1 = Getter {
       first.map { $0 }
@@ -175,16 +164,16 @@ class GetterTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     let first = storage.makeGetter(from: .init(
-      equalityComparerBuilder: .init(
-        selector: { $0 },
-        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      preFilter: .init(
+        keySelector: { $0 },
+        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
       map: { $0 })
     )
     
     let second = storage.makeGetter(from: .init(
-      equalityComparerBuilder: .init(
-        selector: { $0 },
-        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      preFilter: .init(
+        keySelector: { $0 },
+        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
       map: { -$0 })
     )
     

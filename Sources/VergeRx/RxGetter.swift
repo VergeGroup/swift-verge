@@ -121,15 +121,15 @@ extension Reactive where Base : RxValueContainerType {
   
   public func makeGetter<ComparingKey, Output>(
     map: @escaping (Base.Value) -> Output,
-    equalityComparer: EqualityComparerBuilder<Base.Value, ComparingKey>
+    equalityComparer: EqualityComputerBuilder<Base.Value, ComparingKey>
   ) -> RxGetterSource<Base.Value, Output> {
     
-    makeGetter(from: .init(equalityComparerBuilder:equalityComparer, map:map))
+    makeGetter(from: .init(preFilter:equalityComparer, map:map))
     
   }
     
   public func makeGetter() -> RxGetterSource<Base.Value, Base.Value> {
-    makeGetter(from: .init(equalityComparerBuilder: .alwaysDifferent, map: { $0 }))
+    makeGetter(from: .init(preFilter: .alwaysDifferent, map: { $0 }))
   }
   
 }

@@ -8,42 +8,32 @@
 
 import Foundation
 
-public struct EqualityComparerBuilder<Input, ComparingKey> {
-  
-  public static var alwaysDifferent: EqualityComparerBuilder<Input, Input> {
-    .init(selector: { $0 }, predicate: { _, _ in false })
-  }
-  
-  let selector: (Input) -> ComparingKey
-  let predicate: (ComparingKey, ComparingKey) -> Bool
-  
-  public init(
-    selector: @escaping (Input) -> ComparingKey,
-    predicate: @escaping (ComparingKey, ComparingKey) -> Bool
-  ) {
-    self.selector = selector
-    self.predicate = predicate
-  }
-  
-  public func build() -> HistoricalComparer<Input> {
-    .init(selector: selector, comparer: AnyComparerFragment.init(predicate))
-  }
-}
-
 public struct GetterBuilder<Input, ComparingKey, Output> {
   
-  public let equalityComparerBuilder: EqualityComparerBuilder<Input, ComparingKey>
+  public let equalityComparerBuilder: EqualityComputerBuilder<Input, ComparingKey>
   public let map: (Input) -> Output
   
   public init(
-    equalityComparerBuilder: EqualityComparerBuilder<Input, ComparingKey>,
+    preFilter: EqualityComputerBuilder<Input, ComparingKey>,
     map: @escaping (Input) -> Output
   ) {
     
-    self.equalityComparerBuilder = equalityComparerBuilder
+    self.equalityComparerBuilder = preFilter
     self.map = map
     
   }
   
+}
+
+extension GetterBuilder where Input : Equatable {
+  
+  public static func make<Output>(map: @escaping (Input) -> Output) -> GetterBuilder<Input, Input, Output> {
+    .init(preFilter: .init(keySelector: { $0 }, comparer: ==), map: map)
+  }
+      
+}
+
+extension GetterBuilder {
+     
 }
 

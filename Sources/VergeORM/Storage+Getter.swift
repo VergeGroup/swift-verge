@@ -49,7 +49,7 @@ public protocol DatabaseEmbedding {
   
 }
 
-extension AnyComparerFragment where Input : DatabaseType {
+extension AnyComparer where Input : DatabaseType {
   
   public static func databaseUpdated() -> Self {
     return .init { pre, new in
@@ -109,20 +109,20 @@ extension GetterBuilder where Input : DatabaseEmbedding {
   
   public static func makeEntityGetter<Output>(
     update: @escaping (Input.Database) -> Output,
-    andFilter: AnyComparerFragment<Input.Database>?
+    andFilter: AnyComparer<Input.Database>?
   ) -> GetterBuilder<Input, Input.Database, Output> {
     
     let path = Input.getterToDatabase
     
-    let filter = CombinedComparerFragment<Input.Database>.init(or: [
-      AnyComparerFragment.databaseUpdated().asFunction(),
+    let filter = CombinedComparer<Input.Database>.init(or: [
+      AnyComparer.databaseUpdated().asFunction(),
       andFilter?.asFunction()
       ].compactMap { $0 })
     
     return .init(
-      equalityComparerBuilder: .init(
-        selector: { path($0) },
-        predicate: filter.asFunction()
+      preFilter: .init(
+        keySelector: { path($0) },
+        comparer: filter.asFunction()
       ),
       map: { (value) -> Output in
       let t = VergeSignpostTransaction("ORM.Getter.update")
@@ -136,16 +136,16 @@ extension GetterBuilder where Input : DatabaseEmbedding {
   
   public static func makeEntityGetter<E: EntityType>(
     from entityID: E.EntityID,
-    andFilter: AnyComparerFragment<Input.Database>?
+    andFilter: AnyComparer<Input.Database>?
   ) -> GetterBuilder<Input, Input.Database, E?> {
     
     return makeEntityGetter(
       update: { db in
         db.entities.table(E.self).find(by: entityID)
     },
-      andFilter: CombinedComparerFragment.init(or: [
-        AnyComparerFragment.tableUpdated(E.self).asFunction(),
-        AnyComparerFragment.changesContains(entityID).asFunction(),
+      andFilter: CombinedComparer.init(or: [
+        AnyComparer.tableUpdated(E.self).asFunction(),
+        AnyComparer.changesContains(entityID).asFunction(),
         andFilter?.asFunction()
         ].compactMap { $0 }
       ).asAny()
@@ -155,7 +155,7 @@ extension GetterBuilder where Input : DatabaseEmbedding {
   
   public static func makeNonNullEntityGetter<E: EntityType>(
     from entity: E,
-    andFilter: AnyComparerFragment<Input.Database>?
+    andFilter: AnyComparer<Input.Database>?
   ) -> GetterBuilder<Input, Input.Database, E> {
     
     var box = entity
@@ -169,9 +169,9 @@ extension GetterBuilder where Input : DatabaseEmbedding {
         }
         return box
     },
-      andFilter: CombinedComparerFragment.init(or: [
-        AnyComparerFragment.tableUpdated(E.self).asFunction(),
-        AnyComparerFragment.changesContains(entityID).asFunction(),
+      andFilter: CombinedComparer.init(or: [
+        AnyComparer.tableUpdated(E.self).asFunction(),
+        AnyComparer.changesContains(entityID).asFunction(),
         andFilter?.asFunction()
         ].compactMap { $0 }
       ).asAny()
@@ -210,7 +210,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   ///   - andFilter: Check to necessory of needs to update to reduce number of updating.
   public func makeEntityGetter<Output>(
     update: @escaping (Value.Database) -> Output,
-    andFilter: AnyComparerFragment<Value.Database>?
+    andFilter: AnyComparer<Value.Database>?
   ) -> GetterSource<Value, Output> {
       
     return makeGetter(from: .makeEntityGetter(update: update, andFilter: andFilter))
@@ -218,7 +218,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   
   public func makeEntityGetter<E: EntityType>(
     from entityID: E.EntityID,
-    andFilter: AnyComparerFragment<Value.Database>?
+    andFilter: AnyComparer<Value.Database>?
   ) -> GetterSource<Value, E?> {
     
     return makeGetter(from: .makeEntityGetter(from: entityID, andFilter: andFilter))
@@ -226,7 +226,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   
   public func makeNonNullEntityGetter<E: EntityType>(
     from entity: E,
-    andFilter: AnyComparerFragment<Value.Database>?
+    andFilter: AnyComparer<Value.Database>?
   ) -> GetterSource<Value, E> {
     
     return makeGetter(from: .makeNonNullEntityGetter(from: entity, andFilter: andFilter))
@@ -259,7 +259,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     let _cache = cache
     
     guard let makeGetter = _cache.getter(entityID: entityID) as? GetterSource<Value, E?> else {
-      let newGetter = makeEntityGetter(from: entityID, andFilter: AnyComparerFragment.entityUpdated(entityID))
+      let newGetter = makeEntityGetter(from: entityID, andFilter: AnyComparer.entityUpdated(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -293,7 +293,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
     guard let makeGetter = _cache.getter(entityID: entity.entityID) as? GetterSource<Value, E> else {
       let entityID = entity.entityID
-      let newGetter = makeNonNullEntityGetter(from: entity, andFilter: AnyComparerFragment.entityUpdated(entityID))
+      let newGetter = makeNonNullEntityGetter(from: entity, andFilter: AnyComparer.entityUpdated(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }

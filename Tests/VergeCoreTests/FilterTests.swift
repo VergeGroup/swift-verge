@@ -16,7 +16,7 @@ final class FilterTests: XCTestCase {
   
   func testHistorical() {
     
-    let filter = HistoricalComparer<Int>.init(selector: { $0 }, comparer: AnyComparerFragment { $0 == $1 })
+    let filter = EqualityComputer<Int>.init(selector: { $0 }, comparer: AnyComparer { $0 == $1 })
         
     XCTAssertEqual(filter.equals(input: 1), false)
     XCTAssertEqual(filter.equals(input: 1), true)
@@ -26,7 +26,7 @@ final class FilterTests: XCTestCase {
   
   func testHistoricalWithFunction() {
     
-    let filter = HistoricalComparer<Int>.init(selector: { $0 }, comparer: AnyComparerFragment { $0 == $1 }).asFunction()
+    let filter = EqualityComputer<Int>.init(selector: { $0 }, comparer: AnyComparer { $0 == $1 }).asFunction()
     
     XCTAssertEqual(filter(1), false)
     XCTAssertEqual(filter(1), true)
@@ -36,7 +36,7 @@ final class FilterTests: XCTestCase {
   
   func testHistoricalWithRegisterFirstValue() {
     
-    let filter = HistoricalComparer<Int>.init(selector: { $0 }, comparer: AnyComparerFragment { $0 == $1 })
+    let filter = EqualityComputer<Int>.init(selector: { $0 }, comparer: AnyComparer { $0 == $1 })
     
     filter.registerFirstValue(1)
     
@@ -52,10 +52,10 @@ final class FilterTests: XCTestCase {
       var c = 0
     }
         
-    let fragment = CombinedComparerFragment<Model>.init(or: [
-      AnyComparerFragment<Model>.init { $0.a == 1 && $1.a == 1 }.asFunction(),
-      AnyComparerFragment<Model>.init { $0.b == 1 && $1.b == 1 }.asFunction(),
-      AnyComparerFragment<Model>.init { $0.c == 1 && $1.c == 1 }.asFunction(),
+    let fragment = CombinedComparer<Model>.init(or: [
+      AnyComparer<Model>.init { $0.a == 1 && $1.a == 1 }.asFunction(),
+      AnyComparer<Model>.init { $0.b == 1 && $1.b == 1 }.asFunction(),
+      AnyComparer<Model>.init { $0.c == 1 && $1.c == 1 }.asFunction(),
     ])
         
     do {
@@ -90,10 +90,10 @@ final class FilterTests: XCTestCase {
       var c = 0
     }
     
-    let fragment = CombinedComparerFragment<Model>.init(and: [
-      AnyComparerFragment<Model>.init { $0.a == 1 && $1.a == 1 }.asFunction(),
-      AnyComparerFragment<Model>.init { $0.b == 1 && $1.b == 1 }.asFunction(),
-      AnyComparerFragment<Model>.init { $0.c == 1 && $1.c == 1 }.asFunction(),
+    let fragment = CombinedComparer<Model>.init(and: [
+      AnyComparer<Model>.init { $0.a == 1 && $1.a == 1 }.asFunction(),
+      AnyComparer<Model>.init { $0.b == 1 && $1.b == 1 }.asFunction(),
+      AnyComparer<Model>.init { $0.c == 1 && $1.c == 1 }.asFunction(),
     ])
     
     do {

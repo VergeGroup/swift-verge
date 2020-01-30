@@ -37,9 +37,9 @@ class VergeGetterRxTests: XCTestCase {
     var updateCount = 0
         
     let g = storage.rx.makeGetter(from: .init(
-      equalityComparerBuilder: .init(
-        selector: { $0 },
-        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      preFilter: .init(
+        keySelector: { $0 },
+        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
       map: { $0 * 2})
     )
     
@@ -78,9 +78,9 @@ class VergeGetterRxTests: XCTestCase {
     let storage = Storage<Int>(1)
             
     var first: RxGetterSource<Int, Int>! = storage.rx.makeGetter(from: .init(
-      equalityComparerBuilder: .init(
-        selector: { $0 },
-        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      preFilter: .init(
+        keySelector: { $0 },
+        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
       map: { $0 })
     )
     
@@ -115,9 +115,9 @@ class VergeGetterRxTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     let first = storage.rx.makeGetter(from: .init(
-      equalityComparerBuilder: .init(
-        selector: { $0 },
-        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      preFilter: .init(
+        keySelector: { $0 },
+        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
       map: { $0 })
     )
         
@@ -146,16 +146,16 @@ class VergeGetterRxTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     let first = storage.rx.makeGetter(from: .init(
-      equalityComparerBuilder: .init(
-        selector: { $0 },
-        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      preFilter: .init(
+        keySelector: { $0 },
+        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
       map: { $0 })
     )
     
     let second = storage.rx.makeGetter(from: .init(
-      equalityComparerBuilder: .init(
-        selector: { $0 },
-        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      preFilter: .init(
+        keySelector: { $0 },
+        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
       map: { -$0 })
     )
         
