@@ -59,7 +59,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
   ///   - andFilter: Check to necessory of needs to update to reduce number of updating.
   public func makeEntityGetter<Output>(
     update: @escaping (Base.Value.Database) -> Output,
-    andFilter: ((Base.Value.Database) -> Bool)?
+    andFilter: AnyComparerFragment<Base.Value.Database>?
   ) -> RxGetterSource<Base.Value, Output> {
     
     return makeGetter(from: .makeEntityGetter(update: update, andFilter: andFilter))
@@ -68,7 +68,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
   
   public func makeEntityGetter<E: EntityType>(
     from entityID: E.EntityID,
-    andFilter: ((Base.Value.Database) -> Bool)?
+    andFilter: AnyComparerFragment<Base.Value.Database>?
   ) -> RxGetterSource<Base.Value, E?> {
     
     return makeGetter(from: .makeEntityGetter(from: entityID, andFilter: andFilter))
@@ -76,7 +76,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
   
   public func makeNonNullEntityGetter<E: EntityType>(
     from entity: E,
-    andFilter: ((Base.Value.Database) -> Bool)?
+    andFilter: AnyComparerFragment<Base.Value.Database>?
   ) -> RxGetterSource<Base.Value, E> {
     
     return makeGetter(from: .makeNonNullEntityGetter(from: entity, andFilter: andFilter))
@@ -109,7 +109,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
     let _cache = cache
     
     guard let getter = _cache.getter(entityID: entityID) as? RxGetterSource<Base.Value, E?> else {
-      let newGetter = makeEntityGetter(from: entityID, andFilter: Filters.Historical.entityUpdated(entityID).asFunction())
+      let newGetter = makeEntityGetter(from: entityID, andFilter: AnyComparerFragment.entityUpdated(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -143,7 +143,7 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
     
     guard let getter = _cache.getter(entityID: entity.entityID) as? RxGetterSource<Base.Value, E> else {
       let entityID = entity.entityID
-      let newGetter = makeNonNullEntityGetter(from: entity, andFilter: Filters.Historical.entityUpdated(entityID).asFunction())
+      let newGetter = makeNonNullEntityGetter(from: entity, andFilter: AnyComparerFragment.entityUpdated(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }

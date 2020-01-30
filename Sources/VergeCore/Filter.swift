@@ -26,116 +26,108 @@ fileprivate final class PreviousValueRef<T> {
   init() {}
 }
 
-public protocol Filter {
+
+/// A Filter that compares with previous value.
+public final class HistoricalComparer<Input> {
+  
+  private let _isEqual: (Input) -> Bool
+  
+  public init<Key, C: Comparer>(
+    selector: @escaping (Input) -> Key,
+    comparer: C
+  ) where C.Input == Key {
+    
+    let ref = PreviousValueRef<Key>()
+    
+    self._isEqual = { input in
+      
+      let key = selector(input)
+      defer {
+        ref.value = key
+      }
+      if let previousValue = ref.value {
+        return comparer.equals(previousValue: previousValue, newValue: key)
+      } else {
+        return false
+      }
+      
+    }
+    
+  }
+  
+  public func equals(input: Input) -> Bool {
+    _isEqual(input)
+  }
+  
+  public func registerFirstValue(_ value: Input) {
+    _ = _isEqual(value)
+  }
+  
+  public func asFunction() -> (Input) -> Bool {
+    equals
+  }
+  
+}
+
+public protocol Comparer {
   associatedtype Input
   
   /// Check if it uses input value
   /// - Parameter input:
-  func check(input: Input) -> Bool
+  func equals(previousValue: Input, newValue: Input) -> Bool
 }
 
-extension Filter {
-  public func asFunction() -> (Input) -> Bool {
-    check
+extension Comparer {
+  public func asFunction() -> (Input, Input) -> Bool {
+    equals
   }
 }
 
-public enum Filters {
-    
-  public struct Basic<Input>: Filter {
-    
-    private let predicate: (Input) -> Bool
-    
-    public init(_ predicate: @escaping (Input) -> Bool) {
-      self.predicate = predicate
-    }
-    
-    public func check(input: Input) -> Bool {
-      predicate(input)
-    }
+public struct AnyComparerFragment<Input>: Comparer {
+  private let equals: (Input, Input) -> Bool
+  
+  public init(_ equals: @escaping (Input, Input) -> Bool) {
+    self.equals = equals
   }
   
-  public struct Combined<Input>: Filter {
-    
-    private let predicate: (Input) -> Bool
-    
-    public init(and filters: [(Input) -> Bool]) {
-      self.predicate = { input in
-        for filter in filters {
-          guard filter(input) else {
-            return false
-          }
-        }
-        return true
-      }
-    }
-    
-    public init(or filters: [(Input) -> Bool]) {
-      self.predicate = { input in
-        for filter in filters {
-          if filter(input) {
-            return true
-          }
-        }
-        return false
-      }
-    }
-    
-    public func check(input: Input) -> Bool {
-      predicate(input)
-    }
-    
+  public func equals(previousValue: Input, newValue: Input) -> Bool {
+    equals(previousValue, newValue)
   }
-  
-  
-  public final class Historical<Input>: Filter {
-        
-    private let _isEqual: (Input) -> Bool
-    
-    public init<Key>(
-      selector: @escaping (Input) -> Key,
-      predicate: @escaping (Key, Key) -> Bool
-    ) {
-      
-      let ref = PreviousValueRef<Key>()
+}
 
-      self._isEqual = { input in
-        
-        let key = selector(input)
-        defer {
-          ref.value = key
+public struct CombinedComparerFragment<Input>: Comparer {
+  
+  private let equals: (Input, Input) -> Bool
+  
+  public init(and filters: [(Input, Input) -> Bool]) {
+    self.equals = { pre, new in
+      for filter in filters {
+        guard filter(pre, new) else {
+          return false
         }
-        if let previousValue = ref.value {
-          return predicate(previousValue, key)
-        } else {
+      }
+      return true
+    }
+  }
+  
+  public init(or filters: [(Input, Input) -> Bool]) {
+    self.equals = { pre, new in
+      for filter in filters {
+        if filter(pre, new) {
           return true
         }
-        
       }
-      
+      return false
     }
-    
-    public func check(input: Input) -> Bool {
-      _isEqual(input)
-    }
-    
-    public func registerFirstValue(_ value: Input) {
-      _ = _isEqual(value)
-    }
-    
+  }
+  
+  public func equals(previousValue: Input, newValue: Input) -> Bool {
+    equals(previousValue, newValue)
+  }
+  
+  public func asAny() -> AnyComparerFragment<Input> {
+    .init(equals)
   }
   
 }
 
-extension Filters.Historical {
-  public convenience init<Key: Equatable>(selector: @escaping (Input) -> Key) {
-    self.init(selector: selector, predicate: !=)
-  }
-}
-
-extension Filters.Historical where Input : Equatable {
-    
-  public convenience init() {
-    self.init(selector: { $0 }, predicate: !=)
-  }
-}

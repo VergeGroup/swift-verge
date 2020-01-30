@@ -19,9 +19,8 @@ public protocol ValueContainerType: AnyObject {
   #if canImport(Combine)
      
   @available(iOS 13, macOS 10.15, *)
-  func makeGetter<Output>(
-    filter: @escaping (Value) -> Bool,
-    map: @escaping (Value) -> Output
+  func makeGetter<ComparingKey, Output>(
+    from builder: GetterBuilder<Value, ComparingKey, Output>
   ) -> GetterSource<Value, Output>
   
   #endif
@@ -32,7 +31,7 @@ extension ValueContainerType {
   
   @available(iOS 13, macOS 10.15, *)
   public func makeGetter() -> GetterSource<Value, Value> {
-    makeGetter(filter: { _ in true }, map: { $0 })
+    makeGetter(from: .init(equalityComparerBuilder: .alwaysDifferent, map: { $0 }))
   }
 }
 #endif
@@ -46,5 +45,26 @@ extension Storage: ValueContainerType {
   public func unlock() {
     _lock.unlock()
   }
+  
+  #if canImport(Combine)
+  
+  @available(iOS 13, macOS 10.15, *)
+  
+  public func makeGetter<ComparingKey, Output>(
+    from builder: GetterBuilder<Value, ComparingKey, Output>
+  ) -> GetterSource<Value, Output> {
     
+    let comparer = builder.equalityComparerBuilder.build()
+    let pipe = publisher
+      .filter { value in
+        !comparer.equals(input: value)
+    }
+    .map(builder.map)
+    
+    let makeGetter = GetterSource<Value, Output>.init(input: pipe)
+    
+    return makeGetter
+  }
+   
+  #endif
 }

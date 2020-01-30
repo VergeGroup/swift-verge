@@ -161,14 +161,12 @@ extension StoreBase {
   }
   
   @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<Output>(
-    filter: @escaping (Value) -> Bool,
-    map: @escaping (Value) -> Output
-  ) -> GetterSource<Value, Output> {
-    
-    _backingStorage.makeGetter(filter: filter, map: map)
-    
+  public func makeGetter<ComparingKey, Output>(
+    from builder: GetterBuilder<State, ComparingKey, Output>
+  ) -> GetterSource<State, Output> {
+    _backingStorage.makeGetter(from: builder)
   }
+   
 }
 
 @available(iOS 13.0, macOS 10.15, *)

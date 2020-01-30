@@ -188,8 +188,8 @@ class PerformanceTests: XCTestCase {
   
   func testInsertManyEachTransaction() {
     measure {
-      
-      for i in 0..<1000 {
+      /// O(n^2)
+      for i in 0..<10 {
         state.db.performBatchUpdates { (context) in
           let author = Author(rawID: "author.\(i)")
           context.author.insert(author)

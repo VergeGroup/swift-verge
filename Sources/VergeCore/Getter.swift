@@ -120,24 +120,4 @@ public final class GetterSource<Input, Output>: Getter<Output> {
   
 }
 
-extension Storage {
-  
-  @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<Output>(
-    filter: @escaping (Value) -> Bool,
-    map: @escaping (Value) -> Output
-  ) -> GetterSource<Value, Output> {
-    
-    let pipe = publisher
-      .filter(filter)
-      .map(map)
-        
-    let makeGetter = GetterSource<Value, Output>.init(input: pipe)
-    
-    return makeGetter
-    
-  }
-  
-}
-
 #endif

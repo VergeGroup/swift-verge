@@ -105,27 +105,31 @@ extension StoreBase: ReactiveCompatible {}
 
 extension Reactive where Base : RxValueContainerType {
   
-  public func makeGetter<Output>(
-    filter: @escaping (Base.Value) -> Bool,
-    map: @escaping (Base.Value) -> Output
-  ) -> RxGetterSource<Base.Value, Output> {
+  public func makeGetter<ComapringKey, Output>(from: GetterBuilder<Base.Value, ComapringKey, Output>) -> RxGetterSource<Base.Value, Output> {
     
+    let comparer = from.equalityComparerBuilder.build()
     let pipe = base.asObservable()
-      .filter(filter)
-      .map(map)
+      .filter { value in
+        !comparer.equals(input: value)
+    }
+    .map(from.map)
     
     let getter = RxGetterSource<Base.Value, Output>.init(from: pipe)
     
     return getter
+  }
+  
+  public func makeGetter<ComparingKey, Output>(
+    map: @escaping (Base.Value) -> Output,
+    equalityComparer: EqualityComparerBuilder<Base.Value, ComparingKey>
+  ) -> RxGetterSource<Base.Value, Output> {
+    
+    makeGetter(from: .init(equalityComparerBuilder:equalityComparer, map:map))
     
   }
-  
-  public func makeGetter<Output>(from: GetterBuilder<Base.Value, Output>) -> RxGetterSource<Base.Value, Output> {
-    makeGetter(filter: from.filter, map: from.map)
-  }
-  
+    
   public func makeGetter() -> RxGetterSource<Base.Value, Base.Value> {
-    makeGetter(filter: { _ in true }, map: { $0 })
+    makeGetter(from: .init(equalityComparerBuilder: .alwaysDifferent, map: { $0 }))
   }
   
 }

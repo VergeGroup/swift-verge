@@ -133,7 +133,6 @@
 		4BDBDF6B23CE02CF00EEA112 /* VergeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCE1238A85A700F70CDA /* VergeViewModelTests.swift */; };
 		4BDBDF6C23CE02CF00EEA112 /* StandaloneVergeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B63829C23980D4600FAD87F /* StandaloneVergeViewModelTests.swift */; };
 		4BDBDF6D23CE02CF00EEA112 /* ChainingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE76218239AA4A1009EB209 /* ChainingViewModelTests.swift */; };
-		4BDBDF6F23CE067800EEA112 /* VergeStore+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF6E23CE067800EEA112 /* VergeStore+Rx.swift */; };
 		4BDBDF7723CE0C4200EEA112 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7623CE0C4200EEA112 /* AppDelegate.swift */; };
 		4BDBDF7B23CE0C4200EEA112 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7A23CE0C4200EEA112 /* ViewController.swift */; };
 		4BDBDF7E23CE0C4200EEA112 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7C23CE0C4200EEA112 /* Main.storyboard */; };
@@ -509,7 +508,6 @@
 		4BD379EC23BD94D800CE474C /* AnyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEntity.swift; sourceTree = "<group>"; };
 		4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORMGetterTests.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
-		4BDBDF6E23CE067800EEA112 /* VergeStore+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VergeStore+Rx.swift"; sourceTree = "<group>"; };
 		4BDBDF7423CE0C4200EEA112 /* VergeStoreDemoUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BDBDF7623CE0C4200EEA112 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BDBDF7A23CE0C4200EEA112 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -708,7 +706,6 @@
 			children = (
 				4BAC16C023C806F100BF49D9 /* ORM */,
 				4BFC3A0E23C758FD00801CB4 /* RxGetter.swift */,
-				4BDBDF6E23CE067800EEA112 /* VergeStore+Rx.swift */,
 				4B7F385123895B24000B9ACF /* VergeStore+Storage+Rx.swift */,
 				4BA5914E23DF5146007F614C /* FunctionBuilders.swift */,
 				4B17439123C766D70074C457 /* VergeRx.h */,
@@ -1733,7 +1730,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BDBDF6F23CE067800EEA112 /* VergeStore+Rx.swift in Sources */,
 				4B1743A123C7671C0074C457 /* VergeStore+Storage+Rx.swift in Sources */,
 				4BAC16BF23C806E000BF49D9 /* EntityType+.swift in Sources */,
 				4BA5914F23DF5146007F614C /* FunctionBuilders.swift in Sources */,

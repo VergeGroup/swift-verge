@@ -24,8 +24,13 @@ class GetterTests: XCTestCase {
     
     var updateCount = 0
     
-    let g = storage.makeGetter(filter: Filters.Historical.init().asFunction(), map: { $0 * 2 })
-    
+    let g = storage.makeGetter(from: .init(
+      equalityComparerBuilder: .init(
+        selector: { $0 },
+        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      map: { $0 * 2})
+    )
+        
     g.sink { _ in
       updateCount += 1
     }
@@ -56,7 +61,12 @@ class GetterTests: XCTestCase {
     
     var updateCount = 0
     
-    let g = storage.makeGetter(filter: Filters.Historical.init().asFunction(), map: { $0 * 2 })
+    let g = storage.makeGetter(from: .init(
+      equalityComparerBuilder: .init(
+        selector: { $0 },
+        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      map: { $0 * 2 })
+    )
     
     g.sink { _ in
       updateCount += 1
@@ -77,6 +87,10 @@ class GetterTests: XCTestCase {
       $0 = 2
     }
     
+    storage.update {
+      $0 = 2
+    }
+    
     XCTAssertEqual(updateCount, 2)
     
   }
@@ -85,7 +99,12 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    var first: GetterSource<Int, Int>! = storage.makeGetter(filter: Filters.Historical.init().asFunction(), map: { $0 })
+    var first: GetterSource<Int, Int>! = storage.makeGetter(from: .init(
+      equalityComparerBuilder: .init(
+        selector: { $0 },
+        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      map: { $0 })
+    )
     
     weak var weakFirst = first
     
@@ -124,7 +143,12 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.makeGetter(filter: Filters.Historical.init().asFunction(), map: { $0 })
+    let first = storage.makeGetter(from: .init(
+      equalityComparerBuilder: .init(
+        selector: { $0 },
+        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      map: { $0 })
+    )
     
     let share1 = Getter {
       first.map { $0 }
@@ -150,8 +174,19 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.makeGetter(filter: Filters.Historical.init().asFunction(), map: { $0 })
-    let second = storage.makeGetter(filter: Filters.Historical.init().asFunction(), map: { -$0 })
+    let first = storage.makeGetter(from: .init(
+      equalityComparerBuilder: .init(
+        selector: { $0 },
+        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      map: { $0 })
+    )
+    
+    let second = storage.makeGetter(from: .init(
+      equalityComparerBuilder: .init(
+        selector: { $0 },
+        predicate: AnyComparerFragment.init { $0 == $1 }.asFunction()),
+      map: { -$0 })
+    )
     
     let combined = Getter {
       first.combineLatest(second)
