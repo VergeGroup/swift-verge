@@ -21,6 +21,11 @@
 
 import Foundation
 
+fileprivate final class PreviousValueRef<T> {
+  var value: T?
+  init() {}
+}
+
 public protocol Filter {
   associatedtype Input
   
@@ -92,15 +97,15 @@ public enum Filters {
       predicate: @escaping (Key, Key) -> Bool
     ) {
       
-      var previousValue: Key?
-      
+      let ref = PreviousValueRef<Key>()
+
       self._isEqual = { input in
         
         let key = selector(input)
         defer {
-          previousValue = key
+          ref.value = key
         }
-        if let previousValue = previousValue {
+        if let previousValue = ref.value {
           return predicate(previousValue, key)
         } else {
           return true
