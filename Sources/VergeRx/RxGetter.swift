@@ -105,31 +105,75 @@ extension StoreBase: ReactiveCompatible {}
 
 extension Reactive where Base : RxValueContainerType {
   
-  public func makeGetter<ComapringKey, Output>(from: GetterBuilder<Base.Value, ComapringKey, Output>) -> RxGetterSource<Base.Value, Output> {
+  public typealias Value = Base.Value
+  
+  public func makeGetter<PreComapringKey, Output, PostComparingKey>(
+    from builder: GetterBuilder<Value, PreComapringKey, Output, PostComparingKey>
+  ) -> RxGetterSource<Value, Output> {
     
-    let comparer = from.equalityComparerBuilder.build()
-    let pipe = base.asObservable()
+    let preComparer = builder.preFilter.build()
+    let postComparer = builder.postFilter?.build()
+    
+    let baseStream = base.asObservable()
       .filter { value in
-        !comparer.equals(input: value)
+        !preComparer.equals(input: value)
     }
-    .map(from.map)
+    .map(builder.transform)
+    
+    let pipe: Observable<Output>
+    
+    if let comparer = postComparer {
+      pipe = baseStream.filter { value in
+        !comparer.equals(input: value)
+      }
+    } else {
+      pipe = baseStream
+    }
     
     let getter = RxGetterSource<Base.Value, Output>.init(from: pipe)
     
     return getter
   }
-  
-  public func makeGetter<ComparingKey, Output>(
-    map: @escaping (Base.Value) -> Output,
-    equalityComparer: EqualityComputerBuilder<Base.Value, ComparingKey>
-  ) -> RxGetterSource<Base.Value, Output> {
-    
-    makeGetter(from: .init(preFilter:equalityComparer, map:map))
-    
+      
+  /// Dummy
+  @available(*, deprecated, message: "Dummy method")
+  public func makeGetter(_ make: (GetterBuilderMethodChain<Value>) -> Never) -> Never {
+    fatalError()
   }
-    
-  public func makeGetter() -> RxGetterSource<Base.Value, Base.Value> {
-    makeGetter(from: .init(preFilter: .alwaysDifferent, map: { $0 }))
+  
+  /// Dummy
+  @available(*, deprecated, message: "You need to call `map` more. This is Dummy method")
+  public func makeGetter<PreComparingKey>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderPreFilterMethodChain<Value, PreComparingKey>) -> Never {
+    fatalError()
+  }
+  
+  /// Value -> [PreFilter -> Transform] -> Value
+  public func makeGetter<PreComparingKey, Output>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderTransformMethodChain<Value, PreComparingKey, Output>) -> RxGetterSource<Value, Output> {
+    return makeGetter(from: .from(make(.init())))
+  }
+  
+  /// Value -> [PreFilter -> Transform -> PostFilter] -> Value
+  public func makeGetter<PreComparingKey, Output, PostComparingKey>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderPostFilterMethodChain<Value, PreComparingKey, Output, PostComparingKey>) -> RxGetterSource<Value, Output> {
+    return makeGetter(from: .from(make(.init())))
+  }
+  
+  public func makeGetter<Output>(map: @escaping (Value) -> Output) -> RxGetterSource<Value, Output> where Output : Equatable {
+    makeGetter {
+      $0.preFilter(.noFilter)
+        .map(map)
+        .postFilter(comparer: .init(==))
+    }
+  }
+  
+  public func makeGetter<Output>(map keyPath: KeyPath<Value, Output>) -> RxGetterSource<Value, Output> where Output : Equatable {
+    makeGetter(map: { $0[keyPath: keyPath] })
+  }
+  
+  public func makeGetter<PreComparingKey>(preFilter:  EqualityComputerBuilder<Value, PreComparingKey>) -> RxGetterSource<Value, Value> {
+    makeGetter {
+      $0.preFilter(preFilter)
+        .map { $0 }
+    }
   }
   
 }

@@ -24,9 +24,9 @@ class GetterTests: XCTestCase {
     
     var updateCount = 0
     
-    let g = storage.makeGetter(from: .init(
-      preFilter: .make(),
-      map: { $0 * 2})
+    let g = storage.makeGetter(from: .make(
+      preFilter: .init(),
+      transform: { $0 * 2 })
     )
         
     g.sink { _ in
@@ -58,12 +58,13 @@ class GetterTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     var updateCount = 0
-    
-    let g = storage.makeGetter(from: .init(
-      preFilter: .make(),
-      map: { $0 * 2 })
-    )
-    
+                         
+    let g = storage.makeGetter {
+      $0.preFilter(.noFilter)
+        .map(\.self)
+        .postFilter(keySelector: \.description, comparer: .init(==))
+    }
+        
     g.sink { _ in
       updateCount += 1
     }
@@ -95,9 +96,9 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    var first: GetterSource<Int, Int>! = storage.makeGetter(from: .init(
-      preFilter: .make(),
-      map: { $0 })
+    var first: GetterSource<Int, Int>! = storage.makeGetter(from: .make(
+      preFilter: .init(),
+      transform: { $0 })
     )
     
     weak var weakFirst = first
@@ -137,7 +138,11 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.makeGetter(from: .make(map: { $0 }))
+    let first = storage.makeGetter {
+      $0.preFilter(.init())
+        .map(\.self)
+    }
+//      .makeGetter(preFilter: .init(), transform: { $0 })
     
     let share1 = Getter {
       first.map { $0 }
@@ -163,18 +168,20 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.makeGetter(from: .init(
+    let first = storage.makeGetter(from: .make(
       preFilter: .init(
         keySelector: { $0 },
-        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
-      map: { $0 })
+        comparer: .init { $0 == $1 }
+      ),
+      transform: { $0 })
     )
     
-    let second = storage.makeGetter(from: .init(
+    let second = storage.makeGetter(from: .make(
       preFilter: .init(
         keySelector: { $0 },
-        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
-      map: { -$0 })
+        comparer: .init { $0 == $1 }
+      ),
+      transform: { -$0 })
     )
     
     let combined = Getter {
@@ -184,6 +191,47 @@ class GetterTests: XCTestCase {
     }
     
     XCTAssertEqual(combined.value, 0)
+    
+  }
+  
+  func testPostFilter() {
+    
+    let storage = Storage<Int>(1)
+    
+    let getter = storage.makeGetter {
+      $0.preFilter(.noFilter)
+        .map(\.description)
+        .postFilter(comparer: .init(==))
+    }
+          
+    var updateCount = 0
+    
+    getter.sink { _ in
+      updateCount += 1
+    }
+    .store(in: &subs)
+    
+    XCTAssertEqual(updateCount, 1)
+    
+    storage.update {
+      $0 = 2
+    }
+    
+    storage.update {
+      $0 = 2
+    }
+    
+    storage.update {
+      $0 = 2
+    }
+    
+    XCTAssertEqual(updateCount, 2)
+    
+    storage.update {
+      $0 = 3
+    }
+    
+    XCTAssertEqual(updateCount, 3)
     
   }
   

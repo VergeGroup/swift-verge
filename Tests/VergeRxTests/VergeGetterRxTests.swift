@@ -35,14 +35,12 @@ class VergeGetterRxTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     var updateCount = 0
+            
+    let g = storage.rx.makeGetter {
+      $0.preFilter(comparer: .init(==))
+        .map { $0 * 2 }
+    }
         
-    let g = storage.rx.makeGetter(from: .init(
-      preFilter: .init(
-        keySelector: { $0 },
-        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
-      map: { $0 * 2})
-    )
-    
     _ = g.subscribe(onNext: { _ in
       updateCount += 1
     })
@@ -76,13 +74,11 @@ class VergeGetterRxTests: XCTestCase {
   func testChain() {
     
     let storage = Storage<Int>(1)
-            
-    var first: RxGetterSource<Int, Int>! = storage.rx.makeGetter(from: .init(
-      preFilter: .init(
-        keySelector: { $0 },
-        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
-      map: { $0 })
-    )
+                 
+    var first: RxGetterSource<Int, Int>! = storage.rx.makeGetter {
+      $0.preFilter(comparer: .init(==))
+        .map { $0 * 2 }
+    }
     
     weak var weakFirst = first
                 
@@ -113,14 +109,12 @@ class VergeGetterRxTests: XCTestCase {
   func testShare() {
     
     let storage = Storage<Int>(1)
+            
+    let first: RxGetterSource<Int, Int>! = storage.rx.makeGetter {
+      $0.preFilter(comparer: .init(==))
+        .map { $0 * 2 }
+    }
     
-    let first = storage.rx.makeGetter(from: .init(
-      preFilter: .init(
-        keySelector: { $0 },
-        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
-      map: { $0 })
-    )
-        
     let share1 = RxGetter {
       first.map { $0 }
     }
@@ -145,20 +139,16 @@ class VergeGetterRxTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.rx.makeGetter(from: .init(
-      preFilter: .init(
-        keySelector: { $0 },
-        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
-      map: { $0 })
-    )
-    
-    let second = storage.rx.makeGetter(from: .init(
-      preFilter: .init(
-        keySelector: { $0 },
-        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
-      map: { -$0 })
-    )
+    let first = storage.rx.makeGetter {
+      $0.preFilter(comparer: .init(==))
+        .map(\.self)
+    }
         
+    let second = storage.rx.makeGetter {
+      $0.preFilter(comparer: .init(==))
+        .map { -$0 }
+    }
+            
     let combined = RxGetter {
       Observable.combineLatest(first, second)
         .map { $0 + $1 }

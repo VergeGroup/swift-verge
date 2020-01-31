@@ -18,10 +18,10 @@ public final class EqualityComputer<Input> {
   
   private let _isEqual: (Input) -> Bool
   
-  public init<Key, C: Comparer>(
+  public init<Key>(
     selector: @escaping (Input) -> Key,
-    comparer: C
-  ) where C.Input == Key {
+    comparer: Comparer<Key>
+  ) {
     
     let ref = PreviousValueRef<Key>()
     
@@ -57,30 +57,45 @@ public final class EqualityComputer<Input> {
 
 public struct EqualityComputerBuilder<Input, ComparingKey> {
   
-  public static var alwaysDifferent: EqualityComputerBuilder<Input, Input> {
-    .init(keySelector: { $0 }, comparer: { _, _ in false })
+  public static var noFilter: EqualityComputerBuilder<Input, Input> {
+    .init(keySelector: { $0 }, comparer: .init { _, _ in false })
   }
   
   let selector: (Input) -> ComparingKey
-  let predicate: (ComparingKey, ComparingKey) -> Bool
+  let comparer: Comparer<ComparingKey>
   
   public init(
     keySelector: @escaping (Input) -> ComparingKey,
-    comparer: @escaping (ComparingKey, ComparingKey) -> Bool
+    comparer: Comparer<ComparingKey>
   ) {
     self.selector = keySelector
-    self.predicate = comparer
+    self.comparer = comparer
   }
   
+  public init(
+    keySelector: KeyPath<Input, ComparingKey>,
+    comparer: Comparer<ComparingKey>
+  ) {
+    self.selector = { $0[keyPath: keySelector] }
+    self.comparer = comparer
+  }
+    
   public func build() -> EqualityComputer<Input> {
-    .init(selector: selector, comparer: AnyComparer.init(predicate))
+    .init(selector: selector, comparer: comparer)
   }
 }
 
-extension EqualityComputerBuilder where Input : Equatable {
+extension EqualityComputerBuilder where Input : Equatable, ComparingKey == Input {
+  public init()  {
+    self.selector = { $0 }
+    self.comparer = .init(==)
+  }
+}
+
+extension EqualityComputerBuilder where Input == ComparingKey {
   
-  public static func make() -> EqualityComputerBuilder<Input, Input> {
-    .init(keySelector: { $0 }, comparer: ==)
+  public init(comparer: Comparer<Input>) {
+    self.init(keySelector: { $0 }, comparer: comparer)
   }
   
 }

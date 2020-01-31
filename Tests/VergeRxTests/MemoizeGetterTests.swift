@@ -52,11 +52,12 @@ class MemoizeGetterTests: XCTestCase {
     
     var callCount = 0
                                  
-    let getter = store.rx.makeGetter(from: .init(
+    let getter = store.rx.makeGetter(from: .make(
       preFilter: .init(
         keySelector: { $0.count },
-        comparer: AnyComparer.init { $0 == $1 }.asFunction()),
-      map: { state -> Int in
+        comparer: .init { $0 == $1 }
+      ),
+      transform: { state -> Int in
         callCount += 1
         return state.count * 2
     })

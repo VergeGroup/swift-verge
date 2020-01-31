@@ -21,40 +21,18 @@
 
 import Foundation
 
-public protocol Comparer {
-  associatedtype Input
+public struct Comparer<Input> {
   
-  /// Check if it uses input value
-  /// - Parameter input:
-  func equals(previousValue: Input, newValue: Input) -> Bool
-}
-
-extension Comparer {
-  public func asFunction() -> (Input, Input) -> Bool {
-    equals
-  }
-}
-
-public struct AnyComparer<Input>: Comparer {
   private let equals: (Input, Input) -> Bool
-  
+    
   public init(_ equals: @escaping (Input, Input) -> Bool) {
     self.equals = equals
   }
   
-  public func equals(previousValue: Input, newValue: Input) -> Bool {
-    equals(previousValue, newValue)
-  }
-}
-
-public struct CombinedComparer<Input>: Comparer {
-  
-  private let equals: (Input, Input) -> Bool
-  
-  public init(and comparers: [(Input, Input) -> Bool]) {
+  public init(and comparers: [Comparer<Input>]) {
     self.equals = { pre, new in
       for filter in comparers {
-        guard filter(pre, new) else {
+        guard filter.equals(previousValue: pre, newValue: new) else {
           return false
         }
       }
@@ -62,10 +40,10 @@ public struct CombinedComparer<Input>: Comparer {
     }
   }
   
-  public init(or comparers: [(Input, Input) -> Bool]) {
+  public init(or comparers: [Comparer<Input>]) {
     self.equals = { pre, new in
       for filter in comparers {
-        if filter(pre, new) {
+        if filter.equals(previousValue: pre, newValue: new) {
           return true
         }
       }
@@ -75,10 +53,6 @@ public struct CombinedComparer<Input>: Comparer {
   
   public func equals(previousValue: Input, newValue: Input) -> Bool {
     equals(previousValue, newValue)
-  }
-  
-  public func asAny() -> AnyComparer<Input> {
-    .init(equals)
   }
   
 }

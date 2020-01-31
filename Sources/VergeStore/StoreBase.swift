@@ -161,8 +161,8 @@ extension StoreBase {
   }
   
   @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<ComparingKey, Output>(
-    from builder: GetterBuilder<State, ComparingKey, Output>
+  public func makeGetter<PreComparingKey, Output, PostComparingKey>(
+    from builder: GetterBuilder<State, PreComparingKey, Output, PostComparingKey>
   ) -> GetterSource<State, Output> {
     _backingStorage.makeGetter(from: builder)
   }
