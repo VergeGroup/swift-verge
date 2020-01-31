@@ -49,52 +49,39 @@ public protocol DatabaseEmbedding {
   
 }
 
-extension Filters.Historical where Input : DatabaseType {
+extension Comparer where Input : DatabaseType {
   
   public static func databaseUpdated() -> Self {
-    .init(
-      selector: { input -> (UpdatedMarker, UpdatedMarker) in
-        let v = input
-        return (v._backingStorage.entityUpdatedMarker, v._backingStorage.indexUpdatedMarker)
-    },
-      predicate: { (old, new) -> Bool in
-        old != new
-    })
+    return .init { pre, new in
+      (pre._backingStorage.entityUpdatedMarker, pre._backingStorage.indexUpdatedMarker) == (new._backingStorage.entityUpdatedMarker, new._backingStorage.indexUpdatedMarker)
+    }
   }
   
   public static func tableUpdated<E: EntityType>(_ entityType: E.Type) -> Self {
-    return .init(
-      selector: { input -> UpdatedMarker in
-        return input._backingStorage.entityBackingStorage.table(E.self).updatedMarker
-    },
-      predicate: { (old, new) -> Bool in
-        old != new
-    })
+    return .init { pre, new in
+      pre._backingStorage.entityBackingStorage.table(E.self).updatedMarker == new._backingStorage.entityBackingStorage.table(E.self).updatedMarker
+    }
   }
   
   public static func entityUpdated<E: EntityType & Equatable>(_ entityID: E.EntityID) -> Self {
-    return .init(
-      selector: { db in db.entities.table(E.self).find(by: entityID) },
-      predicate: {
-        $0 != $1
-    })
+    return .init { pre, new in
+      pre.entities.table(E.self).find(by: entityID) == new.entities.table(E.self).find(by: entityID)
+    }
   }
   
   public static func changesContains<E: EntityType>(_ entityID: E.EntityID) -> Self {
-    return .init(
-      selector: { $0 },
-      predicate: { _, db -> Bool in
-        guard let result = db._backingStorage.lastUpdatesResult else {
-          return true
-        }
-        guard !result.wasUpdated(entityID) else {
-          return true
-        }
-        guard !result.wasDeleted(entityID) else {
-          return true
-        }
+    return .init { _, new in
+      guard let result = new._backingStorage.lastUpdatesResult else {
         return false
-    })
+      }
+      guard !result.wasUpdated(entityID) else {
+        return false
+      }
+      guard !result.wasDeleted(entityID) else {
+        return false
+      }
+      return true
+    }
   }
   
 }
@@ -122,53 +109,54 @@ extension GetterBuilder where Input : DatabaseEmbedding {
   
   public static func makeEntityGetter<Output>(
     update: @escaping (Input.Database) -> Output,
-    andFilter: ((Input.Database) -> Bool)?
-  ) -> GetterBuilder<Input, Output> {
+    andFilter: Comparer<Input.Database>?
+  ) -> GetterBuilder<Input, Input.Database, Output, Output> {
     
     let path = Input.getterToDatabase
     
-    let filter = Filters.Combined<Input.Database>.init(and: [
-      Filters.Historical.databaseUpdated().asFunction(),
+    let filter = Comparer<Input.Database>.init(or: [
+      .databaseUpdated(),
       andFilter
       ].compactMap { $0 })
     
-    return .init(
-      filter: Filters.Basic { input in
-        filter.check(input: path(input))
-      }.asFunction(),
-      map:  { (value) -> Output in
+    return .make(
+      preFilter: .init(
+        keySelector: { path($0) },
+        comparer: filter
+      ),
+      transform: { (value) -> Output in
         let t = VergeSignpostTransaction("ORM.Getter.update")
         defer {
           t.end()
         }
         return update(Input.getterToDatabase(value))
     })
-   
+    
   }
   
   public static func makeEntityGetter<E: EntityType>(
     from entityID: E.EntityID,
-    andFilter: ((Input.Database) -> Bool)?
-  ) -> GetterBuilder<Input, E?> {
+    andFilter: Comparer<Input.Database>?
+  ) -> GetterBuilder<Input, Input.Database, E?, E?> {
     
     return makeEntityGetter(
       update: { db in
         db.entities.table(E.self).find(by: entityID)
     },
-      andFilter: Filters.Combined.init(and: [
-        Filters.Historical.tableUpdated(E.self).asFunction(),
-        Filters.Historical.changesContains(entityID).asFunction(),
+      andFilter: .init(or: [
+        .tableUpdated(E.self),
+        .changesContains(entityID),
         andFilter
         ].compactMap { $0 }
-      ).asFunction()
+      )
     )
         
   }
   
   public static func makeNonNullEntityGetter<E: EntityType>(
     from entity: E,
-    andFilter: ((Input.Database) -> Bool)?
-  ) -> GetterBuilder<Input, E> {
+    andFilter: Comparer<Input.Database>?
+  ) -> GetterBuilder<Input, Input.Database, E, E> {
     
     var box = entity
     let entityID = entity.entityID
@@ -181,12 +169,12 @@ extension GetterBuilder where Input : DatabaseEmbedding {
         }
         return box
     },
-      andFilter: Filters.Combined.init(and: [
-        Filters.Historical.tableUpdated(E.self).asFunction(),
-        Filters.Historical.changesContains(entityID).asFunction(),
+      andFilter: Comparer.init(or: [
+        .tableUpdated(E.self),
+        .changesContains(entityID),
         andFilter
         ].compactMap { $0 }
-      ).asFunction()
+      )
     )
     return newGetter
     
@@ -222,7 +210,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   ///   - andFilter: Check to necessory of needs to update to reduce number of updating.
   public func makeEntityGetter<Output>(
     update: @escaping (Value.Database) -> Output,
-    andFilter: ((Value.Database) -> Bool)?
+    andFilter: Comparer<Value.Database>?
   ) -> GetterSource<Value, Output> {
       
     return makeGetter(from: .makeEntityGetter(update: update, andFilter: andFilter))
@@ -230,7 +218,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   
   public func makeEntityGetter<E: EntityType>(
     from entityID: E.EntityID,
-    andFilter: ((Value.Database) -> Bool)?
+    andFilter: Comparer<Value.Database>?
   ) -> GetterSource<Value, E?> {
     
     return makeGetter(from: .makeEntityGetter(from: entityID, andFilter: andFilter))
@@ -238,7 +226,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   
   public func makeNonNullEntityGetter<E: EntityType>(
     from entity: E,
-    andFilter: ((Value.Database) -> Bool)?
+    andFilter: Comparer<Value.Database>?
   ) -> GetterSource<Value, E> {
     
     return makeGetter(from: .makeNonNullEntityGetter(from: entity, andFilter: andFilter))
@@ -271,7 +259,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     let _cache = cache
     
     guard let makeGetter = _cache.getter(entityID: entityID) as? GetterSource<Value, E?> else {
-      let newGetter = makeEntityGetter(from: entityID, andFilter: Filters.Historical.entityUpdated(entityID).asFunction())
+      let newGetter = makeEntityGetter(from: entityID, andFilter: Comparer.entityUpdated(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -305,7 +293,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
     guard let makeGetter = _cache.getter(entityID: entity.entityID) as? GetterSource<Value, E> else {
       let entityID = entity.entityID
-      let newGetter = makeNonNullEntityGetter(from: entity, andFilter: Filters.Historical.entityUpdated(entityID).asFunction())
+      let newGetter = makeNonNullEntityGetter(from: entity, andFilter: Comparer.entityUpdated(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }

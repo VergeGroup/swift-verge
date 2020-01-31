@@ -51,13 +51,17 @@ class MemoizeGetterTests: XCTestCase {
     let dispatcher = RootDispatcher(target: store)
     
     var callCount = 0
-                    
-    let getter = store.rx.makeGetter(
-      filter: Filters.Historical.init(selector: { $0.count }, predicate: !=).asFunction(),
-      map: { (state) -> Int in
+                                 
+    let getter = store.rx.makeGetter(from: .make(
+      preFilter: .init(
+        keySelector: { $0.count },
+        comparer: .init { $0 == $1 }
+      ),
+      transform: { state -> Int in
         callCount += 1
         return state.count * 2
     })
+    )
         
     XCTAssertEqual(getter.value, 0)
     

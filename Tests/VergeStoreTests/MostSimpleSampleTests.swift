@@ -59,7 +59,7 @@ enum Sample {
     let count = store.state.count
     
     // Subscribe state
-    store.makeGetter()
+    store.makeGetter(preFilter: .noFilter)
       .sink { state in
         
     }
