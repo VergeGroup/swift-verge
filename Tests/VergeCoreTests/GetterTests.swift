@@ -60,9 +60,8 @@ class GetterTests: XCTestCase {
     var updateCount = 0
                          
     let g = storage.makeGetter {
-      $0.preFilter(.noFilter)
-        .map(\.self)
-        .postFilter(keySelector: \.description, comparer: .init(==))
+      $0.preFilter(.init())
+        .map { $0 * 2 }
     }
         
     g.sink { _ in

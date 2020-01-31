@@ -77,7 +77,7 @@ class VergeGetterRxTests: XCTestCase {
                  
     var first: RxGetterSource<Int, Int>! = storage.rx.makeGetter {
       $0.preFilter(comparer: .init(==))
-        .map { $0 * 2 }
+        .map { $0 }
     }
     
     weak var weakFirst = first
@@ -112,7 +112,7 @@ class VergeGetterRxTests: XCTestCase {
             
     let first: RxGetterSource<Int, Int>! = storage.rx.makeGetter {
       $0.preFilter(comparer: .init(==))
-        .map { $0 * 2 }
+        .map { $0 }
     }
     
     let share1 = RxGetter {
