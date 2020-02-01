@@ -16,7 +16,6 @@
 * [💫 Getter\(Selector\) and Memoization](docs-vergestore/memoization.md)
 * [🚀 Dispatcher - Perform Mutation / Action](docs-vergestore/dispatcher.md)
 * [🔭 Logging - Take logs performed Mutation and Action](docs-vergestore/logging.md)
-* [☂️ Middleware](docs-vergestore/middleware.md)
 
 ## 🖥 Verge Store + Application <a id="verge-store-application"></a>
 

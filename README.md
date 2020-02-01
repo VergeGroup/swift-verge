@@ -4,7 +4,7 @@ description: >-
   SwiftUI
 ---
 
-# Verge - a state management pattern library for iOS App
+# Verge - Flux pattern library for SwiftUI and UIKit on iOS Applications
 
 
 
