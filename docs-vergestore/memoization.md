@@ -21,70 +21,96 @@ But naming uses **Getter** instead of **Selector**, because Objective-C also use
 * Computes derived data from state tree
 * Supports Memoization
 
-## GetterSource object
+## Overview
 
-```swift
-@available(iOS 13, macOS 10.15, *)
-public final class GetterSource<Input, Output>: Getter<Output>
-```
+### Setting up the Store
 
 ```swift
 struct State {
-
+  var title: String = ""
   var count: Int = 0
-
 }
-
-let getterSource: GetterSource<State, Int> = store.getter(
-  filter: Filters.Historical.init(selector: { $0.count }, predicate: !=).asFunction()
-  map: { (state) -> Int in
-    state.count * 2
-})
-
-getterSource.value
 ```
 
-## Filters with Memoization
+```swift
+let store = StoreBase<State, Never>(initialState: .init(), logger: nil)
+```
 
-We have several Filters to get Memoization.
-
-* Filters.Basic
-* Filters.Combined
-* Filters.Historical
-
-Filter can be described with `(Input) -> Bool`
-
-True means pass the value to getter as a new value.  
-It means if value not changed you need to return **false.**
-
-Basically, we use Filters.Historical because it needs to compare previous input value to get memoization.
-
-Finally, To convert to `(Input) -> Bool` , we call `asFunction()`
+### Create a GetterSource / Getter
 
 ```swift
-let filter: Filters.Historical<Int> = Filters.Historical<Int>.init()
+let getterSource: GetterSource<State, Int> = store.makeGetter {
+  // Why here is closure it would be touched later.
+  $0.map(\.count)
+}
+```
+
+**GetterSource** has the type of State to indicates the output object comes from.  
+To erase this type, call **asGetter\(\)  
   
-XCTAssertEqual(filter.check(input: 1), true)
-XCTAssertEqual(filter.check(input: 1), false)
-XCTAssertEqual(filter.check(input: 2), true)
-```
-
-convert to closure with `asFunction`
+You could get Getter object.** Technically GetterSource is subclass of Getter, you can pass to the argument of Getter in the function directly.
 
 ```swift
-let filter: (Int) -> Bool = Filters.Historical<Int>.init().asFunction()
-
-XCTAssertEqual(filter(1), true)
-XCTAssertEqual(filter(1), false)
-XCTAssertEqual(filter(2), true)
+let getterSource: GetterSource<State, Int> = ...
+let getter: Getter<Int> = getterSource.asGetter()
 ```
 
-## Getter object
-
-AnySelector erases Input type and displays only Output type.
+### Get the value from Getter
 
 ```swift
-let anyGetter: Getter<Output> = getterSource.asGetter()
+let getter: Getter<Int> = 
+
+let count: Int = getter.value
+```
+
+_As explained above, GetterSource has same interfaces as well._
+
+### Subscribe the value
+
+Getter / GetterSource compatible **Publisher** of Combine.framework
+
+```swift
+getter.sink { (value) in
+  // Receive the new value
+}
+```
+
+## Memoization to keep performance
+
+Almost of Getter usages would be to project source object into a new form with **Map.**  
+  
+Basically, the operations in Map must be high-performance, to keep the good performance.  
+**However,** **sometimes it's impossible to create fast Map.**  
+For example, getting value from the huge dictionary.
+
+In that case, we can consider using Memoization.
+
+{% embed url="https://en.wikipedia.org/wiki/Memoization" %}
+
+
+
+### Use Pre-Filter
+
+Pre-filter can filter the object before passing the map function.
+
+```swift
+store.makeGetter {
+  $0.preFilter(keySelector: \.title, comparer: .init(==))
+    .map { $0.title.count }
+}
+```
+
+
+
+### Use Post-Filter
+
+Post-filter can filter the object with the mapped object after the map function.
+
+```swift
+store.makeGetter {
+  $0.map { $0.title.count }
+    .postFilter(comparer: .init(==))
+}
 ```
 
 ## Create Getter from other Getter
@@ -157,10 +183,14 @@ It provides Getter functions as RxGetter.
 pod 'Verge/Rx'
 ```
 
-### Create Getter
+### Create RxGetter / RxGetterSource
+
+The syntax are completely same with Getter
 
 ```swift
-let getter = store.rx.getter(filter: .init(), map: { ... })
+let getter: RxGetterSource<State, Int> = store.rx.store.makeGetter {
+  $0.map(\.count)
+}
 ```
 
 ### Transform Getter
