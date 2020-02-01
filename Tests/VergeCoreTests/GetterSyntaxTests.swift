@@ -25,7 +25,7 @@ final class GetterSyntaxTests: XCTestCase {
   func testGetterSyntax1() {
         
     let _ = store.makeGetter {
-      $0.preFilter(keySelector: \.title, comparer: .init(==))
+      $0.changed(keySelector: \.title, comparer: .init(==))
         .map(\.title)
     }
         
@@ -43,7 +43,7 @@ final class GetterSyntaxTests: XCTestCase {
     
     let _ = store.makeGetter {
       $0.map(\.count)
-        .postFilter(comparer: .init(==))
+        .changed(comparer: .init(==))
     }
     
   }

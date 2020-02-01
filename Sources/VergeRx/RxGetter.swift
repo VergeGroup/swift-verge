@@ -157,25 +157,6 @@ extension Reactive where Base : RxValueContainerType {
     return makeGetter(from: .from(make(.init())))
   }
   
-  public func makeGetter<Output>(map: @escaping (Value) -> Output) -> RxGetterSource<Value, Output> where Output : Equatable {
-    makeGetter {
-      $0.preFilter(.noFilter)
-        .map(map)
-        .postFilter(comparer: .init(==))
-    }
-  }
-  
-  public func makeGetter<Output>(map keyPath: KeyPath<Value, Output>) -> RxGetterSource<Value, Output> where Output : Equatable {
-    makeGetter(map: { $0[keyPath: keyPath] })
-  }
-  
-  public func makeGetter<PreComparingKey>(preFilter:  EqualityComputerBuilder<Value, PreComparingKey>) -> RxGetterSource<Value, Value> {
-    makeGetter {
-      $0.preFilter(preFilter)
-        .map { $0 }
-    }
-  }
-  
 }
 
 extension ObservableConvertibleType {
