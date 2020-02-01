@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Verge - a state management pattern library for iOS App](README.md)
+* [Verge - Flux pattern library for SwiftUI and UIKit on iOS Applications](README.md)
 * [Installation](installation.md)
 * [Gallery](gallery.md)
 * [About VergeClassic](about-vergeclassic.md)
