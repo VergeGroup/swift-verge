@@ -55,29 +55,7 @@ extension ValueContainerType {
   public func makeGetter<PreComparingKey, Output, PostComparingKey>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderPostFilterMethodChain<Value, PreComparingKey, Output, PostComparingKey>) -> GetterSource<Value, Output> {
     return makeGetter(from: .from(make(.init())))
   }
-  
-  @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<Output>(map: @escaping (Value) -> Output) -> GetterSource<Value, Output> where Output : Equatable {
-    makeGetter {
-      $0.preFilter(.noFilter)
-        .map(map)
-        .postFilter(comparer: .init(==))
-    }
-  }
-  
-  @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<Output>(map keyPath: KeyPath<Value, Output>) -> GetterSource<Value, Output> where Output : Equatable {
-    makeGetter(map: { $0[keyPath: keyPath] })
-  }
-  
-  @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<PreComparingKey>(preFilter:  EqualityComputerBuilder<Value, PreComparingKey>) -> GetterSource<Value, Value> {
-    makeGetter {
-      $0.preFilter(preFilter)
-        .map { $0 }
-    }
-  }
-  
+      
 }
 #endif
 
