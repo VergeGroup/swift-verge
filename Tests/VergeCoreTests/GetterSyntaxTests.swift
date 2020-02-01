@@ -20,11 +20,11 @@ final class GetterSyntaxTests: XCTestCase {
     var count: Int = 0
   }
   
-  private let storage = Storage<State>(.init())
+  private let store = Storage<State>(.init())
     
   func testGetterSyntax1() {
-    
-    let _ = storage.makeGetter {
+        
+    let _ = store.makeGetter {
       $0.preFilter(keySelector: \.title, comparer: .init(==))
         .map(\.title)
     }
@@ -35,15 +35,41 @@ final class GetterSyntaxTests: XCTestCase {
     
     /// Projects State object into `count` with **NO** filter.
     
-    let _ = storage.makeGetter {
+    let _ = store.makeGetter {
       $0.map(\.count)
     }
     
     /// Projects State object into `count` with filtering
     
-    let _ = storage.makeGetter {
+    let _ = store.makeGetter {
       $0.map(\.count)
         .postFilter(comparer: .init(==))
+    }
+    
+  }
+  
+  func testGetterSyntax3() {
+    
+    func pass(getter: Getter<Int>) {
+      
+    }
+    
+    let getter = store.makeGetter {
+      $0.map(\.count)
+    }
+    
+    pass(getter: getter)
+    
+  }
+  
+  func testGetterSubscribe() {
+    
+    let getter = store.makeGetter {
+      $0.map(\.count)
+    }
+    
+    getter.sink { (value) in
+      
     }
     
   }
