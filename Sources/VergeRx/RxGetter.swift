@@ -135,14 +135,14 @@ extension Reactive where Base : RxValueContainerType {
     return getter
   }
       
-  /// Dummy
+  /// Dummy for Xcode's code completion
   @available(*, deprecated, message: "Dummy method")
   public func makeGetter(_ make: (GetterBuilderMethodChain<Value>) -> Never) -> Never {
     fatalError()
   }
   
-  /// Dummy
-  @available(*, deprecated, message: "You need to call `map` more. This is Dummy method")
+  /// Dummy for Xcode's code completion
+  @available(*, deprecated, message: "You need to call `.map` more.")
   public func makeGetter<PreComparingKey>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderPreFilterMethodChain<Value, PreComparingKey>) -> Never {
     fatalError()
   }

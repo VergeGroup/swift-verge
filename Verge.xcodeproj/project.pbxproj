@@ -62,6 +62,7 @@
 		4B786324233912AB009B9C1B /* VergeStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B786322233912AB009B9C1B /* VergeStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B786327233912AB009B9C1B /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B786328233912AB009B9C1B /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B82CFD823E5760D00FBCB17 /* GetterSyntaxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B82CFD723E5760D00FBCB17 /* GetterSyntaxTests.swift */; };
 		4B86A48B1F969AD6002D54FE /* Verge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B86A4891F969AD6002D54FE /* Verge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B86A4921F969BF3002D54FE /* Verge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4911F969BF3002D54FE /* Verge.swift */; };
 		4B86A49A1F969C7D002D54FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4991F969C7D002D54FE /* AppDelegate.swift */; };
@@ -441,6 +442,7 @@
 		4B786322233912AB009B9C1B /* VergeStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeStore.h; sourceTree = "<group>"; };
 		4B786323233912AB009B9C1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B7F385123895B24000B9ACF /* VergeStore+Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VergeStore+Storage+Rx.swift"; sourceTree = "<group>"; };
+		4B82CFD723E5760D00FBCB17 /* GetterSyntaxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterSyntaxTests.swift; sourceTree = "<group>"; };
 		4B84F3B12388075500D8BC75 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		4B86A4861F969AD5002D54FE /* VergeClassic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeClassic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B86A4891F969AD6002D54FE /* Verge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Verge.h; sourceTree = "<group>"; };
@@ -1032,6 +1034,7 @@
 				4B4011C023C7831900C582BC /* GetterTests.swift */,
 				4B89538423CCE3B1002F95C8 /* FilterTests.swift */,
 				4BF470CE23CC3949001A1D5D /* CounterTests.swift */,
+				4B82CFD723E5760D00FBCB17 /* GetterSyntaxTests.swift */,
 			);
 			path = VergeCoreTests;
 			sourceTree = "<group>";
@@ -1904,6 +1907,7 @@
 				4B4011C123C7831900C582BC /* GetterTests.swift in Sources */,
 				4B39AE5623C5DC8D005F7BC8 /* CopyPerformance.swift in Sources */,
 				4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */,
+				4B82CFD823E5760D00FBCB17 /* GetterSyntaxTests.swift in Sources */,
 				4BF470D023CC394D001A1D5D /* CounterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -75,12 +75,16 @@ public struct GetterBuilderMethodChain<Input> {
   
   public init() {}
   
+  /// Adding a filter to getter to map only when the input object changed.
+  /// It may be better to use post-filter if it's almost the same as operations in map and pre-filter.
   public func preFilter<PreComparingKey>(
     _ preFilter: EqualityComputerBuilder<Input, PreComparingKey>
   ) -> GetterBuilderPreFilterMethodChain<Input, PreComparingKey> {
     .init(preFilter: preFilter)
   }
   
+  /// Adding a filter to getter to map only when the input object changed.
+  /// It may be better to use post-filter if it's almost the same as operations in map and pre-filter.
   public func preFilter<PreComparingKey>(
     keySelector: KeyPath<Input, PreComparingKey>,
     comparer: Comparer<PreComparingKey>
@@ -88,10 +92,24 @@ public struct GetterBuilderMethodChain<Input> {
     preFilter(.init(keySelector: keySelector, comparer: comparer))
   }
   
+  /// Adding a filter to getter to map only when the input object changed.
+  /// It may be better to use post-filter if it's almost the same as operations in map and pre-filter.
   public func preFilter(
     comparer: Comparer<Input>
   )-> GetterBuilderPreFilterMethodChain<Input, Input> {
     preFilter(keySelector: \.self, comparer: comparer)
+  }
+  
+  /// Projects input object into a new form.
+  public func map<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Input, Input, Output> {
+    preFilter(.noFilter)
+      .map(transform)
+  }
+  
+  /// Projects input object into a new form.
+  public func map<Output>(_ transform: KeyPath<Input, Output>) -> GetterBuilderTransformMethodChain<Input, Input, Output> {
+    preFilter(.noFilter)
+      .map(transform)
   }
   
 }
@@ -106,10 +124,12 @@ public struct GetterBuilderPreFilterMethodChain<Input, PreComparingKey> {
     self.preFilter = preFilter
   }
   
+  /// Projects input object into a new form.
   public func map<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Input, PreComparingKey, Output> {
     return .init(source: self, transform: transform)
   }
   
+  /// Projects input object into a new form.
   public func map<Output>(_ transform: KeyPath<Input, Output>) -> GetterBuilderTransformMethodChain<Input, PreComparingKey, Output> {
     return .init(source: self, transform: { $0[keyPath: transform] })
   }
@@ -128,12 +148,16 @@ public struct GetterBuilderTransformMethodChain<Input, PreComparingkey, Output> 
     self.transform = transform
   }
   
+  /// Adding a filter to getter to emit when mapped object changed only.
+  /// If the cost of map is expensive, it might be better to use pre-filter.
   public func postFilter<PostComparingKey>(
     _ postFilter: EqualityComputerBuilder<Output, PostComparingKey>
   ) -> GetterBuilderPostFilterMethodChain<Input, PreComparingkey, Output, PostComparingKey> {
     return .init(source: self, postFilter: postFilter)
   }
   
+  /// Adding a filter to getter to emit when mapped object changed only.
+  /// If the cost of map is expensive, it might be better to use pre-filter.
   public func postFilter<PostComparingKey>(
     keySelector: KeyPath<Output, PostComparingKey>,
     comparer: Comparer<PostComparingKey>
@@ -141,6 +165,8 @@ public struct GetterBuilderTransformMethodChain<Input, PreComparingkey, Output> 
     return postFilter(.init(keySelector: keySelector, comparer: comparer))
   }
   
+  /// Adding a filter to getter to emit when mapped object changed only.
+  /// If the cost of map is expensive, it might be better to use pre-filter.
   public func postFilter(
     comparer: Comparer<Output>
   )-> GetterBuilderPostFilterMethodChain<Input, PreComparingkey, Output, Output> {
