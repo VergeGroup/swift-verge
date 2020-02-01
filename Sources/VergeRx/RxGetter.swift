@@ -85,6 +85,7 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
   public func subscribe<Observer>(_ observer: Observer) -> Disposable where Observer : ObserverType, Element == Observer.Element {
     output
       .do(onDispose: {
+        withExtendedLifetime(self) {}
         vergeSignpostEvent("RxGetter.DisposedSubscription")
       })
       .subscribe(observer)

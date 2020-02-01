@@ -97,8 +97,9 @@ public class Getter<Output>: GetterBase<Output>, Publisher, ObservableObject {
   }
   
   public func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
-
-    output.receive(subscriber: subscriber)
+    output.handleEvents(receiveSubscription: { _ in
+      withExtendedLifetime(self) {}
+    }).receive(subscriber: subscriber)
   }
     
 }
