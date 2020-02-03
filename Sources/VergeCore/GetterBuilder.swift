@@ -103,6 +103,15 @@ public struct GetterBuilderMethodChain<Input> {
     changed(keySelector: \.self, comparer: comparer)
   }
   
+  /// Adding a filter to getter to map only when the input object changed.
+  ///
+  /// - Attention: Wheter to put `.map` before or after `.changed` should be considered according to the costs of `.map` and `.changed`.
+  public func changed(
+    _ equals: @escaping (Input, Input) -> Bool
+  )-> GetterBuilderPreFilterMethodChain<Input, Input> {
+    changed(comparer: .init(equals))
+  }
+  
   /// Projects input object into a new form.
   public func map<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Input, Input, Output> {
     changed(filter: .noFilter)

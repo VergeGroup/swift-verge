@@ -23,11 +23,12 @@ final class Session: ObservableObject {
   let store = SessionStore()
   private(set) lazy var sessionDispatcher = SessionDispatcher(target: store)
   
-  private(set) lazy var users = self.store.makeGetter(
-    filter: Filters.Historical.init(selector: { $0.db.entities.user }).asFunction(),
-    map: { state in
-      state.db.entities.user.find(in: state.db.indexes.userIDs)
-  })
+  private(set) lazy var users = self.store.makeGetter {
+    $0.changed(keySelector: \.db.entities.user, comparer: .init(==))
+      .map { state in
+        state.db.entities.user.find(in: state.db.indexes.userIDs)
+    }
+  }
   
   init() {
     
@@ -109,7 +110,7 @@ final class SessionDispatcher: SessionStore.Dispatcher {
         let pat = Entity.User(rawID: "pat", name: "Pat Torpey")
         let eric = Entity.User(rawID: "eric", name: "Eric Martin")
         
-        let results = context.user.insertsOrUpdates.insert([
+        let results = context.user.insert([
           paul,
           billy,
           pat,
@@ -128,7 +129,7 @@ final class SessionDispatcher: SessionStore.Dispatcher {
       let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.entityID)
       s.db.performBatchUpdates { (context) in
         
-        let postID = context.post.insertsOrUpdates.insert(post).entityID
+        let postID = context.post.insert(post).entityID
         context.indexes.postIDs.append(postID)
         
         context.indexes.postIDsAuthorGrouped.update(in: user.entityID) { (index) in
