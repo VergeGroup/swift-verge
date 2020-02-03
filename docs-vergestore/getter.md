@@ -5,7 +5,9 @@ description: Getting values from state tree with memoization(caching) to keep pe
 # 💫 Getter\(Selector\) and Memoization
 
 {% hint style="danger" %}
-Because Getter does provide the latest computed value and emits a new value. it's like a stream with buffer. Of course, the stream will need several operators. Verge stopped implementing this from scratch. Instead, using Combine or other Reactive Framework. Currently, Combine.framework is used as a standard implementation and RxSwift's support.
+Because Getter does provide the latest computed value and emits a new value. it's like a stream with buffer. Of course, the stream will need several operators. Verge stopped implementing this from scratch. Instead, using Combine or other Reactive Framework. 
+
+Currently, Combine.framework is used as a standard implementation and **RxSwift is also supported.**
 
 This is a huge dependency, but Reactive Framework would be official such as Combine.framework.
 {% endhint %}
@@ -40,7 +42,7 @@ let store = StoreBase<State, Never>(initialState: .init(), logger: nil)
 
 ```swift
 let getterSource: GetterSource<State, Int> = store.makeGetter {
-  // Why here is closure it would be touched later.
+  // Why here is closure would be touched later.
   $0.map(\.count)
 }
 ```
@@ -67,7 +69,7 @@ _As explained above, GetterSource has same interfaces as well._
 
 ### Subscribe the value
 
-Getter / GetterSource compatible **Publisher** of Combine.framework
+Getter / GetterSource is compatible with **Publisher** of Combine.framework
 
 ```swift
 getter.sink { (value) in
@@ -77,7 +79,7 @@ getter.sink { (value) in
 
 ## Memoization to keep performance
 
-Almost of Getter usages would be to project source object into a new form with **Map.**  
+Most of Getter usages would be to project source object into a new form with **Map.**  
   
 Basically, the operations in Map must be high-performance, to keep the good performance.  
 **However,** **sometimes it's impossible to create fast Map.**  
@@ -89,9 +91,9 @@ In that case, we can consider using Memoization.
 
 
 
-### Use Pre-Filter
+### Set condition before map
 
-Pre-filter can filter the object before passing the map function.
+**Using `changed`** **before `map`** can filter the object before passing the map function.
 
 ```swift
 store.makeGetter {
@@ -102,9 +104,9 @@ store.makeGetter {
 
 
 
-### Use Post-Filter
+### Set condition after map
 
-Post-filter can filter the object with the mapped object after the map function.
+**Using `changed`** **after `map`** can filter the object with the mapped object after the map function.
 
 ```swift
 store.makeGetter {
@@ -113,25 +115,43 @@ store.makeGetter {
 }
 ```
 
-## Create Getter from other Getter
-
-{% hint style="danger" %}
-Don't use operator that dispatches asynchronously, when we create new Getter from other Getter.
-
-Because, Publisher must emit value synchronously on subscribed to make Getter could provide current computed value whenever,.
+{% hint style="warning" %}
+Whether to put **.map** before or after **.changed** should be considered according to the costs of **.map** and **.changed**.
 {% endhint %}
 
+## Create Getter from other Getter
 
+✅
 
 ```swift
 let first = store.makeGetter { ... }
 
 let second = Getter {
-  // 🚨Don't use operator that dispatches asynchronously.
   first
     .map { ... } 
 }
 ```
+
+### ⚠️
+
+{% hint style="danger" %}
+Don't use operator that dispatches asynchronously, when we create new Getter from other Getter.
+
+To make Getter, it requires initial value when initializing itself.  
+Publisher must have the replayed value and must emit value synchronously when subscription started.
+{% endhint %}
+
+```swift
+let first = store.makeGetter { ... }
+
+let second = Getter {
+  first
+    .observeOn(...) // ❌ Don't use asynchronous operators.
+    .map { ... } 
+}
+```
+
+
 
 ## Combine getters
 
