@@ -35,6 +35,8 @@ public protocol DispatcherType {
 
 extension DispatcherType {
   
+  public typealias Context = ContextualDispatcher<Self, Scope>
+  
   /// Send activity
   /// - Parameter activity:
   public func send(_ activity: Activity) {
