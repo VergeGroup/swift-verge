@@ -32,7 +32,7 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
   
   private let disposeBag = DisposeBag()
   
-  public final override var value: Output {
+  public override var value: Output {
     try! output.value()
   }
       
