@@ -23,9 +23,7 @@ open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherTy
   
   public let metadata: DispatcherMetadata
     
-  public var scope: WritableKeyPath<State, Scope>
-          
-  public typealias Context = ContextualDispatcher<Self, Scope>
+  public var scope: WritableKeyPath<State, Scope>            
   
   public let target: StoreBase<State, Activity>
   

@@ -151,9 +151,6 @@
 		4BDBDFA623CE0DD100EEA112 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA523CE0DD100EEA112 /* RxSwift */; };
 		4BE9455423AD1B180060F977 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */; };
-		4BF2BCC8238A64C600F70CDA /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 4BF2BCC7238A64C600F70CDA /* RxCocoa */; };
-		4BF2BCCA238A64C600F70CDA /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 4BF2BCC9238A64C600F70CDA /* RxRelay */; };
-		4BF2BCCC238A64C600F70CDA /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4BF2BCCB238A64C600F70CDA /* RxSwift */; };
 		4BF2BCCE238A658400F70CDA /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */; };
 		4BF470CD23CC36E8001A1D5D /* FragmentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CC23CC36E8001A1D5D /* FragmentState.swift */; };
 		4BF470D023CC394D001A1D5D /* CounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CE23CC3949001A1D5D /* CounterTests.swift */; };
@@ -632,11 +629,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BF2BCCC238A64C600F70CDA /* RxSwift in Frameworks */,
 				4B3DC06F23A66840008A4627 /* VergeCore.framework in Frameworks */,
-				4BF2BCCA238A64C600F70CDA /* RxRelay in Frameworks */,
 				4B1743B323C767D90074C457 /* VergeRx.framework in Frameworks */,
-				4BF2BCC8238A64C600F70CDA /* RxCocoa in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1289,9 +1283,6 @@
 			);
 			name = VergeClassic;
 			packageProductDependencies = (
-				4BF2BCC7238A64C600F70CDA /* RxCocoa */,
-				4BF2BCC9238A64C600F70CDA /* RxRelay */,
-				4BF2BCCB238A64C600F70CDA /* RxSwift */,
 			);
 			productName = CycleViewModel;
 			productReference = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */;
@@ -3612,21 +3603,6 @@
 			productName = RxCocoa;
 		};
 		4BDBDFA523CE0DD100EEA112 /* RxSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxSwift;
-		};
-		4BF2BCC7238A64C600F70CDA /* RxCocoa */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxCocoa;
-		};
-		4BF2BCC9238A64C600F70CDA /* RxRelay */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxRelay;
-		};
-		4BF2BCCB238A64C600F70CDA /* RxSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxSwift;
