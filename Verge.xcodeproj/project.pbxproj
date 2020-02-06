@@ -235,6 +235,27 @@
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
 		};
+		4B7FBDA023ECB58400C2D8E6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
+			remoteInfo = VergeCore;
+		};
+		4B7FBDA223ECB58E00C2D8E6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B475BB1239AB954008A03E1;
+			remoteInfo = VergeORM;
+		};
+		4B7FBDA423ECB59400C2D8E6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
+			remoteInfo = VergeStore;
+		};
 		4B94913E239C25C600370067 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -1128,9 +1149,9 @@
 			buildRules = (
 			);
 			dependencies = (
-				4BDBDF9E23CE0D5E00EEA112 /* PBXTargetDependency */,
-				4BDBDFA023CE0D5E00EEA112 /* PBXTargetDependency */,
-				4BDBDFA223CE0D5E00EEA112 /* PBXTargetDependency */,
+				4B7FBDA523ECB59400C2D8E6 /* PBXTargetDependency */,
+				4B7FBDA323ECB58E00C2D8E6 /* PBXTargetDependency */,
+				4B7FBDA123ECB58400C2D8E6 /* PBXTargetDependency */,
 			);
 			name = VergeRx;
 			packageProductDependencies = (
@@ -1977,6 +1998,21 @@
 			target = 4B78631F233912AB009B9C1B /* VergeStore */;
 			targetProxy = 4B786325233912AB009B9C1B /* PBXContainerItemProxy */;
 		};
+		4B7FBDA123ECB58400C2D8E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
+			targetProxy = 4B7FBDA023ECB58400C2D8E6 /* PBXContainerItemProxy */;
+		};
+		4B7FBDA323ECB58E00C2D8E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B475BB1239AB954008A03E1 /* VergeORM */;
+			targetProxy = 4B7FBDA223ECB58E00C2D8E6 /* PBXContainerItemProxy */;
+		};
+		4B7FBDA523ECB59400C2D8E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B78631F233912AB009B9C1B /* VergeStore */;
+			targetProxy = 4B7FBDA423ECB59400C2D8E6 /* PBXContainerItemProxy */;
+		};
 		4B94913F239C25C600370067 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4B78631F233912AB009B9C1B /* VergeStore */;
@@ -2021,15 +2057,6 @@
 			isa = PBXTargetDependency;
 			target = 4B78631F233912AB009B9C1B /* VergeStore */;
 			targetProxy = 4BDBDF9A23CE0C8E00EEA112 /* PBXContainerItemProxy */;
-		};
-		4BDBDF9E23CE0D5E00EEA112 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-		};
-		4BDBDFA023CE0D5E00EEA112 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-		};
-		4BDBDFA223CE0D5E00EEA112 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
 		};
 		4BE9455623AD1B180060F977 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2108,6 +2135,7 @@
 		4B17439823C766D80074C457 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -2144,6 +2172,7 @@
 		4B17439923C766D80074C457 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -2222,6 +2251,7 @@
 		4B475BBB239AB954008A03E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -2257,6 +2287,7 @@
 		4B475BBC239AB954008A03E1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -2430,6 +2461,7 @@
 		4B67672E23D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -2466,6 +2498,7 @@
 		4B67672F23D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -2503,6 +2536,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -2540,6 +2574,7 @@
 		4B67673123D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -2576,6 +2611,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -2847,6 +2883,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -2885,6 +2922,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -3039,6 +3077,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -3071,6 +3110,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -3329,6 +3369,7 @@
 		4BFA22A523A63B56008D7BCB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -3365,6 +3406,7 @@
 		4BFA22A623A63B56008D7BCB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;

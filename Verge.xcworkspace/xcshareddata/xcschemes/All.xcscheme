@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1130"
-   version = "1.7">
+   version = "2.1">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -68,55 +68,9 @@
             buildForProfiling = "NO"
             buildForArchiving = "NO"
             buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B475BC4239ADE1C008A03E1"
-               BuildableName = "VergeORMTests.xctest"
-               BlueprintName = "VergeORMTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B68394323705ACD002FFC5A"
-               BuildableName = "VergeStoreTests.xctest"
-               BlueprintName = "VergeStoreTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4BE9454E23AD1B180060F977"
-               BuildableName = "VergeCoreTests.xctest"
-               BlueprintName = "VergeCoreTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B1743A623C767670074C457"
-               BuildableName = "VergeRxTests.xctest"
-               BlueprintName = "VergeRxTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
+            <TestPlanReference
+               reference = "container:All.xctestplan">
+            </TestPlanReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
@@ -131,53 +85,6 @@
             default = "YES">
          </TestPlanReference>
       </TestPlans>
-      <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B475BC4239ADE1C008A03E1"
-               BuildableName = "VergeORMTests.xctest"
-               BlueprintName = "VergeORMTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B68394323705ACD002FFC5A"
-               BuildableName = "VergeStoreTests.xctest"
-               BlueprintName = "VergeStoreTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4BE9454E23AD1B180060F977"
-               BuildableName = "VergeCoreTests.xctest"
-               BlueprintName = "VergeCoreTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "GetterTests/testChain()">
-               </Test>
-            </SkippedTests>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B1743A623C767670074C457"
-               BuildableName = "VergeRxTests.xctest"
-               BlueprintName = "VergeRxTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

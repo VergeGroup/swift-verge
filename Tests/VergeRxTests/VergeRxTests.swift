@@ -8,6 +8,8 @@
 
 import XCTest
 
+import VergeRx
+
 class VergeRxTests: XCTestCase {
 
     override func setUp() {
