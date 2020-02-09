@@ -119,6 +119,8 @@ extension DispatcherType {
       actionMetadata: meta
     )
     
+    target.logger?.didDispatch(store: target, state: target.state, action: meta, context: context)
+    
     return try action(context)
         
   }
@@ -147,6 +149,8 @@ extension DispatcherType {
       dispatcher: self,
       actionMetadata: meta
     )
+    
+    target.logger?.didDispatch(store: target, state: target.state, action: meta, context: context)
     
     return try action(context)
     
