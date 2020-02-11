@@ -4,7 +4,7 @@ description: >-
   SwiftUI
 ---
 
-# Verge - Flux pattern library for SwiftUI and UIKit on iOS Applications
+# Verge - Flux and ORM for creating iOS App with SwiftUI and UIKit
 
 
 

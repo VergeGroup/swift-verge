@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Verge - Flux pattern library for SwiftUI and UIKit on iOS Applications](README.md)
+* [Verge - Flux and ORM for creating iOS App with SwiftUI and UIKit](README.md)
 * [Installation](installation.md)
 * [Gallery](gallery.md)
 * [About VergeClassic](about-vergeclassic.md)
