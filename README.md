@@ -140,7 +140,7 @@ struct MyView: View {
 
 Of course Verge supports UIKit based application.
 
-## Normalizing State Shape
+## ORM module to normalize State Shape
 
 Most important thing in using state-tree is **Normalization.**
 
@@ -148,9 +148,17 @@ Most important thing in using state-tree is **Normalization.**
 
 {% embed url="https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/" %}
 
-### Verge supports ORM
-
 {% page-ref page="docs-verge-orm/core-concepts.md" %}
+
+### 
+
+### Logging
+
+![Using Logger](.gitbook/assets/image%20%282%29.png)
+
+{% page-ref page="docs-vergestore/logging.md" %}
+
+
 
 
 

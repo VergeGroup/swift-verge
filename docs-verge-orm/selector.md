@@ -41,5 +41,5 @@ getter.addDidUpdate { (entity) in
 
 VergeORM supports create MemoizeSelector from Storage or Store.
 
-{% page-ref page="../docs-vergestore/memoization.md" %}
+{% page-ref page="../docs-vergestore/getter.md" %}
 
