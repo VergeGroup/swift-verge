@@ -83,7 +83,7 @@ struct SessionState: StateType {
     struct Indexes: IndexesType {
       let userIDs = IndexKey<OrderedIDIndex<Schema, Entity.User>>()
       let postIDs = IndexKey<OrderedIDIndex<Schema, Entity.Post>>()
-      let postIDsAuthorGrouped = IndexKey<GroupByIndex<Schema, Entity.User, Entity.Post>>()
+      let postIDsAuthorGrouped = IndexKey<GroupByEntityIndex<Schema, Entity.User, Entity.Post>>()
     }
        
     var _backingStorage: BackingStorage = .init()

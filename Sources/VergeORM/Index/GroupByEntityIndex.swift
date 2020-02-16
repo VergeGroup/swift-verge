@@ -21,13 +21,24 @@
 
 import Foundation
 
-public struct GroupByIndex<
+@available(*, deprecated, renamed: "GroupByEntityIndex")
+public typealias GroupByIndex<
+  Schema: EntitySchemaType,
+  GroupEntity: EntityType,
+  GroupedEntity: EntityType
+  > = GroupByEntityIndex<
+  Schema,
+  GroupEntity,
+  GroupedEntity
+>
+
+public struct GroupByEntityIndex<
   Schema: EntitySchemaType,
   GroupEntity: EntityType,
   GroupedEntity: EntityType
 >: IndexType {
   
-  private var backing: [AnyHashable : OrderedIDIndex<Schema, GroupedEntity>] = [:]
+  private var backing: [GroupEntity.EntityID : OrderedIDIndex<Schema, GroupedEntity>] = [:]
   
   public init() {
     
@@ -40,7 +51,7 @@ public struct GroupByIndex<
   }
   
   public func groups() -> Set<GroupEntity.EntityID> {
-    Set(backing.keys.map { $0 as! GroupEntity.EntityID })
+    Set(backing.keys)
   }
   
   public func orderedID(in groupEntityID: GroupEntity.EntityID) -> OrderedIDIndex<Schema, GroupedEntity> {
@@ -48,7 +59,11 @@ public struct GroupByIndex<
   }
   
   // MARK: - Mutating
-  
+    
+  /// Internal method
+  /// - Parameters:
+  ///   - removing: a set of entity id that will be removed from store
+  ///   - entityName: the entity name of removing
   public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityName) {
     
     if GroupEntity.entityName == entityName {
