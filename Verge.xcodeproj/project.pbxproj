@@ -63,6 +63,9 @@
 		4B786327233912AB009B9C1B /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B786328233912AB009B9C1B /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B80B74323F92B3D000BCFB2 /* HashIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B80B74223F92B3D000BCFB2 /* HashIndexTests.swift */; };
+		4B80B74523F934AF000BCFB2 /* SetIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B80B74423F934AF000BCFB2 /* SetIndex.swift */; };
+		4B80B74723F947A2000BCFB2 /* SetIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B80B74623F947A2000BCFB2 /* SetIndexTests.swift */; };
+		4B80B74923F953F9000BCFB2 /* GroupByKeyIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B80B74823F953F9000BCFB2 /* GroupByKeyIndex.swift */; };
 		4B82CFD823E5760D00FBCB17 /* GetterSyntaxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B82CFD723E5760D00FBCB17 /* GetterSyntaxTests.swift */; };
 		4B86A48B1F969AD6002D54FE /* Verge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B86A4891F969AD6002D54FE /* Verge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B86A4921F969BF3002D54FE /* Verge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4911F969BF3002D54FE /* Verge.swift */; };
@@ -462,6 +465,9 @@
 		4B786323233912AB009B9C1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B7F385123895B24000B9ACF /* VergeStore+Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VergeStore+Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B80B74223F92B3D000BCFB2 /* HashIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashIndexTests.swift; sourceTree = "<group>"; };
+		4B80B74423F934AF000BCFB2 /* SetIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetIndex.swift; sourceTree = "<group>"; };
+		4B80B74623F947A2000BCFB2 /* SetIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetIndexTests.swift; sourceTree = "<group>"; };
+		4B80B74823F953F9000BCFB2 /* GroupByKeyIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupByKeyIndex.swift; sourceTree = "<group>"; };
 		4B82CFD723E5760D00FBCB17 /* GetterSyntaxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterSyntaxTests.swift; sourceTree = "<group>"; };
 		4B84F3B12388075500D8BC75 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		4B86A4861F969AD5002D54FE /* VergeClassic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeClassic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -716,8 +722,10 @@
 			children = (
 				4B6E360F23A7ED1900EB490C /* IndexType.swift */,
 				4BC6EFAE23A8BF7800EFD688 /* OrderedIDIndex.swift */,
+				4B80B74423F934AF000BCFB2 /* SetIndex.swift */,
 				4B07360123AA35F800866430 /* HashIndex.swift */,
 				4BC6EFB023A8BFAF00EFD688 /* GroupByEntityIndex.swift */,
+				4B80B74823F953F9000BCFB2 /* GroupByKeyIndex.swift */,
 			);
 			path = Index;
 			sourceTree = "<group>";
@@ -784,6 +792,7 @@
 				4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */,
 				4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */,
 				4B80B74223F92B3D000BCFB2 /* HashIndexTests.swift */,
+				4B80B74623F947A2000BCFB2 /* SetIndexTests.swift */,
 				4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */,
 				4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */,
 				4B475BC9239ADE1C008A03E1 /* Info.plist */,
@@ -1776,11 +1785,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B80B74923F953F9000BCFB2 /* GroupByKeyIndex.swift in Sources */,
 				4B07360223AA35F900866430 /* HashIndex.swift in Sources */,
 				4BC6EFB123A8BFAF00EFD688 /* GroupByEntityIndex.swift in Sources */,
 				4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */,
 				4B6E361023A7ED1900EB490C /* IndexType.swift in Sources */,
 				4BFA22BB23A64289008D7BCB /* Storage+Getter.swift in Sources */,
+				4B80B74523F934AF000BCFB2 /* SetIndex.swift in Sources */,
 				4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */,
 				4B475BC0239AB983008A03E1 /* DatabaseBatchUpdatesContext.swift in Sources */,
 				4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */,
@@ -1799,6 +1810,7 @@
 				4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */,
 				4BD6850523C82E6C00D8A620 /* ORMGetterTests.swift in Sources */,
 				4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */,
+				4B80B74723F947A2000BCFB2 /* SetIndexTests.swift in Sources */,
 				4BC6EFB523A8C99900EFD688 /* State.swift in Sources */,
 				4B80B74323F92B3D000BCFB2 /* HashIndexTests.swift in Sources */,
 				4B6BF62B23AD7B74001E5361 /* CollectionPerformance.swift in Sources */,
