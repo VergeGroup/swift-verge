@@ -36,7 +36,7 @@ public struct GroupByEntityIndex<
   Schema: EntitySchemaType,
   GroupEntity: EntityType,
   GroupedEntity: EntityType
->: IndexType {
+>: IndexType, Equatable {
   
   private var backing: [GroupEntity.EntityID : OrderedIDIndex<Schema, GroupedEntity>] = [:]
   

@@ -25,7 +25,7 @@ public struct GroupByKeyIndex<
   Schema: EntitySchemaType,
   GroupingKey: Hashable,
   GroupedEntity: EntityType
->: IndexType {
+>: IndexType, Equatable {
   
   private var backing: [GroupingKey : OrderedIDIndex<Schema, GroupedEntity>] = [:]
   

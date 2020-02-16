@@ -188,13 +188,13 @@ public struct GetterBuilderPreFilterMethodChain<Input, PreComparingKey> {
   }
 }
 
-public struct GetterBuilderTransformMethodChain<Input, PreComparingkey, Output> {
+public struct GetterBuilderTransformMethodChain<Input, PreComparingKey, Output> {
   
-  let preFilterFragment: GetterBuilderPreFilterMethodChain<Input, PreComparingkey>
+  let preFilterFragment: GetterBuilderPreFilterMethodChain<Input, PreComparingKey>
   let transform: (Input) -> Output
   
   init(
-    source: GetterBuilderPreFilterMethodChain<Input, PreComparingkey>,
+    source: GetterBuilderPreFilterMethodChain<Input, PreComparingKey>,
     transform: @escaping (Input) -> Output
   ) {
     self.preFilterFragment = source
@@ -205,7 +205,7 @@ public struct GetterBuilderTransformMethodChain<Input, PreComparingkey, Output> 
   /// If the cost of map is expensive, it might be better to use `.changed` before `.map`
   public func changed<PostComparingKey>(
     filter: EqualityComputerBuilder<Output, PostComparingKey>
-  ) -> GetterBuilderPostFilterMethodChain<Input, PreComparingkey, Output, PostComparingKey> {
+  ) -> GetterBuilderPostFilterMethodChain<Input, PreComparingKey, Output, PostComparingKey> {
     return .init(source: self, postFilter: filter)
   }
   
@@ -214,7 +214,7 @@ public struct GetterBuilderTransformMethodChain<Input, PreComparingkey, Output> 
   public func changed<PostComparingKey>(
     keySelector: KeyPath<Output, PostComparingKey>,
     comparer: Comparer<PostComparingKey>
-  )-> GetterBuilderPostFilterMethodChain<Input, PreComparingkey, Output, PostComparingKey> {
+  )-> GetterBuilderPostFilterMethodChain<Input, PreComparingKey, Output, PostComparingKey> {
     return changed(filter: .init(keySelector: keySelector, comparer: comparer))
   }
   
@@ -222,7 +222,7 @@ public struct GetterBuilderTransformMethodChain<Input, PreComparingkey, Output> 
   /// If the cost of map is expensive, it might be better to use `.changed` before `.map`
   public func changed(
     comparer: Comparer<Output>
-  )-> GetterBuilderPostFilterMethodChain<Input, PreComparingkey, Output, Output> {
+  )-> GetterBuilderPostFilterMethodChain<Input, PreComparingKey, Output, Output> {
     return changed(filter: .init(keySelector: \.self, comparer: comparer))
   }
   
@@ -230,7 +230,7 @@ public struct GetterBuilderTransformMethodChain<Input, PreComparingkey, Output> 
   /// If the cost of map is expensive, it might be better to use pre-filter.
   public func changed(
     _ equals: @escaping (Output, Output) -> Bool
-  )-> GetterBuilderPostFilterMethodChain<Input, PreComparingkey, Output, Output> {
+  )-> GetterBuilderPostFilterMethodChain<Input, PreComparingKey, Output, Output> {
     return changed(filter: .init(keySelector: \.self, comparer: .init(equals)))
   }
   
@@ -239,7 +239,7 @@ public struct GetterBuilderTransformMethodChain<Input, PreComparingkey, Output> 
 extension GetterBuilderTransformMethodChain where Output : Equatable {
   
   /// Publishes only elements that don’t match the previous element.
-  public func changed()-> GetterBuilderPostFilterMethodChain<Input, PreComparingkey, Output, Output> {
+  public func changed()-> GetterBuilderPostFilterMethodChain<Input, PreComparingKey, Output, Output> {
     return changed(filter: .init(keySelector: \.self, comparer: .init(==)))
   }
 }
