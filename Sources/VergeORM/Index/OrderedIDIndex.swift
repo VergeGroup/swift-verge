@@ -25,7 +25,9 @@ import Foundation
 public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: IndexType, Equatable {
   
   // FIXME: To be faster filter, use BTree
-  private var backing: [Entity.EntityID] = []
+  // To reduce cost of casting, use AnyHashable in _apply
+  // If use [Entity.EntityID], .contains() will be expensive.
+  private var backing: [AnyHashable] = []
   
   public init() {
   }
@@ -51,11 +53,11 @@ extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplac
   }
   
   public subscript(position: Int) -> Entity.EntityID {
-    _read {
-      yield backing[position]
+    get {
+      backing[position] as! Entity.EntityID
     }
-    _modify {
-      yield &backing[position]
+    set {
+      backing[position] = newValue as AnyHashable
     }
   }
   
