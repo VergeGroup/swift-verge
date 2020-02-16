@@ -125,15 +125,17 @@ final class SessionDispatcher: SessionStore.Dispatcher {
   }
   
   func submitNewPost(title: String, from user: Entity.User) {
-    commit { (s) in
-      let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.entityID)
-      s.db.performBatchUpdates { (context) in
-        
-        let postID = context.post.insert(post).entityID
-        context.indexes.postIDs.append(postID)
-        
-        context.indexes.postIDsAuthorGrouped.update(in: user.entityID) { (index) in
-          index.append(postID)
+    dispatch { c in
+      c.commit { (s) in
+        let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.entityID)
+        s.db.performBatchUpdates { (context) in
+          
+          let postID = context.post.insert(post).entityID
+          context.indexes.postIDs.append(postID)
+          
+          context.indexes.postIDsAuthorGrouped.update(in: user.entityID) { (index) in
+            index.append(postID)
+          }
         }
       }
     }
