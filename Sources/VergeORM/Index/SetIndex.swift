@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019 muukii
+// Copyright (c) 2020 muukii
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +22,14 @@
 import Foundation
 
 /// Ordered Collection based index storage
-public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: IndexType, Equatable {
+public struct SetIndex<Schema: EntitySchemaType, Entity: EntityType>: IndexType, Equatable {
+  
+  public typealias Element = Entity.EntityID
   
   // FIXME: To be faster filter, use BTree
   // To reduce cost of casting, use AnyHashable in _apply
   // If use [Entity.EntityID], .contains() will be expensive.
-  private var backing: [AnyHashable] = []
+  @usableFromInline var backing: Set<AnyHashable> = .init()
   
   public init() {
   }
@@ -35,38 +37,50 @@ public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: Inde
   public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityName) {
     
     if Entity.entityName == entityName, !removing.isEmpty {
-      backing.removeAll { removing.contains($0) }
+      backing.subtract(removing)
     }
-
+        
   }
-     
+  
 }
 
-extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplaceableCollection {
+extension SetIndex {
   
-  public typealias Element = Entity.EntityID
-  public typealias Index = Int
-  public typealias SubSequence = ArraySlice<Entity.EntityID>
-  
-  public mutating func append(_ newElement: __owned Entity.EntityID) {
-    backing.append(newElement)
+  @inlinable public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element] {
+    try backing.sorted(by: {
+      try areInIncreasingOrder($0 as! Element, $1 as! Element)
+    }) as! [Element]
   }
   
-  public subscript(position: Int) -> Entity.EntityID {
-    get {
-      backing[position] as! Entity.EntityID
-    }
-    set {
-      backing[position] = newValue as AnyHashable
+  @inlinable public func map<T>(_ transform: (Element) throws -> T) rethrows -> [T] {
+    try backing.map {
+      try transform($0 as! Element)
     }
   }
   
-  public var startIndex: Int {
-    backing.startIndex
+  @inlinable public func compactMap<ElementOfResult>(_ transform: (Element) throws -> ElementOfResult?) rethrows -> [ElementOfResult] {
+    try backing.compactMap {
+      try transform($0 as! Element)
+    }
   }
   
-  public var endIndex: Int {
-    backing.endIndex
+  @inlinable public mutating func insert(_ newMember: Element) -> (inserted: Bool, memberAfterInsert: Element) {
+    backing.insert(newMember)
   }
   
+  @inlinable public mutating func remove(_ member: Element) -> Element? {
+    backing.remove(member)
+  }
+  
+  @inlinable public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
+    backing.removeAll(keepingCapacity: keepCapacity)
+  }
+  
+  @inlinable public mutating func subtract(_ other: Set<Element>) {
+    backing.subtract(other)
+  }
+  
+  @inlinable public mutating func formUnion<S>(_ other: S) where Element == S.Element, S : Sequence {
+    backing.formUnion(Set(other) as Set<AnyHashable>)
+  }
 }

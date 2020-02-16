@@ -21,7 +21,8 @@
 
 import Foundation
 
-fileprivate struct Wrapper<Schema: EntitySchemaType> {
+/// A wrapper container to erase type of Index
+fileprivate struct IndexWrapper<Schema: EntitySchemaType> {
   
   var base: Any
   private let _apply: (Any, _ removing: Set<AnyHashable>, _ entityName: EntityName) -> Any
@@ -49,13 +50,13 @@ public struct IndexesStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
   
   private let indexed = Indexes()
   
-  private var backing: [Key : Wrapper<Schema>] = [:]
+  private var backing: [Key : IndexWrapper<Schema>] = [:]
   
   init() {
     
   }
   
-  private init(backing: [Key : Wrapper<Schema>]) {
+  private init(backing: [Key : IndexWrapper<Schema>]) {
     self.backing = backing
   }
   
@@ -92,20 +93,28 @@ extension IndexesStorage {
   }
 }
 
+/// A protocol IndexContainer must be implemented
 public protocol IndexType {
   
   typealias Key = IndexKey<Self>
   
   associatedtype Schema : EntitySchemaType
   
+  /// To ORM create Index container
   init()
-    
+      
+  /// Internal method
+  /// - Parameters:
+  ///   - removing: a set of entity id that will be removed from store
+  ///   - entityName: the entity name of removing
+  ///
+  /// You can do this `removing.first as? YourEntity.EntityID`
   mutating func _apply(removing: Set<AnyHashable>, entityName: EntityName)
 }
 
 extension IndexType {
 
-  fileprivate func wrapped() -> Wrapper<Schema> {
+  fileprivate func wrapped() -> IndexWrapper<Schema> {
     return .init(
       base: self,
       apply: { (base: Self, removing: Set<AnyHashable>, entityName: EntityName) in

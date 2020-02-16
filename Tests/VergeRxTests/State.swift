@@ -50,7 +50,7 @@ struct RootState: DatabaseEmbedding {
     
     struct Indexes: IndexesType {
       let allBooks = OrderedIDIndex<Schema, Book>.Key()
-      let authorGroupedBook = GroupByIndex<Schema, Author, Book>.Key()
+      let authorGroupedBook = GroupByEntityIndex<Schema, Author, Book>.Key()
       let bookMiddleware = OrderedIDIndex<Schema, Author>.Key()
     }
     
