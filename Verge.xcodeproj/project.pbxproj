@@ -75,7 +75,7 @@
 		4B86A4A11F969C7D002D54FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A01F969C7D002D54FE /* Assets.xcassets */; };
 		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
 		4B89538523CCE3B1002F95C8 /* FilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B89538423CCE3B1002F95C8 /* FilterTests.swift */; };
-		4B8EB4F923C034A900035B2A /* Comparers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8EB4F823C034A900035B2A /* Comparers.swift */; };
+		4B8EB4F923C034A900035B2A /* Comparer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8EB4F823C034A900035B2A /* Comparer.swift */; };
 		4B94913C239C25C600370067 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B94913D239C25C600370067 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B949141239C25CA00370067 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
@@ -482,7 +482,7 @@
 		4B86A4A31F969C7D002D54FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4B86A4A51F969C7D002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B89538423CCE3B1002F95C8 /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTests.swift; sourceTree = "<group>"; };
-		4B8EB4F823C034A900035B2A /* Comparers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparers.swift; sourceTree = "<group>"; };
+		4B8EB4F823C034A900035B2A /* Comparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparer.swift; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B949146239C264D00370067 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -1084,7 +1084,7 @@
 				4BFA229E23A63B56008D7BCB /* VergeCore.h */,
 				4BA3E1A423C359F40095629B /* Signpost.swift */,
 				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
-				4B8EB4F823C034A900035B2A /* Comparers.swift */,
+				4B8EB4F823C034A900035B2A /* Comparer.swift */,
 				4BA8DB3523E36465001CDADA /* EqualityComputer.swift */,
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
 				4B4011BE23C77CEC00C582BC /* Getter.swift */,
@@ -1950,7 +1950,7 @@
 				4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */,
 				4B54517023CCC7E700770E61 /* GetterBuilder.swift in Sources */,
 				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
-				4B8EB4F923C034A900035B2A /* Comparers.swift in Sources */,
+				4B8EB4F923C034A900035B2A /* Comparer.swift in Sources */,
 				4B4011BF23C77CEC00C582BC /* Getter.swift in Sources */,
 				4BA8DB3623E36465001CDADA /* EqualityComputer.swift in Sources */,
 				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,

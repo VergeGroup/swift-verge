@@ -58,15 +58,11 @@ extension Comparer where Input : DatabaseType {
   }
   
   public static func tableUpdated<E: EntityType>(_ entityType: E.Type) -> Self {
-    return .init { pre, new in
-      pre._backingStorage.entityBackingStorage.table(E.self).updatedMarker == new._backingStorage.entityBackingStorage.table(E.self).updatedMarker
-    }
+    return .init(selector: { $0._backingStorage.entityBackingStorage.table(E.self).updatedMarker })
   }
   
   public static func entityUpdated<E: EntityType & Equatable>(_ entityID: E.EntityID) -> Self {
-    return .init { pre, new in
-      pre.entities.table(E.self).find(by: entityID) == new.entities.table(E.self).find(by: entityID)
-    }
+    return .init(selector: { $0.entities.table(E.self).find(by: entityID) })
   }
   
   public static func changesContains<E: EntityType>(_ entityID: E.EntityID) -> Self {
@@ -106,7 +102,16 @@ fileprivate final class _GetterCache {
 }
 
 extension GetterBuilder where Input : DatabaseEmbedding {
-  
+    
+  /// Factory of the getter for querying entity from database
+  ///
+  /// This method already contains pre-filter to keep performant.
+  /// update closure would run only when database changed.
+  ///
+  /// - Parameters:
+  ///   - update:
+  ///   - andFilter:
+  /// - Returns:
   public static func makeEntityGetter<Output>(
     update: @escaping (Input.Database) -> Output,
     andFilter: Comparer<Input.Database>?
@@ -134,6 +139,11 @@ extension GetterBuilder where Input : DatabaseEmbedding {
     
   }
   
+  /// Factory of the getter for querying entity from database
+  ///
+  /// This method already contains pre-filter to keep performant.
+  /// update closure would run only when database changed.
+  ///
   public static func makeEntityGetter<E: EntityType>(
     from entityID: E.EntityID,
     andFilter: Comparer<Input.Database>?
@@ -153,6 +163,11 @@ extension GetterBuilder where Input : DatabaseEmbedding {
         
   }
   
+  /// Factory of the getter for querying entity from database
+  ///
+  /// This method already contains pre-filter to keep performant.
+  /// update closure would run only when database changed.
+  ///
   public static func makeNonNullEntityGetter<E: EntityType>(
     from entity: E,
     andFilter: Comparer<Input.Database>?

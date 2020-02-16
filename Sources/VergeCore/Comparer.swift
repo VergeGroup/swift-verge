@@ -28,7 +28,17 @@ public struct Comparer<Input> {
   public init(_ equals: @escaping (Input, Input) -> Bool) {
     self.equals = equals
   }
-  
+    
+  /// It compares the value selected from passed selector closure
+  /// - Parameter selector:
+  public init<T: Equatable>(selector: @escaping (Input) -> T) {
+    self.equals = { a, b in
+      selector(a) == selector(b)
+    }
+  }
+    
+  /// Make Combined comparer
+  /// - Parameter comparers:
   public init(and comparers: [Comparer<Input>]) {
     self.equals = { pre, new in
       for filter in comparers {
@@ -40,6 +50,8 @@ public struct Comparer<Input> {
     }
   }
   
+  /// Make Combined comparer
+  /// - Parameter comparers:
   public init(or comparers: [Comparer<Input>]) {
     self.equals = { pre, new in
       for filter in comparers {
