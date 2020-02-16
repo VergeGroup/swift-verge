@@ -61,6 +61,10 @@ extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplac
     }
   }
   
+  public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
+    backing.removeAll(keepingCapacity: keepCapacity)
+  }
+  
   public var startIndex: Int {
     backing.startIndex
   }

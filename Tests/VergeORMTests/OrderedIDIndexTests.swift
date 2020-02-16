@@ -88,4 +88,13 @@ class OrderedIDIndexTests: XCTestCase {
     )
     
   }
+  
+  func testRemoveAll() {
+    
+    state.db.performBatchUpdates { (context) -> Void in
+      
+      context.indexes.allBooks.removeAll(keepingCapacity: true)
+    }
+    
+  }
 }
