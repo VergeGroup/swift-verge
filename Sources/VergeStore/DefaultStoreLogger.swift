@@ -43,7 +43,7 @@ public final class DefaultStoreLogger: StoreLogger {
   }
   
   private static func makeJSON(from data: [String : Any]) -> String {
-    if #available(iOS 11.0, *) {
+    if #available(iOS 11.0, macOS 10.13, *) {
       return String(data: try! JSONSerialization.data(withJSONObject: data, options: [.prettyPrinted, .fragmentsAllowed, .sortedKeys]), encoding: .utf8)!
     } else {
       return String(data: try! JSONSerialization.data(withJSONObject: data, options: [.prettyPrinted, .fragmentsAllowed]), encoding: .utf8)!
