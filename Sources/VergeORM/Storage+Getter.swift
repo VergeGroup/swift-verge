@@ -58,7 +58,7 @@ extension Comparer where Input : DatabaseType {
   }
   
   public static func tableUpdated<E: EntityType>(_ entityType: E.Type) -> Self {
-    return .init(selector: { $0._backingStorage.entityBackingStorage.table(E.self).updatedMarker })
+    Comparer.init(selector: { $0._backingStorage.entityBackingStorage.table(E.self).updatedMarker })
   }
   
   public static func entityUpdated<E: EntityType & Equatable>(_ entityID: E.EntityID) -> Self {
@@ -110,18 +110,18 @@ extension GetterBuilder where Input : DatabaseEmbedding {
   ///
   /// - Parameters:
   ///   - update:
-  ///   - andFilter:
+  ///   - filter:
   /// - Returns:
   public static func makeEntityGetter<Output>(
     update: @escaping (Input.Database) -> Output,
-    andFilter: Comparer<Input.Database>?
+    filter: Comparer<Input.Database>?
   ) -> GetterBuilder<Input, Input.Database, Output, Output> {
     
     let path = Input.getterToDatabase
     
     let filter = Comparer<Input.Database>.init(or: [
       .databaseUpdated(),
-      andFilter
+      filter,
       ].compactMap { $0 })
     
     return .make(
@@ -146,17 +146,17 @@ extension GetterBuilder where Input : DatabaseEmbedding {
   ///
   public static func makeEntityGetter<E: EntityType>(
     from entityID: E.EntityID,
-    andFilter: Comparer<Input.Database>?
+    filter: Comparer<Input.Database>?
   ) -> GetterBuilder<Input, Input.Database, E?, E?> {
     
     return makeEntityGetter(
       update: { db in
         db.entities.table(E.self).find(by: entityID)
     },
-      andFilter: .init(or: [
+      filter: .init(or: [
         .tableUpdated(E.self),
         .changesContains(entityID),
-        andFilter
+        filter
         ].compactMap { $0 }
       )
     )
@@ -170,7 +170,7 @@ extension GetterBuilder where Input : DatabaseEmbedding {
   ///
   public static func makeNonNullEntityGetter<E: EntityType>(
     from entity: E,
-    andFilter: Comparer<Input.Database>?
+    filter: Comparer<Input.Database>?
   ) -> GetterBuilder<Input, Input.Database, E, E> {
     
     var box = entity
@@ -184,10 +184,10 @@ extension GetterBuilder where Input : DatabaseEmbedding {
         }
         return box
     },
-      andFilter: Comparer.init(or: [
+      filter: Comparer.init(or: [
         .tableUpdated(E.self),
         .changesContains(entityID),
-        andFilter
+        filter
         ].compactMap { $0 }
       )
     )
@@ -222,29 +222,29 @@ extension ValueContainerType where Value : DatabaseEmbedding {
   ///
   /// - Parameters:
   ///   - update: Updating output value each Input value updated.
-  ///   - andFilter: Check to necessory of needs to update to reduce number of updating.
+  ///   - filter: Check to necessory of needs to update to reduce number of updating.
   public func makeEntityGetter<Output>(
     update: @escaping (Value.Database) -> Output,
-    andFilter: Comparer<Value.Database>?
+    filter: Comparer<Value.Database>?
   ) -> GetterSource<Value, Output> {
       
-    return makeGetter(from: .makeEntityGetter(update: update, andFilter: andFilter))
+    return makeGetter(from: .makeEntityGetter(update: update, filter: filter))
   }
   
   public func makeEntityGetter<E: EntityType>(
     from entityID: E.EntityID,
-    andFilter: Comparer<Value.Database>?
+    filter: Comparer<Value.Database>?
   ) -> GetterSource<Value, E?> {
     
-    return makeGetter(from: .makeEntityGetter(from: entityID, andFilter: andFilter))
+    return makeGetter(from: .makeEntityGetter(from: entityID, filter: filter))
   }
   
   public func makeNonNullEntityGetter<E: EntityType>(
     from entity: E,
-    andFilter: Comparer<Value.Database>?
+    filter: Comparer<Value.Database>?
   ) -> GetterSource<Value, E> {
     
-    return makeGetter(from: .makeNonNullEntityGetter(from: entity, andFilter: andFilter))
+    return makeGetter(from: .makeNonNullEntityGetter(from: entity, filter: filter))
   }
   
   // MARK: -
@@ -258,7 +258,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     let _cache = cache
     
     guard let makeGetter = _cache.getter(entityID: entityID) as? GetterSource<Value, E?> else {
-      let newGetter = makeEntityGetter(from: entityID, andFilter: nil)
+      let newGetter = makeEntityGetter(from: entityID, filter: nil)
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -274,7 +274,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     let _cache = cache
     
     guard let makeGetter = _cache.getter(entityID: entityID) as? GetterSource<Value, E?> else {
-      let newGetter = makeEntityGetter(from: entityID, andFilter: Comparer.entityUpdated(entityID))
+      let newGetter = makeEntityGetter(from: entityID, filter: Comparer.entityUpdated(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -290,7 +290,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
     guard let makeGetter = _cache.getter(entityID: entity.entityID) as? GetterSource<Value, E> else {
       let entityID = entity.entityID
-      let newGetter = makeNonNullEntityGetter(from: entity, andFilter: nil)
+      let newGetter = makeNonNullEntityGetter(from: entity, filter: nil)
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -308,7 +308,7 @@ extension ValueContainerType where Value : DatabaseEmbedding {
     
     guard let makeGetter = _cache.getter(entityID: entity.entityID) as? GetterSource<Value, E> else {
       let entityID = entity.entityID
-      let newGetter = makeNonNullEntityGetter(from: entity, andFilter: Comparer.entityUpdated(entityID))
+      let newGetter = makeNonNullEntityGetter(from: entity, filter: Comparer.entityUpdated(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }

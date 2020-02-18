@@ -30,7 +30,7 @@ class VergeGetterRxTests: XCTestCase {
     
   }
     
-  func testSimple() {
+  func testSimpleWithSubscribe() {
 
     let storage = Storage<Int>(1)
     
@@ -47,6 +47,47 @@ class VergeGetterRxTests: XCTestCase {
         
     XCTAssertEqual(g.value, 2)
 
+    storage.update {
+      $0 = 2
+    }
+    
+    XCTAssertEqual(storage.value, 2)
+    
+    XCTAssertEqual(g.value, 4)
+    
+    storage.update {
+      $0 = 2
+    }
+    
+    storage.update {
+      $0 = 2
+    }
+    
+    storage.update {
+      $0 = 2
+    }
+    
+    XCTAssertEqual(updateCount, 2)
+    
+  }
+  
+  func testSimpleWithBind() {
+    
+    let storage = Storage<Int>(1)
+    
+    var updateCount = 0
+    
+    let g = storage.rx.makeGetter {
+      $0.changed(comparer: .init(==))
+        .map { $0 * 2 }
+    }
+    
+    _ = g.bind { _ in
+      updateCount += 1
+    }
+    
+    XCTAssertEqual(g.value, 2)
+    
     storage.update {
       $0 = 2
     }
