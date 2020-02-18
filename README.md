@@ -18,7 +18,7 @@ Verge 7.0 is still in development. API and the concept of Verge might be changed
 
 **A Store-Pattern based data-flow architecture.**
 
-The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
+The concept of Verge Store is inspired by [Redux](https://redux.js.org/) and [Vuex](https://vuex.vuejs.org/).
 
 Plus, releasing from so many definition of the actions.  
 To be more Swift's Style on the writing code.
@@ -33,7 +33,6 @@ The characteristics are
 * **Emits any events that isolated from State It's for SwiftUI's onReceive\(:\)**
 * **Supports Logging \(Commit, Action, Performance monitoring\)**
 * **Supports binding with Combine and RxSwift**
-* **Supports normalizing the state with ORM.**
 
 ## Prepare moving to SwiftUI from now with Verge
 
