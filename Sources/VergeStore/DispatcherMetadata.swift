@@ -21,9 +21,9 @@
 
 import Foundation
 
-public struct DispatcherMetadata {
+public struct DispatcherMetadata: JSONDescribing {
   
-  let backing: ActionContainer?
+  private let backing: ActionContainer?
   
   public var fromActionMetadata: ActionMetadata? {
     backing?.fromAction
@@ -47,6 +47,10 @@ public struct DispatcherMetadata {
       self = ._backing(fromAction)
     }
     
+  }
+  
+  public func jsonDescriptor() -> [String : Any]? {
+    fromActionMetadata?.jsonDescriptor()
   }
   
 }

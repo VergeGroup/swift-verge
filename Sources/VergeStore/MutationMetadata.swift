@@ -22,7 +22,7 @@
 import Foundation
 
 /// A metadata object that indicates the name of the mutation and where it was caused.
-public struct MutationMetadata {
+public struct MutationMetadata: JSONDescribing {
     
   public let createdAt: Date = .init()
   public let name: String
@@ -46,6 +46,17 @@ public struct MutationMetadata {
       line: line,
       context: contextMetadataRedirectingOnCrrentThread ?? context
     )
+  }
+  
+  public func jsonDescriptor() -> [String : Any]? {
+    [
+      "createdAt" : Static.dateFormatter.string(from: createdAt),
+      "name" : name,
+      "file" : file.description,
+      "function" : function.description,
+      "line" : line,
+      "context" : context?.jsonDescriptor() as Any
+    ]
   }
      
 }

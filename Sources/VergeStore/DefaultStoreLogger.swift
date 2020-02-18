@@ -42,63 +42,66 @@ public final class DefaultStoreLogger: StoreLogger {
     
   }
   
-  public func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?) {
+  private static func makeJSON(from data: [String : Any]) -> String {
+    if #available(iOSApplicationExtension 11.0, *) {
+      return String(data: try! JSONSerialization.data(withJSONObject: data, options: [.prettyPrinted, .fragmentsAllowed, .sortedKeys]), encoding: .utf8)!
+    } else {
+      return String(data: try! JSONSerialization.data(withJSONObject: data, options: [.prettyPrinted, .fragmentsAllowed]), encoding: .utf8)!
+    }
   }
   
-  public func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, context: Any?, time: CFTimeInterval) {
-    
-    let message = """
-    {
+  public func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata) {
+  }
+  
+  public func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, time: CFTimeInterval) {
+          
+    let data: [String : Any] = [
       "type" : "commit",
-      "took": "\(time * 1000)ms"
-      "mutation" : \(mutation),
-      "context" : \(context as Any),
+      "took": "\(time * 1000)ms",
+      "mutation" : mutation.jsonDescriptor() as Any,
       "store" : "\(store)"
-    }
-    """
+    ]
     
     queue.async {
-      os_log("%@", log: self.commitLog, type: .default, message)
+      let string = Self.makeJSON(from: data)
+      os_log("%@", log: self.commitLog, type: .default, string)
     }
   }
   
-  public func didDispatch(store: AnyObject, state: Any, action: ActionMetadata, context: Any?) {
-    let message = """
-    {
+  public func didDispatch(store: AnyObject, state: Any, action: ActionMetadata) {
+    let data: [String : Any] = [
       "type" : "dispatch",
-      "action" : \(action),
-      "context" : \(context as Any),
+      "action" : action.jsonDescriptor() as Any,
       "store" : "\(store)"
-    }
-    """
+    ]
+    
     queue.async {
-      os_log("%@", log: self.dispatchLog, type: .default, message)
+      let string = Self.makeJSON(from: data)
+      os_log("%@", log: self.dispatchLog, type: .default, string)
     }
   }
   
   public func didCreateDispatcher(store: AnyObject, dispatcher: Any) {
-    let message = """
-    {
+    let data: [String : Any] = [
       "type" : "dispatcher_creation",
-      "dispatcher" : \(dispatcher),
+      "dispatcher" : "\(dispatcher)",
       "store" : "\(store)"
-    }
-    """
+    ]
     queue.async {
-      os_log("%@", log: self.dispatcherCreationLog, type: .default, message)
+      let string = Self.makeJSON(from: data)
+      os_log("%@", log: self.dispatcherCreationLog, type: .default, string)
     }
   }
   
   public func didDestroyDispatcher(store: AnyObject, dispatcher: Any) {
-    let message = """
-    {
+    let data: [String : Any] = [
       "type" : "dispatcher_destruction",
-      "dispatcher" : \(dispatcher),
+      "dispatcher" : "\(dispatcher)",
       "store" : "\(store)"
-    }
-    """
+    ]
     queue.async {
-      os_log("%@", log: self.dispatcherDestructionLog, type: .default, message)
+      let string = Self.makeJSON(from: data)
+      os_log("%@", log: self.dispatcherDestructionLog, type: .default, string)
     }
   }
   
