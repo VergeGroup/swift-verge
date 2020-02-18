@@ -86,13 +86,12 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
   }
   
   @inline(__always)
-  func _receive<FromDispatcher: DispatcherType, Result>(
-    context: FromDispatcher,
+  func _receive<Result>(
     metadata: MutationMetadata,
     mutation: (inout State) throws -> Result
   ) rethrows -> Result {
     
-    logger?.willCommit(store: self, state: self.state, mutation: metadata, context: context)
+    logger?.willCommit(store: self, state: self.state, mutation: metadata)
     
     let startedTime = CFAbsoluteTimeGetCurrent()
     var currentState: State!
@@ -109,7 +108,7 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     
     signpost.end()
         
-    logger?.didCommit(store: self, state: currentState!, mutation: metadata, context: context, time: elapsed)
+    logger?.didCommit(store: self, state: currentState!, mutation: metadata, time: elapsed)
     return returnValue
   }
  

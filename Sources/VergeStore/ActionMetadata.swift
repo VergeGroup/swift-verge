@@ -23,7 +23,7 @@
 import Foundation
 
 /// A metadata object that indicates the name of the action and where it was caused.
-public struct ActionMetadata {
+public struct ActionMetadata: JSONDescribing {
     
   public let createdAt: Date = .init()
   public let name: String
@@ -48,6 +48,17 @@ public struct ActionMetadata {
       context: contextMetadataRedirectingOnCrrentThread ?? context
     )
     
+  }
+  
+  public func jsonDescriptor() -> [String : Any]? {
+    [
+      "createdAt" : VergeStoreStatic.dateFormatter.string(from: createdAt),
+      "name" : name,
+      "file" : file.description,
+      "function" : function.description,
+      "line" : line,
+      "context" : context?.jsonDescriptor() as Any
+    ]
   }
          
 }

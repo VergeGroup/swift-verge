@@ -61,7 +61,6 @@ extension DispatcherType {
       context: metadata
     )
     return try target._receive(
-      context: self,
       metadata: meta,
       mutation: { state in
         try state.update(target: scope, update: mutation)
@@ -87,7 +86,6 @@ extension DispatcherType {
       context: metadata
     )
     return try target._receive(
-      context: self,
       metadata: meta,
       mutation: { state in
         try state.update(target: scope, update: mutation)
@@ -119,7 +117,7 @@ extension DispatcherType {
       actionMetadata: meta
     )
     
-    target.logger?.didDispatch(store: target, state: target.state, action: meta, context: context)
+    target.logger?.didDispatch(store: target, state: target.state, action: meta)
     
     return try action(context)
         
@@ -150,7 +148,7 @@ extension DispatcherType {
       actionMetadata: meta
     )
     
-    target.logger?.didDispatch(store: target, state: target.state, action: meta, context: context)
+    target.logger?.didDispatch(store: target, state: target.state, action: meta)
     
     return try action(context)
     
