@@ -42,7 +42,7 @@ let dispatcher = MyDispatcher(apiClient: apiClient, target: store)
 
 ## Create multiple Dispatcher
 
-![](../.gitbook/assets/image%20%283%29.png)
+![](../.gitbook/assets/image%20%286%29.png)
 
 We can create multiple Dispatcher each use-cases.
 
