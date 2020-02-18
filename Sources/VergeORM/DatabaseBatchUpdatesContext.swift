@@ -197,6 +197,14 @@ public struct DatabaseEntityUpdatesResult<Schema: EntitySchemaType> {
     return set.contains(id)
   }
   
+  public func containsEntityUpdated<E: EntityType>(_ entityType: E.Type) -> Bool {
+    updated.keys.contains(E.entityName)
+  }
+  
+  public func containsEntityDeleted<E: EntityType>(_ entityType: E.Type) -> Bool {
+    deleted.keys.contains(E.entityName)
+  }
+  
 }
 
 @dynamicMemberLookup
