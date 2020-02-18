@@ -50,7 +50,7 @@ public struct MutationMetadata: JSONDescribing {
   
   public func jsonDescriptor() -> [String : Any]? {
     [
-      "createdAt" : Static.dateFormatter.string(from: createdAt),
+      "createdAt" : VergeStoreStatic.dateFormatter.string(from: createdAt),
       "name" : name,
       "file" : file.description,
       "function" : function.description,

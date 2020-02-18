@@ -1,7 +1,7 @@
 
 import Foundation
 
-enum Static {
+enum VergeStoreStatic {
   
   static let dateFormatter: ISO8601DateFormatter = {
     let formatter = ISO8601DateFormatter.init()
