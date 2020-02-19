@@ -150,19 +150,23 @@ extension EventEmitter {
 
 extension ReadonlyStorage {
 
-  private var subject: BehaviorRelay<Value> {
+  private var subject: BehaviorSubject<Value> {
 
-    if let associated = objc_getAssociatedObject(self, &storage_subject) as? BehaviorRelay<Value> {
+    if let associated = objc_getAssociatedObject(self, &storage_subject) as? BehaviorSubject<Value> {
 
       return associated
 
     } else {
 
-      let associated = BehaviorRelay<Value>.init(value: value)
+      let associated = BehaviorSubject<Value>.init(value: value)
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
+      
+      addDeinit {
+        associated.dispose()
+      }
 
       addDidUpdate(subscriber: { (value) in
-        associated.accept(value)
+        associated.onNext(value)
       })
 
       return associated
@@ -188,11 +192,20 @@ extension ReadonlyStorage {
   ///
   /// - Returns: Returns an observable sequence
   public func asObservable() -> Observable<Value> {
-    return subject.asObservable()
+    subject.asObservable()
   }
-
+  
   public func asObservable<S>(keyPath: KeyPath<Value, S>) -> Observable<S> {
-    return asObservable()
+    asObservable()
+      .map { $0[keyPath: keyPath] }
+  }
+  
+  public func asDriver() -> Driver<Value> {
+    subject.asDriver(onErrorDriveWith: .empty())
+  }
+  
+  public func asDriver<S>(keyPath: KeyPath<Value, S>) -> Driver<S> {
+    return asDriver()
       .map { $0[keyPath: keyPath] }
   }
 
