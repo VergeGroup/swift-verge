@@ -162,7 +162,7 @@ extension ReadonlyStorage {
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
       
       addDeinit {
-        associated.dispose()
+        associated.onCompleted()
       }
 
       addDidUpdate(subscriber: { (value) in
