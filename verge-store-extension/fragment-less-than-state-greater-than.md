@@ -25,9 +25,9 @@ struct YourState {
 
 struct AppState {
 
-  var yourState: Fragment<YourState> = .init(.init())
+  @Fragment var yourState YourState = .init()
 }
 
-appState.yourState.name // accessing with dynamic-member-lookup
+appState.yourState.name
 ```
 
