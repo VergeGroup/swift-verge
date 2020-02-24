@@ -61,8 +61,8 @@ public struct EqualityComputerBuilder<Input, ComparingKey> {
     .init(keySelector: { $0 }, comparer: .init { _, _ in false })
   }
   
-  let selector: (Input) -> ComparingKey
-  let comparer: Comparer<ComparingKey>
+  public let selector: (Input) -> ComparingKey
+  public let comparer: Comparer<ComparingKey>
   
   public init(
     keySelector: @escaping (Input) -> ComparingKey,
@@ -72,6 +72,7 @@ public struct EqualityComputerBuilder<Input, ComparingKey> {
     self.comparer = comparer
   }
   
+  #if swift(<5.2)
   public init(
     keySelector: KeyPath<Input, ComparingKey>,
     comparer: Comparer<ComparingKey>
@@ -79,6 +80,7 @@ public struct EqualityComputerBuilder<Input, ComparingKey> {
     self.selector = { $0[keyPath: keySelector] }
     self.comparer = comparer
   }
+  #endif
     
   public func build() -> EqualityComputer<Input> {
     .init(selector: selector, comparer: comparer)

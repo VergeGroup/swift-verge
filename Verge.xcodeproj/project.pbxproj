@@ -60,6 +60,7 @@
 		4B6BF62B23AD7B74001E5361 /* CollectionPerformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6BF62923AD7B55001E5361 /* CollectionPerformance.swift */; };
 		4B6E361023A7ED1900EB490C /* IndexType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6E360F23A7ED1900EB490C /* IndexType.swift */; };
 		4B71CEEE23B14394004520CE /* ActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71CEED23B14394004520CE /* ActivityTests.swift */; };
+		4B73F08924041811006910E6 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B73F08824041811006910E6 /* Log.swift */; };
 		4B786324233912AB009B9C1B /* VergeStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B786322233912AB009B9C1B /* VergeStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B786327233912AB009B9C1B /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B786328233912AB009B9C1B /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -462,6 +463,7 @@
 		4B6BF62923AD7B55001E5361 /* CollectionPerformance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionPerformance.swift; sourceTree = "<group>"; };
 		4B6E360F23A7ED1900EB490C /* IndexType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexType.swift; sourceTree = "<group>"; };
 		4B71CEED23B14394004520CE /* ActivityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTests.swift; sourceTree = "<group>"; };
+		4B73F08824041811006910E6 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		4B786320233912AB009B9C1B /* VergeStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B786322233912AB009B9C1B /* VergeStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeStore.h; sourceTree = "<group>"; };
 		4B786323233912AB009B9C1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1085,6 +1087,7 @@
 			isa = PBXGroup;
 			children = (
 				4BFA229E23A63B56008D7BCB /* VergeCore.h */,
+				4B73F08824041811006910E6 /* Log.swift */,
 				4BA3E1A423C359F40095629B /* Signpost.swift */,
 				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
 				4B8EB4F823C034A900035B2A /* Comparer.swift */,
@@ -1950,6 +1953,7 @@
 			files = (
 				4BF470D223CC3A43001A1D5D /* UpdatedMarker.swift in Sources */,
 				4BF470CD23CC36E8001A1D5D /* FragmentState.swift in Sources */,
+				4B73F08924041811006910E6 /* Log.swift in Sources */,
 				4BA3E1A523C359F40095629B /* Signpost.swift in Sources */,
 				4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */,
 				4B54517023CCC7E700770E61 /* GetterBuilder.swift in Sources */,

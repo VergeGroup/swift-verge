@@ -20,19 +20,22 @@
 // THE SOFTWARE.
 
 import Foundation
+import os.log
 
 public struct Comparer<Input> {
   
   private let equals: (Input, Input) -> Bool
-    
-  public init(_ equals: @escaping (Input, Input) -> Bool) {
+      
+  public init(
+    _ equals: @escaping (Input, Input) -> Bool
+  ) {
     self.equals = equals
   }
     
   /// It compares the value selected from passed selector closure
   /// - Parameter selector:
   public init<T: Equatable>(selector: @escaping (Input) -> T) {
-    self.equals = { a, b in
+    self.init { a, b in
       selector(a) == selector(b)
     }
   }
@@ -40,7 +43,7 @@ public struct Comparer<Input> {
   /// Make Combined comparer
   /// - Parameter comparers:
   public init(and comparers: [Comparer<Input>]) {
-    self.equals = { pre, new in
+    self.init { pre, new in
       for filter in comparers {
         guard filter.equals(previousValue: pre, newValue: new) else {
           return false
@@ -53,7 +56,7 @@ public struct Comparer<Input> {
   /// Make Combined comparer
   /// - Parameter comparers:
   public init(or comparers: [Comparer<Input>]) {
-    self.equals = { pre, new in
+    self.init { pre, new in
       for filter in comparers {
         if filter.equals(previousValue: pre, newValue: new) {
           return true
@@ -69,3 +72,27 @@ public struct Comparer<Input> {
   
 }
 
+extension Comparer {
+  
+  public func and(_ otherComparer: () -> Comparer) -> Comparer {
+    .init(and: [
+      self,
+      otherComparer()
+    ])
+  }
+  
+  public func or(_ otherComparer: () -> Comparer) -> Comparer {
+    .init(or: [
+      self,
+      otherComparer()
+    ])
+  }
+  
+  public func debug(name: String = "", file: StaticString = #file, line: UInt = #line) -> Self {
+    .init { pre, new -> Bool in
+      let result = self.equals(pre,new)
+      os_log("%@", log: VergeOSLogs.debugLog, type: .default, "\(file.description):\(line):\(name) result:\(result)")
+      return result
+    }
+  }
+}
