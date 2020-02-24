@@ -75,6 +75,18 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
   }
   
   public func makeNonNullEntityGetter<E: EntityType>(
+    from entityID: E.EntityID,
+    filter: Comparer<Value.Database>?
+  ) -> RxGetterSource<Value, E>? {
+    
+    guard let entity = Base.Value.getterToDatabase(base.wrappedValue).entities.table(E.self).find(by: entityID) else {
+      return nil
+    }
+    
+    return makeNonNullEntityGetter(from: entity, filter: filter)
+  }
+  
+  public func makeNonNullEntityGetter<E: EntityType>(
     from entity: E,
     filter: Comparer<Value.Database>?
   ) -> RxGetterSource<Value, E> {
@@ -126,6 +138,24 @@ extension Reactive where Base : RxValueContainerType, Base.Value : DatabaseEmbed
     guard let getter = _cache.getter(entityID: entity.entityID) as? RxGetterSource<Base.Value, E> else {
       let entityID = entity.entityID
       let newGetter = makeNonNullEntityGetter(from: entity, filter: nil)
+      _cache.setGetter(newGetter, entityID: entityID)
+      return newGetter
+    }
+    
+    return getter
+    
+  }
+  
+  @inline(__always)
+  public func nonNullEntityGetter<E: EntityType>(from entityID: E.EntityID) -> RxGetterSource<Base.Value, E>? {
+    
+    let _cache = cache
+    
+    guard let getter = _cache.getter(entityID: entityID) as? RxGetterSource<Base.Value, E> else {
+      let entityID = entityID
+      guard let newGetter = makeNonNullEntityGetter(from: entityID, filter: nil) else {
+        return nil
+      }
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
