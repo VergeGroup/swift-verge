@@ -8,33 +8,23 @@
 
 import Foundation
 
-@dynamicMemberLookup
+@propertyWrapper
 public struct Fragment<State> {
   
   private(set) public var counter: UpdatedMarker = .init()
   
-  public init(_ state: State) {
-    self.state = state
+  public init(wrappedValue: State) {
+    self.wrappedValue = wrappedValue
   }
   
-  public var state: State {
+  public var wrappedValue: State {
     didSet {
       counter.markAsUpdated()
     }
   }
   
-  public subscript <T>(dynamicMember keyPath: KeyPath<State, T>) -> T {
-    _read {
-      yield state[keyPath: keyPath]
-    }
+  public var projectedValue: Fragment<State> {
+    self
   }
   
-  public subscript <T>(dynamicMember keyPath: WritableKeyPath<State, T>) -> T {
-    _read {
-      yield state[keyPath: keyPath]
-    }
-    _modify {
-      yield &state[keyPath: keyPath]
-    }
-  }
 }

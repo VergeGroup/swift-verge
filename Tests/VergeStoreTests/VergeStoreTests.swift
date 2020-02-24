@@ -43,9 +43,10 @@ final class VergeStoreTests: XCTestCase {
     var optionalNested: OptionalNestedState?
     var nested: NestedState = .init()
     
-    var treeA = TreeA()
-    var treeB = TreeB()
-    var treeC = TreeC()
+    @Fragment var treeA = TreeA()
+    @Fragment var treeB = TreeB()
+    @Fragment var treeC = TreeC()
+    
   }
   
   final class Store: StoreBase<State, Never> {
@@ -141,7 +142,6 @@ final class VergeStoreTests: XCTestCase {
     }
     
     func operation() {
-      
       commit { state in
         let _: State.TreeA = state
       }
