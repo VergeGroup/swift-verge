@@ -29,5 +29,9 @@ struct AppState {
 }
 
 appState.yourState.name
+
+// get unique value that indicates updated to compare with previous value.
+// this value would be updated on every mutation of this tree.
+appState.$yourState.counter.value 
 ```
 
