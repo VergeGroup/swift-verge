@@ -13,8 +13,8 @@ public protocol GetterType: Hashable {
   var value: Output { get }
 }
 
-open class GetterBase<Output>: GetterType {
-  
+open class GetterBase<Output>: GetterType, CustomReflectable {
+    
   public static func == (lhs: GetterBase<Output>, rhs: GetterBase<Output>) -> Bool {
     lhs === rhs
   }
@@ -28,6 +28,10 @@ open class GetterBase<Output>: GetterType {
   }
   
   public init() {}
+  
+  public var customMirror: Mirror {
+    Mirror.init(self, children: ["value" : value], displayStyle: .struct, ancestorRepresentation: .generated)
+  }
   
 }
 
