@@ -33,12 +33,12 @@ public struct VergeSignpostTransaction {
     }
   }
   
-  public init(_ name: StaticString, format: StaticString, arguments: CVarArg...) {
+  public init(_ name: StaticString, label: String) {
     if #available(iOS 12, macOS 10.14, *) {
       let id = OSSignpostID(log: SignpostConstants.performanceLog)
-      os_signpost(.begin, log: SignpostConstants.performanceLog, name: name, signpostID: id, format, arguments)
+      os_signpost(.begin, log: SignpostConstants.performanceLog, name: name, signpostID: id, "Begin: %@", label)
       _end = {
-        os_signpost(.end, log: SignpostConstants.performanceLog, name: name, signpostID: id, format, arguments)
+        os_signpost(.end, log: SignpostConstants.performanceLog, name: name, signpostID: id, "End: %@", label)
       }
     } else {
       _end = {}

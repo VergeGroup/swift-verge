@@ -100,7 +100,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   }
   
   public func find(by id: Entity.EntityID) -> Entity? {
-    let t = VergeSignpostTransaction("EntityTable.findBy", format: "EntityType:%@", arguments: Entity.entityName.name)
+    let t = VergeSignpostTransaction("EntityTable.findBy", label: "EntityType:\(Entity.entityName.name)")
     defer {
       t.end()
     }
@@ -112,7 +112,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   ///
   /// - Parameter ids: sequence of Entity.ID
   public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.EntityID {
-    let t = VergeSignpostTransaction("EntityTable.findIn", format: "EntityType:%@", arguments: Entity.entityName.name)
+    let t = VergeSignpostTransaction("EntityTable.findIn", label: "EntityType:\(Entity.entityName.name)")
     defer {
       t.end()
     }
@@ -149,7 +149,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   @discardableResult
   mutating func insert(_ entity: Entity) -> InsertionResult {
-    let t = VergeSignpostTransaction("ORM.EntityTable.insertOne", format: "EntityType:%@", arguments: Entity.entityName.name)
+    let t = VergeSignpostTransaction("ORM.EntityTable.insertOne", label: "EntityType:\(Entity.entityName.name)")
     defer {
       t.end()
     }
@@ -161,7 +161,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   @discardableResult
   mutating func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
-    let t = VergeSignpostTransaction("ORM.EntityTable.insertSequence", format: "EntityType:%@", arguments: Entity.entityName.name)
+    let t = VergeSignpostTransaction("ORM.EntityTable.insertSequence", label: "EntityType:\(Entity.entityName.name)")
     defer {
       t.end()
     }
@@ -192,7 +192,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
 extension EntityTable where Entity : Hashable {
   
   public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.EntityID {
-    let t = VergeSignpostTransaction("EntityTable.findIn", format: "EntityType:%@", arguments: Entity.entityName.name)
+    let t = VergeSignpostTransaction("EntityTable.findIn", label: "EntityType:\(Entity.entityName.name)")
     defer {
       t.end()
     }
