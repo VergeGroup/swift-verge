@@ -48,6 +48,10 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   public init(_ value: Value, upstreams: [AnyObject] = []) {
     self.nonatomicValue = value
     self.upstreams = upstreams
+    
+    willUpdateEmitter.add {
+      vergeSignpostEvent("Storage.willUpdate")
+    }
   }
   
   deinit {
@@ -156,8 +160,6 @@ extension ReadonlyStorage {
   /// Transform value with filtering.
   /// - Attention: Retains upstream storage
   public func map<U>(
-    onUpdated: @escaping (Value) -> Void = { _ in },
-    onPassed: @escaping (Value) -> Void = { _ in },
     filter: @escaping (Value) -> Bool = { _ in false },
     transform: @escaping (Value) -> U
   ) -> ReadonlyStorage<U> {
@@ -167,11 +169,9 @@ extension ReadonlyStorage {
     
     let token = addDidUpdate { [weak newStorage] (newValue) in
       guard !filter(newValue) else {
-        onPassed(newValue)
         return
       }
       newStorage?.replace(transform(newValue))
-      onUpdated(newValue)
     }
     
     newStorage.addDeinit { [weak self] in
