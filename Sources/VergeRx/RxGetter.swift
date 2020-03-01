@@ -35,7 +35,7 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
   public override var value: Output {
     try! output.value()
   }
-      
+        
   /// Initialize from observable
   ///
   /// - Attension: Please don't use operator that dispatches asynchronously.

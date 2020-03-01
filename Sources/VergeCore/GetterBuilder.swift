@@ -113,18 +113,14 @@ public struct GetterBuilderMethodChain<Input> {
   }
   
   /// Projects input object into a new form.
+  /// - Attention: No pre filter
   public func map<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Input, Input, Output> {
     changed(filter: .noFilter)
       .map(transform)
   }
   
-  /// Projects input object into a new form.
-  public func map<Output>(_ transform: KeyPath<Input, Output>) -> GetterBuilderTransformMethodChain<Input, Input, Output> {
-    changed(filter: .noFilter)
-      .map(transform)
-  }
-  
   /// No map
+  /// - Attention: No pre filter
   public func noMap() -> GetterBuilderTransformMethodChain<Input, Input, Input> {
     changed(filter: .noFilter)
       .map { $0 }
@@ -132,10 +128,38 @@ public struct GetterBuilderMethodChain<Input> {
   
 }
 
-extension GetterBuilderMethodChain where Input : Equatable {
-  
+extension GetterBuilderMethodChain {
+    
+  #if swift(<5.2)
+  /// Projects input object into a new form.
+  /// - Attention: No pre filter
+  public func map<Output>(_ transform: KeyPath<Input, Output>) -> GetterBuilderTransformMethodChain<Input, Input, Output> {
+    changed(filter: .noFilter)
+      .map(transform)
+  }
+  #endif
+    
   /// Adding a filter to getter to map only when the input object changed.
-  public func changed()-> GetterBuilderPreFilterMethodChain<Input, Input> {
+  /// Filterling with Fragment
+  public func changed<T>(_ fragmentSelector: @escaping (Input) -> Fragment<T>) -> GetterBuilderPreFilterMethodChain<Input, Input> {
+    changed(comparer: .init(selector: {
+      fragmentSelector($0).counter.rawValue
+    }))
+  }
+  
+  /// Projects input object into a new form.
+  ///
+  /// Filterling with Fragment and projects the wrapped value.
+  public func map<Output>(_ transform: @escaping (Input) -> Fragment<Output>) -> GetterBuilderTransformMethodChain<Input, Input, Output> {
+    changed(transform)
+      .map { transform($0).wrappedValue }
+  }
+}
+
+extension GetterBuilderMethodChain where Input : Equatable {
+    
+  /// Adding a filter to getter to map only when the input object changed.
+  public func changed() -> GetterBuilderPreFilterMethodChain<Input, Input> {
     changed(keySelector: \.self, comparer: .init(==))
   }
   
