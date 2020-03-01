@@ -116,7 +116,11 @@ extension Reactive where Base : RxValueContainerType {
     
     let baseStream = base.asObservable()
       .filter { value in
-        !preComparer.equals(input: value)
+        let result = !preComparer.equals(input: value)
+        if !result {
+          VergeSignpostTransaction("RxGetter.hitPreFilter").end()
+        }
+        return result
     }
     .map(builder.transform)
     
@@ -124,7 +128,11 @@ extension Reactive where Base : RxValueContainerType {
     
     if let comparer = postComparer {
       pipe = baseStream.filter { value in
-        !comparer.equals(input: value)
+        let result = !comparer.equals(input: value)
+        if !result {
+          VergeSignpostTransaction("RxGetter.hitPostFilter").end()
+        }
+        return result
       }
     } else {
       pipe = baseStream
