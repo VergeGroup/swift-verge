@@ -12,7 +12,7 @@ import VergeRx
 private var storage_subject: Void?
 private var storage_diposeBag: Void?
 
-extension Storage {
+extension ReadonlyStorage {
   
   /// Returns an observable sequence that contains only changed elements according to the `comparer`.
   ///
