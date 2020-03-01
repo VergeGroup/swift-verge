@@ -27,7 +27,7 @@ public protocol DispacherContextType {
 }
 
 /// A context object created from an action.
-public struct ContextualDispatcher<Dispatcher: DispatcherType, Scope>: DispacherContextType, DispatcherType {
+public final class ContextualDispatcher<Dispatcher: DispatcherType, Scope>: DispacherContextType, DispatcherType {
       
   public typealias Activity = Dispatcher.Activity
   
@@ -90,4 +90,5 @@ extension ContextualDispatcher {
     }
     return try redirect(dispatcher)
   }
+
 }
