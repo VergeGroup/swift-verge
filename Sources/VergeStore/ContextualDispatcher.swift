@@ -40,9 +40,15 @@ public final class ContextualDispatcher<Dispatcher: DispatcherType, Scope>: Disp
   /// Target dispatcher
   public let dispatcher: Dispatcher
   
+  @available(*, deprecated, renamed: "targetStore")
   public var target: StoreBase<Dispatcher.State, Dispatcher.Activity> {
+    targetStore
+  }
+  
+  public var targetStore: StoreBase<Dispatcher.State, Dispatcher.Activity> {
     dispatcher.target
   }
+  
   /// Returns current state from target store
   public var state: Scope {
     return dispatcher.target.state[keyPath: scope]
