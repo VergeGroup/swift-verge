@@ -23,39 +23,60 @@ open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherTy
   
   public let metadata: DispatcherMetadata
     
-  public var scope: WritableKeyPath<State, Scope>            
+  public var scope: WritableKeyPath<State, Scope>
   
-  public let target: StoreBase<State, Activity>
+  public var targetStore: StoreBase<State, Activity>
+  
+  @available(*, deprecated, renamed: "targetStore")
+  public var target: StoreBase<State, Activity> {
+    targetStore
+  }
   
   private var logger: StoreLogger? {
-    target.logger
+    targetStore.logger
   }
-   
+  
   public init(
-    target store: StoreBase<State, Activity>,
+    targetStore: StoreBase<State, Activity>,
     scope: WritableKeyPath<State, Scope>
   ) {
-    self.target = store
+    self.targetStore = targetStore
     self.scope = scope
     self.metadata = .init(fromAction: nil)
     
-    logger?.didCreateDispatcher(store: store, dispatcher: self)
+    logger?.didCreateDispatcher(store: targetStore, dispatcher: self)
+  }
+   
+  @available(*, deprecated, renamed: "init(targetStore:scope:)")
+  public convenience init(
+    target store: StoreBase<State, Activity>,
+    scope: WritableKeyPath<State, Scope>
+  ) {
+    
+    self.init(targetStore: store, scope: scope)
   }
   
   deinit {
-    logger?.didDestroyDispatcher(store: target, dispatcher: self)
+    logger?.didDestroyDispatcher(store: targetStore, dispatcher: self)
   }
     
 }
 
 open class DispatcherBase<State: StateType, Activity>: ScopedDispatcherBase<State, Activity, State> {
       
-  public init(
+  @available(*, deprecated, renamed: "init(targetStore:)")
+  public convenience init(
     target store: StoreBase<State, Activity>
   ) {
-    super.init(target: store, scope: \State.self)
+    self.init(targetStore: store)
   }
 
+  public init(
+    targetStore: StoreBase<State, Activity>
+  ) {
+    super.init(targetStore: targetStore, scope: \State.self)
+  }
+  
 }
 
 public protocol _VergeStore_OptionalProtocol {

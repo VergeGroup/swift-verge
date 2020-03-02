@@ -21,7 +21,7 @@ final class Session: ObservableObject {
   }
   
   let store = SessionStore()
-  private(set) lazy var sessionDispatcher = SessionDispatcher(target: store)
+  private(set) lazy var sessionDispatcher = SessionDispatcher(targetStore: store)
   
   private(set) lazy var users = self.store.makeGetter {
     $0.changed(keySelector: \.db.entities.user, comparer: .init(==))
