@@ -27,6 +27,7 @@ public protocol DispacherContextType {
 }
 
 /// A context object created from an action.
+/// - Attention: This object retains owner. you may need to be weakify context object.
 public final class ContextualDispatcher<Dispatcher: DispatcherType, Scope>: DispacherContextType, DispatcherType {
       
   public typealias Activity = Dispatcher.Activity
