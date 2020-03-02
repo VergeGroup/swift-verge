@@ -34,6 +34,8 @@ public struct VergeSignpostTransaction {
     } else {
       _end = {}
     }
+    #else
+    _end = {}
     #endif
   }
   
@@ -48,6 +50,8 @@ public struct VergeSignpostTransaction {
     } else {
       _end = {}
     }
+    #else
+    _end = {}
     #endif
   }
     
