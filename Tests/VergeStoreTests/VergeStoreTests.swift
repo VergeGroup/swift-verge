@@ -138,7 +138,7 @@ final class VergeStoreTests: XCTestCase {
   final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
     
     init(store: Store) {
-      super.init(target: store, scope: \.treeA)
+      super.init(targetStore: store, scope: \.treeA)
     }
     
     func operation() {
@@ -201,7 +201,7 @@ final class VergeStoreTests: XCTestCase {
   }
     
   let store = Store()
-  lazy var dispatcher = RootDispatcher(target: self.store)
+  lazy var dispatcher = RootDispatcher(targetStore: self.store)
   
   var subs = Set<AnyCancellable>()
   
@@ -223,7 +223,7 @@ final class VergeStoreTests: XCTestCase {
   func testStateSubscription() {
     
     let store = Store()
-    let dispatcher = RootDispatcher(target: store)
+    let dispatcher = RootDispatcher(targetStore: store)
     
     let expectation = XCTestExpectation()
             
@@ -276,14 +276,14 @@ final class VergeStoreTests: XCTestCase {
     dispatcher.setMyName()
     XCTAssertEqual(store.state.optionalNested?.myName, "Muuk")
     
-    let d = OptionalNestedDispatcher(target: store)
+    let d = OptionalNestedDispatcher(targetStore: store)
     d.setMyName()
     XCTAssertEqual(store.state.optionalNested?.myName, "Hello")
   }
   
   func testMutatingNestedState() {
                
-    let d = NestedDispatcher(target: store)
+    let d = NestedDispatcher(targetStore: store)
     d.setMyName()
     XCTAssertEqual(store.state.nested.myName, "Hello")
   }
