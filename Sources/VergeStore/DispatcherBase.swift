@@ -44,7 +44,8 @@ open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherTy
     self.scope = scope
     self.metadata = .init(fromAction: nil)
     
-    logger?.didCreateDispatcher(store: targetStore, dispatcher: self)
+    let log = DidCreateDispatcherLog(store: targetStore, dispatcher: self)    
+    logger?.didCreateDispatcher(log: log)
   }
    
   @available(*, deprecated, renamed: "init(targetStore:scope:)")
@@ -57,7 +58,8 @@ open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherTy
   }
   
   deinit {
-    logger?.didDestroyDispatcher(store: targetStore, dispatcher: self)
+    let log = DidDestroyDispatcherLog(store: targetStore, dispatcher: self)
+    logger?.didDestroyDispatcher(log: log)
   }
     
 }

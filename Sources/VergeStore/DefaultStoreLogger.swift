@@ -23,6 +23,62 @@ import Foundation
 
 import os
 
+public struct CommitLog: Encodable {
+  
+  public let type: String = "commit"
+  public let tookMilliseconds: Double
+  public let mutation: MutationMetadata
+  public let store: String
+
+  @inlinable
+  public init(store: AnyObject, mutation: MutationMetadata, time: CFTimeInterval) {
+    self.store = String(reflecting: store)
+    self.tookMilliseconds = time * 1000
+    self.mutation = mutation
+  }
+}
+
+public struct DispatchLog: Encodable {
+  
+  public let type: String = "dispatch"
+  public let action: ActionMetadata
+  public let store: String
+  
+  @inlinable
+  public init(store: AnyObject, state: Any, action: ActionMetadata) {
+    self.store = String(reflecting: store)
+    self.action = action
+  }
+}
+
+public struct DidCreateDispatcherLog: Encodable {
+  
+  public let type: String = "did_create_dispatcher"
+  public let store: String
+  public let dispatcher: String
+  
+  @inlinable
+  public init(store: AnyObject, dispatcher: Any) {
+    self.store = String(reflecting: store)
+    self.dispatcher = String(reflecting: dispatcher)
+  }
+  
+}
+
+public struct DidDestroyDispatcherLog: Encodable {
+  
+  public let type: String = "did_destroy_dispatcher"
+  public let store: String
+  public let dispatcher: String
+  
+  @inlinable
+  public init(store: AnyObject, dispatcher: Any) {
+    self.store = String(reflecting: store)
+    self.dispatcher = String(reflecting: dispatcher)
+  }
+  
+}
+
 /// An object default implementation of VergeStoreLogger.
 /// It uses `os_log` to print inside.
 /// There are OSLog object each type of action.
@@ -42,68 +98,44 @@ public final class DefaultStoreLogger: StoreLogger {
     
   }
   
-  private static func makeJSON(from data: [String : Any]) -> String {
+  private static let encoder: JSONEncoder = {
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
     if #available(iOS 11.0, macOS 10.13, *) {
-      return String(data: try! JSONSerialization.data(withJSONObject: data, options: [.prettyPrinted, .fragmentsAllowed, .sortedKeys]), encoding: .utf8)!
+      encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     } else {
-      return String(data: try! JSONSerialization.data(withJSONObject: data, options: [.prettyPrinted, .fragmentsAllowed]), encoding: .utf8)!
+      encoder.outputFormatting = [.prettyPrinted]
     }
-  }
-  
-  public func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata) {
-  }
-  
-  public func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, time: CFTimeInterval) {
-          
-    let data: [String : Any] = [
-      "type" : "commit",
-      "took": "\(time * 1000)ms",
-      "mutation" : mutation.jsonDescriptor() as Any,
-      "store" : "\(store)"
-    ]
+    return encoder
+  }()
     
+  public func didCommit(log: CommitLog) {
     queue.async {
-      let string = Self.makeJSON(from: data)
+      let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
       os_log("%@", log: self.commitLog, type: .default, string)
     }
   }
   
-  public func didDispatch(store: AnyObject, state: Any, action: ActionMetadata) {
-    let data: [String : Any] = [
-      "type" : "dispatch",
-      "action" : action.jsonDescriptor() as Any,
-      "store" : "\(store)"
-    ]
-    
+  public func didDispatch(log: DispatchLog) {
     queue.async {
-      let string = Self.makeJSON(from: data)
+      let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
       os_log("%@", log: self.dispatchLog, type: .default, string)
     }
   }
   
-  public func didCreateDispatcher(store: AnyObject, dispatcher: Any) {
-    let data: [String : Any] = [
-      "type" : "dispatcher_creation",
-      "dispatcher" : "\(dispatcher)",
-      "store" : "\(store)"
-    ]
+  public func didCreateDispatcher(log: DidCreateDispatcherLog) {
     queue.async {
-      let string = Self.makeJSON(from: data)
+      let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
       os_log("%@", log: self.dispatcherCreationLog, type: .default, string)
     }
   }
   
-  public func didDestroyDispatcher(store: AnyObject, dispatcher: Any) {
-    let data: [String : Any] = [
-      "type" : "dispatcher_destruction",
-      "dispatcher" : "\(dispatcher)",
-      "store" : "\(store)"
-    ]
+  public func didDestroyDispatcher(log: DidDestroyDispatcherLog) {
     queue.async {
-      let string = Self.makeJSON(from: data)
+      let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
       os_log("%@", log: self.dispatcherDestructionLog, type: .default, string)
     }
   }
-  
+    
 }
 

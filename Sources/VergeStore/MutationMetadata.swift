@@ -22,12 +22,12 @@
 import Foundation
 
 /// A metadata object that indicates the name of the mutation and where it was caused.
-public struct MutationMetadata: JSONDescribing {
+public struct MutationMetadata: Encodable {
     
   public let createdAt: Date = .init()
   public let name: String
-  public let file: StaticString
-  public let function: StaticString
+  public let file: String
+  public let function: String
   public let line: UInt
   public let context: DispatcherMetadata?
   
@@ -41,22 +41,11 @@ public struct MutationMetadata: JSONDescribing {
     
     self.init(
       name: name,
-      file: file,
-      function: function,
+      file: file.description,
+      function: function.description,
       line: line,
       context: contextMetadataRedirectingOnCrrentThread ?? context
     )
   }
-  
-  public func jsonDescriptor() -> [String : Any]? {
-    [
-      "createdAt" : VergeStoreStatic.dateFormatter.string(from: createdAt),
-      "name" : name,
-      "file" : file.description,
-      "function" : function.description,
-      "line" : line,
-      "context" : context?.jsonDescriptor() as Any
-    ]
-  }
-     
+      
 }

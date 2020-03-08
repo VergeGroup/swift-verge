@@ -839,7 +839,6 @@
 				4B2050F823D5C85B000A2779 /* MutationMetadata.swift */,
 				4B2050FA23D5C878000A2779 /* ActionMetadata.swift */,
 				4B2050FC23D5D24C000A2779 /* DispatcherMetadata.swift */,
-				4B2050F623D5C841000A2779 /* StoreLogger.swift */,
 				4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */,
 				4BFA22B423A63C59008D7BCB /* StoreBase+ValueContainerType.swift */,
 				4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */,
@@ -847,6 +846,7 @@
 				4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */,
 				4B68394F237062F7002FFC5A /* Utility.swift */,
 				4B1C011A23D381F100BE9B24 /* Volatile.swift */,
+				4B2050F623D5C841000A2779 /* StoreLogger.swift */,
 				4B0AFD6C2388643400AABA90 /* DefaultStoreLogger.swift */,
 				4B53B93E23B2823D0087183B /* Deprecates.swift */,
 			);

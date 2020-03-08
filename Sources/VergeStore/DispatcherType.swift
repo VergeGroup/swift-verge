@@ -117,7 +117,8 @@ extension DispatcherType {
       actionMetadata: meta
     )
     
-    target.logger?.didDispatch(store: target, state: target.state, action: meta)
+    let log = DispatchLog(store: target, state: target.state, action: meta)
+    target.logger?.didDispatch(log: log)
     
     return try action(context)
         
@@ -148,7 +149,8 @@ extension DispatcherType {
       actionMetadata: meta
     )
     
-    target.logger?.didDispatch(store: target, state: target.state, action: meta)
+    let log = DispatchLog(store: target, state: target.state, action: meta)
+    target.logger?.didDispatch(log: log)
     
     return try action(context)
     

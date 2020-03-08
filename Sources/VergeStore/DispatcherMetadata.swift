@@ -21,12 +21,16 @@
 
 import Foundation
 
-public struct DispatcherMetadata: JSONDescribing {
+public struct DispatcherMetadata: Encodable {
   
   private let backing: ActionContainer?
   
   public var fromActionMetadata: ActionMetadata? {
     backing?.fromAction
+  }
+  
+  public func encode(to encoder: Encoder) throws {
+    try fromActionMetadata.encode(to: encoder)
   }
   
   init(fromAction: ActionMetadata?) {
@@ -48,11 +52,7 @@ public struct DispatcherMetadata: JSONDescribing {
     }
     
   }
-  
-  public func jsonDescriptor() -> [String : Any]? {
-    fromActionMetadata?.jsonDescriptor()
-  }
-  
+    
 }
 
 
