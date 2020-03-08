@@ -159,9 +159,7 @@ Verge supports logging functions.
 
 Using the console of Xcode or Console.app, we can track how the application runs
 
-![](.gitbook/assets/image%20%281%29.png)
-
-
+![](.gitbook/assets/cleanshot-2020-03-08-at-09.25.36-2x.png)
 
 {% page-ref page="docs-vergestore/logging.md" %}
 
