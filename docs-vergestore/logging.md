@@ -65,7 +65,7 @@ We can see the log like below
 
 ### See logs on Console.app
 
-![](../.gitbook/assets/image%20%285%29.png)
+![](../.gitbook/assets/image%20%284%29.png)
 
 ## Creating Custom Logger
 
