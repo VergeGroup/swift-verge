@@ -155,7 +155,13 @@ Most important thing in using state-tree is **Normalization.**
 
 ### Logging
 
-![Using Logger](.gitbook/assets/image%20%282%29.png)
+Verge supports logging functions.
+
+Using the console of Xcode or Console.app, we can track how the application runs
+
+![](.gitbook/assets/image%20%281%29.png)
+
+
 
 {% page-ref page="docs-vergestore/logging.md" %}
 
