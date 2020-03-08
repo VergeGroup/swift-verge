@@ -65,7 +65,7 @@ We can see the log like below
 
 ### See logs on Console.app
 
-![](../.gitbook/assets/image%20%284%29.png)
+![](../.gitbook/assets/cleanshot-2020-03-08-at-09.25.36-2x.png)
 
 ## Creating Custom Logger
 
