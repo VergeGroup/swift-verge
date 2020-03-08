@@ -72,12 +72,11 @@ We can see the log like below
 ```swift
 public protocol StoreLogger {
   
-  func willCommit(store: AnyObject, state: Any, mutation: MutationMetadata)
-  func didCommit(store: AnyObject, state: Any, mutation: MutationMetadata, time: CFTimeInterval)
-  func didDispatch(store: AnyObject, state: Any, action: ActionMetadata)
+  func didCommit(log: CommitLog)
+  func didDispatch(log: DispatchLog)
   
-  func didCreateDispatcher(store: AnyObject, dispatcher: Any)
-  func didDestroyDispatcher(store: AnyObject, dispatcher: Any)
+  func didCreateDispatcher(log: DidCreateDispatcherLog)
+  func didDestroyDispatcher(log: DidDestroyDispatcherLog)
 }
 ```
 
