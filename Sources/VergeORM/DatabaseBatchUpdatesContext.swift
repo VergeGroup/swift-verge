@@ -175,13 +175,6 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   
 }
 
-extension EntityModifier where Entity : Hashable {
-  
-  public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.EntityID {
-    insertsOrUpdates.find(in: ids).union(current.find(in: ids))
-  }
-}
-
 public struct DatabaseEntityUpdatesResult<Schema: EntitySchemaType> {
   
   let updated: [EntityName : Set<AnyHashable>]

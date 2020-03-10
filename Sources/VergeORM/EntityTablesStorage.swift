@@ -110,6 +110,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   /// Find entities by set of ids.
   /// The order of array would not be sorted, it depends on dictionary's buffer.
   ///
+  /// if ids contains same id, result also contains same element.
   /// - Parameter ids: sequence of Entity.ID
   public func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.EntityID {
     let t = VergeSignpostTransaction("EntityTable.findIn", label: "EntityType:\(Entity.entityName.name)")
@@ -185,20 +186,6 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   mutating func removeAll() {
     rawTable.updateEntity { (entities) in
       entities.removeAll(keepingCapacity: false)
-    }
-  }
-}
-
-extension EntityTable where Entity : Hashable {
-  
-  public func find<S: Sequence>(in ids: S) -> Set<Entity> where S.Element == Entity.EntityID {
-    let t = VergeSignpostTransaction("EntityTable.findIn", label: "EntityType:\(Entity.entityName.name)")
-    defer {
-      t.end()
-    }
-    return ids.reduce(into: Set<Entity>()) { (buf, id) in
-      guard let entity = rawTable.entities[id] else { return }
-      buf.insert(entity.base as! Entity)
     }
   }
 }
