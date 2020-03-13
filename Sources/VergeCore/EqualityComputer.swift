@@ -23,13 +23,15 @@ public final class EqualityComputer<Input> {
     comparer: Comparer<Key>
   ) {
     
-    let ref = PreviousValueRef<Key>()
+    let ref = Storage<Key?>.init(nil)
     
     self._isEqual = { input in
       
       let key = selector(input)
       defer {
-        ref.value = key
+        ref.update {
+          $0 = key
+        }
       }
       if let previousValue = ref.value {
         return comparer.equals(previousValue: previousValue, newValue: key)
