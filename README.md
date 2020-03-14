@@ -6,7 +6,13 @@ description: >-
 
 # Verge - Flux and ORM for creating iOS App with SwiftUI and UIKit
 
+* Current v7.0.0 beta status to publish release
+  * Trying to use on author's product.
+    * to get the feel for syntax on writing.
+    * to check the capability and scalability when using on the large projects.
+  * Status
 
+    * Started using VergeORM and RxGetter on the product \(2020-02\)
 
 ![](.gitbook/assets/loop-2x%20%281%29.png)
 
