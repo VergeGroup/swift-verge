@@ -41,6 +41,10 @@ The characteristics are
 * **Supports binding with Combine and RxSwift**
 * **Supports normalizing the state with ORM.**
 
+\*\*\*\*
+
+**🔗**[ **You can see more detail of Verge on Documentation**](https://muukii-app.gitbook.io/verge/) **🔗**
+
 ## Prepare moving to SwiftUI from now with Verge
 
 SwiftUI's concept is similar to the concept of React, Vue, and Elm. Therefore, the concept of state management will become to be similar as well.
