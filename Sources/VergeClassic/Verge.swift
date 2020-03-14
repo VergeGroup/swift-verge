@@ -14,7 +14,9 @@ public enum VergeInternalError : Error {
 }
 
 public enum NoActivity {}
-public struct NoState {}
+public struct NoState {
+  public init() {}
+}
 
 public protocol VergeLogging {
 
