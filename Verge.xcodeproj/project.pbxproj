@@ -158,6 +158,8 @@
 		4BE9455423AD1B180060F977 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */; };
 		4BF2BCCE238A658400F70CDA /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */; };
+		4BF3C2EC242093AC006B1726 /* MultithreadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF3C2EA24209324006B1726 /* MultithreadingTests.swift */; };
+		4BF3C2EE24209620006B1726 /* MultithreadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF3C2ED24209620006B1726 /* MultithreadingTests.swift */; };
 		4BF470CD23CC36E8001A1D5D /* FragmentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CC23CC36E8001A1D5D /* FragmentState.swift */; };
 		4BF470D023CC394D001A1D5D /* CounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CE23CC3949001A1D5D /* CounterTests.swift */; };
 		4BF470D223CC3A43001A1D5D /* UpdatedMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470D123CC3A43001A1D5D /* UpdatedMarker.swift */; };
@@ -558,6 +560,8 @@
 		4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelBase.swift; sourceTree = "<group>"; };
 		4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitter.swift; sourceTree = "<group>"; };
 		4BF2BCE1238A85A700F70CDA /* VergeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeViewModelTests.swift; sourceTree = "<group>"; };
+		4BF3C2EA24209324006B1726 /* MultithreadingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultithreadingTests.swift; sourceTree = "<group>"; };
+		4BF3C2ED24209620006B1726 /* MultithreadingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultithreadingTests.swift; sourceTree = "<group>"; };
 		4BF470CC23CC36E8001A1D5D /* FragmentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FragmentState.swift; sourceTree = "<group>"; };
 		4BF470CE23CC3949001A1D5D /* CounterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterTests.swift; sourceTree = "<group>"; };
 		4BF470D123CC3A43001A1D5D /* UpdatedMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatedMarker.swift; sourceTree = "<group>"; };
@@ -757,6 +761,7 @@
 				4B1743A923C767670074C457 /* VergeRxTests.swift */,
 				4B1743AB23C767670074C457 /* Info.plist */,
 				4BA5915023DF536F007F614C /* FunctionBuilderTests.swift */,
+				4BF3C2ED24209620006B1726 /* MultithreadingTests.swift */,
 			);
 			path = VergeRxTests;
 			sourceTree = "<group>";
@@ -799,6 +804,7 @@
 				4B80B74623F947A2000BCFB2 /* SetIndexTests.swift */,
 				4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */,
 				4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */,
+				4BF3C2EA24209324006B1726 /* MultithreadingTests.swift */,
 				4B475BC9239ADE1C008A03E1 /* Info.plist */,
 				4B99D69223AF6C4300E26127 /* ProtocolTests.swift */,
 			);
@@ -1783,6 +1789,7 @@
 				4B1743AA23C767670074C457 /* VergeRxTests.swift in Sources */,
 				4BA5915123DF536F007F614C /* FunctionBuilderTests.swift in Sources */,
 				4B4011BD23C779D400C582BC /* State.swift in Sources */,
+				4BF3C2EE24209620006B1726 /* MultithreadingTests.swift in Sources */,
 				4B4011BB23C779BE00C582BC /* ORMGetterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1815,6 +1822,7 @@
 				4B475BC8239ADE1C008A03E1 /* VergeORMTests.swift in Sources */,
 				4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */,
 				4BD6850523C82E6C00D8A620 /* ORMGetterTests.swift in Sources */,
+				4BF3C2EC242093AC006B1726 /* MultithreadingTests.swift in Sources */,
 				4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */,
 				4B80B74723F947A2000BCFB2 /* SetIndexTests.swift in Sources */,
 				4BC6EFB523A8C99900EFD688 /* State.swift in Sources */,
