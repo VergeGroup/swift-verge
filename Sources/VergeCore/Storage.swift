@@ -26,7 +26,7 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   private let willUpdateEmitter = EventEmitter<Void>()
   private let didUpdateEmitter = EventEmitter<Value>()
   private let deinitEmitter = EventEmitter<Void>()
-  
+    
   public final var wrappedValue: Value {
     return value
   }
@@ -134,25 +134,7 @@ open class Storage<Value>: ReadonlyStorage<Value> {
       throw error
     }
   }
-  
-  public final func replace(_ value: Value) {
-    do {
-      let notifyValue: Value
-      _lock.lock()
-      notifyValue = nonatomicValue
-      _lock.unlock()
-      notifyWillUpdate(value: notifyValue)
-    }
-    
-    do {
-      _lock.lock()
-      nonatomicValue = value
-      let notifyValue = nonatomicValue
-      _lock.unlock()
-      notifyDidUpdate(value: notifyValue)
-    }
-  }
-  
+     
 }
 
 extension ReadonlyStorage {
@@ -171,7 +153,9 @@ extension ReadonlyStorage {
       guard !filter(newValue) else {
         return
       }
-      newStorage?.replace(transform(newValue))
+      newStorage?.update {
+        $0 = transform(newValue)
+      }
     }
     
     newStorage.addDeinit { [weak self] in
