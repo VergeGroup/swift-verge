@@ -138,8 +138,9 @@ extension VergeType {
     }
     
     logger.willMutate(name: name, description: description, file: file, function: function, line: line, on: self)
-    
-    state.replace(newState)
+    state.update {
+      $0 = newState
+    }
   }
   
   /// Dispatch
