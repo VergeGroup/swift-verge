@@ -8,9 +8,13 @@
 
 import Foundation
 
+import os.lock
+
 fileprivate final class PreviousValueRef<T> {
-  var value: T?
-  init() {}
+  var value: T
+  init(value: T) {
+    self.value = value
+  }
 }
 
 /// A Filter that compares with previous value.
@@ -18,20 +22,28 @@ public final class EqualityComputer<Input> {
   
   private let _isEqual: (Input) -> Bool
   
+  private var lock = os_unfair_lock_s()
+  
+  private let valueRef: AnyObject?
+  
   public init<Key>(
     selector: @escaping (Input) -> Key,
     comparer: Comparer<Key>
   ) {
     
-    let ref = Storage<Key?>.init(nil)
+    let ref = PreviousValueRef<Key?>(value: nil)
     
-    self._isEqual = { input in
+    self.valueRef = ref
+    
+    self._isEqual = { [weak ref] input in
+      
+      guard let ref = ref else {
+        return false
+      }
       
       let key = selector(input)
       defer {
-        ref.update {
-          $0 = key
-        }
+        ref.value = key
       }
       if let previousValue = ref.value {
         return comparer.equals(previousValue: previousValue, newValue: key)
@@ -44,10 +56,12 @@ public final class EqualityComputer<Input> {
   }
   
   public func equals(input: Input) -> Bool {
-    _isEqual(input)
+    os_unfair_lock_lock(&lock); defer { os_unfair_lock_unlock(&lock) }
+    return _isEqual(input)
   }
   
   public func registerFirstValue(_ value: Input) {
+    os_unfair_lock_lock(&lock); defer { os_unfair_lock_unlock(&lock) }
     _ = _isEqual(value)
   }
   

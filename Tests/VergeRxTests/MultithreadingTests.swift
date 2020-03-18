@@ -44,7 +44,7 @@ class MultithreadingTests: XCTestCase {
     
     let group = DispatchGroup()
         
-    for _ in 0..<20 {
+    for _ in 0..<200 {
       group.enter()
       DispatchQueue.global().async {
         self.store.update { state in
