@@ -38,6 +38,7 @@ public final class EqualityComputer<Input> {
     self._isEqual = { [weak ref] input in
       
       guard let ref = ref else {
+        assertionFailure("Caught unexpected behavior")
         return false
       }
       
