@@ -228,7 +228,7 @@ final class VergeStoreTests: XCTestCase {
     let expectation = XCTestExpectation()
             
     let getter = store.makeGetter {
-      $0.map(\.self)
+      $0.map { $0 }
     }
     getter
       .dropFirst()
