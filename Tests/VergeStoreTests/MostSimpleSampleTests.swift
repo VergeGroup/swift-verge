@@ -62,7 +62,7 @@ enum Sample {
     
     // Subscribe state
     _ = store.getterBuilder()
-      .noMap()
+      .mapWithoutPreFilter { $0 }
       .build()
       .sink { state in
         

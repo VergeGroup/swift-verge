@@ -63,25 +63,20 @@ public struct GetterBuilderMethodChain<Trait, Container: ValueContainerType> {
   }
   
   /// Projects input object into a new form.
-  /// - Attention: No pre filter
-  public func map<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Trait, Container, Input, Output> {
+  ///
+  /// - Attention: No pre filter. It may cause performance issue. Consider using .changed() before.
+  public func mapWithoutPreFilter<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Trait, Container, Input, Output> {
     changed(filter: .noFilter)
       .map(transform)
   }
-  
-  /// No map
-  /// - Attention: No pre filter
-  public func noMap() -> GetterBuilderTransformMethodChain<Trait, Container, Input, Input> {
-    changed(filter: .noFilter)
-      .map { $0 }
-  }
-  
+    
 }
 
 extension GetterBuilderMethodChain {
   
+  /// Compare using Fragment's counter
+  ///
   /// Adding a filter to getter to map only when the input object changed.
-  /// Filterling with Fragment
   public func changed<T>(_ fragmentSelector: @escaping (Input) -> Fragment<T>) -> GetterBuilderPreFilterMethodChain<Trait, Container, Input> {
     changed(comparer: .init(selector: {
       fragmentSelector($0).counter.rawValue
@@ -99,6 +94,8 @@ extension GetterBuilderMethodChain {
 
 extension GetterBuilderMethodChain where Input : Equatable {
   
+  /// Compare using Equatable
+  ///
   /// Adding a filter to getter to map only when the input object changed.
   public func changed() -> GetterBuilderPreFilterMethodChain<Trait, Container, Input> {
     changed(keySelector: { $0 }, comparer: .init(==))
@@ -110,12 +107,5 @@ extension GetterBuilderMethodChain where Input : Equatable {
     changed()
       .map(transform)
   }
-    
-  /// [Filter]
-  /// No map
-  public func noMap() -> GetterBuilderTransformMethodChain<Trait, Container, Input, Input> {
-    changed()
-      .map { $0 }
-  }
-  
+      
 }
