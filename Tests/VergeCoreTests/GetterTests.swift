@@ -58,12 +58,9 @@ class GetterTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     var updateCount = 0
-                         
-    let g = storage.makeGetter {
-      $0.changed()
-        .map { $0 * 2 }
-    }
-        
+    
+    let g = storage.makeGetter().changed().map { $0 * 2 }.build()
+                                 
     g.sink { _ in
       updateCount += 1
     }
@@ -137,12 +134,11 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.makeGetter {
-      $0.changed()
-        .map(\.self)
-    }
-//      .makeGetter(preFilter: .init(), transform: { $0 })
-    
+    let first = storage.makeGetter()
+      .changed()
+      .noMap()
+      .build()
+        
     let share1 = Getter {
       first.map { $0 }
     }
@@ -197,10 +193,10 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let getter = storage.makeGetter {
-      $0.map(\.description)
-        .changed(comparer: .init(==))
-    }
+    let getter = storage.makeGetter()
+      .map(\.description)
+      .changed(comparer: .init(==))
+      .build()
           
     var updateCount = 0
     

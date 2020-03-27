@@ -143,26 +143,8 @@ extension Reactive where Base : RxValueContainerType {
     return getter
   }
       
-  /// Dummy for Xcode's code completion
-  @available(*, deprecated, message: "Dummy method")
-  public func makeGetter(_ make: (GetterBuilderMethodChain<Value>) -> Never) -> Never {
-    fatalError()
-  }
-  
-  /// Dummy for Xcode's code completion
-  @available(*, deprecated, message: "You need to call `.map` more.")
-  public func makeGetter<PreComparingKey>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderPreFilterMethodChain<Value, PreComparingKey>) -> Never {
-    fatalError()
-  }
-  
-  /// Value -> [PreFilter -> Transform] -> Value
-  public func makeGetter<PreComparingKey, Output>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderTransformMethodChain<Value, PreComparingKey, Output>) -> RxGetterSource<Value, Output> {
-    return makeGetter(from: .from(make(.init())))
-  }
-  
-  /// Value -> [PreFilter -> Transform -> PostFilter] -> Value
-  public func makeGetter<PreComparingKey, Output, PostComparingKey>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderPostFilterMethodChain<Value, PreComparingKey, Output, PostComparingKey>) -> RxGetterSource<Value, Output> {
-    return makeGetter(from: .from(make(.init())))
+  public func makeGetter() -> GetterBuilderMethodChain<GetterBuilderTrait.Rx, Base> {
+    .init(target: base)
   }
   
 }
@@ -175,4 +157,20 @@ extension ObservableConvertibleType {
   public func unsafeGetterCast() -> RxGetter<Element> {
     .init(from: self)
   }
+}
+
+extension GetterBuilderTransformMethodChain where Trait == GetterBuilderTrait.Rx, Container : RxValueContainerType & ReactiveCompatible {
+  
+  public func build() -> RxGetterSource<Input, Output> {
+    target.rx.makeGetter(from: makeGetterBuilder())
+  }
+  
+}
+
+extension GetterBuilderPostFilterMethodChain where Trait == GetterBuilderTrait.Rx, Container : RxValueContainerType & ReactiveCompatible {
+  
+  public func build() -> RxGetterSource<Input, Output> {
+    target.rx.makeGetter(from: makeGetterBuilder())
+  }
+  
 }

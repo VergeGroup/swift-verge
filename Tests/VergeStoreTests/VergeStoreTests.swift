@@ -227,9 +227,8 @@ final class VergeStoreTests: XCTestCase {
     
     let expectation = XCTestExpectation()
             
-    let getter = store.makeGetter {
-      $0.map { $0 }
-    }
+    let getter = store.makeGetter().map { $0 }.build()
+    
     getter
       .dropFirst()
       .sink { (state) in

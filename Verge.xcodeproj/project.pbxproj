@@ -48,6 +48,7 @@
 		4B475BD0239ADEB4008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
 		4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */; };
 		4B53B93F23B2823D0087183B /* Deprecates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B53B93E23B2823D0087183B /* Deprecates.swift */; };
+		4B542435242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B542434242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift */; };
 		4B54517023CCC7E700770E61 /* GetterBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54516F23CCC7E700770E61 /* GetterBuilder.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
@@ -450,6 +451,7 @@
 		4B495D092332B5170098F7B4 /* NetworkImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
 		4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueContainerType.swift; sourceTree = "<group>"; };
 		4B53B93E23B2823D0087183B /* Deprecates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deprecates.swift; sourceTree = "<group>"; };
+		4B542434242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderMethodChain.swift; sourceTree = "<group>"; };
 		4B54516F23CCC7E700770E61 /* GetterBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilder.swift; sourceTree = "<group>"; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
@@ -1107,6 +1109,7 @@
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
 				4B4011BE23C77CEC00C582BC /* Getter.swift */,
 				4B54516F23CCC7E700770E61 /* GetterBuilder.swift */,
+				4B542434242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift */,
 				4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */,
 				4BFA229F23A63B56008D7BCB /* Info.plist */,
 				4BF470CC23CC36E8001A1D5D /* FragmentState.swift */,
@@ -1974,6 +1977,7 @@
 				4B4011BF23C77CEC00C582BC /* Getter.swift in Sources */,
 				4BA8DB3623E36465001CDADA /* EqualityComputer.swift in Sources */,
 				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,
+				4B542435242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

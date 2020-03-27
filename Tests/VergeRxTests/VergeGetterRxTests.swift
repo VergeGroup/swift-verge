@@ -35,11 +35,10 @@ class VergeGetterRxTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     var updateCount = 0
-            
-    let g = storage.rx.makeGetter {
-      $0.changed(comparer: .init(==))
-        .map { $0 * 2 }
-    }
+                
+    let g = storage.rx.makeGetter().changed(comparer: .init(==))
+      .map { $0 * 2 }
+      .build()
         
     _ = g.subscribe(onNext: { _ in
       updateCount += 1
@@ -76,11 +75,11 @@ class VergeGetterRxTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     var updateCount = 0
-    
-    let g = storage.rx.makeGetter {
-      $0.changed(comparer: .init(==))
-        .map { $0 * 2 }
-    }
+        
+    let g = storage.rx.makeGetter()
+      .changed(comparer: .init(==))
+      .map { $0 * 2 }
+      .build()
     
     _ = g.bind { _ in
       updateCount += 1
@@ -116,10 +115,10 @@ class VergeGetterRxTests: XCTestCase {
     
     let storage = Storage<Int>(1)
                  
-    var first: RxGetterSource<Int, Int>! = storage.rx.makeGetter {
-      $0.changed(comparer: .init(==))
-        .map { $0 }
-    }
+    var first: RxGetterSource<Int, Int>! = storage.rx.makeGetter()
+      .changed(comparer: .init(==))
+      .noMap()
+      .build()
     
     weak var weakFirst = first
                 
@@ -151,10 +150,10 @@ class VergeGetterRxTests: XCTestCase {
     
     let storage = Storage<Int>(1)
             
-    let first: RxGetterSource<Int, Int>! = storage.rx.makeGetter {
-      $0.changed(comparer: .init(==))
-        .map { $0 }
-    }
+    let first: RxGetterSource<Int, Int>! = storage.rx.makeGetter()
+      .changed(comparer: .init(==))
+      .noMap()
+      .build()
     
     let share1 = RxGetter {
       first.map { $0 }
@@ -180,15 +179,15 @@ class VergeGetterRxTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.rx.makeGetter {
-      $0.changed(comparer: .init(==))
-        .map(\.self)
-    }
+    let first = storage.rx.makeGetter()
+      .changed(comparer: .init(==))
+      .noMap()
+      .build()
         
-    let second = storage.rx.makeGetter {
-      $0.changed(comparer: .init(==))
-        .map { -$0 }
-    }
+    let second = storage.rx.makeGetter()
+      .changed(comparer: .init(==))
+      .map { -$0 }
+      .build()
             
     let combined = RxGetter {
       Observable.combineLatest(first, second)

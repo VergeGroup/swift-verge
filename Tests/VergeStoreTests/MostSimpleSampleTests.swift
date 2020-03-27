@@ -58,12 +58,14 @@ enum Sample {
     // Get value from current State
     let count = store.state.count
     
+    print(count)
+    
     // Subscribe state
-    store.makeGetter {
-      $0.noMap()
-    }
-    .sink { state in
-      
+    _ = store.makeGetter()
+      .noMap()
+      .build()
+      .sink { state in
+        
     }
     
   }
