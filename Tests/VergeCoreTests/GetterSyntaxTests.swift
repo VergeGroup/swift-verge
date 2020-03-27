@@ -24,7 +24,7 @@ final class GetterSyntaxTests: XCTestCase {
     
   func testGetterSyntax1() {
     
-    let _: GetterSource<State, String> = store.makeGetter()
+    let _: GetterSource<State, String> = store.getterBuilder()
       .changed(keySelector: \.title, comparer: .init(==))
       .map(\.title)
       .build()
@@ -35,14 +35,14 @@ final class GetterSyntaxTests: XCTestCase {
     
     /// Projects State object into `count` with **NO** filter.
     
-    let _: GetterSource<State, Int> = store.makeGetter()
+    let _: GetterSource<State, Int> = store.getterBuilder()
       .map(\.count)
       .build()
       
     
     /// Projects State object into `count` with filtering
     
-    let _: GetterSource<State, Int> = store.makeGetter()
+    let _: GetterSource<State, Int> = store.getterBuilder()
       .map(\.count)
       .changed(comparer: .init(==))
       .build()
@@ -55,7 +55,7 @@ final class GetterSyntaxTests: XCTestCase {
       
     }
     
-    let getter = store.makeGetter()
+    let getter = store.getterBuilder()
       .map(\.count)
       .build()
     
@@ -65,7 +65,7 @@ final class GetterSyntaxTests: XCTestCase {
   
   func testGetterSubscribe() {
     
-    let getter = store.makeGetter()
+    let getter = store.getterBuilder()
       .map(\.count)
       .build()
     

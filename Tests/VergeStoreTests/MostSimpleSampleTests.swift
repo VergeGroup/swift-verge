@@ -61,7 +61,7 @@ enum Sample {
     print(count)
     
     // Subscribe state
-    _ = store.makeGetter()
+    _ = store.getterBuilder()
       .noMap()
       .build()
       .sink { state in

@@ -59,7 +59,7 @@ class GetterTests: XCTestCase {
     
     var updateCount = 0
     
-    let g = storage.makeGetter().changed().map { $0 * 2 }.build()
+    let g = storage.getterBuilder().changed().map { $0 * 2 }.build()
                                  
     g.sink { _ in
       updateCount += 1
@@ -134,7 +134,7 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.makeGetter()
+    let first = storage.getterBuilder()
       .changed()
       .noMap()
       .build()
@@ -193,7 +193,7 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let getter = storage.makeGetter()
+    let getter = storage.getterBuilder()
       .map(\.description)
       .changed(comparer: .init(==))
       .build()

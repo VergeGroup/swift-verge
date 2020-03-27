@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct GetterBuilder<Input, PreComparingKey, Output, PostComparingKey> {
+public struct GetterComponents<Input, PreComparingKey, Output, PostComparingKey> {
   
   public let preFilter: EqualityComputerBuilder<Input, PreComparingKey>
   public let transform: (Input) -> Output
@@ -28,12 +28,12 @@ public struct GetterBuilder<Input, PreComparingKey, Output, PostComparingKey> {
   
 }
 
-extension GetterBuilder {
+extension GetterComponents {
   
   public static func make(
     preFilter: EqualityComputerBuilder<Input, PreComparingKey>,
     transform: @escaping (Input) -> Output
-  ) -> GetterBuilder<Input, PreComparingKey, Output, Output> {
+  ) -> GetterComponents<Input, PreComparingKey, Output, Output> {
     
     return .init(
       preFilter: preFilter,

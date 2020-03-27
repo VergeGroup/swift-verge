@@ -31,6 +31,9 @@
 		4B2050FB23D5C878000A2779 /* ActionMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050FA23D5C878000A2779 /* ActionMetadata.swift */; };
 		4B2050FD23D5D24C000A2779 /* DispatcherMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050FC23D5D24C000A2779 /* DispatcherMetadata.swift */; };
 		4B264EF823BD13BC001BD9A0 /* DatabaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */; };
+		4B26D110242DF4F800E366CB /* GetterBuilderPreFilterMethodChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B26D10F242DF4F800E366CB /* GetterBuilderPreFilterMethodChain.swift */; };
+		4B26D112242DF52A00E366CB /* GetterBuilderTransformMethodChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B26D111242DF52A00E366CB /* GetterBuilderTransformMethodChain.swift */; };
+		4B26D114242DF54900E366CB /* GetterBuilderPostFilterMethodChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B26D113242DF54900E366CB /* GetterBuilderPostFilterMethodChain.swift */; };
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
 		4B39AE5623C5DC8D005F7BC8 /* CopyPerformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B39AE5423C5DC84005F7BC8 /* CopyPerformance.swift */; };
 		4B3DC06F23A66840008A4627 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
@@ -49,7 +52,7 @@
 		4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */; };
 		4B53B93F23B2823D0087183B /* Deprecates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B53B93E23B2823D0087183B /* Deprecates.swift */; };
 		4B542435242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B542434242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift */; };
-		4B54517023CCC7E700770E61 /* GetterBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54516F23CCC7E700770E61 /* GetterBuilder.swift */; };
+		4B54517023CCC7E700770E61 /* GetterComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54516F23CCC7E700770E61 /* GetterComponents.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
@@ -434,6 +437,9 @@
 		4B2050FC23D5D24C000A2779 /* DispatcherMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherMetadata.swift; sourceTree = "<group>"; };
 		4B232761239E71530043D3F9 /* MemoizeGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoizeGetterTests.swift; sourceTree = "<group>"; };
 		4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseError.swift; sourceTree = "<group>"; };
+		4B26D10F242DF4F800E366CB /* GetterBuilderPreFilterMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderPreFilterMethodChain.swift; sourceTree = "<group>"; };
+		4B26D111242DF52A00E366CB /* GetterBuilderTransformMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderTransformMethodChain.swift; sourceTree = "<group>"; };
+		4B26D113242DF54900E366CB /* GetterBuilderPostFilterMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderPostFilterMethodChain.swift; sourceTree = "<group>"; };
 		4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizeDisplayValueTests.swift; sourceTree = "<group>"; };
 		4B39AE5423C5DC84005F7BC8 /* CopyPerformance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyPerformance.swift; sourceTree = "<group>"; };
 		4B4011BC23C779D400C582BC /* State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
@@ -452,7 +458,7 @@
 		4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueContainerType.swift; sourceTree = "<group>"; };
 		4B53B93E23B2823D0087183B /* Deprecates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deprecates.swift; sourceTree = "<group>"; };
 		4B542434242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderMethodChain.swift; sourceTree = "<group>"; };
-		4B54516F23CCC7E700770E61 /* GetterBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilder.swift; sourceTree = "<group>"; };
+		4B54516F23CCC7E700770E61 /* GetterComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterComponents.swift; sourceTree = "<group>"; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
 		4B57FD1923A29DAD00E41D06 /* EntityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityType.swift; sourceTree = "<group>"; };
@@ -1108,8 +1114,11 @@
 				4BA8DB3523E36465001CDADA /* EqualityComputer.swift */,
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
 				4B4011BE23C77CEC00C582BC /* Getter.swift */,
-				4B54516F23CCC7E700770E61 /* GetterBuilder.swift */,
+				4B54516F23CCC7E700770E61 /* GetterComponents.swift */,
 				4B542434242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift */,
+				4B26D10F242DF4F800E366CB /* GetterBuilderPreFilterMethodChain.swift */,
+				4B26D111242DF52A00E366CB /* GetterBuilderTransformMethodChain.swift */,
+				4B26D113242DF54900E366CB /* GetterBuilderPostFilterMethodChain.swift */,
 				4B4DF7FF23A69CD800D53E9D /* ValueContainerType.swift */,
 				4BFA229F23A63B56008D7BCB /* Info.plist */,
 				4BF470CC23CC36E8001A1D5D /* FragmentState.swift */,
@@ -1970,12 +1979,15 @@
 				4BF470CD23CC36E8001A1D5D /* FragmentState.swift in Sources */,
 				4B73F08924041811006910E6 /* Log.swift in Sources */,
 				4BA3E1A523C359F40095629B /* Signpost.swift in Sources */,
+				4B26D112242DF52A00E366CB /* GetterBuilderTransformMethodChain.swift in Sources */,
 				4B4DF80023A69CD800D53E9D /* ValueContainerType.swift in Sources */,
-				4B54517023CCC7E700770E61 /* GetterBuilder.swift in Sources */,
+				4B54517023CCC7E700770E61 /* GetterComponents.swift in Sources */,
 				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
 				4B8EB4F923C034A900035B2A /* Comparer.swift in Sources */,
+				4B26D110242DF4F800E366CB /* GetterBuilderPreFilterMethodChain.swift in Sources */,
 				4B4011BF23C77CEC00C582BC /* Getter.swift in Sources */,
 				4BA8DB3623E36465001CDADA /* EqualityComputer.swift in Sources */,
+				4B26D114242DF54900E366CB /* GetterBuilderPostFilterMethodChain.swift in Sources */,
 				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,
 				4B542435242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift in Sources */,
 			);

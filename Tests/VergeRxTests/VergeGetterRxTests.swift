@@ -36,7 +36,7 @@ class VergeGetterRxTests: XCTestCase {
     
     var updateCount = 0
                 
-    let g = storage.rx.makeGetter().changed(comparer: .init(==))
+    let g = storage.rx.getterBuilder().changed(comparer: .init(==))
       .map { $0 * 2 }
       .build()
         
@@ -76,7 +76,7 @@ class VergeGetterRxTests: XCTestCase {
     
     var updateCount = 0
         
-    let g = storage.rx.makeGetter()
+    let g = storage.rx.getterBuilder()
       .changed(comparer: .init(==))
       .map { $0 * 2 }
       .build()
@@ -115,7 +115,7 @@ class VergeGetterRxTests: XCTestCase {
     
     let storage = Storage<Int>(1)
                  
-    var first: RxGetterSource<Int, Int>! = storage.rx.makeGetter()
+    var first: RxGetterSource<Int, Int>! = storage.rx.getterBuilder()
       .changed(comparer: .init(==))
       .noMap()
       .build()
@@ -150,7 +150,7 @@ class VergeGetterRxTests: XCTestCase {
     
     let storage = Storage<Int>(1)
             
-    let first: RxGetterSource<Int, Int>! = storage.rx.makeGetter()
+    let first: RxGetterSource<Int, Int>! = storage.rx.getterBuilder()
       .changed(comparer: .init(==))
       .noMap()
       .build()
@@ -179,12 +179,12 @@ class VergeGetterRxTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.rx.makeGetter()
+    let first = storage.rx.getterBuilder()
       .changed(comparer: .init(==))
       .noMap()
       .build()
         
-    let second = storage.rx.makeGetter()
+    let second = storage.rx.getterBuilder()
       .changed(comparer: .init(==))
       .map { -$0 }
       .build()

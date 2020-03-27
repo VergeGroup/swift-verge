@@ -20,7 +20,7 @@ public protocol ValueContainerType: AnyObject {
      
   @available(iOS 13, macOS 10.15, *)
   func makeGetter<PreComparingKey, Output, PostComparingKey>(
-    from builder: GetterBuilder<Value, PreComparingKey, Output, PostComparingKey>
+    from builder: GetterComponents<Value, PreComparingKey, Output, PostComparingKey>
   ) -> GetterSource<Value, Output>
   
   #endif
@@ -30,8 +30,7 @@ public protocol ValueContainerType: AnyObject {
 import Combine
 extension ValueContainerType {
      
-  // TODO: Rename getterBuilder()
-  public func makeGetter() -> GetterBuilderMethodChain<GetterBuilderTrait.Combine, Self> {
+  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Combine, Self> {
     .init(target: self)
   }
       
@@ -53,7 +52,7 @@ extension Storage: ValueContainerType {
   @available(iOS 13, macOS 10.15, *)
   
   public func makeGetter<PreComparingKey, Output, PostComparingKey>(
-    from builder: GetterBuilder<Value, PreComparingKey, Output, PostComparingKey>
+    from builder: GetterComponents<Value, PreComparingKey, Output, PostComparingKey>
   ) -> GetterSource<Value, Output> {
     
     let preComparer = builder.preFilter.build()
@@ -76,9 +75,9 @@ extension Storage: ValueContainerType {
       pipe = base.eraseToAnyPublisher()
     }
        
-    let makeGetter = GetterSource<Value, Output>.init(input: pipe)
+    let getterBuilder = GetterSource<Value, Output>.init(input: pipe)
     
-    return makeGetter
+    return getterBuilder
   }
    
   #endif
