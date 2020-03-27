@@ -37,6 +37,8 @@ public struct GetterBuilderPostFilterMethodChain<Trait, Container: ValueContaine
   
 }
 
+#if canImport(Combine)
+
 extension GetterBuilderPostFilterMethodChain where Trait == GetterBuilderTrait.Combine {
   
   @available(iOS 13, macOS 10.15, *)
@@ -45,3 +47,5 @@ extension GetterBuilderPostFilterMethodChain where Trait == GetterBuilderTrait.C
   }
   
 }
+
+#endif

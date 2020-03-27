@@ -70,6 +70,16 @@ public struct GetterBuilderTransformMethodChain<Trait, Container: ValueContainer
   
 }
 
+extension GetterBuilderTransformMethodChain where Output : Equatable {
+  
+  /// Publishes only elements that don’t match the previous element.
+  public func changed()-> GetterBuilderPostFilterMethodChain<Trait, Container, PreComparingKey, Output, Output> {
+    return changed(filter: .init(keySelector: { $0 }, comparer: .init(==)))
+  }
+}
+
+#if canImport(Combine)
+
 extension GetterBuilderTransformMethodChain where Trait == GetterBuilderTrait.Combine {
   
   @available(iOS 13, macOS 10.15, *)
@@ -79,10 +89,4 @@ extension GetterBuilderTransformMethodChain where Trait == GetterBuilderTrait.Co
   
 }
 
-extension GetterBuilderTransformMethodChain where Output : Equatable {
-  
-  /// Publishes only elements that don’t match the previous element.
-  public func changed()-> GetterBuilderPostFilterMethodChain<Trait, Container, PreComparingKey, Output, Output> {
-    return changed(filter: .init(keySelector: { $0 }, comparer: .init(==)))
-  }
-}
+#endif
