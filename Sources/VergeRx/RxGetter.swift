@@ -108,13 +108,16 @@ extension Reactive where Base : RxValueContainerType {
   public typealias Value = Base.Value
   
   public func makeGetter<PreComapringKey, Output, PostComparingKey>(
-    from builder: GetterBuilder<Value, PreComapringKey, Output, PostComparingKey>
+    from components: GetterComponents<Value, PreComapringKey, Output, PostComparingKey>
   ) -> RxGetterSource<Value, Output> {
     
-    let preComparer = builder.preFilter.build()
-    let postComparer = builder.postFilter?.build()
+    let preComparer = components.preFilter.build()
+    let postComparer = components.postFilter?.build()
     
     let baseStream = base.asObservable()
+      .do(onNext: { [closure = components.onPreFilterWillReceive] value in
+        closure(value)
+      })
       .filter { value in
         let result = !preComparer.equals(input: value)
         if !result {
@@ -122,7 +125,10 @@ extension Reactive where Base : RxValueContainerType {
         }
         return result
     }
-    .map(builder.transform)
+    .do(onNext: { [closure = components.onTransformWillReceive] value in
+      closure(value)
+    })
+    .map(components.transform)
     
     let pipe: Observable<Output>
     
@@ -134,6 +140,9 @@ extension Reactive where Base : RxValueContainerType {
         }
         return result
       }
+      .do(onNext: { [closure = components.onPostFilterWillEmit] value in
+        closure(value)
+      })
     } else {
       pipe = baseStream
     }
@@ -143,26 +152,8 @@ extension Reactive where Base : RxValueContainerType {
     return getter
   }
       
-  /// Dummy for Xcode's code completion
-  @available(*, deprecated, message: "Dummy method")
-  public func makeGetter(_ make: (GetterBuilderMethodChain<Value>) -> Never) -> Never {
-    fatalError()
-  }
-  
-  /// Dummy for Xcode's code completion
-  @available(*, deprecated, message: "You need to call `.map` more.")
-  public func makeGetter<PreComparingKey>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderPreFilterMethodChain<Value, PreComparingKey>) -> Never {
-    fatalError()
-  }
-  
-  /// Value -> [PreFilter -> Transform] -> Value
-  public func makeGetter<PreComparingKey, Output>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderTransformMethodChain<Value, PreComparingKey, Output>) -> RxGetterSource<Value, Output> {
-    return makeGetter(from: .from(make(.init())))
-  }
-  
-  /// Value -> [PreFilter -> Transform -> PostFilter] -> Value
-  public func makeGetter<PreComparingKey, Output, PostComparingKey>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderPostFilterMethodChain<Value, PreComparingKey, Output, PostComparingKey>) -> RxGetterSource<Value, Output> {
-    return makeGetter(from: .from(make(.init())))
+  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Rx, Base> {
+    .init(target: base)
   }
   
 }
@@ -175,4 +166,20 @@ extension ObservableConvertibleType {
   public func unsafeGetterCast() -> RxGetter<Element> {
     .init(from: self)
   }
+}
+
+extension GetterBuilderTransformMethodChain where Trait == GetterBuilderTrait.Rx, Container : RxValueContainerType & ReactiveCompatible {
+  
+  public func build() -> RxGetterSource<Input, Output> {
+    target.rx.makeGetter(from: makeGetterComponents())
+  }
+  
+}
+
+extension GetterBuilderPostFilterMethodChain where Trait == GetterBuilderTrait.Rx, Container : RxValueContainerType & ReactiveCompatible {
+  
+  public func build() -> RxGetterSource<Input, Output> {
+    target.rx.makeGetter(from: makeGetterComponents())
+  }
+  
 }

@@ -23,11 +23,8 @@ class GetterTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     var updateCount = 0
-    
-    let g = storage.makeGetter(from: .make(
-      preFilter: .init(),
-      transform: { $0 * 2 })
-    )
+      
+    let g = storage.getterBuilder().changed().map { $0 * 2 }.build()
         
     g.sink { _ in
       updateCount += 1
@@ -58,12 +55,9 @@ class GetterTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     var updateCount = 0
-                         
-    let g = storage.makeGetter {
-      $0.changed()
-        .map { $0 * 2 }
-    }
-        
+    
+    let g = storage.getterBuilder().changed().map { $0 * 2 }.build()
+                                 
     g.sink { _ in
       updateCount += 1
     }
@@ -95,11 +89,8 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    var first: GetterSource<Int, Int>! = storage.makeGetter(from: .make(
-      preFilter: .init(),
-      transform: { $0 })
-    )
-    
+    var first: GetterSource<Int, Int>! = storage.getterBuilder().changed().map { $0 }.build()
+          
     weak var weakFirst = first
     
     var second: Getter! = Getter {
@@ -124,7 +115,7 @@ class GetterTests: XCTestCase {
     
     let waiter = XCTestExpectation()
     
-    DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
       
       XCTAssertNil(weakFirst)
       waiter.fulfill()
@@ -137,12 +128,11 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.makeGetter {
-      $0.changed()
-        .map(\.self)
-    }
-//      .makeGetter(preFilter: .init(), transform: { $0 })
-    
+    let first = storage.getterBuilder()
+      .changed()
+      .map { $0 }
+      .build()
+        
     let share1 = Getter {
       first.map { $0 }
     }
@@ -167,21 +157,9 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.makeGetter(from: .make(
-      preFilter: .init(
-        keySelector: { $0 },
-        comparer: .init { $0 == $1 }
-      ),
-      transform: { $0 })
-    )
-    
-    let second = storage.makeGetter(from: .make(
-      preFilter: .init(
-        keySelector: { $0 },
-        comparer: .init { $0 == $1 }
-      ),
-      transform: { -$0 })
-    )
+    let first = storage.getterBuilder().changed().map { $0 }.build()
+            
+    let second = storage.getterBuilder().changed().map { -$0 }.build()
     
     let combined = Getter {
       first.combineLatest(second)
@@ -197,10 +175,10 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let getter = storage.makeGetter {
-      $0.map(\.description)
-        .changed(comparer: .init(==))
-    }
+    let getter = storage.getterBuilder()
+      .map(\.description)
+      .changed(comparer: .init(==))
+      .build()
           
     var updateCount = 0
     

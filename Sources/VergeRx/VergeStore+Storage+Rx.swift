@@ -123,19 +123,19 @@ extension ObservableType where Element : StateType {
 
 extension EventEmitter {
   
-  private var subject: PublishRelay<Event> {
+  private var subject: PublishSubject<Event> {
     
-    if let associated = objc_getAssociatedObject(self, &storage_subject) as? PublishRelay<Event> {
+    if let associated = objc_getAssociatedObject(self, &storage_subject) as? PublishSubject<Event> {
       
       return associated
       
     } else {
       
-      let associated = PublishRelay<Event>()
+      let associated = PublishSubject<Event>()
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
       
       add { (event) in
-        associated.accept(event)
+        associated.on(.next(event))
       }
       
       return associated
@@ -143,7 +143,7 @@ extension EventEmitter {
   }
   
   public func asSignal() -> Signal<Event> {
-    return subject.asSignal()
+    return subject.asSignal(onErrorSignalWith: .empty())
   }
   
 }

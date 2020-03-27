@@ -29,12 +29,12 @@ final class LoggedInService<State: LoggedInServiceStateType>: DispatcherBase<Sta
 
   private let apiProvider: MoyaProvider<Templates.JSONResponse.Auth.Request>
     
-  override init(target store: StoreBase<State, Activity>) {
+  override init(targetStore: StoreBase<State, Activity>) {
         
-    let token = store.state.service.auth.accessToken
-    let authPlugin = AccessTokenPlugin { token }
+    let token = targetStore.state.service.auth.accessToken
+    let authPlugin = AccessTokenPlugin { _ in token }
     self.apiProvider = .init(plugins: [authPlugin])
-    super.init(target: store)
+    super.init(targetStore: targetStore)
   }
   
   func fetchMe() {
@@ -68,7 +68,7 @@ final class LoggedInStack<State: LoggedInServiceStateType>: ObservableObject {
     
     let _store = LoggedInStore.init(initialState: initialState, logger: DefaultStoreLogger.shared)
     self.store = _store
-    self.service = .init(target: _store)
+    self.service = .init(targetStore: _store)
     
   }
 }

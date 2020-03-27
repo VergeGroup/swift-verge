@@ -38,9 +38,7 @@ class ViewController: UIViewController {
         
       })
       .disposed(by: disposeBag)
-    
-    viewModel.rx.makeGetter { $0.map(\.count) }.value
-    
+        
     viewModel.rx
       .stateObservable
       .changed(\.displayNumber)

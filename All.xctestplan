@@ -1,10 +1,10 @@
 {
   "configurations" : [
     {
-      "id" : "753AFC3C-AC37-46FD-9542-03F5F7FADE28",
-      "name" : "Basic",
+      "id" : "CED3C5CF-7541-4D76-8BD7-C398F4B5517C",
+      "name" : "Configuration 1",
       "options" : {
-        "mainThreadCheckerEnabled" : false
+
       }
     }
   ],
@@ -15,8 +15,22 @@
     {
       "target" : {
         "containerPath" : "container:Verge.xcodeproj",
+        "identifier" : "4BE9454E23AD1B180060F977",
+        "name" : "VergeCoreTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Verge.xcodeproj",
         "identifier" : "4B475BC4239ADE1C008A03E1",
         "name" : "VergeORMTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Verge.xcodeproj",
+        "identifier" : "4B1743A623C767670074C457",
+        "name" : "VergeRxTests"
       }
     },
     {
@@ -27,20 +41,10 @@
       }
     },
     {
-      "skippedTests" : [
-        "GetterTests\/testChain()"
-      ],
       "target" : {
         "containerPath" : "container:Verge.xcodeproj",
-        "identifier" : "4BE9454E23AD1B180060F977",
-        "name" : "VergeCoreTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Verge.xcodeproj",
-        "identifier" : "4B1743A623C767670074C457",
-        "name" : "VergeRxTests"
+        "identifier" : "4B65F8EB1FB4C0DC00A90A67",
+        "name" : "VergeTests"
       }
     }
   ],

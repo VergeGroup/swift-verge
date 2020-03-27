@@ -20,7 +20,7 @@ public protocol ValueContainerType: AnyObject {
      
   @available(iOS 13, macOS 10.15, *)
   func makeGetter<PreComparingKey, Output, PostComparingKey>(
-    from builder: GetterBuilder<Value, PreComparingKey, Output, PostComparingKey>
+    from builder: GetterComponents<Value, PreComparingKey, Output, PostComparingKey>
   ) -> GetterSource<Value, Output>
   
   #endif
@@ -29,31 +29,9 @@ public protocol ValueContainerType: AnyObject {
 #if canImport(Combine)
 import Combine
 extension ValueContainerType {
-  
-  /// Dummy for Xcode's code completion
-  @available(*, deprecated, message: "Dummy method")
-  @available(iOS 13, macOS 10.15, *)
-  public func makeGetter(_ make: (GetterBuilderMethodChain<Value>) -> Never) -> Never {
-    fatalError()
-  }
-  
-  /// Dummy for Xcode's code completion
-  @available(*, deprecated, message: "You need to call `.map` more.")
-  @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<PreComparingKey>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderPreFilterMethodChain<Value, PreComparingKey>) -> Never {
-    fatalError()
-  }
-  
-  /// Value -> [PreFilter -> Transform] -> Value
-  @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<PreComparingKey, Output>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderTransformMethodChain<Value, PreComparingKey, Output>) -> GetterSource<Value, Output> {
-    return makeGetter(from: .from(make(.init())))
-  }
-  
-  /// Value -> [PreFilter -> Transform -> PostFilter] -> Value
-  @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<PreComparingKey, Output, PostComparingKey>(_ make: (GetterBuilderMethodChain<Value>) -> GetterBuilderPostFilterMethodChain<Value, PreComparingKey, Output, PostComparingKey>) -> GetterSource<Value, Output> {
-    return makeGetter(from: .from(make(.init())))
+     
+  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Combine, Self> {
+    .init(target: self)
   }
       
 }
@@ -74,17 +52,23 @@ extension Storage: ValueContainerType {
   @available(iOS 13, macOS 10.15, *)
   
   public func makeGetter<PreComparingKey, Output, PostComparingKey>(
-    from builder: GetterBuilder<Value, PreComparingKey, Output, PostComparingKey>
+    from components: GetterComponents<Value, PreComparingKey, Output, PostComparingKey>
   ) -> GetterSource<Value, Output> {
     
-    let preComparer = builder.preFilter.build()
-    let postComparer = builder.postFilter?.build()
+    let preComparer = components.preFilter.build()
+    let postComparer = components.postFilter?.build()
     
     let base = publisher
+      .handleEvents(receiveOutput: { [closure = components.onPreFilterWillReceive] value in
+        closure(value)
+      })
       .filter { value in
         !preComparer.equals(input: value)
     }
-    .map(builder.transform)
+    .handleEvents(receiveOutput: { [closure = components.onTransformWillReceive] value in
+      closure(value)
+    })
+    .map(components.transform)
     
     let pipe: AnyPublisher<Output, Never>
     
@@ -92,14 +76,17 @@ extension Storage: ValueContainerType {
       pipe = base.filter { value in
         !comparer.equals(input: value)
       }
+      .handleEvents(receiveOutput: { [closure = components.onPostFilterWillEmit] value in
+        closure(value)
+      })
       .eraseToAnyPublisher()
     } else {
       pipe = base.eraseToAnyPublisher()
     }
        
-    let makeGetter = GetterSource<Value, Output>.init(input: pipe)
+    let getterBuilder = GetterSource<Value, Output>.init(input: pipe)
     
-    return makeGetter
+    return getterBuilder
   }
    
   #endif
