@@ -413,6 +413,7 @@
 /* Begin PBXFileReference section */
 		1EDE2A03AD390233DBB6ED18 /* Pods-SpotifyDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyDemo.debug.xcconfig"; path = "Target Support Files/Pods-SpotifyDemo/Pods-SpotifyDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		2FA2244BF41C2E8969E30BCF /* Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig"; sourceTree = "<group>"; };
+		3818992221C3563A15F64564 /* Pods-Demo-VergeStoreDemoSwiftUI.benchmark.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoSwiftUI.benchmark.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI.benchmark.xcconfig"; sourceTree = "<group>"; };
 		3F351754BE49BE9A03E11763 /* Pods_Demo_VergeStoreDemoUIKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Demo_VergeStoreDemoUIKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B07360123AA35F800866430 /* HashIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashIndex.swift; sourceTree = "<group>"; };
 		4B083E9A23FC4B4F00AB9E6B /* JSONDescribing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONDescribing.swift; sourceTree = "<group>"; };
@@ -572,10 +573,12 @@
 		4BFA22BA23A64289008D7BCB /* Storage+Getter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Getter.swift"; sourceTree = "<group>"; };
 		4BFC3A0E23C758FD00801CB4 /* RxGetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxGetter.swift; sourceTree = "<group>"; };
 		4BFC3A1623C762CB00801CB4 /* VergeGetterRxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeGetterRxTests.swift; sourceTree = "<group>"; };
+		77694289585134958D9399AC /* Pods-SpotifyDemo.benchmark.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyDemo.benchmark.xcconfig"; path = "Target Support Files/Pods-SpotifyDemo/Pods-SpotifyDemo.benchmark.xcconfig"; sourceTree = "<group>"; };
 		946DE623F28DE41DC5DA4063 /* Pods_SpotifyDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpotifyDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADE43B152D7AD2696345A261 /* Pods_Demo_VergeStoreDemoSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Demo_VergeStoreDemoSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD668DC952DD9547224506FC /* Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig"; sourceTree = "<group>"; };
 		C50125436B38343085FC1BFA /* Pods-SpotifyDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyDemo.release.xcconfig"; path = "Target Support Files/Pods-SpotifyDemo/Pods-SpotifyDemo.release.xcconfig"; sourceTree = "<group>"; };
+		E9091CCC1298ACC3224EEB48 /* Pods-Demo-VergeStoreDemoUIKit.benchmark.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoUIKit.benchmark.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit.benchmark.xcconfig"; sourceTree = "<group>"; };
 		F8088580235167190CBF9EAC /* Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig"; sourceTree = "<group>"; };
 		FAE87FF1E76E4BA1A72B0223 /* Pods-Demo-VergeStoreDemoUIKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoUIKit.release.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -721,6 +724,9 @@
 				FAE87FF1E76E4BA1A72B0223 /* Pods-Demo-VergeStoreDemoUIKit.release.xcconfig */,
 				1EDE2A03AD390233DBB6ED18 /* Pods-SpotifyDemo.debug.xcconfig */,
 				C50125436B38343085FC1BFA /* Pods-SpotifyDemo.release.xcconfig */,
+				3818992221C3563A15F64564 /* Pods-Demo-VergeStoreDemoSwiftUI.benchmark.xcconfig */,
+				E9091CCC1298ACC3224EEB48 /* Pods-Demo-VergeStoreDemoUIKit.benchmark.xcconfig */,
+				77694289585134958D9399AC /* Pods-SpotifyDemo.benchmark.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1306,8 +1312,6 @@
 				4B1743B623C767D90074C457 /* PBXTargetDependency */,
 			);
 			name = VergeClassic;
-			packageProductDependencies = (
-			);
 			productName = CycleViewModel;
 			productReference = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2656,7 +2660,7 @@
 		};
 		4B67673323D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1EDE2A03AD390233DBB6ED18 /* Pods-SpotifyDemo.debug.xcconfig */;
+			baseConfigurationReference = 77694289585134958D9399AC /* Pods-SpotifyDemo.benchmark.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -2702,7 +2706,7 @@
 		};
 		4B67673523D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2FA2244BF41C2E8969E30BCF /* Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig */;
+			baseConfigurationReference = 3818992221C3563A15F64564 /* Pods-Demo-VergeStoreDemoSwiftUI.benchmark.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -2727,7 +2731,7 @@
 		};
 		4B67673623D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F8088580235167190CBF9EAC /* Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig */;
+			baseConfigurationReference = E9091CCC1298ACC3224EEB48 /* Pods-Demo-VergeStoreDemoUIKit.benchmark.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -3608,7 +3612,7 @@
 			repositoryURL = "git@github.com:ReactiveX/RxSwift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.1;
+				minimumVersion = 5.1.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
