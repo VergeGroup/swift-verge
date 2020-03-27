@@ -41,10 +41,7 @@ let store = StoreBase<State, Never>(initialState: .init(), logger: nil)
 ### Create a GetterSource / Getter
 
 ```swift
-let getterSource: GetterSource<State, Int> = store.makeGetter {
-  // Why here is closure would be touched later.
-  $0.map(\.count)
-}
+let getterSource: GetterSource<State, Int> = store.getterBuilder().map(\.count)
 ```
 
 **GetterSource** has the type of State to indicates the output object comes from.  
@@ -96,10 +93,10 @@ In that case, we can consider using Memoization.
 **Using `changed`** **before `map`** can filter the object before passing the map function.
 
 ```swift
-store.makeGetter {
-  $0.changed(keySelector: \.title, comparer: .init(==))
-    .map { $0.title.count }
-}
+store.getterBuilder()
+  .changed(keySelector: \.title, comparer: .init(==))
+  .map { $0.title.count }
+  .build()
 ```
 
 
@@ -109,10 +106,10 @@ store.makeGetter {
 **Using `changed`** **after `map`** can filter the object with the mapped object after the map function.
 
 ```swift
-store.makeGetter {
-  $0.map { $0.title.count }
-    .changed(==)
-}
+store.getterBuilder()
+  .mapWithoutPreFilter { $0.title.count }
+  .changed(==)
+  .build()
 ```
 
 {% hint style="warning" %}
@@ -142,7 +139,7 @@ Publisher must have the replayed value and must emit value synchronously when su
 {% endhint %}
 
 ```swift
-let first = store.makeGetter { ... }
+let first = store.getterBuilder() ... .build()
 
 let second = Getter {
   first
@@ -156,9 +153,9 @@ let second = Getter {
 ## Combine getters
 
 ```swift
-let first: Getter<Int> = store.makeGetter { ... }
+let first: Getter<Int> = store.getterBuilder() ... .build()
 
-let second: Getter<Int> = store.makeGetter { ... }
+let second: Getter<Int> = store.getterBuilder() ... .build()
 
 let combined = Getter {
   first.combineLatest(second)
@@ -199,9 +196,9 @@ pod 'Verge/Rx'
 The syntax are completely same with Getter
 
 ```swift
-let getter: RxGetterSource<State, Int> = store.rx.store.makeGetter {
-  $0.map(\.count)
-}
+let getter: RxGetterSource<State, Int> = store.rx.store.getterBuilder()
+  .mapWithoutPreFilter(\.count)
+  .build()
 ```
 
 ### Transform Getter
