@@ -14,8 +14,9 @@ public struct GetterBuilderPostFilterMethodChain<Trait, Container: ValueContaine
   
   public let target: Container
   
-  let transformFragment: GetterBuilderTransformMethodChain<Trait, Container, PreComparingKey, Output>
-  let postFilter: EqualityComputerBuilder<Output, PostComparingKey>
+  private let transformFragment: GetterBuilderTransformMethodChain<Trait, Container, PreComparingKey, Output>
+  private let postFilter: EqualityComputerBuilder<Output, PostComparingKey>
+  private var onPostFilterWillEmit: ((Output) -> Void) = { _ in }
   
   init(
     target: Container,
@@ -27,12 +28,27 @@ public struct GetterBuilderPostFilterMethodChain<Trait, Container: ValueContaine
     self.postFilter = postFilter
   }
   
+  public func `do`(onReceive: @escaping (Output) -> Void) -> Self {
+    var _self = self
+    let pre = onPostFilterWillEmit
+    _self.onPostFilterWillEmit = { value in
+      pre(value)
+      onReceive(value)
+    }
+    return _self
+  }
+  
   public func makeGetterComponents() -> GetterComponents<Input, PreComparingKey, Output, PostComparingKey> {
+    
     .init(
+      onPreFilterWillReceive: transformFragment.preFilterFragment.source.onPreFilterWillReceive,
       preFilter: transformFragment.preFilterFragment.preFilter,
+      onTransformWillReceive: transformFragment.preFilterFragment.onTransformWillReceive,
       transform: transformFragment.transform,
-      postFilter: postFilter
+      postFilter: postFilter,
+      onPostFilterWillEmit: onPostFilterWillEmit
     )
+    
   }
   
 }

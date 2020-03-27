@@ -31,7 +31,6 @@ struct UserListView: View {
       }
       .navigationBarTitle("Users")
     }
-    .edgesIgnoringSafeArea(.all)      
     .onAppear {
       self.session.sessionDispatcher.insertSampleUsers()
     }
@@ -97,7 +96,6 @@ struct AllPostsView: View {
       }
       .navigationBarTitle("Posts")
     }
-    .edgesIgnoringSafeArea(.all)
   }
   
 }

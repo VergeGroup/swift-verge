@@ -52,17 +52,23 @@ extension Storage: ValueContainerType {
   @available(iOS 13, macOS 10.15, *)
   
   public func makeGetter<PreComparingKey, Output, PostComparingKey>(
-    from builder: GetterComponents<Value, PreComparingKey, Output, PostComparingKey>
+    from components: GetterComponents<Value, PreComparingKey, Output, PostComparingKey>
   ) -> GetterSource<Value, Output> {
     
-    let preComparer = builder.preFilter.build()
-    let postComparer = builder.postFilter?.build()
+    let preComparer = components.preFilter.build()
+    let postComparer = components.postFilter?.build()
     
     let base = publisher
+      .handleEvents(receiveOutput: { [closure = components.onPreFilterWillReceive] value in
+        closure(value)
+      })
       .filter { value in
         !preComparer.equals(input: value)
     }
-    .map(builder.transform)
+    .handleEvents(receiveOutput: { [closure = components.onTransformWillReceive] value in
+      closure(value)
+    })
+    .map(components.transform)
     
     let pipe: AnyPublisher<Output, Never>
     
@@ -70,6 +76,9 @@ extension Storage: ValueContainerType {
       pipe = base.filter { value in
         !comparer.equals(input: value)
       }
+      .handleEvents(receiveOutput: { [closure = components.onPostFilterWillEmit] value in
+        closure(value)
+      })
       .eraseToAnyPublisher()
     } else {
       pipe = base.eraseToAnyPublisher()

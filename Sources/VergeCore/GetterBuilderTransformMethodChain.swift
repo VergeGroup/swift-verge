@@ -62,9 +62,12 @@ public struct GetterBuilderTransformMethodChain<Trait, Container: ValueContainer
   
   public func makeGetterComponents() -> GetterComponents<Input, PreComparingKey, Output, Output> {
     .init(
+      onPreFilterWillReceive: preFilterFragment.source.onPreFilterWillReceive,
       preFilter: preFilterFragment.preFilter,
+      onTransformWillReceive: preFilterFragment.onTransformWillReceive,
       transform: transform,
-      postFilter: .noFilter
+      postFilter: .noFilter,
+      onPostFilterWillEmit: { _ in }
     )
   }
   

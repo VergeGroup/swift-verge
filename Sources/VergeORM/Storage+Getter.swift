@@ -124,19 +124,24 @@ extension GetterComponents where Input : DatabaseEmbedding {
       filter,
       ].compactMap { $0 })
     
-    return .make(
+    return GetterComponents<Input, Input.Database, Output, Output>(
+      onPreFilterWillReceive: { _ in },
       preFilter: .init(
         keySelector: { path($0) },
         comparer: filter
       ),
+      onTransformWillReceive: { _ in },
       transform: { (value) -> Output in
         let t = VergeSignpostTransaction("ORM.Getter.update")
         defer {
           t.end()
         }
         return update(Input.getterToDatabase(value))
-    })
-    
+    },
+      postFilter: .noFilter,
+      onPostFilterWillEmit: { _ in }
+    )
+      
   }
   
   /// Factory of the getter for querying entity from database

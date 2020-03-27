@@ -108,13 +108,16 @@ extension Reactive where Base : RxValueContainerType {
   public typealias Value = Base.Value
   
   public func makeGetter<PreComapringKey, Output, PostComparingKey>(
-    from builder: GetterComponents<Value, PreComapringKey, Output, PostComparingKey>
+    from components: GetterComponents<Value, PreComapringKey, Output, PostComparingKey>
   ) -> RxGetterSource<Value, Output> {
     
-    let preComparer = builder.preFilter.build()
-    let postComparer = builder.postFilter?.build()
+    let preComparer = components.preFilter.build()
+    let postComparer = components.postFilter?.build()
     
     let baseStream = base.asObservable()
+      .do(onNext: { [closure = components.onPreFilterWillReceive] value in
+        closure(value)
+      })
       .filter { value in
         let result = !preComparer.equals(input: value)
         if !result {
@@ -122,7 +125,10 @@ extension Reactive where Base : RxValueContainerType {
         }
         return result
     }
-    .map(builder.transform)
+    .do(onNext: { [closure = components.onTransformWillReceive] value in
+      closure(value)
+    })
+    .map(components.transform)
     
     let pipe: Observable<Output>
     
@@ -134,6 +140,9 @@ extension Reactive where Base : RxValueContainerType {
         }
         return result
       }
+      .do(onNext: { [closure = components.onPostFilterWillEmit] value in
+        closure(value)
+      })
     } else {
       pipe = baseStream
     }

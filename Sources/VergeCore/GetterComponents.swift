@@ -10,15 +10,26 @@ import Foundation
 
 public struct GetterComponents<Input, PreComparingKey, Output, PostComparingKey> {
   
+  public let onPreFilterWillReceive: ((Input) -> Void)
+  public let onTransformWillReceive: ((Input) -> Void)
+  public let onPostFilterWillEmit: ((Output) -> Void)
+  
   public let preFilter: EqualityComputerBuilder<Input, PreComparingKey>
   public let transform: (Input) -> Output
   public let postFilter: EqualityComputerBuilder<Output, PostComparingKey>?
     
   public init(
+    onPreFilterWillReceive: @escaping ((Input) -> Void),
     preFilter: EqualityComputerBuilder<Input, PreComparingKey>,
+    onTransformWillReceive: @escaping ((Input) -> Void),
     transform: @escaping (Input) -> Output,
-    postFilter: EqualityComputerBuilder<Output, PostComparingKey>
+    postFilter: EqualityComputerBuilder<Output, PostComparingKey>,
+    onPostFilterWillEmit: @escaping ((Output) -> Void)
   ) {
+    
+    self.onPreFilterWillReceive = onPreFilterWillReceive
+    self.onTransformWillReceive = onTransformWillReceive
+    self.onPostFilterWillEmit = onPostFilterWillEmit
     
     self.preFilter = preFilter
     self.transform = transform
@@ -28,19 +39,3 @@ public struct GetterComponents<Input, PreComparingKey, Output, PostComparingKey>
   
 }
 
-extension GetterComponents {
-  
-  public static func make(
-    preFilter: EqualityComputerBuilder<Input, PreComparingKey>,
-    transform: @escaping (Input) -> Output
-  ) -> GetterComponents<Input, PreComparingKey, Output, Output> {
-    
-    return .init(
-      preFilter: preFilter,
-      transform: transform,
-      postFilter: .noFilter
-    )
-    
-  }
-     
-}

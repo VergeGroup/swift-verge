@@ -20,18 +20,30 @@ public struct GetterBuilderMethodChain<Trait, Container: ValueContainerType> {
   public typealias Input = Container.Value
   
   private let target: Container
+  var onPreFilterWillReceive: ((Input) -> Void) = { _ in }
   
   public init(target: Container) {
     self.target = target
   }
   
+  public func `do`(onReceive: @escaping (Input) -> Void) -> Self {
+    var _self = self
+    let pre = onPreFilterWillReceive
+    _self.onPreFilterWillReceive = { value in
+      pre(value)
+      onReceive(value)
+    }
+    return _self
+  }
+  
   /// Adding a filter to getter to map only when the input object changed.
   ///
   /// - Attention: Wheter to put `.map` before or after `.changed` should be considered according to the costs of `.map` and `.changed`.
+  @inline(__always)
   public func changed<PreComparingKey>(
     filter: EqualityComputerBuilder<Input, PreComparingKey>
   ) -> GetterBuilderPreFilterMethodChain<Trait, Container, PreComparingKey> {
-    .init(target: target, preFilter: filter)
+    .init(target: target, source: self, preFilter: filter)
   }
   
   /// Adding a filter to getter to map only when the input object changed.

@@ -12,15 +12,19 @@ public struct GetterBuilderPreFilterMethodChain<Trait, Container: ValueContainer
   
   public typealias Input = Container.Value
   
+  let source: GetterBuilderMethodChain<Trait, Container>
   let preFilter: EqualityComputerBuilder<Input, PreComparingKey>
+  var onTransformWillReceive: ((Input) -> Void) = { _ in }
   
   public let target: Container
   
   init(
     target: Container,
+    source: GetterBuilderMethodChain<Trait, Container>,
     preFilter: EqualityComputerBuilder<Input, PreComparingKey>
   ) {
     self.target = target
+    self.source = source
     self.preFilter = preFilter
   }
   
@@ -29,8 +33,14 @@ public struct GetterBuilderPreFilterMethodChain<Trait, Container: ValueContainer
     return .init(target: target, source: self, transform: transform)
   }
   
-  /// No map
-  public func noMap() -> GetterBuilderTransformMethodChain<Trait, Container, PreComparingKey, Input> {
-    map { $0 }
+  public func `do`(onReceive: @escaping (Input) -> Void) -> Self {
+    var _self = self
+    let pre = onTransformWillReceive
+    _self.onTransformWillReceive = { value in
+      pre(value)
+      onReceive(value)
+    }
+    return _self
   }
+  
 }

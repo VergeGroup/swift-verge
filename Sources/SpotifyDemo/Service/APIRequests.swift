@@ -92,13 +92,13 @@ public enum Templates {
     public enum Auth {
       
       public struct Request: RequestTemplate, SpotifyRequestType, AccessTokenAuthorizable {
-        
+                
         public var path: String
         public var method: Moya.Method
         public var headers: [String : String]?
         public var task: Task
         
-        public var authorizationType: AuthorizationType {
+        public var authorizationType: AuthorizationType? {
           .bearer
         }
         

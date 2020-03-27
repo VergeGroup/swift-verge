@@ -23,11 +23,8 @@ class GetterTests: XCTestCase {
     let storage = Storage<Int>(1)
     
     var updateCount = 0
-    
-    let g = storage.makeGetter(from: .make(
-      preFilter: .init(),
-      transform: { $0 * 2 })
-    )
+      
+    let g = storage.getterBuilder().changed().map { $0 * 2 }.build()
         
     g.sink { _ in
       updateCount += 1
@@ -92,11 +89,8 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    var first: GetterSource<Int, Int>! = storage.makeGetter(from: .make(
-      preFilter: .init(),
-      transform: { $0 })
-    )
-    
+    var first: GetterSource<Int, Int>! = storage.getterBuilder().changed().map { $0 }.build()
+          
     weak var weakFirst = first
     
     var second: Getter! = Getter {
@@ -136,7 +130,7 @@ class GetterTests: XCTestCase {
     
     let first = storage.getterBuilder()
       .changed()
-      .noMap()
+      .map { $0 }
       .build()
         
     let share1 = Getter {
@@ -163,21 +157,9 @@ class GetterTests: XCTestCase {
     
     let storage = Storage<Int>(1)
     
-    let first = storage.makeGetter(from: .make(
-      preFilter: .init(
-        keySelector: { $0 },
-        comparer: .init { $0 == $1 }
-      ),
-      transform: { $0 })
-    )
-    
-    let second = storage.makeGetter(from: .make(
-      preFilter: .init(
-        keySelector: { $0 },
-        comparer: .init { $0 == $1 }
-      ),
-      transform: { -$0 })
-    )
+    let first = storage.getterBuilder().changed().map { $0 }.build()
+            
+    let second = storage.getterBuilder().changed().map { -$0 }.build()
     
     let combined = Getter {
       first.combineLatest(second)
