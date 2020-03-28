@@ -199,7 +199,11 @@ extension Storage: ObservableObject {
     }
   }
   
-  public var publisher: AnyPublisher<Value, Never> {
+  public var objectDidChange: AnyPublisher<Value, Never> {
+    valuePublisher.dropFirst().eraseToAnyPublisher()
+  }
+  
+  public var valuePublisher: AnyPublisher<Value, Never> {
     
     if let associated = objc_getAssociatedObject(self, &_didChangeAssociated) as? CurrentValueSubject<Value, Never> {
       return associated.eraseToAnyPublisher()
@@ -220,11 +224,7 @@ extension Storage: ObservableObject {
       return associated.eraseToAnyPublisher()
     }
   }
-  
-  public var didChangePublisher: AnyPublisher<Value, Never> {
-    publisher.dropFirst().eraseToAnyPublisher()
-  }
-  
+    
 }
 
 #endif

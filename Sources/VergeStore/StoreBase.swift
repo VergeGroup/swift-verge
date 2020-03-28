@@ -147,8 +147,8 @@ extension StoreBase: ObservableObject {
 @available(iOS 13.0, macOS 10.15, *)
 extension StoreBase {
   
-  public var didChangePublisher: AnyPublisher<State, Never> {
-    _backingStorage.didChangePublisher
+  public var statePublisher: AnyPublisher<State, Never> {
+    _backingStorage.valuePublisher
   }
   
   public var activityPublisher: EventEmitter<Activity>.Publisher {

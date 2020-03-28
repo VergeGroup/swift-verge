@@ -58,7 +58,7 @@ extension Storage: ValueContainerType {
     let preComparer = components.preFilter.build()
     let postComparer = components.postFilter?.build()
     
-    let base = publisher
+    let base = valuePublisher
       .handleEvents(receiveOutput: { [closure = components.onPreFilterWillReceive] value in
         closure(value)
       })

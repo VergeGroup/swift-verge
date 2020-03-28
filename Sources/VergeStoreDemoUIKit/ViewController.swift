@@ -71,28 +71,38 @@ enum ViewModelActivity {
   case somethingHappen
 }
 
-final class ViewModel: RootStore.ViewModelBase<ViewModelState, ViewModelActivity> {
+final class ViewModel: ViewModelBase<ViewModelState, ViewModelActivity> {
   
   let rootStore: RootStore
   
+  private let disposeBag = DisposeBag()
+  
   init(parent: RootStore) {
     self.rootStore = parent
-    super.init(initialState: .init(), parent: parent, logger: nil)
-  }
-  
-  override func updateState(state: inout ViewModelState, by storeState: RootState) {
-    state.count = storeState.count
-  }
-  
-  override func receiveParentActivity(_ activity: RootActivity) {
-    dispatch { context in
-      switch activity {
-      case .bomb:
-        context.send(.somethingHappen)
-      }
+    super.init(initialState: .init(), logger: nil)
+    
+    parent.rx.stateObservable
+      .bind { [weak self] state in
+        self?.commit {
+          $0.count = state.count
+        }
     }
+    .disposed(by: disposeBag)
+    
+    parent.rx.activitySignal
+      .emit(onNext: { [weak self] activity in
+        guard let self = self else { return }
+        self.dispatch { context in
+          switch activity {
+          case .bomb:
+            context.send(.somethingHappen)
+          }
+        }
+      })
+      .disposed(by: disposeBag)
+    
   }
-  
+    
   func increment() {
     
     rootStore.incrementWithNotification()
