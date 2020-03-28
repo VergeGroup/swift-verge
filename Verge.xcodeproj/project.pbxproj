@@ -142,9 +142,6 @@
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
 		4BD6850523C82E6C00D8A620 /* ORMGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */; };
 		4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */; };
-		4BDBDF6B23CE02CF00EEA112 /* VergeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCE1238A85A700F70CDA /* VergeViewModelTests.swift */; };
-		4BDBDF6C23CE02CF00EEA112 /* StandaloneVergeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B63829C23980D4600FAD87F /* StandaloneVergeViewModelTests.swift */; };
-		4BDBDF6D23CE02CF00EEA112 /* ChainingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE76218239AA4A1009EB209 /* ChainingViewModelTests.swift */; };
 		4BDBDF7723CE0C4200EEA112 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7623CE0C4200EEA112 /* AppDelegate.swift */; };
 		4BDBDF7B23CE0C4200EEA112 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7A23CE0C4200EEA112 /* ViewController.swift */; };
 		4BDBDF7E23CE0C4200EEA112 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7C23CE0C4200EEA112 /* Main.storyboard */; };
@@ -462,7 +459,6 @@
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
 		4B57FD1923A29DAD00E41D06 /* EntityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityType.swift; sourceTree = "<group>"; };
-		4B63829C23980D4600FAD87F /* StandaloneVergeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandaloneVergeViewModelTests.swift; sourceTree = "<group>"; };
 		4B65F8EC1FB4C0DC00A90A67 /* VergeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeTests.swift; sourceTree = "<group>"; };
 		4B65F8F01FB4C0DC00A90A67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -561,14 +557,12 @@
 		4BDBDF8223CE0C4400EEA112 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4BDBDF8423CE0C4400EEA112 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BDBDF8823CE0C7800EEA112 /* Sources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources.swift; sourceTree = "<group>"; };
-		4BE76218239AA4A1009EB209 /* ChainingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChainingViewModelTests.swift; sourceTree = "<group>"; };
 		4BE9454F23AD1B180060F977 /* VergeCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BE9455323AD1B180060F977 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitterTests.swift; sourceTree = "<group>"; };
 		4BECC81723312AD400D6A0A1 /* IndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorView.swift; sourceTree = "<group>"; };
 		4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelBase.swift; sourceTree = "<group>"; };
 		4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitter.swift; sourceTree = "<group>"; };
-		4BF2BCE1238A85A700F70CDA /* VergeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeViewModelTests.swift; sourceTree = "<group>"; };
 		4BF3C2EA24209324006B1726 /* MultithreadingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultithreadingTests.swift; sourceTree = "<group>"; };
 		4BF3C2ED24209620006B1726 /* MultithreadingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultithreadingTests.swift; sourceTree = "<group>"; };
 		4BF470CC23CC36E8001A1D5D /* FragmentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FragmentState.swift; sourceTree = "<group>"; };
@@ -841,9 +835,6 @@
 				4B68394823705ACE002FFC5A /* Info.plist */,
 				4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */,
 				4B71CEED23B14394004520CE /* ActivityTests.swift */,
-				4BF2BCE1238A85A700F70CDA /* VergeViewModelTests.swift */,
-				4B63829C23980D4600FAD87F /* StandaloneVergeViewModelTests.swift */,
-				4BE76218239AA4A1009EB209 /* ChainingViewModelTests.swift */,
 				4BCE8C2123CF736300FD30D9 /* MostSimpleSampleTests.swift */,
 			);
 			path = VergeStoreTests;
@@ -1861,10 +1852,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BCE8C2223CF736300FD30D9 /* MostSimpleSampleTests.swift in Sources */,
-				4BDBDF6B23CE02CF00EEA112 /* VergeViewModelTests.swift in Sources */,
-				4BDBDF6D23CE02CF00EEA112 /* ChainingViewModelTests.swift in Sources */,
 				4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */,
-				4BDBDF6C23CE02CF00EEA112 /* StandaloneVergeViewModelTests.swift in Sources */,
 				4B71CEEE23B14394004520CE /* ActivityTests.swift in Sources */,
 				4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */,
 			);
