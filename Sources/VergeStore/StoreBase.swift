@@ -25,7 +25,7 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-public protocol StoreType: AnyObject {
+public protocol StoreType: ValueContainerType {
   associatedtype State: StateType
   associatedtype Activity
   
