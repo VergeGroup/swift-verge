@@ -108,44 +108,6 @@ extension GetterContainer {
 
 @available(iOS 13, *)
 extension StoreType {
-  typealias Field = GetterContainer<Self>
+  public typealias Field = GetterContainer<Self>
 }
 
-public final class Getters<Store: StoreType> {
-  
-  init(store: Store) {
-    
-  }
-  
-}
-
-#if DEBUG
-
-struct MyStoreState: StateType {
-  
-  var hoge: Int = 0
-}
-
-@available(iOS 13, *)
-final class MyStore: StoreBase<MyStoreState, Never> {
-    
-  @Field.Computed var count: Int
-  
-  init() {
-    self._count = .init(make: { (chain) -> Getter<Int> in
-      chain.mapWithoutPreFilter(\.hoge).build()
-    })
-    
-    super.init(initialState: .init(), logger: nil)
-  }
-
-  func hoge() {
-    
-    print(self.count)
-    let hoge = self.$count
-//    self.$count
-  }
-}
-
-
-#endif
