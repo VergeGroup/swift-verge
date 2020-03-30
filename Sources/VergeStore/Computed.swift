@@ -32,17 +32,13 @@ extension GetterContainer {
       get { fatalError() }
       set { fatalError() }
     }
-
-    public func getter(_ store: Store) -> Getter<T> {
-      os_unfair_lock_lock(&inner.lock)
-      defer {
-        os_unfair_lock_unlock(&inner.lock)
-      }
-      let new = self.make(store.getterBuilder())
-      self.inner.getter = new
-      return new
-    }
     
+    @available(*, unavailable)
+    public var projectedValue: Getter<T> {
+      get { fatalError() }
+      set { fatalError() }
+    }
+
     private let make: (GetterBuilderMethodChain<GetterBuilderTrait.Combine, Store>) -> Getter<T>
     
     private let inner: Inner = .init()
@@ -78,9 +74,37 @@ extension GetterContainer {
       }
     }
     
+    public static subscript(
+      _enclosingInstance instance: Store,
+      projected wrappedKeyPath: KeyPath<Store, Getter<T>>,
+      storage storageKeyPath: KeyPath<Store, Self>
+    ) -> Getter<T> {
+      get {
+        
+        let inner = instance[keyPath: storageKeyPath].inner
+        
+        os_unfair_lock_lock(&inner.lock)
+        defer {
+          os_unfair_lock_unlock(&inner.lock)
+        }
+        
+        guard let getter = inner.getter else {
+          let new = instance[keyPath: storageKeyPath].make(instance.getterBuilder())
+          inner.getter = new
+          return new
+        }
+        
+        return getter
+      }
+      set {
+        
+      }
+    }
+    
   }
   
 }
+
 
 @available(iOS 13, *)
 extension StoreType {
@@ -118,6 +142,7 @@ final class MyStore: StoreBase<MyStoreState, Never> {
   func hoge() {
     
     print(self.count)
+    let hoge = self.$count
 //    self.$count
   }
 }
