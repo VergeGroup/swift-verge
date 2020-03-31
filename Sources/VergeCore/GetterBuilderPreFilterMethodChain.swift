@@ -8,19 +8,17 @@
 
 import Foundation
 
-public struct GetterBuilderPreFilterMethodChain<Trait, Container: ValueContainerType, PreComparingKey> {
-  
-  public typealias Input = Container.Value
-  
-  let source: GetterBuilderMethodChain<Trait, Container>
+public struct GetterBuilderPreFilterMethodChain<Trait, Context, Input, PreComparingKey> {
+    
+  let source: GetterBuilderMethodChain<Trait, Context, Input>
   let preFilter: EqualityComputerBuilder<Input, PreComparingKey>
   var onTransformWillReceive: ((Input) -> Void) = { _ in }
   
-  public let target: Container
+  public let target: Context
   
   init(
-    target: Container,
-    source: GetterBuilderMethodChain<Trait, Container>,
+    target: Context,
+    source: GetterBuilderMethodChain<Trait, Context, Input>,
     preFilter: EqualityComputerBuilder<Input, PreComparingKey>
   ) {
     self.target = target
@@ -29,7 +27,7 @@ public struct GetterBuilderPreFilterMethodChain<Trait, Container: ValueContainer
   }
   
   /// Projects input object into a new form.
-  public func map<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Trait, Container, PreComparingKey, Output> {
+  public func map<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Trait, Context, Input, PreComparingKey, Output> {
     return .init(target: target, source: self, transform: transform)
   }
   

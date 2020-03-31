@@ -15,14 +15,12 @@ public enum GetterBuilderTrait {
 
 // MARK: - Method Chain
 
-public struct GetterBuilderMethodChain<Trait, Container: ValueContainerType> {
-  
-  public typealias Input = Container.Value
-  
-  private let target: Container
+public struct GetterBuilderMethodChain<Trait, Context, Input> {
+    
+  private let target: Context
   var onPreFilterWillReceive: ((Input) -> Void) = { _ in }
   
-  public init(target: Container) {
+  public init(target: Context) {
     self.target = target
   }
   
@@ -42,7 +40,7 @@ public struct GetterBuilderMethodChain<Trait, Container: ValueContainerType> {
   @inline(__always)
   public func changed<PreComparingKey>(
     filter: EqualityComputerBuilder<Input, PreComparingKey>
-  ) -> GetterBuilderPreFilterMethodChain<Trait, Container, PreComparingKey> {
+  ) -> GetterBuilderPreFilterMethodChain<Trait, Context, Input, PreComparingKey> {
     .init(target: target, source: self, preFilter: filter)
   }
   
@@ -52,7 +50,7 @@ public struct GetterBuilderMethodChain<Trait, Container: ValueContainerType> {
   public func changed<PreComparingKey>(
     keySelector: @escaping (Input) -> PreComparingKey,
     comparer: Comparer<PreComparingKey>
-  )-> GetterBuilderPreFilterMethodChain<Trait, Container, PreComparingKey> {
+  )-> GetterBuilderPreFilterMethodChain<Trait, Context, Input, PreComparingKey> {
     changed(filter: .init(keySelector: keySelector, comparer: comparer))
   }
   
@@ -61,7 +59,7 @@ public struct GetterBuilderMethodChain<Trait, Container: ValueContainerType> {
   /// - Attention: Wheter to put `.map` before or after `.changed` should be considered according to the costs of `.map` and `.changed`.
   public func changed(
     comparer: Comparer<Input>
-  )-> GetterBuilderPreFilterMethodChain<Trait, Container, Input> {
+  )-> GetterBuilderPreFilterMethodChain<Trait, Context, Input, Input> {
     changed(keySelector: { $0 }, comparer: comparer)
   }
   
@@ -70,14 +68,14 @@ public struct GetterBuilderMethodChain<Trait, Container: ValueContainerType> {
   /// - Attention: Wheter to put `.map` before or after `.changed` should be considered according to the costs of `.map` and `.changed`.
   public func changed(
     _ equals: @escaping (Input, Input) -> Bool
-  )-> GetterBuilderPreFilterMethodChain<Trait, Container, Input> {
+  )-> GetterBuilderPreFilterMethodChain<Trait, Context, Input, Input> {
     changed(comparer: .init(equals))
   }
   
   /// Projects input object into a new form.
   ///
   /// - Attention: No pre filter. It may cause performance issue. Consider using .changed() before.
-  public func mapWithoutPreFilter<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Trait, Container, Input, Output> {
+  public func mapWithoutPreFilter<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Trait, Context, Input, Input, Output> {
     changed(filter: .noFilter)
       .map(transform)
   }
@@ -89,7 +87,7 @@ extension GetterBuilderMethodChain {
   /// Compare using Fragment's counter
   ///
   /// Adding a filter to getter to map only when the input object changed.
-  public func changed<T>(_ fragmentSelector: @escaping (Input) -> Fragment<T>) -> GetterBuilderPreFilterMethodChain<Trait, Container, Input> {
+  public func changed<T>(_ fragmentSelector: @escaping (Input) -> Fragment<T>) -> GetterBuilderPreFilterMethodChain<Trait, Context, Input, Input> {
     changed(comparer: .init(selector: {
       fragmentSelector($0).counter.rawValue
     }))
@@ -98,7 +96,7 @@ extension GetterBuilderMethodChain {
   /// Projects input object into a new form.
   ///
   /// Filterling with Fragment and projects the wrapped value.
-  public func map<Output>(_ transform: @escaping (Input) -> Fragment<Output>) -> GetterBuilderTransformMethodChain<Trait, Container, Input, Output> {
+  public func map<Output>(_ transform: @escaping (Input) -> Fragment<Output>) -> GetterBuilderTransformMethodChain<Trait, Context, Input, Input, Output> {
     changed(transform)
       .map { transform($0).wrappedValue }
   }
@@ -109,13 +107,13 @@ extension GetterBuilderMethodChain where Input : Equatable {
   /// Compare using Equatable
   ///
   /// Adding a filter to getter to map only when the input object changed.
-  public func changed() -> GetterBuilderPreFilterMethodChain<Trait, Container, Input> {
+  public func changed() -> GetterBuilderPreFilterMethodChain<Trait, Context, Input, Input> {
     changed(keySelector: { $0 }, comparer: .init(==))
   }
   
   /// [Filter]
   /// Projects input object into a new form
-  public func map<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Trait, Container, Input, Output> {
+  public func map<Output>(_ transform: @escaping (Input) -> Output) -> GetterBuilderTransformMethodChain<Trait, Context, Input, Input, Output> {
     changed()
       .map(transform)
   }

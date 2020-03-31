@@ -25,6 +25,11 @@ public protocol StateType {
   
 }
 
+public protocol _StateType: StateType {
+  
+  associatedtype Getters
+}
+
 public enum StateUpdatingError: Swift.Error {
   case targetWasNull
 }

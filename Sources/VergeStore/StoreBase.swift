@@ -25,7 +25,7 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-public protocol StoreType: ValueContainerType {
+public protocol StoreType: ValueContainerType where State == Value {
   associatedtype State: StateType
   associatedtype Activity
   

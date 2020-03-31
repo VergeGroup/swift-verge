@@ -8,18 +8,16 @@
 
 import Foundation
 
-public struct GetterBuilderTransformMethodChain<Trait, Container: ValueContainerType, PreComparingKey, Output> {
+public struct GetterBuilderTransformMethodChain<Trait, Context, Input, PreComparingKey, Output> {
+    
+  public let target: Context
   
-  public typealias Input = Container.Value
-  
-  public let target: Container
-  
-  let preFilterFragment: GetterBuilderPreFilterMethodChain<Trait, Container, PreComparingKey>
+  let preFilterFragment: GetterBuilderPreFilterMethodChain<Trait, Context, Input, PreComparingKey>
   let transform: (Input) -> Output
   
   init(
-    target: Container,
-    source: GetterBuilderPreFilterMethodChain<Trait, Container, PreComparingKey>,
+    target: Context,
+    source: GetterBuilderPreFilterMethodChain<Trait, Context, Input, PreComparingKey>,
     transform: @escaping (Input) -> Output
   ) {
     self.target = target
@@ -31,7 +29,7 @@ public struct GetterBuilderTransformMethodChain<Trait, Container: ValueContainer
   /// If the cost of map is expensive, it might be better to use `.changed` before `.map`
   public func changed<PostComparingKey>(
     filter: EqualityComputerBuilder<Output, PostComparingKey>
-  ) -> GetterBuilderPostFilterMethodChain<Trait, Container, PreComparingKey, Output, PostComparingKey> {
+  ) -> GetterBuilderPostFilterMethodChain<Trait, Context, Input, PreComparingKey, Output, PostComparingKey> {
     return .init(target: target, source: self, postFilter: filter)
   }
   
@@ -40,7 +38,7 @@ public struct GetterBuilderTransformMethodChain<Trait, Container: ValueContainer
   public func changed<PostComparingKey>(
     keySelector: @escaping (Output) -> PostComparingKey,
     comparer: Comparer<PostComparingKey>
-  )-> GetterBuilderPostFilterMethodChain<Trait, Container, PreComparingKey, Output, PostComparingKey> {
+  )-> GetterBuilderPostFilterMethodChain<Trait, Context, Input, PreComparingKey, Output, PostComparingKey> {
     return changed(filter: .init(keySelector: keySelector, comparer: comparer))
   }
   
@@ -48,7 +46,7 @@ public struct GetterBuilderTransformMethodChain<Trait, Container: ValueContainer
   /// If the cost of map is expensive, it might be better to use `.changed` before `.map`
   public func changed(
     comparer: Comparer<Output>
-  )-> GetterBuilderPostFilterMethodChain<Trait, Container, PreComparingKey, Output, Output> {
+  )-> GetterBuilderPostFilterMethodChain<Trait, Context, Input, PreComparingKey, Output, Output> {
     return changed(filter: .init(keySelector: { $0 }, comparer: comparer))
   }
   
@@ -56,7 +54,7 @@ public struct GetterBuilderTransformMethodChain<Trait, Container: ValueContainer
   /// If the cost of map is expensive, it might be better to use pre-filter.
   public func changed(
     _ equals: @escaping (Output, Output) -> Bool
-  )-> GetterBuilderPostFilterMethodChain<Trait, Container, PreComparingKey, Output, Output> {
+  )-> GetterBuilderPostFilterMethodChain<Trait, Context, Input, PreComparingKey, Output, Output> {
     return changed(filter: .init(keySelector: { $0 }, comparer: .init(equals)))
   }
   
@@ -76,14 +74,14 @@ public struct GetterBuilderTransformMethodChain<Trait, Container: ValueContainer
 extension GetterBuilderTransformMethodChain where Output : Equatable {
   
   /// Publishes only elements that don’t match the previous element.
-  public func changed()-> GetterBuilderPostFilterMethodChain<Trait, Container, PreComparingKey, Output, Output> {
+  public func changed()-> GetterBuilderPostFilterMethodChain<Trait, Context, Input, PreComparingKey, Output, Output> {
     return changed(filter: .init(keySelector: { $0 }, comparer: .init(==)))
   }
 }
 
 #if canImport(Combine)
 
-extension GetterBuilderTransformMethodChain where Trait == GetterBuilderTrait.Combine {
+extension GetterBuilderTransformMethodChain where Context : ValueContainerType, Trait == GetterBuilderTrait.Combine, Context.Value == Input {
   
   @available(iOS 13, macOS 10.15, *)
   public func build() -> GetterSource<Input, Output> {

@@ -8,19 +8,17 @@
 
 import Foundation
 
-public struct GetterBuilderPostFilterMethodChain<Trait, Container: ValueContainerType, PreComparingKey, Output, PostComparingKey> {
+public struct GetterBuilderPostFilterMethodChain<Trait, Context, Input, PreComparingKey, Output, PostComparingKey> {
+    
+  public let target: Context
   
-  public typealias Input = Container.Value
-  
-  public let target: Container
-  
-  private let transformFragment: GetterBuilderTransformMethodChain<Trait, Container, PreComparingKey, Output>
+  private let transformFragment: GetterBuilderTransformMethodChain<Trait, Context, Input, PreComparingKey, Output>
   private let postFilter: EqualityComputerBuilder<Output, PostComparingKey>
   private var onPostFilterWillEmit: ((Output) -> Void) = { _ in }
   
   init(
-    target: Container,
-    source: GetterBuilderTransformMethodChain<Trait, Container, PreComparingKey, Output>,
+    target: Context,
+    source: GetterBuilderTransformMethodChain<Trait, Context, Input, PreComparingKey, Output>,
     postFilter: EqualityComputerBuilder<Output, PostComparingKey>
   ) {
     self.target = target
@@ -55,7 +53,7 @@ public struct GetterBuilderPostFilterMethodChain<Trait, Container: ValueContaine
 
 #if canImport(Combine)
 
-extension GetterBuilderPostFilterMethodChain where Trait == GetterBuilderTrait.Combine {
+extension GetterBuilderPostFilterMethodChain where Context : ValueContainerType, Trait == GetterBuilderTrait.Combine, Context.Value == Input {
   
   @available(iOS 13, macOS 10.15, *)
   public func build() -> GetterSource<Input, Output> {

@@ -30,7 +30,7 @@ public protocol ValueContainerType: AnyObject {
 import Combine
 extension ValueContainerType {
      
-  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Combine, Self> {
+  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Combine, Self, Value> {
     .init(target: self)
   }
       

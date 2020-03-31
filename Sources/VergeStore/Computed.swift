@@ -39,11 +39,11 @@ extension GetterContainer {
       set { fatalError() }
     }
 
-    private let make: (GetterBuilderMethodChain<GetterBuilderTrait.Combine, Store>) -> Getter<T>
+    private let make: (GetterBuilderMethodChain<GetterBuilderTrait.Combine, Store, Store.Value>) -> Getter<T>
     
     private let inner: Inner = .init()
             
-    public init(make: @escaping (GetterBuilderMethodChain<GetterBuilderTrait.Combine, Store>) -> Getter<T>) {
+    public init(make: @escaping (GetterBuilderMethodChain<GetterBuilderTrait.Combine, Store, Store.Value>) -> Getter<T>) {
       self.make = make
     }
           
@@ -105,9 +105,40 @@ extension GetterContainer {
   
 }
 
-
 @available(iOS 13, *)
 extension StoreType {
   public typealias Field = GetterContainer<Self>
 }
 
+@dynamicMemberLookup
+public struct GettersProxy<State: _StateType> {
+  
+  public subscript<T>(dynamicMember keyPath: KeyPath<State.Getters, GetterProperty<T>>) -> T {
+    fatalError()
+  }
+}
+
+@dynamicMemberLookup
+public struct ComputedsProxy<State: _StateType> {
+  
+  public subscript<T>(dynamicMember keyPath: KeyPath<State.Getters, GetterProperty<T>>) -> T {
+    fatalError()
+  }
+}
+
+
+public struct GetterProperty<T> {
+  
+  public init() {}
+}
+
+extension StoreBase where State : _StateType {
+  
+  public var getters: GettersProxy<State> {
+    .init()
+  }
+}
+
+extension StateType {
+
+}

@@ -16,9 +16,15 @@ import VergeStore
 @available(iOS 13, macOS 10.15, *)
 class ComputedTests: XCTestCase {
   
-  struct MyStoreState: StateType {
-    
+  struct MyStoreState: _StateType {
+        
     var hoge: Int = 0
+    
+    struct Getters {
+      
+      let count = GetterProperty<Int>()
+      
+    }
   }
   
   @available(iOS 13, *)
@@ -50,6 +56,12 @@ class ComputedTests: XCTestCase {
     
   }
 
+  func test_RetainCylcle() {
+    
+    var store: MyStore! = MyStore()
+
+    store.getters.count
+  }
   
 }
 
