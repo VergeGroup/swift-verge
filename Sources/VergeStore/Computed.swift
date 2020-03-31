@@ -14,11 +14,11 @@ import os.lock
 import VergeCore
 #endif
 
-public enum GetterContainer<State: _StateType> {
+public enum _GettersContainer<State: CombinedStateType> {
 }
 
 @dynamicMemberLookup
-public struct GetterProxy<Store: StoreType> where Store.State : _StateType {
+public struct GetterProxy<Store: StoreType> where Store.State : CombinedStateType {
   
   public let store: Store
   
@@ -29,7 +29,7 @@ public struct GetterProxy<Store: StoreType> where Store.State : _StateType {
 }
 
 @dynamicMemberLookup
-public struct ComputedProxy<Store: StoreType> where Store.State : _StateType {
+public struct ComputedProxy<Store: StoreType> where Store.State : CombinedStateType {
   
   public let store: Store
   
@@ -43,7 +43,7 @@ public struct ComputedProxy<Store: StoreType> where Store.State : _StateType {
 extension GetterProxy {
   
   @available(iOS 13, macOS 10.15, *)
-  public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, Store.State.Field.GetterProperty<T>>) -> GetterSource<Store.State, T> {
+  public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, Store.State.Field.Computed<T>>) -> GetterSource<Store.State, T> {
     
     let storeBase = store.asStoreBase()
     
@@ -67,7 +67,7 @@ extension GetterProxy {
 extension ComputedProxy {
   
   @available(iOS 13, macOS 10.15, *)
-  public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, Store.State.Field.GetterProperty<T>>) -> T {
+  public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, Store.State.Field.Computed<T>>) -> T {
     
     let storeBase = store.asStoreBase()
     
@@ -88,13 +88,16 @@ extension ComputedProxy {
   
 }
 
-extension GetterContainer {
+extension _GettersContainer {
   
+  /// An object to define how to create Getter with filter to be performant.
   @available(iOS 13, macOS 10.15, *)
-  public struct GetterProperty<T> {
+  public struct Computed<T> {
     
     private let _make: (GetterBuilderMethodChain<GetterBuilderTrait.Combine, Storage<State>, State>) -> GetterSource<State, T>
-    
+        
+    /// Initializer
+    /// - Parameter make: it makes GetterSource. make closure would be called only once to create and retain Getter in Store when first-time access.
     public init(make: @escaping (GetterBuilderMethodChain<GetterBuilderTrait.Combine, Storage<State>, State>) -> GetterSource<State, T>) {
       self._make = make
     }
@@ -130,12 +133,12 @@ extension ComputedProxy {
 
 #endif
 
-extension _StateType {
+extension CombinedStateType {
   
-  public typealias Field = GetterContainer<Self>
+  public typealias Field = _GettersContainer<Self>
 }
 
-extension StoreType where State : _StateType  {
+extension StoreType where State : CombinedStateType  {
   
   public var getters: GetterProxy<Self> {
     .init(store: self)

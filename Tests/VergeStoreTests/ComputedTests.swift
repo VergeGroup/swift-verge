@@ -16,14 +16,13 @@ import VergeStore
 @available(iOS 13, macOS 10.15, *)
 class ComputedTests: XCTestCase {
   
-  struct MyStoreState: _StateType {
+  struct MyStoreState: CombinedStateType {
         
     var name: String = "muukii"
-    var hoge: Int = 0
     
     struct Getters: GettersType {
       
-      let count = Field.GetterProperty<Int>.init {
+      let nameCount = Field.Computed<Int>.init {
         $0.mapWithoutPreFilter(\.name.count).build()
       }
       
@@ -44,8 +43,8 @@ class ComputedTests: XCTestCase {
     var store: MyStore! = MyStore()
     weak var _store = store
             
-    XCTAssertEqual(store.computed.count, 6)
-    XCTAssertEqual(store.getters.count.value, 6)
+    XCTAssertEqual(store.computed.nameCount, 6)
+    XCTAssertEqual(store.getters.nameCount.value, 6)
 
     store = nil
     XCTAssertNil(_store)

@@ -12,9 +12,10 @@ import Foundation
 import VergeStore
 #endif
 
-extension GetterContainer {
-  
-  public struct RxGetterProperty<T> {
+extension _GettersContainer {
+    
+  /// It's same behavior with VergeStore.Computed
+  public struct RxComputed<T> {
     
     public typealias Chain = GetterBuilderMethodChain<GetterBuilderTrait.Rx, Storage<State>, State>
     
@@ -35,7 +36,7 @@ extension GetterContainer {
 
 extension GetterProxy {
   
-  public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, Store.State.Field.RxGetterProperty<T>>) -> RxGetterSource<Store.State, T> {
+  public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, Store.State.Field.RxComputed<T>>) -> RxGetterSource<Store.State, T> {
     
     let storeBase = store.asStoreBase()
     
@@ -57,7 +58,7 @@ extension GetterProxy {
 
 extension ComputedProxy {
   
-  public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, Store.State.Field.RxGetterProperty<T>>) -> T {
+  public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, Store.State.Field.RxComputed<T>>) -> T {
             
     let storeBase = store.asStoreBase()
     
