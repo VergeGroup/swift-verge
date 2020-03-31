@@ -13,6 +13,9 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "GetterTests\/testChain()"
+      ],
       "target" : {
         "containerPath" : "container:Verge.xcodeproj",
         "identifier" : "4BE9454E23AD1B180060F977",
