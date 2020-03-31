@@ -11,9 +11,6 @@ import Foundation
 import XCTest
 import VergeStore
 
-#if canImport(Combine)
-
-@available(iOS 13, macOS 10.15, *)
 class ComputedTests: XCTestCase {
   
   struct MyStoreState: _StateType {
@@ -23,14 +20,13 @@ class ComputedTests: XCTestCase {
     
     struct Getters: GettersType {
       
-      let count = Field.GetterProperty<Int>.init {
+      let count = Field.RxGetterProperty<Int>.init {
         $0.mapWithoutPreFilter(\.name.count).build()
       }
       
     }
   }
   
-  @available(iOS 13, *)
   final class MyStore: StoreBase<MyStoreState, Never> {
             
     init() {
@@ -43,7 +39,7 @@ class ComputedTests: XCTestCase {
     
     var store: MyStore! = MyStore()
     weak var _store = store
-            
+                
     XCTAssertEqual(store.computed.count, 6)
     XCTAssertEqual(store.getters.count.value, 6)
 
@@ -52,5 +48,3 @@ class ComputedTests: XCTestCase {
   }
   
 }
-
-#endif

@@ -36,6 +36,5 @@ public struct GetterComponents<Input, PreComparingKey, Output, PostComparingKey>
     self.postFilter = postFilter
     
   }
-  
+        
 }
-

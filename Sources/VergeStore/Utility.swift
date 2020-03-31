@@ -25,9 +25,13 @@ public protocol StateType {
   
 }
 
+public protocol GettersType {
+  init()
+}
+
 public protocol _StateType: StateType {
   
-  associatedtype Getters
+  associatedtype Getters: GettersType
 }
 
 public enum StateUpdatingError: Swift.Error {
