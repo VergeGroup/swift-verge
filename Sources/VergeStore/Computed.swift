@@ -14,6 +14,9 @@ import os.lock
 import VergeCore
 #endif
 
+public enum GetterContainer<State: _StateType> {
+}
+
 @dynamicMemberLookup
 public struct GetterProxy<Store: StoreType> where Store.State : _StateType {
   
@@ -24,13 +27,26 @@ public struct GetterProxy<Store: StoreType> where Store.State : _StateType {
   }
   
 }
+
+@dynamicMemberLookup
+public struct ComputedProxy<Store: StoreType> where Store.State : _StateType {
+  
+  public let store: Store
+  
+  init(store: Store) {
+    self.store = store
+  }
+}
+
+#if canImport(Combine)
+
 extension GetterProxy {
   
-  @available(iOS 13, *)
+  @available(iOS 13, macOS 10.15, *)
   public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, Store.State.Field.GetterProperty<T>>) -> GetterSource<Store.State, T> {
-        
+    
     let storeBase = store.asStoreBase()
-        
+    
     return storeBase._getterStorage.update { value in
       
       guard let getter = value[keyPath] as? GetterSource<Store.State, T> else {
@@ -45,21 +61,12 @@ extension GetterProxy {
     }
     
   }
-}
-
-@dynamicMemberLookup
-public struct ComputedProxy<Store: StoreType> where Store.State : _StateType {
   
-  public let store: Store
-  
-  init(store: Store) {
-    self.store = store
-  }
 }
 
 extension ComputedProxy {
   
-  @available(iOS 13, *)
+  @available(iOS 13, macOS 10.15, *)
   public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, Store.State.Field.GetterProperty<T>>) -> T {
     
     let storeBase = store.asStoreBase()
@@ -76,17 +83,18 @@ extension ComputedProxy {
       
       return getter.value
     }
-      
+    
   }
+  
 }
 
-public enum GetterContainer<State: _StateType> {
+extension GetterContainer {
   
-  @available(iOS 13, *)
+  @available(iOS 13, macOS 10.15, *)
   public struct GetterProperty<T> {
     
     private let _make: (GetterBuilderMethodChain<GetterBuilderTrait.Combine, Storage<State>, State>) -> GetterSource<State, T>
-        
+    
     public init(make: @escaping (GetterBuilderMethodChain<GetterBuilderTrait.Combine, Storage<State>, State>) -> GetterSource<State, T>) {
       self._make = make
     }
@@ -94,9 +102,33 @@ public enum GetterContainer<State: _StateType> {
     func make(_ chain: GetterBuilderMethodChain<GetterBuilderTrait.Combine, Storage<State>, State>) -> GetterSource<State, T> {
       _make(chain)
     }
-      
+    
   }
 }
+
+#else
+
+extension GetterProxy {
+  
+  @available(*, unavailable)
+  public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, T>) -> Never {
+    fatalError()
+  }
+  
+}
+
+extension ComputedProxy {
+  
+  
+  @available(*, unavailable)
+  public subscript<T>(dynamicMember keyPath: KeyPath<Store.State.Getters, T>) -> Never {
+    fatalError()
+  }
+     
+}
+
+
+#endif
 
 extension _StateType {
   
