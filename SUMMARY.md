@@ -13,6 +13,7 @@
 * [💥 Action - Grouping mutation with async operations](docs-vergestore/action.md)
 * [⚡️ Activity - Dispatching Volatile Events](docs-vergestore/activity.md)
 * [🪐 State and shape](docs-vergestore/state.md)
+* [🛸 Getters beside State](docs-vergestore/getters-beside-state.md)
 * [💫 Getter\(Selector\) and Memoization](docs-vergestore/getter.md)
 * [🚀 Dispatcher - Perform Mutation / Action](docs-vergestore/dispatcher.md)
 * [🔭 Logging - Take logs performed Mutation and Action](docs-vergestore/logging.md)
