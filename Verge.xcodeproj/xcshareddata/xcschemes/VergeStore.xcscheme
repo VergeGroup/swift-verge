@@ -20,6 +20,20 @@
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4B68394323705ACD002FFC5A"
+               BuildableName = "VergeStoreTests.xctest"
+               BlueprintName = "VergeStoreTests"
+               ReferencedContainer = "container:Verge.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

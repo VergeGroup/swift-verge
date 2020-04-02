@@ -152,7 +152,7 @@ extension Reactive where Base : RxValueContainerType {
     return getter
   }
       
-  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Rx, Base> {
+  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Rx, Base, Base.Value> {
     .init(target: base)
   }
   
@@ -168,7 +168,7 @@ extension ObservableConvertibleType {
   }
 }
 
-extension GetterBuilderTransformMethodChain where Trait == GetterBuilderTrait.Rx, Container : RxValueContainerType & ReactiveCompatible {
+extension GetterBuilderTransformMethodChain where Trait == GetterBuilderTrait.Rx, Context : RxValueContainerType & ReactiveCompatible, Context.Value == Input {
   
   public func build() -> RxGetterSource<Input, Output> {
     target.rx.makeGetter(from: makeGetterComponents())
@@ -176,7 +176,7 @@ extension GetterBuilderTransformMethodChain where Trait == GetterBuilderTrait.Rx
   
 }
 
-extension GetterBuilderPostFilterMethodChain where Trait == GetterBuilderTrait.Rx, Container : RxValueContainerType & ReactiveCompatible {
+extension GetterBuilderPostFilterMethodChain where Trait == GetterBuilderTrait.Rx, Context : RxValueContainerType & ReactiveCompatible, Context.Value == Input {
   
   public func build() -> RxGetterSource<Input, Output> {
     target.rx.makeGetter(from: makeGetterComponents())

@@ -25,7 +25,7 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-public protocol StoreType: AnyObject {
+public protocol StoreType: ValueContainerType where State == Value {
   associatedtype State: StateType
   associatedtype Activity
   
@@ -66,7 +66,8 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
   /// A backing storage that manages current state.
   /// You shouldn't access this directly unless special case.
   public let _backingStorage: Storage<State>
-  public let _eventEmitter: EventEmitter<Activity> = .init()
+  public let _eventEmitter: EventEmitter<Activity> = .init()  
+  public let _getterStorage: Storage<[AnyKeyPath : Any]> = .init([:])
   
   public private(set) var logger: StoreLogger?
     

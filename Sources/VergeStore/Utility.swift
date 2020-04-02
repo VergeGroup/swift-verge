@@ -21,8 +21,45 @@
 
 import Foundation
 
+/// A protocol describes the type is a state of the store.
+/// StoreBase requires State object that has StateType.
+///
+/// You may use CombinedStateType to define computed property with caching to be performant.
 public protocol StateType {
   
+}
+
+/// A container object to group getter properties.
+/// Mainly it would be used with dynamicMemberLookup.
+/// Therefore it must be initialized with no args.
+public protocol GettersType {
+  init()
+}
+
+/** A protocol extended from StateType
+ ```
+ struct State: CombinedStateType {
+ 
+   var name: String = "muukii"
+ 
+   struct Getters: GettersType {
+  
+     let nameCount = Field.Computed<Int>.init {
+       $0.mapWithoutPreFilter(\.name.count).build()
+     }
+ 
+   }
+ }
+ 
+ let store: MyStore<State, Never>
+ 
+ let getter: GetterSource<State, Int> = store.getter.nameCount
+ let value: Int = store.computed.nameCount
+ ```
+*/
+public protocol CombinedStateType: StateType {
+  
+  associatedtype Getters: GettersType
 }
 
 public enum StateUpdatingError: Swift.Error {
