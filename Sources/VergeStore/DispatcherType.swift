@@ -34,8 +34,12 @@ public protocol DispatcherType {
 }
 
 extension DispatcherType {
-  
+      
   public typealias Context = ContextualDispatcher<Self, Scope>
+  
+  public var metadata: DispatcherMetadata {
+    .init()
+  }
   
   /// Send activity
   /// - Parameter activity:

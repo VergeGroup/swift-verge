@@ -33,6 +33,10 @@ public struct DispatcherMetadata: Encodable {
     try fromActionMetadata.encode(to: encoder)
   }
   
+  public init() {
+    self.init(fromAction: nil)
+  }
+  
   init(fromAction: ActionMetadata?) {
     self.backing = fromAction.map { ._backing($0) }
   }
