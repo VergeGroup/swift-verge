@@ -37,7 +37,7 @@ public typealias NoActivityStoreBase<State: StateType> = StoreBase<State, Never>
 /// A base object to create store.
 /// You may create subclass of VergeDefaultStore
 /// ```
-/// final class MyStore: VergeDefaultStore<MyState> {
+/// final class MyStore: StoreBase<MyState> {
 ///   init() {
 ///     super.init(initialState: .init(), logger: nil)
 ///   }
@@ -127,7 +127,25 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
   public func asStoreBase() -> StoreBase<State, Activity> {
     self
   }
-      
+  
+  @discardableResult
+  public func subscribe(_ receive: @escaping (Changes<State>) -> Void) -> EventEmitterSubscribeToken {
+    
+    let storage = Storage<Changes<State>>(.init(old: nil, new: state))
+    
+    receive(storage.value)
+    
+    return _backingStorage.addDidUpdate { newValue in
+      receive(
+        storage.update { changes in
+          changes.update(with: newValue)
+          return changes
+        }
+      )
+    }
+    
+  }
+          
 }
 
 #if canImport(Combine)
