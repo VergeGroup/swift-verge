@@ -128,8 +128,19 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     self
   }
   
+  /// Subscribe the activity
+  ///
+  /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
   @discardableResult
-  public func subscribe(_ receive: @escaping (Changes<State>) -> Void) -> EventEmitterSubscribeToken {
+  public func subscribeActivity(_ receive: @escaping (Activity) -> Void) -> EventEmitterSubscribeToken  {
+    _eventEmitter.add(receive)
+  }
+  
+  /// Subscribe the state changes 
+  ///
+  /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
+  @discardableResult
+  public func subscribeStateChanges(_ receive: @escaping (Changes<State>) -> Void) -> EventEmitterSubscribeToken {
     
     let storage = Storage<Changes<State>>(.init(old: nil, new: state))
     

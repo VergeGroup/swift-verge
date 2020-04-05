@@ -26,6 +26,7 @@
 		4B1C011623D34A6B00BE9B24 /* SessionRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011523D34A6B00BE9B24 /* SessionRootView.swift */; };
 		4B1C011823D34A9F00BE9B24 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011723D34A9F00BE9B24 /* SafariView.swift */; };
 		4B1C011C23D381F700BE9B24 /* Volatile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011A23D381F100BE9B24 /* Volatile.swift */; };
+		4B1F19BD243A679500CED46B /* Changes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBFF45D24389D3D005BA03C /* Changes.swift */; };
 		4B1FB926243268B50020801B /* ComputedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1FB924243268AD0020801B /* ComputedTests.swift */; };
 		4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050F623D5C841000A2779 /* StoreLogger.swift */; };
 		4B2050F923D5C85B000A2779 /* MutationMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050F823D5C85B000A2779 /* MutationMetadata.swift */; };
@@ -133,7 +134,6 @@
 		4BB4F80C23D33AC70039C897 /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F80B23D33AC70039C897 /* State.swift */; };
 		4BB4F80E23D33C0C0039C897 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F80D23D33C0C0039C897 /* Session.swift */; };
 		4BB4F81023D33F970039C897 /* LoggedInService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F80F23D33F970039C897 /* LoggedInService.swift */; };
-		4BBFF45E24389D3D005BA03C /* Changes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBFF45D24389D3D005BA03C /* Changes.swift */; };
 		4BC6EFAF23A8BF7800EFD688 /* OrderedIDIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFAE23A8BF7800EFD688 /* OrderedIDIndex.swift */; };
 		4BC6EFB123A8BFAF00EFD688 /* GroupByEntityIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB023A8BFAF00EFD688 /* GroupByEntityIndex.swift */; };
 		4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */; };
@@ -874,7 +874,6 @@
 				4B0AFD6C2388643400AABA90 /* DefaultStoreLogger.swift */,
 				4B53B93E23B2823D0087183B /* Deprecates.swift */,
 				4B79FA232430E4FB0015B604 /* Computed.swift */,
-				4BBFF45D24389D3D005BA03C /* Changes.swift */,
 			);
 			path = VergeStore;
 			sourceTree = "<group>";
@@ -1114,6 +1113,7 @@
 			children = (
 				4BFA229E23A63B56008D7BCB /* VergeCore.h */,
 				4B73F08824041811006910E6 /* Log.swift */,
+				4BBFF45D24389D3D005BA03C /* Changes.swift */,
 				4BA3E1A423C359F40095629B /* Signpost.swift */,
 				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
 				4B8EB4F823C034A900035B2A /* Comparer.swift */,
@@ -1884,7 +1884,6 @@
 				4B427419236F269C00C302C8 /* StoreBase.swift in Sources */,
 				4BCBCA8D2381CC2B00F33B15 /* ContextualDispatcher.swift in Sources */,
 				4B083E9C23FC4B7600AB9E6B /* JSONDescribing.swift in Sources */,
-				4BBFF45E24389D3D005BA03C /* Changes.swift in Sources */,
 				4B2050FB23D5C878000A2779 /* ActionMetadata.swift in Sources */,
 				4B2050FD23D5D24C000A2779 /* DispatcherMetadata.swift in Sources */,
 				4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */,
@@ -1984,6 +1983,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BF470D223CC3A43001A1D5D /* UpdatedMarker.swift in Sources */,
+				4B1F19BD243A679500CED46B /* Changes.swift in Sources */,
 				4BF470CD23CC36E8001A1D5D /* FragmentState.swift in Sources */,
 				4B73F08924041811006910E6 /* Log.swift in Sources */,
 				4BA3E1A523C359F40095629B /* Signpost.swift in Sources */,
