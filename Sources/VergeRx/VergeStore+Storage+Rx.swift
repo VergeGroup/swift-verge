@@ -51,29 +51,6 @@ extension ObservableType where Element : StateType {
   /// Returns an observable sequence that contains only changed elements according to the `comparer`.
   ///
   /// - Parameters:
-  ///   - selector: KeyPath to property
-  ///   - comparer:
-  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S>(_ selector: KeyPath<Element, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
-    return
-      asObservable()
-        .map { $0[keyPath: selector] }
-        .distinctUntilChanged(comparer)
-  }
-      
-  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
-  ///
-  /// - Parameters:
-  ///   - selector: KeyPath to property
-  ///   - comparer:
-  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S : Equatable>(_ selector: KeyPath<Element, S>) -> Observable<S> {
-    return changed(selector, ==)
-  }
-    
-  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
-  ///
-  /// - Parameters:
   ///   - selector:
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
@@ -92,30 +69,6 @@ extension ObservableType where Element : StateType {
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
   public func changedDriver<S : Equatable>(_ selector: @escaping (Element) -> S) -> Driver<S> {
-    return changedDriver(selector, ==)
-  }
-  
-  /// Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
-  ///
-  /// - Parameters:
-  ///   - selector: KeyPath to property
-  ///   - comparer:
-  /// - Returns: Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
-  public func changedDriver<S>(_ selector: KeyPath<Element, S>, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
-    return
-      asObservable()
-        .map { $0[keyPath: selector] }
-        .distinctUntilChanged(comparer)
-        .asDriver(onErrorRecover: { _ in .empty() })
-  }
-  
-  /// Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
-  ///
-  /// - Parameters:
-  ///   - selector: KeyPath to property
-  ///   - comparer:
-  /// - Returns: Returns an observable sequence as Driver that contains only changed elements according to the `comparer`.
-  public func changedDriver<S : Equatable>(_ selector: KeyPath<Element, S>) -> Driver<S> {
     return changedDriver(selector, ==)
   }
   
