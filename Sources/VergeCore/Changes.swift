@@ -78,6 +78,8 @@ public struct Changes<Value> {
     }
   }
   
+  /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
+  ///
   @inline(__always)
   public func hasChanges<T: Equatable>(_ keyPath: KeyPath<Value, T>) -> Bool {
     let selectedOld = old?[keyPath: keyPath]
@@ -86,6 +88,7 @@ public struct Changes<Value> {
     return selectedOld != selectedNew
   }
   
+  /// Do a closure if value specified by keyPath contains changes.
   public func ifChanged<T: Equatable>(_ keyPath: KeyPath<Value, T>, _ perform: (T) throws -> Void) rethrows {
     
     guard hasChanges(keyPath) else { return }
