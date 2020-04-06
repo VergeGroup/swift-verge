@@ -98,6 +98,10 @@ public struct EqualityComputerBuilder<Input, ComparingKey> {
     self.comparer = comparer
   }
   #endif
+  
+  public func isEqual(old: Input, new: Input) -> Bool {
+    comparer.equals(previousValue: selector(old), newValue: selector(new))
+  }
     
   public func build() -> EqualityComputer<Input> {
     .init(selector: selector, comparer: comparer)

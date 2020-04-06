@@ -81,19 +81,3 @@ open class DispatcherBase<State: StateType, Activity>: ScopedDispatcherBase<Stat
   
 }
 
-public protocol _VergeStore_OptionalProtocol {
-  associatedtype Wrapped
-  var _vergestore_wrappedValue: Wrapped? { get set }
-}
-
-extension Optional: _VergeStore_OptionalProtocol {
-  
-  public var _vergestore_wrappedValue: Wrapped? {
-    get {
-      return self
-    }
-    mutating set {
-      self = newValue
-    }
-  }
-}

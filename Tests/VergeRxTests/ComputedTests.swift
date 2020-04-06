@@ -19,7 +19,7 @@ class ComputedTests: XCTestCase {
     
     struct Getters: GettersType {
       
-      let nameCount = Field.RxComputed<Int>.init {
+      let nameCount = Field.RxGetter<Int>.init {
         $0.mapWithoutPreFilter(\.name.count).build()
       }
       

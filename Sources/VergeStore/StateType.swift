@@ -66,6 +66,23 @@ public enum StateUpdatingError: Swift.Error {
   case targetWasNull
 }
 
+public protocol _VergeStore_OptionalProtocol {
+  associatedtype Wrapped
+  var _vergestore_wrappedValue: Wrapped? { get set }
+}
+
+extension Optional: _VergeStore_OptionalProtocol {
+  
+  public var _vergestore_wrappedValue: Wrapped? {
+    get {
+      return self
+    }
+    mutating set {
+      self = newValue
+    }
+  }
+}
+
 extension StateType {
       
   public mutating func updateTryPresent<T: _VergeStore_OptionalProtocol, Return>(

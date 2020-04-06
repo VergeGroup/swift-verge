@@ -22,7 +22,7 @@ class ComputedTests: XCTestCase {
     
     struct Getters: GettersType {
       
-      let nameCount = Field.Computed<Int>.init {
+      let nameCount = Field.Getter<Int>.init {
         $0.mapWithoutPreFilter(\.name.count).build()
       }
       
