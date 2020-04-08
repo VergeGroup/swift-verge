@@ -156,6 +156,14 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     }
     
   }
+  
+  public func removeStateChangesSubscription(token: EventEmitterSubscribeToken) {
+    _backingStorage.remove(token)
+  }
+  
+  public func removeActivitySubscription(token: EventEmitterSubscribeToken) {
+    _eventEmitter.remove(token)
+  }
           
 }
 

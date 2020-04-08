@@ -123,7 +123,7 @@ public struct Changes<Value> {
     let selectedNew = new[keyPath: keyPath]
     return !comparer(selectedOld, selectedNew)
   }
-  
+      
   /// Do a closure if value specified by keyPath contains changes.
   public func ifChanged<T: Equatable>(_ keyPath: KeyPath<Value, T>, _ perform: (T) throws -> Void) rethrows {
     
@@ -183,9 +183,16 @@ extension Changes where Value : CombinedStateType {
         
         /* Begin lock scope */
         
+        func preFilter() -> Bool {
+          components._onPreFilter()
+          return (source.old.map({ components.preFilter.isEqual(old: $0, new: source.new) }) ?? false)
+        }
+        
         if let cached = _cahce[keyPath] as? Output,
           source.computedFlags.value[keyPath, default: false] == true ||
-          (source.old.map({ components.preFilter.isEqual(old: $0, new: source.new) }) ?? false) {
+          preFilter() {
+          
+          source.computedFlags.update { $0[keyPath] = true }
           return cached
         }
         
@@ -207,6 +214,17 @@ extension Changes where Value : CombinedStateType {
   
   public var computed: ComputedProxy {
     .init(source: self)
+  }
+    
+  @inline(__always)
+  public func hasChanges<T>(computed keyPath: KeyPath<ComputedProxy, T>, _ comparer: (T, T) -> Bool) -> Bool {
+    
+    fatalError()
+  }
+  
+  public func ifChanged<T: Equatable>(computed keyPath: KeyPath<ComputedProxy, T>, _ perform: (T) throws -> Void) rethrows {
+    
+    fatalError()
   }
       
 }
@@ -243,7 +261,7 @@ extension _GettersContainer {
       func ifChanged<PreComparingKey>(
         filter: EqualityComputerBuilder<Input, PreComparingKey>
       ) -> Components<PreComparingKey, Output> {
-        .init(preFilter: filter, transform: transform, onRead: { _ in }, onTransform: { _ in })
+        .init(preFilter: filter, transform: transform)
       }
       
       public func ifChanged<PreComparingKey>(
@@ -277,22 +295,18 @@ extension _GettersContainer {
       
       public typealias Input = State
       
-      fileprivate var _onRead: ((Input) -> Void)
-      fileprivate var _onTransform: ((Output) -> Void)
+      fileprivate var _onRead: (Input) -> Void = { _ in }
+      fileprivate var _onPreFilter: () -> Void = {}
+      fileprivate var _onTransform: (Output) -> Void = { _ in }
       
       public let preFilter: EqualityComputerBuilder<Input, PreComparingKey>
       public let transform: (Input) -> Output
       
       public init(
         preFilter: EqualityComputerBuilder<Input, PreComparingKey>,
-        transform: @escaping (Input) -> Output,
-        onRead: @escaping ((Input) -> Void),
-        onTransform: @escaping ((Output) -> Void)
+        transform: @escaping (Input) -> Output
       ) {
-        
-        self._onRead = onRead
-        self._onTransform = onTransform
-        
+                
         self.preFilter = preFilter
         self.transform = transform
         
@@ -309,6 +323,13 @@ extension _GettersContainer {
         
         var _self = self
         _self._onTransform = onTransform
+        return _self
+      }
+      
+      public func onPreFilter(_ onPreFilter: @escaping () -> Void) -> Self {
+        
+        var _self = self
+        _self._onPreFilter = onPreFilter
         return _self
       }
       
