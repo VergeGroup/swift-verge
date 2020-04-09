@@ -86,7 +86,7 @@ class Computed2Tests: XCTestCase {
       _ = changes.computed.nameCount
       _ = changes.computed.nameCount
       _ = changes.computed.nameCount
-      
+          
     }
     
     XCTAssertEqual(rootPreFilterCounter, 0)

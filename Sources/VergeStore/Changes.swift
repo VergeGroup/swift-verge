@@ -165,14 +165,11 @@ public struct Changes<Value> {
   ///
   @inline(__always)
   public func hasChanges<T: Equatable>(_ keyPath: KeyPath<Value, T>) -> Bool {
-    guard let selectedOld = old?[keyPath: keyPath] else {
-      return true
-    }
-    let selectedNew = current[keyPath: keyPath]
-    
-    return selectedOld != selectedNew
+    hasChanges(keyPath, ==)
   }
   
+  /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
+  ///
   @inline(__always)
   public func hasChanges<T>(_ keyPath: KeyPath<Value, T>, _ comparer: (T, T) -> Bool) -> Bool {
     guard let selectedOld = old?[keyPath: keyPath] else {
@@ -228,57 +225,97 @@ extension Changes where Value : CombinedStateType {
     
     @inline(__always)
     private func take<PreComparingKey, Output>(with keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>) -> Output {
-      
-      let components = Value.Getters()[keyPath: keyPath]
-      components._onRead(source.current)
-      
-      return source.sharedCacheComputedValueStorage.update { _cahce in
-        
-        /* Begin lock scope */
-        
-        func preFilter() -> Bool {
-          components._onPreFilter()
-          return (source.old.map({ components.preFilter.isEqual(old: $0, new: source.current) }) ?? false)
-        }
-        
-        if let computed = source.innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
-          return computed
-        }
-        
-        if let cached = _cahce[keyPath] as? Output, preFilter() {
-          
-          source.innerCurrent.cachedComputedValueStorage.value[keyPath] = cached
-          return cached
-        }
-                
-        let newValue = components.transform(source.current)
-        
-        components._onTransform(newValue)
-        
-        _cahce[keyPath] = newValue
-        source.innerCurrent.cachedComputedValueStorage.value[keyPath] = newValue
-        
-        return newValue
-        
-        /* End lock scope */
-      }
-      
+      return source.take(keyPath: keyPath)
     }
   }
   
   public var computed: ComputedProxy {
     .init(source: self)
   }
+  
+  @inline(__always)
+  public func hasChanges<PreComparingKey, Output: Equatable>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>) -> Bool {
+    hasChanges(computed: keyPath, ==)
+  }
     
   @inline(__always)
-  public func hasChanges<T>(computed keyPath: KeyPath<ComputedProxy, T>, _ comparer: (T, T) -> Bool) -> Bool {
+  public func hasChanges<PreComparingKey, Output>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>, _ comparer: (Output, Output) -> Bool) -> Bool {
     
-    fatalError()
+    guard let innerOld = innerOld else { return true }
+    
+    guard let oldComputedValue = innerOld.cachedComputedValues[keyPath] as? Output else { return true }
+    
+    let current = computed[dynamicMember: keyPath]
+    
+    guard !comparer(oldComputedValue, current) else {
+      return false
+    }
+
+    return true
   }
   
-  public func ifChanged<T: Equatable>(computed keyPath: KeyPath<ComputedProxy, T>, _ perform: (T) throws -> Void) rethrows {
+  public func ifChanged<PreComparingKey, Output: Equatable>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>, _ perform: (Output) throws -> Void) rethrows {
     
-    fatalError()
+    let current = computed[dynamicMember: keyPath]
+
+    guard let innerOld = innerOld else {
+      try perform(current)
+      return
+    }
+        
+    guard let oldComputedValue = innerOld.cachedComputedValues[keyPath] as? Output else {
+      try perform(current)
+      return
+    }
+        
+    guard oldComputedValue != current else {
+      return
+    }
+    
+    try perform(current)
+    
+  }
+  
+  @inline(__always)
+  private func take<PreComparingKey, Output>(
+    keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>
+  ) -> Output {
+        
+    let components = Value.Getters()[keyPath: keyPath]
+    
+    components._onRead(current)
+    
+    return sharedCacheComputedValueStorage.update { _cahce in
+      
+      /* Begin lock scope */
+      
+      func preFilter() -> Bool {
+        components._onPreFilter()
+        return (old.map({ components.preFilter.isEqual(old: $0, new: current) }) ?? false)
+      }
+      
+      if let computed = innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
+        return computed
+      }
+      
+      if let cached = _cahce[keyPath] as? Output, preFilter() {
+        
+        innerCurrent.cachedComputedValueStorage.value[keyPath] = cached
+        return cached
+      }
+      
+      let newValue = components.transform(current)
+      
+      components._onTransform(newValue)
+      
+      _cahce[keyPath] = newValue
+      innerCurrent.cachedComputedValueStorage.value[keyPath] = newValue
+      
+      return newValue
+      
+      /* End lock scope */
+    }
+    
   }
       
 }
