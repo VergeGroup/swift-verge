@@ -74,44 +74,90 @@ fileprivate final class NonatomicRef<Value> {
  */
 @dynamicMemberLookup
 public struct Changes<Value> {
+  
+  private struct InnerOld {
+    
+    let value: Value
+    let cachedComputedValues: [AnyKeyPath : Any]
+    
+    init(value: Value) {
+      self.value = value
+      self.cachedComputedValues = [:]
+    }
+    
+    private init(
+      value: Value,
+      cachedComputedValues: [AnyKeyPath : Any]
+    ) {
+      self.value = value
+      self.cachedComputedValues = cachedComputedValues
+    }
+    
+    init(from new: InnerCurrent) {
+      self.value = new.value
+      self.cachedComputedValues = new.cachedComputedValueStorage.value
+    }
+    
+    public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerOld {
+      return .init(value: try transform(value), cachedComputedValues: cachedComputedValues)
+    }
+    
+  }
+  
+  private struct InnerCurrent {
+    
+    let value: Value
+    
+    let cachedComputedValueStorage: NonatomicRef<[AnyKeyPath : Any]>
+    
+    init(value: Value) {
+      self.value = value
+      self.cachedComputedValueStorage = .init([:])
+    }
+    
+    private init(
+      value: Value,
+      cachedComputedValueStorage: NonatomicRef<[AnyKeyPath : Any]>
+    ) {
+      self.value = value
+      self.cachedComputedValueStorage = cachedComputedValueStorage
+    }
+    
+    public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerCurrent {
+      return .init(value: try transform(value), cachedComputedValueStorage: cachedComputedValueStorage)
+    }
+  }
     
   private let sharedCacheComputedValueStorage: Storage<[AnyKeyPath : Any]>
+      
+  private var innerOld: InnerOld?
+  private var innerCurrent: InnerCurrent
   
-  private var cachedComputedValueStorage: NonatomicRef<[AnyKeyPath : Any]>
-  
-  private var computedFlags: NonatomicRef<[AnyKeyPath : Bool]>
-  
-  public private(set) var old: Value?
-  public private(set) var new: Value
+  public var old: Value? { _read { yield innerOld?.value } }
+  public var current: Value { _read { yield innerCurrent.value } }
   
   public init(
     old: Value?,
     new: Value
   ) {
-    self.old = old
-    self.new = new
+    self.innerOld = old.map(InnerOld.init(value: ))
+    self.innerCurrent = .init(value: new)
     self.sharedCacheComputedValueStorage = .init([:])
-    self.computedFlags = .init([:])
-    self.cachedComputedValueStorage = .init([:])
   }
   
   private init(
-    old: Value?,
-    new: Value,
-    sharedCacheStorage: Storage<[AnyKeyPath : Any]>,
-    cacheStorage: NonatomicRef<[AnyKeyPath : Any]>,
-    computedFlags: NonatomicRef<[AnyKeyPath : Bool]>
+    innerOld: InnerOld?,
+    innerCurrent: InnerCurrent,
+    sharedCacheStorage: Storage<[AnyKeyPath : Any]>
   ) {
-    self.old = old
-    self.new = new
+    self.innerOld = innerOld
+    self.innerCurrent = innerCurrent
     self.sharedCacheComputedValueStorage = sharedCacheStorage
-    self.cachedComputedValueStorage = cacheStorage
-    self.computedFlags = computedFlags
   }
   
   public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
     _read {
-      yield new[keyPath: keyPath]
+      yield current[keyPath: keyPath]
     }
   }
   
@@ -122,7 +168,7 @@ public struct Changes<Value> {
     guard let selectedOld = old?[keyPath: keyPath] else {
       return true
     }
-    let selectedNew = new[keyPath: keyPath]
+    let selectedNew = current[keyPath: keyPath]
     
     return selectedOld != selectedNew
   }
@@ -132,7 +178,7 @@ public struct Changes<Value> {
     guard let selectedOld = old?[keyPath: keyPath] else {
       return true
     }
-    let selectedNew = new[keyPath: keyPath]
+    let selectedNew = current[keyPath: keyPath]
     return !comparer(selectedOld, selectedNew)
   }
       
@@ -140,22 +186,20 @@ public struct Changes<Value> {
   public func ifChanged<T: Equatable>(_ keyPath: KeyPath<Value, T>, _ perform: (T) throws -> Void) rethrows {
     
     guard hasChanges(keyPath) else { return }
-    try perform(new[keyPath: keyPath])
+    try perform(current[keyPath: keyPath])
   }
     
   public func ifChanged<T>(_ keyPath: KeyPath<Value, T>, _ comparer: (T, T) -> Bool, _ perform: (T) throws -> Void) rethrows {
     
     guard hasChanges(keyPath, comparer) else { return }
-    try perform(new[keyPath: keyPath])
+    try perform(current[keyPath: keyPath])
   }
   
   public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
     .init(
-      old: try old.map(transform),
-      new: try transform(new),
-      sharedCacheStorage: sharedCacheComputedValueStorage,
-      cacheStorage: cachedComputedValueStorage,
-      computedFlags: computedFlags
+      innerOld: try innerOld?.map(transform),
+      innerCurrent: try innerCurrent.map(transform),
+      sharedCacheStorage: sharedCacheComputedValueStorage
     )
   }
   
@@ -166,10 +210,8 @@ public struct Changes<Value> {
   }
   
   public mutating func update(with nextNewValue: Value) {
-    self.old = self.new
-    self.new = nextNewValue
-    self.cachedComputedValueStorage = .init([:])
-    self.computedFlags = .init([:])
+    self.innerOld = .init(from: innerCurrent)
+    self.innerCurrent = .init(value: nextNewValue)
   }
   
 }
@@ -188,7 +230,7 @@ extension Changes where Value : CombinedStateType {
     private func take<PreComparingKey, Output>(with keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>) -> Output {
       
       let components = Value.Getters()[keyPath: keyPath]
-      components._onRead(source.new)
+      components._onRead(source.current)
       
       return source.sharedCacheComputedValueStorage.update { _cahce in
         
@@ -196,25 +238,25 @@ extension Changes where Value : CombinedStateType {
         
         func preFilter() -> Bool {
           components._onPreFilter()
-          return (source.old.map({ components.preFilter.isEqual(old: $0, new: source.new) }) ?? false)
+          return (source.old.map({ components.preFilter.isEqual(old: $0, new: source.current) }) ?? false)
         }
         
-        if let cached = _cahce[keyPath] as? Output,
-          source.computedFlags.value[keyPath, default: false] == true ||
-          preFilter() {
+        if let computed = source.innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
+          return computed
+        }
+        
+        if let cached = _cahce[keyPath] as? Output, preFilter() {
           
-          source.computedFlags.value[keyPath] = true
+          source.innerCurrent.cachedComputedValueStorage.value[keyPath] = cached
           return cached
         }
-        
-        source.computedFlags.value[keyPath] = true
-        
-        let newValue = components.transform(source.new)
+                
+        let newValue = components.transform(source.current)
         
         components._onTransform(newValue)
         
         _cahce[keyPath] = newValue
-        source.cachedComputedValueStorage.value[keyPath] = newValue
+        source.innerCurrent.cachedComputedValueStorage.value[keyPath] = newValue
         
         return newValue
         
@@ -244,7 +286,7 @@ extension Changes where Value : CombinedStateType {
 extension Changes where Value : Equatable {
   
   public var hasChanges: Bool {
-    old != new
+    old != current
   }
 }
 
