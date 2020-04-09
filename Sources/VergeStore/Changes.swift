@@ -25,6 +25,13 @@ import Foundation
 import VergeCore
 #endif
 
+fileprivate final class NonatomicRef<Value> {
+  var value: Value
+  init(_ value: Value) {
+    self.value = value
+  }
+}
+
 /**
  
  An object that contains 2 instances (old, new)
@@ -67,10 +74,12 @@ import VergeCore
  */
 @dynamicMemberLookup
 public struct Changes<Value> {
+    
+  private let sharedCacheComputedValueStorage: Storage<[AnyKeyPath : Any]>
   
-  private let cacheStorage: Storage<[AnyKeyPath : Any]>
+  private var cachedComputedValueStorage: NonatomicRef<[AnyKeyPath : Any]>
   
-  private var computedFlags: Storage<[AnyKeyPath : Bool]>
+  private var computedFlags: NonatomicRef<[AnyKeyPath : Bool]>
   
   public private(set) var old: Value?
   public private(set) var new: Value
@@ -81,19 +90,22 @@ public struct Changes<Value> {
   ) {
     self.old = old
     self.new = new
-    self.cacheStorage = .init([:])
+    self.sharedCacheComputedValueStorage = .init([:])
     self.computedFlags = .init([:])
+    self.cachedComputedValueStorage = .init([:])
   }
   
   private init(
     old: Value?,
     new: Value,
-    cacheStorage: Storage<[AnyKeyPath : Any]>,
-    computedFlags: Storage<[AnyKeyPath : Bool]>
+    sharedCacheStorage: Storage<[AnyKeyPath : Any]>,
+    cacheStorage: NonatomicRef<[AnyKeyPath : Any]>,
+    computedFlags: NonatomicRef<[AnyKeyPath : Bool]>
   ) {
     self.old = old
     self.new = new
-    self.cacheStorage = cacheStorage
+    self.sharedCacheComputedValueStorage = sharedCacheStorage
+    self.cachedComputedValueStorage = cacheStorage
     self.computedFlags = computedFlags
   }
   
@@ -141,23 +153,22 @@ public struct Changes<Value> {
     .init(
       old: try old.map(transform),
       new: try transform(new),
-      cacheStorage: cacheStorage,
+      sharedCacheStorage: sharedCacheComputedValueStorage,
+      cacheStorage: cachedComputedValueStorage,
       computedFlags: computedFlags
     )
   }
   
   public func makeNextChanges(with nextNewValue: Value) -> Changes<Value> {
-    .init(
-      old: self.new,
-      new: nextNewValue,
-      cacheStorage: cacheStorage,
-      computedFlags: .init([:])
-    )
+    var _self = self
+    _self.update(with: nextNewValue)
+    return _self
   }
   
   public mutating func update(with nextNewValue: Value) {
     self.old = self.new
     self.new = nextNewValue
+    self.cachedComputedValueStorage = .init([:])
     self.computedFlags = .init([:])
   }
   
@@ -179,7 +190,7 @@ extension Changes where Value : CombinedStateType {
       let components = Value.Getters()[keyPath: keyPath]
       components._onRead(source.new)
       
-      return source.cacheStorage.update { _cahce in
+      return source.sharedCacheComputedValueStorage.update { _cahce in
         
         /* Begin lock scope */
         
@@ -192,17 +203,18 @@ extension Changes where Value : CombinedStateType {
           source.computedFlags.value[keyPath, default: false] == true ||
           preFilter() {
           
-          source.computedFlags.update { $0[keyPath] = true }
+          source.computedFlags.value[keyPath] = true
           return cached
         }
         
-        source.computedFlags.update { $0[keyPath] = true }
+        source.computedFlags.value[keyPath] = true
         
         let newValue = components.transform(source.new)
         
         components._onTransform(newValue)
         
         _cahce[keyPath] = newValue
+        source.cachedComputedValueStorage.value[keyPath] = newValue
         
         return newValue
         
