@@ -8,6 +8,7 @@
 
 import Foundation
 
+import VergeStore
 import VergeORM
 
 struct Book: EntityType, Hashable {
@@ -37,7 +38,7 @@ struct Author: EntityType {
   static let anonymous: Author = .init(rawID: "anonymous")
 }
 
-struct RootState: DatabaseEmbedding {
+struct RootState: StateType, DatabaseEmbedding {
   
   static let getterToDatabase: (RootState) -> RootState.Database = { $0.db }
   

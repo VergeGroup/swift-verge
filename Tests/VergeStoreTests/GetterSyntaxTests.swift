@@ -10,17 +10,17 @@ import Foundation
 
 import XCTest
 
-import VergeCore
+import VergeStore
 
 @available(iOS 13, *)
 final class GetterSyntaxTests: XCTestCase {
   
-  struct State {
+  struct State: StateType {
     var title: String = ""
     var count: Int = 0
   }
   
-  private let store = Storage<State>(.init())
+  private let store = StoreBase<State, Never>.init(initialState: .init(), logger: nil)
     
   func testGetterSyntax1() {
     

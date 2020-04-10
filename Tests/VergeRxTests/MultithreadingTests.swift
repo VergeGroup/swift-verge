@@ -16,11 +16,11 @@ import VergeORM
 
 class MultithreadingTests: XCTestCase {
   
-  let store = Storage(RootState())
+  let store = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
       
   func testUpdateFromThreads() {
     
-    let results = self.store.update { state in
+    let results = self.store.commit { state in
       state.db.performBatchUpdates { (context) -> [EntityTable<RootState.Database.Schema, Author>.InsertionResult] in
         
         let authors = (0..<1000).map { i in
@@ -47,7 +47,7 @@ class MultithreadingTests: XCTestCase {
     for _ in 0..<200 {
       group.enter()
       DispatchQueue.global().async {
-        self.store.update { state in
+        self.store.commit { state in
           state.db.performBatchUpdates { (context) in
             
             let authors = (0..<1000).map { i in

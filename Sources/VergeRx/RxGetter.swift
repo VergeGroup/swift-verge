@@ -103,9 +103,9 @@ public final class RxGetterSource<Input, Output>: RxGetter<Output> {
 extension Storage: ReactiveCompatible {}
 extension StoreBase: ReactiveCompatible {}
 
-extension Reactive where Base : RxValueContainerType {
+extension Reactive where Base : StoreType {
   
-  public typealias Value = Base.Value
+  public typealias Value = Base.State
   
   public func makeGetter<PreComapringKey, Output, PostComparingKey>(
     from components: GetterComponents<Value, PreComapringKey, Output, PostComparingKey>
@@ -114,7 +114,7 @@ extension Reactive where Base : RxValueContainerType {
     let preComparer = components.preFilter.build()
     let postComparer = components.postFilter?.build()
     
-    let baseStream = base.asObservable()
+    let baseStream = base.asStoreBase().rx.stateObservable
       .do(onNext: { [closure = components.onPreFilterWillReceive] value in
         closure(value)
       })
@@ -147,12 +147,12 @@ extension Reactive where Base : RxValueContainerType {
       pipe = baseStream
     }
     
-    let getter = RxGetterSource<Base.Value, Output>.init(from: pipe)
+    let getter = RxGetterSource<Base.State, Output>.init(from: pipe)
     
     return getter
   }
       
-  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Rx, Base, Base.Value> {
+  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Rx, Base, Base.State> {
     .init(target: base)
   }
   
@@ -168,7 +168,7 @@ extension ObservableConvertibleType {
   }
 }
 
-extension GetterBuilderTransformMethodChain where Trait == GetterBuilderTrait.Rx, Context : RxValueContainerType & ReactiveCompatible, Context.Value == Input {
+extension GetterBuilderTransformMethodChain where Trait == GetterBuilderTrait.Rx, Context : StoreType & ReactiveCompatible, Context.State == Input {
   
   public func build() -> RxGetterSource<Input, Output> {
     target.rx.makeGetter(from: makeGetterComponents())
@@ -176,7 +176,7 @@ extension GetterBuilderTransformMethodChain where Trait == GetterBuilderTrait.Rx
   
 }
 
-extension GetterBuilderPostFilterMethodChain where Trait == GetterBuilderTrait.Rx, Context : RxValueContainerType & ReactiveCompatible, Context.Value == Input {
+extension GetterBuilderPostFilterMethodChain where Trait == GetterBuilderTrait.Rx, Context : StoreType & ReactiveCompatible, Context.State == Input {
   
   public func build() -> RxGetterSource<Input, Output> {
     target.rx.makeGetter(from: makeGetterComponents())

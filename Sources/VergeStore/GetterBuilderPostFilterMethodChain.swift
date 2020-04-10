@@ -53,11 +53,11 @@ public struct GetterBuilderPostFilterMethodChain<Trait, Context, Input, PreCompa
 
 #if canImport(Combine)
 
-extension GetterBuilderPostFilterMethodChain where Context : ValueContainerType, Trait == GetterBuilderTrait.Combine, Context.Value == Input {
+extension GetterBuilderPostFilterMethodChain where Context : StoreType, Trait == GetterBuilderTrait.Combine, Context.State == Input {
   
   @available(iOS 13, macOS 10.15, *)
   public func build() -> GetterSource<Input, Output> {
-    target.makeGetter(from: makeGetterComponents())
+    target.asStoreBase().makeGetter(from: makeGetterComponents())
   }
   
 }

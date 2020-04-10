@@ -32,6 +32,12 @@ fileprivate final class NonatomicRef<Value> {
   }
 }
 
+public protocol ChangesType {
+  associatedtype Value
+  var old: Value? { get }
+  var current: Value { get }
+}
+
 /**
  
  An object that contains 2 instances (old, new)
@@ -73,7 +79,7 @@ fileprivate final class NonatomicRef<Value> {
  ```
  */
 @dynamicMemberLookup
-public struct Changes<Value> {
+public struct Changes<Value>: ChangesType {
   
   private struct InnerOld {
     

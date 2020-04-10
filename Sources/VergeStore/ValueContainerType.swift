@@ -8,67 +8,61 @@
 
 import Foundation
 
-public protocol ValueContainerType: AnyObject {
-  associatedtype Value
-  
-  var wrappedValue: Value { get }
-  
-  func lock()
-  func unlock()
-  
-  #if canImport(Combine)
-     
-  @available(iOS 13, macOS 10.15, *)
-  func makeGetter<PreComparingKey, Output, PostComparingKey>(
-    from builder: GetterComponents<Value, PreComparingKey, Output, PostComparingKey>
-  ) -> GetterSource<Value, Output>
-  
-  #endif
-}
+//public protocol ValueContainerType: AnyObject {
+//  associatedtype Value: ChangesType
+//
+//  var wrappedValue: Value { get }
+//
+//  func lock()
+//  func unlock()
+//
+//  #if canImport(Combine)
+//
+//  @available(iOS 13, macOS 10.15, *)
+//  func makeGetter<PreComparingKey, Output, PostComparingKey>(
+//    from builder: GetterComponents<Value.Value, PreComparingKey, Output, PostComparingKey>
+//  ) -> GetterSource<Value.Value, Output>
+//
+//  #endif
+//}
 
 #if canImport(Combine)
 import Combine
-extension ValueContainerType {
+extension StoreType {
      
-  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Combine, Self, Value> {
+  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Combine, Self, State> {
     .init(target: self)
   }
       
 }
 #endif
 
-extension Storage: ValueContainerType {
-  
-  public func lock() {
-    _lock.lock()
-  }
-
-  public func unlock() {
-    _lock.unlock()
-  }
-  
+extension StoreBase {
+    
   #if canImport(Combine)
   
   @available(iOS 13, macOS 10.15, *)
   
   public func makeGetter<PreComparingKey, Output, PostComparingKey>(
-    from components: GetterComponents<Value, PreComparingKey, Output, PostComparingKey>
-  ) -> GetterSource<Value, Output> {
+    from components: GetterComponents<State, PreComparingKey, Output, PostComparingKey>
+  ) -> GetterSource<State, Output> {
     
     let preComparer = components.preFilter.build()
     let postComparer = components.postFilter?.build()
     
-    let base = valuePublisher
+    let base = statePublisher
       .handleEvents(receiveOutput: { [closure = components.onPreFilterWillReceive] value in
-        closure(value)
+        closure(value.current)
       })
       .filter { value in
-        !preComparer.equals(input: value)
+        !preComparer.equals(input: value.current)
     }
     .handleEvents(receiveOutput: { [closure = components.onTransformWillReceive] value in
-      closure(value)
+      closure(value.current)
     })
-    .map(components.transform)
+      .map {
+        components.transform($0.current)
+    }
     
     let pipe: AnyPublisher<Output, Never>
     
@@ -79,15 +73,15 @@ extension Storage: ValueContainerType {
       .handleEvents(receiveOutput: { [closure = components.onPostFilterWillEmit] value in
         closure(value)
       })
-      .eraseToAnyPublisher()
+        .eraseToAnyPublisher()
     } else {
       pipe = base.eraseToAnyPublisher()
     }
-       
-    let getterBuilder = GetterSource<Value, Output>.init(input: pipe)
+    
+    let getterBuilder = GetterSource<State, Output>.init(input: pipe)
     
     return getterBuilder
   }
-   
+  
   #endif
 }

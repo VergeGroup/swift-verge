@@ -25,11 +25,13 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-public protocol StoreType: ValueContainerType where State == Value {
+public protocol StoreType {
   associatedtype State: StateType
   associatedtype Activity
   
   func asStoreBase() -> StoreBase<State, Activity>
+  
+  var state: State { get }
 }
 
 public typealias NoActivityStoreBase<State: StateType> = StoreBase<State, Never>
@@ -60,12 +62,12 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     
   /// A current state.
   public var state: State {
-    _backingStorage.value
+    _backingStorage.value.current
   }
 
   /// A backing storage that manages current state.
   /// You shouldn't access this directly unless special case.
-  public let _backingStorage: Storage<State>
+  public let _backingStorage: Storage<Changes<State>>
   public let _eventEmitter: EventEmitter<Activity> = .init()  
   public let _getterStorage: Storage<[AnyKeyPath : Any]> = .init([:])
   
@@ -79,8 +81,7 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     initialState: State,
     logger: StoreLogger?
   ) {
-    
-    self._backingStorage = .init(initialState)
+    self._backingStorage = .init(.init(old: nil, new: initialState))
     self.logger = logger
     self.metadata = .init(fromAction: nil)
     
@@ -97,7 +98,9 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     
     let returnValue = try _backingStorage.update { (state) -> Result in
       let startedTime = CFAbsoluteTimeGetCurrent()
-      let r = try mutation(&state)
+      var current = state.current
+      let r = try mutation(&current)
+      state.update(with: current)
       elapsed = CFAbsoluteTimeGetCurrent() - startedTime
       return r
     }
@@ -141,18 +144,11 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
   /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
   @discardableResult
   public func subscribeStateChanges(_ receive: @escaping (Changes<State>) -> Void) -> EventEmitterSubscribeToken {
-    
-    let storage = Storage<Changes<State>>(.init(old: nil, new: state))
-    
-    receive(storage.value)
+        
+    receive(_backingStorage.value)
     
     return _backingStorage.addDidUpdate { newValue in
-      receive(
-        storage.update { changes in
-          changes.update(with: newValue)
-          return changes
-        }
-      )
+      receive(newValue)
     }
     
   }
@@ -185,19 +181,12 @@ extension StoreBase: ObservableObject {
 @available(iOS 13.0, macOS 10.15, *)
 extension StoreBase {
   
-  public var statePublisher: AnyPublisher<State, Never> {
+  public var statePublisher: AnyPublisher<Changes<State>, Never> {
     _backingStorage.valuePublisher
   }
   
   public var activityPublisher: EventEmitter<Activity>.Publisher {
     _eventEmitter.publisher
-  }
-  
-  @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<PreComparingKey, Output, PostComparingKey>(
-    from builder: GetterComponents<State, PreComparingKey, Output, PostComparingKey>
-  ) -> GetterSource<State, Output> {
-    _backingStorage.makeGetter(from: builder)
   }
    
 }

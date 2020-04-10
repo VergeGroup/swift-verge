@@ -10,7 +10,7 @@ import Foundation
 
 import XCTest
 
-import VergeCore
+import VergeStore
 
 final class FilterTests: XCTestCase {
   

@@ -11,15 +11,15 @@ import Foundation
 import XCTest
 
 import VergeRx
-import VergeCore
+import VergeStore
 import VergeORM
 
 class ORMGetterTests: XCTestCase {
   
   func testSelector() {
     
-    let storage = Storage<RootState>(.init())
-    
+    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
+
     let id = Book.EntityID.init("some")
     
     let nullableSelector = storage.rx.entityGetter(
@@ -39,7 +39,7 @@ class ORMGetterTests: XCTestCase {
       
       var book: Book!
       
-      storage.update { state in
+      storage.commit { state in
         let createdBook = state.db.performBatchUpdates { (context) -> Book in
           
           let book = Book(rawID: id.raw, authorID: Author.anonymous.entityID)
@@ -63,7 +63,7 @@ class ORMGetterTests: XCTestCase {
       
       XCTContext.runActivity(named: "modify") { (_) -> Void in
         
-        storage.update { state in
+        storage.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
             var book = context.book.current.find(by: id)!
@@ -80,7 +80,7 @@ class ORMGetterTests: XCTestCase {
       
       XCTContext.runActivity(named: "delete") { (_) -> Void in
         
-        storage.update { state in
+        storage.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
             context.book.deletes.insert(id)
@@ -98,11 +98,11 @@ class ORMGetterTests: XCTestCase {
   
   func testSelectorUsingInsertionResult() {
     
-    let storage = Storage<RootState>(.init())
+    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
         
     XCTContext.runActivity(named: "simple") { (a) -> Void in
                               
-      let result = storage.update { state in
+      let result = storage.commit { state in
         state.db.performBatchUpdates { (context) -> EntityTable<RootState.Database.Schema, Book>.InsertionResult in
           
           let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
@@ -120,7 +120,7 @@ class ORMGetterTests: XCTestCase {
             
       XCTContext.runActivity(named: "modify") { (_) -> Void in
         
-        storage.update { state in
+        storage.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
             var book = context.book.current.find(by: .init("some"))!
@@ -136,7 +136,7 @@ class ORMGetterTests: XCTestCase {
       
       XCTContext.runActivity(named: "delete") { (_) -> Void in
         
-        storage.update { state in
+        storage.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
             context.book.deletes.insert(.init("some"))
@@ -153,9 +153,9 @@ class ORMGetterTests: XCTestCase {
   
   func testEqualsWithNonEquatableEntity() {
     
-    let storage = Storage<RootState>(.init())
+    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
     
-    let result = storage.update { state in
+    let result = storage.commit { state in
       state.db.performBatchUpdates { (context) -> EntityTable<RootState.Database.Schema, Author>.InsertionResult in
         
         let author = Author(rawID: "muukii", name: "muukii")
@@ -176,7 +176,7 @@ class ORMGetterTests: XCTestCase {
     
     XCTContext.runActivity(named: "updateName") { _ in
       
-      storage.update { state in
+      storage.commit { state in
         state.db.performBatchUpdates { (context) in
           context.author.updateIfExists(id: .init("muukii")) { (author) in
             author.name = "Hiroshi"
@@ -192,7 +192,7 @@ class ORMGetterTests: XCTestCase {
     
     XCTContext.runActivity(named: "updateName, but not changed") { _ in
       
-      storage.update { state in
+      storage.commit { state in
         state.db.performBatchUpdates { (context) in
           context.author.updateIfExists(id: .init("muukii")) { (author) in
             author.name = "Hiroshi"
@@ -210,7 +210,7 @@ class ORMGetterTests: XCTestCase {
       
       for _ in 0..<10 {
         
-        storage.update { state in
+        storage.commit { state in
           state.other.count += 1
         }
         
@@ -220,7 +220,7 @@ class ORMGetterTests: XCTestCase {
     
     XCTContext.runActivity(named: "Adding book, getter would not emit changes") { _ -> Void in
       
-      storage.update { state in
+      storage.commit { state in
         state.db.performBatchUpdates { (context) in
           context.book.insert(Book(rawID: "Verge", authorID: .init("muukii")))
         }
@@ -236,7 +236,7 @@ class ORMGetterTests: XCTestCase {
   
   func testGetterCache() {
     
-    let storage = Storage<RootState>(.init())
+    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
     
     let getter1 = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
     let getter2 = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
@@ -249,7 +249,7 @@ class ORMGetterTests: XCTestCase {
   
   func testPerformanceGetterCreationIncludesFirstTime() {
     
-    let storage = Storage<RootState>(.init())
+    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
     
     measure {
       let _ = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
@@ -259,7 +259,7 @@ class ORMGetterTests: XCTestCase {
   
   func testPerformanceGetterCreationWithCache() {
         
-    let storage = Storage<RootState>(.init())
+    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
     
     let _ = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
     

@@ -41,7 +41,7 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   
   fileprivate var nonatomicValue: Value
   
-  let _lock = NSRecursiveLock()
+  private let _lock = NSRecursiveLock()
   
   fileprivate let upstreams: [AnyObject]
   
@@ -56,6 +56,14 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   
   deinit {
     deinitEmitter.accept(())
+  }
+  
+  public func lock() {
+    _lock.lock()
+  }
+  
+  public func unlock() {
+    _lock.unlock()
   }
     
   /// Register observer with closure.
@@ -116,21 +124,21 @@ open class Storage<Value>: ReadonlyStorage<Value> {
     }
     do {
       let notifyValue: Value
-      _lock.lock()
+      lock()
       notifyValue = nonatomicValue
-      _lock.unlock()
+      unlock()
       notifyWillUpdate(value: notifyValue)
     }
     
-    _lock.lock()
+    lock()
     do {
       let r = try update(&nonatomicValue)
       let notifyValue = nonatomicValue
-      _lock.unlock()
+      unlock()
       notifyDidUpdate(value: notifyValue)
       return r
     } catch {
-      _lock.unlock()
+      unlock()
       throw error
     }
   }

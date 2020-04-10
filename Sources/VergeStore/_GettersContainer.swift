@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019 muukii
+// Copyright (c) 2020 Hiroshi Kimura(Muukii) <muuki.app@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,26 +21,18 @@
 
 import Foundation
 
-#if COCOAPODS || canImport(VergeCore)
+import os.lock
 
 #if !COCOAPODS
 import VergeCore
 #endif
 
-//extension StoreBase: ValueContainerType {
-//
-//  public var wrappedValue: Changes<State> {
-//    _backingStorage.value
-//  }
-//
-//  public func lock() {
-//    _backingStorage.lock()
-//  }
-//
-//  public func unlock() {
-//    _backingStorage.unlock()
-//  }
-//
-//}
-//
-#endif
+public enum _GettersContainer<State: CombinedStateType> {
+}
+
+extension CombinedStateType {
+  
+  public typealias Field = _GettersContainer<Self>
+}
+
+

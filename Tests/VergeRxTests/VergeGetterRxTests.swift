@@ -10,8 +10,10 @@ import XCTest
 
 import RxSwift
 
-import VergeCore
+import VergeStore
 import VergeRx
+
+extension Int : StateType {}
 
 class VergeGetterRxTests: XCTestCase {
   
@@ -32,7 +34,7 @@ class VergeGetterRxTests: XCTestCase {
     
   func testSimpleWithSubscribe() {
 
-    let storage = Storage<Int>(1)
+    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
     
     var updateCount = 0
                 
@@ -46,23 +48,23 @@ class VergeGetterRxTests: XCTestCase {
         
     XCTAssertEqual(g.value, 2)
 
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
-    XCTAssertEqual(storage.value, 2)
+    XCTAssertEqual(storage.state, 2)
     
     XCTAssertEqual(g.value, 4)
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
@@ -72,7 +74,7 @@ class VergeGetterRxTests: XCTestCase {
   
   func testSimpleWithBind() {
     
-    let storage = Storage<Int>(1)
+    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
     
     var updateCount = 0
         
@@ -87,23 +89,23 @@ class VergeGetterRxTests: XCTestCase {
     
     XCTAssertEqual(g.value, 2)
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
-    XCTAssertEqual(storage.value, 2)
+    XCTAssertEqual(storage.state, 2)
     
     XCTAssertEqual(g.value, 4)
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
@@ -113,7 +115,7 @@ class VergeGetterRxTests: XCTestCase {
   
   func testChain() {
     
-    let storage = Storage<Int>(1)
+    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
                  
     var first: RxGetterSource<Int, Int>! = storage.rx.getterBuilder()
       .changed(comparer: .init(==))
@@ -134,7 +136,7 @@ class VergeGetterRxTests: XCTestCase {
     
     XCTAssertNotNil(weakFirst)
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
@@ -148,7 +150,7 @@ class VergeGetterRxTests: XCTestCase {
   
   func testShare() {
     
-    let storage = Storage<Int>(1)
+    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
             
     let first: RxGetterSource<Int, Int>! = storage.rx.getterBuilder()
       .changed(comparer: .init(==))
@@ -166,7 +168,7 @@ class VergeGetterRxTests: XCTestCase {
     XCTAssertEqual(share1.value, 1)
     XCTAssertEqual(share2.value, 1)
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
@@ -177,7 +179,7 @@ class VergeGetterRxTests: XCTestCase {
   
   func testCombine() {
     
-    let storage = Storage<Int>(1)
+    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
     
     let first = storage.rx.getterBuilder()
       .changed(comparer: .init(==))
