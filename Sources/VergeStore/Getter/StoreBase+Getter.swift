@@ -8,24 +8,6 @@
 
 import Foundation
 
-//public protocol ValueContainerType: AnyObject {
-//  associatedtype Value: ChangesType
-//
-//  var wrappedValue: Value { get }
-//
-//  func lock()
-//  func unlock()
-//
-//  #if canImport(Combine)
-//
-//  @available(iOS 13, macOS 10.15, *)
-//  func makeGetter<PreComparingKey, Output, PostComparingKey>(
-//    from builder: GetterComponents<Value.Value, PreComparingKey, Output, PostComparingKey>
-//  ) -> GetterSource<Value.Value, Output>
-//
-//  #endif
-//}
-
 #if canImport(Combine)
 import Combine
 extension StoreType {
@@ -35,14 +17,10 @@ extension StoreType {
   }
       
 }
-#endif
 
 extension StoreBase {
-    
-  #if canImport(Combine)
-  
+      
   @available(iOS 13, macOS 10.15, *)
-  
   public func makeGetter<PreComparingKey, Output, PostComparingKey>(
     from components: GetterComponents<State, PreComparingKey, Output, PostComparingKey>
   ) -> GetterSource<State, Output> {
@@ -83,5 +61,5 @@ extension StoreBase {
     return getterBuilder
   }
   
-  #endif
 }
+#endif
