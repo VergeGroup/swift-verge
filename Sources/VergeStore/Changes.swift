@@ -114,7 +114,7 @@ public struct Changes<Value>: ChangesType {
     
     let value: Value
     
-    let cachedComputedValueStorage: NonatomicRef<[AnyKeyPath : Any]>
+    let cachedComputedValueStorage: Storage<[AnyKeyPath : Any]>
     
     init(value: Value) {
       self.value = value
@@ -123,7 +123,7 @@ public struct Changes<Value>: ChangesType {
     
     private init(
       value: Value,
-      cachedComputedValueStorage: NonatomicRef<[AnyKeyPath : Any]>
+      cachedComputedValueStorage: Storage<[AnyKeyPath : Any]>
     ) {
       self.value = value
       self.cachedComputedValueStorage = cachedComputedValueStorage
@@ -291,6 +291,12 @@ extension Changes where Value : CombinedStateType {
     
     components._onRead(current)
     
+    if let computed = innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
+      // if cached, take value withoud shared lock
+      return computed
+    }
+    
+    // lock the shared lock
     return sharedCacheComputedValueStorage.update { _cahce in
       
       /* Begin lock scope */
@@ -299,14 +305,12 @@ extension Changes where Value : CombinedStateType {
         components._onPreFilter()
         return (old.map({ components.preFilter.equals($0, current) }) ?? false)
       }
-      
-      if let computed = innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
-        return computed
-      }
-      
+                 
       if let cached = _cahce[keyPath] as? Output, preFilter() {
         
-        innerCurrent.cachedComputedValueStorage.value[keyPath] = cached
+        innerCurrent.cachedComputedValueStorage.update {
+          $0[keyPath] = cached
+        }
         return cached
       }
       
@@ -315,7 +319,10 @@ extension Changes where Value : CombinedStateType {
       components._onTransform(newValue)
       
       _cahce[keyPath] = newValue
-      innerCurrent.cachedComputedValueStorage.value[keyPath] = newValue
+      
+      innerCurrent.cachedComputedValueStorage.update {
+        $0[keyPath] = newValue
+      }
       
       return newValue
       
