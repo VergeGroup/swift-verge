@@ -39,13 +39,25 @@ public struct Comparer<Input> {
       selector(a) == selector(b)
     }
   }
-    
+  
+  public init<T>(selector: @escaping (Input) -> T, equals: @escaping (T, T) -> Bool) {
+    self.init { a, b in
+      equals(selector(a), selector(b))
+    }
+  }
+  
+  public init<T>(selector: @escaping (Input) -> T, comparer: Comparer<T>) {
+    self.init { a, b in
+      comparer.equals(selector(a), selector(b))
+    }
+  }
+        
   /// Make Combined comparer
   /// - Parameter comparers:
   public init(and comparers: [Comparer<Input>]) {
     self.init { pre, new in
       for filter in comparers {
-        guard filter.equals(previousValue: pre, newValue: new) else {
+        guard filter.equals(pre, new) else {
           return false
         }
       }
@@ -58,7 +70,7 @@ public struct Comparer<Input> {
   public init(or comparers: [Comparer<Input>]) {
     self.init { pre, new in
       for filter in comparers {
-        if filter.equals(previousValue: pre, newValue: new) {
+        if filter.equals(pre, new) {
           return true
         }
       }
@@ -66,8 +78,8 @@ public struct Comparer<Input> {
     }
   }
   
-  public func equals(previousValue: Input, newValue: Input) -> Bool {
-    equals(previousValue, newValue)
+  public func equals(_ lhs: Input, _ rhs: Input) -> Bool {
+    equals(lhs, rhs)
   }
   
 }

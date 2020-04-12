@@ -25,6 +25,14 @@ import Foundation
 @_exported import VergeCore
 #endif
 
+public struct ChangesSubscription {
+  let token: EventEmitterSubscribeToken
+}
+
+public struct ActivitySusbscription {
+  let token: EventEmitterSubscribeToken
+}
+
 public protocol StoreType {
   associatedtype State: StateType
   associatedtype Activity
@@ -63,6 +71,11 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
   /// A current state.
   public var state: State {
     _backingStorage.value.current
+  }
+  
+  /// A current changes state.
+  public var changes: Changes<State> {
+    _backingStorage.value
   }
 
   /// A backing storage that manages current state.
@@ -130,35 +143,37 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
   public func asStoreBase() -> StoreBase<State, Activity> {
     self
   }
+    
+  /// Subscribe the state changes
+  ///
+  /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
+  @discardableResult
+  public func subscribeStateChanges(_ receive: @escaping (Changes<State>) -> Void) -> ChangesSubscription {
+    
+    receive(_backingStorage.value)
+    
+    let token = _backingStorage.addDidUpdate { newValue in
+      receive(newValue)
+    }
+    
+    return .init(token: token)
+  }
   
   /// Subscribe the activity
   ///
   /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
   @discardableResult
-  public func subscribeActivity(_ receive: @escaping (Activity) -> Void) -> EventEmitterSubscribeToken  {
-    _eventEmitter.add(receive)
+  public func subscribeActivity(_ receive: @escaping (Activity) -> Void) -> ActivitySusbscription  {
+    let token = _eventEmitter.add(receive)
+    return .init(token: token)
+  }
+   
+  public func removeStateChangesSubscription(_ subscription: ChangesSubscription) {
+    _backingStorage.remove(subscription.token)
   }
   
-  /// Subscribe the state changes 
-  ///
-  /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
-  @discardableResult
-  public func subscribeStateChanges(_ receive: @escaping (Changes<State>) -> Void) -> EventEmitterSubscribeToken {
-        
-    receive(_backingStorage.value)
-    
-    return _backingStorage.addDidUpdate { newValue in
-      receive(newValue)
-    }
-    
-  }
-  
-  public func removeStateChangesSubscription(token: EventEmitterSubscribeToken) {
-    _backingStorage.remove(token)
-  }
-  
-  public func removeActivitySubscription(token: EventEmitterSubscribeToken) {
-    _eventEmitter.remove(token)
+  public func removeActivitySubscription(_ subscription: ActivitySusbscription) {
+    _eventEmitter.remove(subscription.token)
   }
           
 }

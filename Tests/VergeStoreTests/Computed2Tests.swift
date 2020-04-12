@@ -34,8 +34,7 @@ class Computed2Tests: XCTestCase {
       
       struct Getters: GettersType {
         
-        let nameCount = Field.Computed.make()
-          .map(\.value.count)
+        let nameCount = Field.Computed(\.value.count)
           .ifChanged(keySelector: \.value, comparer: .init(==))
           .onTransform { o in
             print(o)
@@ -46,9 +45,13 @@ class Computed2Tests: XCTestCase {
     }
     
     struct Getters: GettersType {
+                        
+      let _nameCount = Field.Computed {
+        $0.name
+      }
+      .ifChanged(keySelector: \.name, comparer: .init(==))
       
-      let nameCount = Field.Computed.make()
-        .map(\.name.count)
+      let nameCount = Field.Computed(\.name.count)
         .ifChanged(keySelector: \.name, comparer: .init(==))
         .onPreFilter {
           rootPreFilterCounter += 1
@@ -75,6 +78,18 @@ class Computed2Tests: XCTestCase {
   override func setUp() {
     rootTransformCounter = 0
     nestedCounter = 0
+  }
+  
+  func testX() {
+    
+    let store = MyStore()
+    
+    store.changes.computed._nameCount
+    
+    store.changes.ifChanged(computed: \._nameCount) { hoge in
+      
+    }
+    
   }
   
   func testPreFilterCount() {

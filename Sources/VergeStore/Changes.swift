@@ -42,12 +42,12 @@ public protocol ChangesType {
  
  An object that contains 2 instances (old, new)
  Use-case is to know how it did change.
-
+ 
  ```
  struct MyState {
-   var name: String
-   var age: String
-   var height: String
+ var name: String
+ var age: String
+ var height: String
  }
  ```
  
@@ -64,17 +64,17 @@ public protocol ChangesType {
  ```
  func updateUI(changes: Changes<MyState>) {
  
-   changes.ifChanged(\.name) { name in
-     // update UI
-   }
+ changes.ifChanged(\.name) { name in
+ // update UI
+ }
  
-   changes.ifChanged(\.age) { age in
-     // update UI
-   }
+ changes.ifChanged(\.age) { age in
+ // update UI
+ }
  
-   changes.ifChanged(\.height) { height in
-     // update UI
-   }
+ changes.ifChanged(\.height) { height in
+ // update UI
+ }
  }
  ```
  */
@@ -133,9 +133,9 @@ public struct Changes<Value>: ChangesType {
       return .init(value: try transform(value), cachedComputedValueStorage: cachedComputedValueStorage)
     }
   }
-    
+  
   private let sharedCacheComputedValueStorage: Storage<[AnyKeyPath : Any]>
-      
+  
   private var innerOld: InnerOld?
   private var innerCurrent: InnerCurrent
   
@@ -184,14 +184,14 @@ public struct Changes<Value>: ChangesType {
     let selectedNew = current[keyPath: keyPath]
     return !comparer(selectedOld, selectedNew)
   }
-      
+  
   /// Do a closure if value specified by keyPath contains changes.
   public func ifChanged<T: Equatable>(_ keyPath: KeyPath<Value, T>, _ perform: (T) throws -> Void) rethrows {
     
     guard hasChanges(keyPath) else { return }
     try perform(current[keyPath: keyPath])
   }
-    
+  
   public func ifChanged<T>(_ keyPath: KeyPath<Value, T>, _ comparer: (T, T) -> Bool, _ perform: (T) throws -> Void) rethrows {
     
     guard hasChanges(keyPath, comparer) else { return }
@@ -225,12 +225,12 @@ extension Changes where Value : CombinedStateType {
   public struct ComputedProxy {
     let source: Changes<Value>
     
-    public subscript<PreComparingKey, Output>(dynamicMember keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>) -> Output {
+    public subscript<Output>(dynamicMember keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>) -> Output {
       take(with: keyPath)
     }
     
     @inline(__always)
-    private func take<PreComparingKey, Output>(with keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>) -> Output {
+    private func take<Output>(with keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>) -> Output {
       return source.take(keyPath: keyPath)
     }
   }
@@ -240,12 +240,12 @@ extension Changes where Value : CombinedStateType {
   }
   
   @inline(__always)
-  public func hasChanges<PreComparingKey, Output: Equatable>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>) -> Bool {
+  public func hasChanges<Output: Equatable>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>) -> Bool {
     hasChanges(computed: keyPath, ==)
   }
-    
+  
   @inline(__always)
-  public func hasChanges<PreComparingKey, Output>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>, _ comparer: (Output, Output) -> Bool) -> Bool {
+  public func hasChanges<Output>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>, _ comparer: (Output, Output) -> Bool) -> Bool {
     
     guard let innerOld = innerOld else { return true }
     
@@ -256,24 +256,24 @@ extension Changes where Value : CombinedStateType {
     guard !comparer(oldComputedValue, current) else {
       return false
     }
-
+    
     return true
   }
   
-  public func ifChanged<PreComparingKey, Output: Equatable>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>, _ perform: (Output) throws -> Void) rethrows {
+  public func ifChanged<Output: Equatable>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>, _ perform: (Output) throws -> Void) rethrows {
     
     let current = computed[dynamicMember: keyPath]
-
+    
     guard let innerOld = innerOld else {
       try perform(current)
       return
     }
-        
+    
     guard let oldComputedValue = innerOld.cachedComputedValues[keyPath] as? Output else {
       try perform(current)
       return
     }
-        
+    
     guard oldComputedValue != current else {
       return
     }
@@ -283,10 +283,10 @@ extension Changes where Value : CombinedStateType {
   }
   
   @inline(__always)
-  private func take<PreComparingKey, Output>(
-    keyPath: KeyPath<Value.Getters, Value.Field.Computed.Components<PreComparingKey, Output>>
+  private func take<Output>(
+    keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>
   ) -> Output {
-        
+    
     let components = Value.Getters()[keyPath: keyPath]
     
     components._onRead(current)
@@ -297,7 +297,7 @@ extension Changes where Value : CombinedStateType {
       
       func preFilter() -> Bool {
         components._onPreFilter()
-        return (old.map({ components.preFilter.isEqual(old: $0, new: current) }) ?? false)
+        return (old.map({ components.preFilter.equals($0, current) }) ?? false)
       }
       
       if let computed = innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
@@ -323,7 +323,7 @@ extension Changes where Value : CombinedStateType {
     }
     
   }
-      
+  
 }
 
 extension Changes where Value : Equatable {
@@ -335,113 +335,94 @@ extension Changes where Value : Equatable {
 
 
 extension _GettersContainer {
-
-  public enum Computed {
+        
+  public struct Computed<Output> {
     
-    public static func make() -> MethodChainMap {
-      .init()
+    public typealias Input = State
+    
+    fileprivate var _onRead: (Input) -> Void = { _ in }
+    fileprivate var _onPreFilter: () -> Void = {}
+    fileprivate var _onTransform: (Output) -> Void = { _ in }
+    
+    public let preFilter: Comparer<Input>
+    public let transform: (Input) -> Output
+    
+    public init(_ compute: @escaping (State) -> Output) {
+      self.init(preFilter: .init { _, _ in false }, transform: compute)
     }
-    
-    public struct MethodChainMap {
-                     
-      public func map<Output>(_ transform: @escaping (State) -> Output) -> MethodChainPreFilter<Output> {
-        .init(transform: transform)
-      }
-    }
-    
-    public struct MethodChainPreFilter<Output> {
-      
-      public typealias Input = State
-      
-      let transform: (Input) -> Output
-      
-      func ifChanged<PreComparingKey>(
-        filter: EqualityComputerBuilder<Input, PreComparingKey>
-      ) -> Components<PreComparingKey, Output> {
-        .init(preFilter: filter, transform: transform)
-      }
-      
-      public func ifChanged<PreComparingKey>(
-        keySelector: @escaping (Input) -> PreComparingKey,
-        comparer: Comparer<PreComparingKey>
-      ) -> Components<PreComparingKey, Output> {
-        ifChanged(filter: .init(keySelector: keySelector, comparer: comparer))
-      }
-      
-      public func ifChanged(
-        comparer: Comparer<Input>
-      ) -> Components<Input, Output> {
-        ifChanged(keySelector: { $0 }, comparer: comparer)
-      }
-      
-      public func ifChanged(
-        _ equals: @escaping (Input, Input) -> Bool
-      ) -> Components<Input, Output> {
-        ifChanged(comparer: .init(equals))
-      }
                
-      public func ifChanged<T>(_ fragmentSelector: @escaping (Input) -> Fragment<T>) -> Components<Input, Output> {
-        ifChanged(comparer: .init(selector: {
-          fragmentSelector($0).counter.rawValue
-        }))
-      }
+    private init(
+      preFilter: Comparer<Input>,
+      transform: @escaping (Input) -> Output
+    ) {
+                  
+      self.preFilter = preFilter
+      self.transform = transform
       
     }
+    
+    func ifChanged(
+      filter: Comparer<Input>
+    ) -> Self {
+      .init(preFilter: filter, transform: transform)
+    }
+    
+    public func ifChanged<PreComparingKey>(
+      keySelector: @escaping (Input) -> PreComparingKey,
+      comparer: Comparer<PreComparingKey>
+    ) -> Self {
+      ifChanged(filter: .init(selector: keySelector, comparer: comparer))
+    }
+    
+    public func ifChanged(
+      comparer: Comparer<Input>
+    ) -> Self {
+      ifChanged(keySelector: { $0 }, comparer: comparer)
+    }
+    
+    public func ifChanged(
+      _ equals: @escaping (Input, Input) -> Bool
+    ) -> Self {
+      ifChanged(comparer: .init(equals))
+    }
+    
+    public func ifChanged<T>(_ fragmentSelector: @escaping (Input) -> Fragment<T>) -> Self {
+      ifChanged(comparer: .init(selector: {
+        fragmentSelector($0).counter.rawValue
+      }))
+    }
         
-    public struct Components<PreComparingKey, Output> {
+    public func onRead(_ onRead: @escaping (Input) -> Void) -> Self {
       
-      public typealias Input = State
+      var _self = self
+      _self._onRead = onRead
+      return _self
+    }
+    
+    public func onTransform(_ onTransform: @escaping (Output) -> Void) -> Self {
       
-      fileprivate var _onRead: (Input) -> Void = { _ in }
-      fileprivate var _onPreFilter: () -> Void = {}
-      fileprivate var _onTransform: (Output) -> Void = { _ in }
+      var _self = self
+      _self._onTransform = onTransform
+      return _self
+    }
+    
+    public func onPreFilter(_ onPreFilter: @escaping () -> Void) -> Self {
       
-      public let preFilter: EqualityComputerBuilder<Input, PreComparingKey>
-      public let transform: (Input) -> Output
-      
-      public init(
-        preFilter: EqualityComputerBuilder<Input, PreComparingKey>,
-        transform: @escaping (Input) -> Output
-      ) {
-                
-        self.preFilter = preFilter
-        self.transform = transform
-        
-      }
-      
-      public func onRead(_ onRead: @escaping (Input) -> Void) -> Self {
-        
-        var _self = self
-        _self._onRead = onRead
-        return _self
-      }
-      
-      public func onTransform(_ onTransform: @escaping (Output) -> Void) -> Self {
-        
-        var _self = self
-        _self._onTransform = onTransform
-        return _self
-      }
-      
-      public func onPreFilter(_ onPreFilter: @escaping () -> Void) -> Self {
-        
-        var _self = self
-        _self._onPreFilter = onPreFilter
-        return _self
-      }
-      
+      var _self = self
+      _self._onPreFilter = onPreFilter
+      return _self
     }
     
   }
 }
 
-extension _GettersContainer.Computed.MethodChainPreFilter where Input : Equatable {
+extension _GettersContainer.Computed where Input : Equatable {
   
   /// Compare using Equatable
   ///
   /// Adding a filter to getter to map only when the input object changed.
-  public func ifChanged() -> _GettersContainer.Computed.Components<Input, Output> {
-    ifChanged(keySelector: { $0 }, comparer: .init(==))
+  public func ifChanged() -> Self {
+    ifChanged(==)
   }
   
 }
