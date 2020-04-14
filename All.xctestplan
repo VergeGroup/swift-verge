@@ -37,6 +37,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "GetterTests\/testChain()"
+      ],
       "target" : {
         "containerPath" : "container:Verge.xcodeproj",
         "identifier" : "4B68394323705ACD002FFC5A",
