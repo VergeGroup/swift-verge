@@ -81,6 +81,16 @@ public protocol ChangesType {
 @dynamicMemberLookup
 public struct Changes<Value>: ChangesType {
   
+  indirect enum PreviousWrapper {
+    case wrapped(Changes<Value>)
+    var value: Changes<Value> {
+      switch self {
+      case .wrapped(let value):
+        return value
+      }
+    }
+  }
+  
   private struct InnerOld {
     
     let value: Value
@@ -139,26 +149,34 @@ public struct Changes<Value>: ChangesType {
   private var innerOld: InnerOld?
   private var innerCurrent: InnerCurrent
   
+  internal private(set) var previous: PreviousWrapper?
   public var old: Value? { _read { yield innerOld?.value } }
   public var current: Value { _read { yield innerCurrent.value } }
+  
+  private(set) public var version: UInt64
   
   public init(
     old: Value?,
     new: Value
   ) {
+    self.previous = nil
     self.innerOld = old.map(InnerOld.init(value: ))
     self.innerCurrent = .init(value: new)
     self.sharedCacheComputedValueStorage = .init([:])
+    self.version = 0
   }
   
   private init(
+    previous: PreviousWrapper?,
     innerOld: InnerOld?,
     innerCurrent: InnerCurrent,
-    sharedCacheStorage: Storage<[AnyKeyPath : Any]>
+    sharedCacheStorage: Storage<[AnyKeyPath : Any]>,
+    version: UInt64
   ) {
     self.innerOld = innerOld
     self.innerCurrent = innerCurrent
     self.sharedCacheComputedValueStorage = sharedCacheStorage
+    self.version = version
   }
   
   public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
@@ -198,11 +216,38 @@ public struct Changes<Value>: ChangesType {
     try perform(current[keyPath: keyPath])
   }
   
+  public func ifChanged<Composed>(
+    compose: (Composing) -> Composed,
+    comparer: (Composed, Composed) -> Bool,
+    perform: (Composed) -> Void) {
+    
+    let current = Composing(source: self)
+    
+    guard let previousValue = previous?.value else {
+      perform(compose(.init(source: self)))
+      return
+    }
+    
+    let old = Composing(source: previousValue)
+    
+    let composedOld = compose(old)
+    let composedNew = compose(current)
+    
+    guard !comparer(composedOld, composedNew) else {
+      return
+    }
+    
+    perform(composedNew)
+  }
+  
+  
   public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
-    .init(
+    Changes<U>(
+      previous: try previous.map { try Changes<U>.PreviousWrapper.wrapped($0.value.map(transform)) },
       innerOld: try innerOld?.map(transform),
       innerCurrent: try innerCurrent.map(transform),
-      sharedCacheStorage: sharedCacheComputedValueStorage
+      sharedCacheStorage: sharedCacheComputedValueStorage,
+      version: version
     )
   }
   
@@ -213,10 +258,46 @@ public struct Changes<Value>: ChangesType {
   }
   
   public mutating func update(with nextNewValue: Value) {
+    
+    var previous = self
+    previous.previous = nil
+    
+    self.previous = .wrapped(previous)
     self.innerOld = .init(from: innerCurrent)
     self.innerCurrent = .init(value: nextNewValue)
+    self.version &+= 1
   }
   
+}
+
+extension Changes {
+  
+  @dynamicMemberLookup
+  public struct Composing {
+    
+    private let source: Changes<Value>
+    
+    public var current: Value {
+      source.current
+    }
+    
+    fileprivate init(source: Changes<Value>) {
+      self.source = source
+    }
+    
+    public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
+      _read {
+        yield source[dynamicMember: keyPath]
+      }
+    }
+        
+  }
+}
+
+extension Changes.Composing where Value : CombinedStateType {
+  public var computed: Changes.ComputedProxy {
+    .init(source: source)
+  }
 }
 
 extension Changes where Value : CombinedStateType {
@@ -231,7 +312,7 @@ extension Changes where Value : CombinedStateType {
     
     @inline(__always)
     private func take<Output>(with keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>) -> Output {
-      return source.take(keyPath: keyPath)
+      return source._takeFromCacheOrCreate(keyPath: keyPath)
     }
   }
   
@@ -247,12 +328,16 @@ extension Changes where Value : CombinedStateType {
   @inline(__always)
   public func hasChanges<Output>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>, _ comparer: (Output, Output) -> Bool) -> Bool {
     
-    guard let innerOld = innerOld else { return true }
+    let current = _takeFromCacheOrCreate(keyPath: keyPath)
     
-    guard let oldComputedValue = innerOld.cachedComputedValues[keyPath] as? Output else { return true }
+    guard let innerOld = innerOld else {
+      return true      
+    }
     
-    let current = computed[dynamicMember: keyPath]
-    
+    guard let oldComputedValue = innerOld.cachedComputedValues[keyPath] as? Output else {
+      return true
+    }
+        
     guard !comparer(oldComputedValue, current) else {
       return false
     }
@@ -261,9 +346,9 @@ extension Changes where Value : CombinedStateType {
   }
   
   public func ifChanged<Output: Equatable>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>, _ perform: (Output) throws -> Void) rethrows {
-    
-    let current = computed[dynamicMember: keyPath]
-    
+        
+    let current = _takeFromCacheOrCreate(keyPath: keyPath)
+  
     guard let innerOld = innerOld else {
       try perform(current)
       return
@@ -283,7 +368,7 @@ extension Changes where Value : CombinedStateType {
   }
   
   @inline(__always)
-  private func take<Output>(
+  private func _takeFromCacheOrCreate<Output>(
     keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>
   ) -> Output {
     
@@ -292,6 +377,7 @@ extension Changes where Value : CombinedStateType {
     components._onRead(current)
     
     if let computed = innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
+      components._onHitCache()
       // if cached, take value withoud shared lock
       return computed
     }
@@ -307,14 +393,14 @@ extension Changes where Value : CombinedStateType {
       }
                  
       if let cached = _cahce[keyPath] as? Output, preFilter() {
-        
+        components._onHitSharedCache()
         innerCurrent.cachedComputedValueStorage.update {
           $0[keyPath] = cached
         }
         return cached
       }
       
-      let newValue = components.transform(current)
+      let newValue = components.compute(current)
       
       components._onTransform(newValue)
       
@@ -348,11 +434,13 @@ extension _GettersContainer {
     public typealias Input = State
     
     fileprivate var _onRead: (Input) -> Void = { _ in }
+    fileprivate var _onHitCache: () -> Void = {}
+    fileprivate var _onHitSharedCache: () -> Void = {}
     fileprivate var _onPreFilter: () -> Void = {}
     fileprivate var _onTransform: (Output) -> Void = { _ in }
     
-    public let preFilter: Comparer<Input>
-    public let transform: (Input) -> Output
+    let preFilter: Comparer<Input>
+    let compute: (Input) -> Output
     
     public init(_ compute: @escaping (State) -> Output) {
       self.init(preFilter: .init { _, _ in false }, transform: compute)
@@ -364,14 +452,14 @@ extension _GettersContainer {
     ) {
                   
       self.preFilter = preFilter
-      self.transform = transform
+      self.compute = transform
       
     }
     
     func ifChanged(
       filter: Comparer<Input>
     ) -> Self {
-      .init(preFilter: filter, transform: transform)
+      .init(preFilter: filter, transform: compute)
     }
     
     public func ifChanged<PreComparingKey>(
@@ -399,24 +487,38 @@ extension _GettersContainer {
       }))
     }
         
-    public func onRead(_ onRead: @escaping (Input) -> Void) -> Self {
+    public func onRead(_ clsoure: @escaping (Input) -> Void) -> Self {
       
       var _self = self
-      _self._onRead = onRead
+      _self._onRead = clsoure
       return _self
     }
     
-    public func onTransform(_ onTransform: @escaping (Output) -> Void) -> Self {
+    public func onTransform(_ closure: @escaping (Output) -> Void) -> Self {
       
       var _self = self
-      _self._onTransform = onTransform
+      _self._onTransform = closure
       return _self
     }
     
-    public func onPreFilter(_ onPreFilter: @escaping () -> Void) -> Self {
+    public func onPreFilter(_ closure: @escaping () -> Void) -> Self {
       
       var _self = self
-      _self._onPreFilter = onPreFilter
+      _self._onPreFilter = closure
+      return _self
+    }
+    
+    public func onHitCache(_ closure: @escaping () -> Void) -> Self {
+      
+      var _self = self
+      _self._onHitCache = closure
+      return _self
+    }
+    
+    public func onHitSharedCache(_ closure: @escaping () -> Void) -> Self {
+      
+      var _self = self
+      _self._onHitSharedCache = closure
       return _self
     }
     

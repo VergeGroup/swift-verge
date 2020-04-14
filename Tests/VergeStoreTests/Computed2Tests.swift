@@ -9,7 +9,7 @@
 import Foundation
 
 import XCTest
-import VergeStore
+@testable import VergeStore
 
 fileprivate var rootTransformCounter: Int = 0
 fileprivate var nestedCounter: Int = 0
@@ -19,6 +19,10 @@ fileprivate var rootPreFilterCounter = 0
 class Computed2Tests: XCTestCase {
   
   struct RootState: CombinedStateType {
+    
+    var num_0: Int = 0
+    var num_1: Int = 0
+    var num_2: Int = 0
     
     var name: String = "muukii"
     
@@ -45,7 +49,11 @@ class Computed2Tests: XCTestCase {
     }
     
     struct Getters: GettersType {
-                        
+      
+      let num_0 = Field.Computed<Int>(\.num_0).ifChanged(keySelector: \.num_0, comparer: .init(==))
+      var num_1 = Field.Computed<Int>(\.num_1).ifChanged(keySelector: \.num_1, comparer: .init(==))
+      var num_2 = Field.Computed<Int>(\.num_2).ifChanged(keySelector: \.num_2, comparer: .init(==))
+                              
       let _nameCount = Field.Computed {
         $0.name
       }
@@ -78,6 +86,78 @@ class Computed2Tests: XCTestCase {
   override func setUp() {
     rootTransformCounter = 0
     nestedCounter = 0
+  }
+  
+  func testChangesChain() {
+    
+    let store = MyStore()
+        
+    XCTAssertEqual(store.changes.version, 0)
+    XCTAssertNil(store.changes.previous)
+    
+    XCTAssertEqual(store.changes.num_0, 0)
+    XCTAssertEqual(store.changes.hasChanges(\.num_0), true)
+    XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), true)
+            
+    store.commit {
+      $0.num_0 = 0
+    }
+    
+    XCTAssertEqual(store.changes.hasChanges(\.num_0), false)
+    XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), false)
+    
+    store.commit {
+      $0.num_0 = 1
+    }
+        
+    XCTAssertEqual(store.changes.version, 2)
+    XCTAssertNotNil(store.changes.previous)
+    XCTAssertNil(store.changes.previous?.value.previous)
+    
+    XCTAssertEqual(store.changes.hasChanges(\.num_0), true)
+    XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), true)
+
+    store.commit {
+      $0.num_0 = 2
+    }
+    
+    XCTAssertEqual(store.changes.version, 3)
+    XCTAssertNotNil(store.changes.previous)
+    XCTAssertNil(store.changes.previous?.value.previous)
+    XCTAssertEqual(store.changes.previous?.value.num_0, 1)
+    
+    XCTAssertEqual(store.changes.hasChanges(\.num_0), true)
+    XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), true)
+    
+    store.commit {
+      $0.num_0 = 2
+    }
+    
+    XCTAssertEqual(store.changes.version, 4)
+
+    XCTAssertEqual(store.changes.hasChanges(\.num_0), false)
+    XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), false)
+  }
+  
+  func testCompose() {
+    
+    let store = MyStore()
+    
+    store.changes.computed._nameCount
+    
+    store.changes.ifChanged(compose: {
+      (
+        $0.name,
+        $0.computed._nameCount
+      )
+    }, comparer: ==) { (hoge) in
+      
+    }
+    
+    store.changes.ifChanged(computed: \._nameCount) { hoge in
+      
+    }
+    
   }
   
   func testX() {
