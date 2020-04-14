@@ -143,6 +143,86 @@ class Computed2Tests: XCTestCase {
     XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), false)
   }
   
+  func testCompose1() {
+    
+    let store = MyStore()
+    
+    var count = 0
+        
+    store.changes.ifChanged(
+      compose: { $0.computed.num_0 },
+      comparer: ==) { v in
+        count += 1
+    }
+    
+    store.commit {
+      $0.num_0 = 0
+    }
+    
+    store.changes.ifChanged(
+      compose: { $0.computed.num_0 },
+      comparer: ==) { v in
+        count += 1
+    }
+    
+    XCTAssertEqual(count, 1)
+    
+  }
+  
+  func testCompose2() {
+    
+    let store = MyStore()
+    
+    var count = 0
+        
+    store.changes.ifChanged(
+      compose: {
+        (
+          $0.num_1,
+          $0.num_0,
+          $0.computed.num_0
+        )
+    },
+      comparer: ==) { v in
+        count += 1
+    }
+    
+    store.commit {
+      $0.num_0 = 0
+    }
+    
+    store.changes.ifChanged(
+      compose: {
+        (
+          $0.num_1,
+          $0.num_0,
+          $0.computed.num_0
+        )
+    },
+      comparer: ==) { v in
+        count += 1
+    }
+    
+    store.commit {
+      $0.num_1 = 1
+    }
+    
+    store.changes.ifChanged(
+      compose: {
+        (
+          $0.num_1,
+          $0.num_0,
+          $0.computed.num_0
+        )
+    },
+      comparer: ==) { v in
+        count += 1
+    }
+    
+    XCTAssertEqual(count, 2)
+    
+  }
+  
   func testConcurrency() {
     
     let store = MyStore()
@@ -162,28 +242,7 @@ class Computed2Tests: XCTestCase {
     }
     
   }
-  
-  func testCompose() {
-    
-    let store = MyStore()
-    
-    store.changes.computed._nameCount
-    
-    store.changes.ifChanged(compose: {
-      (
-        $0.name,
-        $0.computed._nameCount
-      )
-    }, comparer: ==) { (hoge) in
       
-    }
-    
-    store.changes.ifChanged(computed: \._nameCount) { hoge in
-      
-    }
-    
-  }
-  
   func testX() {
     
     let store = MyStore()
