@@ -331,7 +331,7 @@ extension Changes where Value : CombinedStateType {
     let current = _takeFromCacheOrCreate(keyPath: keyPath)
     
     guard let innerOld = innerOld else {
-      return true      
+      return true
     }
     
     guard let oldComputedValue = innerOld.cachedComputedValues[keyPath] as? Output else {
@@ -375,18 +375,26 @@ extension Changes where Value : CombinedStateType {
     let components = Value.Getters()[keyPath: keyPath]
     
     components._onRead(current)
-    
-    if let computed = innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
-      components._onHitCache()
-      // if cached, take value withoud shared lock
-      return computed
+        
+    returnCachedValue: do {
+      if let computed = innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
+        components._onHitCache()
+        // if cached, take value withoud shared lock
+        return computed
+      }
     }
-    
+           
     // lock the shared lock
     return sharedCacheComputedValueStorage.update { _cahce in
-      
+            
       /* Begin lock scope */
       
+      if let computed = innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
+        components._onHitCache()
+        // if cached, take value withoud shared lock
+        return computed
+      }
+          
       func preFilter() -> Bool {
         components._onPreFilter()
         return (old.map({ components.preFilter.equals($0, current) }) ?? false)

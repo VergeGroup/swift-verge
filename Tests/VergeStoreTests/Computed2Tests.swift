@@ -50,7 +50,11 @@ class Computed2Tests: XCTestCase {
     
     struct Getters: GettersType {
       
-      let num_0 = Field.Computed<Int>(\.num_0).ifChanged(keySelector: \.num_0, comparer: .init(==))
+      let num_0 = Field.Computed<Int>(\.num_0)
+        .ifChanged(keySelector: \.num_0, comparer: .init(==))
+        .onTransform { o in
+          rootTransformCounter += 1
+      }
       var num_1 = Field.Computed<Int>(\.num_1).ifChanged(keySelector: \.num_1, comparer: .init(==))
       var num_2 = Field.Computed<Int>(\.num_2).ifChanged(keySelector: \.num_2, comparer: .init(==))
                               
@@ -137,6 +141,26 @@ class Computed2Tests: XCTestCase {
 
     XCTAssertEqual(store.changes.hasChanges(\.num_0), false)
     XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), false)
+  }
+  
+  func testConcurrency() {
+    
+    let store = MyStore()
+    
+    let changes = store.changes
+    
+    rootTransformCounter = 0
+    DispatchQueue.concurrentPerform(iterations: 500) { (i) in
+      XCTAssertEqual(changes.hasChanges(computed: \.num_0), true)
+    }
+    XCTAssertEqual(rootTransformCounter, 1)
+    
+    measure {
+      DispatchQueue.concurrentPerform(iterations: 500) { (i) in
+        XCTAssertEqual(changes.hasChanges(computed: \.num_0), true)
+      }
+    }
+    
   }
   
   func testCompose() {
