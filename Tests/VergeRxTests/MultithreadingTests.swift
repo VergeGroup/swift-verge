@@ -66,7 +66,7 @@ class MultithreadingTests: XCTestCase {
       exp.fulfill()
     }
     
-    wait(for: [exp], timeout: 10)
+    wait(for: [exp], timeout: 20)
                             
   }
 }
