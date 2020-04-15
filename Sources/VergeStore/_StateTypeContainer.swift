@@ -27,12 +27,12 @@ import os.lock
 import VergeCore
 #endif
 
-public enum _GettersContainer<State: CombinedStateType> {
+public enum _StateTypeContainer<State: ExtendedStateType> {
 }
 
-extension CombinedStateType {
+extension ExtendedStateType {
   
-  public typealias Field = _GettersContainer<Self>
+  public typealias Field = _StateTypeContainer<Self>
 }
 
 

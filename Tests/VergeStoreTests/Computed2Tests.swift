@@ -18,7 +18,7 @@ fileprivate var rootPreFilterCounter = 0
 
 class Computed2Tests: XCTestCase {
   
-  struct RootState: CombinedStateType {
+  struct RootState: ExtendedStateType {
     
     var num_0: Int = 0
     var num_1: Int = 0
@@ -32,11 +32,11 @@ class Computed2Tests: XCTestCase {
     
     var nested: NestedState = .init()
     
-    struct NestedState: CombinedStateType {
+    struct NestedState: ExtendedStateType {
       
       var value: String = "Hello"
       
-      struct Getters: GettersType {
+      struct Extended: ExtendedType {
         
         let nameCount = Field.Computed(\.value.count)
           .ifChanged(keySelector: \.value, comparer: .init(==))
@@ -48,7 +48,7 @@ class Computed2Tests: XCTestCase {
       }
     }
     
-    struct Getters: GettersType {
+    struct Extended: ExtendedType {
       
       let num_0 = Field.Computed<Int>(\.num_0)
         .ifChanged(keySelector: \.num_0, comparer: .init(==))

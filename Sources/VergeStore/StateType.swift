@@ -32,17 +32,17 @@ public protocol StateType {
 /// A container object to group getter properties.
 /// Mainly it would be used with dynamicMemberLookup.
 /// Therefore it must be initialized with no args.
-public protocol GettersType {
+public protocol ExtendedType {
   init()
 }
 
 /** A protocol extended from StateType
  ```
- struct State: CombinedStateType {
+ struct State: ExtendedStateType {
  
    var name: String = "muukii"
 
-   struct Field: GettersType {
+   struct Extended: ExtendedType {
       
      let nameCount = Field.Computed(\.value.count)
        .ifChanged(keySelector: \.value, comparer: .init(==))
@@ -55,9 +55,9 @@ public protocol GettersType {
  let value: Int = store.changes.computed.nameCount
  ```
 */
-public protocol CombinedStateType: StateType {
+public protocol ExtendedStateType: StateType {
   
-  associatedtype Getters: GettersType
+  associatedtype Extended: ExtendedType
 }
 
 public enum StateUpdatingError: Swift.Error {

@@ -294,24 +294,24 @@ extension Changes {
   }
 }
 
-extension Changes.Composing where Value : CombinedStateType {
+extension Changes.Composing where Value : ExtendedStateType {
   public var computed: Changes.ComputedProxy {
     .init(source: source)
   }
 }
 
-extension Changes where Value : CombinedStateType {
+extension Changes where Value : ExtendedStateType {
   
   @dynamicMemberLookup
   public struct ComputedProxy {
     let source: Changes<Value>
     
-    public subscript<Output>(dynamicMember keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>) -> Output {
+    public subscript<Output>(dynamicMember keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>) -> Output {
       take(with: keyPath)
     }
     
     @inline(__always)
-    private func take<Output>(with keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>) -> Output {
+    private func take<Output>(with keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>) -> Output {
       return source._takeFromCacheOrCreate(keyPath: keyPath)
     }
   }
@@ -321,12 +321,12 @@ extension Changes where Value : CombinedStateType {
   }
   
   @inline(__always)
-  public func hasChanges<Output: Equatable>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>) -> Bool {
+  public func hasChanges<Output: Equatable>(computed keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>) -> Bool {
     hasChanges(computed: keyPath, ==)
   }
   
   @inline(__always)
-  public func hasChanges<Output>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>, _ comparer: (Output, Output) -> Bool) -> Bool {
+  public func hasChanges<Output>(computed keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>, _ comparer: (Output, Output) -> Bool) -> Bool {
     
     let current = _takeFromCacheOrCreate(keyPath: keyPath)
     
@@ -345,7 +345,7 @@ extension Changes where Value : CombinedStateType {
     return true
   }
   
-  public func ifChanged<Output: Equatable>(computed keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>, _ perform: (Output) throws -> Void) rethrows {
+  public func ifChanged<Output: Equatable>(computed keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>, _ perform: (Output) throws -> Void) rethrows {
         
     let current = _takeFromCacheOrCreate(keyPath: keyPath)
   
@@ -369,10 +369,10 @@ extension Changes where Value : CombinedStateType {
   
   @inline(__always)
   private func _takeFromCacheOrCreate<Output>(
-    keyPath: KeyPath<Value.Getters, Value.Field.Computed<Output>>
+    keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>
   ) -> Output {
     
-    let components = Value.Getters()[keyPath: keyPath]
+    let components = Value.Extended()[keyPath: keyPath]
     
     components._onRead(current)
         
@@ -435,7 +435,7 @@ extension Changes where Value : Equatable {
 }
 
 
-extension _GettersContainer {
+extension _StateTypeContainer {
         
   public struct Computed<Output> {
     
@@ -533,7 +533,7 @@ extension _GettersContainer {
   }
 }
 
-extension _GettersContainer.Computed where Input : Equatable {
+extension _StateTypeContainer.Computed where Input : Equatable {
   
   /// Compare using Equatable
   ///
