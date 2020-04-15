@@ -145,6 +145,7 @@
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
 		4BD6850523C82E6C00D8A620 /* ORMGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */; };
 		4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD79C0324477F430073A48B /* VergeConcurrency.swift */; };
+		4BDB78222447934A00675D03 /* StoreWrapperType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB78212447934A00675D03 /* StoreWrapperType.swift */; };
 		4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */; };
 		4BDBDF7723CE0C4200EEA112 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7623CE0C4200EEA112 /* AppDelegate.swift */; };
 		4BDBDF7B23CE0C4200EEA112 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7A23CE0C4200EEA112 /* ViewController.swift */; };
@@ -573,6 +574,7 @@
 		4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORMGetterTests.swift; sourceTree = "<group>"; };
 		4BD79C0324477F430073A48B /* VergeConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeConcurrency.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
+		4BDB78212447934A00675D03 /* StoreWrapperType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreWrapperType.swift; sourceTree = "<group>"; };
 		4BDBDF7423CE0C4200EEA112 /* VergeStoreDemoUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BDBDF7623CE0C4200EEA112 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BDBDF7A23CE0C4200EEA112 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -884,6 +886,7 @@
 				4B91B37D2440C097005082D7 /* Getter */,
 				4B8EB4F823C034A900035B2A /* Comparer.swift */,
 				4BA8DB3523E36465001CDADA /* EqualityComputer.swift */,
+				4BDB78212447934A00675D03 /* StoreWrapperType.swift */,
 			);
 			path = VergeStore;
 			sourceTree = "<group>";
@@ -1937,6 +1940,7 @@
 				4B0AFD6D2388643400AABA90 /* DefaultStoreLogger.swift in Sources */,
 				4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */,
 				4B6B77A8243F9E5500E0C0EA /* EqualityComputer.swift in Sources */,
+				4BDB78222447934A00675D03 /* StoreWrapperType.swift in Sources */,
 				4B1F19C1243A82BC00CED46B /* StateType.swift in Sources */,
 				4B6B779F243F9DB200E0C0EA /* GetterBuilderPostFilterMethodChain.swift in Sources */,
 				4B6B77A0243F9DB200E0C0EA /* GetterComponents.swift in Sources */,
