@@ -144,6 +144,7 @@
 		4BCE8C2223CF736300FD30D9 /* MostSimpleSampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE8C2123CF736300FD30D9 /* MostSimpleSampleTests.swift */; };
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
 		4BD6850523C82E6C00D8A620 /* ORMGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */; };
+		4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD79C0324477F430073A48B /* VergeConcurrency.swift */; };
 		4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */; };
 		4BDBDF7723CE0C4200EEA112 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7623CE0C4200EEA112 /* AppDelegate.swift */; };
 		4BDBDF7B23CE0C4200EEA112 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7A23CE0C4200EEA112 /* ViewController.swift */; };
@@ -570,6 +571,7 @@
 		4BCE8C2123CF736300FD30D9 /* MostSimpleSampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostSimpleSampleTests.swift; sourceTree = "<group>"; };
 		4BD379EC23BD94D800CE474C /* AnyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEntity.swift; sourceTree = "<group>"; };
 		4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORMGetterTests.swift; sourceTree = "<group>"; };
+		4BD79C0324477F430073A48B /* VergeConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeConcurrency.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		4BDBDF7423CE0C4200EEA112 /* VergeStoreDemoUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BDBDF7623CE0C4200EEA112 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -1162,6 +1164,7 @@
 				4BFA229F23A63B56008D7BCB /* Info.plist */,
 				4BF470CC23CC36E8001A1D5D /* FragmentState.swift */,
 				4BF470D123CC3A43001A1D5D /* UpdatedMarker.swift */,
+				4BD79C0324477F430073A48B /* VergeConcurrency.swift */,
 			);
 			path = VergeCore;
 			sourceTree = "<group>";
@@ -2028,6 +2031,7 @@
 				4B73F08924041811006910E6 /* Log.swift in Sources */,
 				4BA3E1A523C359F40095629B /* Signpost.swift in Sources */,
 				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
+				4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */,
 				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

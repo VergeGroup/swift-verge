@@ -174,51 +174,54 @@ class Computed2Tests: XCTestCase {
     let store = MyStore()
     
     var count = 0
+    
+    func ifChange(_ perform: () -> Void) {
+      store.changes.ifChanged(
+        compose: {
+          (
+            $0.num_1,
+            $0.num_0,
+            $0.computed.num_0
+          )
+      },
+        comparer: ==) { _ in
+          perform()
+      }
+    }
         
-    store.changes.ifChanged(
-      compose: {
-        (
-          $0.num_1,
-          $0.num_0,
-          $0.computed.num_0
-        )
-    },
-      comparer: ==) { v in
+    XCTContext.runActivity(named: "initial") { (a) -> Void in
+      
+      ifChange {
         count += 1
+      }
+           
     }
     
-    store.commit {
-      $0.num_0 = 0
-    }
-    
-    store.changes.ifChanged(
-      compose: {
-        (
-          $0.num_1,
-          $0.num_0,
-          $0.computed.num_0
-        )
-    },
-      comparer: ==) { v in
+    XCTContext.runActivity(named: "commit1") { (a) -> Void in
+      
+      store.commit {
+        $0.num_0 = 0
+      }
+      
+      ifChange {
         count += 1
+      }
+      
     }
-    
-    store.commit {
-      $0.num_1 = 1
-    }
-    
-    store.changes.ifChanged(
-      compose: {
-        (
-          $0.num_1,
-          $0.num_0,
-          $0.computed.num_0
-        )
-    },
-      comparer: ==) { v in
+               
+    XCTContext.runActivity(named: "commit2") { (a) -> Void in
+      
+      store.commit {
+        $0.num_0 = 1
+      }
+      
+      ifChange {
         count += 1
+      }
+      
     }
     
+       
     XCTAssertEqual(count, 2)
     
   }
@@ -226,15 +229,8 @@ class Computed2Tests: XCTestCase {
   func testConcurrency() {
     
     let store = MyStore()
-    
     let changes = store.changes
-    
-    rootTransformCounter = 0
-    DispatchQueue.concurrentPerform(iterations: 500) { (i) in
-      XCTAssertEqual(changes.hasChanges(computed: \.num_0), true)
-    }
-    XCTAssertEqual(rootTransformCounter, 1)
-    
+        
     measure {
       DispatchQueue.concurrentPerform(iterations: 500) { (i) in
         XCTAssertEqual(changes.hasChanges(computed: \.num_0), true)
@@ -242,17 +238,17 @@ class Computed2Tests: XCTestCase {
     }
     
   }
-      
-  func testX() {
+  
+  func testMinimumizeComupting() {
     
     let store = MyStore()
+    let changes = store.changes
     
-    store.changes.computed._nameCount
-    
-    store.changes.ifChanged(computed: \._nameCount) { hoge in
-      
+    rootTransformCounter = 0
+    DispatchQueue.concurrentPerform(iterations: 500) { (i) in
+      XCTAssertEqual(changes.hasChanges(computed: \.num_0), true)
     }
-    
+    XCTAssertEqual(rootTransformCounter, 1)
   }
   
   func testPreFilterCount() {

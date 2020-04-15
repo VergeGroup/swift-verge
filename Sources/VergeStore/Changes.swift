@@ -124,7 +124,7 @@ public struct Changes<Value>: ChangesType {
     
     let value: Value
     
-    let cachedComputedValueStorage: Storage<[AnyKeyPath : Any]>
+    let cachedComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
     
     init(value: Value) {
       self.value = value
@@ -133,7 +133,7 @@ public struct Changes<Value>: ChangesType {
     
     private init(
       value: Value,
-      cachedComputedValueStorage: Storage<[AnyKeyPath : Any]>
+      cachedComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
     ) {
       self.value = value
       self.cachedComputedValueStorage = cachedComputedValueStorage
@@ -144,7 +144,7 @@ public struct Changes<Value>: ChangesType {
     }
   }
   
-  private let sharedCacheComputedValueStorage: Storage<[AnyKeyPath : Any]>
+  private let sharedCacheComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
   
   private var innerOld: InnerOld?
   private var innerCurrent: InnerCurrent
@@ -170,7 +170,7 @@ public struct Changes<Value>: ChangesType {
     previous: PreviousWrapper?,
     innerOld: InnerOld?,
     innerCurrent: InnerCurrent,
-    sharedCacheStorage: Storage<[AnyKeyPath : Any]>,
+    sharedCacheStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>,
     version: UInt64
   ) {
     self.innerOld = innerOld
@@ -383,9 +383,9 @@ extension Changes where Value : CombinedStateType {
         return computed
       }
     }
-           
+               
     // lock the shared lock
-    return sharedCacheComputedValueStorage.update { _cahce in
+    return sharedCacheComputedValueStorage.modify { _cahce in
             
       /* Begin lock scope */
       
@@ -402,7 +402,7 @@ extension Changes where Value : CombinedStateType {
                  
       if let cached = _cahce[keyPath] as? Output, preFilter() {
         components._onHitSharedCache()
-        innerCurrent.cachedComputedValueStorage.update {
+        innerCurrent.cachedComputedValueStorage.modify {
           $0[keyPath] = cached
         }
         return cached
@@ -414,7 +414,7 @@ extension Changes where Value : CombinedStateType {
       
       _cahce[keyPath] = newValue
       
-      innerCurrent.cachedComputedValueStorage.update {
+      innerCurrent.cachedComputedValueStorage.modify {
         $0[keyPath] = newValue
       }
       

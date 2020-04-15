@@ -41,7 +41,7 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   
   fileprivate var nonatomicValue: Value
   
-  private let _lock = NSRecursiveLock()
+  private let _lock = NSLock()
   
   fileprivate let upstreams: [AnyObject]
   

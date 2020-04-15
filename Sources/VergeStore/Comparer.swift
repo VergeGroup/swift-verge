@@ -31,7 +31,7 @@ public struct Comparer<Input> {
   ) {
     self.equals = equals
   }
-    
+      
   /// It compares the value selected from passed selector closure
   /// - Parameter selector:
   public init<T: Equatable>(selector: @escaping (Input) -> T) {
@@ -45,7 +45,7 @@ public struct Comparer<Input> {
       equals(selector(a), selector(b))
     }
   }
-  
+    
   public init<T>(selector: @escaping (Input) -> T, comparer: Comparer<T>) {
     self.init { a, b in
       comparer.equals(selector(a), selector(b))
@@ -82,6 +82,12 @@ public struct Comparer<Input> {
     equals(lhs, rhs)
   }
   
+}
+
+extension Comparer where Input : Equatable {  
+  public init() {
+    self.init(==)
+  }
 }
 
 extension Comparer {
