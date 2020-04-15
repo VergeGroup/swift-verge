@@ -41,20 +41,18 @@ public protocol GettersType {
  struct State: CombinedStateType {
  
    var name: String = "muukii"
- 
-   struct Getters: GettersType {
-  
-     let nameCount = Field.Computed<Int>.init {
-       $0.mapWithoutPreFilter(\.name.count).build()
-     }
- 
-   }
+
+   struct Field: GettersType {
+      
+     let nameCount = Field.Computed(\.value.count)
+       .ifChanged(keySelector: \.value, comparer: .init(==))
+      
+    }
  }
  
  let store: MyStore<State, Never>
  
- let getter: GetterSource<State, Int> = store.getter.nameCount
- let value: Int = store.computed.nameCount
+ let value: Int = store.changes.computed.nameCount
  ```
 */
 public protocol CombinedStateType: StateType {
