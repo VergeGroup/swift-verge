@@ -23,7 +23,7 @@ class MultithreadingTests: XCTestCase {
     let results = self.store.commit { state in
       state.db.performBatchUpdates { (context) -> [EntityTable<RootState.Database.Schema, Author>.InsertionResult] in
         
-        let authors = (0..<1000).map { i in
+        let authors = (0..<100).map { i in
           Author(rawID: "author.\(i)")
         }
         return context.author.insert(authors)
@@ -44,13 +44,13 @@ class MultithreadingTests: XCTestCase {
     
     let group = DispatchGroup()
         
-    for _ in 0..<200 {
+    for _ in 0..<20 {
       group.enter()
       DispatchQueue.global().async {
         self.store.commit { state in
           state.db.performBatchUpdates { (context) in
             
-            let authors = (0..<1000).map { i in
+            let authors = (0..<100).map { i in
               Author(rawID: "author.\(i)")
             }
             context.author.insert(authors)
