@@ -36,9 +36,4 @@ fileprivate final class MyViewModel2: StoreWrapperType {
     fatalError()
   }
   
-  var hoge: Store<State, WrappedStore.Activity> {
-    fatalError()
-  }
-    
-  var scope_: State { fatalError() }
 }

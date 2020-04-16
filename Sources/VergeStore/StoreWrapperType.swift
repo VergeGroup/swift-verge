@@ -8,8 +8,10 @@
 
 import Foundation
 
-public protocol StoreWrapperType: AnyObject, DispatcherType where Scope == WrappedStore.State {
-    
+public protocol StoreWrapperType: DispatcherType {
+  
+  associatedtype WrappedStore
+  var store: WrappedStore { get }
 }
 
 extension StoreWrapperType {
