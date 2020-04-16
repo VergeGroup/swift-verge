@@ -25,22 +25,17 @@ open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherTy
     
   public var scope: WritableKeyPath<State, Scope>
   
-  public var targetStore: Store<State, Activity>
-  
-  @available(*, deprecated, renamed: "targetStore")
-  public var target: Store<State, Activity> {
-    targetStore
-  }
-  
+  public var store: Store<State, Activity>
+   
   private var logger: StoreLogger? {
-    targetStore.logger
+    store.logger
   }
   
   public init(
     targetStore: Store<State, Activity>,
     scope: WritableKeyPath<State, Scope>
   ) {
-    self.targetStore = targetStore
+    self.store = targetStore
     self.scope = scope
     self.metadata = .init(fromAction: nil)
     
@@ -58,7 +53,7 @@ open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherTy
   }
   
   deinit {
-    let log = DidDestroyDispatcherLog(store: targetStore, dispatcher: self)
+    let log = DidDestroyDispatcherLog(store: store, dispatcher: self)
     logger?.didDestroyDispatcher(log: log)
   }
     

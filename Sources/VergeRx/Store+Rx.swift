@@ -30,15 +30,15 @@ extension Reactive where Base : StoreType {
 
 extension Reactive where Base : StoreWrapperType {
   
-  public var changesObservable: Observable<Changes<Base.State>> {
+  public var changesObservable: Observable<Changes<Base.WrappedStore.State>> {
     base.store.asStore().rx.changesObservable
   }
   
-  public var stateObservable: Observable<Base.State> {
+  public var stateObservable: Observable<Base.WrappedStore.State> {
     base.store.asStore().rx.stateObservable
   }
   
-  public var activitySignal: Signal<Base.Activity> {
+  public var activitySignal: Signal<Base.WrappedStore.Activity> {
     base.store.asStore().rx.activitySignal
   }
   

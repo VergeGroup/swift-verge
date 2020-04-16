@@ -41,23 +41,18 @@ public final class ContextualDispatcher<Dispatcher: DispatcherType, Scope>: Disp
   /// Target dispatcher
   public let dispatcher: Dispatcher
   
-  @available(*, deprecated, renamed: "targetStore")
-  public var target: Store<Dispatcher.WrappedStore.State, Dispatcher.WrappedStore.Activity> {
-    targetStore
-  }
-  
-  public var targetStore: Store<Dispatcher.WrappedStore.State, Dispatcher.WrappedStore.Activity> {
-    dispatcher.target.asStore()
+  public var store: Store<Dispatcher.WrappedStore.State, Dispatcher.WrappedStore.Activity> {
+    dispatcher.store.asStore()
   }
   
   /// Returns current state from target store
   public var state: Scope {
-    return dispatcher.target.state[keyPath: scope]
+    return dispatcher.store.state[keyPath: scope]
   }
             
   /// Returns current state from target store
   public var rootState: State {
-    return dispatcher.target.state
+    return dispatcher.store.state
   }
   
   init(
