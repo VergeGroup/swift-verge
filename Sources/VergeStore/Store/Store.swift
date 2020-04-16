@@ -75,7 +75,7 @@ open class Store<State: StateType, Activity>: CustomReflectable, StoreType, Disp
   
   public typealias Value = State
   
-  public var target: Store<State, Activity> { self }
+  public var store: Store<State, Activity> { self }
   
   public let metadata: DispatcherMetadata
     

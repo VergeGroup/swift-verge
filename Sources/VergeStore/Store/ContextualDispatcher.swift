@@ -30,38 +30,33 @@ public protocol DispacherContextType {
 /// - Attention: This object retains owner. you may need to be weakify context object.
 public final class ContextualDispatcher<Dispatcher: DispatcherType, Scope>: DispacherContextType, DispatcherType {
       
-  public typealias Activity = Dispatcher.Activity
+  public typealias Activity = Dispatcher.WrappedStore.Activity
   
-  public typealias State = Dispatcher.State
+  public typealias State = Dispatcher.WrappedStore.State
     
-  public let scope: WritableKeyPath<Dispatcher.State, Scope>
+  public let scope: WritableKeyPath<Dispatcher.WrappedStore.State, Scope>
   
   public let metadata: DispatcherMetadata
   
   /// Target dispatcher
   public let dispatcher: Dispatcher
   
-  @available(*, deprecated, renamed: "targetStore")
-  public var target: Store<Dispatcher.State, Dispatcher.Activity> {
-    targetStore
-  }
-  
-  public var targetStore: Store<Dispatcher.State, Dispatcher.Activity> {
-    dispatcher.target
+  public var store: Store<Dispatcher.WrappedStore.State, Dispatcher.WrappedStore.Activity> {
+    dispatcher.store.asStore()
   }
   
   /// Returns current state from target store
   public var state: Scope {
-    return dispatcher.target.state[keyPath: scope]
+    return dispatcher.store.state[keyPath: scope]
   }
             
   /// Returns current state from target store
   public var rootState: State {
-    return dispatcher.target.state
+    return dispatcher.store.state
   }
   
   init(
-    scope: WritableKeyPath<Dispatcher.State, Scope>,
+    scope: WritableKeyPath<Dispatcher.WrappedStore.State, Scope>,
     dispatcher: Dispatcher,
     actionMetadata: ActionMetadata
   ) {

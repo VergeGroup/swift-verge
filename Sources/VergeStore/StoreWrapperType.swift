@@ -10,32 +10,29 @@ import Foundation
 
 public protocol StoreWrapperType: DispatcherType {
   
-  associatedtype WrappedStore: StoreType where WrappedStore.State == State, WrappedStore.Activity == Activity
-  
+  associatedtype WrappedStore
   var store: WrappedStore { get }
 }
 
 extension StoreWrapperType {
-
-  public var target: Store<State, Activity> { store.asStore() }
-  public var scope: WritableKeyPath<State, State> { \State.self }
-  public var metadata: DispatcherMetadata { .init() }
   
-  public var changes: Changes<State> {
+  public typealias Scope = WrappedStore.State
+    
+  public var changes: Changes<WrappedStore.State> {
     store.asStore().changes
   }
   
-  public var state: State {
+  public var state: WrappedStore.State {
     store.state
   }
   
   @discardableResult
-  public func subscribeStateChanges(_ receive: @escaping (Changes<State>) -> Void) -> ChangesSubscription {
+  public func subscribeStateChanges(_ receive: @escaping (Changes<WrappedStore.State>) -> Void) -> ChangesSubscription {
     store.asStore().subscribeStateChanges(receive)
   }
   
   @discardableResult
-  public func subscribeActivity(_ receive: @escaping (Activity) -> Void) -> ActivitySusbscription  {
+  public func subscribeActivity(_ receive: @escaping (WrappedStore.Activity) -> Void) -> ActivitySusbscription  {
     store.asStore().subscribeActivity(receive)
   }
   

@@ -23,13 +23,18 @@ import Foundation
 
 public protocol DispatcherType {
     
-  associatedtype State: StateType
-  associatedtype Activity
+  associatedtype WrappedStore: StoreType
   associatedtype Scope
-  
-  var target: Store<State, Activity> { get }
-  var scope: WritableKeyPath<State, Scope> { get }
+    
+  var store: WrappedStore { get }
+  var scope: WritableKeyPath<WrappedStore.State, Scope> { get }
   var metadata: DispatcherMetadata { get }
+  
+}
+
+extension DispatcherType where Scope == WrappedStore.State {
+  
+   public var scope: WritableKeyPath<WrappedStore.State, WrappedStore.State> { \WrappedStore.State.self }
   
 }
 
@@ -43,8 +48,8 @@ extension DispatcherType {
   
   /// Send activity
   /// - Parameter activity:
-  public func send(_ activity: Activity) {
-    target._send(activity: activity)
+  public func send(_ activity: WrappedStore.Activity) {
+    store.asStore()._send(activity: activity)
   }
       
   /// Run Mutation that created inline
@@ -64,7 +69,7 @@ extension DispatcherType {
       line: line,
       context: metadata
     )
-    return try target._receive(
+    return try store.asStore()._receive(
       metadata: meta,
       mutation: { state in
         try state.update(target: scope, update: mutation)
@@ -79,7 +84,7 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    scope: WritableKeyPath<State, NewScope>,
+    scope: WritableKeyPath<WrappedStore.State, NewScope>,
     mutation: (inout NewScope) throws -> Result
   ) rethrows -> Result {
     let meta = MutationMetadata.makeOnCurrentThread(
@@ -89,7 +94,7 @@ extension DispatcherType {
       line: line,
       context: metadata
     )
-    return try target._receive(
+    return try store.asStore()._receive(
       metadata: meta,
       mutation: { state in
         try state.update(target: scope, update: mutation)
@@ -121,8 +126,8 @@ extension DispatcherType {
       actionMetadata: meta
     )
     
-    let log = DispatchLog(store: target, state: target.state, action: meta)
-    target.logger?.didDispatch(log: log)
+    let log = DispatchLog(store: store.asStore(), state: store.state, action: meta)
+    store.asStore().logger?.didDispatch(log: log)
     
     return try action(context)
         
@@ -135,7 +140,7 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    scope: WritableKeyPath<State, NewScope>,
+    scope: WritableKeyPath<WrappedStore.State, NewScope>,
     action: ((ContextualDispatcher<Self, NewScope>) throws -> Result)
   ) rethrows -> Result {
     
@@ -153,8 +158,8 @@ extension DispatcherType {
       actionMetadata: meta
     )
     
-    let log = DispatchLog(store: target, state: target.state, action: meta)
-    target.logger?.didDispatch(log: log)
+    let log = DispatchLog(store: store.asStore(), state: store.state, action: meta)
+    store.asStore().logger?.didDispatch(log: log)
     
     return try action(context)
     
