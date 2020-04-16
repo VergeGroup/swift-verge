@@ -42,11 +42,11 @@ public final class ContextualDispatcher<Dispatcher: DispatcherType, Scope>: Disp
   public let dispatcher: Dispatcher
   
   @available(*, deprecated, renamed: "targetStore")
-  public var target: StoreBase<Dispatcher.State, Dispatcher.Activity> {
+  public var target: Store<Dispatcher.State, Dispatcher.Activity> {
     targetStore
   }
   
-  public var targetStore: StoreBase<Dispatcher.State, Dispatcher.Activity> {
+  public var targetStore: Store<Dispatcher.State, Dispatcher.Activity> {
     dispatcher.target
   }
   

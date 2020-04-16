@@ -16,7 +16,7 @@ import VergeORM
 
 class MultithreadingTests: XCTestCase {
   
-  let store = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
+  let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
       
   func testUpdateFromThreads() {
     

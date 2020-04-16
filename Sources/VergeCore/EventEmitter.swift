@@ -22,52 +22,70 @@
 import Foundation
 import os
 
-public final class EventEmitterSubscribeToken: Hashable {
-  public static func == (lhs: EventEmitterSubscribeToken, rhs: EventEmitterSubscribeToken) -> Bool {
+public protocol SubscriptionType {
+  func dispose()
+}
+
+public final class EventEmitterSubscription: Hashable, SubscriptionType {
+  public static func == (lhs: EventEmitterSubscription, rhs: EventEmitterSubscription) -> Bool {
     lhs === rhs
+  }
+  
+  private weak var owner: EventEmitterType?
+  
+  fileprivate init(owner: EventEmitterType) {
+    self.owner = owner
   }
   
   public func hash(into hasher: inout Hasher) {
     ObjectIdentifier(self).hash(into: &hasher)
   }
+  
+  public func dispose() {
+    owner?.remove(self)
+  }
+}
+
+public protocol EventEmitterType: AnyObject {
+  func remove(_ token: EventEmitterSubscription)
 }
 
 /// Instead of Combine
-public final class EventEmitter<Event> {
+public final class EventEmitter<Event>: EventEmitterType {
   
   private var __publisher: Any?
   
-  private var lock = os_unfair_lock_s()
+  private let lock = VergeConcurrency.UnfairLock()
   
-  private var subscribers: [EventEmitterSubscribeToken : (Event) -> Void] = [:]
+  private var subscribers: [EventEmitterSubscription : (Event) -> Void] = [:]
   
   public init() {
     
   }
       
   public func accept(_ event: Event) {
-    var targets: [(Event) -> Void]
-    os_unfair_lock_lock(&lock)
-    targets = subscribers.map { $0.value }
-    os_unfair_lock_unlock(&lock)
+    let targets: Dictionary<EventEmitterSubscription, (Event) -> Void>.Values
+    lock.lock()
+    targets = subscribers.values
+    lock.unlock()
     targets.forEach {
       $0(event)
     }
   }
   
   @discardableResult
-  public func add(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterSubscribeToken {
-    let token = EventEmitterSubscribeToken()
-    os_unfair_lock_lock(&lock)
+  public func add(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterSubscription {
+    let token = EventEmitterSubscription(owner: self)
+    lock.lock()
     subscribers[token] = eventReceiver
-    os_unfair_lock_unlock(&lock)
+    lock.unlock()
     return token
   }
   
-  public func remove(_ token: EventEmitterSubscribeToken) {
-    os_unfair_lock_lock(&lock)
+  public func remove(_ token: EventEmitterSubscription) {
+    lock.lock()
     subscribers.removeValue(forKey: token)
-    os_unfair_lock_unlock(&lock)
+    lock.unlock()
   }
 }
 
@@ -105,7 +123,7 @@ extension EventEmitter {
     public let combineIdentifier: CombineIdentifier = .init()
     
     private let subscriber: AnySubscriber<Event, Never>
-    private let eventEmitterSubscription: EventEmitterSubscribeToken
+    private let eventEmitterSubscription: EventEmitterSubscription
     private weak var eventEmitter: EventEmitter<Event>?
     
     init(subscriber: AnySubscriber<Event, Never>, eventEmitter: EventEmitter<Event>) {

@@ -25,24 +25,35 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-public struct ChangesSubscription {
-  let token: EventEmitterSubscribeToken
+public struct ChangesSubscription: SubscriptionType {
+  let token: EventEmitterSubscription
+ 
+  public func dispose() {
+    token.dispose()
+  }
 }
 
-public struct ActivitySusbscription {
-  let token: EventEmitterSubscribeToken
+public struct ActivitySusbscription: SubscriptionType {
+  let token: EventEmitterSubscription
+  
+  public func dispose() {
+    token.dispose()
+  }
 }
 
 public protocol StoreType {
   associatedtype State: StateType
   associatedtype Activity
   
-  func asStoreBase() -> StoreBase<State, Activity>
+  func asStoreBase() -> Store<State, Activity>
   
   var state: State { get }
 }
 
-public typealias NoActivityStoreBase<State: StateType> = StoreBase<State, Never>
+public typealias NoActivityStoreBase<State: StateType> = Store<State, Never>
+
+@available(*, deprecated, renamed: "Store")
+public typealias StoreBase<State: StateType, Activity> = Store<State, Activity>
 
 /// A base object to create store.
 /// You may create subclass of VergeDefaultStore
@@ -53,7 +64,7 @@ public typealias NoActivityStoreBase<State: StateType> = StoreBase<State, Never>
 ///   }
 /// }
 /// ```
-open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, DispatcherType {
+open class Store<State: StateType, Activity>: CustomReflectable, StoreType, DispatcherType {
   
   public var scope: WritableKeyPath<State, State> = \State.self
     
@@ -64,7 +75,7 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
   
   public typealias Value = State
   
-  public var target: StoreBase<State, Activity> { self }
+  public var target: Store<State, Activity> { self }
   
   public let metadata: DispatcherMetadata
     
@@ -140,7 +151,12 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     )
   }
   
-  public func asStoreBase() -> StoreBase<State, Activity> {
+  public func asStore() -> Store<State, Activity> {
+    self
+  }
+  
+  @available(*, deprecated, renamed: "asStore")
+  public func asStoreBase() -> Store<State, Activity> {
     self
   }
     
@@ -184,7 +200,7 @@ import Foundation
 import Combine
 
 @available(iOS 13.0, macOS 10.15, *)
-extension StoreBase: ObservableObject {
+extension Store: ObservableObject {
   
   /// A Publisher to compatible SwiftUI
   public var objectWillChange: ObservableObjectPublisher {
@@ -194,9 +210,13 @@ extension StoreBase: ObservableObject {
 }
 
 @available(iOS 13.0, macOS 10.15, *)
-extension StoreBase {
+extension Store {
   
-  public var statePublisher: AnyPublisher<Changes<State>, Never> {
+  public var statePublisher: AnyPublisher<State, Never> {
+    _backingStorage.valuePublisher.map(\.current).eraseToAnyPublisher()
+  }
+  
+  public var changesPublisher: AnyPublisher<Changes<State>, Never> {
     _backingStorage.valuePublisher
   }
   

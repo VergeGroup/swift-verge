@@ -20,7 +20,7 @@ final class GetterSyntaxTests: XCTestCase {
     var count: Int = 0
   }
   
-  private let store = StoreBase<State, Never>.init(initialState: .init(), logger: nil)
+  private let store = Store<State, Never>.init(initialState: .init(), logger: nil)
     
   func testGetterSyntax1() {
     

@@ -49,7 +49,7 @@ final class VergeStoreTests: XCTestCase {
     
   }
   
-  final class Store: StoreBase<State, Never> {
+  final class Store: VergeStore.Store<State, Never> {
     
     init() {
       super.init(initialState: .init(), logger: DefaultStoreLogger.shared)

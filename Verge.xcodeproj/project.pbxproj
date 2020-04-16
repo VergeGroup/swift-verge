@@ -16,7 +16,7 @@
 		4B17439B23C766FB0074C457 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4B17439C23C766FB0074C457 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
 		4B17439D23C766FB0074C457 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
-		4B1743A123C7671C0074C457 /* VergeStore+Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7F385123895B24000B9ACF /* VergeStore+Storage+Rx.swift */; };
+		4B1743A123C7671C0074C457 /* Store+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7F385123895B24000B9ACF /* Store+Rx.swift */; };
 		4B1743A223C7671F0074C457 /* RxGetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFC3A0E23C758FD00801CB4 /* RxGetter.swift */; };
 		4B1743AA23C767670074C457 /* VergeRxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1743A923C767670074C457 /* VergeRxTests.swift */; };
 		4B1743AC23C767670074C457 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; };
@@ -39,7 +39,7 @@
 		4B4011B923C7797A00C582BC /* MemoizeGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B232761239E71530043D3F9 /* MemoizeGetterTests.swift */; };
 		4B4011BB23C779BE00C582BC /* ORMGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB97D2423AFD0A9004EECDB /* ORMGetterTests.swift */; };
 		4B4011BD23C779D400C582BC /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4011BC23C779D400C582BC /* State.swift */; };
-		4B427419236F269C00C302C8 /* StoreBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B427418236F269C00C302C8 /* StoreBase.swift */; };
+		4B427419236F269C00C302C8 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B427418236F269C00C302C8 /* Store.swift */; };
 		4B475BB6239AB954008A03E1 /* VergeORM.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B475BB4239AB954008A03E1 /* VergeORM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B475BB9239AB954008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
 		4B475BBA239AB954008A03E1 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -145,6 +145,7 @@
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
 		4BD6850523C82E6C00D8A620 /* ORMGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */; };
 		4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD79C0324477F430073A48B /* VergeConcurrency.swift */; };
+		4BDB78222447934A00675D03 /* StoreWrapperType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB78212447934A00675D03 /* StoreWrapperType.swift */; };
 		4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */; };
 		4BDBDF7723CE0C4200EEA112 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7623CE0C4200EEA112 /* AppDelegate.swift */; };
 		4BDBDF7B23CE0C4200EEA112 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7A23CE0C4200EEA112 /* ViewController.swift */; };
@@ -160,7 +161,6 @@
 		4BDBDF9923CE0C8E00EEA112 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BDBDFA423CE0DD100EEA112 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA323CE0DD100EEA112 /* RxCocoa */; };
 		4BDBDFA623CE0DD100EEA112 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA523CE0DD100EEA112 /* RxSwift */; };
-		4BE577CF24336C19006B0442 /* Computed+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE577CE24336C19006B0442 /* Computed+Rx.swift */; };
 		4BE9455423AD1B180060F977 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */; };
 		4BF2BCCE238A658400F70CDA /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */; };
@@ -465,7 +465,7 @@
 		4B4011BE23C77CEC00C582BC /* Getter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Getter.swift; sourceTree = "<group>"; };
 		4B4011C023C7831900C582BC /* GetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterTests.swift; sourceTree = "<group>"; };
 		4B42740C236F1D2D00C302C8 /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
-		4B427418236F269C00C302C8 /* StoreBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBase.swift; sourceTree = "<group>"; };
+		4B427418236F269C00C302C8 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		4B475BB2239AB954008A03E1 /* VergeORM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeORM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B475BB4239AB954008A03E1 /* VergeORM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeORM.h; sourceTree = "<group>"; };
 		4B475BB5239AB954008A03E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -496,7 +496,7 @@
 		4B786320233912AB009B9C1B /* VergeStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B786322233912AB009B9C1B /* VergeStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeStore.h; sourceTree = "<group>"; };
 		4B786323233912AB009B9C1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B7F385123895B24000B9ACF /* VergeStore+Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VergeStore+Storage+Rx.swift"; sourceTree = "<group>"; };
+		4B7F385123895B24000B9ACF /* Store+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Store+Rx.swift"; sourceTree = "<group>"; };
 		4B80B74223F92B3D000BCFB2 /* HashIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashIndexTests.swift; sourceTree = "<group>"; };
 		4B80B74423F934AF000BCFB2 /* SetIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetIndex.swift; sourceTree = "<group>"; };
 		4B80B74623F947A2000BCFB2 /* SetIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetIndexTests.swift; sourceTree = "<group>"; };
@@ -573,6 +573,7 @@
 		4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORMGetterTests.swift; sourceTree = "<group>"; };
 		4BD79C0324477F430073A48B /* VergeConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeConcurrency.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
+		4BDB78212447934A00675D03 /* StoreWrapperType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreWrapperType.swift; sourceTree = "<group>"; };
 		4BDBDF7423CE0C4200EEA112 /* VergeStoreDemoUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BDBDF7623CE0C4200EEA112 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BDBDF7A23CE0C4200EEA112 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -581,7 +582,6 @@
 		4BDBDF8223CE0C4400EEA112 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4BDBDF8423CE0C4400EEA112 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BDBDF8823CE0C7800EEA112 /* Sources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources.swift; sourceTree = "<group>"; };
-		4BE577CE24336C19006B0442 /* Computed+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Computed+Rx.swift"; sourceTree = "<group>"; };
 		4BE9454F23AD1B180060F977 /* VergeCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BE9455323AD1B180060F977 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitterTests.swift; sourceTree = "<group>"; };
@@ -776,8 +776,7 @@
 			children = (
 				4BAC16C023C806F100BF49D9 /* ORM */,
 				4BFC3A0E23C758FD00801CB4 /* RxGetter.swift */,
-				4B7F385123895B24000B9ACF /* VergeStore+Storage+Rx.swift */,
-				4BE577CE24336C19006B0442 /* Computed+Rx.swift */,
+				4B7F385123895B24000B9ACF /* Store+Rx.swift */,
 				4BA5914E23DF5146007F614C /* FunctionBuilders.swift */,
 				4B17439123C766D70074C457 /* VergeRx.h */,
 				4B17439223C766D70074C457 /* Info.plist */,
@@ -884,6 +883,7 @@
 				4B91B37D2440C097005082D7 /* Getter */,
 				4B8EB4F823C034A900035B2A /* Comparer.swift */,
 				4BA8DB3523E36465001CDADA /* EqualityComputer.swift */,
+				4BDB78212447934A00675D03 /* StoreWrapperType.swift */,
 			);
 			path = VergeStore;
 			sourceTree = "<group>";
@@ -1005,7 +1005,7 @@
 		4B91B37E2440C0D8005082D7 /* Store */ = {
 			isa = PBXGroup;
 			children = (
-				4B427418236F269C00C302C8 /* StoreBase.swift */,
+				4B427418236F269C00C302C8 /* Store.swift */,
 				4B2050F823D5C85B000A2779 /* MutationMetadata.swift */,
 				4B2050FA23D5C878000A2779 /* ActionMetadata.swift */,
 				4B2050FC23D5D24C000A2779 /* DispatcherMetadata.swift */,
@@ -1832,9 +1832,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B1743A123C7671C0074C457 /* VergeStore+Storage+Rx.swift in Sources */,
+				4B1743A123C7671C0074C457 /* Store+Rx.swift in Sources */,
 				4BAC16BF23C806E000BF49D9 /* EntityType+.swift in Sources */,
-				4BE577CF24336C19006B0442 /* Computed+Rx.swift in Sources */,
 				4BA5914F23DF5146007F614C /* FunctionBuilders.swift in Sources */,
 				4BAC16C223C8072300BF49D9 /* EntityGetter.swift in Sources */,
 				4B1743A223C7671F0074C457 /* RxGetter.swift in Sources */,
@@ -1920,7 +1919,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B427419236F269C00C302C8 /* StoreBase.swift in Sources */,
+				4B427419236F269C00C302C8 /* Store.swift in Sources */,
 				4B6B77A1243F9DB200E0C0EA /* GetterBuilderPreFilterMethodChain.swift in Sources */,
 				4BCBCA8D2381CC2B00F33B15 /* ContextualDispatcher.swift in Sources */,
 				4B2050FB23D5C878000A2779 /* ActionMetadata.swift in Sources */,
@@ -1937,6 +1936,7 @@
 				4B0AFD6D2388643400AABA90 /* DefaultStoreLogger.swift in Sources */,
 				4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */,
 				4B6B77A8243F9E5500E0C0EA /* EqualityComputer.swift in Sources */,
+				4BDB78222447934A00675D03 /* StoreWrapperType.swift in Sources */,
 				4B1F19C1243A82BC00CED46B /* StateType.swift in Sources */,
 				4B6B779F243F9DB200E0C0EA /* GetterBuilderPostFilterMethodChain.swift in Sources */,
 				4B6B77A0243F9DB200E0C0EA /* GetterComponents.swift in Sources */,

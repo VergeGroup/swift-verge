@@ -207,7 +207,7 @@ extension GetterComponents where Input : DatabaseEmbedding {
 fileprivate var _valueContainerAssociated: Void?
 
 @available(iOS 13, macOS 10.15, *)
-extension StoreBase where State : DatabaseEmbedding {
+extension Store where State : DatabaseEmbedding {
     
   private var cache: _GetterCache {
     

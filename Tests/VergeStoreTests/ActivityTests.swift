@@ -26,7 +26,7 @@ class ActivityTests: XCTestCase {
     case didSendMessage
   }
   
-  final class Store: StoreBase<State, Activity> {
+  final class Store: VergeStore.Store<State, Activity> {
         
     init() {
       super.init(initialState: .init(), logger: DefaultStoreLogger.shared)

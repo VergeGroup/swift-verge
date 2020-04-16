@@ -18,7 +18,7 @@ extension StoreType {
       
 }
 
-extension StoreBase {
+extension Store {
       
   @available(iOS 13, macOS 10.15, *)
   public func makeGetter<PreComparingKey, Output, PostComparingKey>(
@@ -28,7 +28,7 @@ extension StoreBase {
     let preComparer = components.preFilter.build()
     let postComparer = components.postFilter?.build()
     
-    let base = statePublisher
+    let base = changesPublisher
       .handleEvents(receiveOutput: { [closure = components.onPreFilterWillReceive] value in
         closure(value.current)
       })
