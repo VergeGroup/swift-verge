@@ -10,7 +10,7 @@ import Foundation
 
 import XCTest
 
-import VergeCore
+import VergeStore
 
 final class FilterTests: XCTestCase {
   
@@ -61,7 +61,7 @@ final class FilterTests: XCTestCase {
     do {
       let pre = Model()
       let new = Model()
-      XCTAssertEqual(fragment.equals(previousValue: pre, newValue: new), false)
+      XCTAssertEqual(fragment.equals(pre, new), false)
     }
     
     do {
@@ -69,7 +69,7 @@ final class FilterTests: XCTestCase {
       pre.a = 1
       var new = Model()
       new.a = 1
-      XCTAssertEqual(fragment.equals(previousValue: pre, newValue: new), true)
+      XCTAssertEqual(fragment.equals(pre, new), true)
     }
     
     do {
@@ -77,7 +77,7 @@ final class FilterTests: XCTestCase {
       pre.c = 1
       var new = Model()
       new.c = 1
-      XCTAssertEqual(fragment.equals(previousValue: pre, newValue: new), true)
+      XCTAssertEqual(fragment.equals(pre, new), true)
     }
     
   }
@@ -99,7 +99,7 @@ final class FilterTests: XCTestCase {
     do {
       let pre = Model()
       let new = Model()
-      XCTAssertEqual(fragment.equals(previousValue: pre, newValue: new), false)
+      XCTAssertEqual(fragment.equals(pre, new), false)
     }
     
     do {
@@ -107,7 +107,7 @@ final class FilterTests: XCTestCase {
       pre.a = 1
       var new = Model()
       new.a = 1
-      XCTAssertEqual(fragment.equals(previousValue: pre, newValue: new), false)
+      XCTAssertEqual(fragment.equals(pre, new), false)
     }
     
     do {
@@ -117,7 +117,7 @@ final class FilterTests: XCTestCase {
       var new = Model()
       new.a = 1
       new.b = 1
-      XCTAssertEqual(fragment.equals(previousValue: pre, newValue: new), false)
+      XCTAssertEqual(fragment.equals(pre, new), false)
     }
     
     do {
@@ -129,7 +129,7 @@ final class FilterTests: XCTestCase {
       new.a = 1
       new.b = 1
       new.c = 1
-      XCTAssertEqual(fragment.equals(previousValue: pre, newValue: new), true)
+      XCTAssertEqual(fragment.equals(pre, new), true)
     }
     
   }

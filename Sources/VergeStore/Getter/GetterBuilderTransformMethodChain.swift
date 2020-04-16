@@ -81,11 +81,11 @@ extension GetterBuilderTransformMethodChain where Output : Equatable {
 
 #if canImport(Combine)
 
-extension GetterBuilderTransformMethodChain where Context : ValueContainerType, Trait == GetterBuilderTrait.Combine, Context.Value == Input {
+extension GetterBuilderTransformMethodChain where Context : StoreType, Trait == GetterBuilderTrait.Combine, Context.State == Input {
   
   @available(iOS 13, macOS 10.15, *)
   public func build() -> GetterSource<Input, Output> {
-    target.makeGetter(from: makeGetterComponents())
+    target.asStoreBase().makeGetter(from: makeGetterComponents())
   }
   
 }

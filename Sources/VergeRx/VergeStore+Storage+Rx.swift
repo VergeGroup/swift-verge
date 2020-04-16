@@ -15,7 +15,7 @@ fileprivate var storage_diposeBag: Void?
 extension Reactive where Base : StoreType {
   
   public var stateObservable: Observable<Base.State> {
-    base.asStoreBase()._backingStorage.asObservable()
+    base.asStoreBase()._backingStorage.asObservable().map { $0.current }
   }
   
   public var activitySignal: Signal<Base.Activity> {
@@ -164,16 +164,3 @@ extension ReadonlyStorage {
 
 }
 
-public protocol RxValueContainerType: ValueContainerType {
-  
-  func asObservable() -> Observable<Value>
-  
-}
-
-extension Storage: RxValueContainerType {}
-
-extension StoreBase: RxValueContainerType where State : StateType {
-  public func asObservable() -> Observable<State> {
-    rx.stateObservable
-  }
-}

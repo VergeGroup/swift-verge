@@ -25,11 +25,21 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-public protocol StoreType: ValueContainerType where State == Value {
+public struct ChangesSubscription {
+  let token: EventEmitterSubscribeToken
+}
+
+public struct ActivitySusbscription {
+  let token: EventEmitterSubscribeToken
+}
+
+public protocol StoreType {
   associatedtype State: StateType
   associatedtype Activity
   
   func asStoreBase() -> StoreBase<State, Activity>
+  
+  var state: State { get }
 }
 
 public typealias NoActivityStoreBase<State: StateType> = StoreBase<State, Never>
@@ -37,7 +47,7 @@ public typealias NoActivityStoreBase<State: StateType> = StoreBase<State, Never>
 /// A base object to create store.
 /// You may create subclass of VergeDefaultStore
 /// ```
-/// final class MyStore: VergeDefaultStore<MyState> {
+/// final class MyStore: StoreBase<MyState> {
 ///   init() {
 ///     super.init(initialState: .init(), logger: nil)
 ///   }
@@ -60,12 +70,17 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     
   /// A current state.
   public var state: State {
+    _backingStorage.value.current
+  }
+  
+  /// A current changes state.
+  public var changes: Changes<State> {
     _backingStorage.value
   }
 
   /// A backing storage that manages current state.
   /// You shouldn't access this directly unless special case.
-  public let _backingStorage: Storage<State>
+  public let _backingStorage: Storage<Changes<State>>
   public let _eventEmitter: EventEmitter<Activity> = .init()  
   public let _getterStorage: Storage<[AnyKeyPath : Any]> = .init([:])
   
@@ -79,8 +94,7 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     initialState: State,
     logger: StoreLogger?
   ) {
-    
-    self._backingStorage = .init(initialState)
+    self._backingStorage = .init(.init(old: nil, new: initialState))
     self.logger = logger
     self.metadata = .init(fromAction: nil)
     
@@ -97,7 +111,9 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
     
     let returnValue = try _backingStorage.update { (state) -> Result in
       let startedTime = CFAbsoluteTimeGetCurrent()
-      let r = try mutation(&state)
+      var current = state.current
+      let r = try mutation(&current)
+      state.update(with: current)
       elapsed = CFAbsoluteTimeGetCurrent() - startedTime
       return r
     }
@@ -127,7 +143,39 @@ open class StoreBase<State: StateType, Activity>: CustomReflectable, StoreType, 
   public func asStoreBase() -> StoreBase<State, Activity> {
     self
   }
-      
+    
+  /// Subscribe the state changes
+  ///
+  /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
+  @discardableResult
+  public func subscribeStateChanges(_ receive: @escaping (Changes<State>) -> Void) -> ChangesSubscription {
+    
+    receive(_backingStorage.value)
+    
+    let token = _backingStorage.addDidUpdate { newValue in
+      receive(newValue)
+    }
+    
+    return .init(token: token)
+  }
+  
+  /// Subscribe the activity
+  ///
+  /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
+  @discardableResult
+  public func subscribeActivity(_ receive: @escaping (Activity) -> Void) -> ActivitySusbscription  {
+    let token = _eventEmitter.add(receive)
+    return .init(token: token)
+  }
+   
+  public func removeStateChangesSubscription(_ subscription: ChangesSubscription) {
+    _backingStorage.remove(subscription.token)
+  }
+  
+  public func removeActivitySubscription(_ subscription: ActivitySusbscription) {
+    _eventEmitter.remove(subscription.token)
+  }
+          
 }
 
 #if canImport(Combine)
@@ -148,19 +196,12 @@ extension StoreBase: ObservableObject {
 @available(iOS 13.0, macOS 10.15, *)
 extension StoreBase {
   
-  public var statePublisher: AnyPublisher<State, Never> {
+  public var statePublisher: AnyPublisher<Changes<State>, Never> {
     _backingStorage.valuePublisher
   }
   
   public var activityPublisher: EventEmitter<Activity>.Publisher {
     _eventEmitter.publisher
-  }
-  
-  @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<PreComparingKey, Output, PostComparingKey>(
-    from builder: GetterComponents<State, PreComparingKey, Output, PostComparingKey>
-  ) -> GetterSource<State, Output> {
-    _backingStorage.makeGetter(from: builder)
   }
    
 }

@@ -19,6 +19,6 @@ let package = Package(
   targets: [
     .target(name: "VergeCore", dependencies: []),
     .target(name: "VergeStore", dependencies: ["VergeCore"]),
-    .target(name: "VergeORM", dependencies: ["VergeCore"]),
+    .target(name: "VergeORM", dependencies: ["VergeCore", "VergeStore"]),
   ]
 )

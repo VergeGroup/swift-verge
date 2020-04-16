@@ -50,7 +50,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'ORM' do |ss|
     ss.source_files = 'Sources/VergeORM/**/*.swift'    
-    ss.dependency 'Verge/Core'   
+    ss.dependency 'Verge/Store'   
   end
 
 end

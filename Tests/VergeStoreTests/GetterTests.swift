@@ -9,9 +9,11 @@
 import Foundation
 
 import XCTest
-import VergeCore
+import VergeStore
 
 import Combine
+
+extension Int: StateType {}
 
 @available(iOS 13.0, *)
 class GetterTests: XCTestCase {
@@ -20,7 +22,7 @@ class GetterTests: XCTestCase {
   
   func testFirstCall() {
     
-    let storage = Storage<Int>(1)
+    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
     
     var updateCount = 0
       
@@ -52,7 +54,7 @@ class GetterTests: XCTestCase {
   
   func testSimple() {
     
-    let storage = Storage<Int>(1)
+    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
     
     var updateCount = 0
     
@@ -65,19 +67,19 @@ class GetterTests: XCTestCase {
        
     XCTAssertEqual(g.value, 2)
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
-    XCTAssertEqual(storage.value, 2)
+    XCTAssertEqual(storage.state, 2)
     
     XCTAssertEqual(g.value, 4)
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
@@ -87,7 +89,7 @@ class GetterTests: XCTestCase {
   
   func testChain() {
     
-    let storage = Storage<Int>(1)
+    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
     
     var first: GetterSource<Int, Int>! = storage.getterBuilder().changed().map { $0 }.build()
           
@@ -105,7 +107,7 @@ class GetterTests: XCTestCase {
     
     XCTAssertNotNil(weakFirst)
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
@@ -126,7 +128,7 @@ class GetterTests: XCTestCase {
   
   func testShare() {
     
-    let storage = Storage<Int>(1)
+    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
     
     let first = storage.getterBuilder()
       .changed()
@@ -144,7 +146,7 @@ class GetterTests: XCTestCase {
     XCTAssertEqual(share1.value, 1)
     XCTAssertEqual(share2.value, 1)
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
@@ -155,7 +157,7 @@ class GetterTests: XCTestCase {
   
   func testCombine() {
     
-    let storage = Storage<Int>(1)
+    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
     
     let first = storage.getterBuilder().changed().map { $0 }.build()
             
@@ -173,7 +175,7 @@ class GetterTests: XCTestCase {
   
   func testPostFilter() {
     
-    let storage = Storage<Int>(1)
+    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
     
     let getter = storage.getterBuilder()
       .map(\.description)
@@ -189,21 +191,21 @@ class GetterTests: XCTestCase {
     
     XCTAssertEqual(updateCount, 1)
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
-    storage.update {
+    storage.commit {
       $0 = 2
     }
     
     XCTAssertEqual(updateCount, 2)
     
-    storage.update {
+    storage.commit {
       $0 = 3
     }
     
