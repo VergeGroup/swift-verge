@@ -34,7 +34,7 @@ class VergeGetterRxTests: XCTestCase {
     
   func testSimpleWithSubscribe() {
 
-    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
+    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
     
     var updateCount = 0
                 
@@ -74,7 +74,7 @@ class VergeGetterRxTests: XCTestCase {
   
   func testSimpleWithBind() {
     
-    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
+    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
     
     var updateCount = 0
         
@@ -115,7 +115,7 @@ class VergeGetterRxTests: XCTestCase {
   
   func testChain() {
     
-    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
+    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
                  
     var first: RxGetterSource<Int, Int>! = storage.rx.getterBuilder()
       .changed(comparer: .init(==))
@@ -150,7 +150,7 @@ class VergeGetterRxTests: XCTestCase {
   
   func testShare() {
     
-    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
+    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
             
     let first: RxGetterSource<Int, Int>! = storage.rx.getterBuilder()
       .changed(comparer: .init(==))
@@ -179,7 +179,7 @@ class VergeGetterRxTests: XCTestCase {
   
   func testCombine() {
     
-    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
+    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
     
     let first = storage.rx.getterBuilder()
       .changed(comparer: .init(==))

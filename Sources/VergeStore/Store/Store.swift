@@ -25,12 +25,20 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-public struct ChangesSubscription {
-  let token: EventEmitterSubscribeToken
+public struct ChangesSubscription: SubscriptionType {
+  let token: EventEmitterSubscription
+ 
+  public func dispose() {
+    token.dispose()
+  }
 }
 
-public struct ActivitySusbscription {
-  let token: EventEmitterSubscribeToken
+public struct ActivitySusbscription: SubscriptionType {
+  let token: EventEmitterSubscription
+  
+  public func dispose() {
+    token.dispose()
+  }
 }
 
 public protocol StoreType {
@@ -44,7 +52,8 @@ public protocol StoreType {
 
 public typealias NoActivityStoreBase<State: StateType> = Store<State, Never>
 
-public typealias Store<State: StateType, Activity> = Store<State, Activity>
+@available(*, deprecated, renamed: "Store")
+public typealias StoreBase<State: StateType, Activity> = Store<State, Activity>
 
 /// A base object to create store.
 /// You may create subclass of VergeDefaultStore
@@ -142,6 +151,11 @@ open class Store<State: StateType, Activity>: CustomReflectable, StoreType, Disp
     )
   }
   
+  public func asStore() -> Store<State, Activity> {
+    self
+  }
+  
+  @available(*, deprecated, renamed: "asStore")
   public func asStoreBase() -> Store<State, Activity> {
     self
   }
@@ -198,7 +212,11 @@ extension Store: ObservableObject {
 @available(iOS 13.0, macOS 10.15, *)
 extension Store {
   
-  public var statePublisher: AnyPublisher<Changes<State>, Never> {
+  public var statePublisher: AnyPublisher<State, Never> {
+    _backingStorage.valuePublisher.map(\.current).eraseToAnyPublisher()
+  }
+  
+  public var changesPublisher: AnyPublisher<Changes<State>, Never> {
     _backingStorage.valuePublisher
   }
   

@@ -79,7 +79,7 @@ class Computed2Tests: XCTestCase {
     }
   }
   
-  final class MyStore: StoreBase<RootState, Never> {
+  final class MyStore: Store<RootState, Never> {
     
     init() {
       super.init(initialState: .init(), logger: nil)

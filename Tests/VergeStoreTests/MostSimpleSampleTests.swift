@@ -23,7 +23,7 @@ enum Sample {
     case happen
   }
   
-  final class MyStore: StoreBase<State, Activity> {
+  final class MyStore: Store<State, Activity> {
     
     init() {
       super.init(initialState: .init(), logger: DefaultStoreLogger.shared)

@@ -101,7 +101,7 @@ public final class RxGetterSource<Input, Output>: RxGetter<Output> {
 }
 
 extension Storage: ReactiveCompatible {}
-extension StoreBase: ReactiveCompatible {}
+extension Store: ReactiveCompatible {}
 
 extension Reactive where Base : StoreType {
   

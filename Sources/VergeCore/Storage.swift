@@ -70,7 +70,7 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   /// Storage tells got a newValue.
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
-  public final func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
+  public final func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscription {
     willUpdateEmitter.add(subscriber)
   }
   
@@ -78,16 +78,16 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   /// Storage tells got a newValue.
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
-  public final func addDidUpdate(subscriber: @escaping (Value) -> Void) -> EventEmitterSubscribeToken {
+  public final func addDidUpdate(subscriber: @escaping (Value) -> Void) -> EventEmitterSubscription {
     didUpdateEmitter.add(subscriber)
   }
   
   @discardableResult
-  public final func addDeinit(subscriber: @escaping () -> Void) -> EventEmitterSubscribeToken {
+  public final func addDeinit(subscriber: @escaping () -> Void) -> EventEmitterSubscription {
     deinitEmitter.add(subscriber)
   }
   
-  public final func remove(_ token: EventEmitterSubscribeToken) {
+  public final func remove(_ token: EventEmitterSubscription) {
     didUpdateEmitter.remove(token)
     willUpdateEmitter.remove(token)
     deinitEmitter.remove(token)

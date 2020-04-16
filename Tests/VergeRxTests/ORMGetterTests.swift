@@ -18,7 +18,7 @@ class ORMGetterTests: XCTestCase {
   
   func testSelector() {
     
-    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
+    let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
 
     let id = Book.EntityID.init("some")
     
@@ -98,7 +98,7 @@ class ORMGetterTests: XCTestCase {
   
   func testSelectorUsingInsertionResult() {
     
-    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
+    let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
         
     XCTContext.runActivity(named: "simple") { (a) -> Void in
                               
@@ -153,7 +153,7 @@ class ORMGetterTests: XCTestCase {
   
   func testEqualsWithNonEquatableEntity() {
     
-    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
+    let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
     let result = storage.commit { state in
       state.db.performBatchUpdates { (context) -> EntityTable<RootState.Database.Schema, Author>.InsertionResult in
@@ -236,7 +236,7 @@ class ORMGetterTests: XCTestCase {
   
   func testGetterCache() {
     
-    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
+    let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
     let getter1 = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
     let getter2 = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
@@ -249,7 +249,7 @@ class ORMGetterTests: XCTestCase {
   
   func testPerformanceGetterCreationIncludesFirstTime() {
     
-    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
+    let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
     measure {
       let _ = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
@@ -259,7 +259,7 @@ class ORMGetterTests: XCTestCase {
   
   func testPerformanceGetterCreationWithCache() {
         
-    let storage = StoreBase<RootState, Never>.init(initialState: .init(), logger: nil)
+    let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
     let _ = storage.rx.entityGetter(from: Author.EntityID("Hoo"))
     

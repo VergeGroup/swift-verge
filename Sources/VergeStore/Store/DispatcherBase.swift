@@ -25,10 +25,10 @@ open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherTy
     
   public var scope: WritableKeyPath<State, Scope>
   
-  public var targetStore: StoreBase<State, Activity>
+  public var targetStore: Store<State, Activity>
   
   @available(*, deprecated, renamed: "targetStore")
-  public var target: StoreBase<State, Activity> {
+  public var target: Store<State, Activity> {
     targetStore
   }
   
@@ -37,7 +37,7 @@ open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherTy
   }
   
   public init(
-    targetStore: StoreBase<State, Activity>,
+    targetStore: Store<State, Activity>,
     scope: WritableKeyPath<State, Scope>
   ) {
     self.targetStore = targetStore
@@ -50,7 +50,7 @@ open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherTy
    
   @available(*, deprecated, renamed: "init(targetStore:scope:)")
   public convenience init(
-    target store: StoreBase<State, Activity>,
+    target store: Store<State, Activity>,
     scope: WritableKeyPath<State, Scope>
   ) {
     
@@ -68,13 +68,13 @@ open class DispatcherBase<State: StateType, Activity>: ScopedDispatcherBase<Stat
       
   @available(*, deprecated, renamed: "init(targetStore:)")
   public convenience init(
-    target store: StoreBase<State, Activity>
+    target store: Store<State, Activity>
   ) {
     self.init(targetStore: store)
   }
 
   public init(
-    targetStore: StoreBase<State, Activity>
+    targetStore: Store<State, Activity>
   ) {
     super.init(targetStore: targetStore, scope: \State.self)
   }

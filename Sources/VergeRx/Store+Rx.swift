@@ -14,12 +14,32 @@ fileprivate var storage_diposeBag: Void?
 
 extension Reactive where Base : StoreType {
   
+  public var changesObservable: Observable<Changes<Base.State>> {
+    base.asStoreBase()._backingStorage.asObservable()
+  }
+  
   public var stateObservable: Observable<Base.State> {
     base.asStoreBase()._backingStorage.asObservable().map { $0.current }
   }
   
   public var activitySignal: Signal<Base.Activity> {
     base.asStoreBase()._eventEmitter.asSignal()
+  }
+  
+}
+
+extension Reactive where Base : StoreWrapperType {
+  
+  public var changesObservable: Observable<Changes<Base.State>> {
+    base.store.rx.changesObservable
+  }
+  
+  public var stateObservable: Observable<Base.State> {
+    base.store.rx.stateObservable
+  }
+  
+  public var activitySignal: Signal<Base.Activity> {
+    base.store.rx.activitySignal
   }
   
 }

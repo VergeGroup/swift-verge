@@ -27,7 +27,7 @@ public protocol DispatcherType {
   associatedtype Activity
   associatedtype Scope
   
-  var target: StoreBase<State, Activity> { get }
+  var target: Store<State, Activity> { get }
   var scope: WritableKeyPath<State, Scope> { get }
   var metadata: DispatcherMetadata { get }
   

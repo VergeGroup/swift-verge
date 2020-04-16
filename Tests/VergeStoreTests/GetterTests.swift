@@ -22,7 +22,7 @@ class GetterTests: XCTestCase {
   
   func testFirstCall() {
     
-    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
+    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
     
     var updateCount = 0
       
@@ -54,7 +54,7 @@ class GetterTests: XCTestCase {
   
   func testSimple() {
     
-    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
+    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
     
     var updateCount = 0
     
@@ -89,7 +89,7 @@ class GetterTests: XCTestCase {
   
   func testChain() {
     
-    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
+    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
     
     var first: GetterSource<Int, Int>! = storage.getterBuilder().changed().map { $0 }.build()
           
@@ -128,7 +128,7 @@ class GetterTests: XCTestCase {
   
   func testShare() {
     
-    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
+    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
     
     let first = storage.getterBuilder()
       .changed()
@@ -157,7 +157,7 @@ class GetterTests: XCTestCase {
   
   func testCombine() {
     
-    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
+    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
     
     let first = storage.getterBuilder().changed().map { $0 }.build()
             
@@ -175,7 +175,7 @@ class GetterTests: XCTestCase {
   
   func testPostFilter() {
     
-    let storage = StoreBase<Int, Never>.init(initialState: 1, logger: nil)
+    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
     
     let getter = storage.getterBuilder()
       .map(\.description)

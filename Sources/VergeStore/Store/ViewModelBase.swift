@@ -25,4 +25,4 @@ import Foundation
 import VergeCore
 #endif
 
-public typealias ViewModelBase<State: StateType, Activity> = StoreBase<State, Activity>
+public typealias ViewModelBase<State: StateType, Activity> = Store<State, Activity>
