@@ -20,12 +20,14 @@ fileprivate final class MyStore: Store<MyState, MyActivity> {}
 
 fileprivate final class MyViewModel: StoreWrapperType {
       
+  typealias Scope = MyState
   var store: MyStore { fatalError() }
             
 }
 
 fileprivate final class MyViewModel2: StoreWrapperType {
   
+  typealias Scope = State
   struct State: StateType {
     
   }
