@@ -57,7 +57,7 @@ extension GetterBuilderPostFilterMethodChain where Context : StoreType, Trait ==
   
   @available(iOS 13, macOS 10.15, *)
   public func build() -> GetterSource<Input, Output> {
-    target.asStoreBase().makeGetter(from: makeGetterComponents())
+    target.asStore().makeGetter(from: makeGetterComponents())
   }
   
 }

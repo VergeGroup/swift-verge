@@ -45,7 +45,7 @@ public protocol StoreType {
   associatedtype State: StateType
   associatedtype Activity
   
-  func asStoreBase() -> Store<State, Activity>
+  func asStore() -> Store<State, Activity>
   
   var state: State { get }
 }

@@ -114,7 +114,7 @@ extension Reactive where Base : StoreType {
     let preComparer = components.preFilter.build()
     let postComparer = components.postFilter?.build()
     
-    let baseStream = base.asStoreBase().rx.stateObservable
+    let baseStream = base.asStore().rx.stateObservable
       .do(onNext: { [closure = components.onPreFilterWillReceive] value in
         closure(value)
       })
