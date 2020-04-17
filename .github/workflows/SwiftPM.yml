@@ -8,6 +8,8 @@ jobs:
     runs-on: macOS-latest
 
     steps:
+    - name: Force xcode 11.4
+      run: sudo xcode-select -switch /Applications/Xcode_11.4.app
     - uses: actions/checkout@v1
     - name: Build
       run: swift build -v
