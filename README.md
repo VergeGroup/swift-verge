@@ -24,6 +24,53 @@ Verge 7.0 is still in development. API and the concept of Verge might be changed
 
 **A Store-Pattern based data-flow architecture.**
 
+```swift
+struct State: StateType {
+  var name: String = ""
+  var age: Int = 0
+}
+
+enum Activity {
+  case somethingHappen
+}
+
+// 🌟with UIKit
+class ViewController: UIViewController {
+  
+  ...  
+  
+  let store = Store<State, Activity>(initialState: .init(), logger: nil)
+  
+  ...
+            
+  func update(changes: Changes<State>) {
+    
+    changes.ifChanged(\.name) { (name) in
+      nameLabel.text = name
+    }
+    
+    changes.ifChanged(\.age) { (age) in
+      ageLabel.text = age.description
+    }
+    
+  }
+}
+
+
+// 🌟with SwiftUI
+struct MyView: View {
+  
+  @EnvironmentObject var store: Store<State, Activity>
+  
+  var body: some View {
+    Group {
+      Text(store.state.name)
+      Text(store.state.age)
+    }
+  }
+}
+```
+
 The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
 
 Plus, releasing from so many definition of the actions.  
