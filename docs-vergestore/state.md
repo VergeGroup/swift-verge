@@ -38,6 +38,12 @@ struct State: StateType {
 }
 ```
 
+Although in some of cases, the cost of computing might be higher which depends on how it create the value from stored properties.
+
+You can see one of the solutions from link below.
+
+{% page-ref page="getters-beside-state.md" %}
+
 ## StateType protocol helps to modify
 
 VergeStore provides `StateType` protocol as a helper.

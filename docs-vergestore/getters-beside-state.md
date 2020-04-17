@@ -1,4 +1,4 @@
-# 🛸 Getters beside State
+# 🛸 Computed property on State
 
 ## Computed Property on State
 
@@ -85,28 +85,29 @@ And this can not handle easily a case that combining from multiple stored proper
   
 Next introduces one of the solutions.
 
-## Getters
+## Computed Properties
 
 VergeStore has a way of providing computed property with caching to reduce taking computing resource.
 
 Keywords are:
 
-* CombinedStateType
-* GettersType
+* ExtendedStateType
+* ExtendedType
 * Field.Computed&lt;T&gt;
 
 Above State code can be improved like following.
 
 ```swift
-struct State: CombinedStateType {
-  var items: [Item] = []
+struct State: ExtendedStateType {
+
+  var name: String = ...
+  var items: [Int] = []
   
-  struct Getters: GettersType {
-    let processedItems = Field.Computed<[ProcessedItem]>.init {
-      $0.changed(\.items) // if Item compatibles with Equatable
-        .map { $0.items.doSomeExpensiveProcessing() }
-        .changed() // if ProcessedItem compatibles with Equatable
+  struct Extended: ExtendedType {
+    let filteredArray = Field.Computed<[Int]> {
+      $0.items.filter { $0 > 300 }
     }
+    .ifChanged(selector: \.largeArray)
   }
 }
 ```
@@ -116,15 +117,39 @@ Accessing
 ```swift
 let store: MyStore<State, Never> = ...
 
-// not changed to get state
-store.state.items 
+let changes = store.changes
 
-// here is new interface to get value from computed property
-store.getters.processedItems //  => GetterSource<State, [ProcessedItem]>
-store.computed.processedItems // => [ProcessedItem]
-
+let result: [Int] = changes.computed.filteredArray
 ```
 
-`store.computed.processedItems` will be updated only when items updated.  
+`store.computed.filteredArray` will be updated only when items updated.  
 Since the results are stored as a cache, we can take value without computing.
+
+Followings are the steps describes when it computes while paying the cost.
+
+```swift
+let store: MyStore<State, Never> = ...
+
+// It computes
+store.changes.computed.filteredArray
+
+// no computes because results cached with first-time access
+store.changes.computed.filteredArray
+
+// State will change but no affects items
+store.commit {
+  $0.name = "Muukii"
+}
+
+// no computes because results cached with first-time access
+store.changes.computed.filteredArray
+
+// State will change with it affects items
+store.commit {
+  $0.items.append(...)
+}
+
+// It computes new value
+store.changes.computed.filteredArray
+```
 

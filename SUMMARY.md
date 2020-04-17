@@ -5,6 +5,7 @@
 * [Gallery](gallery.md)
 * [About VergeClassic](about-vergeclassic.md)
 * [Changelog](changelog.md)
+* [Migrate from VergeClassic](migrate-from-vergeclassic.md)
 
 ## 📦 Verge Store <a id="docs-vergestore"></a>
 
@@ -13,7 +14,8 @@
 * [💥 Action - Grouping mutation with async operations](docs-vergestore/action.md)
 * [⚡️ Activity - Dispatching Volatile Events](docs-vergestore/activity.md)
 * [🪐 State and shape](docs-vergestore/state.md)
-* [🛸 Getters beside State](docs-vergestore/getters-beside-state.md)
+* [🌟 Changes from State](docs-vergestore/changes-from-state.md)
+* [🛸 Computed property on State](docs-vergestore/getters-beside-state.md)
 * [💫 Getter\(Selector\) and Memoization](docs-vergestore/getter.md)
 * [🚀 Dispatcher - Perform Mutation / Action](docs-vergestore/dispatcher.md)
 * [🔭 Logging - Take logs performed Mutation and Action](docs-vergestore/logging.md)
