@@ -179,6 +179,7 @@ public struct Changes<Value>: ChangesType {
     self.version = version
   }
   
+  @inlinable
   public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
     _read {
       yield current[keyPath: keyPath]
@@ -188,12 +189,14 @@ public struct Changes<Value>: ChangesType {
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   ///
   @inline(__always)
+  @inlinable
   public func hasChanges<T: Equatable>(_ keyPath: KeyPath<Value, T>) -> Bool {
     hasChanges(keyPath, ==)
   }
   
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   ///
+  @inlinable
   @inline(__always)
   public func hasChanges<T>(_ keyPath: KeyPath<Value, T>, _ comparer: (T, T) -> Bool) -> Bool {
     guard let selectedOld = old?[keyPath: keyPath] else {
@@ -204,12 +207,14 @@ public struct Changes<Value>: ChangesType {
   }
   
   /// Do a closure if value specified by keyPath contains changes.
+  @inlinable
   public func ifChanged<T: Equatable>(_ keyPath: KeyPath<Value, T>, _ perform: (T) throws -> Void) rethrows {
     
     guard hasChanges(keyPath) else { return }
     try perform(current[keyPath: keyPath])
   }
   
+  @inlinable
   public func ifChanged<T>(_ keyPath: KeyPath<Value, T>, _ comparer: (T, T) -> Bool, _ perform: (T) throws -> Void) rethrows {
     
     guard hasChanges(keyPath, comparer) else { return }
@@ -441,20 +446,32 @@ extension _StateTypeContainer {
     
     public typealias Input = State
     
-    fileprivate var _onRead: (Input) -> Void = { _ in }
-    fileprivate var _onHitCache: () -> Void = {}
-    fileprivate var _onHitSharedCache: () -> Void = {}
-    fileprivate var _onPreFilter: () -> Void = {}
-    fileprivate var _onTransform: (Output) -> Void = { _ in }
+    @usableFromInline
+    fileprivate(set) var _onRead: (Input) -> Void = { _ in }
     
+    @usableFromInline
+    fileprivate(set) var _onHitCache: () -> Void = {}
+    
+    @usableFromInline
+    fileprivate(set) var _onHitSharedCache: () -> Void = {}
+    
+    @usableFromInline
+    fileprivate(set) var _onPreFilter: () -> Void = {}
+    
+    @usableFromInline
+    fileprivate(set) var _onTransform: (Output) -> Void = { _ in }
+    
+    @usableFromInline
     let preFilter: Comparer<Input>
+    @usableFromInline
     let compute: (Input) -> Output
     
     public init(_ compute: @escaping (State) -> Output) {
       self.init(preFilter: .init { _, _ in false }, transform: compute)
     }
-               
-    private init(
+        
+    @usableFromInline
+    init(
       preFilter: Comparer<Input>,
       transform: @escaping (Input) -> Output
     ) {
@@ -464,37 +481,58 @@ extension _StateTypeContainer {
       
     }
     
-    func ifChanged(
-      filter: Comparer<Input>
-    ) -> Self {
-      .init(preFilter: filter, transform: compute)
-    }
-    
-    public func ifChanged<PreComparingKey>(
-      keySelector: @escaping (Input) -> PreComparingKey,
-      comparer: Comparer<PreComparingKey>
-    ) -> Self {
-      ifChanged(filter: .init(selector: keySelector, comparer: comparer))
-    }
-    
+    @inlinable
+    @inline(__always)
     public func ifChanged(
       comparer: Comparer<Input>
     ) -> Self {
-      ifChanged(keySelector: { $0 }, comparer: comparer)
+      .init(preFilter: comparer, transform: compute)
     }
     
-    public func ifChanged(
-      _ equals: @escaping (Input, Input) -> Bool
+    @inlinable
+    @inline(__always)
+    public func ifChanged<PreComparingKey>(
+      selector: @escaping (Input) -> PreComparingKey,
+      comparer: Comparer<PreComparingKey>
     ) -> Self {
-      ifChanged(comparer: .init(equals))
+      ifChanged(comparer: .init(selector: selector, comparer: comparer))
     }
     
-    public func ifChanged<T>(_ fragmentSelector: @escaping (Input) -> Fragment<T>) -> Self {
+    @inlinable
+    @inline(__always)
+    public func ifChanged<PreComparingKey>(
+      selector: @escaping (Input) -> PreComparingKey,
+      compare: @escaping (PreComparingKey, PreComparingKey) -> Bool
+    ) -> Self {
+      ifChanged(comparer: .init(selector: selector, comparer: .init(compare)))
+    }
+    
+    @inlinable
+    @inline(__always)
+    public func ifChanged<PreComparingKey: Equatable>(
+      selector: @escaping (Input) -> PreComparingKey
+    ) -> Self {
+      ifChanged(selector: selector, compare: ==)
+    }
+    
+    @inlinable
+    @inline(__always)
+    public func ifChanged(
+      compare: @escaping (Input, Input) -> Bool
+    ) -> Self {
+      ifChanged(comparer: .init(compare))
+    }
+    
+    @inlinable
+    @inline(__always)
+    public func ifChanged<T>(fragmentSelector: @escaping (Input) -> Fragment<T>) -> Self {
       ifChanged(comparer: .init(selector: {
         fragmentSelector($0).counter.rawValue
       }))
     }
         
+    @inlinable
+    @inline(__always)
     public func onRead(_ clsoure: @escaping (Input) -> Void) -> Self {
       
       var _self = self
@@ -502,6 +540,8 @@ extension _StateTypeContainer {
       return _self
     }
     
+    @inlinable
+    @inline(__always)
     public func onTransform(_ closure: @escaping (Output) -> Void) -> Self {
       
       var _self = self
@@ -509,6 +549,8 @@ extension _StateTypeContainer {
       return _self
     }
     
+    @inlinable
+    @inline(__always)
     public func onPreFilter(_ closure: @escaping () -> Void) -> Self {
       
       var _self = self
@@ -516,6 +558,8 @@ extension _StateTypeContainer {
       return _self
     }
     
+    @inlinable
+    @inline(__always)
     public func onHitCache(_ closure: @escaping () -> Void) -> Self {
       
       var _self = self
@@ -523,6 +567,8 @@ extension _StateTypeContainer {
       return _self
     }
     
+    @inlinable
+    @inline(__always)
     public func onHitSharedCache(_ closure: @escaping () -> Void) -> Self {
       
       var _self = self
@@ -539,7 +585,7 @@ extension _StateTypeContainer.Computed where Input : Equatable {
   ///
   /// Adding a filter to getter to map only when the input object changed.
   public func ifChanged() -> Self {
-    ifChanged(==)
+    ifChanged(compare: ==)
   }
   
 }

@@ -22,9 +22,9 @@
 import Foundation
 
 /// A protocol describes the type is a state of the store.
-/// StoreBase requires State object that has StateType.
+/// Store requires State object that has StateType.
 ///
-/// You may use CombinedStateType to define computed property with caching to be performant.
+/// You may use ExtendedStateType to define computed property with caching to be performant.
 public protocol StateType {
   
 }

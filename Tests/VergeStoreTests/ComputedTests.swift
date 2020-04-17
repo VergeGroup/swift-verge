@@ -26,6 +26,8 @@ class Computed2Tests: XCTestCase {
     
     var name: String = "muukii"
     
+    var largeArray: [Int] = Array((0..<10000).map { $0 })
+    
     var foo: String {
       name
     }
@@ -39,7 +41,7 @@ class Computed2Tests: XCTestCase {
       struct Extended: ExtendedType {
         
         let nameCount = Field.Computed(\.value.count)
-          .ifChanged(keySelector: \.value, comparer: .init(==))
+          .ifChanged(selector: \.value, comparer: .init(==))
           .onTransform { o in
             print(o)
             nestedCounter += 1
@@ -50,21 +52,31 @@ class Computed2Tests: XCTestCase {
     
     struct Extended: ExtendedType {
       
+      let filteredArray = Field.Computed<[Int]> {
+        $0.largeArray.filter { $0 > 300 }
+      }
+      .ifChanged(selector: \.largeArray)
+      
+      let filteredArrayWithoutPreFilter = Field.Computed<[Int]> {
+        $0.largeArray.filter { $0 > 300 }
+      }
+      
       let num_0 = Field.Computed<Int>(\.num_0)
-        .ifChanged(keySelector: \.num_0, comparer: .init(==))
+        .ifChanged(selector: \.num_0, comparer: .init(==))
         .onTransform { o in
           rootTransformCounter += 1
       }
-      var num_1 = Field.Computed<Int>(\.num_1).ifChanged(keySelector: \.num_1, comparer: .init(==))
-      var num_2 = Field.Computed<Int>(\.num_2).ifChanged(keySelector: \.num_2, comparer: .init(==))
+      
+      var num_1 = Field.Computed<Int>(\.num_1).ifChanged(selector: \.num_1, comparer: .init(==))
+      var num_2 = Field.Computed<Int>(\.num_2).ifChanged(selector: \.num_2, comparer: .init(==))
                               
       let _nameCount = Field.Computed {
         $0.name
       }
-      .ifChanged(keySelector: \.name, comparer: .init(==))
+      .ifChanged(selector: \.name, comparer: .init(==))
       
       let nameCount = Field.Computed(\.name.count)
-        .ifChanged(keySelector: \.name, comparer: .init(==))
+        .ifChanged(selector: \.name, comparer: .init(==))
         .onPreFilter {
           rootPreFilterCounter += 1
       }
@@ -90,6 +102,58 @@ class Computed2Tests: XCTestCase {
   override func setUp() {
     rootTransformCounter = 0
     nestedCounter = 0
+  }
+  
+  func testPerformanceComputing() {
+    
+    let store = MyStore()
+    
+    let changes = store.changes
+    
+    measure {
+      _ = changes.computed.filteredArray
+    }
+    
+  }
+  
+  func testPerformanceComputingWithourPrefilter() {
+   
+    let store = MyStore()
+    
+    let changes = store.changes
+    
+    measure {
+      _ = changes.computed.filteredArrayWithoutPreFilter
+    }
+    
+  }
+  
+  func testPerformanceComputingWithCommits() {
+    
+    let store = MyStore()
+        
+    measure {
+      store.commit {
+        // no affects to array
+        $0.num_1 += 1
+      }
+      _ = store.changes.computed.filteredArray
+    }
+    
+  }
+  
+  func testPerformanceComputingWithourPrefilterWithCommits() {
+    
+    let store = MyStore()
+        
+    measure {
+      store.commit {
+        // no affects to array
+        $0.num_1 += 1
+      }
+      _ = store.changes.computed.filteredArrayWithoutPreFilter
+    }
+    
   }
   
   func testChangesChain() {
