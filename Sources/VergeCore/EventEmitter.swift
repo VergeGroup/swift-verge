@@ -22,12 +22,71 @@
 import Foundation
 import os
 
-public protocol SubscriptionType {
-  func dispose()
+public final class UntilDeinitCancellable: Hashable {
+  
+  public static func == (lhs: UntilDeinitCancellable, rhs: UntilDeinitCancellable) -> Bool {
+    lhs === rhs
+  }
+  
+  public func hash(into hasher: inout Hasher) {
+    ObjectIdentifier(self).hash(into: &hasher)
+  }
+  
+  private let onDeinit: () -> Void
+  
+  init(onDeinit: @escaping () -> Void) {
+    self.onDeinit = onDeinit
+  }
+  
+  convenience init<C>(_ cancellable: C) where C : CancellableType {
+    self.init {
+      cancellable.cancel()
+    }
+  }
+  
+  deinit {
+    onDeinit()
+  }
+  
 }
 
-public final class EventEmitterSubscription: Hashable, SubscriptionType {
-  public static func == (lhs: EventEmitterSubscription, rhs: EventEmitterSubscription) -> Bool {
+public protocol CancellableType {
+  
+  func cancel()
+}
+
+extension CancellableType {
+  
+  public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == UntilDeinitCancellable {
+    collection.append(.init(self))
+  }
+  
+  public func store(in set: inout Set<UntilDeinitCancellable>) {
+    set.insert(.init(self))
+  }
+  
+}
+
+#if canImport(Combine)
+
+import Combine
+
+extension CancellableType {
+    
+  @available(iOS 13, macOS 10.15, *)
+  public func store(in set: inout Set<AnyCancellable>) {
+    set.insert(AnyCancellable.init {
+      self.cancel()
+    })
+  }
+  
+}
+
+#endif
+
+public final class EventEmitterCancellable: Hashable, CancellableType {
+  
+  public static func == (lhs: EventEmitterCancellable, rhs: EventEmitterCancellable) -> Bool {
     lhs === rhs
   }
   
@@ -41,13 +100,13 @@ public final class EventEmitterSubscription: Hashable, SubscriptionType {
     ObjectIdentifier(self).hash(into: &hasher)
   }
   
-  public func dispose() {
+  public func cancel() {
     owner?.remove(self)
   }
 }
 
 public protocol EventEmitterType: AnyObject {
-  func remove(_ token: EventEmitterSubscription)
+  func remove(_ token: EventEmitterCancellable)
 }
 
 /// Instead of Combine
@@ -57,14 +116,14 @@ public final class EventEmitter<Event>: EventEmitterType {
   
   private let lock = VergeConcurrency.UnfairLock()
   
-  private var subscribers: [EventEmitterSubscription : (Event) -> Void] = [:]
+  private var subscribers: [EventEmitterCancellable : (Event) -> Void] = [:]
   
   public init() {
     
   }
       
   public func accept(_ event: Event) {
-    let targets: Dictionary<EventEmitterSubscription, (Event) -> Void>.Values
+    let targets: Dictionary<EventEmitterCancellable, (Event) -> Void>.Values
     lock.lock()
     targets = subscribers.values
     lock.unlock()
@@ -74,15 +133,15 @@ public final class EventEmitter<Event>: EventEmitterType {
   }
   
   @discardableResult
-  public func add(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterSubscription {
-    let token = EventEmitterSubscription(owner: self)
+  public func add(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterCancellable {
+    let token = EventEmitterCancellable(owner: self)
     lock.lock()
     subscribers[token] = eventReceiver
     lock.unlock()
     return token
   }
   
-  public func remove(_ token: EventEmitterSubscription) {
+  public func remove(_ token: EventEmitterCancellable) {
     lock.lock()
     subscribers.removeValue(forKey: token)
     lock.unlock()
@@ -123,7 +182,7 @@ extension EventEmitter {
     public let combineIdentifier: CombineIdentifier = .init()
     
     private let subscriber: AnySubscriber<Event, Never>
-    private let eventEmitterSubscription: EventEmitterSubscription
+    private let eventEmitterSubscription: EventEmitterCancellable
     private weak var eventEmitter: EventEmitter<Event>?
     
     init(subscriber: AnySubscriber<Event, Never>, eventEmitter: EventEmitter<Event>) {

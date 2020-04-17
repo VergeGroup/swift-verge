@@ -25,13 +25,6 @@ import Foundation
 import VergeCore
 #endif
 
-fileprivate final class NonatomicRef<Value> {
-  var value: Value
-  init(_ value: Value) {
-    self.value = value
-  }
-}
-
 public protocol ChangesType {
   associatedtype Value
   var old: Value? { get }

@@ -25,19 +25,19 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-public struct ChangesSubscription: SubscriptionType {
-  let token: EventEmitterSubscription
+public struct ChangesSubscription: CancellableType {
+  let token: EventEmitterCancellable
  
-  public func dispose() {
-    token.dispose()
+  public func cancel() {
+    token.cancel()
   }
 }
 
-public struct ActivitySusbscription: SubscriptionType {
-  let token: EventEmitterSubscription
+public struct ActivitySusbscription: CancellableType {
+  let token: EventEmitterCancellable
   
-  public func dispose() {
-    token.dispose()
+  public func cancel() {
+    token.cancel()
   }
 }
 

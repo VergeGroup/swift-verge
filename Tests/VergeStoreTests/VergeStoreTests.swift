@@ -309,4 +309,28 @@ final class VergeStoreTests: XCTestCase {
     
   }
   
+  func testSubscription() {
+    
+    var subscriptions = Set<UntilDeinitCancellable>()
+    var count = 0
+    
+    store.subscribeStateChanges { (changes) in
+      count += 1
+    }
+    .store(in: &subscriptions)
+        
+    store.commit { _ in
+      
+    }
+    
+    subscriptions = .init()
+
+    store.commit { _ in
+      
+    }
+    
+    XCTAssertEqual(count, 2)
+    
+  }
+  
 }

@@ -70,7 +70,7 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   /// Storage tells got a newValue.
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
-  public final func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterSubscription {
+  public final func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterCancellable {
     willUpdateEmitter.add(subscriber)
   }
   
@@ -78,16 +78,16 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   /// Storage tells got a newValue.
   /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
   @discardableResult
-  public final func addDidUpdate(subscriber: @escaping (Value) -> Void) -> EventEmitterSubscription {
+  public final func addDidUpdate(subscriber: @escaping (Value) -> Void) -> EventEmitterCancellable {
     didUpdateEmitter.add(subscriber)
   }
   
   @discardableResult
-  public final func addDeinit(subscriber: @escaping () -> Void) -> EventEmitterSubscription {
+  public final func addDeinit(subscriber: @escaping () -> Void) -> EventEmitterCancellable {
     deinitEmitter.add(subscriber)
   }
   
-  public final func remove(_ token: EventEmitterSubscription) {
+  public final func remove(_ token: EventEmitterCancellable) {
     didUpdateEmitter.remove(token)
     willUpdateEmitter.remove(token)
     deinitEmitter.remove(token)
@@ -220,13 +220,7 @@ extension Storage: ObservableObject {
       objc_setAssociatedObject(self, &_didChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
       
       addDidUpdate { s in
-        if Thread.isMainThread {
-          associated.send(s)
-        } else {
-          DispatchQueue.main.async {
-            associated.send(s)
-          }
-        }
+        associated.send(s)
       }
       
       return associated.eraseToAnyPublisher()
