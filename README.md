@@ -112,18 +112,10 @@ let count = store.state.count
 ### Subscribe the state
 
 ```swift
-// Using combine
-store.makeGetter()
-  .sink { state in
-        
-}
-
-// or Using RxSwift
-
-import VergeRx
-store.rx.makeGetter()
-  .bind { state in
-        
+store.subscribeStateChanges { (changes) in
+  changes.ifChanged(\.name) { name in
+    // it's called only name changed.
+  }
 }
 ```
 
