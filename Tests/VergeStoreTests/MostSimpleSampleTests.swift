@@ -13,7 +13,7 @@ import VergeStore
 import SwiftUI
 
 @available(iOS 13.0, *)
-enum Sample {
+enum Sample2 {
   
   struct State: StateType {
     var count: Int = 0
