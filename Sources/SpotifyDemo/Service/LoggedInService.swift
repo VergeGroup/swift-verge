@@ -28,9 +28,9 @@ struct LoggedInServiceState {
 final class LoggedInService<State: LoggedInServiceStateType>: DispatcherBase<State, Never> {
 
   private let apiProvider: MoyaProvider<Templates.JSONResponse.Auth.Request>
-    
-  override init(targetStore: StoreBase<State, Activity>) {
-        
+  
+  override init(targetStore: Store<State, Never>) {
+                
     let token = targetStore.state.service.auth.accessToken
     let authPlugin = AccessTokenPlugin { _ in token }
     self.apiProvider = .init(plugins: [authPlugin])
@@ -51,7 +51,7 @@ final class LoggedInService<State: LoggedInServiceStateType>: DispatcherBase<Sta
   
 }
 
-final class LoggedInStore<State: LoggedInServiceStateType>: StoreBase<State, Never> {
+final class LoggedInStore<State: LoggedInServiceStateType>: Store<State, Never> {
   
 }
 

@@ -38,16 +38,20 @@ class ViewController: UIViewController {
         
       })
       .disposed(by: disposeBag)
-        
-    viewModel.rx
-      .stateObservable
-      .changed(\.displayNumber)
+    
+    viewModel.rx.changesObservable
       .observeOn(MainScheduler.instance)
-      .bind { [weak self] number in
-        self?.label.text = number
+      .bind { [weak self] (changes) in
+        self?.update(changes: changes)
     }
     .disposed(by: disposeBag)
-        
+    
+  }
+  
+  private func update(changes: Changes<ViewModelState>) {
+    changes.ifChanged(\.displayNumber) { (number) in
+      label.text = number
+    }
   }
 
   @IBAction func onTapButton(_ sender: Any) {
@@ -102,7 +106,7 @@ final class ViewModel: ViewModelBase<ViewModelState, ViewModelActivity> {
       .disposed(by: disposeBag)
     
   }
-    
+      
   func increment() {
     
     rootStore.incrementWithNotification()
