@@ -52,6 +52,10 @@ let store = MyStore()
 store.increment()
 ```
 
+{% page-ref page="mutation.md" %}
+
+### 
+
 ### Add Action
 
 ```swift
@@ -77,6 +81,10 @@ let store = MyStore()
 
 store.delayedIncrement()
 ```
+
+{% page-ref page="action.md" %}
+
+
 
 ## Scaling up
 
