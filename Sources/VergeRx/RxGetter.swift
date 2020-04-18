@@ -207,7 +207,7 @@ extension GetterBuilderPostFilterMethodChain where Trait == GetterBuilderTrait.R
     target.rx.makeGetter(from: makeGetterComponents())
   }
   
-  public func build() -> RxGetterSource<Input, Changes<Output>> {
+  public func buildChanges() -> RxGetterSource<Input, Changes<Output>> {
     target.rx.makeChangesGetter(from: makeGetterComponents())
   }
   
