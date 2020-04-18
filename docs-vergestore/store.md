@@ -93,7 +93,7 @@ It's might be hard to manage these.
   
 Therefore, Verge provides **Dispatcher**
 
-![Updating the state from multiple dispatcher](../.gitbook/assets/image.png)
+![Updating the state from multiple dispatcher](../.gitbook/assets/image%20%282%29.png)
 
 {% page-ref page="dispatcher.md" %}
 

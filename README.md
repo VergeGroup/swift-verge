@@ -6,6 +6,10 @@ description: >-
 
 # Verge - Flux and ORM for creating iOS App with SwiftUI and UIKit
 
+![](.gitbook/assets/image%20%281%29.png)
+
+## Verge - Store
+
 * Current v7.0.0 beta status to publish release
   * Trying to use on author's product.
     * to get the feel for syntax on writing.
@@ -13,10 +17,6 @@ description: >-
   * Status
 
     * Started using VergeORM and RxGetter on the product \(2020-02\)
-
-![](.gitbook/assets/loop-2x%20%281%29.png)
-
-## Verge - Store
 
 {% hint style="danger" %}
 Verge 7.0 is still in development. API and the concept of Verge might be changed a bit.
