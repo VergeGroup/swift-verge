@@ -58,36 +58,15 @@ public class Getter<Output>: GetterBase<Output>, Publisher, ObservableObject {
   
   private var subscriptions = Set<AnyCancellable>()
   
-  /// Initialize from publisher
-  ///
-  /// - Attension: Please don't use operator that dispatches asynchronously.
-  /// - Parameter observable:
-  public convenience init<O: Publisher>(from publisher: () -> O) where O.Output == Output, O.Failure == Never {
-    self.init(from: publisher())
-  }
-  
-  /// Initialize from publisher
-  ///
-  /// - Attension: Please don't use operator that dispatches asynchronously.
-  /// - Parameter observable:
-  public init<O: Publisher>(from publisher: O) where O.Output == Output, O.Failure == Never {
+  fileprivate init<O: Publisher>(from publisher: O, initialValue: O.Output) where O.Output == Output, O.Failure == Never {
     
     let pipe = publisher.buffer(size: 1, prefetch: .byRequest, whenFull: .dropOldest).makeConnectable()
     
     pipe.connect().store(in: &subscriptions)
     
-    var initialValue: Output!
-    
-    pipe.first().sink { value in
-      initialValue = value
-    }
-    .store(in: &subscriptions)
-    
-    precondition(initialValue != nil, "Don't use asynchronous operator in \(publisher), and it must emit the value immediately.")
-        
     let _output = CurrentValueSubject<Output, Never>.init(initialValue)
     let _objectWillChange = ObservableObjectPublisher()
-        
+    
     pipe.sink { [weak _output, weak _objectWillChange] (value) in
       _output?.send(value)
       _objectWillChange?.send()
@@ -100,6 +79,40 @@ public class Getter<Output>: GetterBase<Output>, Publisher, ObservableObject {
     self.objectWillChange = _objectWillChange
   }
   
+  /// Initialize from publisher
+  ///
+  /// - Attension: Please don't use operator that dispatches asynchronously.
+  /// - Parameter observable:
+  public convenience init<O: Publisher>(from publisher: () -> O) where O.Output == Output, O.Failure == Never {
+    self.init(from: publisher())
+  }
+  
+  /// Initialize from publisher
+  ///
+  /// - Attension: Please don't use operator that dispatches asynchronously.
+  /// - Parameter observable:
+  public convenience init<O: Publisher>(from publisher: O) where O.Output == Output, O.Failure == Never {
+    
+    let pipe = publisher.buffer(size: 1, prefetch: .byRequest, whenFull: .dropOldest).makeConnectable()
+    
+    var _subs = Set<AnyCancellable>()
+    
+    pipe.connect().store(in: &_subs)
+    
+    var initialValue: Output!
+    
+    pipe.first().sink { value in
+      initialValue = value
+    }
+    .store(in: &_subs)
+    
+    precondition(initialValue != nil, "Don't use asynchronous operator in \(publisher), and it must emit the value immediately.")
+  
+    self.init(from: pipe, initialValue: initialValue)
+    
+    subscriptions.formUnion(_subs)
+  }
+  
   public func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
     output.handleEvents(receiveSubscription: { _ in
       withExtendedLifetime(self) {}
@@ -110,14 +123,6 @@ public class Getter<Output>: GetterBase<Output>, Publisher, ObservableObject {
 
 @available(iOS 13, macOS 10.15, *)
 public final class GetterSource<Input, Output>: Getter<Output> {
-  
-  init<O: Publisher>(
-    input: O
-  ) where O.Output == Output, O.Failure == Never {
-    
-    super.init(from: input)
-    
-  }
   
   public func asGetter() -> Getter<Output> {
     self
@@ -143,9 +148,12 @@ extension Store {
   @available(iOS 13, macOS 10.15, *)
   fileprivate func makeStream<Output>(
     from components: GetterComponents<State, Output>
-  ) -> AnyPublisher<Changes<Output>, Never> {
-         
+  ) -> (AnyPublisher<Changes<Output>, Never>, Changes<Output>) {
+    
+    let initialValue = Changes<Output>.init(old: nil, new: components.transform(changes.current))
+        
     let base = changesPublisher
+      .dropFirst()
       .handleEvents(receiveOutput: { [closure = components.onPreFilterWillReceive] value in
         closure(value.current)
       })
@@ -158,15 +166,11 @@ extension Store {
       .map({
         components.transform($0.current)
       })
-      .scan(Optional<Changes<Output>>.none, { (pre, element) in
-        guard pre != nil else {
-          return .init(old: nil, new: element)
-        }
+      .scan(initialValue, { (pre, element) in
         var _next = pre
-        _next!.update(with: element)
-        return _next!
+        _next.update(with: element)
+        return _next
       })
-      .map({ $0! })
       .filter({ value in
         value.hasChanges(compare: components.postFilter.equals)
       })
@@ -175,7 +179,7 @@ extension Store {
       })
       .eraseToAnyPublisher()
     
-    return base
+    return (base, initialValue)
     
   }
   
@@ -184,8 +188,8 @@ extension Store {
     from components: GetterComponents<State, Output>
   ) -> GetterSource<State, Output> {
     
-    let pipe = makeStream(from: components).map(\.current)
-    let getterBuilder = GetterSource<State, Output>.init(input: pipe)
+    let (stream, initialValue) = makeStream(from: components)
+    let getterBuilder = GetterSource<State, Output>.init(from: stream.map(\.current), initialValue: initialValue.current)
     
     return getterBuilder
   }
@@ -195,11 +199,12 @@ extension Store {
     from components: GetterComponents<State, Output>
   ) -> GetterSource<State, Changes<Output>> {
     
-    let pipe = makeStream(from: components)
-    let getterBuilder = GetterSource<State, Changes<Output>>.init(input: pipe)
+    let (stream, initialValue) = makeStream(from: components)
+    let getterBuilder = GetterSource<State, Changes<Output>>.init(from: stream, initialValue: initialValue)
     
     return getterBuilder
   }
   
 }
+
 #endif
