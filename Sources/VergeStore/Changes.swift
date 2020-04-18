@@ -179,6 +179,15 @@ public struct Changes<Value>: ChangesType {
     }
   }
   
+  @inline(__always)
+  @inlinable
+  public func hasChanges(compare: (Value, Value) -> Bool) -> Bool {
+    guard let old = old else {
+      return true
+    }
+    return !compare(old, current)
+  }
+  
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   ///
   @inline(__always)
@@ -191,12 +200,12 @@ public struct Changes<Value>: ChangesType {
   ///
   @inlinable
   @inline(__always)
-  public func hasChanges<T>(_ keyPath: KeyPath<Value, T>, _ comparer: (T, T) -> Bool) -> Bool {
+  public func hasChanges<T>(_ keyPath: KeyPath<Value, T>, _ compare: (T, T) -> Bool) -> Bool {
     guard let selectedOld = old?[keyPath: keyPath] else {
       return true
     }
     let selectedNew = current[keyPath: keyPath]
-    return !comparer(selectedOld, selectedNew)
+    return !compare(selectedOld, selectedNew)
   }
   
   /// Do a closure if value specified by keyPath contains changes.

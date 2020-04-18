@@ -17,16 +17,16 @@ extension Int: StateType {}
 
 @available(iOS 13.0, *)
 class GetterTests: XCTestCase {
-  
+    
   private var subs = Set<AnyCancellable>()
-  
+       
   func testFirstCall() {
     
-    let storage = Store<Int, Never>.init(initialState: 1, logger: nil)
+    let store = Store<Int, Never>.init(initialState: 1, logger: nil)
     
     var updateCount = 0
       
-    let g = storage.getterBuilder().changed().map { $0 * 2 }.build()
+    let g = store.getterBuilder().changed().map { $0 * 2 }.build()
         
     g.sink { _ in
       updateCount += 1

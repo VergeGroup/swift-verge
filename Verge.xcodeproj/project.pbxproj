@@ -57,7 +57,6 @@
 		4B6B77A0243F9DB200E0C0EA /* GetterComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54516F23CCC7E700770E61 /* GetterComponents.swift */; };
 		4B6B77A1243F9DB200E0C0EA /* GetterBuilderPreFilterMethodChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B26D10F242DF4F800E366CB /* GetterBuilderPreFilterMethodChain.swift */; };
 		4B6B77A2243F9DB200E0C0EA /* GetterBuilderTransformMethodChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B26D111242DF52A00E366CB /* GetterBuilderTransformMethodChain.swift */; };
-		4B6B77A3243F9DB200E0C0EA /* StoreBase+Getter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4DF7FF23A69CD800D53E9D /* StoreBase+Getter.swift */; };
 		4B6B77A5243F9DB200E0C0EA /* GetterBuilderMethodChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B542434242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift */; };
 		4B6B77A7243F9E3700E0C0EA /* Getter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4011BE23C77CEC00C582BC /* Getter.swift */; };
 		4B6B77A8243F9E5500E0C0EA /* EqualityComputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA8DB3523E36465001CDADA /* EqualityComputer.swift */; };
@@ -86,6 +85,7 @@
 		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
 		4B86D824244A24B5008D3040 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D823244A24B5008D3040 /* Extensions.swift */; };
 		4B86D826244A2A1D008D3040 /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D825244A2A1D008D3040 /* Sample.swift */; };
+		4B86D828244AFE1D008D3040 /* MemoizeGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D827244AFE1D008D3040 /* MemoizeGetterTests.swift */; };
 		4B91B3782440B9C4005082D7 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B91B3792440B9C4005082D7 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B94913C239C25C600370067 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
@@ -477,7 +477,6 @@
 		4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeORMTests.swift; sourceTree = "<group>"; };
 		4B475BC9239ADE1C008A03E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B495D092332B5170098F7B4 /* NetworkImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
-		4B4DF7FF23A69CD800D53E9D /* StoreBase+Getter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoreBase+Getter.swift"; sourceTree = "<group>"; };
 		4B542434242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderMethodChain.swift; sourceTree = "<group>"; };
 		4B54516F23CCC7E700770E61 /* GetterComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterComponents.swift; sourceTree = "<group>"; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
@@ -519,6 +518,7 @@
 		4B86A4A51F969C7D002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B86D823244A24B5008D3040 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		4B86D825244A2A1D008D3040 /* Sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sample.swift; sourceTree = "<group>"; };
+		4B86D827244AFE1D008D3040 /* MemoizeGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoizeGetterTests.swift; sourceTree = "<group>"; };
 		4B89538423CCE3B1002F95C8 /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTests.swift; sourceTree = "<group>"; };
 		4B8EB4F823C034A900035B2A /* Comparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparer.swift; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -867,6 +867,7 @@
 				4B68394623705ACD002FFC5A /* VergeStoreTests.swift */,
 				4B68394823705ACE002FFC5A /* Info.plist */,
 				4B4011C023C7831900C582BC /* GetterTests.swift */,
+				4B86D827244AFE1D008D3040 /* MemoizeGetterTests.swift */,
 				4B89538423CCE3B1002F95C8 /* FilterTests.swift */,
 				4B82CFD723E5760D00FBCB17 /* GetterSyntaxTests.swift */,
 				4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */,
@@ -1000,7 +1001,6 @@
 		4B91B37D2440C097005082D7 /* Getter */ = {
 			isa = PBXGroup;
 			children = (
-				4B4DF7FF23A69CD800D53E9D /* StoreBase+Getter.swift */,
 				4B4011BE23C77CEC00C582BC /* Getter.swift */,
 				4B54516F23CCC7E700770E61 /* GetterComponents.swift */,
 				4B542434242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift */,
@@ -1918,6 +1918,7 @@
 				4B6B77AC243FA6B300E0C0EA /* GetterSyntaxTests.swift in Sources */,
 				4B6B77AD243FA6B300E0C0EA /* GetterTests.swift in Sources */,
 				4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */,
+				4B86D828244AFE1D008D3040 /* MemoizeGetterTests.swift in Sources */,
 				4B6B77AE243FA6B300E0C0EA /* FilterTests.swift in Sources */,
 				4B86D826244A2A1D008D3040 /* Sample.swift in Sources */,
 				4BAFD7EA24488B4800C7D38D /* WrapperTests.swift in Sources */,
@@ -1939,7 +1940,6 @@
 				4B2050FD23D5D24C000A2779 /* DispatcherMetadata.swift in Sources */,
 				4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */,
 				4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */,
-				4B6B77A3243F9DB200E0C0EA /* StoreBase+Getter.swift in Sources */,
 				4B6B77A7243F9E3700E0C0EA /* Getter.swift in Sources */,
 				4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */,
 				4B1F19C0243A82BC00CED46B /* Volatile.swift in Sources */,
