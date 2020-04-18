@@ -117,18 +117,16 @@ extension Reactive where Base : StoreType {
   
   public typealias Value = Base.State
   
-  fileprivate func makeStream<PreComapringKey, Output, PostComparingKey>(
-    from components: GetterComponents<Value, PreComapringKey, Output, PostComparingKey>
+  fileprivate func makeStream<Output>(
+    from components: GetterComponents<Value, Output>
   ) -> Observable<Changes<Output>> {
-    
-    let postComparer = components.postFilter
     
     let baseStream = base.asStore().rx.changesObservable
       .do(onNext: { [closure = components.onPreFilterWillReceive] value in
         closure(value.current)
       })
       .filter({ value in
-        let hasChanges = value.hasChanges(compare: components.preFilter.isEqual)
+        let hasChanges = value.hasChanges(compare: components.preFilter.equals)
         if !hasChanges {
           VergeSignpostTransaction("RxGetter.hitPreFilter").end()
         }
@@ -140,38 +138,31 @@ extension Reactive where Base : StoreType {
       .map({ value in
         components.transform(value.current)
       })
-      .scan(into: Optional<Changes<Output>>.none) { (pre, element) in
+      .scan(into: Optional<Changes<Output>>.none, accumulator: { (pre, element) in
         if pre == nil {
           pre = Changes<Output>.init(old: nil, new: element)
         } else {
           pre!.update(with: element)
         }
-    }
-    .map { $0! }
-    
-    let pipe: Observable<Changes<Output>>
-    
-    if let comparer = postComparer {
-      pipe = baseStream.filter { value in
+      })
+      .map({ $0! })      
+      .filter({ value in
         
-        let hasChanges = value.hasChanges(compare: comparer.isEqual)
+        let hasChanges = value.hasChanges(compare: components.postFilter.equals)
         if !hasChanges {
           VergeSignpostTransaction("RxGetter.hitPostFilter").end()
         }
         return hasChanges
-      }
+      })
       .do(onNext: { [closure = components.onPostFilterWillEmit] value in
         closure(value.current)
       })
-    } else {
-      pipe = baseStream
-    }
     
-    return pipe
+    return baseStream
   }
   
-  public func makeGetter<PreComapringKey, Output, PostComparingKey>(
-    from components: GetterComponents<Value, PreComapringKey, Output, PostComparingKey>
+  public func makeGetter<Output>(
+    from components: GetterComponents<Value, Output>
   ) -> RxGetterSource<Value, Output> {
     
     let pipe = makeStream(from: components).map { $0.current }
@@ -179,8 +170,8 @@ extension Reactive where Base : StoreType {
     return getter
   }
   
-  public func makeChangesGetter<PreComapringKey, Output, PostComparingKey>(
-    from components: GetterComponents<Value, PreComapringKey, Output, PostComparingKey>
+  public func makeChangesGetter<Output>(
+    from components: GetterComponents<Value, Output>
   ) -> RxGetterSource<Value, Changes<Output>> {
         
     let pipe: Observable<Changes<Output>> = makeStream(from: components)

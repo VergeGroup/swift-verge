@@ -141,18 +141,16 @@ extension StoreType {
 extension Store {
   
   @available(iOS 13, macOS 10.15, *)
-  fileprivate func makeStream<PreComparingKey, Output, PostComparingKey>(
-    from components: GetterComponents<State, PreComparingKey, Output, PostComparingKey>
+  fileprivate func makeStream<Output>(
+    from components: GetterComponents<State, Output>
   ) -> AnyPublisher<Changes<Output>, Never> {
-    
-    let postComparer = components.postFilter
-     
+         
     let base = changesPublisher
       .handleEvents(receiveOutput: { [closure = components.onPreFilterWillReceive] value in
         closure(value.current)
       })
       .filter({ value in
-        value.hasChanges(compare: components.preFilter.isEqual)
+        value.hasChanges(compare: components.preFilter.equals)
       })
       .handleEvents(receiveOutput: { [closure = components.onTransformWillReceive] value in
         closure(value.current)
@@ -169,29 +167,21 @@ extension Store {
         return _next!
       })
       .map({ $0! })
+      .filter({ value in
+        value.hasChanges(compare: components.postFilter.equals)
+      })
+      .handleEvents(receiveOutput: { [closure = components.onPostFilterWillEmit] value in
+        closure(value.current)
+      })
+      .eraseToAnyPublisher()
     
-    let pipe: AnyPublisher<Changes<Output>, Never>
-    
-    if let comparer = postComparer {
-      pipe = base
-        .filter({ value in
-          value.hasChanges(compare: comparer.isEqual)
-        })
-        .handleEvents(receiveOutput: { [closure = components.onPostFilterWillEmit] value in
-          closure(value.current)
-        })
-        .eraseToAnyPublisher()
-    } else {
-      pipe = base.eraseToAnyPublisher()
-    }
-    
-    return pipe
+    return base
     
   }
   
   @available(iOS 13, macOS 10.15, *)
-  public func makeGetter<PreComparingKey, Output, PostComparingKey>(
-    from components: GetterComponents<State, PreComparingKey, Output, PostComparingKey>
+  public func makeGetter<Output>(
+    from components: GetterComponents<State, Output>
   ) -> GetterSource<State, Output> {
     
     let pipe = makeStream(from: components).map(\.current)
@@ -201,8 +191,8 @@ extension Store {
   }
   
   @available(iOS 13, macOS 10.15, *)
-  public func makeChangesGetter<PreComparingKey, Output, PostComparingKey>(
-    from components: GetterComponents<State, PreComparingKey, Output, PostComparingKey>
+  public func makeChangesGetter<Output>(
+    from components: GetterComponents<State, Output>
   ) -> GetterSource<State, Changes<Output>> {
     
     let pipe = makeStream(from: components)

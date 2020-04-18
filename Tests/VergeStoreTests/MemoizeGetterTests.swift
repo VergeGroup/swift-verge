@@ -53,7 +53,7 @@ class MemoizeGetterTests: XCTestCase {
     var callCount = 0
     
     let getter = store.getterBuilder()
-      .changed(keySelector: \.count, comparer: .init(==))
+      .changed(selector: \.count, comparer: .init(==))
       .map { state -> Int in
         callCount += 1
         return state.count * 2

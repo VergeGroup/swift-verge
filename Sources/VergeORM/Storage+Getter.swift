@@ -115,7 +115,7 @@ extension GetterComponents where Input : DatabaseEmbedding {
   public static func makeEntityGetter<Output>(
     update: @escaping (Input.Database) -> Output,
     filter: Comparer<Input.Database>?
-  ) -> GetterComponents<Input, Input.Database, Output, Output> {
+  ) -> GetterComponents<Input, Output> {
     
     let path = Input.getterToDatabase
     
@@ -124,10 +124,10 @@ extension GetterComponents where Input : DatabaseEmbedding {
       filter,
       ].compactMap { $0 })
     
-    return GetterComponents<Input, Input.Database, Output, Output>(
+    return GetterComponents<Input, Output>(
       onPreFilterWillReceive: { _ in },
       preFilter: .init(
-        keySelector: { path($0) },
+        selector: { path($0) },
         comparer: filter
       ),
       onTransformWillReceive: { _ in },
@@ -138,7 +138,7 @@ extension GetterComponents where Input : DatabaseEmbedding {
         }
         return update(Input.getterToDatabase(value))
     },
-      postFilter: .noFilter,
+      postFilter: .alwaysFalse,
       onPostFilterWillEmit: { _ in }
     )
       
@@ -152,7 +152,7 @@ extension GetterComponents where Input : DatabaseEmbedding {
   public static func makeEntityGetter<E: EntityType>(
     from entityID: E.EntityID,
     filter: Comparer<Input.Database>?
-  ) -> GetterComponents<Input, Input.Database, E?, E?> {
+  ) -> GetterComponents<Input, E?> {
     
     return makeEntityGetter(
       update: { db in
@@ -176,7 +176,7 @@ extension GetterComponents where Input : DatabaseEmbedding {
   public static func makeNonNullEntityGetter<E: EntityType>(
     from entity: E,
     filter: Comparer<Input.Database>?
-  ) -> GetterComponents<Input, Input.Database, E, E> {
+  ) -> GetterComponents<Input, E> {
     
     var box = entity
     let entityID = entity.entityID
