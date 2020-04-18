@@ -13,37 +13,7 @@ import XCTest
 import VergeStore
 
 final class FilterTests: XCTestCase {
-  
-  func testHistorical() {
     
-    let filter = EqualityComputer<Int>.init(selector: { $0 }, comparer: .init { $0 == $1 })
-        
-    XCTAssertEqual(filter.equals(input: 1), false)
-    XCTAssertEqual(filter.equals(input: 1), true)
-    XCTAssertEqual(filter.equals(input: 2), false)
-    
-  }
-  
-  func testHistoricalWithFunction() {
-    
-    let filter = EqualityComputer<Int>.init(selector: { $0 }, comparer: .init { $0 == $1 }).asFunction()
-    
-    XCTAssertEqual(filter(1), false)
-    XCTAssertEqual(filter(1), true)
-    XCTAssertEqual(filter(2), false)
-    
-  }
-  
-  func testHistoricalWithRegisterFirstValue() {
-    
-    let filter = EqualityComputer<Int>.init(selector: { $0 }, comparer: .init { $0 == $1 })
-    
-    filter.registerFirstValue(1)
-    
-    XCTAssertEqual(filter.equals(input: 1), true)
-    
-  }
-  
   func testCombinedFilterOR() {
     
     struct Model {

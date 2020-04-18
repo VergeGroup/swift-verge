@@ -126,3 +126,80 @@ public final class GetterSource<Input, Output>: Getter<Output> {
 }
 
 #endif
+
+#if canImport(Combine)
+
+import Combine
+extension StoreType {
+  
+  public func getterBuilder() -> GetterBuilderMethodChain<GetterBuilderTrait.Combine, Self, State> {
+    .init(target: self)
+  }
+  
+}
+
+extension Store {
+  
+  @available(iOS 13, macOS 10.15, *)
+  fileprivate func makeStream<Output>(
+    from components: GetterComponents<State, Output>
+  ) -> AnyPublisher<Changes<Output>, Never> {
+         
+    let base = changesPublisher
+      .handleEvents(receiveOutput: { [closure = components.onPreFilterWillReceive] value in
+        closure(value.current)
+      })
+      .filter({ value in
+        value.hasChanges(compare: components.preFilter.equals)
+      })
+      .handleEvents(receiveOutput: { [closure = components.onTransformWillReceive] value in
+        closure(value.current)
+      })
+      .map({
+        components.transform($0.current)
+      })
+      .scan(Optional<Changes<Output>>.none, { (pre, element) in
+        guard pre != nil else {
+          return .init(old: nil, new: element)
+        }
+        var _next = pre
+        _next!.update(with: element)
+        return _next!
+      })
+      .map({ $0! })
+      .filter({ value in
+        value.hasChanges(compare: components.postFilter.equals)
+      })
+      .handleEvents(receiveOutput: { [closure = components.onPostFilterWillEmit] value in
+        closure(value.current)
+      })
+      .eraseToAnyPublisher()
+    
+    return base
+    
+  }
+  
+  @available(iOS 13, macOS 10.15, *)
+  public func makeGetter<Output>(
+    from components: GetterComponents<State, Output>
+  ) -> GetterSource<State, Output> {
+    
+    let pipe = makeStream(from: components).map(\.current)
+    let getterBuilder = GetterSource<State, Output>.init(input: pipe)
+    
+    return getterBuilder
+  }
+  
+  @available(iOS 13, macOS 10.15, *)
+  public func makeChangesGetter<Output>(
+    from components: GetterComponents<State, Output>
+  ) -> GetterSource<State, Changes<Output>> {
+    
+    let pipe = makeStream(from: components)
+    let getterBuilder = GetterSource<State, Changes<Output>>.init(input: pipe)
+    
+    return getterBuilder
+  }
+  
+}
+#endif

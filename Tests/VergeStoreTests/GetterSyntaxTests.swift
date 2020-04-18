@@ -25,7 +25,7 @@ final class GetterSyntaxTests: XCTestCase {
   func testGetterSyntax1() {
     
     let _: GetterSource<State, String> = store.getterBuilder()
-      .changed(keySelector: \.title, comparer: .init(==))
+      .changed(selector: \.title, comparer: .init(==))
       .map(\.title)
       .build()
                    

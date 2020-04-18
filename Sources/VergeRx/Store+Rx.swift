@@ -44,18 +44,37 @@ extension Reactive where Base : StoreWrapperType {
   
 }
 
-extension ObservableType where Element : StateType {
+extension ObservableType {
+    
+  /// Make Changes sequense from current sequence
+  /// - Returns:
+  public func changes() -> Observable<Changes<Element>> {
+    
+    scan(into: Optional<Changes<Element>>.none, accumulator: { (pre, element) in
+      if pre == nil {
+        pre = Changes<Element>.init(old: nil, new: element)
+      } else {
+        pre!.update(with: element)
+      }
+    })
+      .map { $0! }
+
+  }
+  
+}
+
+extension ObservableType {
   /// Returns an observable sequence that contains only changed elements according to the `comparer`.
   ///
   /// - Parameters:
   ///   - selector:
-  ///   - comparer:
+  ///   - compare:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S>(_ selector: @escaping (Element) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Observable<S> {
+  public func changed<S>(_ selector: @escaping (Element) -> S, _ compare: @escaping (S, S) throws -> Bool) -> Observable<S> {
     return
       asObservable()
         .map { selector($0) }
-        .distinctUntilChanged(comparer)
+        .distinctUntilChanged(compare)
   }
   
   /// Returns an observable sequence that contains only changed elements according to the `comparer`.
@@ -72,13 +91,13 @@ extension ObservableType where Element : StateType {
   ///
   /// - Parameters:
   ///   - selector:
-  ///   - comparer:
+  ///   - compare:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changedDriver<S>(_ selector: @escaping (Element) -> S, _ comparer: @escaping (S, S) throws -> Bool) -> Driver<S> {
+  public func changedDriver<S>(_ selector: @escaping (Element) -> S, _ compare: @escaping (S, S) throws -> Bool) -> Driver<S> {
     return
       asObservable()
         .map { selector($0) }
-        .distinctUntilChanged(comparer)
+        .distinctUntilChanged(compare)
         .asDriver(onErrorRecover: { _ in .empty() })
   }
   

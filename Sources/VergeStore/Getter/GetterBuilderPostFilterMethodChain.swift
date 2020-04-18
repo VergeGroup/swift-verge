@@ -8,18 +8,18 @@
 
 import Foundation
 
-public struct GetterBuilderPostFilterMethodChain<Trait, Context, Input, PreComparingKey, Output, PostComparingKey> {
+public struct GetterBuilderPostFilterMethodChain<Trait, Context, Input, Output> {
     
   public let target: Context
   
-  private let transformFragment: GetterBuilderTransformMethodChain<Trait, Context, Input, PreComparingKey, Output>
-  private let postFilter: EqualityComputerBuilder<Output, PostComparingKey>
+  private let transformFragment: GetterBuilderTransformMethodChain<Trait, Context, Input, Output>
+  private let postFilter: Comparer<Output>
   private var onPostFilterWillEmit: ((Output) -> Void) = { _ in }
   
   init(
     target: Context,
-    source: GetterBuilderTransformMethodChain<Trait, Context, Input, PreComparingKey, Output>,
-    postFilter: EqualityComputerBuilder<Output, PostComparingKey>
+    source: GetterBuilderTransformMethodChain<Trait, Context, Input, Output>,
+    postFilter: Comparer<Output>
   ) {
     self.target = target
     self.transformFragment = source
@@ -36,7 +36,7 @@ public struct GetterBuilderPostFilterMethodChain<Trait, Context, Input, PreCompa
     return _self
   }
   
-  public func makeGetterComponents() -> GetterComponents<Input, PreComparingKey, Output, PostComparingKey> {
+  public func makeGetterComponents() -> GetterComponents<Input, Output> {
     
     .init(
       onPreFilterWillReceive: transformFragment.preFilterFragment.source.onPreFilterWillReceive,

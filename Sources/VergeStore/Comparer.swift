@@ -24,6 +24,10 @@ import os.log
 
 public struct Comparer<Input> {
   
+  public static var alwaysFalse: Self {
+    .init { _, _ in false }
+  }
+  
   private let equals: (Input, Input) -> Bool
       
   public init(

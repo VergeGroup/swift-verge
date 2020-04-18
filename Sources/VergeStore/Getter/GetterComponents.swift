@@ -8,22 +8,22 @@
 
 import Foundation
 
-public struct GetterComponents<Input, PreComparingKey, Output, PostComparingKey> {
+public struct GetterComponents<Input, Output> {
   
   public let onPreFilterWillReceive: ((Input) -> Void)
   public let onTransformWillReceive: ((Input) -> Void)
   public let onPostFilterWillEmit: ((Output) -> Void)
   
-  public let preFilter: EqualityComputerBuilder<Input, PreComparingKey>
+  public let preFilter: Comparer<Input>
   public let transform: (Input) -> Output
-  public let postFilter: EqualityComputerBuilder<Output, PostComparingKey>?
+  public let postFilter: Comparer<Output>
     
   public init(
     onPreFilterWillReceive: @escaping ((Input) -> Void),
-    preFilter: EqualityComputerBuilder<Input, PreComparingKey>,
+    preFilter: Comparer<Input>,
     onTransformWillReceive: @escaping ((Input) -> Void),
     transform: @escaping (Input) -> Output,
-    postFilter: EqualityComputerBuilder<Output, PostComparingKey>,
+    postFilter: Comparer<Output>,
     onPostFilterWillEmit: @escaping ((Output) -> Void)
   ) {
     

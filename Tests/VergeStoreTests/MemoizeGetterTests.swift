@@ -12,12 +12,12 @@ import XCTest
 
 import VergeStore
 import VergeCore
-import VergeRx
 
+@available(iOS 13, macOS 10.15, *)
 class MemoizeGetterTests: XCTestCase {
   
   struct State: StateType {
-       
+    
     var count: Int = 0
     var name: String = ""
   }
@@ -30,19 +30,19 @@ class MemoizeGetterTests: XCTestCase {
   }
   
   final class RootDispatcher: Store.Dispatcher {
-        
+    
     func increment() {
       commit {
         $0.count += 1
       }
     }
-      
+    
     func setMyName() {
       commit {
         $0.name = UUID().uuidString
       }
     }
-        
+    
   }
   
   func testMemoize() {
@@ -52,14 +52,14 @@ class MemoizeGetterTests: XCTestCase {
     
     var callCount = 0
     
-    let getter = store.rx.getterBuilder()
+    let getter = store.getterBuilder()
       .changed(selector: \.count, comparer: .init(==))
       .map { state -> Int in
         callCount += 1
         return state.count * 2
     }
     .build()
-                                           
+    
     XCTAssertEqual(getter.value, 0)
     
     XCTAssertEqual(callCount, 1)
