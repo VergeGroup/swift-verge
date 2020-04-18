@@ -138,14 +138,7 @@ extension Reactive where Base : StoreType {
       .map({ value in
         components.transform(value.current)
       })
-      .scan(into: Optional<Changes<Output>>.none, accumulator: { (pre, element) in
-        if pre == nil {
-          pre = Changes<Output>.init(old: nil, new: element)
-        } else {
-          pre!.update(with: element)
-        }
-      })
-      .map({ $0! })      
+      .changes()
       .filter({ value in
         
         let hasChanges = value.hasChanges(compare: components.postFilter.equals)

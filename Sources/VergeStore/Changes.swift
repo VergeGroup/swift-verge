@@ -29,6 +29,8 @@ public protocol ChangesType {
   associatedtype Value
   var old: Value? { get }
   var current: Value { get }
+  
+  func hasChanges(compare: (Value, Value) -> Bool) -> Bool
 }
 
 /**
