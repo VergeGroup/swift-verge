@@ -6,9 +6,9 @@ description: >-
 
 # Verge - Flux and ORM for creating iOS App with SwiftUI and UIKit
 
-![](.gitbook/assets/image%20%281%29.png)
-
 ## Verge - Store
+
+![](.gitbook/assets/top-image-01%20%281%29.png)
 
 * Current v7.0.0 beta status to publish release
   * Trying to use on author's product.
