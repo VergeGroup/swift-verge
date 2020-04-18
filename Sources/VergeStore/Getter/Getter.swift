@@ -144,8 +144,16 @@ extension Store {
   fileprivate func makeStream<Output>(
     from components: GetterComponents<State, Output>
   ) -> AnyPublisher<Changes<Output>, Never> {
-         
+    
+    let firstStream = changesPublisher
+      .map({
+        components.transform($0.current)
+      })
+      .first()
+      .eraseToAnyPublisher()
+    
     let base = changesPublisher
+      .dropFirst()
       .handleEvents(receiveOutput: { [closure = components.onPreFilterWillReceive] value in
         closure(value.current)
       })
@@ -158,6 +166,9 @@ extension Store {
       .map({
         components.transform($0.current)
       })
+      .eraseToAnyPublisher()
+    
+    let stream = Publishers.Merge(firstStream, base)
       .scan(Optional<Changes<Output>>.none, { (pre, element) in
         guard pre != nil else {
           return .init(old: nil, new: element)
@@ -175,7 +186,7 @@ extension Store {
       })
       .eraseToAnyPublisher()
     
-    return base
+    return stream
     
   }
   
@@ -202,4 +213,5 @@ extension Store {
   }
   
 }
+
 #endif

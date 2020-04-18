@@ -27,9 +27,6 @@ class MemoizeGetterTests: XCTestCase {
     init() {
       super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
     }
-  }
-  
-  final class RootDispatcher: Store.Dispatcher {
     
     func increment() {
       commit {
@@ -42,13 +39,11 @@ class MemoizeGetterTests: XCTestCase {
         $0.name = UUID().uuidString
       }
     }
-    
   }
   
   func testMemoize() {
     
     let store = Store()
-    let dispatcher = RootDispatcher(targetStore: store)
     
     var callCount = 0
     
@@ -61,19 +56,76 @@ class MemoizeGetterTests: XCTestCase {
     .build()
     
     XCTAssertEqual(getter.value, 0)
-    
     XCTAssertEqual(callCount, 1)
     
-    dispatcher.increment()
+    store.increment()
     
     XCTAssertEqual(getter.value, 2)
-    
     XCTAssertEqual(callCount, 2)
     
-    dispatcher.setMyName()
+    store.setMyName()
     
     XCTAssertEqual(getter.value, 2)
+    XCTAssertEqual(callCount, 2)
+  }
+  
+  func testMemoize2() {
     
+    let store = Store()
+    
+    store.setMyName()
+    
+    var callCount = 0
+    
+    let getter = store.getterBuilder()
+      .changed(selector: \.count, comparer: .init(==))
+      .map { state -> Int in
+        callCount += 1
+        return state.count * 2
+    }
+    .build()
+    
+    XCTAssertEqual(getter.value, 0)
+    XCTAssertEqual(callCount, 1)
+    
+    store.increment()
+    
+    XCTAssertEqual(getter.value, 2)
+    XCTAssertEqual(callCount, 2)
+    
+    store.setMyName()
+    
+    XCTAssertEqual(getter.value, 2)
+    XCTAssertEqual(callCount, 2)
+  }
+  
+  func testMemoize3() {
+    
+    let store = Store()
+    
+    store.increment()
+    
+    var callCount = 0
+    
+    let getter = store.getterBuilder()
+      .changed(selector: \.count, comparer: .init(==))
+      .map { state -> Int in
+        callCount += 1
+        return state.count * 2
+    }
+    .build()
+    
+    XCTAssertEqual(getter.value,2)
+    XCTAssertEqual(callCount, 1)
+    
+    store.increment()
+    
+    XCTAssertEqual(getter.value, 4)
+    XCTAssertEqual(callCount, 2)
+    
+    store.setMyName()
+    
+    XCTAssertEqual(getter.value, 4)
     XCTAssertEqual(callCount, 2)
   }
   

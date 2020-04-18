@@ -121,7 +121,14 @@ extension Reactive where Base : StoreType {
     from components: GetterComponents<Value, Output>
   ) -> Observable<Changes<Output>> {
     
+    let firstStream = base.asStore().rx.changesObservable
+      .map({ value in
+        components.transform(value.current)
+      })
+      .take(1)
+    
     let baseStream = base.asStore().rx.changesObservable
+      .skip(1)
       .do(onNext: { [closure = components.onPreFilterWillReceive] value in
         closure(value.current)
       })
@@ -138,7 +145,13 @@ extension Reactive where Base : StoreType {
       .map({ value in
         components.transform(value.current)
       })
-      .changes()
+    
+    let stream = Observable.from([
+      firstStream,
+      baseStream
+    ])
+      .merge()
+      .changes() // makes new Changes Object
       .filter({ value in
         
         let hasChanges = value.hasChanges(compare: components.postFilter.equals)
@@ -151,7 +164,7 @@ extension Reactive where Base : StoreType {
         closure(value.current)
       })
     
-    return baseStream
+    return stream
   }
   
   public func makeGetter<Output>(
