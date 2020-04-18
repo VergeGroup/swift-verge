@@ -48,9 +48,9 @@ extension ObservableType {
     
   /// Make Changes sequense from current sequence
   /// - Returns:
-  public func changes() -> Observable<Changes<Element>> {
+  public func changes(initial: Changes<Element>? = nil) -> Observable<Changes<Element>> {
     
-    scan(into: Optional<Changes<Element>>.none, accumulator: { (pre, element) in
+    scan(into: initial, accumulator: { (pre, element) in
       if pre == nil {
         pre = Changes<Element>.init(old: nil, new: element)
       } else {

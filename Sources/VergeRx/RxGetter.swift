@@ -35,20 +35,8 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
   public override var value: Output {
     try! output.value()
   }
-        
-  /// Initialize from observable
-  ///
-  /// - Attension: Please don't use operator that dispatches asynchronously.
-  /// - Parameter observable:
-  public convenience init<O: ObservableConvertibleType>(from observable: () -> O) where O.Element == Output {
-    self.init(from: observable())
-  }
-  
-  /// Initialize from observable
-  ///
-  /// - Attension: Please don't use operator that dispatches asynchronously.
-  /// - Parameter observable:
-  public init<O: ObservableConvertibleType>(from observable: O) where O.Element == Output {
+    
+  fileprivate init<O: ObservableConvertibleType>(from observable: O, initialValue: O.Element) where O.Element == Output {
     
     VergeSignpostTransaction("RxGetter.init").end()
     
@@ -59,6 +47,41 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
       .do(onNext: { _ in
         VergeSignpostTransaction("RxGetter.receiveNewValue").end()
       })
+      .share(replay: 1, scope: .whileConnected)
+    
+    let subject = BehaviorSubject<Output>(value: initialValue)
+    
+    self.disposeBag = bag
+    self.output = subject
+    
+    shared.subscribe(onNext: {
+      subject.onNext($0)
+    })
+      .disposed(by: disposeBag)
+    
+  }
+        
+  /// Initialize from observable
+  ///
+  /// - Attension: Please don't use operator that dispatches asynchronously.
+  /// - Parameter observable:
+  public convenience init<O: ObservableConvertibleType>(from observable: () -> O) where O.Element == Output {
+    self.init(from: observable())
+  }
+
+    
+  /// Initialize from observable
+  ///
+  /// - Attension: Please don't use operator that dispatches asynchronously.
+  /// - Parameter observable:
+  public convenience init<O: ObservableConvertibleType>(from observable: O) where O.Element == Output {
+    
+    VergeSignpostTransaction("RxGetter.init").end()
+    
+    let bag = DisposeBag()
+    
+    let shared = observable
+      .asObservable()
       .share(replay: 1, scope: .whileConnected)
                
     var initialValue: Output!
@@ -75,16 +98,8 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
       .disposed(by: bag)
           
     precondition(initialValue != nil, "Don't use asynchronous operator in \(observable), and it must emit the value immediately.")
-    
-    let subject = BehaviorSubject<Output>(value: initialValue)
-    
-    self.disposeBag = bag
-    self.output = subject
-   
-    shared.skip(1).subscribe(onNext: {
-      subject.onNext($0)
-    })
-    .disposed(by: disposeBag)
+        
+    self.init(from: shared, initialValue: initialValue)
     
   }
   
@@ -119,14 +134,10 @@ extension Reactive where Base : StoreType {
   
   fileprivate func makeStream<Output>(
     from components: GetterComponents<Value, Output>
-  ) -> Observable<Changes<Output>> {
+  ) -> (Observable<Changes<Output>>, Changes<Output>) {
     
-    let firstStream = base.asStore().rx.changesObservable
-      .map({ value in
-        components.transform(value.current)
-      })
-      .take(1)
-    
+    let initialValue = Changes<Output>.init(old: nil, new: components.transform(base.asStore().changes.current)) 
+          
     let baseStream = base.asStore().rx.changesObservable
       .skip(1)
       .do(onNext: { [closure = components.onPreFilterWillReceive] value in
@@ -145,13 +156,7 @@ extension Reactive where Base : StoreType {
       .map({ value in
         components.transform(value.current)
       })
-    
-    let stream = Observable.from([
-      firstStream,
-      baseStream
-    ])
-      .merge()
-      .changes() // makes new Changes Object
+      .changes(initial: initialValue) // makes new Changes Object
       .filter({ value in
         
         let hasChanges = value.hasChanges(compare: components.postFilter.equals)
@@ -164,15 +169,15 @@ extension Reactive where Base : StoreType {
         closure(value.current)
       })
     
-    return stream
+    return (baseStream, initialValue)
   }
   
   public func makeGetter<Output>(
     from components: GetterComponents<Value, Output>
   ) -> RxGetterSource<Value, Output> {
     
-    let pipe = makeStream(from: components).map { $0.current }
-    let getter = RxGetterSource<Base.State, Output>.init(from: pipe)
+    let (stream, initialValue) = makeStream(from: components)
+    let getter = RxGetterSource<Base.State, Output>.init(from: stream.map { $0.current }, initialValue: initialValue.current)
     return getter
   }
   
@@ -180,8 +185,8 @@ extension Reactive where Base : StoreType {
     from components: GetterComponents<Value, Output>
   ) -> RxGetterSource<Value, Changes<Output>> {
         
-    let pipe: Observable<Changes<Output>> = makeStream(from: components)
-    let getter = RxGetterSource<Base.State, Changes<Output>>.init(from: pipe)
+    let (stream, initialValue) = makeStream(from: components)
+    let getter = RxGetterSource<Base.State, Changes<Output>>.init(from: stream, initialValue: initialValue)
     
     return getter
   }
