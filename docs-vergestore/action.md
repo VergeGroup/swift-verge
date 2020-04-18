@@ -1,5 +1,12 @@
 # 💥 Action - Grouping mutation with async operations
 
+
+
+{% hint style="danger" %}
+Action might be deprecated.  
+We are under the consideration.
+{% endhint %}
+
 ## What Action is
 
 Action appears similar to Mutation. But actually it's not.
