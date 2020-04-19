@@ -128,12 +128,9 @@ final class MyStore: StoreBase<State, Activity> {
   }
   
   func delayedIncrement() {
-    dispatch { context in
-      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-        context.redirect { $0.increment() }
-        
-        context.send(.happen)
-      }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      self.increment()
+      self.send(.happen)
     }
   }
   
