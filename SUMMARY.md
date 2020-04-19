@@ -5,7 +5,7 @@
 * [Gallery](gallery.md)
 * [About VergeClassic](about-vergeclassic.md)
 * [Changelog](changelog.md)
-* [Migrate from VergeClassic](migrate-from-vergeclassic.md)
+* [🆙 Migrate from VergeClassic](migrate-from-vergeclassic.md)
 
 ## 📦 Verge Store <a id="docs-vergestore"></a>
 
