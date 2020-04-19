@@ -51,8 +51,15 @@ import Foundation
  */
 public protocol StoreWrapperType: DispatcherType {
   
-  associatedtype WrappedStore
+  associatedtype State: StateType = WrappedStore.State
+  associatedtype Activity = WrappedStore.Activity
+    
+  associatedtype Scope
   var store: WrappedStore { get }
+}
+
+extension StoreWrapperType {
+  public typealias DefaultStore = Store<State, Activity>
 }
 
 extension StoreWrapperType {
@@ -85,3 +92,25 @@ extension StoreWrapperType {
   
 }
 
+#if canImport(Combine)
+
+import Combine
+
+@available(iOS 13, macOS 10.15, *)
+extension StoreWrapperType where State == WrappedStore.State, Activity == WrappedStore.Activity {
+  
+  public var statePublisher: AnyPublisher<State, Never> {
+    store.asStore().statePublisher
+  }
+  
+  public var changesPublisher: AnyPublisher<State, Never> {
+    store.asStore().statePublisher
+  }
+  
+  public var activityPublisher: EventEmitter<Activity>.Publisher {
+    store.asStore().activityPublisher
+  }
+  
+}
+
+#endif

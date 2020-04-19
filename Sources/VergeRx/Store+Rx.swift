@@ -28,6 +28,14 @@ extension Reactive where Base : StoreType {
   
 }
 
+extension StoreWrapperType {
+  
+  public var rx: Reactive<Self> {
+    return .init(self)
+  }
+  
+}
+
 extension Reactive where Base : StoreWrapperType {
   
   public var changesObservable: Observable<Changes<Base.WrappedStore.State>> {

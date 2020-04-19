@@ -24,7 +24,7 @@ import Foundation
 public protocol DispatcherType {
     
   associatedtype WrappedStore: StoreType
-  associatedtype Scope
+  associatedtype Scope = WrappedStore.State
     
   var store: WrappedStore { get }
   var scope: WritableKeyPath<WrappedStore.State, Scope> { get }

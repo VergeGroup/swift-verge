@@ -43,7 +43,7 @@ public struct ActivitySusbscription: CancellableType {
 
 public protocol StoreType {
   associatedtype State: StateType
-  associatedtype Activity
+  associatedtype Activity = Never
   
   func asStore() -> Store<State, Activity>
   
