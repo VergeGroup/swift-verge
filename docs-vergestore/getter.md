@@ -41,7 +41,10 @@ let store = StoreBase<State, Never>(initialState: .init(), logger: nil)
 ### Create a GetterSource / Getter
 
 ```swift
-let getterSource: GetterSource<State, Int> = store.getterBuilder().map(\.count)
+let getterSource: GetterSource<State, Int> = store
+  .getterBuilder()
+  .map(\.count)
+  .build()
 ```
 
 **GetterSource** has the type of State to indicates the output object comes from.  

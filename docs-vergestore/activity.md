@@ -54,9 +54,7 @@ final class Store: StoreBase<State, Activity>, DispatcherType {
   }
   
   func sendMessage() {
-    dispatch { context in
-      context.send(.didSendMessage)
-    }
+    send(.didSendMessage)
   }
 }
 ```
@@ -65,16 +63,6 @@ final class Store: StoreBase<State, Activity>, DispatcherType {
 In this sample, Store has DispatcherType.  
 If you create the application not so much complicated, you don't need separate Store and Dispatcher.
 {% endhint %}
-
-This is the point, this is only way to send Activity. Action only can do this.
-
-```swift
-func sendMessage() {
-  dispatch { context in
-    context.send(.didSendMessage)
-  }
-}
-```
 
 ```swift
 let store = Store()
