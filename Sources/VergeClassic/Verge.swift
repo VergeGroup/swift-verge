@@ -183,8 +183,20 @@ extension VergeType {
     return returnValue
 
   }
+  
+  public func send(
+    _ activity: Activity,
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+  ) {
+    
+    self.activity.makeEmitter().accept(activity)
+    logger.didEmit(activity: activity, file: file, function: function, line: line, on: self)
+  }
    
-  fileprivate func emit(
+  @available(*, deprecated, renamed: "send")
+  public func emit(
     _ activity: Activity,
     file: StaticString = #file,
     function: StaticString = #function,
@@ -262,7 +274,17 @@ public final class DispatchingContext<Verge : VergeType> {
     try source.dispatch(name, description, file, function, line, action)
     
   }
+  
+  public func send(
+    _ activity: Verge.Activity,
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line
+  ) {
+    source.emit(activity, file: file, function: function, line: line)
+  }
    
+  @available(*, deprecated, renamed: "send")
   public func emit(
     _ activity: Verge.Activity,
     file: StaticString = #file,
