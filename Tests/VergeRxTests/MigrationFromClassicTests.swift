@@ -56,7 +56,7 @@ enum MigrationExample {
         
       }
       
-      public struct State: StateType {
+      public struct State {
         
         var state1: String = ""
         var state2: String = ""

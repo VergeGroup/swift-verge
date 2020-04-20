@@ -42,7 +42,7 @@ public struct ActivitySusbscription: CancellableType {
 }
 
 public protocol StoreType {
-  associatedtype State: StateType
+  associatedtype State
   associatedtype Activity = Never
   
   func asStore() -> Store<State, Activity>
@@ -50,10 +50,18 @@ public protocol StoreType {
   var state: State { get }
 }
 
+extension StoreType {
+  
+  public func makeSlice<NewState>(_ slice: @escaping (Changes<State>) -> NewState) -> StoreSlice<NewState> {
+    .init(slice: slice, from: self)
+  }
+  
+}
+
 public typealias NoActivityStoreBase<State: StateType> = Store<State, Never>
 
 @available(*, deprecated, renamed: "Store")
-public typealias StoreBase<State: StateType, Activity> = Store<State, Activity>
+public typealias StoreBase<State, Activity> = Store<State, Activity>
 
 /// A base object to create store.
 /// You may create subclass of VergeDefaultStore
@@ -64,7 +72,7 @@ public typealias StoreBase<State: StateType, Activity> = Store<State, Activity>
 ///   }
 /// }
 /// ```
-open class Store<State: StateType, Activity>: CustomReflectable, StoreType, DispatcherType {
+open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType {
   
   public var scope: WritableKeyPath<State, State> = \State.self
     
@@ -164,9 +172,14 @@ open class Store<State: StateType, Activity>: CustomReflectable, StoreType, Disp
   ///
   /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
   @discardableResult
-  public func subscribeStateChanges(_ receive: @escaping (Changes<State>) -> Void) -> ChangesSubscription {
-    
-    receive(_backingStorage.value)
+  public func subscribeStateChanges(
+    dropsFirst: Bool = false,
+    _ receive: @escaping (Changes<State>) -> Void
+  ) -> ChangesSubscription {
+
+    if !dropsFirst {
+      receive(_backingStorage.value)
+    }
     
     let token = _backingStorage.addDidUpdate { newValue in
       receive(newValue)

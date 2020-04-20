@@ -29,28 +29,12 @@ extension Reactive where Base : StoreType {
 }
 
 extension StoreWrapperType {
-  
+
   @_disfavoredOverload
   public var rx: Reactive<Self> {
     return .init(self)
   }
-  
-}
 
-extension Reactive where Base : StoreWrapperType {
-  
-  public var changesObservable: Observable<Changes<Base.WrappedStore.State>> {
-    base.store.asStore().rx.changesObservable
-  }
-  
-  public var stateObservable: Observable<Base.WrappedStore.State> {
-    base.store.asStore().rx.stateObservable
-  }
-  
-  public var activitySignal: Signal<Base.WrappedStore.Activity> {
-    base.store.asStore().rx.activitySignal
-  }
-  
 }
 
 extension ObservableType {

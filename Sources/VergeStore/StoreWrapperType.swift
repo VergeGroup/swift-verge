@@ -49,9 +49,9 @@ import Foundation
  }
  ``` 
  */
-public protocol StoreWrapperType: DispatcherType {
+public protocol StoreWrapperType: StoreType, DispatcherType {
   
-  associatedtype State: StateType = WrappedStore.State
+  associatedtype State = WrappedStore.State
   associatedtype Activity = WrappedStore.Activity
     
   associatedtype Scope
@@ -60,6 +60,12 @@ public protocol StoreWrapperType: DispatcherType {
 
 extension StoreWrapperType {
   public typealias DefaultStore = Store<State, Activity>
+}
+
+extension StoreWrapperType where State == WrappedStore.State, Activity == WrappedStore.Activity {
+  public func asStore() -> Store<State, Activity> {
+    store.asStore()
+  }
 }
 
 extension StoreWrapperType {

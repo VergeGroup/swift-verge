@@ -72,7 +72,7 @@ extension DispatcherType {
     return try store.asStore()._receive(
       metadata: meta,
       mutation: { state in
-        try state.update(target: scope, update: mutation)
+        try mutation(&state[keyPath: scope])
     })
   }
       
@@ -97,7 +97,7 @@ extension DispatcherType {
     return try store.asStore()._receive(
       metadata: meta,
       mutation: { state in
-        try state.update(target: scope, update: mutation)
+        try mutation(&state[keyPath: scope])
     }
     )
   }

@@ -19,7 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherType {
+open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
   
   public let metadata: DispatcherMetadata
     
@@ -59,7 +59,7 @@ open class ScopedDispatcherBase<State: StateType, Activity, Scope>: DispatcherTy
     
 }
 
-open class DispatcherBase<State: StateType, Activity>: ScopedDispatcherBase<State, Activity, State> {
+open class DispatcherBase<State, Activity>: ScopedDispatcherBase<State, Activity, State> {
       
   @available(*, deprecated, renamed: "init(targetStore:)")
   public convenience init(

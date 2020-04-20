@@ -174,6 +174,8 @@
 		4BF470CD23CC36E8001A1D5D /* FragmentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CC23CC36E8001A1D5D /* FragmentState.swift */; };
 		4BF470D023CC394D001A1D5D /* CounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CE23CC3949001A1D5D /* CounterTests.swift */; };
 		4BF470D223CC3A43001A1D5D /* UpdatedMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470D123CC3A43001A1D5D /* UpdatedMarker.swift */; };
+		4BF76681244E1B5300A5EA10 /* StoreSlice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF76680244E1B5300A5EA10 /* StoreSlice.swift */; };
+		4BF76684244E242A00A5EA10 /* StoreSliceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF76682244E242500A5EA10 /* StoreSliceTests.swift */; };
 		4BFA22A023A63B56008D7BCB /* VergeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BFA229E23A63B56008D7BCB /* VergeCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4BFA22A323A63B56008D7BCB /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4BFA22A423A63B56008D7BCB /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -602,6 +604,8 @@
 		4BF470CC23CC36E8001A1D5D /* FragmentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FragmentState.swift; sourceTree = "<group>"; };
 		4BF470CE23CC3949001A1D5D /* CounterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterTests.swift; sourceTree = "<group>"; };
 		4BF470D123CC3A43001A1D5D /* UpdatedMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatedMarker.swift; sourceTree = "<group>"; };
+		4BF76680244E1B5300A5EA10 /* StoreSlice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSlice.swift; sourceTree = "<group>"; };
+		4BF76682244E242500A5EA10 /* StoreSliceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSliceTests.swift; sourceTree = "<group>"; };
 		4BFA229C23A63B55008D7BCB /* VergeCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BFA229E23A63B56008D7BCB /* VergeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeCore.h; sourceTree = "<group>"; };
 		4BFA229F23A63B56008D7BCB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -871,6 +875,7 @@
 			children = (
 				4B86D825244A2A1D008D3040 /* Sample.swift */,
 				4B68394623705ACD002FFC5A /* VergeStoreTests.swift */,
+				4BF76682244E242500A5EA10 /* StoreSliceTests.swift */,
 				4B68394823705ACE002FFC5A /* Info.plist */,
 				4B4011C023C7831900C582BC /* GetterTests.swift */,
 				4B86D827244AFE1D008D3040 /* MemoizeGetterTests.swift */,
@@ -1019,6 +1024,7 @@
 			isa = PBXGroup;
 			children = (
 				4B427418236F269C00C302C8 /* Store.swift */,
+				4BF76680244E1B5300A5EA10 /* StoreSlice.swift */,
 				4B2050F823D5C85B000A2779 /* MutationMetadata.swift */,
 				4B2050FA23D5C878000A2779 /* ActionMetadata.swift */,
 				4B2050FC23D5D24C000A2779 /* DispatcherMetadata.swift */,
@@ -1931,6 +1937,7 @@
 				4B1F19C4243A88A000CED46B /* ComputedTests.swift in Sources */,
 				4B71CEEE23B14394004520CE /* ActivityTests.swift in Sources */,
 				4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */,
+				4BF76684244E242A00A5EA10 /* StoreSliceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1959,6 +1966,7 @@
 				4B6B77A0243F9DB200E0C0EA /* GetterComponents.swift in Sources */,
 				4B2050F923D5C85B000A2779 /* MutationMetadata.swift in Sources */,
 				4B6B77A9243F9E5500E0C0EA /* Comparer.swift in Sources */,
+				4BF76681244E1B5300A5EA10 /* StoreSlice.swift in Sources */,
 				4B6B77A5243F9DB200E0C0EA /* GetterBuilderMethodChain.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
