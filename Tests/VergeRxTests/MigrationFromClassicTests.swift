@@ -178,4 +178,46 @@ enum MigrationExample {
     
   }
   
+  enum Extra_2 {
+    
+    public final class ViewModel : NSObject, StoreWrapperType {
+      
+      public enum Activity {
+        
+      }
+      
+      public struct State: StateType {
+        
+        var state1: String = ""
+        var state2: String = ""
+        var state3: String = ""
+      }
+      
+      public let store: DefaultStore
+      
+      public override init() {
+        self.store = .init(initialState: .init(), logger: nil)
+        super.init()
+      }
+      
+      func setSomeData() {
+        
+        commit { s in
+          s.state1 = "hello"
+        }
+      }
+    }
+    
+    
+    static func sample() {
+      
+      let viewModel = ViewModel()
+      
+      viewModel.rx.changesObservable
+      
+    }
+    
+    
+  }
+  
 }

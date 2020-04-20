@@ -30,6 +30,7 @@ extension Reactive where Base : StoreType {
 
 extension StoreWrapperType {
   
+  @_disfavoredOverload
   public var rx: Reactive<Self> {
     return .init(self)
   }
