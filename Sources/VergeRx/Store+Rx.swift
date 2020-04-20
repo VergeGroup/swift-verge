@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 fileprivate var storage_subject: Void?
-fileprivate var storage_diposeBag: Void?
+fileprivate var storage_lock: Void?
 
 extension Reactive where Base : StoreType {
   
@@ -135,7 +135,10 @@ extension EventEmitter {
       let associated = PublishSubject<Event>()
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
       
+      let lock = NSRecursiveLock()
+      
       add { (event) in
+        lock.lock(); defer { lock.unlock() }
         associated.on(.next(event))
       }
       
@@ -150,8 +153,10 @@ extension EventEmitter {
 }
 
 extension ReadonlyStorage {
-
+  
   private var subject: BehaviorSubject<Value> {
+    
+    lock(); defer { unlock() }
 
     if let associated = objc_getAssociatedObject(self, &storage_subject) as? BehaviorSubject<Value> {
 
@@ -162,28 +167,17 @@ extension ReadonlyStorage {
       let associated = BehaviorSubject<Value>.init(value: value)
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
       
+      let lock = NSRecursiveLock()
+      
       addDeinit {
+        lock.lock(); defer { lock.unlock() }
         associated.onCompleted()
       }
 
       addDidUpdate(subscriber: { (value) in
+        lock.lock(); defer { lock.unlock() }
         associated.onNext(value)
       })
-
-      return associated
-    }
-  }
-
-  private var disposeBag: DisposeBag {
-
-    if let associated = objc_getAssociatedObject(self, &storage_diposeBag) as? DisposeBag {
-
-      return associated
-
-    } else {
-
-      let associated = DisposeBag()
-      objc_setAssociatedObject(self, &storage_diposeBag, associated, .OBJC_ASSOCIATION_RETAIN)
 
       return associated
     }
