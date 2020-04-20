@@ -32,7 +32,7 @@ class ReproduceDeadlockTests: XCTestCase {
     
     wait(for: [], timeout: 1)
     
-    store.rx.stateObservable.bind { state in
+    _ = store.rx.stateObservable.bind { state in
       if state.count == 1 {
         let group = DispatchGroup()
         group.enter()

@@ -34,7 +34,7 @@ class MultithreadingTests: XCTestCase {
       self.store.rx.nonNullEntityGetter(from: $0)
     }
     .forEach { getter in
-      getter
+      _ = getter
         .do(onNext: { e in
 //          print(Thread.current, e)
         })

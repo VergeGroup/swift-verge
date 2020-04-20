@@ -15,20 +15,20 @@ enum FunctionBuilderTests {
   
   static func test() {
     
-    SubscriptionGroup {
+    _ = SubscriptionGroup {
       
       Single.just(1).subscribe()
       
     }
     
-    SubscriptionGroup {
+    _ = SubscriptionGroup {
       
       Single.just(1).subscribe()
       Single.just(1).subscribe()
             
     }
     
-    SubscriptionGroup {
+    _ = SubscriptionGroup {
       [
       Single.just(1).subscribe(),
       Single.just(1).subscribe()
