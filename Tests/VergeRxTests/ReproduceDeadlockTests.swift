@@ -30,6 +30,8 @@ class ReproduceDeadlockTests: XCTestCase {
     
     let store = StoreWrapper()
     
+    wait(for: [], timeout: 1)
+    
     store.rx.stateObservable.bind { state in
       if state.count == 1 {
         let group = DispatchGroup()
@@ -45,6 +47,7 @@ class ReproduceDeadlockTests: XCTestCase {
     store.commit {
       $0.count += 1
     }
+    
         
   }
 }
