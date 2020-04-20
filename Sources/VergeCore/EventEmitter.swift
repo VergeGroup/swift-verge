@@ -114,7 +114,7 @@ public final class EventEmitter<Event>: EventEmitterType {
   
   private var __publisher: Any?
   
-  private let lock = VergeConcurrency.UnfairLock()
+  private let lock = NSRecursiveLock()
   
   private var subscribers: [EventEmitterCancellable : (Event) -> Void] = [:]
   

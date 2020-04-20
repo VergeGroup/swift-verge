@@ -184,7 +184,7 @@ class ORMGetterTests: XCTestCase {
     
     XCTContext.runActivity(named: "updateName") { _ in
       
-      storage.commit { state in
+      _ = storage.commit { state in
         state.db.performBatchUpdates { (context) in
           context.author.updateIfExists(id: .init("muukii")) { (author) in
             author.name = "Hiroshi"
@@ -200,7 +200,7 @@ class ORMGetterTests: XCTestCase {
     
     XCTContext.runActivity(named: "updateName, but not changed") { _ in
       
-      storage.commit { state in
+      _ = storage.commit { state in
         state.db.performBatchUpdates { (context) in
           context.author.updateIfExists(id: .init("muukii")) { (author) in
             author.name = "Hiroshi"
@@ -228,7 +228,7 @@ class ORMGetterTests: XCTestCase {
     
     XCTContext.runActivity(named: "Adding book, getter would not emit changes") { _ -> Void in
       
-      storage.commit { state in
+      _ = storage.commit { state in
         state.db.performBatchUpdates { (context) in
           context.book.insert(Book(rawID: "Verge", authorID: .init("muukii")))
         }
@@ -240,7 +240,7 @@ class ORMGetterTests: XCTestCase {
     
     XCTContext.runActivity(named: "Add other author") { _ in
       
-      storage.commit { state in
+      _ = storage.commit { state in
         state.db.performBatchUpdates { (context) in
           context.author.insert(.init(rawID: "John", name: "John"))
         }

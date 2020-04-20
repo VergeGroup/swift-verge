@@ -46,8 +46,7 @@
 		4B475BC0239AB983008A03E1 /* DatabaseBatchUpdatesContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BBE239AB97F008A03E1 /* DatabaseBatchUpdatesContext.swift */; };
 		4B475BC8239ADE1C008A03E1 /* VergeORMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */; };
 		4B475BD0239ADEB4008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
-		4B4AB16C244DEEE3005E7283 /* ReproduceDeadlockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */; };
-		4B4AB16E244DF35E005E7283 /* SynchronizationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16D244DF35E005E7283 /* SynchronizationTracker.swift */; };
+		4B4AB16B244DECC8005E7283 /* ReproduceDeadlockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
@@ -480,7 +479,6 @@
 		4B475BC9239ADE1C008A03E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B495D092332B5170098F7B4 /* NetworkImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
 		4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReproduceDeadlockTests.swift; sourceTree = "<group>"; };
-		4B4AB16D244DF35E005E7283 /* SynchronizationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizationTracker.swift; sourceTree = "<group>"; };
 		4B542434242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderMethodChain.swift; sourceTree = "<group>"; };
 		4B54516F23CCC7E700770E61 /* GetterComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterComponents.swift; sourceTree = "<group>"; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
@@ -798,7 +796,6 @@
 		4B1743A823C767670074C457 /* VergeRxTests */ = {
 			isa = PBXGroup;
 			children = (
-				4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */,
 				4B4011BC23C779D400C582BC /* State.swift */,
 				4BB97D2423AFD0A9004EECDB /* ORMGetterTests.swift */,
 				4B232761239E71530043D3F9 /* MemoizeGetterTests.swift */,
@@ -880,6 +877,11 @@
 				4B71CEED23B14394004520CE /* ActivityTests.swift */,
 				4BCE8C2123CF736300FD30D9 /* MostSimpleSampleTests.swift */,
 				4B1F19C3243A88A000CED46B /* ComputedTests.swift */,
+<<<<<<< Updated upstream
+=======
+				4BAFD7E924488B4800C7D38D /* WrapperTests.swift */,
+				4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */,
+>>>>>>> Stashed changes
 			);
 			path = VergeStoreTests;
 			sourceTree = "<group>";
@@ -1178,7 +1180,6 @@
 				4BF470CC23CC36E8001A1D5D /* FragmentState.swift */,
 				4BF470D123CC3A43001A1D5D /* UpdatedMarker.swift */,
 				4BD79C0324477F430073A48B /* VergeConcurrency.swift */,
-				4B4AB16D244DF35E005E7283 /* SynchronizationTracker.swift */,
 			);
 			path = VergeCore;
 			sourceTree = "<group>";
@@ -1520,7 +1521,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = muukii;
 				TargetAttributes = {
 					4B17438E23C766D70074C457 = {
@@ -1867,7 +1868,6 @@
 				4B8035FB244CB96B0028BD32 /* MigrationFromClassicTests.swift in Sources */,
 				4BF3C2EE24209620006B1726 /* MultithreadingTests.swift in Sources */,
 				4B4011BB23C779BE00C582BC /* ORMGetterTests.swift in Sources */,
-				4B4AB16C244DEEE3005E7283 /* ReproduceDeadlockTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1923,6 +1923,7 @@
 			files = (
 				4BCE8C2223CF736300FD30D9 /* MostSimpleSampleTests.swift in Sources */,
 				4B6B77AC243FA6B300E0C0EA /* GetterSyntaxTests.swift in Sources */,
+				4B4AB16B244DECC8005E7283 /* ReproduceDeadlockTests.swift in Sources */,
 				4B6B77AD243FA6B300E0C0EA /* GetterTests.swift in Sources */,
 				4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */,
 				4B86D828244AFE1D008D3040 /* MemoizeGetterTests.swift in Sources */,
@@ -2048,7 +2049,6 @@
 				4B73F08924041811006910E6 /* Log.swift in Sources */,
 				4BA3E1A523C359F40095629B /* Signpost.swift in Sources */,
 				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
-				4B4AB16E244DF35E005E7283 /* SynchronizationTracker.swift in Sources */,
 				4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */,
 				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,
 			);
@@ -2244,9 +2244,8 @@
 		4B17439823C766D80074C457 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
@@ -2281,9 +2280,8 @@
 		4B17439923C766D80074C457 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
@@ -2360,7 +2358,6 @@
 		4B475BBB239AB954008A03E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -2396,7 +2393,6 @@
 		4B475BBC239AB954008A03E1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -2570,7 +2566,6 @@
 		4B67672E23D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -2607,9 +2602,8 @@
 		4B67672F23D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
@@ -2682,7 +2676,6 @@
 		4B67673123D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -3472,7 +3465,6 @@
 		4BFA22A523A63B56008D7BCB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -3509,7 +3501,6 @@
 		4BFA22A623A63B56008D7BCB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;

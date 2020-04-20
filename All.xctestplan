@@ -30,6 +30,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "ReproduceDeadlockTests\/testReproduceDeadlock()"
+      ],
       "target" : {
         "containerPath" : "container:Verge.xcodeproj",
         "identifier" : "4B1743A623C767670074C457",

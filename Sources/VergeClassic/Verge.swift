@@ -281,7 +281,7 @@ public final class DispatchingContext<Verge : VergeType> {
     function: StaticString = #function,
     line: UInt = #line
   ) {
-    source.emit(activity, file: file, function: function, line: line)
+    source.send(activity, file: file, function: function, line: line)
   }
    
   @available(*, deprecated, renamed: "send")
@@ -291,7 +291,7 @@ public final class DispatchingContext<Verge : VergeType> {
     function: StaticString = #function,
     line: UInt = #line
     ) {
-    source.emit(activity, file: file, function: function, line: line)
+    source.send(activity, file: file, function: function, line: line)
   }
 
 }

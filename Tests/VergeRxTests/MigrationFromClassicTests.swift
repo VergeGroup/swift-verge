@@ -213,7 +213,7 @@ enum MigrationExample {
       
       let viewModel = ViewModel()
       
-      viewModel.rx.changesObservable
+      _ = viewModel.rx.changesObservable
       
     }
     
