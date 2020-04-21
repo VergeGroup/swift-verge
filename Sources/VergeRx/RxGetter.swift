@@ -144,7 +144,7 @@ extension Reactive where Base : StoreType {
         closure(value.current)
       })
       .filter({ value in
-        let hasChanges = value.hasChanges(compare: components.preFilter.equals)
+        let hasChanges = !components.preFilter(value)
         if !hasChanges {
           VergeSignpostTransaction("RxGetter.hitPreFilter").end()
         }

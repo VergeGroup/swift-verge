@@ -158,7 +158,7 @@ extension Store {
         closure(value.current)
       })
       .filter({ value in
-        value.hasChanges(compare: components.preFilter.equals)
+        !components.preFilter(value)
       })
       .handleEvents(receiveOutput: { [closure = components.onTransformWillReceive] value in
         closure(value.current)

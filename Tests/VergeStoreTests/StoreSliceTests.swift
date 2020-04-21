@@ -38,10 +38,10 @@ final class StoreSliceTests: XCTestCase {
   let wrapper = StoreWrapper()
   
   func testSlice() {
-    
-    typealias SlicedState = (Int)
-    
-    let slice = StoreSlice<Int>.init(slice: { $0.count }, from: wrapper)
+        
+    let slice = wrapper.slice { (changes) in
+      changes.count
+    }
     
     XCTAssertEqual(slice.state, 0)
     XCTAssertEqual(slice.changes.hasChanges(\.self), true)

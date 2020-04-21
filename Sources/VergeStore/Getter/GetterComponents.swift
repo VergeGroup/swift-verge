@@ -14,7 +14,8 @@ public struct GetterComponents<Input, Output> {
   public let onTransformWillReceive: ((Input) -> Void)
   public let onPostFilterWillEmit: ((Output) -> Void)
   
-  public let preFilter: Comparer<Input>
+  /// no changes, return true
+  public let preFilter: (Changes<Input>) -> Bool
   public let transform: (Input) -> Output
   public let postFilter: Comparer<Output>
     
@@ -31,7 +32,9 @@ public struct GetterComponents<Input, Output> {
     self.onTransformWillReceive = onTransformWillReceive
     self.onPostFilterWillEmit = onPostFilterWillEmit
     
-    self.preFilter = preFilter
+    self.preFilter = { changes in
+      !changes.hasChanges(compare: preFilter.equals)
+    }
     self.transform = transform
     self.postFilter = postFilter
     

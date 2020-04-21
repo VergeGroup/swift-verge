@@ -41,7 +41,7 @@ public struct ActivitySusbscription: CancellableType {
   }
 }
 
-public protocol StoreType {
+public protocol StoreType: AnyObject {
   associatedtype State
   associatedtype Activity = Never
   
@@ -52,8 +52,25 @@ public protocol StoreType {
 
 extension StoreType {
   
-  public func makeSlice<NewState>(_ slice: @escaping (Changes<State>) -> NewState) -> StoreSlice<NewState> {
-    .init(slice: slice, from: self)
+  public func slice<NewState>(
+    get: @escaping (Changes<State>) -> NewState
+  ) -> StateSlice<NewState> {
+    return .init(
+      get: .init(makeInitial: get, update: { .updated(get($0)) }),
+      set: { _, _ in },
+      source: self
+    )
+  }
+  
+  public func binding<NewState>(
+    get: @escaping (Changes<State>) -> NewState,
+    set: @escaping (inout State, NewState) -> Void
+  ) -> BindingStateSlice<NewState> {
+    return .init(
+      get: .init(makeInitial: get, update: { .updated(get($0)) }),
+      set: set,
+      source: self
+    )
   }
   
 }
