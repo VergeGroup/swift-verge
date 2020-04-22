@@ -50,31 +50,6 @@ public protocol StoreType: AnyObject {
   var state: State { get }
 }
 
-extension StoreType {
-  
-  public func slice<NewState>(
-    get: @escaping (Changes<State>) -> NewState
-  ) -> StateSlice<NewState> {
-    return .init(
-      get: .init(makeInitial: get, update: { .updated(get($0)) }),
-      set: { _, _ in },
-      source: self
-    )
-  }
-  
-  public func binding<NewState>(
-    get: @escaping (Changes<State>) -> NewState,
-    set: @escaping (inout State, NewState) -> Void
-  ) -> BindingStateSlice<NewState> {
-    return .init(
-      get: .init(makeInitial: get, update: { .updated(get($0)) }),
-      set: set,
-      source: self
-    )
-  }
-  
-}
-
 public typealias NoActivityStoreBase<State: StateType> = Store<State, Never>
 
 @available(*, deprecated, renamed: "Store")
@@ -113,12 +88,19 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   public var changes: Changes<State> {
     _backingStorage.value
   }
+  
+  public var __backingStorage: UnsafeMutableRawPointer {    
+    Unmanaged.passUnretained(_backingStorage).toOpaque()
+  }
+  
+  public var __activityEmitter: UnsafeMutableRawPointer {
+    Unmanaged.passUnretained(_activityEmitter).toOpaque()
+  }
 
   /// A backing storage that manages current state.
   /// You shouldn't access this directly unless special case.
-  public let _backingStorage: Storage<Changes<State>>
-  public let _eventEmitter: EventEmitter<Activity> = .init()  
-  public let _getterStorage: Storage<[AnyKeyPath : Any]> = .init([:])
+  private let _backingStorage: StateStorage<Changes<State>>
+  private let _activityEmitter: EventEmitter<Activity> = .init()
   
   public private(set) var logger: StoreLogger?
     
@@ -164,7 +146,11 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   @inline(__always)
   func _send(activity: Activity) {
     
-    _eventEmitter.accept(activity)
+    _activityEmitter.accept(activity)
+  }
+  
+  func setNotificationFilter(_ filter: @escaping (Changes<State>) -> Bool) {
+    self._backingStorage.setNotificationFilter(filter)
   }
      
   public var customMirror: Mirror {
@@ -180,11 +166,6 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
     self
   }
   
-  @available(*, deprecated, renamed: "asStore")
-  public func asStoreBase() -> Store<State, Activity> {
-    self
-  }
-    
   /// Subscribe the state changes
   ///
   /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
@@ -210,7 +191,7 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
   @discardableResult
   public func subscribeActivity(_ receive: @escaping (Activity) -> Void) -> ActivitySusbscription  {
-    let token = _eventEmitter.add(receive)
+    let token = _activityEmitter.add(receive)
     return .init(token: token)
   }
    
@@ -219,7 +200,7 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   }
   
   public func removeActivitySubscription(_ subscription: ActivitySusbscription) {
-    _eventEmitter.remove(subscription.token)
+    _activityEmitter.remove(subscription.token)
   }
           
 }
@@ -251,7 +232,7 @@ extension Store {
   }
   
   public var activityPublisher: EventEmitter<Activity>.Publisher {
-    _eventEmitter.publisher
+    _activityEmitter.publisher
   }
    
 }

@@ -115,6 +115,8 @@ open class ReadonlyStorage<Value>: CustomReflectable {
 
 open class Storage<Value>: ReadonlyStorage<Value> {
   
+  private var notificationFilter: (Value) -> Bool = { _ in true }
+  
   @discardableResult
   @inline(__always)
   public final func update<Result>(_ update: (inout Value) throws -> Result) rethrows -> Result {
@@ -127,7 +129,9 @@ open class Storage<Value>: ReadonlyStorage<Value> {
       lock()
       notifyValue = nonatomicValue
       unlock()
-      notifyWillUpdate(value: notifyValue)
+      if notificationFilter(notifyValue) {
+        notifyWillUpdate(value: notifyValue)
+      }
     }
     
     lock()
@@ -135,14 +139,26 @@ open class Storage<Value>: ReadonlyStorage<Value> {
       let r = try update(&nonatomicValue)
       let notifyValue = nonatomicValue
       unlock()
-      notifyDidUpdate(value: notifyValue)
+      if notificationFilter(notifyValue) {
+        notifyDidUpdate(value: notifyValue)
+      }
       return r
     } catch {
       unlock()
       throw error
     }
   }
+    
+  /// Filter to supress update notifications
+  /// - Parameter filter: Return true, notification will emit.
+  public final func setNotificationFilter(_ filter: @escaping (Value) -> Bool) {
+    notificationFilter = filter
+  }
      
+}
+
+public final class StateStorage<Value>: Storage<Value> {
+
 }
 
 extension ReadonlyStorage {

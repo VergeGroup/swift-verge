@@ -22,6 +22,10 @@
 import Foundation
 
 public class StateSlice<State> {
+  
+  public static func constant(_ value: State) -> StateSlice<State> {
+    .init(constant: value)
+  }
         
   /// A current state.
   public var state: State {
@@ -36,17 +40,25 @@ public class StateSlice<State> {
   fileprivate let innerStore: Store<State, Never>
       
   fileprivate let _set: (State) -> Void
-    
-  public init<Source: StoreType>(
-    get: FilterMap<Changes<Source.State>, State>,
-    set: @escaping (inout Source.State, State) -> Void,
-    source: Source
+  
+  private var postFilter: Comparer<State>?
+  
+  private init(constant: State) {
+    self.innerStore = .init(initialState: constant, logger: nil)
+    self._set = { _ in }
+  }
+      
+  fileprivate init<UpstreamState>(
+    get: FilterMap<UpstreamState, State>,
+    set: @escaping (State) -> Void,
+    initialUpstreamState: UpstreamState,
+    subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> ChangesSubscription
   ) {
     
-    let store = Store<State, Never>.init(initialState: get.makeInitial(source.asStore().changes), logger: nil)
+    let store = Store<State, Never>.init(initialState: get.makeInitial(initialUpstreamState), logger: nil)
     
-    source.asStore().subscribeStateChanges(dropsFirst: true) { [weak store] (changes) in
-      let update = get.map(changes)
+    _ = subscribeUpstreamState { [weak store] value in
+      let update = get.makeResult(value)
       switch update {
       case .noChanages:
         break
@@ -57,37 +69,117 @@ public class StateSlice<State> {
       }
     }
     
+    self._set = set
     self.innerStore = store
-    self._set = { [weak source] state in
-      source?.asStore().commit {
-        set(&$0, state)
-      }
+  }
+    
+  ///
+  /// - Parameter postFilter: Returns the objects are equals
+  /// - Returns:
+  public func setPostFilter(_ postFilter: Comparer<State>) -> Self {
+    self.postFilter = postFilter
+    innerStore.setNotificationFilter { changes in
+      changes.hasChanges(compare: postFilter.equals)
     }
+
+    return self
   }
   
   /// Subscribe the state changes
   ///
   /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
   @discardableResult
-  public func subscribeStateChanges(_ receive: @escaping (Changes<State>) -> Void) -> ChangesSubscription {
-    
-    innerStore.subscribeStateChanges { (changes) in
+  public func subscribeStateChanges(dropsFirst: Bool = false, _ receive: @escaping (Changes<State>) -> Void) -> ChangesSubscription {
+    innerStore.subscribeStateChanges(dropsFirst: dropsFirst) { [postFilter] (changes) in
+      guard let postFilter = postFilter else {
+        receive(changes)
+        return
+      }
+      guard !changes.hasChanges(compare: postFilter.equals) else {
+        return
+      }
       receive(changes)
     }
   }
   
+  public func chain<NewState>(_ map: FilterMap<Changes<State>, NewState>) -> StateSlice<NewState> {
+    
+    return .init(
+      get: map,
+      set: { _ in
+        // retains upstream
+        withExtendedLifetime(self) {}
+    },
+      initialUpstreamState: changes,
+      subscribeUpstreamState: { callback in
+        self.innerStore.subscribeStateChanges(dropsFirst: true, callback)
+    })
+    
+  }
+  
 }
+
+#if canImport(Combine)
+
+import Combine
+
+@available(iOS 13, macOS 10.15, *)
+extension StateSlice: ObservableObject {
+  public var objectWillChange: ObservableObjectPublisher {
+    innerStore.objectWillChange
+  }
+}
+
+#endif
 
 public final class BindingStateSlice<State>: StateSlice<State> {
   
   /// A current state.
   public override var state: State {
-    get {
-      innerStore.state
-    }
-    set {
-      _set(newValue)
-    }
+    get { innerStore.state }
+    set { _set(newValue) }
+  }
+  
+}
+
+extension StoreType {
+  
+  public func slice<NewState>(
+    _ filterMap: FilterMap<Changes<State>, NewState>
+  ) -> StateSlice<NewState> {
+    
+    return .init(
+      get: filterMap,
+      set: { _ in
+        
+    },
+      initialUpstreamState: asStore().changes,
+      subscribeUpstreamState: { callback in
+        asStore().subscribeStateChanges(dropsFirst: true, callback)
+    })
+  }
+  
+  public func binding<NewState>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    get: FilterMap<Changes<State>, NewState>,
+    set: @escaping (inout State, NewState) -> Void
+  ) -> BindingStateSlice<NewState> {
+    
+    return .init(
+      get: get,
+      set: { [weak self] state in
+        self?.asStore().commit(name, file, function, line) {
+          set(&$0, state)
+        }
+    },
+      initialUpstreamState: asStore().changes,
+      subscribeUpstreamState: { callback in
+        asStore().subscribeStateChanges(dropsFirst: true, callback)
+    })
+    
   }
   
 }

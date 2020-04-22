@@ -22,28 +22,28 @@
 import Foundation
 
 // TODO: Get a good name
-public struct FilterMap<Source, Destination> {
+// StatePipeline
+public struct FilterMap<Input, Output> {
   
   public enum Result {
-    case updated(Destination)
+    case updated(Output)
     case noChanages
   }
   
-  private let _makeIniital: (Source) -> Destination
-  private let _update: (Source) -> Result
+  private let _makeInitial: (Input) -> Output
+  private var _update: (Input) -> Result
   
   public init(
-    makeInitial: @escaping (Source) -> Destination,
-    update: @escaping (Source) -> Result
+    makeInitial: @escaping (Input) -> Output,
+    update: @escaping (Input) -> Result
   ) {
-    self._makeIniital = makeInitial
+    self._makeInitial = makeInitial
     self._update = update
   }
-  
+    
   public init(
-    preFilter: @escaping (Source) -> Bool,
-    map: @escaping (Source) -> Destination,
-    postFilter: @escaping (Destination) -> Bool
+    preFilter: @escaping (Input) -> Bool,
+    map: @escaping (Input) -> Output
   ) {
     
     self.init(
@@ -51,18 +51,92 @@ public struct FilterMap<Source, Destination> {
       update: { source in
         guard !preFilter(source) else { return .noChanages }
         let result = map(source)
-        guard !postFilter(result) else { return .noChanages }
         return .updated(result)
     })
     
   }
   
-  public func map(_ source: Source) -> Result {
+  func makeResult(_ source: Input) -> Result {
     _update(source)
   }
   
-  public func makeInitial(_ source: Source) -> Destination {
-    _makeIniital(source)
+  func makeInitial(_ source: Input) -> Output {
+    _makeInitial(source)
   }
   
+  public func combinedPreFilter(
+    _ filter: @escaping (Input) -> Bool
+  ) -> Self {
+    
+    var _self = self
+    _self._update = { [_update] source in
+      guard !filter(source) else { return .noChanages }
+      return _update(source)
+    }
+    return _self
+  }
+  
+  public func combinedPostFilter(
+    _ filter: @escaping (Output) -> Bool
+  ) -> Self {
+    
+    var _self = self
+    _self._update = { [_update] source in
+      let result = _update(source)
+      switch result {
+      case .noChanages:
+        return .noChanages
+      case .updated(let result):
+        if filter(result) {
+          return .noChanages
+        }
+        return .updated(result)
+      }
+    }
+    return _self
+  }
+  
+  public func combined<NewDistination>(
+    _ other: FilterMap<Output, NewDistination>
+  ) -> FilterMap<Input, NewDistination> {
+    
+    FilterMap<Input, NewDistination>.init(
+      makeInitial: { [_makeInitial] source in
+        other.makeInitial(_makeInitial(source))
+    },
+      update: { [_update] source in
+        switch _update(source) {
+        case .noChanages: return .noChanages
+        case .updated(let t):
+          switch other.makeResult(t) {
+          case .noChanages: return .noChanages
+          case .updated(let d):
+            return .updated(d)
+          }
+        }
+    })
+    
+  }
+  
+}
+
+extension FilterMap where Input : ChangesType {
+  public init(
+    preFilter: Comparer<Input.Value>,
+    map: @escaping (Input) -> Output
+  ) {
+    self.init(
+      preFilter: {
+        $0.hasChanges(compare: preFilter.equals)
+    },
+      map: map
+    )
+  }
+}
+
+extension FilterMap {
+  
+  public static func map(_ map: @escaping (Input) -> Output) -> Self {
+    .init(preFilter: { _ in false }, map: map)
+  }
 }

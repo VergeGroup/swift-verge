@@ -14,16 +14,24 @@ fileprivate var storage_lock: Void?
 
 extension Reactive where Base : StoreType {
   
+  private var storage: StateStorage<Changes<Base.State>> {
+    unsafeBitCast(base.asStore().__backingStorage, to: StateStorage<Changes<Base.State>>.self)
+  }
+  
+  private var activityEmitter: EventEmitter<Base.Activity> {
+    unsafeBitCast(base.asStore().__activityEmitter, to: EventEmitter<Base.Activity>.self)
+  }
+  
   public var changesObservable: Observable<Changes<Base.State>> {
-    base.asStore()._backingStorage.asObservable()
+    storage.asObservable()
   }
   
   public var stateObservable: Observable<Base.State> {
-    base.asStore()._backingStorage.asObservable().map { $0.current }
+    storage.asObservable().map { $0.current }
   }
   
   public var activitySignal: Signal<Base.Activity> {
-    base.asStore()._eventEmitter.asSignal()
+    activityEmitter.asSignal()
   }
   
 }
