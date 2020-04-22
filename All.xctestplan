@@ -2,9 +2,28 @@
   "configurations" : [
     {
       "id" : "CED3C5CF-7541-4D76-8BD7-C398F4B5517C",
-      "name" : "Configuration 1",
+      "name" : "Basic",
       "options" : {
 
+      }
+    },
+    {
+      "id" : "C8A4A8E7-7082-47B7-8C0E-8D4DC5BF01E2",
+      "name" : "Thread Sanitization",
+      "options" : {
+        "threadSanitizerEnabled" : true,
+        "undefinedBehaviorSanitizerEnabled" : true
+      }
+    },
+    {
+      "id" : "1C451F14-8D88-40D3-949E-08EC2939DA3D",
+      "name" : "Address Sanitization",
+      "options" : {
+        "addressSanitizer" : {
+          "detectStackUseAfterReturn" : true,
+          "enabled" : true
+        },
+        "undefinedBehaviorSanitizerEnabled" : true
       }
     }
   ],
@@ -13,6 +32,7 @@
   },
   "testTargets" : [
     {
+      "parallelizable" : true,
       "skippedTests" : [
         "GetterTests\/testChain()"
       ],
@@ -23,6 +43,7 @@
       }
     },
     {
+      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:Verge.xcodeproj",
         "identifier" : "4B475BC4239ADE1C008A03E1",
@@ -30,6 +51,7 @@
       }
     },
     {
+      "parallelizable" : true,
       "skippedTests" : [
         "ReproduceDeadlockTests\/testReproduceDeadlock()"
       ],
@@ -40,6 +62,7 @@
       }
     },
     {
+      "parallelizable" : true,
       "skippedTests" : [
         "GetterTests\/testChain()"
       ],
@@ -50,6 +73,7 @@
       }
     },
     {
+      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:Verge.xcodeproj",
         "identifier" : "4B65F8EB1FB4C0DC00A90A67",

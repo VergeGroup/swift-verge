@@ -85,36 +85,7 @@ public struct Changes<Value>: ChangesType {
       }
     }
   }
-  
-  private struct InnerOld {
     
-    let value: Value
-    let cachedComputedValues: [AnyKeyPath : Any]
-    
-    init(value: Value) {
-      self.value = value
-      self.cachedComputedValues = [:]
-    }
-    
-    private init(
-      value: Value,
-      cachedComputedValues: [AnyKeyPath : Any]
-    ) {
-      self.value = value
-      self.cachedComputedValues = cachedComputedValues
-    }
-    
-    init(from new: InnerCurrent) {
-      self.value = new.value
-      self.cachedComputedValues = new.cachedComputedValueStorage.value
-    }
-    
-    public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerOld {
-      return .init(value: try transform(value), cachedComputedValues: cachedComputedValues)
-    }
-    
-  }
-  
   private struct InnerCurrent {
     
     let value: Value
@@ -141,11 +112,10 @@ public struct Changes<Value>: ChangesType {
   
   private let sharedCacheComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
   
-  private var innerOld: InnerOld?
-  private var innerCurrent: InnerCurrent
-  
   internal private(set) var previous: PreviousWrapper?
-  public var old: Value? { _read { yield innerOld?.value } }
+  private var innerCurrent: InnerCurrent
+    
+  public var old: Value? { _read { yield previous?.value.current } }
   public var current: Value { _read { yield innerCurrent.value } }
   
   private(set) public var version: UInt64
@@ -155,7 +125,6 @@ public struct Changes<Value>: ChangesType {
     new: Value
   ) {
     self.previous = nil
-    self.innerOld = old.map(InnerOld.init(value: ))
     self.innerCurrent = .init(value: new)
     self.sharedCacheComputedValueStorage = .init([:])
     self.version = 0
@@ -163,12 +132,12 @@ public struct Changes<Value>: ChangesType {
   
   private init(
     previous: PreviousWrapper?,
-    innerOld: InnerOld?,
     innerCurrent: InnerCurrent,
     sharedCacheStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>,
     version: UInt64
   ) {
-    self.innerOld = innerOld
+    
+    self.previous = previous
     self.innerCurrent = innerCurrent
     self.sharedCacheComputedValueStorage = sharedCacheStorage
     self.version = version
@@ -253,7 +222,6 @@ public struct Changes<Value>: ChangesType {
   public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
     Changes<U>(
       previous: try previous.map { try Changes<U>.PreviousWrapper.wrapped($0.value.map(transform)) },
-      innerOld: try innerOld?.map(transform),
       innerCurrent: try innerCurrent.map(transform),
       sharedCacheStorage: sharedCacheComputedValueStorage,
       version: version
@@ -272,7 +240,6 @@ public struct Changes<Value>: ChangesType {
     previous.previous = nil
     
     self.previous = .wrapped(previous)
-    self.innerOld = .init(from: innerCurrent)
     self.innerCurrent = .init(value: nextNewValue)
     self.version &+= 1
   }
@@ -339,11 +306,11 @@ extension Changes where Value : ExtendedStateType {
     
     let current = _takeFromCacheOrCreate(keyPath: keyPath)
     
-    guard let innerOld = innerOld else {
+    guard let previous = previous?.value else {
       return true
     }
-    
-    guard let oldComputedValue = innerOld.cachedComputedValues[keyPath] as? Output else {
+            
+    guard let oldComputedValue = previous.innerCurrent.cachedComputedValueStorage.unsafelyWrappedValue[keyPath] as? Output else {
       return true
     }
         
@@ -358,12 +325,12 @@ extension Changes where Value : ExtendedStateType {
         
     let current = _takeFromCacheOrCreate(keyPath: keyPath)
   
-    guard let innerOld = innerOld else {
+    guard let previous = previous?.value else {
       try perform(current)
       return
     }
-    
-    guard let oldComputedValue = innerOld.cachedComputedValues[keyPath] as? Output else {
+
+    guard let oldComputedValue = previous.innerCurrent.cachedComputedValueStorage.unsafelyWrappedValue[keyPath] as? Output else {
       try perform(current)
       return
     }

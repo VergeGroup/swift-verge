@@ -38,6 +38,11 @@ public enum VergeConcurrency {
   
   /// An atomic variable.
   public final class Atomic<Value> {
+    
+    public var unsafelyWrappedValue: Value {
+      _read { yield _value }
+    }
+    
     private let lock: UnfairLock
     private var _value: Value
     
