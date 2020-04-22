@@ -198,6 +198,11 @@
                BlueprintName = "VergeStoreTests"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "GetterTests/testChain()">
+               </Test>
+            </SkippedTests>
          </TestableReference>
          <TestableReference
             skipped = "NO">

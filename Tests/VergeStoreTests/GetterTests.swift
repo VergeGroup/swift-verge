@@ -117,7 +117,7 @@ class GetterTests: XCTestCase {
     
     let waiter = XCTestExpectation()
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
       
       XCTAssertNil(weakFirst)
       waiter.fulfill()
