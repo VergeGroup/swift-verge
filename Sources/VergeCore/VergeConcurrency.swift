@@ -43,7 +43,7 @@ public enum VergeConcurrency {
       _read { yield _value }
     }
     
-    private let lock: UnfairLock
+    private let lock: NSRecursiveLock
     private var _value: Value
     
     /// Atomically get or set the value of the variable.

@@ -159,7 +159,7 @@ extension Reactive where Base : StoreType {
       .changes(initial: initialValue) // makes new Changes Object
       .filter({ value in
         
-        let hasChanges = value.hasChanges(compare: components.postFilter.equals)
+        let hasChanges = !components.postFilter(value)
         if !hasChanges {
           VergeSignpostTransaction("RxGetter.hitPostFilter").end()
         }

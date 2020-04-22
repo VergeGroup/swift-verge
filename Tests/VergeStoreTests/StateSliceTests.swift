@@ -42,17 +42,17 @@ final class StateSliceTests: XCTestCase {
     let slice = wrapper.slice(.map { $0.count })
     
     XCTAssertEqual(slice.state, 0)
-    XCTAssertEqual(slice.changes.hasChanges(\.self), true)
+    XCTAssertEqual(slice.changes.hasChanges(\.current), true)
     
     wrapper.increment()
     
     XCTAssertEqual(slice.state, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.self), true)
+    XCTAssertEqual(slice.changes.hasChanges(\.current), true)
       
     wrapper.empty()
     
     XCTAssertEqual(slice.state, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.self), false)
+    XCTAssertEqual(slice.changes.hasChanges(\.current), false)
   }
   
   func testBinding() {
@@ -80,21 +80,21 @@ final class StateSliceTests: XCTestCase {
     baseSlice = nil
     
     weak var weakSlice = slice
-    
+        
     XCTAssertEqual(slice.state, 0)
-    XCTAssertEqual(slice.changes.hasChanges(\.self), true)
+    XCTAssertEqual(slice.changes.hasChanges(\.current), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.increment()
         
     XCTAssertEqual(slice.state, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.self), true)
+    XCTAssertEqual(slice.changes.hasChanges(\.current), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.empty()
     
     XCTAssertEqual(slice.state, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.self), false)
+    XCTAssertEqual(slice.changes.hasChanges(\.current), false)
     XCTAssertNotNil(weakBaseSlice)
 
     slice = nil

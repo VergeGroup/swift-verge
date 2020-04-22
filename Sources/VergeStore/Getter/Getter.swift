@@ -172,7 +172,7 @@ extension Store {
         return _next
       })
       .filter({ value in
-        value.hasChanges(compare: components.postFilter.equals)
+        !components.postFilter(value)
       })
       .handleEvents(receiveOutput: { [closure = components.onPostFilterWillEmit] value in
         closure(value.current)

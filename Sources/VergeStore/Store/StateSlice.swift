@@ -40,9 +40,7 @@ public class StateSlice<State> {
   fileprivate let innerStore: Store<State, Never>
       
   fileprivate let _set: (State) -> Void
-  
-  private var postFilter: Comparer<State>?
-  
+    
   private init(constant: State) {
     self.innerStore = .init(initialState: constant, logger: nil)
     self._set = { _ in }
@@ -76,10 +74,9 @@ public class StateSlice<State> {
   ///
   /// - Parameter postFilter: Returns the objects are equals
   /// - Returns:
-  public func setPostFilter(_ postFilter: Comparer<State>) -> Self {
-    self.postFilter = postFilter
+  public func setPostFilter(_ postFilter: @escaping (Changes<State>) -> Bool) -> Self {
     innerStore.setNotificationFilter { changes in
-      changes.hasChanges(compare: postFilter.equals)
+      !postFilter(changes)
     }
 
     return self
@@ -90,14 +87,7 @@ public class StateSlice<State> {
   /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
   @discardableResult
   public func subscribeStateChanges(dropsFirst: Bool = false, _ receive: @escaping (Changes<State>) -> Void) -> ChangesSubscription {
-    innerStore.subscribeStateChanges(dropsFirst: dropsFirst) { [postFilter] (changes) in
-      guard let postFilter = postFilter else {
-        receive(changes)
-        return
-      }
-      guard !changes.hasChanges(compare: postFilter.equals) else {
-        return
-      }
+    innerStore.subscribeStateChanges(dropsFirst: dropsFirst) { (changes) in
       receive(changes)
     }
   }

@@ -15,10 +15,18 @@ struct DemoState: ExtendedStateType {
   var name: String = ""
   
   struct Extended: ExtendedType {
+    
+    static let instance = Extended()
+    
     let nameCount = Field.Computed<Int> {
       $0.name.count
     }
-    .ifChanged(selector: \.name, comparer: .init())
+    .modified {
+      $0.preFilter {
+        $0.hasChanges(\.name)
+      }
+    }
+
   }
   
 }

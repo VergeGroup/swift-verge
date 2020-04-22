@@ -29,16 +29,33 @@ public struct FilterMap<Input, Output> {
     case updated(Output)
     case noChanages
   }
-  
+    
   private let _makeInitial: (Input) -> Output
+  private var _preFilter: (Input) -> Bool
   private var _update: (Input) -> Result
   
   public init(
     makeInitial: @escaping (Input) -> Output,
     update: @escaping (Input) -> Result
   ) {
+    
+    self.init(makeInitial: makeInitial, preFilter: { _ in false }, update: update)
+  }
+    
+  private init(
+    makeInitial: @escaping (Input) -> Output,
+    preFilter: @escaping (Input) -> Bool,
+    update: @escaping (Input) -> Result
+  ) {
+    
     self._makeInitial = makeInitial
-    self._update = update
+    self._preFilter = preFilter
+    self._update = { input in
+      guard !preFilter(input) else {
+        return .noChanages
+      }
+      return update(input)
+    }
   }
     
   public init(
@@ -48,11 +65,9 @@ public struct FilterMap<Input, Output> {
     
     self.init(
       makeInitial: map,
-      update: { source in
-        guard !preFilter(source) else { return .noChanages }
-        let result = map(source)
-        return .updated(result)
-    })
+      preFilter: preFilter,
+      update: { .updated(map($0)) }
+    )
     
   }
   
@@ -64,74 +79,22 @@ public struct FilterMap<Input, Output> {
     _makeInitial(source)
   }
   
-  public func combinedPreFilter(
+  public func preFilter(
     _ filter: @escaping (Input) -> Bool
   ) -> Self {
-    
-    var _self = self
-    _self._update = { [_update] source in
-      guard !filter(source) else { return .noChanages }
-      return _update(source)
-    }
-    return _self
-  }
-  
-  public func combinedPostFilter(
-    _ filter: @escaping (Output) -> Bool
-  ) -> Self {
-    
-    var _self = self
-    _self._update = { [_update] source in
-      let result = _update(source)
-      switch result {
-      case .noChanages:
-        return .noChanages
-      case .updated(let result):
-        if filter(result) {
-          return .noChanages
-        }
-        return .updated(result)
-      }
-    }
-    return _self
-  }
-  
-  public func combined<NewDistination>(
-    _ other: FilterMap<Output, NewDistination>
-  ) -> FilterMap<Input, NewDistination> {
-    
-    FilterMap<Input, NewDistination>.init(
-      makeInitial: { [_makeInitial] source in
-        other.makeInitial(_makeInitial(source))
+    Self.init(
+      makeInitial: _makeInitial,
+      preFilter: { [_preFilter] input in
+        _preFilter(input) || filter(input)
     },
-      update: { [_update] source in
-        switch _update(source) {
-        case .noChanages: return .noChanages
-        case .updated(let t):
-          switch other.makeResult(t) {
-          case .noChanages: return .noChanages
-          case .updated(let d):
-            return .updated(d)
-          }
-        }
-    })
-    
+      update: _update
+    )
   }
   
 }
 
 extension FilterMap where Input : ChangesType {
-  public init(
-    preFilter: Comparer<Input.Value>,
-    map: @escaping (Input) -> Output
-  ) {
-    self.init(
-      preFilter: {
-        $0.hasChanges(compare: preFilter.equals)
-    },
-      map: map
-    )
-  }
+  
 }
 
 extension FilterMap {

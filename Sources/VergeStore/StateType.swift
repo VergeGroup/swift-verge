@@ -33,7 +33,7 @@ public protocol StateType {
 /// Mainly it would be used with dynamicMemberLookup.
 /// Therefore it must be initialized with no args.
 public protocol ExtendedType {
-  init()
+  static var instance: Self { get }
 }
 
 /** A protocol extended from StateType

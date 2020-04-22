@@ -40,51 +40,77 @@ class Computed2Tests: XCTestCase {
       
       struct Extended: ExtendedType {
         
+        static let instance = Extended()
+             
         let nameCount = Field.Computed(\.value.count)
-          .ifChanged(selector: \.value, comparer: .init(==))
-          .onTransform { o in
-            print(o)
-            nestedCounter += 1
+          .preFilter {
+            $0.noChanges(\.value)
         }
-        
+        .onTransform {
+          nestedCounter += 1
+        }
+                 
       }
     }
     
     struct Extended: ExtendedType {
       
+      static let instance = Extended()
+              
       let filteredArray = Field.Computed<[Int]> {
         $0.largeArray.filter { $0 > 300 }
       }
-      .ifChanged(selector: \.largeArray)
+      .preFilter {
+        $0.noChanges(\.largeArray)
+      }
       
       let filteredArrayWithoutPreFilter = Field.Computed<[Int]> {
         $0.largeArray.filter { $0 > 300 }
       }
       
       let num_0 = Field.Computed<Int>(\.num_0)
-        .ifChanged(selector: \.num_0, comparer: .init(==))
-        .onTransform { o in
-          rootTransformCounter += 1
+        .preFilter {
+          $0.noChanges(\.num_0)
+      }
+      .onTransform {
+        rootTransformCounter += 1
       }
       
-      var num_1 = Field.Computed<Int>(\.num_1).ifChanged(selector: \.num_1, comparer: .init(==))
-      var num_2 = Field.Computed<Int>(\.num_2).ifChanged(selector: \.num_2, comparer: .init(==))
+      let num_1 = Field.Computed<Int>(\.num_1)
+        .preFilter {
+          $0.noChanges(\.num_1)
+      }
+      
+      let num_2 = Field.Computed<Int>(\.num_2)
+        .preFilter {
+          $0.noChanges(\.num_2)
+      }
+      
+      let multiplied = Field.Computed<Int> {
+        $0.computed.num_1 * $0.computed.num_2
+      }
+      .preFilter {
+        $0.noChanges(\.num_1) && $0.noChanges(\.num_2)
+      }
                               
       let _nameCount = Field.Computed {
         $0.name
       }
-      .ifChanged(selector: \.name, comparer: .init(==))
+      .preFilter {
+        $0.noChanges(\.name)
+      }
       
       let nameCount = Field.Computed(\.name.count)
-        .ifChanged(selector: \.name, comparer: .init(==))
-        .onPreFilter {
+        .preFilter {
+          $0.noChanges(\.name)
+      }
+        .onHitPreFilter {
           rootPreFilterCounter += 1
       }
-      .onRead { _ in
+      .onRead {
         rootReadCounter += 1
       }
-      .onTransform { o in
-        print(o)
+      .onTransform {
         rootTransformCounter += 1
       }
       
@@ -165,14 +191,14 @@ class Computed2Tests: XCTestCase {
     
     XCTAssertEqual(store.changes.num_0, 0)
     XCTAssertEqual(store.changes.hasChanges(\.num_0), true)
-    XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), true)
-            
+    XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), true)
+                    
     store.commit {
       $0.num_0 = 0
     }
     
     XCTAssertEqual(store.changes.hasChanges(\.num_0), false)
-    XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), false)
+    XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), false)
     
     store.commit {
       $0.num_0 = 1
@@ -183,7 +209,7 @@ class Computed2Tests: XCTestCase {
     XCTAssertNil(store.changes.previous?.value.previous)
     
     XCTAssertEqual(store.changes.hasChanges(\.num_0), true)
-    XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), true)
+    XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), true)
 
     store.commit {
       $0.num_0 = 2
@@ -195,7 +221,7 @@ class Computed2Tests: XCTestCase {
     XCTAssertEqual(store.changes.previous?.value.num_0, 1)
     
     XCTAssertEqual(store.changes.hasChanges(\.num_0), true)
-    XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), true)
+    XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), true)
     
     store.commit {
       $0.num_0 = 2
@@ -204,7 +230,7 @@ class Computed2Tests: XCTestCase {
     XCTAssertEqual(store.changes.version, 4)
 
     XCTAssertEqual(store.changes.hasChanges(\.num_0), false)
-    XCTAssertEqual(store.changes.hasChanges(computed: \.num_0), false)
+    XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), false)
   }
   
   func testCompose1() {
@@ -293,11 +319,15 @@ class Computed2Tests: XCTestCase {
   func testConcurrency() {
     
     let store = MyStore()
+    
+    _ = store.changes.num_0
+    store.commit { _ in }
+
     let changes = store.changes
-        
+                  
     measure {
       DispatchQueue.concurrentPerform(iterations: 500) { (i) in
-        XCTAssertEqual(changes.hasChanges(computed: \.num_0), true)
+        XCTAssertEqual(changes.hasChanges(\.computed.num_0), false)
       }
     }
     
@@ -308,9 +338,12 @@ class Computed2Tests: XCTestCase {
     let store = MyStore()
     let changes = store.changes
     
+    store.commit { _ in }
+    
     rootTransformCounter = 0
     DispatchQueue.concurrentPerform(iterations: 500) { (i) in
-      XCTAssertEqual(changes.hasChanges(computed: \.num_0), true)
+      _ = changes.computed.num_0
+      XCTAssertEqual(changes.hasChanges(\.computed.num_0), true)
     }
     XCTAssertEqual(rootTransformCounter, 1)
   }
@@ -335,7 +368,7 @@ class Computed2Tests: XCTestCase {
       $0.name = "a"
     }
     
-    XCTAssertEqual(rootPreFilterCounter, 1)
+    XCTAssertEqual(rootPreFilterCounter, 0)
     XCTAssertEqual(rootReadCounter, 6)
     XCTAssertEqual(rootTransformCounter, 2)
     
@@ -343,7 +376,7 @@ class Computed2Tests: XCTestCase {
       $0.name = "a"
     }
     
-    XCTAssertEqual(rootPreFilterCounter, 2)
+    XCTAssertEqual(rootPreFilterCounter, 1)
     XCTAssertEqual(rootReadCounter, 9)
     XCTAssertEqual(rootTransformCounter, 2)
     
@@ -369,7 +402,7 @@ class Computed2Tests: XCTestCase {
         .computed
         .nameCount
       
-      changes.ifChanged(computed: \.nameCount) { (f) in
+      changes.ifChanged(\.computed.nameCount) { (f) in
         
       }
                           
