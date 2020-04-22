@@ -38,7 +38,7 @@ public class StateSlice<State> {
   fileprivate let _set: (State) -> Void
     
   public init<Source: StoreType>(
-    get: ConditionalMap<Changes<Source.State>, State>,
+    get: FilterMap<Changes<Source.State>, State>,
     set: @escaping (inout Source.State, State) -> Void,
     source: Source
   ) {
