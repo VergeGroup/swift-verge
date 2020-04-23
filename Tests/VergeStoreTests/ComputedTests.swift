@@ -49,7 +49,7 @@ class Computed2Tests: XCTestCase {
         .onTransform {
           nestedCounter += 1
         }
-                 
+                         
       }
     }
     

@@ -33,13 +33,19 @@ public struct MemoizeMap<Input, Output> {
   private let _makeInitial: (Input) -> Output
   private var _dropInput: (Input) -> Bool
   private var _update: (Input) -> Result
-  
+    
   public init(
     makeInitial: @escaping (Input) -> Output,
     update: @escaping (Input) -> Result
   ) {
     
     self.init(makeInitial: makeInitial, dropInput: { _ in false }, update: update)
+  }
+  
+  public init(
+    map: @escaping (Input) -> Output
+  ) {
+    self.init(dropInput: { _ in false }, map: map)
   }
     
   private init(
@@ -84,7 +90,13 @@ public struct MemoizeMap<Input, Output> {
     Self.init(
       makeInitial: _makeInitial,
       dropInput: { [_dropInput] input in
-        _dropInput(input) || predicate(input)
+        guard !_dropInput(input) else {
+          return true
+        }
+        guard !predicate(input) else {
+          return true
+        }
+        return false
       },
       update: _update
     )
