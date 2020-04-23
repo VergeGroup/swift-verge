@@ -22,7 +22,7 @@
 import Foundation
 
 #if !COCOAPODS
-import VergeCore
+import VergeStore
 #endif
 
 public struct EntityTableKey<S: EntityType> {
@@ -90,8 +90,8 @@ extension DatabaseType {
 
 public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
   
-  private(set) public var entityUpdatedMarker = UpdatedMarker()
-  private(set) public var indexUpdatedMarker = UpdatedMarker()
+  private(set) public var entityUpdatedMarker = VersionCounter()
+  private(set) public var indexUpdatedMarker = VersionCounter()
   internal(set) public var lastUpdatesResult: DatabaseEntityUpdatesResult<Schema>?
   
   var entityBackingStorage: EntityTablesStorage<Schema> = .init()

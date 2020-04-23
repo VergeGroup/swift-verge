@@ -121,7 +121,7 @@ extension Reactive where Base : StoreType, Base.State : DatabaseEmbedding {
     let _cache = cache
     
     guard let getter = _cache.getter(entityID: entityID) as? RxGetterSource<Base.State, E?> else {
-      let newGetter = makeEntityGetter(from: entityID, filter: .entityUpdated(entityID))
+      let newGetter = makeEntityGetter(from: entityID, filter: .entityNoUpdates(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -173,7 +173,7 @@ extension Reactive where Base : StoreType, Base.State : DatabaseEmbedding {
     
     guard let getter = _cache.getter(entityID: entity.entityID) as? RxGetterSource<Base.State, E> else {
       let entityID = entity.entityID
-      let newGetter = makeNonNullEntityGetter(from: entity, filter: .entityUpdated(entityID))
+      let newGetter = makeNonNullEntityGetter(from: entity, filter: .entityNoUpdates(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }

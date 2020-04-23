@@ -89,7 +89,7 @@ extension GetterBuilderMethodChain {
   /// Adding a filter to getter to map only when the input object changed.
   public func changed<T>(_ fragmentSelector: @escaping (Input) -> Fragment<T>) -> GetterBuilderPreFilterMethodChain<Trait, Context, Input> {
     changed(comparer: .init(selector: {
-      fragmentSelector($0).counter.rawValue
+      fragmentSelector($0).counter.version
     }))
   }
   

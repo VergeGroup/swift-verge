@@ -9,18 +9,14 @@
 import Foundation
 
 /// A container manages raw value to describe mark as updated.
-public struct UpdatedMarker: Hashable {
+public struct VersionCounter: Hashable {
   
-  private(set) public var rawValue: UInt64 = 0
+  private(set) public var version: UInt64 = 0
   
   public init() {}
   
   public mutating func markAsUpdated() {
-    guard rawValue < UInt64.max else {
-      rawValue &= 0
-      return
-    }
-    rawValue &+= 1
+    version &+= 1
   }
   
 }
