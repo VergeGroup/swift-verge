@@ -21,12 +21,9 @@
 
 import Foundation
 
-public typealias DerivedState<State> = StateSlice<State>
-public typealias BindingDerivedState<State> = BindingStateSlice<State>
-
-public class StateSlice<State> {
+public class Derived<State> {
   
-  public static func constant(_ value: State) -> StateSlice<State> {
+  public static func constant(_ value: State) -> Derived<State> {
     .init(constant: value)
   }
         
@@ -96,7 +93,7 @@ public class StateSlice<State> {
     }
   }
   
-  public func chain<NewState>(_ map: MemoizeMap<Changes<State>, NewState>) -> StateSlice<NewState> {
+  public func chain<NewState>(_ map: MemoizeMap<Changes<State>, NewState>) -> Derived<NewState> {
     
     return .init(
       get: map,
@@ -115,7 +112,7 @@ public class StateSlice<State> {
 import Combine
 
 @available(iOS 13, macOS 10.15, *)
-extension StateSlice: ObservableObject {
+extension Derived: ObservableObject {
   public var objectWillChange: ObservableObjectPublisher {
     innerStore.objectWillChange
   }
@@ -123,7 +120,7 @@ extension StateSlice: ObservableObject {
 
 #endif
 
-public final class BindingStateSlice<State>: StateSlice<State> {
+public final class BindingDerived<State>: Derived<State> {
   
   /// A current state.
   public override var state: State {
@@ -135,9 +132,9 @@ public final class BindingStateSlice<State>: StateSlice<State> {
 
 extension StoreType {
   
-  public func slice<NewState>(
+  public func derived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>
-  ) -> StateSlice<NewState> {
+  ) -> Derived<NewState> {
     
     return .init(
       get: memoizeMap,
@@ -157,7 +154,7 @@ extension StoreType {
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
     set: @escaping (inout State, NewState) -> Void
-  ) -> BindingStateSlice<NewState> {
+  ) -> BindingDerived<NewState> {
     
     return .init(
       get: get,

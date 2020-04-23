@@ -15,7 +15,7 @@ import VergeStore
 import VergeCore
 #endif
 
-extension StateSlice {
+extension Derived {
   
   public convenience init(_ getter: RxGetter<State>) {
     self.init(
