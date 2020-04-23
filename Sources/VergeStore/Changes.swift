@@ -436,14 +436,14 @@ extension _StateTypeContainer {
     }
         
     public init(_ compute: @escaping (Input) -> Output) {
-      self.init(MemoizeMap<Input, Output>.map(compute))
+      self.init(.init(map: compute))
     }
     
     @inlinable
     @inline(__always)
-    public func dropInput(while predicate: @escaping (Input) -> Bool) -> Self {
+    public func dropsInput(while predicate: @escaping (Input) -> Bool) -> Self {
       modified {
-        $0.dropInput(while: predicate)
+        $0.dropsInput(while: predicate)
       }
     }
     

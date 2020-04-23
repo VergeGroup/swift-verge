@@ -84,7 +84,7 @@ public struct MemoizeMap<Input, Output> {
     _makeInitial(source)
   }
   
-  public func dropInput(
+  public func dropsInput(
     while predicate: @escaping (Input) -> Bool
   ) -> Self {
     Self.init(
@@ -102,6 +102,28 @@ public struct MemoizeMap<Input, Output> {
     )
   }
    
+}
+
+extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
+    
+  /// Using implicit drop-input with Equatable
+  /// - Parameter map:
+  public init(
+    map: @escaping (Input) -> Output
+  ) {
+    
+    self.init(
+      makeInitial: map,
+      dropInput: { $0.asChanges().noChanges(\.root) },
+      update: { .updated(map($0)) }
+    )
+  }
+  
+  /// Using implicit drop-input with Equatable
+  public static func map(_ map: @escaping (Input) -> Output) -> Self {
+    .init(map: map)
+  }
+  
 }
 
 extension MemoizeMap where Input : ChangesType {

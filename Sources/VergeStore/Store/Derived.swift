@@ -79,7 +79,7 @@ public class Derived<State> {
     self._set = set
     self.innerStore = store
   }
-  
+
   deinit {
     
   }
@@ -87,9 +87,10 @@ public class Derived<State> {
   ///
   /// - Parameter postFilter: Returns the objects are equals
   /// - Returns:
-  public func setPostFilter(_ postFilter: @escaping (Changes<State>) -> Bool) -> Self {
+  @discardableResult
+  public func dropsOutput(_ dropsOutput: @escaping (Changes<State>) -> Bool) -> Self {
     innerStore.setNotificationFilter { changes in
-      !postFilter(changes)
+      !dropsOutput(changes)
     }
 
     return self
@@ -145,7 +146,8 @@ public final class BindingDerived<State>: Derived<State> {
 extension StoreType {
   
   public func derived<NewState>(
-    _ memoizeMap: MemoizeMap<Changes<State>, NewState>
+    _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
+    dropsOutput: (Changes<NewState>) -> Bool = { _ in false }
   ) -> Derived<NewState> {
     
     return .init(
@@ -159,12 +161,19 @@ extension StoreType {
     }, retainsUpstream: nil)
   }
   
+  public func derived<NewState: Equatable>(
+    _ memoizeMap: MemoizeMap<Changes<State>, NewState>
+  ) -> Derived<NewState> {
+    derived(memoizeMap, dropsOutput: { $0.asChanges().noChanges(\.root) })
+  }
+  
   public func binding<NewState>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
+    dropsOutput: (Changes<NewState>) -> Bool = { _ in false },
     set: @escaping (inout State, NewState) -> Void
   ) -> BindingDerived<NewState> {
     
@@ -180,6 +189,26 @@ extension StoreType {
         asStore().subscribeStateChanges(dropsFirst: true, callback)
     }, retainsUpstream: nil)
     
+  }
+  
+  public func binding<NewState: Equatable>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    get: MemoizeMap<Changes<State>, NewState>,
+    set: @escaping (inout State, NewState) -> Void
+  ) -> BindingDerived<NewState> {
+    
+    binding(
+      name,
+      file,
+      function,
+      line,
+      get: get,
+      dropsOutput: { $0.asChanges().noChanges(\.root) },
+      set: set
+    )
   }
   
 }
