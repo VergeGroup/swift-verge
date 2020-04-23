@@ -15,6 +15,29 @@ import VergeStore
 import VergeCore
 #endif
 
+extension StateSlice {
+  
+  public convenience init(_ getter: RxGetter<State>) {
+    self.init(
+      get: .init(map: { $0 }),
+      set: { _ in },
+      initialUpstreamState: getter.value,
+      subscribeUpstreamState: { (callback) -> CancellableType in
+        
+        let disposable = getter.subscribe(onNext: { value in
+          callback(value)
+        })
+                  
+        return VergeAnyCancellable {
+          disposable.dispose()
+        }
+    },
+      retainsUpstream: getter
+    )
+  }
+  
+}
+
 public protocol RxGetterType: GetterType {
   
   func asObservable() -> Observable<Output>

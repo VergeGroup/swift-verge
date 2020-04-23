@@ -55,6 +55,24 @@ public protocol CancellableType {
   func cancel()
 }
 
+public struct VergeAnyCancellable: CancellableType {
+    
+  private let _cancel: () -> Void
+  
+  public init<C>(_ other: C) where C : CancellableType {
+    self.init(onCancel: other.cancel)
+  }
+  
+  public init(onCancel: @escaping () -> Void) {
+    self._cancel = onCancel
+  }
+
+  public func cancel() {
+    _cancel()
+  }
+  
+}
+
 extension CancellableType {
   
   public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == UntilDeinitCancellable {

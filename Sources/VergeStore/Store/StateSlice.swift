@@ -21,6 +21,9 @@
 
 import Foundation
 
+public typealias DerivedState<State> = StateSlice<State>
+public typealias BindingDerivedState<State> = BindingStateSlice<State>
+
 public class StateSlice<State> {
   
   public static func constant(_ value: State) -> StateSlice<State> {
@@ -46,11 +49,12 @@ public class StateSlice<State> {
     self._set = { _ in }
   }
       
-  fileprivate init<UpstreamState>(
+  public init<UpstreamState>(
     get: MemoizeMap<UpstreamState, State>,
     set: @escaping (State) -> Void,
     initialUpstreamState: UpstreamState,
-    subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> ChangesSubscription
+    subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
+    retainsUpstream: AnyObject?
   ) {
     
     let store = Store<State, Never>.init(initialState: get.makeInitial(initialUpstreamState), logger: nil)
@@ -96,14 +100,11 @@ public class StateSlice<State> {
     
     return .init(
       get: map,
-      set: { _ in
-        // retains upstream
-        withExtendedLifetime(self) {}
-    },
+      set: { _ in },
       initialUpstreamState: changes,
       subscribeUpstreamState: { callback in
         self.innerStore.subscribeStateChanges(dropsFirst: true, callback)
-    })
+    }, retainsUpstream: self)
     
   }
   
@@ -146,7 +147,7 @@ extension StoreType {
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
         asStore().subscribeStateChanges(dropsFirst: true, callback)
-    })
+    }, retainsUpstream: nil)
   }
   
   public func binding<NewState>(
@@ -168,7 +169,7 @@ extension StoreType {
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
         asStore().subscribeStateChanges(dropsFirst: true, callback)
-    })
+    }, retainsUpstream: nil)
     
   }
   
