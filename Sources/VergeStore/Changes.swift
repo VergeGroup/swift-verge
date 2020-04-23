@@ -169,12 +169,23 @@ public struct Changes<Value>: ChangesType {
     
     !hasChanges(selector, compare)
   }
+  
+  @inline(__always)
+  public func noChanges<T>(_ selector: Selector<T>, _ comparer: Comparer<T>) -> Bool {
+    
+    !hasChanges(selector, comparer.equals)
+  }
     
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   ///
   @inline(__always)
   public func hasChanges<T: Equatable>(_ selector: Selector<T>) -> Bool {
     hasChanges(selector, ==)
+  }
+  
+  @inline(__always)
+  public func hasChanges<T>(_ selector: Selector<T>, _ comparer: Comparer<T>) -> Bool {
+    hasChanges(selector, comparer.equals)
   }
   
   @inline(__always)
