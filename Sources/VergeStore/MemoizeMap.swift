@@ -23,7 +23,7 @@ import Foundation
 
 // TODO: Get a good name
 // StatePipeline
-public struct FilterMap<Input, Output> {
+public struct MemoizeMap<Input, Output> {
   
   public enum Result {
     case updated(Output)
@@ -31,7 +31,7 @@ public struct FilterMap<Input, Output> {
   }
     
   private let _makeInitial: (Input) -> Output
-  private var _preFilter: (Input) -> Bool
+  private var _dropInput: (Input) -> Bool
   private var _update: (Input) -> Result
   
   public init(
@@ -39,19 +39,19 @@ public struct FilterMap<Input, Output> {
     update: @escaping (Input) -> Result
   ) {
     
-    self.init(makeInitial: makeInitial, preFilter: { _ in false }, update: update)
+    self.init(makeInitial: makeInitial, dropInput: { _ in false }, update: update)
   }
     
   private init(
     makeInitial: @escaping (Input) -> Output,
-    preFilter: @escaping (Input) -> Bool,
+    dropInput: @escaping (Input) -> Bool,
     update: @escaping (Input) -> Result
   ) {
     
     self._makeInitial = makeInitial
-    self._preFilter = preFilter
+    self._dropInput = dropInput
     self._update = { input in
-      guard !preFilter(input) else {
+      guard !dropInput(input) else {
         return .noChanages
       }
       return update(input)
@@ -59,16 +59,15 @@ public struct FilterMap<Input, Output> {
   }
     
   public init(
-    preFilter: @escaping (Input) -> Bool,
+    dropInput: @escaping (Input) -> Bool,
     map: @escaping (Input) -> Output
   ) {
     
     self.init(
       makeInitial: map,
-      preFilter: preFilter,
+      dropInput: dropInput,
       update: { .updated(map($0)) }
     )
-    
   }
   
   func makeResult(_ source: Input) -> Result {
@@ -79,27 +78,28 @@ public struct FilterMap<Input, Output> {
     _makeInitial(source)
   }
   
-  public func preFilter(
-    _ filter: @escaping (Input) -> Bool
+  public func dropInput(
+    while predicate: @escaping (Input) -> Bool
   ) -> Self {
     Self.init(
       makeInitial: _makeInitial,
-      preFilter: { [_preFilter] input in
-        _preFilter(input) || filter(input)
-    },
+      dropInput: { [_dropInput] input in
+        _dropInput(input) || predicate(input)
+      },
       update: _update
     )
   }
+   
+}
+
+extension MemoizeMap where Input : ChangesType {
   
 }
 
-extension FilterMap where Input : ChangesType {
-  
-}
-
-extension FilterMap {
+extension MemoizeMap {
   
   public static func map(_ map: @escaping (Input) -> Output) -> Self {
-    .init(preFilter: { _ in false }, map: map)
+    .init(dropInput: { _ in false }, map: map)
   }
 }
+

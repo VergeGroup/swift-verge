@@ -47,7 +47,7 @@ public class StateSlice<State> {
   }
       
   fileprivate init<UpstreamState>(
-    get: FilterMap<UpstreamState, State>,
+    get: MemoizeMap<UpstreamState, State>,
     set: @escaping (State) -> Void,
     initialUpstreamState: UpstreamState,
     subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> ChangesSubscription
@@ -92,7 +92,7 @@ public class StateSlice<State> {
     }
   }
   
-  public func chain<NewState>(_ map: FilterMap<Changes<State>, NewState>) -> StateSlice<NewState> {
+  public func chain<NewState>(_ map: MemoizeMap<Changes<State>, NewState>) -> StateSlice<NewState> {
     
     return .init(
       get: map,
@@ -135,11 +135,11 @@ public final class BindingStateSlice<State>: StateSlice<State> {
 extension StoreType {
   
   public func slice<NewState>(
-    _ filterMap: FilterMap<Changes<State>, NewState>
+    _ memoizeMap: MemoizeMap<Changes<State>, NewState>
   ) -> StateSlice<NewState> {
     
     return .init(
-      get: filterMap,
+      get: memoizeMap,
       set: { _ in
         
     },
@@ -154,7 +154,7 @@ extension StoreType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    get: FilterMap<Changes<State>, NewState>,
+    get: MemoizeMap<Changes<State>, NewState>,
     set: @escaping (inout State, NewState) -> Void
   ) -> BindingStateSlice<NewState> {
     

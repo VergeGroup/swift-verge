@@ -43,7 +43,7 @@ class Computed2Tests: XCTestCase {
         static let instance = Extended()
              
         let nameCount = Field.Computed(\.value.count)
-          .preFilter {
+          .dropInput {
             $0.noChanges(\.value)
         }
         .onTransform {
@@ -60,7 +60,7 @@ class Computed2Tests: XCTestCase {
       let filteredArray = Field.Computed<[Int]> {
         $0.largeArray.filter { $0 > 300 }
       }
-      .preFilter {
+      .dropInput {
         $0.noChanges(\.largeArray)
       }
       
@@ -69,7 +69,7 @@ class Computed2Tests: XCTestCase {
       }
       
       let num_0 = Field.Computed<Int>(\.num_0)
-        .preFilter {
+        .dropInput {
           $0.noChanges(\.num_0)
       }
       .onTransform {
@@ -77,31 +77,31 @@ class Computed2Tests: XCTestCase {
       }
       
       let num_1 = Field.Computed<Int>(\.num_1)
-        .preFilter {
+        .dropInput {
           $0.noChanges(\.num_1)
       }
       
       let num_2 = Field.Computed<Int>(\.num_2)
-        .preFilter {
+        .dropInput {
           $0.noChanges(\.num_2)
       }
       
       let multiplied = Field.Computed<Int> {
         $0.computed.num_1 * $0.computed.num_2
       }
-      .preFilter {
+      .dropInput {
         $0.noChanges(\.num_1) && $0.noChanges(\.num_2)
       }
                               
       let _nameCount = Field.Computed {
         $0.name
       }
-      .preFilter {
+      .dropInput {
         $0.noChanges(\.name)
       }
       
       let nameCount = Field.Computed(\.name.count)
-        .preFilter {
+        .dropInput {
           $0.noChanges(\.name)
       }
         .onHitPreFilter {

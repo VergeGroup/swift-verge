@@ -330,7 +330,7 @@ extension Changes where Value : ExtendedStateType {
         
         components._onHitSharedCache()
         
-        switch components.filterMap.makeResult(self) {
+        switch components.memoizeMap.makeResult(self) {
         case .noChanages:
           
           // No changes
@@ -362,7 +362,7 @@ extension Changes where Value : ExtendedStateType {
         
         components._onTransform()
         
-        let initialValue = components.filterMap.makeInitial(self)
+        let initialValue = components.memoizeMap.makeInitial(self)
         
         _cahce[keyPath] = initialValue
         
@@ -410,36 +410,36 @@ extension _StateTypeContainer {
     fileprivate(set) var _onTransform: () -> Void = {}
     
     @usableFromInline
-    let filterMap: FilterMap<Input, Output>
+    let memoizeMap: MemoizeMap<Input, Output>
     
     @usableFromInline
-    init(_ filterMap: FilterMap<Input, Output>) {
-      self.filterMap = filterMap
+    init(_ filterMap: MemoizeMap<Input, Output>) {
+      self.memoizeMap = filterMap
     }
     
     public init(
       makeInitial: @escaping (Input) -> Output,
-      update: @escaping (Input) -> FilterMap<Input, Output>.Result
+      update: @escaping (Input) -> MemoizeMap<Input, Output>.Result
     ) {
-      self.init(FilterMap<Input, Output>.init(makeInitial: makeInitial, update: update))
+      self.init(MemoizeMap<Input, Output>.init(makeInitial: makeInitial, update: update))
     }
         
     public init(_ compute: @escaping (Input) -> Output) {
-      self.init(FilterMap<Input, Output>.map(compute))
+      self.init(MemoizeMap<Input, Output>.map(compute))
     }
     
     @inlinable
     @inline(__always)
-    public func preFilter(_ filter: @escaping (Input) -> Bool) -> Self {
+    public func dropInput(while predicate: @escaping (Input) -> Bool) -> Self {
       modified {
-        $0.preFilter(filter)
+        $0.dropInput(while: predicate)
       }
     }
     
     @inlinable
     @inline(__always)
-    public func modified(_ modifier: (FilterMap<Input, Output>) -> FilterMap<Input, Output>) -> Self {
-      .init(modifier(filterMap))
+    public func modified(_ modifier: (MemoizeMap<Input, Output>) -> MemoizeMap<Input, Output>) -> Self {
+      .init(modifier(memoizeMap))
     }
                        
     @inlinable

@@ -22,7 +22,7 @@
 		4B1743AC23C767670074C457 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; };
 		4B1743B223C7676E0074C457 /* VergeGetterRxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFC3A1623C762CB00801CB4 /* VergeGetterRxTests.swift */; };
 		4B1743B323C767D90074C457 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; };
-		4B1BE8E5244F28050077DB66 /* FilterMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1BE8E4244F28050077DB66 /* FilterMap.swift */; };
+		4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */; };
 		4B1C011623D34A6B00BE9B24 /* SessionRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011523D34A6B00BE9B24 /* SessionRootView.swift */; };
 		4B1C011823D34A9F00BE9B24 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011723D34A9F00BE9B24 /* SafariView.swift */; };
 		4B1F19C0243A82BC00CED46B /* Volatile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011A23D381F100BE9B24 /* Volatile.swift */; };
@@ -455,7 +455,7 @@
 		4B1743A723C767670074C457 /* VergeRxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeRxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B1743A923C767670074C457 /* VergeRxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeRxTests.swift; sourceTree = "<group>"; };
 		4B1743AB23C767670074C457 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B1BE8E4244F28050077DB66 /* FilterMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterMap.swift; sourceTree = "<group>"; };
+		4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoizeMap.swift; sourceTree = "<group>"; };
 		4B1C011523D34A6B00BE9B24 /* SessionRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRootView.swift; sourceTree = "<group>"; };
 		4B1C011723D34A9F00BE9B24 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
 		4B1C011A23D381F100BE9B24 /* Volatile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Volatile.swift; sourceTree = "<group>"; };
@@ -908,7 +908,7 @@
 				4B91B37D2440C097005082D7 /* Getter */,
 				4B8EB4F823C034A900035B2A /* Comparer.swift */,
 				4BDB78212447934A00675D03 /* StoreWrapperType.swift */,
-				4B1BE8E4244F28050077DB66 /* FilterMap.swift */,
+				4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */,
 			);
 			path = VergeStore;
 			sourceTree = "<group>";
@@ -1953,7 +1953,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B427419236F269C00C302C8 /* Store.swift in Sources */,
-				4B1BE8E5244F28050077DB66 /* FilterMap.swift in Sources */,
+				4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */,
 				4B6B77A1243F9DB200E0C0EA /* GetterBuilderPreFilterMethodChain.swift in Sources */,
 				4BCBCA8D2381CC2B00F33B15 /* ContextualDispatcher.swift in Sources */,
 				4B2050FB23D5C878000A2779 /* ActionMetadata.swift in Sources */,

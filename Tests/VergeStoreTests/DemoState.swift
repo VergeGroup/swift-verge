@@ -21,10 +21,8 @@ struct DemoState: ExtendedStateType {
     let nameCount = Field.Computed<Int> {
       $0.name.count
     }
-    .modified {
-      $0.preFilter {
-        $0.hasChanges(\.name)
-      }
+    .dropInput {
+      $0.noChanges(\.name)
     }
 
   }
