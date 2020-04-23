@@ -34,16 +34,22 @@ public final class UntilDeinitCancellable: Hashable {
   
   private let onDeinit: () -> Void
   
-  init(onDeinit: @escaping () -> Void) {
+  public init(onDeinit: @escaping () -> Void) {
     self.onDeinit = onDeinit
   }
   
-  convenience init<C>(_ cancellable: C) where C : CancellableType {
+  public convenience init<C>(_ cancellable: C) where C : CancellableType {
     self.init {
       cancellable.cancel()
     }
   }
   
+  public convenience init(_ cancellable: CancellableType) {
+    self.init {
+      cancellable.cancel()
+    }
+  }
+    
   deinit {
     onDeinit()
   }

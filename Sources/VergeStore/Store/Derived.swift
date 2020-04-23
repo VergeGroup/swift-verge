@@ -21,6 +21,10 @@
 
 import Foundation
 
+#if !COCOAPODS
+import VergeCore
+#endif
+
 public class Derived<State> {
   
   public static func constant(_ value: State) -> Derived<State> {
@@ -44,7 +48,10 @@ public class Derived<State> {
   private init(constant: State) {
     self.innerStore = .init(initialState: constant, logger: nil)
     self._set = { _ in }
+    self.subscription = .init(onDeinit: {})
   }
+  
+  private let subscription: UntilDeinitCancellable
       
   public init<UpstreamState>(
     get: MemoizeMap<UpstreamState, State>,
@@ -55,8 +62,8 @@ public class Derived<State> {
   ) {
     
     let store = Store<State, Never>.init(initialState: get.makeInitial(initialUpstreamState), logger: nil)
-    
-    _ = subscribeUpstreamState { [weak store] value in
+                     
+    let s = subscribeUpstreamState { [weak store] value in
       let update = get.makeResult(value)
       switch update {
       case .noChanages:
@@ -68,8 +75,13 @@ public class Derived<State> {
       }
     }
     
+    self.subscription = UntilDeinitCancellable.init(s)
     self._set = set
     self.innerStore = store
+  }
+  
+  deinit {
+    
   }
     
   ///
