@@ -266,7 +266,7 @@ extension Changes {
     
     private let source: Changes<Value>
     
-    public var current: Value {
+    public var root: Value {
       source.current
     }
     
