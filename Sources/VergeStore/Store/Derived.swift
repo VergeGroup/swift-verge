@@ -96,7 +96,7 @@ public class Derived<State> {
   /// - Parameter postFilter: Returns the objects are equals
   /// - Returns:
   @discardableResult
-  public func dropsOutput(_ dropsOutput: @escaping (Changes<State>) -> Bool) -> Self {
+  fileprivate func dropsOutput(_ dropsOutput: @escaping (Changes<State>) -> Bool) -> Self {
     innerStore.setNotificationFilter { changes in
       !dropsOutput(changes)
     }
@@ -158,10 +158,10 @@ extension StoreType {
   
   public func derived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
-    dropsOutput: (Changes<NewState>) -> Bool = { _ in false }
+    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false }
   ) -> Derived<NewState> {
     
-    return .init(
+    let derived = Derived<NewState>(
       get: memoizeMap,
       set: { _ in
         
@@ -169,7 +169,13 @@ extension StoreType {
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
         asStore().subscribeStateChanges(dropsFirst: true, callback)
-    }, retainsUpstream: nil)
+    },
+      retainsUpstream: nil
+    )
+    
+    derived.dropsOutput(dropsOutput)
+    
+    return derived
   }
   
   public func derived<NewState: Equatable>(
@@ -184,11 +190,11 @@ extension StoreType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
-    dropsOutput: (Changes<NewState>) -> Bool = { _ in false },
+    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
     set: @escaping (inout State, NewState) -> Void
   ) -> BindingDerived<NewState> {
     
-    return .init(
+    let derived = BindingDerived<NewState>.init(
       get: get,
       set: { [weak self] state in
         self?.asStore().commit(name, file, function, line) {
@@ -200,6 +206,9 @@ extension StoreType {
         asStore().subscribeStateChanges(dropsFirst: true, callback)
     }, retainsUpstream: nil)
     
+    derived.dropsOutput(dropsOutput)
+    
+    return derived
   }
   
   public func binding<NewState: Equatable>(
