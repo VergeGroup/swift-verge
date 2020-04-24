@@ -22,7 +22,8 @@
 import Foundation
 import os
 
-/// A cancellable object that will cancel when itself deallocated.
+/// A type-erasing cancellable object that executes a provided closure when canceled.
+/// An AnyCancellable instance automatically calls cancel() when deinitialized.
 public final class VergeAnyCancellable: Hashable, CancellableType {
   
   private let lock = NSLock()

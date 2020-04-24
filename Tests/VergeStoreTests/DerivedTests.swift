@@ -109,19 +109,29 @@ final class DerivedTests: XCTestCase {
     weak var weakSlice = slice
         
     XCTAssertEqual(slice.state, 0)
+    XCTAssertEqual(slice.changes.version, 0)
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.increment()
         
     XCTAssertEqual(slice.state, 1)
+    XCTAssertEqual(slice.changes.version, 1)
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.empty()
     
     XCTAssertEqual(slice.state, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), false)
+    XCTAssertEqual(slice.changes.version, 1) // with memoized, version not changed
+    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertNotNil(weakBaseSlice)
+    
+     wrapper.increment()
+    
+    XCTAssertEqual(slice.state, 2)
+    XCTAssertEqual(slice.changes.version, 2)
+    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
 
     slice = nil

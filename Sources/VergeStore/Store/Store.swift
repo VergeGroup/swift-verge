@@ -25,24 +25,6 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-/// Details in CancellableType's docs
-public struct ChangesSubscription: CancellableType {
-  let token: EventEmitterCancellable
- 
-  public func cancel() {
-    token.cancel()
-  }
-}
-
-/// Details in CancellableType's docs
-public struct ActivitySusbscription: CancellableType {
-  let token: EventEmitterCancellable
-  
-  public func cancel() {
-    token.cancel()
-  }
-}
-
 public protocol StoreType: AnyObject {
   associatedtype State
   associatedtype Activity = Never
@@ -170,11 +152,11 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   
   /// Subscribe the state changes
   ///
-  /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func subscribeStateChanges(
     dropsFirst: Bool = false,
     _ receive: @escaping (Changes<State>) -> Void
-  ) -> ChangesSubscription {
+  ) -> VergeAnyCancellable {
 
     if !dropsFirst {
       receive(_backingStorage.value)
@@ -184,25 +166,17 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
       receive(newValue)
     }
     
-    return .init(token: token)
+    return .init(token)
   }
   
   /// Subscribe the activity
   ///
-  /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
-  public func subscribeActivity(_ receive: @escaping (Activity) -> Void) -> ActivitySusbscription  {
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func subscribeActivity(_ receive: @escaping (Activity) -> Void) -> VergeAnyCancellable {
     let token = _activityEmitter.add(receive)
-    return .init(token: token)
+    return .init(token)
   }
-   
-  public func removeStateChangesSubscription(_ subscription: ChangesSubscription) {
-    _backingStorage.remove(subscription.token)
-  }
-  
-  public func removeActivitySubscription(_ subscription: ActivitySusbscription) {
-    _activityEmitter.remove(subscription.token)
-  }
-          
+             
 }
 
 #if canImport(Combine)

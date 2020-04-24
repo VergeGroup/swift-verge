@@ -78,24 +78,20 @@ extension StoreWrapperType {
     store.state
   }
   
-  @discardableResult
-  public func subscribeStateChanges(_ receive: @escaping (Changes<WrappedStore.State>) -> Void) -> ChangesSubscription {
+  /// Subscribe the state changes
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func subscribeStateChanges(_ receive: @escaping (Changes<WrappedStore.State>) -> Void) -> VergeAnyCancellable {
     store.asStore().subscribeStateChanges(receive)
   }
   
-  @discardableResult
-  public func subscribeActivity(_ receive: @escaping (WrappedStore.Activity) -> Void) -> ActivitySusbscription  {
+  /// Subscribe the activity
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func subscribeActivity(_ receive: @escaping (WrappedStore.Activity) -> Void) -> VergeAnyCancellable  {
     store.asStore().subscribeActivity(receive)
   }
-  
-  public func removeStateChangesSubscription(_ subscription: ChangesSubscription) {
-    store.asStore().removeStateChangesSubscription(subscription)
-  }
-  
-  public func removeActivitySubscription(_ subscription: ActivitySusbscription) {
-    store.asStore().removeActivitySubscription(subscription)
-  }
-  
+      
 }
 
 #if canImport(Combine)

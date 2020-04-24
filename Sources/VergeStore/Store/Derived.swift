@@ -45,15 +45,19 @@ public class Derived<State> {
   fileprivate let innerStore: Store<State, Never>
       
   fileprivate let _set: (State) -> Void
-    
+  
+  private let subscription: VergeAnyCancellable
+  private let retainsUpstream: AnyObject?
+  
+  // MARK: - Initializers
+      
   private init(constant: State) {
     self.innerStore = .init(initialState: constant, logger: nil)
     self._set = { _ in }
     self.subscription = .init(onDeinit: {})
+    self.retainsUpstream = nil
   }
-  
-  private let subscription: VergeAnyCancellable
-      
+        
   public init<UpstreamState>(
     get: MemoizeMap<UpstreamState, State>,
     set: @escaping (State) -> Void,
@@ -76,6 +80,7 @@ public class Derived<State> {
       }
     }
     
+    self.retainsUpstream = retainsUpstream
     self.subscription = VergeAnyCancellable.init(s)
     self._set = set
     self.innerStore = store
@@ -84,6 +89,8 @@ public class Derived<State> {
   deinit {
     
   }
+  
+  // MARK: - Functions
     
   ///
   /// - Parameter postFilter: Returns the objects are equals
@@ -99,12 +106,13 @@ public class Derived<State> {
   
   /// Subscribe the state changes
   ///
-  /// - Returns: An object to cancel subscription. Subscribing retains self, you need to cancel subscription when you don't need.
-  public func subscribeStateChanges(dropsFirst: Bool = false, _ receive: @escaping (Changes<State>) -> Void) -> ChangesSubscription {
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func subscribeStateChanges(dropsFirst: Bool = false, _ receive: @escaping (Changes<State>) -> Void) -> VergeAnyCancellable {
     innerStore.subscribeStateChanges(dropsFirst: dropsFirst) { (changes) in
       withExtendedLifetime(self) {}
       receive(changes)
     }
+    .asAutoCancellable()
   }
   
   public func chain<NewState>(_ map: MemoizeMap<Changes<State>, NewState>) -> Derived<NewState> {
@@ -115,7 +123,9 @@ public class Derived<State> {
       initialUpstreamState: changes,
       subscribeUpstreamState: { callback in
         self.innerStore.subscribeStateChanges(dropsFirst: true, callback)
-    }, retainsUpstream: self)
+    },
+      retainsUpstream: self
+    )
     
   }
   
