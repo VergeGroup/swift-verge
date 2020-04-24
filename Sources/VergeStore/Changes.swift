@@ -195,8 +195,9 @@ public struct Changes<Value>: ChangesType {
     }
     return !compare(Composing(source: old)[keyPath: selector], Composing(source: self)[keyPath: selector])
   }
-  
+    
   /// Do a closure if value specified by keyPath contains changes.
+  @inline(__always)
   public func ifChanged<T: Equatable>(_ keyPath: Selector<T>, _ perform: (T) throws -> Void) rethrows {
     try ifChanged(keyPath, ==, perform)
   }
@@ -395,6 +396,10 @@ extension Changes where Value : Equatable {
   
   public var hasChanges: Bool {
     old != current
+  }
+  
+  public func ifChanged(_ perform: (Value) throws -> Void) rethrows {
+    try ifChanged(\.root, perform)
   }
 }
 
