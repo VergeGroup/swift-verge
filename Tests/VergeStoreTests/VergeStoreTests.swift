@@ -327,4 +327,34 @@ final class VergeStoreTests: XCTestCase {
     
   }
   
+  func testOrderOfEvents() {
+    
+    // Currently, it's collapsed because Storage emits event without locking.
+    
+    let store = VergeStore.Store<DemoState, Never>(initialState: .init(), logger: nil)
+    
+    let exp = expectation(description: "")
+    
+    var results: [Int] = []
+    
+    let sub = store.subscribeStateChanges(dropsFirst: false) { (changes) in
+      results.append(changes.count)
+    }
+    
+    DispatchQueue.global().async {
+      DispatchQueue.concurrentPerform(iterations: 1000) { (i) in
+        store.commit {
+          $0.count += 1
+        }
+        
+      }
+      exp.fulfill()
+    }
+           
+    wait(for: [exp], timeout: 10)
+    XCTAssertEqual(1001, results.count)
+    XCTAssertEqual(Array((0...1000).map { $0 }), results)
+    withExtendedLifetime(sub) {}
+  }
+  
 }

@@ -47,7 +47,6 @@ class ReproduceDeadlockTests: XCTestCase {
     store.commit {
       $0.count += 1
     }
-    
-        
+            
   }
 }

@@ -178,22 +178,19 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
       
     } else {
       
-      let queue = DispatchQueue.init(label: "me.verge.state")
+//      let lock = NSRecursiveLock()
       
       if !dropsFirst {
-        queue.sync {
-          receive(_backingStorage.value.droppedPrevious())
-        }
+//        lock.lock(); defer { lock.unlock() }
+        receive(_backingStorage.value.droppedPrevious())
       }
       
       let cancellable = _backingStorage.addDidUpdate { newValue in
-        queue.sync {
-          receive(newValue)
-        }
+//        lock.lock(); defer { lock.unlock() }
+        receive(newValue)
       }
-        
-      return .init(cancellable)
       
+      return .init(cancellable)
     }
     
   }
@@ -209,16 +206,15 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
     if let queue = queue {
       let cancellable = _activityEmitter.add { (activity) in
         queue.async {
-          activity
+          receive(activity)
         }
       }
       return .init(cancellable)
     } else {
-      let queue = DispatchQueue.init(label: "me.verge.activity")
+//      let lock = NSRecursiveLock()
       let cancellable = _activityEmitter.add { activity in
-        queue.sync {
-          receive(activity)
-        }
+//        lock.lock(); defer { lock.unlock() }
+        receive(activity)
       }
       return .init(cancellable)
     }

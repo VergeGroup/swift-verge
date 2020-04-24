@@ -13,6 +13,7 @@ import VergeStore
 struct DemoState: ExtendedStateType {
   
   var name: String = ""
+  var count: Int = 0
   
   struct Extended: ExtendedType {
     
