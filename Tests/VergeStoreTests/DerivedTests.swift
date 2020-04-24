@@ -127,7 +127,7 @@ final class DerivedTests: XCTestCase {
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
     
-     wrapper.increment()
+    wrapper.increment()
     
     XCTAssertEqual(slice.state, 2)
     XCTAssertEqual(slice.changes.version, 2)
