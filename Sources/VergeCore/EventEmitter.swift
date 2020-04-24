@@ -86,6 +86,27 @@ public final class AutoCancellable: Hashable, CancellableType {
   
 }
 
+/// An object to cancel subscription
+///
+/// To cancel depending owner, can be written following
+///
+/// ```
+/// class ViewController {
+///
+///   var subscriptions = Set<AutoCancellable>()
+///
+///   func something() {
+///
+///   let derived = store.derived(...)
+///
+///   derived
+///     .subscribeStateChanges { ... }
+///     .store(in: &subscriptions)
+///   }
+///
+/// }
+/// ```
+///
 public protocol CancellableType {
   
   func cancel()

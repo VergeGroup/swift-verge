@@ -25,28 +25,7 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-/// An object to cancel subscription
-///
-/// To cancel depending owner, can be written following
-///
-/// ```
-/// class ViewController {
-/// 
-///   var subscriptions = Set<AutoCancellable>()
-///
-///   func something() {
-///
-///   let derived = store.derived(...)
-///
-///   derived
-///     .subscribeStateChanges { ... }
-///     .store(in: &subscriptions)
-///   }
-///
-/// }
-/// ```
-///
-///
+/// Details in CancellableType's docs
 public struct ChangesSubscription: CancellableType {
   let token: EventEmitterCancellable
  
@@ -55,6 +34,7 @@ public struct ChangesSubscription: CancellableType {
   }
 }
 
+/// Details in CancellableType's docs
 public struct ActivitySusbscription: CancellableType {
   let token: EventEmitterCancellable
   
@@ -191,7 +171,6 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   /// Subscribe the state changes
   ///
   /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
-  @discardableResult
   public func subscribeStateChanges(
     dropsFirst: Bool = false,
     _ receive: @escaping (Changes<State>) -> Void
@@ -211,7 +190,6 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   /// Subscribe the activity
   ///
   /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
-  @discardableResult
   public func subscribeActivity(_ receive: @escaping (Activity) -> Void) -> ActivitySusbscription  {
     let token = _activityEmitter.add(receive)
     return .init(token: token)
