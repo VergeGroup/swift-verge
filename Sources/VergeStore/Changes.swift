@@ -148,6 +148,12 @@ public struct Changes<Value>: ChangesType {
     self
   }
   
+  public func droppedPrevious() -> Self {
+    var _self = self
+    _self.previous = nil
+    return _self
+  }
+  
   @inlinable
   public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
     _read {

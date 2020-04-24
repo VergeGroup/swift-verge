@@ -155,26 +155,74 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func subscribeStateChanges(
     dropsFirst: Bool = false,
-    _ receive: @escaping (Changes<State>) -> Void
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
-
-    if !dropsFirst {
-      receive(_backingStorage.value)
+    
+    if let queue = queue {
+      
+      if !dropsFirst {
+        let value = _backingStorage.value.droppedPrevious()
+        queue.async {
+          receive(value)
+        }
+      }
+      
+      let cancellable = _backingStorage.addDidUpdate { newValue in
+        queue.async {
+          receive(newValue)
+        }
+      }
+      
+      return .init(cancellable)
+      
+    } else {
+      
+      let queue = DispatchQueue.init(label: "me.verge.state")
+      
+      if !dropsFirst {
+        queue.sync {
+          receive(_backingStorage.value.droppedPrevious())
+        }
+      }
+      
+      let cancellable = _backingStorage.addDidUpdate { newValue in
+        queue.sync {
+          receive(newValue)
+        }
+      }
+        
+      return .init(cancellable)
+      
     }
     
-    let token = _backingStorage.addDidUpdate { newValue in
-      receive(newValue)
-    }
-    
-    return .init(token)
   }
   
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func subscribeActivity(_ receive: @escaping (Activity) -> Void) -> VergeAnyCancellable {
-    let token = _activityEmitter.add(receive)
-    return .init(token)
+  public func subscribeActivity(
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Activity) -> Void
+  ) -> VergeAnyCancellable {
+    
+    if let queue = queue {
+      let cancellable = _activityEmitter.add { (activity) in
+        queue.async {
+          activity
+        }
+      }
+      return .init(cancellable)
+    } else {
+      let queue = DispatchQueue.init(label: "me.verge.activity")
+      let cancellable = _activityEmitter.add { activity in
+        queue.sync {
+          receive(activity)
+        }
+      }
+      return .init(cancellable)
+    }
+  
   }
              
 }

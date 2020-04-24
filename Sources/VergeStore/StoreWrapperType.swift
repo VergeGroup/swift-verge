@@ -81,15 +81,22 @@ extension StoreWrapperType {
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func subscribeStateChanges(_ receive: @escaping (Changes<WrappedStore.State>) -> Void) -> VergeAnyCancellable {
-    store.asStore().subscribeStateChanges(receive)
+  public func subscribeStateChanges(
+    dropsFirst: Bool = false,
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Changes<WrappedStore.State>) -> Void
+  ) -> VergeAnyCancellable {
+    store.asStore().subscribeStateChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
   
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func subscribeActivity(_ receive: @escaping (WrappedStore.Activity) -> Void) -> VergeAnyCancellable  {
-    store.asStore().subscribeActivity(receive)
+  public func subscribeActivity(
+    queue: DispatchQueue? = nil,
+    receive: @escaping (WrappedStore.Activity) -> Void
+  ) -> VergeAnyCancellable  {
+    store.asStore().subscribeActivity(queue: queue, receive: receive)
   }
       
 }

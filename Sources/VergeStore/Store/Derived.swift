@@ -107,22 +107,37 @@ public class Derived<State> {
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func subscribeStateChanges(dropsFirst: Bool = false, _ receive: @escaping (Changes<State>) -> Void) -> VergeAnyCancellable {
-    innerStore.subscribeStateChanges(dropsFirst: dropsFirst) { (changes) in
+  public func subscribeStateChanges(
+    dropsFirst: Bool = false,
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Changes<State>) -> Void
+  ) -> VergeAnyCancellable {
+    
+    innerStore.subscribeStateChanges(
+    dropsFirst: dropsFirst,
+    queue: queue
+    ) { (changes) in
       withExtendedLifetime(self) {}
       receive(changes)
     }
     .asAutoCancellable()
   }
   
-  public func chain<NewState>(_ map: MemoizeMap<Changes<State>, NewState>) -> Derived<NewState> {
+  public func chain<NewState>(
+    queue: DispatchQueue? = nil,
+    _ map: MemoizeMap<Changes<State>, NewState>
+    ) -> Derived<NewState> {
         
     return .init(
       get: map,
       set: { _ in },
       initialUpstreamState: changes,
       subscribeUpstreamState: { callback in
-        self.innerStore.subscribeStateChanges(dropsFirst: true, callback)
+        self.innerStore.subscribeStateChanges(
+          dropsFirst: true,
+          queue: queue,
+          receive: callback
+        )
     },
       retainsUpstream: self
     )
@@ -168,7 +183,7 @@ extension StoreType {
     },
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
-        asStore().subscribeStateChanges(dropsFirst: true, callback)
+        asStore().subscribeStateChanges(dropsFirst: true, queue: nil, receive: callback)
     },
       retainsUpstream: nil
     )
@@ -203,7 +218,7 @@ extension StoreType {
     },
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
-        asStore().subscribeStateChanges(dropsFirst: true, callback)
+        asStore().subscribeStateChanges(dropsFirst: true, queue: nil, receive: callback)
     }, retainsUpstream: nil)
     
     derived.dropsOutput(dropsOutput)
