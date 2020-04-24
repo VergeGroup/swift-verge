@@ -51,7 +51,7 @@ public class Derived<State> {
     self.subscription = .init(onDeinit: {})
   }
   
-  private let subscription: UntilDeinitCancellable
+  private let subscription: AutoCancellable
       
   public init<UpstreamState>(
     get: MemoizeMap<UpstreamState, State>,
@@ -75,7 +75,7 @@ public class Derived<State> {
       }
     }
     
-    self.subscription = UntilDeinitCancellable.init(s)
+    self.subscription = AutoCancellable.init(s)
     self._set = set
     self.innerStore = store
   }
@@ -98,16 +98,16 @@ public class Derived<State> {
   
   /// Subscribe the state changes
   ///
-  /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
-  @discardableResult
+  /// - Returns: An object to cancel subscription. Subscribing retains self, you need to cancel subscription when you don't need.
   public func subscribeStateChanges(dropsFirst: Bool = false, _ receive: @escaping (Changes<State>) -> Void) -> ChangesSubscription {
     innerStore.subscribeStateChanges(dropsFirst: dropsFirst) { (changes) in
+      withExtendedLifetime(self) {}
       receive(changes)
     }
   }
   
   public func chain<NewState>(_ map: MemoizeMap<Changes<State>, NewState>) -> Derived<NewState> {
-    
+        
     return .init(
       get: map,
       set: { _ in },

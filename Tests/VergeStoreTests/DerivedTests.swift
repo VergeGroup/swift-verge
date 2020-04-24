@@ -69,6 +69,33 @@ final class DerivedTests: XCTestCase {
     
   }
   
+  func testRetain() {
+    
+    var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count })
+    weak var weakBaseSlice = baseSlice
+    
+    let expectation = XCTestExpectation(description: "receive changes")
+    
+    let subscription = baseSlice.subscribeStateChanges(dropsFirst: true) { (changes) in
+      expectation.fulfill()
+    }
+
+    XCTAssertNotNil(weakBaseSlice)
+    // deinit
+    baseSlice = nil
+    
+    XCTAssertNotNil(weakBaseSlice, "it won't be deinitiallized")
+    
+    wrapper.commit { _ in }
+    
+    subscription.cancel()
+    
+    XCTAssertNil(weakBaseSlice)
+    
+    wait(for: [expectation], timeout: 1)
+    
+  }
+  
   func testSliceChain() {
     
     var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count })

@@ -25,6 +25,28 @@ import Foundation
 @_exported import VergeCore
 #endif
 
+/// An object to cancel subscription
+///
+/// To cancel depending owner, can be written following
+///
+/// ```
+/// class ViewController {
+/// 
+///   var subscriptions = Set<AutoCancellable>()
+///
+///   func something() {
+///
+///   let derived = store.derived(...)
+///
+///   derived
+///     .subscribeStateChanges { ... }
+///     .store(in: &subscriptions)
+///   }
+///
+/// }
+/// ```
+///
+///
 public struct ChangesSubscription: CancellableType {
   let token: EventEmitterCancellable
  

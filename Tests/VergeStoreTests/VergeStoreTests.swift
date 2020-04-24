@@ -305,7 +305,7 @@ final class VergeStoreTests: XCTestCase {
   
   func testSubscription() {
     
-    var subscriptions = Set<UntilDeinitCancellable>()
+    var subscriptions = Set<AutoCancellable>()
     var count = 0
     
     store.subscribeStateChanges { (changes) in

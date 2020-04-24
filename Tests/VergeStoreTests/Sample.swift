@@ -29,7 +29,7 @@ enum Sample {
     
     let store = Store<State, Activity>(initialState: .init(), logger: nil)
     
-    var subscriptions = Set<UntilDeinitCancellable>()
+    var subscriptions = Set<AutoCancellable>()
     
     override func viewDidLoad() {
       super.viewDidLoad()

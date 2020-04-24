@@ -22,9 +22,13 @@
 import Foundation
 import os
 
-public final class UntilDeinitCancellable: Hashable {
+public final class AutoCancellable: Hashable, CancellableType {
   
-  public static func == (lhs: UntilDeinitCancellable, rhs: UntilDeinitCancellable) -> Bool {
+  private let lock = NSLock()
+  
+  private var wasCancelled = false
+
+  public static func == (lhs: AutoCancellable, rhs: AutoCancellable) -> Bool {
     lhs === rhs
   }
   
@@ -32,10 +36,10 @@ public final class UntilDeinitCancellable: Hashable {
     ObjectIdentifier(self).hash(into: &hasher)
   }
   
-  private let onDeinit: () -> Void
+  private var actions: ContiguousArray<() -> Void> = .init()
   
   public init(onDeinit: @escaping () -> Void) {
-    self.onDeinit = onDeinit
+    self.actions = [onDeinit]
   }
   
   public convenience init<C>(_ cancellable: C) where C : CancellableType {
@@ -49,16 +53,43 @@ public final class UntilDeinitCancellable: Hashable {
       cancellable.cancel()
     }
   }
+  
+  public func insert(_ cancellable: CancellableType) {
+    actions.append {
+      cancellable.cancel()
+    }
+  }
+  
+  public func insert(onDeinit: @escaping () -> Void) {
+    actions.append(onDeinit)
+  }
     
   deinit {
-    onDeinit()
+    cancel()
   }
+  
+  public func cancel() {
+    
+    lock.lock()
+    defer {
+      lock.unlock()
+    }
+    
+    guard !wasCancelled else { return }
+    wasCancelled = true
+    
+    actions.forEach {
+      $0()
+    }
+  }
+  
   
 }
 
 public protocol CancellableType {
   
   func cancel()
+    
 }
 
 public struct VergeAnyCancellable: CancellableType {
@@ -81,11 +112,11 @@ public struct VergeAnyCancellable: CancellableType {
 
 extension CancellableType {
   
-  public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == UntilDeinitCancellable {
+  public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == AutoCancellable {
     collection.append(.init(self))
   }
   
-  public func store(in set: inout Set<UntilDeinitCancellable>) {
+  public func store(in set: inout Set<AutoCancellable>) {
     set.insert(.init(self))
   }
   
