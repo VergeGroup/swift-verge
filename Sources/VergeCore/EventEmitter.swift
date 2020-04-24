@@ -22,13 +22,14 @@
 import Foundation
 import os
 
-public final class AutoCancellable: Hashable, CancellableType {
+/// A cancellable object that will cancel when itself deallocated.
+public final class VergeAnyCancellable: Hashable, CancellableType {
   
   private let lock = NSLock()
   
   private var wasCancelled = false
 
-  public static func == (lhs: AutoCancellable, rhs: AutoCancellable) -> Bool {
+  public static func == (lhs: VergeAnyCancellable, rhs: VergeAnyCancellable) -> Bool {
     lhs === rhs
   }
   
@@ -110,34 +111,28 @@ public final class AutoCancellable: Hashable, CancellableType {
 public protocol CancellableType {
   
   func cancel()
-    
-}
-
-public struct VergeAnyCancellable: CancellableType {
-    
-  private let _cancel: () -> Void
-  
-  public init<C>(_ other: C) where C : CancellableType {
-    self.init(onCancel: other.cancel)
-  }
-  
-  public init(onCancel: @escaping () -> Void) {
-    self._cancel = onCancel
-  }
-
-  public func cancel() {
-    _cancel()
-  }
-  
 }
 
 extension CancellableType {
   
-  public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == AutoCancellable {
+  public func asAutoCancellable() -> VergeAnyCancellable {
+    .init(self)
+  }
+}
+
+extension CancellableType {
+      
+  /// Stores this cancellable instance in the specified collection.
+  ///
+  /// According to Combine.framework API Design.
+  public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == VergeAnyCancellable {
     collection.append(.init(self))
   }
   
-  public func store(in set: inout Set<AutoCancellable>) {
+  /// Stores this cancellable instance in the specified set.
+  ///
+  /// According to Combine.framework API Design.
+  public func store(in set: inout Set<VergeAnyCancellable>) {
     set.insert(.init(self))
   }
   
@@ -149,6 +144,7 @@ import Combine
 
 extension CancellableType {
     
+  /// Interop with Combine
   @available(iOS 13, macOS 10.15, *)
   public func store(in set: inout Set<AnyCancellable>) {
     set.insert(AnyCancellable.init {

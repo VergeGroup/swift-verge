@@ -25,6 +25,7 @@ import Foundation
 import VergeCore
 #endif
 
+/// A container object that provides the current value and changes from the source Store.
 public class Derived<State> {
   
   public static func constant(_ value: State) -> Derived<State> {
@@ -51,7 +52,7 @@ public class Derived<State> {
     self.subscription = .init(onDeinit: {})
   }
   
-  private let subscription: AutoCancellable
+  private let subscription: VergeAnyCancellable
       
   public init<UpstreamState>(
     get: MemoizeMap<UpstreamState, State>,
@@ -75,7 +76,7 @@ public class Derived<State> {
       }
     }
     
-    self.subscription = AutoCancellable.init(s)
+    self.subscription = VergeAnyCancellable.init(s)
     self._set = set
     self.innerStore = store
   }

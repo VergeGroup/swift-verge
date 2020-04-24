@@ -21,8 +21,11 @@
 
 import Foundation
 
-// TODO: Get a good name
-// StatePipeline
+/// A pipeline object to make derived data from the source store.
+/// It supports Memoization
+///
+/// - TODO:
+///   - make identifier to cache Derived<T>
 public struct MemoizeMap<Input, Output> {
   
   public enum Result {
@@ -83,7 +86,11 @@ public struct MemoizeMap<Input, Output> {
   func makeInitial(_ source: Input) -> Output {
     _makeInitial(source)
   }
-  
+    
+  /// Tune memoization logic up.
+  ///
+  /// - Parameter predicate: Return true, the coming input would be dropped.
+  /// - Returns:
   public func dropsInput(
     while predicate: @escaping (Input) -> Bool
   ) -> Self {
@@ -119,7 +126,8 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
     )
   }
   
-  /// Using implicit drop-input with Equatable
+  /// Projects a specified shape from Input.
+  /// Memoization is available, with Equatable.
   public static func map(_ map: @escaping (Input) -> Output) -> Self {
     .init(map: map)
   }
@@ -131,7 +139,13 @@ extension MemoizeMap where Input : ChangesType {
 }
 
 extension MemoizeMap {
-  
+    
+  /// Projects a specified shape from Input.
+  ///
+  /// No memoization, additionally you need to call `dropsInput` to get memoization.
+  ///
+  /// - Parameter map:
+  /// - Returns:
   public static func map(_ map: @escaping (Input) -> Output) -> Self {
     .init(dropInput: { _ in false }, map: map)
   }
