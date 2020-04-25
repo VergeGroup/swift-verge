@@ -110,9 +110,7 @@ public struct Changes<Value>: ChangesType {
       return .init(value: try transform(value), cachedComputedValueStorage: cachedComputedValueStorage)
     }
   }
-  
-//  private let sharedCacheComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
-  
+    
   internal private(set) var previous: PreviousWrapper?
   private var innerCurrent: InnerCurrent
     
@@ -127,20 +125,17 @@ public struct Changes<Value>: ChangesType {
   ) {
     self.previous = nil
     self.innerCurrent = .init(value: new)
-//    self.sharedCacheComputedValueStorage = .init([:])
     self.version = 0
   }
   
   private init(
     previous: PreviousWrapper?,
     innerCurrent: InnerCurrent,
-//    sharedCacheStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>,
     version: UInt64
   ) {
     
     self.previous = previous
     self.innerCurrent = innerCurrent
-//    self.sharedCacheComputedValueStorage = sharedCacheStorage
     self.version = version
   }
   
