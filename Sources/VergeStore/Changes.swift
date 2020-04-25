@@ -340,7 +340,7 @@ extension Changes where Value : ExtendedStateType {
         return previous.innerCurrent.cachedComputedValueStorage.modify { previousCache -> Output in
           if let previousCachedValue = previousCache[keyPath] as? Output {
             
-            components._onHitSharedCache()
+            components._onHitPreviousCache()
             
             switch components.memoizeMap.makeResult(self) {
             case .noChanages:
@@ -408,7 +408,7 @@ extension _StateTypeContainer {
     fileprivate(set) var _onHitCache: () -> Void = {}
     
     @usableFromInline
-    fileprivate(set) var _onHitSharedCache: () -> Void = {}
+    fileprivate(set) var _onHitPreviousCache: () -> Void = {}
     
     @usableFromInline
     fileprivate(set) var _onHitPreFilter: () -> Void = {}
@@ -487,10 +487,10 @@ extension _StateTypeContainer {
     
     @inlinable
     @inline(__always)
-    public func onHitSharedCache(_ closure: @escaping () -> Void) -> Self {
+    public func onHitPreviousCache(_ closure: @escaping () -> Void) -> Self {
       
       var _self = self
-      _self._onHitSharedCache = closure
+      _self._onHitPreviousCache = closure
       return _self
     }
     
