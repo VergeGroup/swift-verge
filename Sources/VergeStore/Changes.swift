@@ -111,7 +111,7 @@ public struct Changes<Value>: ChangesType {
     }
   }
   
-  private let sharedCacheComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
+//  private let sharedCacheComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
   
   internal private(set) var previous: PreviousWrapper?
   private var innerCurrent: InnerCurrent
@@ -127,20 +127,20 @@ public struct Changes<Value>: ChangesType {
   ) {
     self.previous = nil
     self.innerCurrent = .init(value: new)
-    self.sharedCacheComputedValueStorage = .init([:])
+//    self.sharedCacheComputedValueStorage = .init([:])
     self.version = 0
   }
   
   private init(
     previous: PreviousWrapper?,
     innerCurrent: InnerCurrent,
-    sharedCacheStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>,
+//    sharedCacheStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>,
     version: UInt64
   ) {
     
     self.previous = previous
     self.innerCurrent = innerCurrent
-    self.sharedCacheComputedValueStorage = sharedCacheStorage
+//    self.sharedCacheComputedValueStorage = sharedCacheStorage
     self.version = version
   }
   
@@ -243,7 +243,7 @@ public struct Changes<Value>: ChangesType {
     Changes<U>(
       previous: try previous.map { try Changes<U>.PreviousWrapper.wrapped($0.value.map(transform)) },
       innerCurrent: try innerCurrent.map(transform),
-      sharedCacheStorage: sharedCacheComputedValueStorage,
+//      sharedCacheStorage: sharedCacheComputedValueStorage,
       version: version
     )
   }
@@ -320,80 +320,65 @@ extension Changes where Value : ExtendedStateType {
   private func _takeFromCacheOrCreate<Output>(
     keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>
   ) -> Output {
-    
+
     let components = Value.Extended.instance[keyPath: keyPath]
     
     components._onRead()
+    
+    // TODO: tune-up concurrency performance
             
-    returnCachedValue: do {
-      if let computed = innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
-        components._onHitCache()
-        // if cached, take value withoud shared lock
-        return computed
-      }
-    }
-               
-    // lock the shared lock
-    return sharedCacheComputedValueStorage.modify { _cahce in
-            
-      /* Begin lock scope */
+    return innerCurrent.cachedComputedValueStorage.modify { cache -> Output in
       
-      if let computed = innerCurrent.cachedComputedValueStorage.value[keyPath] as? Output {
+      if let computed = cache[keyPath] as? Output {
         components._onHitCache()
         // if cached, take value withoud shared lock
         return computed
       }
-                             
-      if let cached = _cahce[keyPath] as? Output {
+      
+      if let previous = previous?.value {
         
-        components._onHitSharedCache()
-        
-        switch components.memoizeMap.makeResult(self) {
-        case .noChanages:
-          
-          // No changes
-          components._onHitPreFilter()
-          
-          innerCurrent.cachedComputedValueStorage.modify {
-            $0[keyPath] = cached
+        return previous.innerCurrent.cachedComputedValueStorage.modify { previousCache -> Output in
+          if let previousCachedValue = previousCache[keyPath] as? Output {
+            
+            components._onHitSharedCache()
+            
+            switch components.memoizeMap.makeResult(self) {
+            case .noChanages:
+              
+              // No changes
+              components._onHitPreFilter()
+              cache[keyPath] = previousCachedValue
+              return previousCachedValue
+              
+            case .updated(let newValue):
+              
+              // Update
+              components._onTransform()
+              cache[keyPath] = newValue
+              return newValue
+            }
+          } else {
+            
+            components._onTransform()
+            
+            let initialValue = components.memoizeMap.makeInitial(self)
+            cache[keyPath] = initialValue
+            return initialValue
+            
           }
-          return cached
-          
-        case .updated(let newValue):
-          
-          // Update
-          
-          components._onTransform()
-          
-          _cahce[keyPath] = newValue
-          
-          innerCurrent.cachedComputedValueStorage.modify {
-            $0[keyPath] = newValue
-          }
-          
-          return newValue
         }
-               
-      } else {
         
-        // Make initial
+      } else {
         
         components._onTransform()
         
         let initialValue = components.memoizeMap.makeInitial(self)
-        
-        _cahce[keyPath] = initialValue
-        
-        innerCurrent.cachedComputedValueStorage.modify {
-          $0[keyPath] = initialValue
-        }
-                
+        cache[keyPath] = initialValue        
         return initialValue
       }
-                     
-      /* End lock scope */
+      
     }
-    
+                          
   }
   
 }
