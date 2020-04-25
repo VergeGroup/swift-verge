@@ -308,7 +308,7 @@ extension Changes where Value : ExtendedStateType {
     
     @inline(__always)
     private func take<Output>(with keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>) -> Output {
-      return source._takeFromCacheOrCreate(keyPath: keyPath)
+      return source._synchronized_takeFromCacheOrCreate(keyPath: keyPath)
     }
   }
   
@@ -317,7 +317,7 @@ extension Changes where Value : ExtendedStateType {
   }
         
   @inline(__always)
-  private func _takeFromCacheOrCreate<Output>(
+  private func _synchronized_takeFromCacheOrCreate<Output>(
     keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>
   ) -> Output {
 
