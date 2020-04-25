@@ -171,6 +171,12 @@ public final class BindingDerived<State>: Derived<State> {
 
 extension StoreType {
   
+  /// Returns Dervived object with making
+  ///
+  /// - Parameter
+  ///   - memoizeMap:
+  ///   - dropsOutput: Predicate to drops object if found a duplicated output
+  /// - Returns:
   public func derived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
     dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false }
@@ -192,13 +198,26 @@ extension StoreType {
     
     return derived
   }
-  
+    
+  /// Returns Dervived object with making
+  ///
+  /// Drops duplicated the output with Equatable comparison.
+  ///
+  /// - Parameter memoizeMap:
+  /// - Returns:
   public func derived<NewState: Equatable>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>
   ) -> Derived<NewState> {
     derived(memoizeMap, dropsOutput: { $0.asChanges().noChanges(\.root) })
   }
-  
+    
+  /// Returns Binding Derived object
+  /// - Parameters:
+  ///   - name:
+  ///   - get:
+  ///   - dropsOutput: Predicate to drops object if found a duplicated output
+  ///   - set:
+  /// - Returns:
   public func binding<NewState>(
     _ name: String = "",
     _ file: StaticString = #file,
@@ -226,6 +245,14 @@ extension StoreType {
     return derived
   }
   
+  /// Returns Binding Derived object
+  ///
+  /// Drops duplicated the output with Equatable comparison.  
+  /// - Parameters:
+  ///   - name:
+  ///   - get:
+  ///   - set:
+  /// - Returns:
   public func binding<NewState: Equatable>(
     _ name: String = "",
     _ file: StaticString = #file,

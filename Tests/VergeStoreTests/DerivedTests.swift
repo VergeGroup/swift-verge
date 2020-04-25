@@ -75,6 +75,8 @@ final class DerivedTests: XCTestCase {
     weak var weakBaseSlice = baseSlice
     
     let expectation = XCTestExpectation(description: "receive changes")
+    expectation.expectedFulfillmentCount = 1
+    expectation.assertForOverFulfill = true
     
     let subscription = baseSlice.subscribeStateChanges(dropsFirst: true) { (changes) in
       expectation.fulfill()
@@ -87,7 +89,9 @@ final class DerivedTests: XCTestCase {
     XCTAssertNotNil(weakBaseSlice, "it won't be deinitiallized")
     
     wrapper.commit { _ in }
-    
+        
+    wrapper.commit { $0.count += 1 }
+            
     subscription.cancel()
     
     XCTAssertNil(weakBaseSlice)
