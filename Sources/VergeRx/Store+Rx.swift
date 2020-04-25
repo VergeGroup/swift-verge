@@ -22,10 +22,18 @@ extension Reactive where Base : StoreType {
     unsafeBitCast(base.asStore().__activityEmitter, to: EventEmitter<Base.Activity>.self)
   }
   
-  public var changesObservable: Observable<Changes<Base.State>> {
-    storage.asObservable()
+  public func changesObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.State>> {
+    if startsFromInitial {
+      return storage
+        .asObservable()
+        .skip(1)
+        .startWith(storage.value.droppedPrevious())
+    } else {
+      return storage
+        .asObservable()
+    }
   }
-  
+    
   public var stateObservable: Observable<Base.State> {
     storage.asObservable().map { $0.current }
   }

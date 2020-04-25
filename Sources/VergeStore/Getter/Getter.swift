@@ -151,8 +151,8 @@ extension Store {
   ) -> (AnyPublisher<Changes<Output>, Never>, Changes<Output>) {
     
     let initialValue = Changes<Output>.init(old: nil, new: components.transform(changes.current))
-        
-    let base = changesPublisher
+
+    let base = changesPublisher(startsFromInitial: true)
       .dropFirst()
       .handleEvents(receiveOutput: { [closure = components.onPreFilterWillReceive] value in
         closure(value.current)

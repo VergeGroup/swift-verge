@@ -11,25 +11,51 @@ import XCTest
 import VergeRx
 
 class VergeRxTests: XCTestCase {
-
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+  
+  func testChangesObbservable() {
+    
+    let store = DemoStore()
+    
+    XCTContext.runActivity(named: "Premise") { (activity) in
+      
+      XCTAssertEqual(store.changes.hasChanges(\.count), true)
+      
+      store.commit { _ in }
+      
+      XCTAssertEqual(store.changes.hasChanges(\.count), false)
+      
     }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    
+    XCTContext.runActivity(named: "startsFromInitial: true") { (activity) in
+      
+      let exp1 = expectation(description: "")
+      
+      _ = store.rx.changesObservable(startsFromInitial: true)
+        .subscribe(onNext: { changes in
+          exp1.fulfill()
+          XCTAssertEqual(changes.hasChanges(\.count), true)
+        })
+      
+      XCTAssertEqual(exp1.expectedFulfillmentCount, 1)
+      
+      wait(for: [exp1], timeout: 1)
+      
     }
-
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    
+    XCTContext.runActivity(named: "startsFromInitial: false") { (activity) in
+      
+      let exp1 = expectation(description: "")
+      
+      _ = store.rx.changesObservable(startsFromInitial: false)
+        .subscribe(onNext: { changes in
+          exp1.fulfill()
+          XCTAssertEqual(changes.hasChanges(\.count), false)
+        })
+      
+      XCTAssertEqual(exp1.expectedFulfillmentCount, 1)
+      
+      wait(for: [exp1], timeout: 1)
+      
     }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
+  }
 }

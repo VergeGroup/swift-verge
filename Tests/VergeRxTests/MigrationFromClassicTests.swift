@@ -95,7 +95,7 @@ enum MigrationExample {
       
       rx: do {
         
-        let _: Observable<Changes<ViewModel.State>> = viewModel.rx.changesObservable
+        let _: Observable<Changes<ViewModel.State>> = viewModel.rx.changesObservable()
         
         let _: Observable<ViewModel.State> = viewModel.rx.stateObservable
         

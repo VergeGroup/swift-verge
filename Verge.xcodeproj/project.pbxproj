@@ -40,6 +40,7 @@
 		4B4011B923C7797A00C582BC /* MemoizeGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B232761239E71530043D3F9 /* MemoizeGetterTests.swift */; };
 		4B4011BB23C779BE00C582BC /* ORMGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB97D2423AFD0A9004EECDB /* ORMGetterTests.swift */; };
 		4B4011BD23C779D400C582BC /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4011BC23C779D400C582BC /* State.swift */; };
+		4B4171D224540846009FD729 /* DemoState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B95BE59244F10F200124F6B /* DemoState.swift */; };
 		4B427419236F269C00C302C8 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B427418236F269C00C302C8 /* Store.swift */; };
 		4B475BB6239AB954008A03E1 /* VergeORM.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B475BB4239AB954008A03E1 /* VergeORM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B475BB9239AB954008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
@@ -890,7 +891,6 @@
 				4B71CEED23B14394004520CE /* ActivityTests.swift */,
 				4BCE8C2123CF736300FD30D9 /* MostSimpleSampleTests.swift */,
 				4B1F19C3243A88A000CED46B /* ComputedTests.swift */,
-				4B95BE59244F10F200124F6B /* DemoState.swift */,
 			);
 			path = VergeStoreTests;
 			sourceTree = "<group>";
@@ -1171,6 +1171,7 @@
 		4BF2BCCD238A653000F70CDA /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				4B95BE59244F10F200124F6B /* DemoState.swift */,
 				4B1743A823C767670074C457 /* VergeRxTests */,
 				4BE9455023AD1B180060F977 /* VergeCoreTests */,
 				4B65F8ED1FB4C0DC00A90A67 /* VergeTests */,
@@ -1873,6 +1874,7 @@
 			files = (
 				4B4011B923C7797A00C582BC /* MemoizeGetterTests.swift in Sources */,
 				4B1743B223C7676E0074C457 /* VergeGetterRxTests.swift in Sources */,
+				4B4171D224540846009FD729 /* DemoState.swift in Sources */,
 				4B1743AA23C767670074C457 /* VergeRxTests.swift in Sources */,
 				4BA5915123DF536F007F614C /* FunctionBuilderTests.swift in Sources */,
 				4B4011BD23C779D400C582BC /* State.swift in Sources */,

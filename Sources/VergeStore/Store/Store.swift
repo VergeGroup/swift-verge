@@ -245,8 +245,14 @@ extension Store {
     _backingStorage.valuePublisher.map(\.current).eraseToAnyPublisher()
   }
   
-  public var changesPublisher: AnyPublisher<Changes<State>, Never> {
-    _backingStorage.valuePublisher
+  public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
+    if startsFromInitial {
+      return _backingStorage.valuePublisher.dropFirst()
+        .merge(with: Just(_backingStorage.value.droppedPrevious()))
+        .eraseToAnyPublisher()
+    } else {
+      return _backingStorage.valuePublisher
+    }
   }
   
   public var activityPublisher: EventEmitter<Activity>.Publisher {

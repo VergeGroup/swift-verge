@@ -29,3 +29,10 @@ struct DemoState: ExtendedStateType {
   }
   
 }
+
+final class DemoStore: VergeStore.Store<DemoState, Never> {
+  
+  init() {
+    super.init(initialState: .init(), logger: nil)
+  }
+}

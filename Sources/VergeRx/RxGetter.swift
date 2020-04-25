@@ -161,7 +161,7 @@ extension Reactive where Base : StoreType {
     
     let initialValue = Changes<Output>.init(old: nil, new: components.transform(base.asStore().changes.current)) 
           
-    let baseStream = base.asStore().rx.changesObservable
+    let baseStream = base.asStore().rx.changesObservable(startsFromInitial: true)
       .skip(1)
       .do(onNext: { [closure = components.onPreFilterWillReceive] value in
         closure(value.current)

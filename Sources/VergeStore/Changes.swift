@@ -144,7 +144,7 @@ public struct Changes<Value>: ChangesType {
   }
   
   /// To create initial changes object
-  func droppedPrevious() -> Self {
+  public func droppedPrevious() -> Self {
     var _self = self
     _self.previous = nil
     return _self
