@@ -241,10 +241,19 @@ extension Store: ObservableObject {
 @available(iOS 13.0, macOS 10.15, *)
 extension Store {
   
+  /// A publisher that repeatedly emits the current state when state updated
+  ///
+  /// Guarantees to emit the first event on started subscribing.
   public var statePublisher: AnyPublisher<State, Never> {
     _backingStorage.valuePublisher.map(\.current).eraseToAnyPublisher()
   }
-  
+    
+  /// A publisher that repeatedly emits the changes when state updated
+  ///
+  /// Guarantees to emit the first event on started subscribing.
+  ///
+  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
+  /// - Returns:
   public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
     if startsFromInitial {
       return _backingStorage.valuePublisher.dropFirst()

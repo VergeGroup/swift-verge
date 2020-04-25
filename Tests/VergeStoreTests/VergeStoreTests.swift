@@ -357,4 +357,51 @@ final class VergeStoreTests: XCTestCase {
     withExtendedLifetime(sub) {}
   }
   
+  func testChangesPublisher() {
+    
+    let store = DemoStore()
+    
+    XCTContext.runActivity(named: "Premise") { (activity) in
+      
+      XCTAssertEqual(store.changes.hasChanges(\.count), true)
+      
+      store.commit { _ in }
+      
+      XCTAssertEqual(store.changes.hasChanges(\.count), false)
+      
+    }
+    
+    XCTContext.runActivity(named: "startsFromInitial: true") { (activity) in
+      
+      let exp1 = expectation(description: "")
+      
+      _ = store.changesPublisher(startsFromInitial: true)
+        .sink { changes in
+          exp1.fulfill()
+          XCTAssertEqual(changes.hasChanges(\.count), true)
+        }
+      
+      XCTAssertEqual(exp1.expectedFulfillmentCount, 1)
+      
+      wait(for: [exp1], timeout: 1)
+      
+    }
+    
+    XCTContext.runActivity(named: "startsFromInitial: false") { (activity) in
+      
+      let exp1 = expectation(description: "")
+      
+      _ = store.changesPublisher(startsFromInitial: false)
+        .sink { changes in
+          exp1.fulfill()
+          XCTAssertEqual(changes.hasChanges(\.count), false)
+        }
+      
+      XCTAssertEqual(exp1.expectedFulfillmentCount, 1)
+      
+      wait(for: [exp1], timeout: 1)
+      
+    }
+  }
+  
 }
