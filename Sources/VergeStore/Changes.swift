@@ -143,7 +143,8 @@ public struct Changes<Value>: ChangesType {
     self
   }
   
-  public func droppedPrevious() -> Self {
+  /// To create initial changes object
+  func droppedPrevious() -> Self {
     var _self = self
     _self.previous = nil
     return _self
@@ -238,7 +239,6 @@ public struct Changes<Value>: ChangesType {
     Changes<U>(
       previous: try previous.map { try Changes<U>.PreviousWrapper.wrapped($0.value.map(transform)) },
       innerCurrent: try innerCurrent.map(transform),
-//      sharedCacheStorage: sharedCacheComputedValueStorage,
       version: version
     )
   }
