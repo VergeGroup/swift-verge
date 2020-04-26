@@ -86,6 +86,10 @@ public struct Comparer<Input> {
     equals(lhs, rhs)
   }
   
+  public func curried() -> (_ lhs: Input, _ rhs: Input) -> Bool {
+    equals
+  }
+  
 }
 
 extension Comparer where Input : Equatable {  

@@ -33,7 +33,17 @@ public protocol StateType {
 /// Mainly it would be used with dynamicMemberLookup.
 /// Therefore it must be initialized with no args.
 public protocol ExtendedType {
-  init()
+  
+  /// Currently limitation
+  /// To get better performance, return shared initialized instance
+  ///
+  /// This property will be accessed by using computed property
+  ///
+  /// ```
+  /// static let instance: YourExtendedType = .init()
+  /// ```
+  ///
+  static var instance: Self { get }
 }
 
 /** A protocol extended from StateType

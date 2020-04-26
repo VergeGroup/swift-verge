@@ -14,16 +14,41 @@ fileprivate var storage_lock: Void?
 
 extension Reactive where Base : StoreType {
   
-  public var changesObservable: Observable<Changes<Base.State>> {
-    base.asStore()._backingStorage.asObservable()
+  private var storage: StateStorage<Changes<Base.State>> {
+    unsafeBitCast(base.asStore().__backingStorage, to: StateStorage<Changes<Base.State>>.self)
   }
   
+  private var activityEmitter: EventEmitter<Base.Activity> {
+    unsafeBitCast(base.asStore().__activityEmitter, to: EventEmitter<Base.Activity>.self)
+  }
+  
+  /// An observable that repeatedly emits the current state when state updated
+  ///
+  /// Guarantees to emit the first event on started
   public var stateObservable: Observable<Base.State> {
-    base.asStore()._backingStorage.asObservable().map { $0.current }
+    storage.asObservable().map { $0.current }
   }
   
+  /// An observable that repeatedly emits the changes when state updated
+  ///
+  /// Guarantees to emit the first event on started subscribing.
+  ///
+  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
+  /// - Returns:
+  public func changesObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.State>> {
+    if startsFromInitial {
+      return storage
+        .asObservable()
+        .skip(1)
+        .startWith(storage.value.droppedPrevious())
+    } else {
+      return storage
+        .asObservable()
+    }
+  }
+
   public var activitySignal: Signal<Base.Activity> {
-    base.asStore()._eventEmitter.asSignal()
+    activityEmitter.asSignal()
   }
   
 }

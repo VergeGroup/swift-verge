@@ -25,37 +25,13 @@ import Foundation
 @_exported import VergeCore
 #endif
 
-public struct ChangesSubscription: CancellableType {
-  let token: EventEmitterCancellable
- 
-  public func cancel() {
-    token.cancel()
-  }
-}
-
-public struct ActivitySusbscription: CancellableType {
-  let token: EventEmitterCancellable
-  
-  public func cancel() {
-    token.cancel()
-  }
-}
-
-public protocol StoreType {
+public protocol StoreType: AnyObject {
   associatedtype State
   associatedtype Activity = Never
   
   func asStore() -> Store<State, Activity>
   
   var state: State { get }
-}
-
-extension StoreType {
-  
-  public func makeSlice<NewState>(_ slice: @escaping (Changes<State>) -> NewState) -> StoreSlice<NewState> {
-    .init(slice: slice, from: self)
-  }
-  
 }
 
 public typealias NoActivityStoreBase<State: StateType> = Store<State, Never>
@@ -96,12 +72,19 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   public var changes: Changes<State> {
     _backingStorage.value
   }
+  
+  public var __backingStorage: UnsafeMutableRawPointer {    
+    Unmanaged.passUnretained(_backingStorage).toOpaque()
+  }
+  
+  public var __activityEmitter: UnsafeMutableRawPointer {
+    Unmanaged.passUnretained(_activityEmitter).toOpaque()
+  }
 
   /// A backing storage that manages current state.
   /// You shouldn't access this directly unless special case.
-  public let _backingStorage: Storage<Changes<State>>
-  public let _eventEmitter: EventEmitter<Activity> = .init()  
-  public let _getterStorage: Storage<[AnyKeyPath : Any]> = .init([:])
+  private let _backingStorage: StateStorage<Changes<State>>
+  private let _activityEmitter: EventEmitter<Activity> = .init()
   
   public private(set) var logger: StoreLogger?
     
@@ -147,7 +130,11 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   @inline(__always)
   func _send(activity: Activity) {
     
-    _eventEmitter.accept(activity)
+    _activityEmitter.accept(activity)
+  }
+  
+  func setNotificationFilter(_ filter: @escaping (Changes<State>) -> Bool) {
+    self._backingStorage.setNotificationFilter(filter)
   }
      
   public var customMirror: Mirror {
@@ -163,48 +150,77 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
     self
   }
   
-  @available(*, deprecated, renamed: "asStore")
-  public func asStoreBase() -> Store<State, Activity> {
-    self
-  }
-    
   /// Subscribe the state changes
   ///
-  /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
-  @discardableResult
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func subscribeStateChanges(
     dropsFirst: Bool = false,
-    _ receive: @escaping (Changes<State>) -> Void
-  ) -> ChangesSubscription {
-
-    if !dropsFirst {
-      receive(_backingStorage.value)
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Changes<State>) -> Void
+  ) -> VergeAnyCancellable {
+    
+    if let queue = queue {
+      
+      if !dropsFirst {
+        let value = _backingStorage.value.droppedPrevious()
+        queue.async {
+          receive(value)
+        }
+      }
+      
+      let cancellable = _backingStorage.addDidUpdate { newValue in
+        queue.async {
+          receive(newValue)
+        }
+      }
+      
+      return .init(cancellable)
+      
+    } else {
+      
+//      let lock = NSRecursiveLock()
+      
+      if !dropsFirst {
+//        lock.lock(); defer { lock.unlock() }
+        receive(_backingStorage.value.droppedPrevious())
+      }
+      
+      let cancellable = _backingStorage.addDidUpdate { newValue in
+//        lock.lock(); defer { lock.unlock() }
+        receive(newValue)
+      }
+      
+      return .init(cancellable)
     }
     
-    let token = _backingStorage.addDidUpdate { newValue in
-      receive(newValue)
-    }
-    
-    return .init(token: token)
   }
   
   /// Subscribe the activity
   ///
-  /// - Returns: Token to remove suscription if you need to do explicitly. Subscription will be removed automatically when Store deinit
-  @discardableResult
-  public func subscribeActivity(_ receive: @escaping (Activity) -> Void) -> ActivitySusbscription  {
-    let token = _eventEmitter.add(receive)
-    return .init(token: token)
-  }
-   
-  public func removeStateChangesSubscription(_ subscription: ChangesSubscription) {
-    _backingStorage.remove(subscription.token)
-  }
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func subscribeActivity(
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Activity) -> Void
+  ) -> VergeAnyCancellable {
+    
+    if let queue = queue {
+      let cancellable = _activityEmitter.add { (activity) in
+        queue.async {
+          receive(activity)
+        }
+      }
+      return .init(cancellable)
+    } else {
+//      let lock = NSRecursiveLock()
+      let cancellable = _activityEmitter.add { activity in
+//        lock.lock(); defer { lock.unlock() }
+        receive(activity)
+      }
+      return .init(cancellable)
+    }
   
-  public func removeActivitySubscription(_ subscription: ActivitySusbscription) {
-    _eventEmitter.remove(subscription.token)
   }
-          
+             
 }
 
 #if canImport(Combine)
@@ -225,16 +241,31 @@ extension Store: ObservableObject {
 @available(iOS 13.0, macOS 10.15, *)
 extension Store {
   
+  /// A publisher that repeatedly emits the current state when state updated
+  ///
+  /// Guarantees to emit the first event on started subscribing.
   public var statePublisher: AnyPublisher<State, Never> {
     _backingStorage.valuePublisher.map(\.current).eraseToAnyPublisher()
   }
-  
-  public var changesPublisher: AnyPublisher<Changes<State>, Never> {
-    _backingStorage.valuePublisher
+    
+  /// A publisher that repeatedly emits the changes when state updated
+  ///
+  /// Guarantees to emit the first event on started subscribing.
+  ///
+  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
+  /// - Returns:
+  public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
+    if startsFromInitial {
+      return _backingStorage.valuePublisher.dropFirst()
+        .merge(with: Just(_backingStorage.value.droppedPrevious()))
+        .eraseToAnyPublisher()
+    } else {
+      return _backingStorage.valuePublisher
+    }
   }
   
   public var activityPublisher: EventEmitter<Activity>.Publisher {
-    _eventEmitter.publisher
+    _activityEmitter.publisher
   }
    
 }

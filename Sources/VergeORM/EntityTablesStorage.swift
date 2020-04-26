@@ -22,7 +22,7 @@
 import Foundation
 
 #if !COCOAPODS
-import VergeCore
+import VergeStore
 #endif
 
 protocol EntityTableType {
@@ -41,7 +41,7 @@ struct EntityRawTable: Equatable {
   
   typealias RawTable = [AnyHashable : AnyEntity]
   
-  private(set) var updatedMarker = UpdatedMarker()
+  private(set) var updatedMarker = VersionCounter()
 
   private(set) var entities: RawTable = [:]
   
@@ -67,7 +67,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   let entityName: EntityName = Entity.entityName
   
-  public var updatedMarker: UpdatedMarker {
+  public var updatedMarker: VersionCounter {
     _read { yield rawTable.updatedMarker }
   }
     

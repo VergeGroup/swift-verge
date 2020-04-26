@@ -22,9 +22,15 @@
 import Foundation
 import os
 
-public final class UntilDeinitCancellable: Hashable {
+/// A type-erasing cancellable object that executes a provided closure when canceled.
+/// An AnyCancellable instance automatically calls cancel() when deinitialized.
+public final class VergeAnyCancellable: Hashable, CancellableType {
   
-  public static func == (lhs: UntilDeinitCancellable, rhs: UntilDeinitCancellable) -> Bool {
+  private let lock = NSLock()
+  
+  private var wasCancelled = false
+
+  public static func == (lhs: VergeAnyCancellable, rhs: VergeAnyCancellable) -> Bool {
     lhs === rhs
   }
   
@@ -32,24 +38,77 @@ public final class UntilDeinitCancellable: Hashable {
     ObjectIdentifier(self).hash(into: &hasher)
   }
   
-  private let onDeinit: () -> Void
+  private var actions: ContiguousArray<() -> Void> = .init()
   
-  init(onDeinit: @escaping () -> Void) {
-    self.onDeinit = onDeinit
+  public init(onDeinit: @escaping () -> Void) {
+    self.actions = [onDeinit]
   }
   
-  convenience init<C>(_ cancellable: C) where C : CancellableType {
+  public convenience init<C>(_ cancellable: C) where C : CancellableType {
     self.init {
       cancellable.cancel()
     }
   }
   
-  deinit {
-    onDeinit()
+  public convenience init(_ cancellable: CancellableType) {
+    self.init {
+      cancellable.cancel()
+    }
   }
+  
+  public func insert(_ cancellable: CancellableType) {
+    actions.append {
+      cancellable.cancel()
+    }
+  }
+  
+  public func insert(onDeinit: @escaping () -> Void) {
+    actions.append(onDeinit)
+  }
+    
+  deinit {
+    cancel()
+  }
+  
+  public func cancel() {
+    
+    lock.lock()
+    defer {
+      lock.unlock()
+    }
+    
+    guard !wasCancelled else { return }
+    wasCancelled = true
+    
+    actions.forEach {
+      $0()
+    }
+  }
+  
   
 }
 
+/// An object to cancel subscription
+///
+/// To cancel depending owner, can be written following
+///
+/// ```
+/// class ViewController {
+///
+///   var subscriptions = Set<AutoCancellable>()
+///
+///   func something() {
+///
+///   let derived = store.derived(...)
+///
+///   derived
+///     .subscribeStateChanges { ... }
+///     .store(in: &subscriptions)
+///   }
+///
+/// }
+/// ```
+///
 public protocol CancellableType {
   
   func cancel()
@@ -57,11 +116,24 @@ public protocol CancellableType {
 
 extension CancellableType {
   
-  public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == UntilDeinitCancellable {
+  public func asAutoCancellable() -> VergeAnyCancellable {
+    .init(self)
+  }
+}
+
+extension CancellableType {
+      
+  /// Stores this cancellable instance in the specified collection.
+  ///
+  /// According to Combine.framework API Design.
+  public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == VergeAnyCancellable {
     collection.append(.init(self))
   }
   
-  public func store(in set: inout Set<UntilDeinitCancellable>) {
+  /// Stores this cancellable instance in the specified set.
+  ///
+  /// According to Combine.framework API Design.
+  public func store(in set: inout Set<VergeAnyCancellable>) {
     set.insert(.init(self))
   }
   
@@ -73,6 +145,7 @@ import Combine
 
 extension CancellableType {
     
+  /// Interop with Combine
   @available(iOS 13, macOS 10.15, *)
   public func store(in set: inout Set<AnyCancellable>) {
     set.insert(AnyCancellable.init {

@@ -14,7 +14,7 @@ import VergeRx
 
 class ReproduceDeadlockTests: XCTestCase {
   
-  struct StoreWrapper: StoreWrapperType {
+  class StoreWrapper: StoreWrapperType {
         
     struct State: StateType {
       var count = 0
@@ -47,7 +47,6 @@ class ReproduceDeadlockTests: XCTestCase {
     store.commit {
       $0.count += 1
     }
-    
-        
+            
   }
 }

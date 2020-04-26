@@ -151,14 +151,14 @@ extension Store {
   ) -> (AnyPublisher<Changes<Output>, Never>, Changes<Output>) {
     
     let initialValue = Changes<Output>.init(old: nil, new: components.transform(changes.current))
-        
-    let base = changesPublisher
+
+    let base = changesPublisher(startsFromInitial: true)
       .dropFirst()
       .handleEvents(receiveOutput: { [closure = components.onPreFilterWillReceive] value in
         closure(value.current)
       })
       .filter({ value in
-        value.hasChanges(compare: components.preFilter.equals)
+        !components.preFilter(value)
       })
       .handleEvents(receiveOutput: { [closure = components.onTransformWillReceive] value in
         closure(value.current)
@@ -172,7 +172,7 @@ extension Store {
         return _next
       })
       .filter({ value in
-        value.hasChanges(compare: components.postFilter.equals)
+        !components.postFilter(value)
       })
       .handleEvents(receiveOutput: { [closure = components.onPostFilterWillEmit] value in
         closure(value.current)

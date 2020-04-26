@@ -51,21 +51,21 @@ public protocol DatabaseEmbedding {
 
 extension Comparer where Input : DatabaseType {
   
-  public static func databaseUpdated() -> Self {
+  public static func databaseNoUpdates() -> Self {
     return .init { pre, new in
       (pre._backingStorage.entityUpdatedMarker, pre._backingStorage.indexUpdatedMarker) == (new._backingStorage.entityUpdatedMarker, new._backingStorage.indexUpdatedMarker)
     }
   }
   
-  public static func tableUpdated<E: EntityType>(_ entityType: E.Type) -> Self {
+  public static func tableNoUpdates<E: EntityType>(_ entityType: E.Type) -> Self {
     Comparer.init(selector: { $0._backingStorage.entityBackingStorage.table(E.self).updatedMarker })
   }
   
-  public static func entityUpdated<E: EntityType & Equatable>(_ entityID: E.EntityID) -> Self {
+  public static func entityNoUpdates<E: EntityType & Equatable>(_ entityID: E.EntityID) -> Self {
     return .init(selector: { $0.entities.table(E.self).find(by: entityID) })
   }
   
-  public static func changesContains<E: EntityType>(_ entityID: E.EntityID) -> Self {
+  public static func changesNoContains<E: EntityType>(_ entityID: E.EntityID) -> Self {
     return .init { _, new in
       guard let result = new._backingStorage.lastUpdatesResult else {
         return false
@@ -120,7 +120,7 @@ extension GetterComponents where Input : DatabaseEmbedding {
     let path = Input.getterToDatabase
     
     let filter = Comparer<Input.Database>.init(or: [
-      .databaseUpdated(),
+      .databaseNoUpdates(),
       filter,
       ].compactMap { $0 })
     
@@ -159,8 +159,8 @@ extension GetterComponents where Input : DatabaseEmbedding {
         db.entities.table(E.self).find(by: entityID)
     },
       filter: .init(or: [
-        .tableUpdated(E.self),
-        .changesContains(entityID),
+        .tableNoUpdates(E.self),
+        .changesNoContains(entityID),
         filter
         ].compactMap { $0 }
       )
@@ -190,8 +190,8 @@ extension GetterComponents where Input : DatabaseEmbedding {
         return box
     },
       filter: Comparer.init(or: [
-        .tableUpdated(E.self),
-        .changesContains(entityID),
+        .tableNoUpdates(E.self),
+        .changesNoContains(entityID),
         filter
         ].compactMap { $0 }
       )
@@ -279,7 +279,7 @@ extension Store where State : DatabaseEmbedding {
     let _cache = cache
     
     guard let getterBuilder = _cache.getter(entityID: entityID) as? GetterSource<State, E?> else {
-      let newGetter = makeEntityGetter(from: entityID, filter: Comparer.entityUpdated(entityID))
+      let newGetter = makeEntityGetter(from: entityID, filter: Comparer.entityNoUpdates(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }
@@ -313,7 +313,7 @@ extension Store where State : DatabaseEmbedding {
     
     guard let getterBuilder = _cache.getter(entityID: entity.entityID) as? GetterSource<State, E> else {
       let entityID = entity.entityID
-      let newGetter = makeNonNullEntityGetter(from: entity, filter: Comparer.entityUpdated(entityID))
+      let newGetter = makeNonNullEntityGetter(from: entity, filter: Comparer.entityNoUpdates(entityID))
       _cache.setGetter(newGetter, entityID: entityID)
       return newGetter
     }

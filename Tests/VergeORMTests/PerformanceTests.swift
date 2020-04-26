@@ -148,7 +148,7 @@ class PerformanceTests: XCTestCase {
   func testInsertToFatStore() {
     
     state.db.performBatchUpdates { (context) in
-      let authors = (0..<100000).map { i in
+      let authors = (0..<1000).map { i in
         Author(rawID: "author.\(i)")
       }
       
@@ -158,7 +158,7 @@ class PerformanceTests: XCTestCase {
     measure {
       state.db.performBatchUpdates { (context) in
         
-        let authors = (0..<100000).map { i in
+        let authors = (0..<1000).map { i in
           Author(rawID: "author.\(i)")
         }
         

@@ -15,6 +15,29 @@ import VergeStore
 import VergeCore
 #endif
 
+extension Derived {
+  
+  public convenience init(_ getter: RxGetter<State>) {
+    self.init(
+      get: .init(map: { $0 }),
+      set: { _ in },
+      initialUpstreamState: getter.value,
+      subscribeUpstreamState: { (callback) -> CancellableType in
+        
+        let disposable = getter.subscribe(onNext: { value in
+          callback(value)
+        })
+                  
+        return VergeAnyCancellable {
+          disposable.dispose()
+        }
+    },
+      retainsUpstream: getter
+    )
+  }
+  
+}
+
 public protocol RxGetterType: GetterType {
   
   func asObservable() -> Observable<Output>
@@ -138,13 +161,13 @@ extension Reactive where Base : StoreType {
     
     let initialValue = Changes<Output>.init(old: nil, new: components.transform(base.asStore().changes.current)) 
           
-    let baseStream = base.asStore().rx.changesObservable
+    let baseStream = base.asStore().rx.changesObservable(startsFromInitial: true)
       .skip(1)
       .do(onNext: { [closure = components.onPreFilterWillReceive] value in
         closure(value.current)
       })
       .filter({ value in
-        let hasChanges = value.hasChanges(compare: components.preFilter.equals)
+        let hasChanges = !components.preFilter(value)
         if !hasChanges {
           VergeSignpostTransaction("RxGetter.hitPreFilter").end()
         }
@@ -159,7 +182,7 @@ extension Reactive where Base : StoreType {
       .changes(initial: initialValue) // makes new Changes Object
       .filter({ value in
         
-        let hasChanges = value.hasChanges(compare: components.postFilter.equals)
+        let hasChanges = !components.postFilter(value)
         if !hasChanges {
           VergeSignpostTransaction("RxGetter.hitPostFilter").end()
         }

@@ -10,24 +10,24 @@ import Foundation
 
 import XCTest
 
-import VergeCore
+import VergeStore
 
 final class CounterTests: XCTestCase {
     
   func testCounter() {
     
-    var counter = UpdatedMarker()
+    var counter = VersionCounter()
     
     for _ in 0..<100 {
       
       counter.markAsUpdated()
     }
     
-    XCTAssertEqual(counter.rawValue, 100)
+    XCTAssertEqual(counter.version, 100)
   }
   
   func testCounterPerformance() {
-    var counter = UpdatedMarker()
+    var counter = VersionCounter()
     if #available(iOS 13.0, *) {
       measure(metrics: [XCTCPUMetric()]) {
         counter.markAsUpdated()
