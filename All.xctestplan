@@ -64,7 +64,8 @@
     {
       "parallelizable" : true,
       "skippedTests" : [
-        "GetterTests\/testChain()"
+        "GetterTests\/testChain()",
+        "VergeStoreTests\/testOrderOfEvents()"
       ],
       "target" : {
         "containerPath" : "container:Verge.xcodeproj",

@@ -334,11 +334,17 @@ final class VergeStoreTests: XCTestCase {
     let store = VergeStore.Store<DemoState, Never>(initialState: .init(), logger: nil)
     
     let exp = expectation(description: "")
+    let counter = expectation(description: "update count")
+    counter.assertForOverFulfill = true
+    counter.expectedFulfillmentCount = 1001
     
-    var results: [Int] = []
+    let results: VergeConcurrency.Atomic<[Int]> = .init([])
     
     let sub = store.subscribeStateChanges(dropsFirst: false) { (changes) in
-      results.append(changes.count)
+      results.modify {
+        $0.append(changes.count)
+      }
+      counter.fulfill()
     }
     
     DispatchQueue.global().async {
@@ -351,9 +357,8 @@ final class VergeStoreTests: XCTestCase {
       exp.fulfill()
     }
            
-    wait(for: [exp], timeout: 10)
-    XCTAssertEqual(1001, results.count)
-    XCTAssertEqual(Array((0...1000).map { $0 }), results)
+    wait(for: [exp, counter], timeout: 10)
+    XCTAssertEqual(Array((0...1000).map { $0 }), results.value)
     withExtendedLifetime(sub) {}
   }
   
