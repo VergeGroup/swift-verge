@@ -152,6 +152,9 @@
 		4BC6EFB823A8D1B500EFD688 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB623A8D1AF00EFD688 /* Database.swift */; };
 		4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */; };
 		4BCBCA8D2381CC2B00F33B15 /* ContextualDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8C2381CC2B00F33B15 /* ContextualDispatcher.swift */; };
+		4BCC08432456228C00ECAB8A /* Derived+ORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC08412456222100ECAB8A /* Derived+ORM.swift */; };
+		4BCC0845245625DC00ECAB8A /* DatabaseEmbedding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC0844245625DC00ECAB8A /* DatabaseEmbedding.swift */; };
+		4BCC0847245626F300ECAB8A /* Comparer+ORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */; };
 		4BCE8C2223CF736300FD30D9 /* MostSimpleSampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE8C2123CF736300FD30D9 /* MostSimpleSampleTests.swift */; };
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
 		4BD6850523C82E6C00D8A620 /* ORMGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */; };
@@ -584,6 +587,9 @@
 		4BC6EFB623A8D1AF00EFD688 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherBase.swift; sourceTree = "<group>"; };
 		4BCBCA8C2381CC2B00F33B15 /* ContextualDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualDispatcher.swift; sourceTree = "<group>"; };
+		4BCC08412456222100ECAB8A /* Derived+ORM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Derived+ORM.swift"; sourceTree = "<group>"; };
+		4BCC0844245625DC00ECAB8A /* DatabaseEmbedding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseEmbedding.swift; sourceTree = "<group>"; };
+		4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Comparer+ORM.swift"; sourceTree = "<group>"; };
 		4BCE8C2123CF736300FD30D9 /* MostSimpleSampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostSimpleSampleTests.swift; sourceTree = "<group>"; };
 		4BD379EC23BD94D800CE474C /* AnyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEntity.swift; sourceTree = "<group>"; };
 		4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORMGetterTests.swift; sourceTree = "<group>"; };
@@ -843,6 +849,9 @@
 				4BD379EC23BD94D800CE474C /* AnyEntity.swift */,
 				4B07360323AB2E0300866430 /* Index */,
 				4BFA22BA23A64289008D7BCB /* Store+Getter.swift */,
+				4BCC0844245625DC00ECAB8A /* DatabaseEmbedding.swift */,
+				4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */,
+				4BCC08412456222100ECAB8A /* Derived+ORM.swift */,
 			);
 			path = VergeORM;
 			sourceTree = "<group>";
@@ -1889,6 +1898,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BCC0845245625DC00ECAB8A /* DatabaseEmbedding.swift in Sources */,
 				4B80B74923F953F9000BCFB2 /* GroupByKeyIndex.swift in Sources */,
 				4B07360223AA35F900866430 /* HashIndex.swift in Sources */,
 				4BC6EFB123A8BFAF00EFD688 /* GroupByEntityIndex.swift in Sources */,
@@ -1901,7 +1911,9 @@
 				4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */,
 				4BC6EFB823A8D1B500EFD688 /* Database.swift in Sources */,
 				4BC6EFAF23A8BF7800EFD688 /* OrderedIDIndex.swift in Sources */,
+				4BCC08432456228C00ECAB8A /* Derived+ORM.swift in Sources */,
 				4B264EF823BD13BC001BD9A0 /* DatabaseError.swift in Sources */,
+				4BCC0847245626F300ECAB8A /* Comparer+ORM.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

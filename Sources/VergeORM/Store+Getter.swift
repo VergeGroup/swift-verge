@@ -41,46 +41,6 @@ extension EntityType {
 }
 #endif
 
-public protocol DatabaseEmbedding {
-  
-  associatedtype Database: DatabaseType
-  
-  static var getterToDatabase: (Self) -> Database { get }
-  
-}
-
-extension Comparer where Input : DatabaseType {
-  
-  public static func databaseNoUpdates() -> Self {
-    return .init { pre, new in
-      (pre._backingStorage.entityUpdatedMarker, pre._backingStorage.indexUpdatedMarker) == (new._backingStorage.entityUpdatedMarker, new._backingStorage.indexUpdatedMarker)
-    }
-  }
-  
-  public static func tableNoUpdates<E: EntityType>(_ entityType: E.Type) -> Self {
-    Comparer.init(selector: { $0._backingStorage.entityBackingStorage.table(E.self).updatedMarker })
-  }
-  
-  public static func entityNoUpdates<E: EntityType & Equatable>(_ entityID: E.EntityID) -> Self {
-    return .init(selector: { $0.entities.table(E.self).find(by: entityID) })
-  }
-  
-  public static func changesNoContains<E: EntityType>(_ entityID: E.EntityID) -> Self {
-    return .init { _, new in
-      guard let result = new._backingStorage.lastUpdatesResult else {
-        return false
-      }
-      guard !result.wasUpdated(entityID) else {
-        return false
-      }
-      guard !result.wasDeleted(entityID) else {
-        return false
-      }
-      return true
-    }
-  }
-  
-}
 
 fileprivate final class _GetterCache {
   
