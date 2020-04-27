@@ -113,7 +113,7 @@ public struct MemoizeMap<Input, Output> {
 
 extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
     
-  /// Using implicit drop-input with Equatable
+  /// ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
   public init(
     map: @escaping (Input) -> Output
@@ -142,7 +142,7 @@ extension MemoizeMap {
     
   /// Projects a specified shape from Input.
   ///
-  /// No memoization, additionally you need to call `dropsInput` to get memoization.
+  /// ❗️ No memoization, additionally you need to call `dropsInput` to get memoization.
   ///
   /// - Parameter map:
   /// - Returns:

@@ -181,21 +181,17 @@ extension Derived where State == Any {
       subscribeUpstreamState: { callback in
                 
         let _s0 = s0.subscribeStateChanges(dropsFirst: true, queue: nil) { (s0) in
-          callback(
-            buffer.modify { value in
-              value.0 = s0.current
-              return value
-            }
-          )
+          buffer.modify { value in
+            value.0 = s0.current
+            callback(value)
+          }
         }
         
         let _s1 = s1.subscribeStateChanges(dropsFirst: true, queue: nil) { (s1) in
-          callback(
-            buffer.modify { value in
-              value.1 = s1.current
-              return value
-            }
-          )
+          buffer.modify { value in
+            value.1 = s1.current
+            callback(value)
+          }
         }
         
         return VergeAnyCancellable(onDeinit: {
@@ -217,7 +213,7 @@ extension Derived where State == Any {
   ///   - s0:
   ///   - s1:
   ///   - s2:
-  /// - Returns: 
+  /// - Returns:
   public static func combined<S0, S1, S2>(_ s0: Derived<S0>, _ s1: Derived<S1>, _ s2: Derived<S2>) -> Derived<(S0, S1, S2)> {
     
     typealias Shape = (S0, S1, S2)
@@ -233,30 +229,24 @@ extension Derived where State == Any {
       subscribeUpstreamState: { callback in
         
         let _s0 = s0.subscribeStateChanges(dropsFirst: true, queue: nil) { (s0) in
-          callback(
-            buffer.modify { value in
-              value.0 = s0.current
-              return value
-            }
-          )
+          buffer.modify { value in
+            value.0 = s0.current
+            callback(value)
+          }
         }
         
         let _s1 = s1.subscribeStateChanges(dropsFirst: true, queue: nil) { (s1) in
-          callback(
-            buffer.modify { value in
-              value.1 = s1.current
-              return value
-            }
-          )
+          buffer.modify { value in
+            value.1 = s1.current
+            callback(value)
+          }
         }
         
         let _s2 = s2.subscribeStateChanges(dropsFirst: true, queue: nil) { (s2) in
-          callback(
-            buffer.modify { value in
-              value.2 = s2.current
-              return value
-            }
-          )
+          buffer.modify { value in
+            value.2 = s2.current
+            callback(value)
+          }
         }
         
         return VergeAnyCancellable(onDeinit: {
@@ -328,7 +318,7 @@ extension StoreType {
     
   /// Returns Dervived object with making
   ///
-  /// Drops duplicated the output with Equatable comparison.
+  /// ✅ Drops duplicated the output with Equatable comparison.
   ///
   /// - Parameter memoizeMap:
   /// - Returns:
@@ -374,7 +364,7 @@ extension StoreType {
   
   /// Returns Binding Derived object
   ///
-  /// Drops duplicated the output with Equatable comparison.  
+  /// ✅ Drops duplicated the output with Equatable comparison.
   /// - Parameters:
   ///   - name:
   ///   - get:
