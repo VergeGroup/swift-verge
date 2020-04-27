@@ -39,17 +39,17 @@ final class DerivedTests: XCTestCase {
                 
     let slice = wrapper.derived(.map { $0.count })
     
-    XCTAssertEqual(slice.state, 0)
+    XCTAssertEqual(slice.value, 0)
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
     
     wrapper.increment()
     
-    XCTAssertEqual(slice.state, 1)
+    XCTAssertEqual(slice.value, 1)
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
       
     wrapper.empty()
     
-    XCTAssertEqual(slice.state, 1)
+    XCTAssertEqual(slice.value, 1)
     XCTAssertEqual(slice.changes.hasChanges(\.root), false)
   }
   
@@ -110,28 +110,28 @@ final class DerivedTests: XCTestCase {
     
     weak var weakSlice = slice
         
-    XCTAssertEqual(slice.state, 0)
+    XCTAssertEqual(slice.value, 0)
     XCTAssertEqual(slice.changes.version, 0)
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.increment()
         
-    XCTAssertEqual(slice.state, 1)
+    XCTAssertEqual(slice.value, 1)
     XCTAssertEqual(slice.changes.version, 1)
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.empty()
     
-    XCTAssertEqual(slice.state, 1)
+    XCTAssertEqual(slice.value, 1)
     XCTAssertEqual(slice.changes.version, 1) // with memoized, version not changed
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.increment()
     
-    XCTAssertEqual(slice.state, 2)
+    XCTAssertEqual(slice.value, 2)
     XCTAssertEqual(slice.changes.version, 2)
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
@@ -163,7 +163,7 @@ final class DerivedTests: XCTestCase {
     
     let d = Derived.combined(s0, s1)
     
-    XCTAssert(d.state == (0, ""))
+    XCTAssert(d.value == (0, ""))
         
     let sub = d.subscribeStateChanges { (changes) in
       
@@ -183,13 +183,13 @@ final class DerivedTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssert(d.state == (1, ""))
+    XCTAssert(d.value == (1, ""))
     
     wrapper.commit {
       $0.name = "next"
     }
     
-    XCTAssert(d.state == (1, "next"))
+    XCTAssert(d.value == (1, "next"))
     
     wait(for: [updateCount, update1, update0], timeout: 10)
     withExtendedLifetime(sub) {}
@@ -215,7 +215,7 @@ final class DerivedTests: XCTestCase {
     
     let d = Derived.combined(s0, s1)
     
-    XCTAssert(d.state == (0, 0))
+    XCTAssert(d.value == (0, 0))
     
     let sub = d.subscribeStateChanges { (changes) in
       
@@ -235,13 +235,13 @@ final class DerivedTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssert(d.state == (1, 0))
+    XCTAssert(d.value == (1, 0))
     
     wrapper.commit {
       $0.name = "next"
     }
     
-    XCTAssert(d.state == (1, 4))
+    XCTAssert(d.value == (1, 4))
     
     wait(for: [updateCount, update1, update0], timeout: 10)
     withExtendedLifetime(sub) {}

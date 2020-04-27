@@ -94,7 +94,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
             let db = type(of: composing.root).getterToDatabase(composing.root)
             return db
         }, comparer: { old, new in
-          Comparer<Input.Value.Database>.init(or: [
+          Comparer<Input.Value.Database>.init(and: [
             .databaseNoUpdates(),
             .tableNoUpdates(Entity.self),
             .changesNoContains(entityID)
@@ -102,7 +102,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
             .equals(old, new)
         })
         
-        guard !hasChanges else {
+        guard hasChanges else {
           return .noChanages
         }
         
@@ -113,63 +113,31 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
   
 }
 
-extension StoreType where State : DatabaseEmbedding {
-    
-  @inline(__always)
-  public func derived<Entity: EntityType>(
-    from entityID: Entity.EntityID,
-    entityWasUpdated: @escaping (Entity?, Entity?) -> Bool
-  ) -> Entity.Derived {
-        
-    let d = derived(
-      .makeEntityQuery(entityID: entityID),
-      dropsOutput: { changes in
-        changes.noChanges(\.root, {
-          entityWasUpdated($0.wrapped, $1.wrapped)
-        })
-    })
-        
-    return d
-  }
-  
-  @inline(__always)
-  public func derived<Entity: EntityType & Equatable>(
-    from entityID: Entity.EntityID
-  ) -> Entity.Derived {
-    
-    derived(from: entityID, entityWasUpdated: ==)
-  }
-  
-}
+// MARK: - Primitive operators
 
 extension StoreType where State : DatabaseEmbedding {
   
   @inline(__always)
-  public func derivedNonNull<Entity: EntityType>(
+  public func derived<Entity: EntityType>(
     from entityID: Entity.EntityID,
-    entityWasUpdated: @escaping (Entity?, Entity?) -> Bool
-  ) throws -> Entity.NonNullDerived {
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool
+  ) -> Entity.Derived {
     
-    let path = State.getterToDatabase
+    let d = derived(
+      .makeEntityQuery(entityID: entityID),
+      dropsOutput: { changes in
+        changes.noChanges(\.root, {
+          dropsOutput($0.wrapped, $1.wrapped)
+        })
+    })
     
-    guard let initalValue = path(state).entities.table(Entity.self).find(by: entityID) else {
-      throw VergeORMError.notFoundEntityFromDatabase
-    }
-   
-    return derivedNonNull(from: initalValue, entityWasUpdated: entityWasUpdated)
-  }
-  
-  @inline(__always)
-  public func derivedNonNull<Entity: EntityType & Equatable>(
-    from entityID: Entity.EntityID
-  ) throws -> Entity.NonNullDerived {
-    try derivedNonNull(from: entityID, entityWasUpdated: ==)
+    return d
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entity: Entity,
-    entityWasUpdated: @escaping (Entity?, Entity?) -> Bool
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool
   ) -> Entity.NonNullDerived {
     
     let lastValue = VergeConcurrency.Atomic<Entity>.init(entity)
@@ -178,7 +146,7 @@ extension StoreType where State : DatabaseEmbedding {
     let checker = VergeConcurrency.SynchronizationTracker()
     #endif
     
-    return derived(from: entity.entityID, entityWasUpdated: entityWasUpdated)
+    return derived(from: entity.entityID, dropsOutput: dropsOutput)
       .chain(.init(map: {
         #if DEBUG
         checker.register(); defer { checker.unregister() }
@@ -191,12 +159,48 @@ extension StoreType where State : DatabaseEmbedding {
       }))
     
   }
+}
+
+// MARK: - Convenience operators
+
+extension StoreType where State : DatabaseEmbedding {
   
+  @inline(__always)
+  public func derived<Entity: EntityType & Equatable>(
+    from entityID: Entity.EntityID
+  ) -> Entity.Derived {
+    
+    derived(from: entityID, dropsOutput: ==)
+  }
+    
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType>(
+    from entityID: Entity.EntityID,
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool
+  ) throws -> Entity.NonNullDerived {
+    
+    let path = State.getterToDatabase
+    
+    guard let initalValue = path(state).entities.table(Entity.self).find(by: entityID) else {
+      throw VergeORMError.notFoundEntityFromDatabase
+    }
+   
+    return derivedNonNull(from: initalValue, dropsOutput: dropsOutput)
+  }
+  
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType & Equatable>(
+    from entityID: Entity.EntityID
+  ) throws -> Entity.NonNullDerived {
+    try derivedNonNull(from: entityID, dropsOutput: ==)
+  }
+  
+ 
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entity: Entity
   ) -> Entity.NonNullDerived {
-    derivedNonNull(from: entity, entityWasUpdated: ==)
+    derivedNonNull(from: entity, dropsOutput: ==)
   }
   
   public typealias NonNullDerivedRecord<Entity: EntityType> = [Entity.EntityID : Entity.NonNullDerived]
@@ -204,10 +208,10 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entities: S,
-    entityWasUpdated: @escaping (S.Element?, S.Element?) -> Bool
+    dropsOutput: @escaping (S.Element?, S.Element?) -> Bool
   ) -> NonNullDerivedRecord<Entity> where S.Element == Entity {
     entities.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
-      r[e.entityID] = derivedNonNull(from: e, entityWasUpdated: entityWasUpdated)
+      r[e.entityID] = derivedNonNull(from: e, dropsOutput: dropsOutput)
     }
   }
   
@@ -215,16 +219,16 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from entities: S
   ) -> NonNullDerivedRecord<Entity> where S.Element == Entity {
-    derivedNonNull(from: entities, entityWasUpdated: ==)
+    derivedNonNull(from: entities, dropsOutput: ==)
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entities: Set<Entity>,
-    entityWasUpdated: @escaping (Entity?, Entity?) -> Bool
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool
   ) -> NonNullDerivedRecord<Entity> {
     entities.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
-      r[e.entityID] = derivedNonNull(from: e, entityWasUpdated: entityWasUpdated)
+      r[e.entityID] = derivedNonNull(from: e, dropsOutput: dropsOutput)
     }
   }
   
@@ -232,32 +236,32 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entities: Set<Entity>
   ) -> NonNullDerivedRecord<Entity> {
-    derivedNonNull(from: entities, entityWasUpdated: ==)
+    derivedNonNull(from: entities, dropsOutput: ==)
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from insertionResult: EntityTable<State.Database.Schema, Entity>.InsertionResult,
-    entityWasUpdated: @escaping (Entity?, Entity?) -> Bool
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool
   ) -> Entity.NonNullDerived {
-    derivedNonNull(from: insertionResult.entity, entityWasUpdated: entityWasUpdated)
+    derivedNonNull(from: insertionResult.entity, dropsOutput: dropsOutput)
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from insertionResult: EntityTable<State.Database.Schema, Entity>.InsertionResult
   ) -> Entity.NonNullDerived {
-    derivedNonNull(from: insertionResult, entityWasUpdated: ==)
+    derivedNonNull(from: insertionResult, dropsOutput: ==)
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from insertionResults: S,
-    entityWasUpdated: @escaping (Entity?, Entity?) -> Bool
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool
   ) -> NonNullDerivedRecord<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
     
     insertionResults.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
-      r[e.entityID] = derivedNonNull(from: e.entity, entityWasUpdated: entityWasUpdated)
+      r[e.entityID] = derivedNonNull(from: e.entity, dropsOutput: dropsOutput)
     }
   }
   
@@ -266,7 +270,7 @@ extension StoreType where State : DatabaseEmbedding {
     from insertionResults: S
   ) -> NonNullDerivedRecord<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
     
-    derivedNonNull(from: insertionResults, entityWasUpdated: ==)
+    derivedNonNull(from: insertionResults, dropsOutput: ==)
   }
      
 }

@@ -33,7 +33,9 @@ extension Comparer where Input : DatabaseType {
   }
   
   public static func tableNoUpdates<E: EntityType>(_ entityType: E.Type) -> Self {
-    Comparer.init(selector: { $0._backingStorage.entityBackingStorage.table(E.self).updatedMarker })
+    Comparer.init(selector: {
+      $0._backingStorage.entityBackingStorage.table(E.self).updatedMarker      
+    })
   }
   
   public static func entityNoUpdates<E: EntityType & Equatable>(_ entityID: E.EntityID) -> Self {
