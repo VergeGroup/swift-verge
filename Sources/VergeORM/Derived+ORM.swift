@@ -34,3 +34,54 @@ extension EntityType {
   #endif
   
 }
+
+extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding {
+  
+  fileprivate static func makeEntityQuery<Entity: EntityType>(entityID: Entity.EntityID) -> MemoizeMap<Input, Entity?> {
+    
+    let path = Input.Value.getterToDatabase
+      
+    return .init(makeInitial: { changes in
+      
+      path(changes.current).entities.table(Entity.self).find(by: entityID)
+      
+    }, update: { changes in
+      
+      let hasChanges = changes.asChanges().hasChanges(
+        compose: { (composing) -> Input.Value.Database in
+          let db = type(of: composing.root).getterToDatabase(composing.root)
+          return db
+      }, comparer: { old, new in
+        Comparer<Input.Value.Database>.init(or: [
+          .databaseNoUpdates(),
+          .tableNoUpdates(Entity.self),
+          .changesNoContains(entityID)
+        ])
+          .equals(old, new)
+      })
+      
+      guard !hasChanges else {
+        return .noChanages
+      }
+      
+      let entity = path(changes.current).entities.table(Entity.self).find(by: entityID)
+      return .updated(entity)
+    })
+  }
+  
+}
+
+extension StoreType where State : DatabaseEmbedding {
+    
+  public func derived<Entity: EntityType>(_ entityID: Entity.EntityID, entityEquals: @escaping (Entity?, Entity?) -> Bool) -> Derived<Entity?> {
+        
+    let d = derived(
+      .makeEntityQuery(entityID: entityID),
+      dropsOutput: { changes in
+        changes.noChanges(\.root, entityEquals)
+    })
+        
+    return d
+  }
+  
+}

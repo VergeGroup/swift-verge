@@ -79,11 +79,11 @@ public struct MemoizeMap<Input, Output> {
     )
   }
   
-  func makeResult(_ source: Input) -> Result {
+  public func makeResult(_ source: Input) -> Result {
     _update(source)
   }
   
-  func makeInitial(_ source: Input) -> Output {
+  public func makeInitial(_ source: Input) -> Output {
     _makeInitial(source)
   }
     

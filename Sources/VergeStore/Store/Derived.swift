@@ -25,8 +25,14 @@ import Foundation
 import VergeCore
 #endif
 
+public protocol DerivedType {
+  associatedtype State
+  
+  func asDerived() -> Derived<State>
+}
+
 /// A container object that provides the current value and changes from the source Store.
-public class Derived<State> {
+public class Derived<State>: DerivedType {
   
   public static func constant(_ value: State) -> Derived<State> {
     .init(constant: value)
@@ -47,7 +53,7 @@ public class Derived<State> {
   fileprivate let _set: (State) -> Void
   
   private let subscription: VergeAnyCancellable
-  private let retainsUpstream: AnyObject?
+  private let retainsUpstream: Any?
   
   // MARK: - Initializers
       
@@ -63,7 +69,7 @@ public class Derived<State> {
     set: @escaping (State) -> Void,
     initialUpstreamState: UpstreamState,
     subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
-    retainsUpstream: AnyObject?
+    retainsUpstream: Any?
   ) {
     
     let store = Store<State, Never>.init(initialState: get.makeInitial(initialUpstreamState), logger: nil)
@@ -91,6 +97,10 @@ public class Derived<State> {
   }
   
   // MARK: - Functions
+  
+  public func asDerived() -> Derived<State> {
+    self
+  }
     
   ///
   /// - Parameter postFilter: Returns the objects are equals
@@ -140,6 +150,123 @@ public class Derived<State> {
         )
     },
       retainsUpstream: self
+    )
+    
+  }
+  
+}
+
+extension Derived where State == Any {
+    
+  /// Make Derived that projects combined value from specified source Derived objects.
+  ///
+  /// It retains specified Derived objects as data source until itself deallocated
+  ///
+  /// - Parameters:
+  ///   - s0:
+  ///   - s1:
+  /// - Returns:
+  public static func combined<S0, S1>(_ s0: Derived<S0>, _ s1: Derived<S1>) -> Derived<(S0, S1)> {
+    
+    typealias Shape = (S0, S1)
+    
+    let initial = (s0.state, s1.state)
+    
+    let buffer = VergeConcurrency.Atomic<Shape>.init(initial)
+    
+    return Derived<Shape>(
+      get: MemoizeMap<Shape, Shape>.init(map: { $0 }),
+      set: { _, _ in },
+      initialUpstreamState: initial,
+      subscribeUpstreamState: { callback in
+                
+        let _s0 = s0.subscribeStateChanges(dropsFirst: true, queue: nil) { (s0) in
+          callback(
+            buffer.modify { value in
+              value.0 = s0.current
+              return value
+            }
+          )
+        }
+        
+        let _s1 = s1.subscribeStateChanges(dropsFirst: true, queue: nil) { (s1) in
+          callback(
+            buffer.modify { value in
+              value.1 = s1.current
+              return value
+            }
+          )
+        }
+        
+        return VergeAnyCancellable(onDeinit: {
+          _s0.cancel()
+          _s1.cancel()
+        })
+        
+    },
+      retainsUpstream: [s0, s1]
+    )
+    
+  }
+    
+  /// Make Derived that projects combined value from specified source Derived objects.
+  ///
+  /// It retains specified Derived objects as data source until itself deallocated
+  ///
+  /// - Parameters:
+  ///   - s0:
+  ///   - s1:
+  ///   - s2:
+  /// - Returns: 
+  public static func combined<S0, S1, S2>(_ s0: Derived<S0>, _ s1: Derived<S1>, _ s2: Derived<S2>) -> Derived<(S0, S1, S2)> {
+    
+    typealias Shape = (S0, S1, S2)
+    
+    let initial = (s0.state, s1.state, s2.state)
+    
+    let buffer = VergeConcurrency.Atomic<Shape>.init(initial)
+    
+    return Derived<Shape>(
+      get: MemoizeMap<Shape, Shape>.init(map: { $0 }),
+      set: { _, _, _ in },
+      initialUpstreamState: initial,
+      subscribeUpstreamState: { callback in
+        
+        let _s0 = s0.subscribeStateChanges(dropsFirst: true, queue: nil) { (s0) in
+          callback(
+            buffer.modify { value in
+              value.0 = s0.current
+              return value
+            }
+          )
+        }
+        
+        let _s1 = s1.subscribeStateChanges(dropsFirst: true, queue: nil) { (s1) in
+          callback(
+            buffer.modify { value in
+              value.1 = s1.current
+              return value
+            }
+          )
+        }
+        
+        let _s2 = s2.subscribeStateChanges(dropsFirst: true, queue: nil) { (s2) in
+          callback(
+            buffer.modify { value in
+              value.2 = s2.current
+              return value
+            }
+          )
+        }
+        
+        return VergeAnyCancellable(onDeinit: {
+          _s0.cancel()
+          _s1.cancel()
+          _s2.cancel()
+        })
+        
+    },
+      retainsUpstream: [s0, s1]
     )
     
   }
