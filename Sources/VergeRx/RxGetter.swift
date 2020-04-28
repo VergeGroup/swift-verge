@@ -83,6 +83,10 @@ public class RxGetter<Output>: GetterBase<Output>, RxGetterType, ObservableType 
       .disposed(by: disposeBag)
     
   }
+  
+  public convenience init(from derived: Derived<Output>) {
+    self.init(from: derived.rx.valueObservable)
+  }
         
   /// Initialize from observable
   ///
