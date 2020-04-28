@@ -30,7 +30,7 @@ class DerivedTests: XCTestCase {
       
       let didUpdate = XCTestExpectation()
       
-      nullableSelector.statePublisher
+      nullableSelector.valuePublisher
         .dropFirst(1).sink { _ in
           didUpdate.fulfill()
       }
@@ -111,8 +111,8 @@ class DerivedTests: XCTestCase {
           return r
         }
       }
-      
-      let selector = storage.nonNullEntityGetter(from: result)
+            
+      let selector = storage.derivedNonNull(from: result)
       
       XCTAssertEqual(selector.value.rawID, "some")
       XCTAssertEqual(selector.value.name, "")
@@ -165,9 +165,10 @@ class DerivedTests: XCTestCase {
     
     var updatedCount = 0
     
-    let authorGetter = storage.nonNullEntityGetter(from: result)
+    let authorGetter = storage.derivedNonNull(from: result)
     
-    authorGetter.dropFirst(1).sink { _ in
+    authorGetter.valuePublisher
+      .dropFirst(1).sink { _ in
       updatedCount += 1
     }
     .store(in: &subscriptions)
@@ -244,25 +245,12 @@ class DerivedTests: XCTestCase {
     
   }
   
-  func testGetterCache() {
-    
-    let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
-    
-    let getter1 = storage.entityGetter(from: Author.EntityID("Hoo"))
-    let getter2 = storage.entityGetter(from: Author.EntityID("Hoo"))
-    let getter3 = storage.entityGetter(from: Book.EntityID("Hoo"))
-    
-    XCTAssert(getter1 === getter2)
-    XCTAssert(getter3 !== getter2)
-    
-  }
-  
   func testPerformanceGetterCreationIncludesFirstTime() {
     
     let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
     measure {
-      let _ = storage.entityGetter(from: Author.EntityID("Hoo"))
+      let _ = storage.derived(from: Author.EntityID("Hoo"))
     }
     
   }
@@ -271,10 +259,10 @@ class DerivedTests: XCTestCase {
     
     let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
-    let _ = storage.entityGetter(from: Author.EntityID("Hoo"))
+    let _ = storage.derived(from: Author.EntityID("Hoo"))
     
     measure {
-      let _ = storage.entityGetter(from: Author.EntityID("Hoo"))
+      let _ = storage.derived(from: Author.EntityID("Hoo"))
     }
     
   }

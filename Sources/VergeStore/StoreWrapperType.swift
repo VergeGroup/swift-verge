@@ -112,8 +112,8 @@ extension StoreWrapperType where State == WrappedStore.State, Activity == Wrappe
     store.asStore().statePublisher
   }
   
-  public var changesPublisher: AnyPublisher<State, Never> {
-    store.asStore().statePublisher
+  public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
+    store.asStore().changesPublisher(startsFromInitial: startsFromInitial)
   }
   
   public var activityPublisher: EventEmitter<Activity>.Publisher {

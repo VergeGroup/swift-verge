@@ -93,14 +93,13 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
           compose: { (composing) -> Input.Value.Database in
             let db = type(of: composing.root).getterToDatabase(composing.root)
             return db
-        }, comparer: { old, new in
-          Comparer<Input.Value.Database>.init(and: [
-            .databaseNoUpdates(),
-            .tableNoUpdates(Entity.self),
-            .changesNoContains(entityID)
-          ])
-            .equals(old, new)
-        })
+        }, comparer: Comparer<Input.Value.Database>(or: [
+          Comparer<Input.Value.Database>.databaseNoUpdates(),
+          Comparer<Input.Value.Database>.tableNoUpdates(Entity.self),
+          Comparer<Input.Value.Database>.changesNoContains(entityID),
+        ])
+        .curried()
+        )
         
         guard hasChanges else {
           return .noChanages
@@ -113,31 +112,85 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
   
 }
 
+fileprivate final class _GetterCache {
+  
+  private let cache = NSCache<NSString, AnyObject>()
+  
+  @inline(__always)
+  private func key<E: EntityType>(entityID: E.EntityID) -> NSString {
+    "\(ObjectIdentifier(E.self))_\(entityID)" as NSString
+  }
+  
+  func get<E: EntityType>(entityID: E.EntityID) -> E.Derived? {
+    cache.object(forKey: key(entityID: entityID)) as? E.Derived
+  }
+  
+  func set<E: EntityType>(_ getter: E.Derived, entityID: E.EntityID) {
+    cache.setObject(getter, forKey: key(entityID: entityID))
+  }
+  
+}
+
 // MARK: - Primitive operators
 
+fileprivate var _valueContainerAssociated: Void?
+
 extension StoreType where State : DatabaseEmbedding {
+  
+  private var cache: _GetterCache {
+        
+    objc_sync_enter(self); defer { objc_sync_exit(self) }
+    
+    if let associated = objc_getAssociatedObject(self, &_valueContainerAssociated) as? _GetterCache {
+      
+      return associated
+      
+    } else {
+      
+      let associated = _GetterCache()
+      objc_setAssociatedObject(self, &_valueContainerAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
+      return associated
+    }
+  }
   
   @inline(__always)
   public func derived<Entity: EntityType>(
     from entityID: Entity.EntityID,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) -> Entity.Derived {
     
-    let d = derived(
-      .makeEntityQuery(entityID: entityID),
+    objc_sync_enter(self); defer { objc_sync_exit(self) }
+    
+    let underlyingDerived: Derived<EntityWrapper<Entity>>
+    
+    if let cached = cache.get(entityID: entityID) {
+      underlyingDerived = cached
+    } else {
+      underlyingDerived = derived(
+        .makeEntityQuery(entityID: entityID)
+      )
+      cache.set(underlyingDerived, entityID: entityID)
+    }
+        
+    let d = underlyingDerived.chain(
+      .init(map: { $0.current }),
       dropsOutput: { changes in
         changes.noChanges(\.root, {
           dropsOutput($0.wrapped, $1.wrapped)
         })
     })
-    
+        
     return d
   }
+  
+}
+
+extension StoreType where State : DatabaseEmbedding {
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entity: Entity,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) -> Entity.NonNullDerived {
     
     let lastValue = VergeConcurrency.Atomic<Entity>.init(entity)
@@ -159,6 +212,7 @@ extension StoreType where State : DatabaseEmbedding {
       }))
     
   }
+  
 }
 
 // MARK: - Convenience operators
@@ -176,7 +230,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entityID: Entity.EntityID,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) throws -> Entity.NonNullDerived {
     
     let path = State.getterToDatabase
@@ -208,7 +262,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entities: S,
-    dropsOutput: @escaping (S.Element?, S.Element?) -> Bool
+    dropsOutput: @escaping (S.Element?, S.Element?) -> Bool = { _, _ in false }
   ) -> NonNullDerivedRecord<Entity> where S.Element == Entity {
     entities.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
       r[e.entityID] = derivedNonNull(from: e, dropsOutput: dropsOutput)
@@ -225,7 +279,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entities: Set<Entity>,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) -> NonNullDerivedRecord<Entity> {
     entities.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
       r[e.entityID] = derivedNonNull(from: e, dropsOutput: dropsOutput)
@@ -242,7 +296,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from insertionResult: EntityTable<State.Database.Schema, Entity>.InsertionResult,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) -> Entity.NonNullDerived {
     derivedNonNull(from: insertionResult.entity, dropsOutput: dropsOutput)
   }
@@ -257,7 +311,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from insertionResults: S,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) -> NonNullDerivedRecord<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
     
     insertionResults.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in

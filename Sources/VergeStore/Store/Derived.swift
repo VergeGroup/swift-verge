@@ -116,7 +116,7 @@ public class Derived<Value>: DerivedType {
   /// - Parameter postFilter: Returns the objects are equals
   /// - Returns:
   @discardableResult
-  fileprivate func dropsOutput(_ dropsOutput: @escaping (Changes<Value>) -> Bool) -> Self {
+  fileprivate func setDropsOutput(_ dropsOutput: @escaping (Changes<Value>) -> Bool) -> Self {
     innerStore.setNotificationFilter { changes in
       !dropsOutput(changes)
     }
@@ -142,13 +142,20 @@ public class Derived<Value>: DerivedType {
     }
     .asAutoCancellable()
   }
-  
+    
+  /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
+  /// - Parameters:
+  ///   - queue: a queue to receive object
+  ///   - map:
+  ///   - dropsOutput: a condition to drop a duplicated(no-changes) object. (Default: no drops)
+  /// - Returns:
   public func chain<NewState>(
-    queue: DispatchQueue? = nil,
-    _ map: MemoizeMap<Changes<Value>, NewState>
+    _ map: MemoizeMap<Changes<Value>, NewState>,
+    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
+    queue: DispatchQueue? = nil
     ) -> Derived<NewState> {
         
-    return .init(
+    let d = Derived<NewState>(
       get: map,
       set: { _ in },
       initialUpstreamState: changes,
@@ -161,6 +168,10 @@ public class Derived<Value>: DerivedType {
     },
       retainsUpstream: self
     )
+    
+    d.setDropsOutput(dropsOutput)
+    
+    return d
     
   }
   
@@ -286,7 +297,7 @@ extension Derived: ObservableObject {
   /// A publisher that repeatedly emits the current state when state updated
   ///
   /// Guarantees to emit the first event on started subscribing.
-  public var statePublisher: AnyPublisher<Value, Never> {
+  public var valuePublisher: AnyPublisher<Value, Never> {
     innerStore.statePublisher
       .handleEvents(receiveCancel: {
         withExtendedLifetime(self) {}
@@ -352,7 +363,7 @@ extension StoreType {
       retainsUpstream: nil
     )
     
-    derived.dropsOutput(dropsOutput)
+    derived.setDropsOutput(dropsOutput)
     
     return derived
   }
@@ -398,7 +409,7 @@ extension StoreType {
         asStore().subscribeStateChanges(dropsFirst: true, queue: nil, receive: callback)
     }, retainsUpstream: nil)
     
-    derived.dropsOutput(dropsOutput)
+    derived.setDropsOutput(dropsOutput)
     
     return derived
   }
