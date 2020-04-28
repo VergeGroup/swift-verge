@@ -61,7 +61,7 @@ final class DerivedTests: XCTestCase {
         source.count = new
     })
     
-    slice.state = 2
+    slice.value = 2
         
     XCTAssertEqual(wrapper.state.count, 2)
     

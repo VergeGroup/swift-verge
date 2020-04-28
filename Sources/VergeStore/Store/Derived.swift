@@ -43,12 +43,6 @@ public class Derived<Value>: DerivedType {
     innerStore.state
   }
   
-  /// A current state.
-  @available(*, deprecated, renamed: "value")
-  public var state: Value {
-    innerStore.state
-  }
-  
   /// A current changes state.
   public var changes: Changes<Value> {
     innerStore.changes
@@ -322,6 +316,7 @@ extension Derived: ObservableObject {
 
 #endif
 
+@propertyWrapper
 public final class BindingDerived<State>: Derived<State> {
   
   /// A current state.
@@ -330,12 +325,15 @@ public final class BindingDerived<State>: Derived<State> {
     set { _set(newValue) }
   }
   
-  /// A current state.
-  public override var state: State {
-    get { innerStore.state }
-    set { _set(newValue) }
+  public var wrappedValue: State {
+    get { value }
+    set { value = newValue }
   }
   
+  public var projectedValue: Self {
+    self
+  }
+    
 }
 
 extension StoreType {
