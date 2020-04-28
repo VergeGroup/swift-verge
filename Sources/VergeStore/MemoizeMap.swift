@@ -79,11 +79,11 @@ public struct MemoizeMap<Input, Output> {
     )
   }
   
-  func makeResult(_ source: Input) -> Result {
+  public func makeResult(_ source: Input) -> Result {
     _update(source)
   }
   
-  func makeInitial(_ source: Input) -> Output {
+  public func makeInitial(_ source: Input) -> Output {
     _makeInitial(source)
   }
     
@@ -113,7 +113,7 @@ public struct MemoizeMap<Input, Output> {
 
 extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
     
-  /// Using implicit drop-input with Equatable
+  /// ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
   public init(
     map: @escaping (Input) -> Output
@@ -142,7 +142,7 @@ extension MemoizeMap {
     
   /// Projects a specified shape from Input.
   ///
-  /// No memoization, additionally you need to call `dropsInput` to get memoization.
+  /// ❗️ No memoization, additionally you need to call `dropsInput` to get memoization.
   ///
   /// - Parameter map:
   /// - Returns:

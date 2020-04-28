@@ -17,7 +17,7 @@ import VergeCore
 
 extension Derived {
   
-  public convenience init(_ getter: RxGetter<State>) {
+  public convenience init(_ getter: RxGetter<Value>) {
     self.init(
       get: .init(map: { $0 }),
       set: { _ in },

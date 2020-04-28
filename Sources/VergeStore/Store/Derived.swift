@@ -25,33 +25,49 @@ import Foundation
 import VergeCore
 #endif
 
-/// A container object that provides the current value and changes from the source Store.
-public class Derived<State> {
+public protocol DerivedType {
+  associatedtype Value
   
-  public static func constant(_ value: State) -> Derived<State> {
+  func asDerived() -> Derived<Value>
+}
+
+/// A container object that provides the current value and changes from the source Store.
+public class Derived<Value>: DerivedType {
+  
+  public static func constant(_ value: Value) -> Derived<Value> {
     .init(constant: value)
   }
-        
+  
   /// A current state.
-  public var state: State {
+  public var value: Value {
+    innerStore.state
+  }
+  
+  /// A current state.
+  @available(*, deprecated, renamed: "value")
+  public var state: Value {
     innerStore.state
   }
   
   /// A current changes state.
-  public var changes: Changes<State> {
+  public var changes: Changes<Value> {
     innerStore.changes
   }
   
-  fileprivate let innerStore: Store<State, Never>
+  fileprivate let innerStore: Store<Value, Never>
+  
+  public var _innerStore: UnsafeMutableRawPointer {
+    Unmanaged.passUnretained(innerStore).toOpaque()
+  }
       
-  fileprivate let _set: (State) -> Void
+  fileprivate let _set: (Value) -> Void
   
   private let subscription: VergeAnyCancellable
-  private let retainsUpstream: AnyObject?
+  private let retainsUpstream: Any?
   
   // MARK: - Initializers
       
-  private init(constant: State) {
+  private init(constant: Value) {
     self.innerStore = .init(initialState: constant, logger: nil)
     self._set = { _ in }
     self.subscription = .init(onDeinit: {})
@@ -59,14 +75,14 @@ public class Derived<State> {
   }
         
   public init<UpstreamState>(
-    get: MemoizeMap<UpstreamState, State>,
-    set: @escaping (State) -> Void,
+    get: MemoizeMap<UpstreamState, Value>,
+    set: @escaping (Value) -> Void,
     initialUpstreamState: UpstreamState,
     subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
-    retainsUpstream: AnyObject?
+    retainsUpstream: Any?
   ) {
     
-    let store = Store<State, Never>.init(initialState: get.makeInitial(initialUpstreamState), logger: nil)
+    let store = Store<Value, Never>.init(initialState: get.makeInitial(initialUpstreamState), logger: nil)
                      
     let s = subscribeUpstreamState { [weak store] value in
       let update = get.makeResult(value)
@@ -91,12 +107,16 @@ public class Derived<State> {
   }
   
   // MARK: - Functions
+  
+  public func asDerived() -> Derived<Value> {
+    self
+  }
     
   ///
   /// - Parameter postFilter: Returns the objects are equals
   /// - Returns:
   @discardableResult
-  fileprivate func dropsOutput(_ dropsOutput: @escaping (Changes<State>) -> Bool) -> Self {
+  fileprivate func setDropsOutput(_ dropsOutput: @escaping (Changes<Value>) -> Bool) -> Self {
     innerStore.setNotificationFilter { changes in
       !dropsOutput(changes)
     }
@@ -110,7 +130,7 @@ public class Derived<State> {
   public func subscribeStateChanges(
     dropsFirst: Bool = false,
     queue: DispatchQueue? = nil,
-    receive: @escaping (Changes<State>) -> Void
+    receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     
     innerStore.subscribeStateChanges(
@@ -122,13 +142,20 @@ public class Derived<State> {
     }
     .asAutoCancellable()
   }
-  
+    
+  /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
+  /// - Parameters:
+  ///   - queue: a queue to receive object
+  ///   - map:
+  ///   - dropsOutput: a condition to drop a duplicated(no-changes) object. (Default: no drops)
+  /// - Returns:
   public func chain<NewState>(
-    queue: DispatchQueue? = nil,
-    _ map: MemoizeMap<Changes<State>, NewState>
+    _ map: MemoizeMap<Changes<Value>, NewState>,
+    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
+    queue: DispatchQueue? = nil
     ) -> Derived<NewState> {
         
-    return .init(
+    let d = Derived<NewState>(
       get: map,
       set: { _ in },
       initialUpstreamState: changes,
@@ -140,6 +167,117 @@ public class Derived<State> {
         )
     },
       retainsUpstream: self
+    )
+    
+    d.setDropsOutput(dropsOutput)
+    
+    return d
+    
+  }
+  
+}
+
+extension Derived where Value == Any {
+    
+  /// Make Derived that projects combined value from specified source Derived objects.
+  ///
+  /// It retains specified Derived objects as data source until itself deallocated
+  ///
+  /// - Parameters:
+  ///   - s0:
+  ///   - s1:
+  /// - Returns:
+  public static func combined<S0, S1>(_ s0: Derived<S0>, _ s1: Derived<S1>) -> Derived<(S0, S1)> {
+    
+    typealias Shape = (S0, S1)
+    
+    let initial = (s0.value, s1.value)
+    
+    let buffer = VergeConcurrency.Atomic<Shape>.init(initial)
+    
+    return Derived<Shape>(
+      get: MemoizeMap<Shape, Shape>.init(map: { $0 }),
+      set: { _, _ in },
+      initialUpstreamState: initial,
+      subscribeUpstreamState: { callback in
+                
+        let _s0 = s0.subscribeStateChanges(dropsFirst: true, queue: nil) { (s0) in
+          buffer.modify { value in
+            value.0 = s0.current
+            callback(value)
+          }
+        }
+        
+        let _s1 = s1.subscribeStateChanges(dropsFirst: true, queue: nil) { (s1) in
+          buffer.modify { value in
+            value.1 = s1.current
+            callback(value)
+          }
+        }
+        
+        return VergeAnyCancellable(onDeinit: {
+          _s0.cancel()
+          _s1.cancel()
+        })
+        
+    },
+      retainsUpstream: [s0, s1]
+    )
+    
+  }
+    
+  /// Make Derived that projects combined value from specified source Derived objects.
+  ///
+  /// It retains specified Derived objects as data source until itself deallocated
+  ///
+  /// - Parameters:
+  ///   - s0:
+  ///   - s1:
+  ///   - s2:
+  /// - Returns:
+  public static func combined<S0, S1, S2>(_ s0: Derived<S0>, _ s1: Derived<S1>, _ s2: Derived<S2>) -> Derived<(S0, S1, S2)> {
+    
+    typealias Shape = (S0, S1, S2)
+    
+    let initial = (s0.value, s1.value, s2.value)
+    
+    let buffer = VergeConcurrency.Atomic<Shape>.init(initial)
+    
+    return Derived<Shape>(
+      get: MemoizeMap<Shape, Shape>.init(map: { $0 }),
+      set: { _, _, _ in },
+      initialUpstreamState: initial,
+      subscribeUpstreamState: { callback in
+        
+        let _s0 = s0.subscribeStateChanges(dropsFirst: true, queue: nil) { (s0) in
+          buffer.modify { value in
+            value.0 = s0.current
+            callback(value)
+          }
+        }
+        
+        let _s1 = s1.subscribeStateChanges(dropsFirst: true, queue: nil) { (s1) in
+          buffer.modify { value in
+            value.1 = s1.current
+            callback(value)
+          }
+        }
+        
+        let _s2 = s2.subscribeStateChanges(dropsFirst: true, queue: nil) { (s2) in
+          buffer.modify { value in
+            value.2 = s2.current
+            callback(value)
+          }
+        }
+        
+        return VergeAnyCancellable(onDeinit: {
+          _s0.cancel()
+          _s1.cancel()
+          _s2.cancel()
+        })
+        
+    },
+      retainsUpstream: [s0, s1]
     )
     
   }
@@ -155,11 +293,42 @@ extension Derived: ObservableObject {
   public var objectWillChange: ObservableObjectPublisher {
     innerStore.objectWillChange
   }
+  
+  /// A publisher that repeatedly emits the current state when state updated
+  ///
+  /// Guarantees to emit the first event on started subscribing.
+  public var valuePublisher: AnyPublisher<Value, Never> {
+    innerStore.statePublisher
+      .handleEvents(receiveCancel: {
+        withExtendedLifetime(self) {}
+      })
+      .eraseToAnyPublisher()
+  }
+  
+  /// A publisher that repeatedly emits the changes when state updated
+  ///
+  /// Guarantees to emit the first event on started subscribing.
+  ///
+  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
+  /// - Returns:
+  public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<Value>, Never> {
+    innerStore.changesPublisher(startsFromInitial: startsFromInitial)
+      .handleEvents(receiveCancel: {
+        withExtendedLifetime(self) {}
+      })
+      .eraseToAnyPublisher()
+  }
 }
 
 #endif
 
 public final class BindingDerived<State>: Derived<State> {
+  
+  /// A current state.
+  public override var value: State {
+    get { innerStore.state }
+    set { _set(newValue) }
+  }
   
   /// A current state.
   public override var state: State {
@@ -194,14 +363,14 @@ extension StoreType {
       retainsUpstream: nil
     )
     
-    derived.dropsOutput(dropsOutput)
+    derived.setDropsOutput(dropsOutput)
     
     return derived
   }
     
   /// Returns Dervived object with making
   ///
-  /// Drops duplicated the output with Equatable comparison.
+  /// ✅ Drops duplicated the output with Equatable comparison.
   ///
   /// - Parameter memoizeMap:
   /// - Returns:
@@ -240,14 +409,14 @@ extension StoreType {
         asStore().subscribeStateChanges(dropsFirst: true, queue: nil, receive: callback)
     }, retainsUpstream: nil)
     
-    derived.dropsOutput(dropsOutput)
+    derived.setDropsOutput(dropsOutput)
     
     return derived
   }
   
   /// Returns Binding Derived object
   ///
-  /// Drops duplicated the output with Equatable comparison.  
+  /// ✅ Drops duplicated the output with Equatable comparison.
   /// - Parameters:
   ///   - name:
   ///   - get:

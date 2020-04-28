@@ -191,6 +191,30 @@ public struct Changes<Value>: ChangesType {
   }
   
   @inline(__always)
+  public func hasChanges<Composed>(
+    compose: (Composing) -> Composed,
+    comparer: (Composed, Composed) -> Bool
+  ) -> Bool {
+    
+    let current = Composing(source: self)
+    
+    guard let previousValue = previous?.value else {
+      return true
+    }
+    
+    let old = Composing(source: previousValue)
+    
+    let composedOld = compose(old)
+    let composedNew = compose(current)
+    
+    guard !comparer(composedOld, composedNew) else {
+      return false
+    }
+    
+    return true
+  }
+  
+  @inline(__always)
   public func hasChanges<T>(_ selector: Selector<T>, _ compare: (T, T) -> Bool) -> Bool {
     guard let old = previous?.value else {
       return true

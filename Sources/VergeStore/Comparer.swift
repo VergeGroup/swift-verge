@@ -28,12 +28,12 @@ public struct Comparer<Input> {
     .init { _, _ in false }
   }
   
-  private let equals: (Input, Input) -> Bool
-      
+  private let _equals: (Input, Input) -> Bool
+       
   public init(
     _ equals: @escaping (Input, Input) -> Bool
   ) {
-    self.equals = equals
+    self._equals = equals
   }
       
   /// It compares the value selected from passed selector closure
@@ -52,7 +52,7 @@ public struct Comparer<Input> {
     
   public init<T>(selector: @escaping (Input) -> T, comparer: Comparer<T>) {
     self.init { a, b in
-      comparer.equals(selector(a), selector(b))
+      comparer._equals(selector(a), selector(b))
     }
   }
         
@@ -61,7 +61,7 @@ public struct Comparer<Input> {
   public init(and comparers: [Comparer<Input>]) {
     self.init { pre, new in
       for filter in comparers {
-        guard filter.equals(pre, new) else {
+        guard filter._equals(pre, new) else {
           return false
         }
       }
@@ -74,7 +74,7 @@ public struct Comparer<Input> {
   public init(or comparers: [Comparer<Input>]) {
     self.init { pre, new in
       for filter in comparers {
-        if filter.equals(pre, new) {
+        if filter._equals(pre, new) {
           return true
         }
       }
@@ -83,11 +83,19 @@ public struct Comparer<Input> {
   }
   
   public func equals(_ lhs: Input, _ rhs: Input) -> Bool {
-    equals(lhs, rhs)
+    _equals(lhs, rhs)
   }
   
   public func curried() -> (_ lhs: Input, _ rhs: Input) -> Bool {
-    equals
+    _equals
+  }
+  
+  public func handleResult(_ handler: @escaping (Input, Input, Bool) -> Void) -> Self {
+    Self.init { [_equals, handler] in
+      let result = _equals($0, $1)
+      handler($0, $1, result)
+      return result
+    }
   }
   
 }
@@ -116,7 +124,7 @@ extension Comparer {
   
   public func debug(name: String = "", file: StaticString = #file, line: UInt = #line) -> Self {
     .init { pre, new -> Bool in
-      let result = self.equals(pre,new)
+      let result = self._equals(pre,new)
       os_log("%@", log: VergeOSLogs.debugLog, type: .default, "\(file.description):\(line):\(name) result:\(result)")
       return result
     }

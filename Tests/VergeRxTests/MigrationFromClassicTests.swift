@@ -85,11 +85,11 @@ enum MigrationExample {
             
       let _: Changes<ViewModel.State> = viewModel.changes
       
-      viewModel.subscribeStateChanges { (changes: Changes<ViewModel.State>) in
+      _ = viewModel.subscribeStateChanges { (changes: Changes<ViewModel.State>) in
         
       }
       
-      viewModel.subscribeActivity { (activity: ViewModel.Activity) in
+      _ = viewModel.subscribeActivity { (activity: ViewModel.Activity) in
         
       }
       
@@ -105,7 +105,7 @@ enum MigrationExample {
       combine: do {
         if #available(iOS 13, *) {
           let _: AnyPublisher<ViewModel.State, Never> = viewModel.statePublisher
-          let _: AnyPublisher<ViewModel.State, Never> = viewModel.changesPublisher
+          let _: AnyPublisher<Changes<ViewModel.State>, Never> = viewModel.changesPublisher()
           let _: EventEmitter<ViewModel.Activity>.Publisher = viewModel.activityPublisher
         }
       }
@@ -168,7 +168,7 @@ enum MigrationExample {
       _ = viewModel.changes
       if #available(iOS 13, *) {
         _ = viewModel.statePublisher
-        _ = viewModel.changesPublisher
+        _ = viewModel.changesPublisher()
         _ = viewModel.activityPublisher
       } else {
         // Fallback on earlier versions
