@@ -478,6 +478,7 @@
 		4B26D10F242DF4F800E366CB /* GetterBuilderPreFilterMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderPreFilterMethodChain.swift; sourceTree = "<group>"; };
 		4B26D111242DF52A00E366CB /* GetterBuilderTransformMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderTransformMethodChain.swift; sourceTree = "<group>"; };
 		4B26D113242DF54900E366CB /* GetterBuilderPostFilterMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderPostFilterMethodChain.swift; sourceTree = "<group>"; };
+		4B2F001D2459DC4A0034DA40 /* All.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = All.xctestplan; path = /Users/muukii/.ghq/github.com/muukii/Verge/worktree/space1/Tests/All.xctestplan; sourceTree = "<absolute>"; };
 		4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizeDisplayValueTests.swift; sourceTree = "<group>"; };
 		4B39AE5423C5DC84005F7BC8 /* CopyPerformance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyPerformance.swift; sourceTree = "<group>"; };
 		4B4011BC23C779D400C582BC /* State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
@@ -492,7 +493,6 @@
 		4B475BC5239ADE1C008A03E1 /* VergeORMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeORMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeORMTests.swift; sourceTree = "<group>"; };
 		4B475BC9239ADE1C008A03E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B495D092332B5170098F7B4 /* NetworkImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
 		4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReproduceDeadlockTests.swift; sourceTree = "<group>"; };
 		4B4AB16D244DF35E005E7283 /* SynchronizationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizationTracker.swift; sourceTree = "<group>"; };
 		4B542434242DCE0700ECC0C9 /* GetterBuilderMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderMethodChain.swift; sourceTree = "<group>"; };
@@ -563,7 +563,6 @@
 		4BAC16BE23C806E000BF49D9 /* EntityType+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EntityType+.swift"; sourceTree = "<group>"; };
 		4BAC16C123C8072300BF49D9 /* EntityGetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityGetter.swift; sourceTree = "<group>"; };
 		4BAD4FDC1FC80B0100C841FA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		4BADEB9A23380AE400E1D3F5 /* Lorem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lorem.swift; sourceTree = "<group>"; };
 		4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Verge+Extension.swift"; sourceTree = "<group>"; };
 		4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddlewareTests.swift; sourceTree = "<group>"; };
@@ -612,7 +611,6 @@
 		4BE9454F23AD1B180060F977 /* VergeCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BE9455323AD1B180060F977 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitterTests.swift; sourceTree = "<group>"; };
-		4BECC81723312AD400D6A0A1 /* IndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorView.swift; sourceTree = "<group>"; };
 		4BF21F2F2458C1860045B5C2 /* UtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilTests.swift; sourceTree = "<group>"; };
 		4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelBase.swift; sourceTree = "<group>"; };
 		4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitter.swift; sourceTree = "<group>"; };
@@ -934,16 +932,6 @@
 			path = VergeStore;
 			sourceTree = "<group>";
 		};
-		4B78632C233912B9009B9C1B /* DemoComponents */ = {
-			isa = PBXGroup;
-			children = (
-				4B495D092332B5170098F7B4 /* NetworkImageView.swift */,
-				4BECC81723312AD400D6A0A1 /* IndicatorView.swift */,
-				4BADEB9A23380AE400E1D3F5 /* Lorem.swift */,
-			);
-			path = DemoComponents;
-			sourceTree = "<group>";
-		};
 		4B84F3B02388066F00D8BC75 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -966,7 +954,6 @@
 				4B84F3B12388075500D8BC75 /* Package.swift */,
 				4B84F3B02388066F00D8BC75 /* Sources */,
 				4BF2BCCD238A653000F70CDA /* Tests */,
-				4B78632C233912B9009B9C1B /* DemoComponents */,
 				4B86A4871F969AD5002D54FE /* Products */,
 				4B86A4AC1F969C98002D54FE /* Frameworks */,
 				2A539E3FF4267844D858E039 /* Pods */,
@@ -1189,6 +1176,7 @@
 		4BF2BCCD238A653000F70CDA /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				4B2F001D2459DC4A0034DA40 /* All.xctestplan */,
 				4B95BE59244F10F200124F6B /* DemoState.swift */,
 				4B1743A823C767670074C457 /* VergeRxTests */,
 				4BE9455023AD1B180060F977 /* VergeCoreTests */,
