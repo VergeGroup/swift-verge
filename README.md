@@ -67,7 +67,7 @@ struct MyView: View {
 
 The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
 
-Plus, releasing from so many definition of the actions.  
+Plus, releasing from so many definition of the actions.<br>
 To be more Swift's Style on the writing code.
 
 `store.myOperation()` instead of `store.dispatch(.myOperation)`
@@ -117,11 +117,14 @@ Specifically:
 
 ## Prepare moving to SwiftUI from now with Verge
 
-SwiftUI's concept is similar to the concept of React, Vue, and Elm. Therefore, the concept of state management will become to be similar as well.
+SwiftUI's concept is similar to the concept of React, Vue, and Elm. <br>
+Therefore, the concept of state management will become to be similar as well.
 
 That is Redux or Vuex and more.
 
-Now, almost of iOS Applications are developed on top of UIKit. And We can't say SwiftUI is ready for top production. However, it would be changed.
+Now, almost of iOS Applications are developed on top of UIKit.<br>
+And We can't say SwiftUI is ready for top production. <br>
+However, it would change.
 
 It's better to use the state management that fits SwiftUI from now. It's not only for that, current UIKit based applications can get more productivity as well.
 
@@ -140,7 +143,7 @@ It provides core functions of Store-pattern.
 
 ### ORM
 
-It provides the function that manages performant many entity objects.
+It provides the function that manages performant many entity objects.<br>
 Technically, using Normalization.
 
 In the application that uses many entity objects, we sure highly recommend using such as ORM using Normalization.
@@ -174,7 +177,7 @@ VergeRx
 pod 'Verge/Rx'
 ```
 
-These are separated with subspecs in Podspec.
+These are separated with subspecs in Podspec.<br>
 After installed, these are merged into single module as `Verge`.
 
 To use Verge in your code, define import decralation following.
