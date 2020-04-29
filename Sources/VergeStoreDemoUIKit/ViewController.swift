@@ -39,7 +39,7 @@ class ViewController: UIViewController {
       })
       .disposed(by: disposeBag)
     
-    viewModel.rx.changesObservable
+    viewModel.rx.changesObservable()
       .observeOn(MainScheduler.instance)
       .bind { [weak self] (changes) in
         self?.update(changes: changes)
@@ -96,11 +96,9 @@ final class ViewModel: ViewModelBase<ViewModelState, ViewModelActivity> {
     parent.rx.activitySignal
       .emit(onNext: { [weak self] activity in
         guard let self = self else { return }
-        self.dispatch { context in
-          switch activity {
-          case .bomb:
-            context.send(.somethingHappen)
-          }
+        switch activity {
+        case .bomb:
+          self.send(.somethingHappen)
         }
       })
       .disposed(by: disposeBag)

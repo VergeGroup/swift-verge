@@ -27,23 +27,21 @@ final class LoggedOutService<State: LoggedOutServiceStateType>: DispatcherBase<S
   let apiProvider = MoyaProvider<MultiTarget>()
   
   func fetchToken(code: Auth.AuthCode) -> Future<AuthResponse, MoyaError> {
-    dispatch { _ in
-      Future<AuthResponse, MoyaError> { (promise) in
-        self.apiProvider.request(.init(APIRequests.token(code: code))) { (result) in
-          switch result {
-          case .success(let response):
-            let auth = try! AuthResponse.init(from: try! JSON(data: response.data))
-            promise(.success(auth))
-          case .failure(let error):
-            promise(.failure(error))
-          }
+    Future<AuthResponse, MoyaError> { (promise) in
+      self.apiProvider.request(.init(APIRequests.token(code: code))) { (result) in
+        switch result {
+        case .success(let response):
+          let auth = try! AuthResponse.init(from: try! JSON(data: response.data))
+          promise(.success(auth))
+        case .failure(let error):
+          promise(.failure(error))
         }
       }
     }
   }
 }
 
-final class LoggedOutStore<State: LoggedOutServiceStateType>: StoreBase<State, Never> {
+final class LoggedOutStore<State: LoggedOutServiceStateType>: Store<State, Never> {
   
 }
 
@@ -60,7 +58,7 @@ final class LoggedOutStack<State: LoggedOutServiceStateType>: ObservableObject {
     
     let _store = LoggedOutStore.init(initialState: initialState, logger: DefaultStoreLogger.shared)
     self.store = _store
-    self.service = .init(target: _store)
+    self.service = .init(targetStore: _store)
     
   }
 }

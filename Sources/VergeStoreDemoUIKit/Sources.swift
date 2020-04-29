@@ -19,7 +19,7 @@ enum RootActivity {
   case bomb
 }
 
-final class RootStore: StoreBase<RootState, RootActivity> {
+final class RootStore: Store<RootState, RootActivity> {
   
   init() {
     super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
@@ -32,19 +32,17 @@ final class RootStore: StoreBase<RootState, RootActivity> {
   }
   
   func incrementWithNotification() {
-    dispatch { context in
+    
+    /// This is sample async task
+    DispatchQueue.main.async {
       
-      /// This is sample async task
-      DispatchQueue.main.async {
-        
-        context.redirect { $0.increment() }
-        if context.state.count > 10 {
-          context.send(.bomb)
-        }
-        
+      self.increment()
+      if self.state.count > 10 {
+        self.send(.bomb)
       }
-           
+      
     }
+    
   }
   
 }

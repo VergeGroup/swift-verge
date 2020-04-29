@@ -21,23 +21,21 @@
 
 import Foundation
 
-public protocol DispacherContextType {
+public protocol ContextualDispatcherType {
   associatedtype Dispatcher: DispatcherType
   var dispatcher: Dispatcher { get }
 }
 
 /// A context object created from an action.
 /// - Attention: This object retains owner. you may need to be weakify context object.
-public final class ContextualDispatcher<Dispatcher: DispatcherType, Scope>: DispacherContextType, DispatcherType {
+public final class ContextualDispatcher<Dispatcher: DispatcherType, Scope>: ContextualDispatcherType, DispatcherType {
       
   public typealias Activity = Dispatcher.WrappedStore.Activity
   
   public typealias State = Dispatcher.WrappedStore.State
     
   public let scope: WritableKeyPath<Dispatcher.WrappedStore.State, Scope>
-  
-  public let metadata: DispatcherMetadata
-  
+    
   /// Target dispatcher
   public let dispatcher: Dispatcher
   
@@ -57,40 +55,10 @@ public final class ContextualDispatcher<Dispatcher: DispatcherType, Scope>: Disp
   
   init(
     scope: WritableKeyPath<Dispatcher.WrappedStore.State, Scope>,
-    dispatcher: Dispatcher,
-    actionMetadata: ActionMetadata
+    dispatcher: Dispatcher
   ) {
     self.scope = scope
     self.dispatcher = dispatcher
-    self.metadata = .init(fromAction: actionMetadata)
   }
      
-}
-
-var keyForIsRedirecting: String { "me.muukii.verge.IsRedirecting" }
-
-var contextMetadataRedirectingOnCrrentThread: DispatcherMetadata? {
-  Thread.current.threadDictionary.object(forKey: keyForIsRedirecting) as? DispatcherMetadata
-}
-
-func enterRedirectingOnCurrentThread(metadata: DispatcherMetadata) {
-  Thread.current.threadDictionary.setValue(metadata, forKey: keyForIsRedirecting)
-}
-
-func leaveRedirectingOnCurrentThread() {
-  Thread.current.threadDictionary.setValue(nil, forKey: keyForIsRedirecting)
-}
-
-extension ContextualDispatcher {
-         
-  public func redirect<Result>(_ redirect: (Dispatcher) throws -> Result) rethrows -> Result {
-    
-    enterRedirectingOnCurrentThread(metadata: metadata)
-    
-    defer {
-      leaveRedirectingOnCurrentThread()
-    }
-    return try redirect(dispatcher)
-  }
-
 }

@@ -29,23 +29,5 @@ public struct MutationMetadata: Encodable {
   public let file: String
   public let function: String
   public let line: UInt
-  public let context: DispatcherMetadata?
-  
-  static func makeOnCurrentThread(
-    name: String,
-    file: StaticString,
-    function: StaticString,
-    line: UInt,
-    context: DispatcherMetadata?
-  ) -> Self {
-    
-    self.init(
-      name: name,
-      file: file.description,
-      function: function.description,
-      line: line,
-      context: contextMetadataRedirectingOnCrrentThread ?? context
-    )
-  }
-      
+
 }

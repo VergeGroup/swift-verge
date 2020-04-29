@@ -38,19 +38,6 @@ public struct CommitLog: Encodable {
   }
 }
 
-public struct DispatchLog: Encodable {
-  
-  public let type: String = "dispatch"
-  public let action: ActionMetadata
-  public let store: String
-  
-  @inlinable
-  public init(store: AnyObject, state: Any, action: ActionMetadata) {
-    self.store = String(reflecting: store)
-    self.action = action
-  }
-}
-
 public struct DidCreateDispatcherLog: Encodable {
   
   public let type: String = "did_create_dispatcher"
@@ -88,7 +75,6 @@ public final class DefaultStoreLogger: StoreLogger {
   public static let shared = DefaultStoreLogger()
   
   public let commitLog = OSLog(subsystem: "VergeStore", category: "Commit")
-  public let dispatchLog = OSLog(subsystem: "VergeStore", category: "Dispatch")
   public let dispatcherCreationLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Creation")
   public let dispatcherDestructionLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Descruction")
   
@@ -115,14 +101,7 @@ public final class DefaultStoreLogger: StoreLogger {
       os_log("%@", log: self.commitLog, type: .default, string)
     }
   }
-  
-  public func didDispatch(log: DispatchLog) {
-    queue.async {
-      let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
-      os_log("%@", log: self.dispatchLog, type: .default, string)
-    }
-  }
-  
+   
   public func didCreateDispatcher(log: DidCreateDispatcherLog) {
     queue.async {
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!

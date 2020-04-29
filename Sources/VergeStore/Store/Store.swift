@@ -60,9 +60,7 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   public typealias Value = State
   
   public var store: Store<State, Activity> { self }
-  
-  public let metadata: DispatcherMetadata
-    
+      
   /// A current state.
   public var state: State {
     _backingStorage.value.current
@@ -97,9 +95,7 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
     logger: StoreLogger?
   ) {
     self._backingStorage = .init(.init(old: nil, new: initialState))
-    self.logger = logger
-    self.metadata = .init(fromAction: nil)
-    
+    self.logger = logger    
   }
   
   @inline(__always)

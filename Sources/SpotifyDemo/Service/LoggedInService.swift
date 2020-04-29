@@ -37,16 +37,10 @@ final class LoggedInService<State: LoggedInServiceStateType>: DispatcherBase<Sta
     super.init(targetStore: targetStore)
   }
   
-  func fetchMe() {
-    
-    dispatch { c in
-      
-      apiProvider.request(APIRequests.me()) { (result) in
-        print(result)
-      }
-      
+  func fetchMe() {          
+    apiProvider.request(APIRequests.me()) { (result) in
+      print(result)
     }
-    
   }
   
 }
