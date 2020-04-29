@@ -153,6 +153,20 @@ extension StoreType where State : DatabaseEmbedding {
     }
   }
   
+  /**
+   Returns Derived object that projects fetched Entity object by the entity identifier.
+   
+   The Derived object is constructed from multiple Derived.
+   Underlying-Derived: Fetch the entity from id
+   DropsOutput-Derived: Drops the duplicated object
+   
+   Underlying-Derived would be cached by the id.
+   If the cached object found, it will be used to construct Derived with DropsOutput-Derived.
+   
+   - Parameters:
+     - entityID: an identifier of the entity
+     - dropsOutput: Used for Derived. the condition to drop duplicated object.
+   */
   @inline(__always)
   public func derived<Entity: EntityType>(
     from entityID: Entity.EntityID,
@@ -185,6 +199,8 @@ extension StoreType where State : DatabaseEmbedding {
   
 }
 
+// MARK: - Convenience operators
+
 extension StoreType where State : DatabaseEmbedding {
   
   @inline(__always)
@@ -214,8 +230,6 @@ extension StoreType where State : DatabaseEmbedding {
   }
   
 }
-
-// MARK: - Convenience operators
 
 extension StoreType where State : DatabaseEmbedding {
   
@@ -327,4 +341,33 @@ extension StoreType where State : DatabaseEmbedding {
     derivedNonNull(from: insertionResults, dropsOutput: ==)
   }
      
+}
+
+extension StoreType where State : DatabaseEmbedding {
+  
+  @inline(__always)
+  public func derivedNonNull<E0: EntityType & Equatable, E1: EntityType & Equatable>(
+    from e0ID: E0.EntityID,
+    _ e1ID: E1.EntityID
+  ) throws -> Derived<(NonNullEntityWrapper<E0>, NonNullEntityWrapper<E1>)> {
+    
+    Derived.combined(
+      try derivedNonNull(from: e0ID),
+      try derivedNonNull(from: e1ID)
+    )
+  }
+  
+  @inline(__always)
+  public func derivedNonNull<E0: EntityType & Equatable, E1: EntityType & Equatable, E2: EntityType & Equatable>(
+    from e0ID: E0.EntityID,
+    _ e1ID: E1.EntityID,
+    _ e2ID: E2.EntityID
+  ) throws -> Derived<(NonNullEntityWrapper<E0>, NonNullEntityWrapper<E1>, NonNullEntityWrapper<E2>)> {
+    
+    Derived.combined(
+      try derivedNonNull(from: e0ID),
+      try derivedNonNull(from: e1ID),
+      try derivedNonNull(from: e2ID)
+    )
+  }
 }
