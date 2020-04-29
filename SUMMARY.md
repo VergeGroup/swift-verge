@@ -11,14 +11,17 @@
 
 * [🌑 Store - Manages State](docs-vergestore/store.md)
 * [☄️ Mutation - Updates state](docs-vergestore/mutation.md)
-* [💥 Action - Grouping mutation with async operations](docs-vergestore/action.md)
 * [⚡️ Activity - Dispatching Volatile Events](docs-vergestore/activity.md)
 * [🪐 State and shape](docs-vergestore/state.md)
 * [🌟 Changes from State](docs-vergestore/changes-from-state.md)
 * [🛸 Computed property on State](docs-vergestore/getters-beside-state.md)
-* [💫 Getter\(Selector\) and Memoization](docs-vergestore/getter.md)
 * [🚀 Dispatcher - Perform Mutation / Action](docs-vergestore/dispatcher.md)
 * [🔭 Logging - Take logs performed Mutation and Action](docs-vergestore/logging.md)
+
+## Verge Store Deprecated
+
+* [💥 Action - Grouping mutation with async operations](verge-store-deprecated/action.md)
+* [💫 Getter\(Selector\) and Memoization](verge-store-deprecated/getter.md)
 
 ## 🖥 Verge Store + Application <a id="verge-store-application"></a>
 
