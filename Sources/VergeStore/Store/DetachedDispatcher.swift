@@ -19,50 +19,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
-      
-  public let scope: WritableKeyPath<State, Scope>
-  
-  public let store: Store<State, Activity>
-  
-  public var state: Scope {
-    return store.state[keyPath: scope]
-  }
-  
-  /// Returns current state from target store
-  public var rootState: State {
-    return store.state
-  }
-   
-  private var logger: StoreLogger? {
-    store.logger
-  }
-  
-  public init(
-    targetStore: Store<State, Activity>,
-    scope: WritableKeyPath<State, Scope>
-  ) {
-    self.store = targetStore
-    self.scope = scope
-      
-    let log = DidCreateDispatcherLog(store: targetStore, dispatcher: self)    
-    logger?.didCreateDispatcher(log: log)
-  }
-     
-  deinit {
-    let log = DidDestroyDispatcherLog(store: store, dispatcher: self)
-    logger?.didDestroyDispatcher(log: log)
-  }
-    
-}
+import Foundation
 
-open class DispatcherBase<State, Activity>: ScopedDispatcherBase<State, Activity, State> {
-      
-  public init(
-    targetStore: Store<State, Activity>
-  ) {
-    super.init(targetStore: targetStore, scope: \State.self)
-  }
+public final class DetachedDispatcher<State, Activity, Scope>: ScopedDispatcherBase<State, Activity, Scope> {
   
 }
-

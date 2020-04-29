@@ -33,9 +33,7 @@ class ActivityTests: XCTestCase {
     }
     
     func sendMessage() {
-      dispatch { context in
-        context.send(.didSendMessage)
-      }
+      send(.didSendMessage)
     }
   }
   

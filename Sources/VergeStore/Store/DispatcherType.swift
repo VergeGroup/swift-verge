@@ -38,9 +38,7 @@ extension DispatcherType where Scope == WrappedStore.State {
 }
 
 extension DispatcherType {
-      
-  public typealias Context = ContextualDispatcher<Self, Scope>
-  
+        
   /// Send activity
   /// - Parameter activity:
   public func send(_ activity: WrappedStore.Activity) {
@@ -97,6 +95,14 @@ extension DispatcherType {
         try mutation(&state[keyPath: scope])
     }
     )
+  }
+  
+  public func detached<NewScope>(from newScope: WritableKeyPath<WrappedStore.State, NewScope>) -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
+    .init(targetStore: store.asStore(), scope: newScope)
+  }
+  
+  public func detached<NewScope>(by appendingScope: WritableKeyPath<Scope, NewScope>) -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
+    .init(targetStore: store.asStore(), scope: self.scope.appending(path: appendingScope))
   }
     
 }
