@@ -57,3 +57,16 @@ derived.rx
   })
 ```
 
+## Memoization to keep performance
+
+Mostly Derived is used for projecting the specified shape from the source object.  
+  
+And some cases may contain an expensive operation.  
+In that case, we can consider to tune Memoization up.​  
+  
+We can see the detail of Memoization from below link.
+
+{% embed url="https://en.wikipedia.org/wiki/Memoization" %}
+
+
+
