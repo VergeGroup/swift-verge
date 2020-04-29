@@ -1,28 +1,17 @@
----
-description: >-
-  A Store-Pattern based data-flow architecture for iOS Application with UIKit /
-  SwiftUI
----
-
 # Verge - Flux and ORM for creating iOS App with SwiftUI and UIKit
 
-## Verge - Store
+## Verge 7.0.0 Beta
 
-![](.gitbook/assets/top-image-01%20%281%29.png)
+![](https://user-images.githubusercontent.com/1888355/80621676-98133a80-8a82-11ea-952f-3c3e52f9c222.png)
 
-* Current v7.0.0 beta status to publish release
-  * Trying to use on author's product.
-    * to get the feel for syntax on writing.
-    * to check the capability and scalability when using on the large projects.
-  * Status
+> 🚧 Verge 7.0 is still in development. API and the concept of Verge might be changed a bit.
 
-    * Started using VergeORM and RxGetter on the product \(2020-02\)
-
-{% hint style="danger" %}
-Verge 7.0 is still in development. API and the concept of Verge might be changed a bit.
-{% endhint %}
+[**🔗 You can see more detail of Verge on Documentation**](https://muukii-app.gitbook.io/verge/)
 
 **A Store-Pattern based data-flow architecture.**
+
+<details><summary>See first look</summary>
+<p>
 
 ```swift
 struct State: StateType {
@@ -71,6 +60,11 @@ struct MyView: View {
 }
 ```
 
+</p>
+</details>
+
+## Overview
+
 The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
 
 Plus, releasing from so many definition of the actions.  
@@ -88,9 +82,38 @@ The characteristics are
 * **Supports binding with Combine and RxSwift**
 * **Supports normalizing the state with ORM.**
 
-\*\*\*\*
+## What differences between other Flux libraries in the iOS application world
 
-**🔗**[ **You can see more detail of Verge on Documentation**](https://muukii-app.gitbook.io/verge/) **🔗**
+Firstly, Verge provides the functions to keep excellent performance in using Store-Pattern.
+
+Verge focuses on using in the real-world.
+
+For example, the application must have many features depends on its business.<br>
+Such as the application might be getting complicated.
+
+To solve this issue, we can choose Store-Pattern such as flux.
+
+At a glance, Flux architecture is amazing.<br>
+However, we have to follow the disadvantages behind it.
+
+They are coming from the application runs with Data-Driven (Mostly).<br>
+Data-Driven will cause some expensive calculations in the application that depends on the complexity of the application.<br>
+Sometimes, we may face some performance issues we can't overlook it.
+
+Redux and Vuex are already following that.
+
+- Redux
+  - reselect
+  - ORM
+- Vuex
+  - Getters
+  - ORM
+
+Verge is trying to do that in iOS application with Swift.
+
+Specifically:
+- Derived
+- ORM
 
 ## Prepare moving to SwiftUI from now with Verge
 
@@ -102,120 +125,43 @@ Now, almost of iOS Applications are developed on top of UIKit. And We can't say 
 
 It's better to use the state management that fits SwiftUI from now. It's not only for that, current UIKit based applications can get more productivity as well.
 
-## Overview Verge Store
+## Installation
 
-### **Declare**
+With Cocoapods,
 
-```swift
-struct State: StateType {
-  var count: Int = 0
-}
+VergeStore
 
-enum Activity {
-  case happen
-}
-
-final class MyStore: StoreBase<State, Activity> {
-  
-  init() {
-    super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
-  }
-  
-  func increment() {
-    commit {
-      $0.count += 0
-    }
-  }
-  
-  func delayedIncrement() {
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-      self.increment()
-      self.send(.happen)
-    }
-  }
-  
-}
+```ruby
+pod 'Verge/Store'
 ```
 
-### Run
+VergeORM
 
-```swift
-let store = MyStore()
-
-store.increment()
-
-store.delayedIncrement()
+```ruby
+pod 'Verge/ORM'
 ```
 
-### Read the state
+VergeRx
 
-```swift
-let count = store.state.count
+```ruby
+pod 'Verge/Rx'
 ```
 
-### Subscribe the state
+These are separated with subspecs in Podspec.
+After installed, these are merged into single module as `Verge`.
+
+To use Verge in your code, define import decralation following.
 
 ```swift
-store.subscribeStateChanges { (changes) in
-  changes.ifChanged(\.name) { name in
-    // it's called only name changed.
-  }
-}
+import Verge
 ```
 
-### Integrate with SwiftUI
+## Author
 
-```swift
-struct MyView: View {
-  
-  @EnvironmentObject var store: MyStore
-  
-  var body: some View {
-    Group {
-      Text(store.state.count.description)
-      Button(action: {
-        self.store.increment()
-      }) {
-        Text("Increment")
-      }
-    }
-  }
-}
-```
+[muukii](https://github.com/muukii)
 
-### Integrate with UIKit
+## License
 
-Of course Verge supports UIKit based application.
-
-## ORM module to normalize State Shape
-
-Most important thing in using state-tree is **Normalization.**
-
-**We can get detail of normalization from Redux documentation**
-
-{% embed url="https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/" %}
-
-{% page-ref page="docs-verge-orm/core-concepts.md" %}
-
-### 
-
-### Logging
-
-Verge supports logging functions.
-
-Using the console of Xcode or Console.app, we can track how the application runs
-
-![](.gitbook/assets/cleanshot-2020-03-08-at-09.25.36-2x.png)
-
-{% page-ref page="docs-vergestore/logging.md" %}
-
-
-
-
-
-## Concept from...
-
-{% embed url="https://medium.com/eureka-engineering/thought-about-arch-for-swiftui-1b0496d8094" %}
-
+Verge is released under the MIT license.
 
 
