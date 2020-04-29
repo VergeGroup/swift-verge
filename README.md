@@ -10,7 +10,7 @@
 
 **A Store-Pattern based data-flow architecture.**
 
-<details><summary>See first look</summary>
+<details><summary>See the first look of code</summary>
 <p>
 
 ```swift
@@ -124,6 +124,33 @@ That is Redux or Vuex and more.
 Now, almost of iOS Applications are developed on top of UIKit. And We can't say SwiftUI is ready for top production. However, it would be changed.
 
 It's better to use the state management that fits SwiftUI from now. It's not only for that, current UIKit based applications can get more productivity as well.
+
+## Usage
+
+[Please check it from here](https://muukii-app.gitbook.io/verge/)
+
+## Modules overview
+
+### Store
+
+It provides core functions of Store-pattern.
+
+- State supports computed property with caching (like [Vuex's Getters](https://vuex.vuejs.org/guide/getters.html))
+- Derived object to create derived data from state-tree with performant (like [redux/reselect](https://github.com/reduxjs/reselect))
+
+### ORM
+
+It provides the function that manages performant many entity objects.
+Technically, using Normalization.
+
+In the application that uses many entity objects, we sure highly recommend using such as ORM using Normalization.
+
+About more detail,
+https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape
+
+### Rx Extensions
+
+It provides several observable that compatible with RxSwift.
 
 ## Installation
 
