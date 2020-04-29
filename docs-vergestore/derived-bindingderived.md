@@ -8,7 +8,9 @@
 
 Derived's functions are:
 
-* Computes derived data from state tree
+* Computes the derived data from the state tree
+* Emit the updated data with updating Store
+* Supports subscribe the data
 * Supports Memoization
 
 ## Overview
@@ -68,5 +70,18 @@ We can see the detail of Memoization from below link.
 
 {% embed url="https://en.wikipedia.org/wiki/Memoization" %}
 
+### Suppress the map operation that projects no changes
 
+In create Derived method,  we can get the detail that how we suppress the no need updating and updated event. 
+
+```swift
+extension StoreType {
+
+  public func derived<NewState>(
+    _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
+    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false }
+  ) -> Derived<NewState>
+  
+ }
+```
 
