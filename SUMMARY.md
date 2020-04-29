@@ -15,6 +15,7 @@
 * [🪐 State and shape](docs-vergestore/state.md)
 * [🌟 Changes from State](docs-vergestore/changes-from-state.md)
 * [🛸 Computed property on State](docs-vergestore/getters-beside-state.md)
+* [🌙 Derived / BindingDerived](docs-vergestore/derived-bindingderived.md)
 * [🚀 Dispatcher - Perform Mutation / Action](docs-vergestore/dispatcher.md)
 * [🔭 Logging - Take logs performed Mutation and Action](docs-vergestore/logging.md)
 
