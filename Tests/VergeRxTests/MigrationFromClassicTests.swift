@@ -85,7 +85,7 @@ enum MigrationExample {
             
       let _: Changes<ViewModel.State> = viewModel.changes
       
-      _ = viewModel.subscribeStateChanges { (changes: Changes<ViewModel.State>) in
+      _ = viewModel.subscribeChanges { (changes: Changes<ViewModel.State>) in
         
       }
       

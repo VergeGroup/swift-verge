@@ -121,13 +121,13 @@ public class Derived<Value>: DerivedType {
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func subscribeStateChanges(
+  public func subscribeChanges(
     dropsFirst: Bool = false,
     queue: DispatchQueue? = nil,
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     
-    innerStore.subscribeStateChanges(
+    innerStore.subscribeChanges(
     dropsFirst: dropsFirst,
     queue: queue
     ) { (changes) in
@@ -154,7 +154,7 @@ public class Derived<Value>: DerivedType {
       set: { _ in },
       initialUpstreamState: changes,
       subscribeUpstreamState: { callback in
-        self.innerStore.subscribeStateChanges(
+        self.innerStore.subscribeChanges(
           dropsFirst: true,
           queue: queue,
           receive: callback
@@ -195,14 +195,14 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
                 
-        let _s0 = s0.subscribeStateChanges(dropsFirst: true, queue: nil) { (s0) in
+        let _s0 = s0.subscribeChanges(dropsFirst: true, queue: nil) { (s0) in
           buffer.modify { value in
             value.0 = s0.current
             callback(value)
           }
         }
         
-        let _s1 = s1.subscribeStateChanges(dropsFirst: true, queue: nil) { (s1) in
+        let _s1 = s1.subscribeChanges(dropsFirst: true, queue: nil) { (s1) in
           buffer.modify { value in
             value.1 = s1.current
             callback(value)
@@ -243,21 +243,21 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
         
-        let _s0 = s0.subscribeStateChanges(dropsFirst: true, queue: nil) { (s0) in
+        let _s0 = s0.subscribeChanges(dropsFirst: true, queue: nil) { (s0) in
           buffer.modify { value in
             value.0 = s0.current
             callback(value)
           }
         }
         
-        let _s1 = s1.subscribeStateChanges(dropsFirst: true, queue: nil) { (s1) in
+        let _s1 = s1.subscribeChanges(dropsFirst: true, queue: nil) { (s1) in
           buffer.modify { value in
             value.1 = s1.current
             callback(value)
           }
         }
         
-        let _s2 = s2.subscribeStateChanges(dropsFirst: true, queue: nil) { (s2) in
+        let _s2 = s2.subscribeChanges(dropsFirst: true, queue: nil) { (s2) in
           buffer.modify { value in
             value.2 = s2.current
             callback(value)
@@ -356,7 +356,7 @@ extension StoreType {
     },
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
-        asStore().subscribeStateChanges(dropsFirst: true, queue: nil, receive: callback)
+        asStore().subscribeChanges(dropsFirst: true, queue: nil, receive: callback)
     },
       retainsUpstream: nil
     )
@@ -404,7 +404,7 @@ extension StoreType {
     },
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
-        asStore().subscribeStateChanges(dropsFirst: true, queue: nil, receive: callback)
+        asStore().subscribeChanges(dropsFirst: true, queue: nil, receive: callback)
     }, retainsUpstream: nil)
     
     derived.setDropsOutput(dropsOutput)
