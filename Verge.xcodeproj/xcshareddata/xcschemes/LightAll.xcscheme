@@ -205,9 +205,6 @@
                <Test
                   Identifier = "VergeStoreTests/testDeadlock()">
                </Test>
-               <Test
-                  Identifier = "VergeStoreTests/testOrderOfEvents()">
-               </Test>
             </SkippedTests>
          </TestableReference>
          <TestableReference

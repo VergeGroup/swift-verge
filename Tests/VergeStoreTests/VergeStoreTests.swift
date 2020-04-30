@@ -305,15 +305,13 @@ final class VergeStoreTests: XCTestCase {
   }
   
   func testOrderOfEvents() {
-    
-    // Currently, it's collapsed because Storage emits event without locking.
-    
+        
     let store = VergeStore.Store<DemoState, Never>(initialState: .init(), logger: nil)
     
     let exp = expectation(description: "")
     let counter = expectation(description: "update count")
     counter.assertForOverFulfill = true
-    counter.expectedFulfillmentCount = 1001
+    counter.expectedFulfillmentCount = 10001
     
     let results: VergeConcurrency.Atomic<[Int]> = .init([])
     
@@ -325,7 +323,7 @@ final class VergeStoreTests: XCTestCase {
     }
     
     DispatchQueue.global().async {
-      DispatchQueue.concurrentPerform(iterations: 1000) { (i) in
+      DispatchQueue.concurrentPerform(iterations: 10000) { (i) in
         store.commit {
           $0.count += 1
         }
@@ -335,7 +333,7 @@ final class VergeStoreTests: XCTestCase {
     }
            
     wait(for: [exp, counter], timeout: 10)
-    XCTAssertEqual(Array((0...1000).map { $0 }), results.value)
+    XCTAssertEqual(Array((0...10000).map { $0 }), results.value)
     withExtendedLifetime(sub) {}
   }
   

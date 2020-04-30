@@ -136,13 +136,17 @@ open class Storage<Value>: ReadonlyStorage<Value> {
     
     lock()
     do {
+      
       let r = try update(&nonatomicValue)
       let notifyValue = nonatomicValue
-      unlock()
-      // TODO: cause cracking the order of event
+      
       if notificationFilter(notifyValue) {
+        // notify the event with locking
+        // it may cause dead-lock in somecase
         notifyDidUpdate(value: notifyValue)
       }
+      
+      unlock()
       return r
     } catch {
       unlock()
