@@ -5,6 +5,7 @@ import Foundation
 public protocol StoreLogger {
   
   func didCommit(log: CommitLog)
+  func didSendActivity(log: ActivityLog)
   
   func didCreateDispatcher(log: DidCreateDispatcherLog)
   func didDestroyDispatcher(log: DidDestroyDispatcherLog)

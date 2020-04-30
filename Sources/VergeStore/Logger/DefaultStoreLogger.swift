@@ -27,14 +27,27 @@ public struct CommitLog: Encodable {
   
   public let type: String = "commit"
   public let tookMilliseconds: Double
-  public let mutation: MutationMetadata
+  public let trace: MutationTrace
   public let store: String
 
   @inlinable
-  public init(store: AnyObject, mutation: MutationMetadata, time: CFTimeInterval) {
+  public init(store: AnyObject, trace: MutationTrace, time: CFTimeInterval) {
     self.store = String(reflecting: store)
     self.tookMilliseconds = time * 1000
-    self.mutation = mutation
+    self.trace = trace
+  }
+}
+
+public struct ActivityLog: Encodable {
+  
+  public let type: String = "activity"
+  public let trace: ActivityTrace
+  public let store: String
+  
+  @inlinable
+  public init(store: AnyObject, trace: ActivityTrace) {
+    self.store = String(reflecting: store)
+    self.trace = trace
   }
 }
 
@@ -75,6 +88,8 @@ public final class DefaultStoreLogger: StoreLogger {
   public static let shared = DefaultStoreLogger()
   
   public let commitLog = OSLog(subsystem: "VergeStore", category: "Commit")
+  public let activityLog = OSLog(subsystem: "VergeStore", category: "Activity")
+
   public let dispatcherCreationLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Creation")
   public let dispatcherDestructionLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Descruction")
   
@@ -99,6 +114,13 @@ public final class DefaultStoreLogger: StoreLogger {
     queue.async {
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
       os_log("%@", log: self.commitLog, type: .default, string)
+    }
+  }
+  
+  public func didSendActivity(log: ActivityLog) {
+    queue.async {
+      let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
+      os_log("%@", log: self.activityLog, type: .default, string)
     }
   }
    

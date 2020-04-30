@@ -38,13 +38,37 @@ extension DispatcherType where Scope == WrappedStore.State {
 }
 
 extension DispatcherType {
+  
+  /// Send activity
+  /// - Parameter activity:
+  public func send(
+    _ name: String = "",
+    _ activity: WrappedStore.Activity,
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line
+  ) {
+    let trace = ActivityTrace(
+      name: name,
+      file: file.description,
+      function: function.description,
+      line: line
+    )
+    
+    store.asStore()._send(activity: activity, trace: trace)
+  }
         
   /// Send activity
   /// - Parameter activity:
-  public func send(_ activity: WrappedStore.Activity) {
-    store.asStore()._send(activity: activity)
+  public func send(
+    _ activity: WrappedStore.Activity,
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line
+  ) {
+    send("", activity, file, function, line)
   }
-      
+        
   /// Run Mutation that created inline
   ///
   /// Throwable
@@ -56,7 +80,7 @@ extension DispatcherType {
     mutation: (inout Scope) throws -> Result
   ) rethrows -> Result {
     
-    let meta = MutationMetadata(
+    let trace = MutationTrace(
       name: name,
       file: file.description,
       function: function.description,
@@ -64,10 +88,11 @@ extension DispatcherType {
     )
     
     return try store.asStore()._receive(
-      metadata: meta,
       mutation: { state in
         try mutation(&state[keyPath: scope])
-    })
+    },
+      trace: trace
+    )
   }
       
   /// Run Mutation that created inline
@@ -82,7 +107,7 @@ extension DispatcherType {
     mutation: (inout NewScope) throws -> Result
   ) rethrows -> Result {
     
-    let meta = MutationMetadata(
+    let trace = MutationTrace(
       name: name,
       file: file.description,
       function: function.description,
@@ -90,10 +115,10 @@ extension DispatcherType {
     )
     
     return try store.asStore()._receive(
-      metadata: meta,
       mutation: { state in
         try mutation(&state[keyPath: scope])
-    }
+    },
+      trace: trace
     )
   }
   

@@ -21,8 +21,8 @@
 
 import Foundation
 
-/// A metadata object that indicates the name of the mutation and where it was caused.
-public struct MutationMetadata: Encodable {
+/// A trace that indicates the mutation where comes from.
+public struct MutationTrace: Encodable {
     
   public let createdAt: Date = .init()
   public let name: String

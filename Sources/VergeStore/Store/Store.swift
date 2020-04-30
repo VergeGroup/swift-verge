@@ -100,8 +100,8 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   
   @inline(__always)
   func _receive<Result>(
-    metadata: MutationMetadata,
-    mutation: (inout State) throws -> Result
+    mutation: (inout State) throws -> Result,
+    trace: MutationTrace
   ) rethrows -> Result {
                 
     let signpost = VergeSignpostTransaction("Store.commit")
@@ -118,15 +118,21 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
     
     signpost.end()
     
-    let log = CommitLog(store: self, mutation: metadata, time: elapsed)
+    let log = CommitLog(store: self, trace: trace, time: elapsed)
     logger?.didCommit(log: log)
     return returnValue
   }
  
   @inline(__always)
-  func _send(activity: Activity) {
+  func _send(
+    activity: Activity,
+    trace: ActivityTrace
+  ) {
     
     _activityEmitter.accept(activity)
+    
+    let log = ActivityLog(store: self, trace: trace)
+    logger?.didSendActivity(log: log)
   }
   
   func setNotificationFilter(_ filter: @escaping (Changes<State>) -> Bool) {
