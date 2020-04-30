@@ -36,12 +36,9 @@ enum Sample2 {
     }
     
     func delayedIncrement() {
-      dispatch { context in
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-          self.increment()
-          
-          context.send(.happen)
-        }
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        self.increment()        
+        self.send(.happen)
       }
     }
     

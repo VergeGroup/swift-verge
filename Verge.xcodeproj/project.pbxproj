@@ -32,9 +32,7 @@
 		4B1F19C2243A82BC00CED46B /* Changes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBFF45D24389D3D005BA03C /* Changes.swift */; };
 		4B1F19C4243A88A000CED46B /* ComputedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1F19C3243A88A000CED46B /* ComputedTests.swift */; };
 		4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050F623D5C841000A2779 /* StoreLogger.swift */; };
-		4B2050F923D5C85B000A2779 /* MutationMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050F823D5C85B000A2779 /* MutationMetadata.swift */; };
-		4B2050FB23D5C878000A2779 /* ActionMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050FA23D5C878000A2779 /* ActionMetadata.swift */; };
-		4B2050FD23D5D24C000A2779 /* DispatcherMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050FC23D5D24C000A2779 /* DispatcherMetadata.swift */; };
+		4B2050F923D5C85B000A2779 /* MutationTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050F823D5C85B000A2779 /* MutationTrace.swift */; };
 		4B264EF823BD13BC001BD9A0 /* DatabaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */; };
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
 		4B39AE5623C5DC8D005F7BC8 /* CopyPerformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B39AE5423C5DC84005F7BC8 /* CopyPerformance.swift */; };
@@ -153,10 +151,11 @@
 		4BC6EFB523A8C99900EFD688 /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB423A8C99900EFD688 /* State.swift */; };
 		4BC6EFB823A8D1B500EFD688 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB623A8D1AF00EFD688 /* Database.swift */; };
 		4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */; };
-		4BCBCA8D2381CC2B00F33B15 /* ContextualDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8C2381CC2B00F33B15 /* ContextualDispatcher.swift */; };
+		4BCBCA8D2381CC2B00F33B15 /* DetachedDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8C2381CC2B00F33B15 /* DetachedDispatcher.swift */; };
 		4BCC08432456228C00ECAB8A /* Derived+ORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC08412456222100ECAB8A /* Derived+ORM.swift */; };
 		4BCC0845245625DC00ECAB8A /* DatabaseEmbedding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC0844245625DC00ECAB8A /* DatabaseEmbedding.swift */; };
 		4BCC0847245626F300ECAB8A /* Comparer+ORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */; };
+		4BCE88B6245B1B8A006E20C3 /* ActivityTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */; };
 		4BCE8C2223CF736300FD30D9 /* MostSimpleSampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE8C2123CF736300FD30D9 /* MostSimpleSampleTests.swift */; };
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
 		4BD6850523C82E6C00D8A620 /* ORMGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */; };
@@ -470,9 +469,7 @@
 		4B1C011A23D381F100BE9B24 /* Volatile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Volatile.swift; sourceTree = "<group>"; };
 		4B1F19C3243A88A000CED46B /* ComputedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputedTests.swift; sourceTree = "<group>"; };
 		4B2050F623D5C841000A2779 /* StoreLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreLogger.swift; sourceTree = "<group>"; };
-		4B2050F823D5C85B000A2779 /* MutationMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationMetadata.swift; sourceTree = "<group>"; };
-		4B2050FA23D5C878000A2779 /* ActionMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionMetadata.swift; sourceTree = "<group>"; };
-		4B2050FC23D5D24C000A2779 /* DispatcherMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherMetadata.swift; sourceTree = "<group>"; };
+		4B2050F823D5C85B000A2779 /* MutationTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationTrace.swift; sourceTree = "<group>"; };
 		4B232761239E71530043D3F9 /* MemoizeGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoizeGetterTests.swift; sourceTree = "<group>"; };
 		4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseError.swift; sourceTree = "<group>"; };
 		4B26D10F242DF4F800E366CB /* GetterBuilderPreFilterMethodChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetterBuilderPreFilterMethodChain.swift; sourceTree = "<group>"; };
@@ -590,10 +587,11 @@
 		4BC6EFB423A8C99900EFD688 /* State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
 		4BC6EFB623A8D1AF00EFD688 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherBase.swift; sourceTree = "<group>"; };
-		4BCBCA8C2381CC2B00F33B15 /* ContextualDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualDispatcher.swift; sourceTree = "<group>"; };
+		4BCBCA8C2381CC2B00F33B15 /* DetachedDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetachedDispatcher.swift; sourceTree = "<group>"; };
 		4BCC08412456222100ECAB8A /* Derived+ORM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Derived+ORM.swift"; sourceTree = "<group>"; };
 		4BCC0844245625DC00ECAB8A /* DatabaseEmbedding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseEmbedding.swift; sourceTree = "<group>"; };
 		4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Comparer+ORM.swift"; sourceTree = "<group>"; };
+		4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTrace.swift; sourceTree = "<group>"; };
 		4BCE8C2123CF736300FD30D9 /* MostSimpleSampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostSimpleSampleTests.swift; sourceTree = "<group>"; };
 		4BD379EC23BD94D800CE474C /* AnyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEntity.swift; sourceTree = "<group>"; };
 		4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORMGetterTests.swift; sourceTree = "<group>"; };
@@ -1039,12 +1037,11 @@
 			children = (
 				4B427418236F269C00C302C8 /* Store.swift */,
 				4BF76680244E1B5300A5EA10 /* Derived.swift */,
-				4B2050F823D5C85B000A2779 /* MutationMetadata.swift */,
-				4B2050FA23D5C878000A2779 /* ActionMetadata.swift */,
-				4B2050FC23D5D24C000A2779 /* DispatcherMetadata.swift */,
+				4B2050F823D5C85B000A2779 /* MutationTrace.swift */,
+				4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */,
 				4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */,
 				4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */,
-				4BCBCA8C2381CC2B00F33B15 /* ContextualDispatcher.swift */,
+				4BCBCA8C2381CC2B00F33B15 /* DetachedDispatcher.swift */,
 				4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */,
 			);
 			path = Store;
@@ -1972,10 +1969,8 @@
 				4B6F6F3924521F1E00B6CC3A /* FragmentState.swift in Sources */,
 				4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */,
 				4B6B77A1243F9DB200E0C0EA /* GetterBuilderPreFilterMethodChain.swift in Sources */,
-				4BCBCA8D2381CC2B00F33B15 /* ContextualDispatcher.swift in Sources */,
-				4B2050FB23D5C878000A2779 /* ActionMetadata.swift in Sources */,
+				4BCBCA8D2381CC2B00F33B15 /* DetachedDispatcher.swift in Sources */,
 				4B1F19C2243A82BC00CED46B /* Changes.swift in Sources */,
-				4B2050FD23D5D24C000A2779 /* DispatcherMetadata.swift in Sources */,
 				4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */,
 				4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */,
 				4B6B77A7243F9E3700E0C0EA /* Getter.swift in Sources */,
@@ -1985,11 +1980,12 @@
 				4B6B77A2243F9DB200E0C0EA /* GetterBuilderTransformMethodChain.swift in Sources */,
 				4B0AFD6D2388643400AABA90 /* DefaultStoreLogger.swift in Sources */,
 				4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */,
+				4BCE88B6245B1B8A006E20C3 /* ActivityTrace.swift in Sources */,
 				4BDB78222447934A00675D03 /* StoreWrapperType.swift in Sources */,
 				4B1F19C1243A82BC00CED46B /* StateType.swift in Sources */,
 				4B6B779F243F9DB200E0C0EA /* GetterBuilderPostFilterMethodChain.swift in Sources */,
 				4B6B77A0243F9DB200E0C0EA /* GetterComponents.swift in Sources */,
-				4B2050F923D5C85B000A2779 /* MutationMetadata.swift in Sources */,
+				4B2050F923D5C85B000A2779 /* MutationTrace.swift in Sources */,
 				4B6B77A9243F9E5500E0C0EA /* Comparer.swift in Sources */,
 				4BF76681244E1B5300A5EA10 /* Derived.swift in Sources */,
 				4B6B77A5243F9DB200E0C0EA /* GetterBuilderMethodChain.swift in Sources */,

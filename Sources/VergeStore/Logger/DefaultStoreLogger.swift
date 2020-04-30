@@ -27,27 +27,27 @@ public struct CommitLog: Encodable {
   
   public let type: String = "commit"
   public let tookMilliseconds: Double
-  public let mutation: MutationMetadata
+  public let trace: MutationTrace
   public let store: String
 
   @inlinable
-  public init(store: AnyObject, mutation: MutationMetadata, time: CFTimeInterval) {
+  public init(store: AnyObject, trace: MutationTrace, time: CFTimeInterval) {
     self.store = String(reflecting: store)
     self.tookMilliseconds = time * 1000
-    self.mutation = mutation
+    self.trace = trace
   }
 }
 
-public struct DispatchLog: Encodable {
+public struct ActivityLog: Encodable {
   
-  public let type: String = "dispatch"
-  public let action: ActionMetadata
+  public let type: String = "activity"
+  public let trace: ActivityTrace
   public let store: String
   
   @inlinable
-  public init(store: AnyObject, state: Any, action: ActionMetadata) {
+  public init(store: AnyObject, trace: ActivityTrace) {
     self.store = String(reflecting: store)
-    self.action = action
+    self.trace = trace
   }
 }
 
@@ -88,7 +88,8 @@ public final class DefaultStoreLogger: StoreLogger {
   public static let shared = DefaultStoreLogger()
   
   public let commitLog = OSLog(subsystem: "VergeStore", category: "Commit")
-  public let dispatchLog = OSLog(subsystem: "VergeStore", category: "Dispatch")
+  public let activityLog = OSLog(subsystem: "VergeStore", category: "Activity")
+
   public let dispatcherCreationLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Creation")
   public let dispatcherDestructionLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Descruction")
   
@@ -116,13 +117,13 @@ public final class DefaultStoreLogger: StoreLogger {
     }
   }
   
-  public func didDispatch(log: DispatchLog) {
+  public func didSendActivity(log: ActivityLog) {
     queue.async {
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
-      os_log("%@", log: self.dispatchLog, type: .default, string)
+      os_log("%@", log: self.activityLog, type: .default, string)
     }
   }
-  
+   
   public func didCreateDispatcher(log: DidCreateDispatcherLog) {
     queue.async {
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!

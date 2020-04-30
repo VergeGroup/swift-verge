@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019 muukii
+// Copyright (c) 2020 muukii
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,35 +19,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
 import Foundation
 
-/// A metadata object that indicates the name of the action and where it was caused.
-public struct ActionMetadata: Encodable {
-    
+/// A trace that indicates the activity where comes from.
+public struct ActivityTrace: Encodable {
+  
   public let createdAt: Date = .init()
   public let name: String
   public let file: String
   public let function: String
   public let line: UInt
-  public let context: DispatcherMetadata?
   
-  static func makeOnCurrentThread(
-    name: String,
-    file: StaticString,
-    function: StaticString,
-    line: UInt,
-    context: DispatcherMetadata?
-  ) -> Self {
-    
-    self.init(
-      name: name,
-      file: file.description,
-      function: function.description,
-      line: line,
-      context: contextMetadataRedirectingOnCrrentThread ?? context
-    )
-    
-  }
-             
 }

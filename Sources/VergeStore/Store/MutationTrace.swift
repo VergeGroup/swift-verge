@@ -21,31 +21,13 @@
 
 import Foundation
 
-/// A metadata object that indicates the name of the mutation and where it was caused.
-public struct MutationMetadata: Encodable {
+/// A trace that indicates the mutation where comes from.
+public struct MutationTrace: Encodable {
     
   public let createdAt: Date = .init()
   public let name: String
   public let file: String
   public let function: String
   public let line: UInt
-  public let context: DispatcherMetadata?
-  
-  static func makeOnCurrentThread(
-    name: String,
-    file: StaticString,
-    function: StaticString,
-    line: UInt,
-    context: DispatcherMetadata?
-  ) -> Self {
-    
-    self.init(
-      name: name,
-      file: file.description,
-      function: function.description,
-      line: line,
-      context: contextMetadataRedirectingOnCrrentThread ?? context
-    )
-  }
-      
+
 }

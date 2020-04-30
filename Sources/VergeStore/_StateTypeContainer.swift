@@ -21,8 +21,6 @@
 
 import Foundation
 
-import os.lock
-
 #if !COCOAPODS
 import VergeCore
 #endif

@@ -21,42 +21,6 @@
 
 import Foundation
 
-public struct DispatcherMetadata: Encodable {
+public final class DetachedDispatcher<State, Activity, Scope>: ScopedDispatcherBase<State, Activity, Scope> {
   
-  private let backing: ActionContainer?
-  
-  public var fromActionMetadata: ActionMetadata? {
-    backing?.fromAction
-  }
-  
-  public func encode(to encoder: Encoder) throws {
-    try fromActionMetadata.encode(to: encoder)
-  }
-  
-  public init() {
-    self.init(fromAction: nil)
-  }
-  
-  init(fromAction: ActionMetadata?) {
-    self.backing = fromAction.map { ._backing($0) }
-  }
-  
-  indirect enum ActionContainer {
-    
-    public var fromAction: ActionMetadata {
-      switch self {
-      case ._backing(let m): return m
-      }
-    }
-    
-    case _backing(ActionMetadata)
-    
-    init(fromAction: ActionMetadata) {
-      self = ._backing(fromAction)
-    }
-    
-  }
-    
 }
-
-

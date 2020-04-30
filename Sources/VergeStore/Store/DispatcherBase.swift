@@ -20,12 +20,19 @@
 // THE SOFTWARE.
 
 open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
+      
+  public let scope: WritableKeyPath<State, Scope>
   
-  public let metadata: DispatcherMetadata
-    
-  public var scope: WritableKeyPath<State, Scope>
+  public let store: Store<State, Activity>
   
-  public var store: Store<State, Activity>
+  public var state: Scope {
+    return store.state[keyPath: scope]
+  }
+  
+  /// Returns current state from target store
+  public var rootState: State {
+    return store.state
+  }
    
   private var logger: StoreLogger? {
     store.logger
@@ -37,21 +44,11 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
   ) {
     self.store = targetStore
     self.scope = scope
-    self.metadata = .init(fromAction: nil)
-    
+      
     let log = DidCreateDispatcherLog(store: targetStore, dispatcher: self)    
     logger?.didCreateDispatcher(log: log)
   }
-   
-  @available(*, deprecated, renamed: "init(targetStore:scope:)")
-  public convenience init(
-    target store: Store<State, Activity>,
-    scope: WritableKeyPath<State, Scope>
-  ) {
-    
-    self.init(targetStore: store, scope: scope)
-  }
-  
+     
   deinit {
     let log = DidDestroyDispatcherLog(store: store, dispatcher: self)
     logger?.didDestroyDispatcher(log: log)
@@ -61,13 +58,6 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
 
 open class DispatcherBase<State, Activity>: ScopedDispatcherBase<State, Activity, State> {
       
-  @available(*, deprecated, renamed: "init(targetStore:)")
-  public convenience init(
-    target store: Store<State, Activity>
-  ) {
-    self.init(targetStore: store)
-  }
-
   public init(
     targetStore: Store<State, Activity>
   ) {

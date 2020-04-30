@@ -28,7 +28,6 @@ public protocol DispatcherType {
     
   var store: WrappedStore { get }
   var scope: WritableKeyPath<WrappedStore.State, Scope> { get }
-  var metadata: DispatcherMetadata { get }
   
 }
 
@@ -39,19 +38,37 @@ extension DispatcherType where Scope == WrappedStore.State {
 }
 
 extension DispatcherType {
-      
-  public typealias Context = ContextualDispatcher<Self, Scope>
-  
-  public var metadata: DispatcherMetadata {
-    .init()
-  }
   
   /// Send activity
   /// - Parameter activity:
-  public func send(_ activity: WrappedStore.Activity) {
-    store.asStore()._send(activity: activity)
+  public func send(
+    _ name: String = "",
+    _ activity: WrappedStore.Activity,
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line
+  ) {
+    let trace = ActivityTrace(
+      name: name,
+      file: file.description,
+      function: function.description,
+      line: line
+    )
+    
+    store.asStore()._send(activity: activity, trace: trace)
   }
-      
+        
+  /// Send activity
+  /// - Parameter activity:
+  public func send(
+    _ activity: WrappedStore.Activity,
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line
+  ) {
+    send("", activity, file, function, line)
+  }
+        
   /// Run Mutation that created inline
   ///
   /// Throwable
@@ -62,18 +79,20 @@ extension DispatcherType {
     _ line: UInt = #line,
     mutation: (inout Scope) throws -> Result
   ) rethrows -> Result {
-    let meta = MutationMetadata.makeOnCurrentThread(
+    
+    let trace = MutationTrace(
       name: name,
-      file: file,
-      function: function,
-      line: line,
-      context: metadata
+      file: file.description,
+      function: function.description,
+      line: line
     )
+    
     return try store.asStore()._receive(
-      metadata: meta,
       mutation: { state in
         try mutation(&state[keyPath: scope])
-    })
+    },
+      trace: trace
+    )
   }
       
   /// Run Mutation that created inline
@@ -87,82 +106,28 @@ extension DispatcherType {
     scope: WritableKeyPath<WrappedStore.State, NewScope>,
     mutation: (inout NewScope) throws -> Result
   ) rethrows -> Result {
-    let meta = MutationMetadata.makeOnCurrentThread(
+    
+    let trace = MutationTrace(
       name: name,
-      file: file,
-      function: function,
-      line: line,
-      context: metadata
+      file: file.description,
+      function: function.description,
+      line: line
     )
+    
     return try store.asStore()._receive(
-      metadata: meta,
       mutation: { state in
         try mutation(&state[keyPath: scope])
-    }
+    },
+      trace: trace
     )
-  }
-      
-  /// Run action that created inline
-  @discardableResult
-  public func dispatch<Result>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    action: ((ContextualDispatcher<Self, Scope>) throws -> Result)
-  ) rethrows -> Result {
-           
-    let meta = ActionMetadata.makeOnCurrentThread(
-      name: name,
-      file: file,
-      function: function,
-      line: line,
-      context: metadata
-    )
-    
-    let context = ContextualDispatcher<Self, Scope>.init(
-      scope: scope,
-      dispatcher: self,
-      actionMetadata: meta
-    )
-    
-    let log = DispatchLog(store: store.asStore(), state: store.state, action: meta)
-    store.asStore().logger?.didDispatch(log: log)
-    
-    return try action(context)
-        
   }
   
-  /// Run action that created inline
-  @discardableResult
-  public func dispatch<Result, NewScope>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    scope: WritableKeyPath<WrappedStore.State, NewScope>,
-    action: ((ContextualDispatcher<Self, NewScope>) throws -> Result)
-  ) rethrows -> Result {
-    
-    let meta = ActionMetadata.makeOnCurrentThread(
-      name: name,
-      file: file,
-      function: function,
-      line: line,
-      context: metadata
-    )
-    
-    let context = ContextualDispatcher<Self, NewScope>.init(
-      scope: scope,
-      dispatcher: self,
-      actionMetadata: meta
-    )
-    
-    let log = DispatchLog(store: store.asStore(), state: store.state, action: meta)
-    store.asStore().logger?.didDispatch(log: log)
-    
-    return try action(context)
-    
+  public func detached<NewScope>(from newScope: WritableKeyPath<WrappedStore.State, NewScope>) -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
+    .init(targetStore: store.asStore(), scope: newScope)
   }
   
+  public func detached<NewScope>(by appendingScope: WritableKeyPath<Scope, NewScope>) -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
+    .init(targetStore: store.asStore(), scope: self.scope.appending(path: appendingScope))
+  }
+    
 }

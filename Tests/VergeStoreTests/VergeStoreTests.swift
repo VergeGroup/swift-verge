@@ -95,10 +95,8 @@ final class VergeStoreTests: XCTestCase {
     }
     
     func continuousIncrement() {
-      dispatch { c -> Void in
-        c.redirect { $0.increment() }
-        c.redirect { $0.increment() }
-      }
+      increment()
+      increment()
     }
     
     func failableIncrement() throws {
@@ -109,28 +107,23 @@ final class VergeStoreTests: XCTestCase {
     
     func hoge() {
       
-      dispatch(scope: \.nested) { (c) -> Void in
-        
-        let _: State.NestedState = c.state
-        
-        c.commit { state in
-          let _: State.NestedState = state
-          
-        }
-        
-        c.dispatch(scope: \.optionalNested) { c in
-          
-          let _: State.OptionalNestedState? = c.state
-          
-          c.commit { state in
-            let _: State.OptionalNestedState? = state
-            
-          }
-          
-        }
-                
-      }
+      let _detached = detached(from: \.nested)
       
+      let _: State.NestedState = _detached.state
+      
+      _detached.commit { state in
+        let _: State.NestedState = state
+        
+      }
+        
+      let optionalNestedTarget = detached(from: \.optionalNested)
+                  
+      let _: State.OptionalNestedState? = optionalNestedTarget.state
+          
+      optionalNestedTarget.commit { state in
+        let _: State.OptionalNestedState? = state
+      }
+                      
     }
     
   }
@@ -142,6 +135,9 @@ final class VergeStoreTests: XCTestCase {
     }
     
     func operation() {
+      
+      let _: State.TreeA = state
+      
       commit { state in
         let _: State.TreeA = state
       }
@@ -150,33 +146,14 @@ final class VergeStoreTests: XCTestCase {
         let _: State.TreeB = state
       }
       
-      dispatch { context in
-        let _: State.TreeA = context.state
-        
-        context.commit { state in
-          let _: State.TreeA = state
-        }
-      }
+      let treeB = detached(from: \.treeB)
       
-      dispatch(scope: \.treeB) { context in
-        let _: State.TreeB = context.state
-        
-        context.commit { state in
-          let _: State.TreeB = state
-        }
+      let _: State.TreeB = treeB.state
+                         
+      treeB.commit { state in
+        let _: State.TreeB = state
       }
-      
-      dispatch { context in
-
-        context.dispatch { _context in
-           let _: State.TreeA = _context.state
-        }
-        
-        context.dispatch(scope: \.treeB) { _context in
-          let _: State.TreeB = _context.state
-        }
-      }
-      
+         
     }
   }
   
