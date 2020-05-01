@@ -169,6 +169,21 @@ public class Derived<Value>: DerivedType {
     
   }
   
+  /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
+  ///
+  /// Drops output value if no changes with Equatable
+  ///
+  /// - Parameters:
+  ///   - queue: a queue to receive object
+  ///   - map:
+  /// - Returns:
+  public func chain<NewState: Equatable>(
+    _ map: MemoizeMap<Changes<Value>, NewState>,
+    queue: DispatchQueue? = nil
+  ) -> Derived<NewState> {
+    chain(map, dropsOutput: { !$0.hasChanges }, queue: queue)
+  }
+  
 }
 
 extension Derived where Value == Any {
