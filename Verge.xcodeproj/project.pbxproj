@@ -158,6 +158,7 @@
 		4BCC0847245626F300ECAB8A /* Comparer+ORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */; };
 		4BCE88B6245B1B8A006E20C3 /* ActivityTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */; };
 		4BCE8C2223CF736300FD30D9 /* MostSimpleSampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE8C2123CF736300FD30D9 /* MostSimpleSampleTests.swift */; };
+		4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD260A4245C7F680052B4AC /* Derived+Assign.swift */; };
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
 		4BD6850523C82E6C00D8A620 /* ORMGetterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */; };
 		4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD79C0324477F430073A48B /* VergeConcurrency.swift */; };
@@ -595,6 +596,7 @@
 		4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Comparer+ORM.swift"; sourceTree = "<group>"; };
 		4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTrace.swift; sourceTree = "<group>"; };
 		4BCE8C2123CF736300FD30D9 /* MostSimpleSampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostSimpleSampleTests.swift; sourceTree = "<group>"; };
+		4BD260A4245C7F680052B4AC /* Derived+Assign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Derived+Assign.swift"; sourceTree = "<group>"; };
 		4BD379EC23BD94D800CE474C /* AnyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEntity.swift; sourceTree = "<group>"; };
 		4BD6850423C82E6C00D8A620 /* ORMGetterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORMGetterTests.swift; sourceTree = "<group>"; };
 		4BD79C0324477F430073A48B /* VergeConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeConcurrency.swift; sourceTree = "<group>"; };
@@ -1040,6 +1042,7 @@
 			children = (
 				4B427418236F269C00C302C8 /* Store.swift */,
 				4BF76680244E1B5300A5EA10 /* Derived.swift */,
+				4BD260A4245C7F680052B4AC /* Derived+Assign.swift */,
 				4B2050F823D5C85B000A2779 /* MutationTrace.swift */,
 				4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */,
 				4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */,
@@ -1978,6 +1981,7 @@
 				4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */,
 				4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */,
 				4B6B77A7243F9E3700E0C0EA /* Getter.swift in Sources */,
+				4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */,
 				4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */,
 				4B1F19C0243A82BC00CED46B /* Volatile.swift in Sources */,
 				4B6B77AB243FA3EC00E0C0EA /* _StateTypeContainer.swift in Sources */,

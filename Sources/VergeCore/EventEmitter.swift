@@ -24,6 +24,24 @@ import os
 
 /// A type-erasing cancellable object that executes a provided closure when canceled.
 /// An AnyCancellable instance automatically calls cancel() when deinitialized.
+/// To cancel depending owner, can be written following
+///
+/// ```
+/// class ViewController {
+///
+///   var subscriptions = Set<AutoCancellable>()
+///
+///   func something() {
+///
+///   let derived = store.derived(...)
+///
+///   derived
+///     .subscribeStateChanges { ... }
+///     .store(in: &subscriptions)
+///   }
+///
+/// }
+/// ```
 public final class VergeAnyCancellable: Hashable, CancellableType {
   
   private let lock = NSLock()
