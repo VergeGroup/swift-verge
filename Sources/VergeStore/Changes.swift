@@ -224,26 +224,26 @@ public struct Changes<Value>: ChangesType {
     
   /// Do a closure if value specified by keyPath contains changes.
   @inline(__always)
-  public func ifChanged<T: Equatable>(_ keyPath: Selector<T>, _ perform: (T) throws -> Void) rethrows {
+  public func ifChanged<T: Equatable, Result>(_ keyPath: Selector<T>, _ perform: (T) throws -> Result) rethrows -> Result? {
     try ifChanged(keyPath, ==, perform)
   }
   
   /// Do a closure if value specified by keyPath contains changes.
-  public func ifChanged<T>(_ selector: Selector<T>, _ comparer: (T, T) -> Bool, _ perform: (T) throws -> Void) rethrows {          
-    guard hasChanges(selector, comparer) else { return }
-    try perform(Composing(source: self)[keyPath: selector])
+  public func ifChanged<T, Result>(_ selector: Selector<T>, _ comparer: (T, T) -> Bool, _ perform: (T) throws -> Result) rethrows -> Result? {
+    guard hasChanges(selector, comparer) else { return nil }
+    return try perform(Composing(source: self)[keyPath: selector])
   }
   
-  public func ifChanged<Composed>(
+  public func ifChanged<Composed, Result>(
     compose: (Composing) -> Composed,
     comparer: (Composed, Composed) -> Bool,
-    perform: (Composed) -> Void) {
+    perform: (Composed) throws -> Result
+  ) rethrows -> Result? {
     
     let current = Composing(source: self)
     
     guard let previousValue = previous?.value else {
-      perform(compose(.init(source: self)))
-      return
+      return try perform(compose(.init(source: self)))
     }
     
     let old = Composing(source: previousValue)
@@ -252,12 +252,11 @@ public struct Changes<Value>: ChangesType {
     let composedNew = compose(current)
     
     guard !comparer(composedOld, composedNew) else {
-      return
+      return nil
     }
     
-    perform(composedNew)
+    return try perform(composedNew)
   }
-  
   
   public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
     Changes<U>(

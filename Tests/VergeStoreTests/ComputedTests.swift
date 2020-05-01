@@ -280,7 +280,7 @@ class Computed2Tests: XCTestCase {
     }
         
     XCTContext.runActivity(named: "initial") { (a) -> Void in
-      
+            
       ifChange {
         count += 1
       }
