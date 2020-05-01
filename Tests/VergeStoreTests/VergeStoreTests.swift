@@ -386,4 +386,54 @@ final class VergeStoreTests: XCTestCase {
     }
   }
   
+  func testAssin() {
+    
+    let store1 = DemoStore()
+    let store2 = DemoStore()
+    
+    let sub = store1
+      .derived(.map(\.count))
+      .assign(to: \.count, on: store2)
+    
+    store1.commit {
+      $0.count += 1
+    }
+    
+    XCTAssertEqual(store1.state.count, store1.state.count)
+    
+    store1.commit {
+      $0.count += 1
+    }
+    
+    XCTAssertEqual(store1.state.count, store1.state.count)
+    
+    withExtendedLifetime(sub, {})
+    
+  }
+  
+  func testBinder() {
+    
+    let store1 = DemoStore()
+    let store2 = DemoStore()
+    
+    let sub = store1
+      .derived(.map(\.count))
+      .assign(to: store2.assignee(\.count))
+    
+    store1.commit {
+      $0.count += 1
+    }
+    
+    XCTAssertEqual(store1.state.count, store1.state.count)
+    
+    store1.commit {
+      $0.count += 1
+    }
+    
+    XCTAssertEqual(store1.state.count, store1.state.count)
+    
+    withExtendedLifetime(sub, {})
+    
+  }
+  
 }
