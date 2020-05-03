@@ -167,9 +167,7 @@ extension Store {
         components.transform($0.current)
       })
       .scan(initialValue, { (pre, element) in
-        var _next = pre
-        _next.update(with: element)
-        return _next
+        pre.makeNextChanges(with: element)
       })
       .filter({ value in
         !components.postFilter(value)

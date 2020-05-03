@@ -25,7 +25,7 @@ import Foundation
 import VergeCore
 #endif
 
-public protocol ChangesType {
+public protocol ChangesType: AnyObject {
   
   associatedtype Value
   var old: Value? { get }
@@ -75,61 +75,34 @@ public protocol ChangesType {
  ```
  */
 @dynamicMemberLookup
-public struct Changes<Value>: ChangesType {
+public final class Changes<Value>: ChangesType {
   
-  indirect enum PreviousWrapper {
-    case wrapped(Changes<Value>)
-    var value: Changes<Value> {
-      switch self {
-      case .wrapped(let value):
-        return value
-      }
-    }
-  }
-    
-  private struct InnerCurrent {
-    
-    let value: Value
-    
-    let cachedComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
-    
-    init(value: Value) {
-      self.value = value
-      self.cachedComputedValueStorage = .init([:])
-    }
-    
-    private init(
-      value: Value,
-      cachedComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
-    ) {
-      self.value = value
-      self.cachedComputedValueStorage = cachedComputedValueStorage
-    }
-    
-    public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerCurrent {
-      return .init(value: try transform(value), cachedComputedValueStorage: cachedComputedValueStorage)
-    }
-  }
-    
-  internal private(set) var previous: PreviousWrapper?
-  private var innerCurrent: InnerCurrent
-    
-  public var old: Value? { _read { yield previous?.value.current } }
-  public var current: Value { _read { yield innerCurrent.value } }
-  
+  // MARK: - Stored Properties
+
+  let previous: Changes<Value>?
+  private let innerCurrent: InnerCurrent
   private(set) public var version: UInt64
   
-  public init(
+  // MARK: - Computed Properties
+    
+  public var old: Value? { _read { yield previous?.current } }
+  public var current: Value { _read { yield innerCurrent.value } }
+  
+  // MARK: - Initializers
+    
+  public convenience init(
     old: Value?,
     new: Value
   ) {
-    self.previous = nil
-    self.innerCurrent = .init(value: new)
-    self.version = 0
+    self.init(
+      previous: nil,
+      innerCurrent: .init(value: new),
+      version: 0
+    )
   }
   
   private init(
-    previous: PreviousWrapper?,
+    previous: Changes<Value>?,
     innerCurrent: InnerCurrent,
     version: UInt64
   ) {
@@ -137,6 +110,21 @@ public struct Changes<Value>: ChangesType {
     self.previous = previous
     self.innerCurrent = innerCurrent
     self.version = version
+    
+    vergeSignpostEvent("Changes.init")
+  }
+  
+  deinit {
+    vergeSignpostEvent("Changes.deinit")
+  }
+  
+  @inline(__always)
+  private func cloneWithDropsPrevious() -> Changes<Value> {
+    return .init(
+      previous: nil,
+      innerCurrent: innerCurrent,
+      version: version
+    )
   }
   
   public func asChanges() -> Changes<Value> {
@@ -144,10 +132,8 @@ public struct Changes<Value>: ChangesType {
   }
   
   /// To create initial changes object
-  public func droppedPrevious() -> Self {
-    var _self = self
-    _self.previous = nil
-    return _self
+  public func droppedPrevious() -> Changes<Value> {
+    cloneWithDropsPrevious()
   }
   
   @inlinable
@@ -196,18 +182,20 @@ public struct Changes<Value>: ChangesType {
     comparer: (Composed, Composed) -> Bool
   ) -> Bool {
     
+    let signpost = VergeSignpostTransaction("Changes.hasChanges(compose:comparer:)")
+    defer {
+      signpost.end()
+    }
+    
     let current = Composing(source: self)
     
-    guard let previousValue = previous?.value else {
+    guard let previousValue = previous else {
       return true
     }
     
     let old = Composing(source: previousValue)
-    
-    let composedOld = compose(old)
-    let composedNew = compose(current)
-    
-    guard !comparer(composedOld, composedNew) else {
+        
+    guard !comparer(compose(old), compose(current)) else {
       return false
     }
     
@@ -216,7 +204,7 @@ public struct Changes<Value>: ChangesType {
   
   @inline(__always)
   public func hasChanges<T>(_ selector: Selector<T>, _ compare: (T, T) -> Bool) -> Bool {
-    guard let old = previous?.value else {
+    guard let old = previous else {
       return true
     }
     return !compare(Composing(source: old)[keyPath: selector], Composing(source: self)[keyPath: selector])
@@ -242,7 +230,7 @@ public struct Changes<Value>: ChangesType {
     
     let current = Composing(source: self)
     
-    guard let previousValue = previous?.value else {
+    guard let previousValue = previous else {
       return try perform(compose(.init(source: self)))
     }
     
@@ -260,26 +248,51 @@ public struct Changes<Value>: ChangesType {
   
   public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
     Changes<U>(
-      previous: try previous.map { try Changes<U>.PreviousWrapper.wrapped($0.value.map(transform)) },
+      previous: try previous.map { try $0.map(transform) },
       innerCurrent: try innerCurrent.map(transform),
       version: version
     )
   }
   
   public func makeNextChanges(with nextNewValue: Value) -> Changes<Value> {
-    var _self = self
-    _self.update(with: nextNewValue)
-    return _self
+    
+    let previous = cloneWithDropsPrevious()
+    let nextVersion = previous.version &+ 1
+    return Changes<Value>.init(
+      previous: previous,
+      innerCurrent: .init(value: nextNewValue),
+      version: nextVersion
+    )
   }
+
+}
+
+// MARK: - Nested Types
+
+extension Changes {
   
-  public mutating func update(with nextNewValue: Value) {
+  private struct InnerCurrent {
     
-    var previous = self
-    previous.previous = nil
+    let value: Value
     
-    self.previous = .wrapped(previous)
-    self.innerCurrent = .init(value: nextNewValue)
-    self.version &+= 1
+    let cachedComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
+    
+    init(value: Value) {
+      self.value = value
+      self.cachedComputedValueStorage = .init([:])
+    }
+    
+    private init(
+      value: Value,
+      cachedComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
+    ) {
+      self.value = value
+      self.cachedComputedValueStorage = cachedComputedValueStorage
+    }
+    
+    public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerCurrent {
+      return .init(value: try transform(value), cachedComputedValueStorage: cachedComputedValueStorage)
+    }
   }
   
 }
@@ -353,7 +366,7 @@ extension Changes where Value : ExtendedStateType {
         return computed
       }
       
-      if let previous = previous?.value {
+      if let previous = previous {
         
         return previous.innerCurrent.cachedComputedValueStorage.modify { previousCache -> Output in
           if let previousCachedValue = previousCache[keyPath] as? Output {

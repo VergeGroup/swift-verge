@@ -80,6 +80,12 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
   fileprivate static func makeEntityQuery<Entity: EntityType>(entityID: Entity.EntityID) -> MemoizeMap<Input, EntityWrapper<Entity>> {
     
     let path = Input.Value.getterToDatabase
+    
+    let comparer = Comparer<Input.Value.Database>(or: [
+      Comparer<Input.Value.Database>.databaseNoUpdates(),
+      Comparer<Input.Value.Database>.tableNoUpdates(Entity.self),
+      Comparer<Input.Value.Database>.changesNoContains(entityID),
+    ])
       
     return .init(
       makeInitial: { changes in
@@ -88,17 +94,12 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
         )
     },
       update: { changes in
-        
+                
         let hasChanges = changes.asChanges().hasChanges(
           compose: { (composing) -> Input.Value.Database in
-            let db = type(of: composing.root).getterToDatabase(composing.root)
+            let db = path(composing.root)
             return db
-        }, comparer: Comparer<Input.Value.Database>(or: [
-          Comparer<Input.Value.Database>.databaseNoUpdates(),
-          Comparer<Input.Value.Database>.tableNoUpdates(Entity.self),
-          Comparer<Input.Value.Database>.changesNoContains(entityID),
-        ])
-        .curried()
+        }, comparer: comparer.curried()
         )
         
         guard hasChanges else {

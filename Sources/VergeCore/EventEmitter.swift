@@ -219,6 +219,9 @@ public final class EventEmitter<Event>: EventEmitterType {
     targets = subscribers.values
     lock.unlock()
     targets.forEach {
+      #if DEBUG
+      vergeSignpostEvent("EventEmitter.emit")
+      #endif
       $0(event)
     }
   }
