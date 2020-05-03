@@ -10,7 +10,9 @@ import RxSwift
 import RxCocoa
 
 fileprivate var storage_subject: Void?
-fileprivate var storage_lock: Void?
+
+extension Storage: ReactiveCompatible {}
+extension Store: ReactiveCompatible {}
 
 extension Reactive where Base : StoreType {
   

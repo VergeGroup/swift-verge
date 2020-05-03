@@ -190,32 +190,6 @@ final class VergeStoreTests: XCTestCase {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
     
-  @available(iOS 13.0, *)
-  func testStateSubscription() {
-    
-    let store = Store()
-    let dispatcher = RootDispatcher(targetStore: store)
-    
-    let expectation = XCTestExpectation()
-            
-    let getter = store.getterBuilder().mapWithoutPreFilter { $0 }.build()
-    
-    getter
-      .dropFirst()
-      .sink { (state) in
-        
-        XCTAssertEqual(state.count, 1)
-        expectation.fulfill()
-    }
-    .store(in: &subs)
-    
-    DispatchQueue.global().async {
-      dispatcher.increment()
-    }
-    
-    wait(for: [expectation], timeout: 1)
-  }
-  
   func testDispatch() {
     
     dispatcher.resetCount()
