@@ -352,7 +352,7 @@ class Computed2Tests: XCTestCase {
     
     let store = MyStore()
             
-    let sub = store.subscribeChanges { (changes) in
+    let sub = store.sinkChanges { (changes) in
       
       _ = changes.computed.nameCount
       _ = changes.computed.nameCount
@@ -380,6 +380,7 @@ class Computed2Tests: XCTestCase {
     XCTAssertEqual(rootReadCounter, 9)
     XCTAssertEqual(rootTransformCounter, 2)
     
+    withExtendedLifetime(sub, {})
     
   }
     
@@ -388,7 +389,7 @@ class Computed2Tests: XCTestCase {
     var store: MyStore! = MyStore()
     weak var _store = store
     
-    let subscription = store.subscribeChanges { (changes) in
+    let subscription = store.sinkChanges { (changes) in
 
       _ = changes.computed.nameCount
       _ = changes.computed.nameCount
@@ -434,6 +435,8 @@ class Computed2Tests: XCTestCase {
           
     store = nil
     XCTAssertNil(_store)
+    
+    withExtendedLifetime(subscription, {})
   }
   
 }

@@ -121,20 +121,32 @@ public class Derived<Value>: DerivedType {
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func subscribeChanges(
+  public func sinkChanges(
     dropsFirst: Bool = false,
     queue: DispatchQueue? = nil,
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     
-    innerStore.subscribeChanges(
-    dropsFirst: dropsFirst,
-    queue: queue
+    innerStore.sinkChanges(
+      dropsFirst: dropsFirst,
+      queue: queue
     ) { (changes) in
       withExtendedLifetime(self) {}
       receive(changes)
     }
     .asAutoCancellable()
+  }
+    
+  /// Subscribe the state changes
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkChanges")
+  public func subscribeChanges(
+    dropsFirst: Bool = false,
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Changes<Value>) -> Void
+  ) -> VergeAnyCancellable {
+    sinkChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
     
   /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
@@ -154,7 +166,7 @@ public class Derived<Value>: DerivedType {
       set: { _ in },
       initialUpstreamState: changes,
       subscribeUpstreamState: { callback in
-        self.innerStore.subscribeChanges(
+        self.innerStore.sinkChanges(
           dropsFirst: true,
           queue: queue,
           receive: callback
@@ -186,6 +198,26 @@ public class Derived<Value>: DerivedType {
   
 }
 
+extension Derived where Value : Equatable {
+  
+  /// Subscribe the state changes
+  ///
+  /// Receives a value only changed
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkChangedValue(
+    dropsFirst: Bool = false,
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Value) -> Void
+  ) -> VergeAnyCancellable {
+    sinkChanges(dropsFirst: dropsFirst, queue: queue) { (changes) in
+      changes.ifChanged { value in
+        receive(value)
+      }
+    }
+  }
+}
+
 extension Derived where Value == Any {
     
   /// Make Derived that projects combined value from specified source Derived objects.
@@ -210,14 +242,14 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
                 
-        let _s0 = s0.subscribeChanges(dropsFirst: true, queue: nil) { (s0) in
+        let _s0 = s0.sinkChanges(dropsFirst: true, queue: nil) { (s0) in
           buffer.modify { value in
             value.0 = s0.current
             callback(value)
           }
         }
         
-        let _s1 = s1.subscribeChanges(dropsFirst: true, queue: nil) { (s1) in
+        let _s1 = s1.sinkChanges(dropsFirst: true, queue: nil) { (s1) in
           buffer.modify { value in
             value.1 = s1.current
             callback(value)
@@ -258,21 +290,21 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
         
-        let _s0 = s0.subscribeChanges(dropsFirst: true, queue: nil) { (s0) in
+        let _s0 = s0.sinkChanges(dropsFirst: true, queue: nil) { (s0) in
           buffer.modify { value in
             value.0 = s0.current
             callback(value)
           }
         }
         
-        let _s1 = s1.subscribeChanges(dropsFirst: true, queue: nil) { (s1) in
+        let _s1 = s1.sinkChanges(dropsFirst: true, queue: nil) { (s1) in
           buffer.modify { value in
             value.1 = s1.current
             callback(value)
           }
         }
         
-        let _s2 = s2.subscribeChanges(dropsFirst: true, queue: nil) { (s2) in
+        let _s2 = s2.sinkChanges(dropsFirst: true, queue: nil) { (s2) in
           buffer.modify { value in
             value.2 = s2.current
             callback(value)
@@ -371,7 +403,7 @@ extension StoreType {
     },
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
-        asStore().subscribeChanges(dropsFirst: true, queue: nil, receive: callback)
+        asStore().sinkChanges(dropsFirst: true, queue: nil, receive: callback)
     },
       retainsUpstream: nil
     )
@@ -419,7 +451,7 @@ extension StoreType {
     },
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
-        asStore().subscribeChanges(dropsFirst: true, queue: nil, receive: callback)
+        asStore().sinkChanges(dropsFirst: true, queue: nil, receive: callback)
     }, retainsUpstream: nil)
     
     derived.setDropsOutput(dropsOutput)

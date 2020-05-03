@@ -81,22 +81,45 @@ extension StoreWrapperType {
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkChanges(
+    dropsFirst: Bool = false,
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Changes<WrappedStore.State>) -> Void
+  ) -> VergeAnyCancellable {
+    store.asStore().sinkChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+  
+  /// Subscribe the state changes
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkChanges")
   public func subscribeChanges(
     dropsFirst: Bool = false,
     queue: DispatchQueue? = nil,
     receive: @escaping (Changes<WrappedStore.State>) -> Void
   ) -> VergeAnyCancellable {
-    store.asStore().subscribeChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
+    store.asStore().sinkChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
   
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkActivity(
+    queue: DispatchQueue? = nil,
+    receive: @escaping (WrappedStore.Activity) -> Void
+  ) -> VergeAnyCancellable  {
+    store.asStore().sinkActivity(queue: queue, receive: receive)
+  }
+  
+  /// Subscribe the activity
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkActivity")
   public func subscribeActivity(
     queue: DispatchQueue? = nil,
     receive: @escaping (WrappedStore.Activity) -> Void
   ) -> VergeAnyCancellable  {
-    store.asStore().subscribeActivity(queue: queue, receive: receive)
+    store.asStore().sinkActivity(queue: queue, receive: receive)
   }
       
 }

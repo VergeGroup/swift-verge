@@ -44,7 +44,7 @@ extension Derived {
     on object: Object,
     dropsOutput: @escaping (Changes<Value>) -> Bool = { _ in false }
   ) -> VergeAnyCancellable {
-    subscribeChanges { [weak object] c in
+    sinkChanges { [weak object] c in
       guard !dropsOutput(c) else { return }
       object?[keyPath: keyPath] = c.current
     }
@@ -92,7 +92,7 @@ extension Derived {
   public func assign(
     to binder: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
-    subscribeChanges { c in
+    sinkChanges { c in
       binder(c)
     }
   }
