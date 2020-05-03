@@ -116,13 +116,13 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   /// ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
   public init(
-    map: @escaping (Input) -> Output
+    map: @escaping (Changes<Input.Value>) -> Output
   ) {
     
     self.init(
-      makeInitial: map,
+      makeInitial: { map($0.asChanges()) },
       dropInput: { $0.asChanges().noChanges(\.root) },
-      update: { .updated(map($0)) }
+      update: { .updated(map($0.asChanges())) }
     )
   }
   
@@ -135,6 +135,35 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
 }
 
 extension MemoizeMap where Input : ChangesType {
+  
+  /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
+  ///
+  /// ✅ Active Memoization with Fragment's version
+  ///
+  /// - Parameter map:
+  /// - Returns:
+  public static func map(_ map: @escaping (Changes<Input.Value>) -> Fragment<Output>) -> MemoizeMap<Input, Output> {
+         
+   return .init(
+    makeInitial: {
+      
+      map($0.asChanges()).wrappedValue
+      
+   }, update: { changes in
+    
+    let versionUpdated = changes.asChanges().hasChanges(
+      compose: { a in
+        a._map(map).version
+    },
+      comparer: { $0 == $1 })
+    
+    guard versionUpdated else {
+      return .noChanages
+    }
+    
+    return .updated(map(changes.asChanges()).wrappedValue)    
+   })
+  }
   
 }
 
@@ -149,5 +178,7 @@ extension MemoizeMap {
   public static func map(_ map: @escaping (Input) -> Output) -> Self {
     .init(dropInput: { _ in false }, map: map)
   }
+  
+
 }
 

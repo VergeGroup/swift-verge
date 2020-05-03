@@ -317,7 +317,12 @@ extension Changes {
         yield source[dynamicMember: keyPath]
       }
     }
-        
+    
+    // Currently Special-case, it will become official support.
+    func _map<T>(_ closure: (Changes<Value>) -> T) -> T {
+      closure(source)
+    }
+             
   }
 }
 
