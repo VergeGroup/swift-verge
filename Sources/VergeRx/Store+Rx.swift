@@ -72,7 +72,7 @@ extension ObservableType {
       if pre == nil {
         pre = Changes<Element>.init(old: nil, new: element)
       } else {
-        pre!.update(with: element)
+        pre = pre!.makeNextChanges(with: element)
       }
     })
       .map { $0! }

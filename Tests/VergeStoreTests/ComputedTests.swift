@@ -206,7 +206,7 @@ class Computed2Tests: XCTestCase {
         
     XCTAssertEqual(store.changes.version, 2)
     XCTAssertNotNil(store.changes.previous)
-    XCTAssertNil(store.changes.previous?.value.previous)
+    XCTAssertNil(store.changes.previous?.previous)
     
     XCTAssertEqual(store.changes.hasChanges(\.num_0), true)
     XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), true)
@@ -217,8 +217,8 @@ class Computed2Tests: XCTestCase {
     
     XCTAssertEqual(store.changes.version, 3)
     XCTAssertNotNil(store.changes.previous)
-    XCTAssertNil(store.changes.previous?.value.previous)
-    XCTAssertEqual(store.changes.previous?.value.num_0, 1)
+    XCTAssertNil(store.changes.previous?.previous)
+    XCTAssertEqual(store.changes.previous?.num_0, 1)
     
     XCTAssertEqual(store.changes.hasChanges(\.num_0), true)
     XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), true)

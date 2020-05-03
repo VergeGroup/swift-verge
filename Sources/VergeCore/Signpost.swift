@@ -13,16 +13,29 @@ enum SignpostConstants {
 public func vergeSignpostEvent(_ event: StaticString) {
   #if DEBUG
   if #available(iOS 12, macOS 10.14, *) {
-    os_signpost(.event, log: SignpostConstants.activityLog, name: event)
+    let id = OSSignpostID(log: SignpostConstants.activityLog)
+    os_signpost(.event, log: SignpostConstants.activityLog, name: event, signpostID: id)
   }
   #endif
 }
+
+@inlinable
+public func vergeSignpostEvent(_ event: StaticString, label: String) {
+  #if DEBUG
+  if #available(iOS 12, macOS 10.14, *) {
+    let id = OSSignpostID(log: SignpostConstants.activityLog)
+    os_signpost(.event, log: SignpostConstants.activityLog, name: event, signpostID: id, "%@", label)
+  }
+  #endif
+}
+
 
 public struct VergeSignpostTransaction {
   
   @usableFromInline
   let _end: () -> Void
   
+  @inlinable
   public init(_ name: StaticString) {
     #if DEBUG
     if #available(iOS 12, macOS 10.14, *) {
@@ -39,6 +52,7 @@ public struct VergeSignpostTransaction {
     #endif
   }
   
+  @inlinable
   public init(_ name: StaticString, label: String) {
     #if DEBUG
     if #available(iOS 12, macOS 10.14, *) {
