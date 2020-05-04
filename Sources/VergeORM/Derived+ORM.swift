@@ -289,6 +289,42 @@ extension StoreType where State : DatabaseEmbedding {
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
+    from entityIDs: S,
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
+  ) -> NonNullDerivedRecord<Entity> where S.Element == Entity.EntityID {
+    entityIDs.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
+      do {
+        r[e] = try derivedNonNull(from: e, dropsOutput: dropsOutput)
+      } catch {
+        //
+      }
+    }
+  }
+  
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
+    from entityIDs: S
+  ) -> NonNullDerivedRecord<Entity> where S.Element == Entity.EntityID {
+    derivedNonNull(from: entityIDs, dropsOutput: ==)
+  }
+  
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType>(
+    from entityIDs: Set<Entity.EntityID>,
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
+  ) -> NonNullDerivedRecord<Entity> {
+    derivedNonNull(from: AnySequence.init(entityIDs.makeIterator), dropsOutput: dropsOutput)
+  }
+  
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType & Equatable>(
+    from entityIDs: Set<Entity.EntityID>
+  ) -> NonNullDerivedRecord<Entity> {
+    derivedNonNull(from: entityIDs, dropsOutput: ==)
+  }
+  
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entities: S,
     dropsOutput: @escaping (S.Element?, S.Element?) -> Bool = { _, _ in false }
   ) -> NonNullDerivedRecord<Entity> where S.Element == Entity {
@@ -303,15 +339,13 @@ extension StoreType where State : DatabaseEmbedding {
   ) -> NonNullDerivedRecord<Entity> where S.Element == Entity {
     derivedNonNull(from: entities, dropsOutput: ==)
   }
-  
+    
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entities: Set<Entity>,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) -> NonNullDerivedRecord<Entity> {
-    entities.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
-      r[e.entityID] = derivedNonNull(from: e, dropsOutput: dropsOutput)
-    }
+    derivedNonNull(from: AnySequence.init(entities.makeIterator))
   }
   
   @inline(__always)
