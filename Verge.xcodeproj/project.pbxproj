@@ -26,7 +26,6 @@
 		4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */; };
 		4B1C011623D34A6B00BE9B24 /* SessionRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011523D34A6B00BE9B24 /* SessionRootView.swift */; };
 		4B1C011823D34A9F00BE9B24 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011723D34A9F00BE9B24 /* SafariView.swift */; };
-		4B1F19C0243A82BC00CED46B /* Volatile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011A23D381F100BE9B24 /* Volatile.swift */; };
 		4B1F19C1243A82BC00CED46B /* StateType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B68394F237062F7002FFC5A /* StateType.swift */; };
 		4B1F19C2243A82BC00CED46B /* Changes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBFF45D24389D3D005BA03C /* Changes.swift */; };
 		4B1F19C4243A88A000CED46B /* ComputedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1F19C3243A88A000CED46B /* ComputedTests.swift */; };
@@ -450,7 +449,6 @@
 		4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoizeMap.swift; sourceTree = "<group>"; };
 		4B1C011523D34A6B00BE9B24 /* SessionRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRootView.swift; sourceTree = "<group>"; };
 		4B1C011723D34A9F00BE9B24 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
-		4B1C011A23D381F100BE9B24 /* Volatile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Volatile.swift; sourceTree = "<group>"; };
 		4B1F19C3243A88A000CED46B /* ComputedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputedTests.swift; sourceTree = "<group>"; };
 		4B2050F623D5C841000A2779 /* StoreLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreLogger.swift; sourceTree = "<group>"; };
 		4B2050F823D5C85B000A2779 /* MutationTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationTrace.swift; sourceTree = "<group>"; };
@@ -871,7 +869,6 @@
 				4B786323233912AB009B9C1B /* Info.plist */,
 				4B68394F237062F7002FFC5A /* StateType.swift */,
 				4BBFF45D24389D3D005BA03C /* Changes.swift */,
-				4B1C011A23D381F100BE9B24 /* Volatile.swift */,
 				4B6B77AA243FA3EB00E0C0EA /* _StateTypeContainer.swift */,
 				4B91B37E2440C0D8005082D7 /* Store */,
 				4B91B37F2440C0F3005082D7 /* Logger */,
@@ -1895,7 +1892,6 @@
 				4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */,
 				4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */,
 				4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */,
-				4B1F19C0243A82BC00CED46B /* Volatile.swift in Sources */,
 				4B6B77AB243FA3EC00E0C0EA /* _StateTypeContainer.swift in Sources */,
 				4B0AFD6D2388643400AABA90 /* DefaultStoreLogger.swift in Sources */,
 				4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */,
