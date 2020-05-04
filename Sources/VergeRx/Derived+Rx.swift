@@ -25,7 +25,7 @@ extension Reactive where Base : DerivedType {
   public var valueObservable: Observable<Base.Value> {
     store.rx.stateObservable
       .do(onDispose: {
-        withExtendedLifetime(self) {}
+        withExtendedLifetime(self.base) {}
       })
   }
   
@@ -36,9 +36,9 @@ extension Reactive where Base : DerivedType {
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
   public func changesObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.Value>> {
-    store.rx.changesObservable()
+    store.rx.changesObservable() 
       .do(onDispose: {
-        withExtendedLifetime(self) {}
+        withExtendedLifetime(self.base) {}
       })
   }
     
@@ -51,8 +51,7 @@ extension Reactive where Base : DerivedType, Base.Value : Equatable {
   /// Guarantees to emit the first event on started
   /// - Attention: ✅ Events drops duplicated items with Equatable
   public var valueObservable: Observable<Base.Value> {
-    store.rx.changesObservable()
-      .changed()
+    changesObservable().changed()
   }
   
 }
