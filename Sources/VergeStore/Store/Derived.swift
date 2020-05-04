@@ -32,6 +32,8 @@ public protocol DerivedType {
 }
 
 /// A container object that provides the current value and changes from the source Store.
+///
+/// Conforms to Equatable that compares pointer personality.
 public class Derived<Value>: DerivedType {
   
   public static func constant(_ value: Value) -> Derived<Value> {
@@ -200,6 +202,18 @@ public class Derived<Value>: DerivedType {
     chain(map, dropsOutput: { !$0.hasChanges }, queue: queue)
   }
   
+}
+
+extension Derived : Equatable {
+  public static func == (lhs: Derived<Value>, rhs: Derived<Value>) -> Bool {
+    lhs === rhs
+  }
+}
+
+extension Derived : Hashable {
+  public func hash(into hasher: inout Hasher) {
+    ObjectIdentifier(self).hash(into: &hasher)
+  }
 }
 
 extension Derived where Value : Equatable {
