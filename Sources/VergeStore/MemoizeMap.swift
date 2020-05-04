@@ -143,26 +143,28 @@ extension MemoizeMap where Input : ChangesType {
   /// - Parameter map:
   /// - Returns:
   public static func map(_ map: @escaping (Changes<Input.Value>) -> Fragment<Output>) -> MemoizeMap<Input, Output> {
-         
-   return .init(
-    makeInitial: {
+            
+    return .init(
+      makeInitial: {
+        
+        map($0.asChanges()).wrappedValue
+        
+    }, update: { changes in
       
-      map($0.asChanges()).wrappedValue
+      let versionUpdated = changes.asChanges().hasChanges(
+        compose: { a in
+          // avoid copying body state
+          // returns only version
+          a._map(map).version
+      },
+        comparer: { $0 == $1 })
       
-   }, update: { changes in
-    
-    let versionUpdated = changes.asChanges().hasChanges(
-      compose: { a in
-        a._map(map).version
-    },
-      comparer: { $0 == $1 })
-    
-    guard versionUpdated else {
-      return .noChanages
-    }
-    
-    return .updated(map(changes.asChanges()).wrappedValue)    
-   })
+      guard versionUpdated else {
+        return .noChanages
+      }
+      
+      return .updated(map(changes.asChanges()).wrappedValue)
+    })
   }
   
 }
