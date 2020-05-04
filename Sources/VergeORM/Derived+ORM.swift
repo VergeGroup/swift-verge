@@ -56,6 +56,10 @@ public struct EntityWrapper<Entity: EntityType> {
   
 }
 
+extension EntityWrapper: Equatable where Entity: Equatable {
+  
+}
+
 @dynamicMemberLookup
 public struct NonNullEntityWrapper<Entity: EntityType> {
   
@@ -71,6 +75,10 @@ public struct NonNullEntityWrapper<Entity: EntityType> {
   public subscript<Property>(dynamicMember keyPath: KeyPath<Entity, Property>) -> Property {
     wrapped[keyPath: keyPath]
   }
+  
+}
+
+extension NonNullEntityWrapper: Equatable where Entity: Equatable {
   
 }
 
