@@ -62,6 +62,10 @@ extension EntityWrapper: Equatable where Entity: Equatable {
   
 }
 
+extension EntityWrapper: Hashable where Entity: Hashable {
+  
+}
+
 @dynamicMemberLookup
 public struct NonNullEntityWrapper<Entity: EntityType> {
   
@@ -83,6 +87,10 @@ public struct NonNullEntityWrapper<Entity: EntityType> {
 }
 
 extension NonNullEntityWrapper: Equatable where Entity: Equatable {
+  
+}
+
+extension NonNullEntityWrapper: Hashable where Entity: Hashable {
   
 }
 

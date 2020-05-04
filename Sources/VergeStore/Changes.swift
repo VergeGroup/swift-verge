@@ -223,10 +223,26 @@ public final class Changes<Value>: ChangesType {
     return try perform(Composing(source: self)[keyPath: selector])
   }
   
-  public func ifChanged<Composed, Result>(
+  public func ifChanged<Composed: Equatable, Result>(
+    _ compose: (Composing) -> Composed,
+    _ perform: (Composed) throws -> Result
+  ) rethrows -> Result? {
+    try ifChanged(compose: compose, comparer: ==, perform: perform)
+  }
+  
+  @available(*, deprecated, renamed: "ifChanged(_:_:)")
+  public func ifChanged<Composed: Equatable, Result>(
     compose: (Composing) -> Composed,
-    comparer: (Composed, Composed) -> Bool,
     perform: (Composed) throws -> Result
+  ) rethrows -> Result? {
+    try ifChanged(compose, perform)
+  }
+  
+  @inline(__always)
+  public func ifChanged<Composed, Result>(
+    _ compose: (Composing) -> Composed,
+    _ comparer: (Composed, Composed) -> Bool,
+    _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     
     let current = Composing(source: self)
@@ -245,6 +261,16 @@ public final class Changes<Value>: ChangesType {
     }
     
     return try perform(composedNew)
+  }
+  
+  @inline(__always)
+  @available(*, deprecated, renamed: "ifChanged(_:_:_:)")
+  public func ifChanged<Composed, Result>(
+    compose: (Composing) -> Composed,
+    comparer: (Composed, Composed) -> Bool,
+    perform: (Composed) throws -> Result
+  ) rethrows -> Result? {
+    try ifChanged(compose, comparer, perform)
   }
   
   public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
@@ -305,6 +331,7 @@ extension Changes {
 
 extension Changes {
   
+  // TODO: Composer might be better name
   @dynamicMemberLookup
   public struct Composing {
     

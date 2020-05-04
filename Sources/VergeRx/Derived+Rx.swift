@@ -21,6 +21,7 @@ extension Reactive where Base : DerivedType {
   /// An observable that repeatedly emits the current state when state updated
   ///
   /// Guarantees to emit the first event on started
+  /// - Attention: ⚠️ Events may contain duplicated items by other sub-state modified in a store
   public var valueObservable: Observable<Base.Value> {
     store.rx.stateObservable
       .do(onDispose: {
@@ -41,4 +42,17 @@ extension Reactive where Base : DerivedType {
       })
   }
     
+}
+
+extension Reactive where Base : DerivedType, Base.Value : Equatable {
+  
+  /// An observable that repeatedly emits the current state when state updated
+  ///
+  /// Guarantees to emit the first event on started
+  /// - Attention: ✅ Events drops duplicated items with Equatable
+  public var valueObservable: Observable<Base.Value> {
+    store.rx.changesObservable()
+      .changed()
+  }
+  
 }
