@@ -46,7 +46,7 @@ public struct EntityWrapper<Entity: EntityType> {
   
   public private(set) var wrapped: Entity?
   
-  fileprivate init(_ wrapped: Entity?) {
+  public init(_ wrapped: Entity?) {
     self.wrapped = wrapped
   }
 
@@ -67,7 +67,7 @@ public struct NonNullEntityWrapper<Entity: EntityType> {
   
   public let isUsingFallback: Bool
   
-  fileprivate init(_ wrapped: Entity, isUsingFallback: Bool) {
+  public init(_ wrapped: Entity, isUsingFallback: Bool) {
     self.wrapped = wrapped
     self.isUsingFallback = isUsingFallback
   }
