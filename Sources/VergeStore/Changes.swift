@@ -227,7 +227,7 @@ public final class Changes<Value>: ChangesType {
     _ compose: (Composing) -> Composed,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged(compose: compose, comparer: ==, perform: perform)
+    try ifChanged(compose, ==, perform)
   }
   
   @available(*, deprecated, renamed: "ifChanged(_:_:)")
@@ -306,7 +306,7 @@ extension Changes: CustomReflectable {
       self,
       children: [
         "version" : version,
-        "previous": previous,
+        "previous": previous as Any,
         "current" : current
       ],
       displayStyle: .struct,

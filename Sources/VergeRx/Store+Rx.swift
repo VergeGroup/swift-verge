@@ -125,7 +125,7 @@ extension ObservableType where Element : ChangesType {
   public func changed<S>(_ selector: @escaping (Composing) -> S, _ compare: @escaping (S, S) -> Bool) -> Observable<S> {
     
     return flatMap { changes -> Observable<S> in
-      let _r = changes.asChanges().ifChanged(compose: selector, comparer: compare) { value in
+      let _r = changes.asChanges().ifChanged(selector, compare) { value in
         return value
       }
       return _r.map { .just($0) } ?? .empty()

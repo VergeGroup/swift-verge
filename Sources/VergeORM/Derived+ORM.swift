@@ -359,11 +359,7 @@ extension StoreType where State : DatabaseEmbedding {
     dropsOutput: @escaping (S.Element?, S.Element?) -> Bool = { _, _ in false }
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
     entities.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
-      do {
-        r.append(derived: try derivedNonNull(from: e, dropsOutput: dropsOutput), id: e.entityID)
-      } catch {
-        //
-      }
+      r.append(derived: derivedNonNull(from: e, dropsOutput: dropsOutput), id: e.entityID)
     }
   }
   
