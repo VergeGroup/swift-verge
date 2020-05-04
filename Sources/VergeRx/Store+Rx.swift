@@ -83,6 +83,33 @@ extension ObservableType {
   
 }
 
+extension ObservableType where Element : ChangesType, Element.Value : Equatable {
+  
+  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
+  ///
+  /// Using Changes under
+  ///
+  /// - Parameters:
+  ///   - selector:
+  ///   - compare:
+  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
+  public func changed() -> Observable<Element.Value> {
+    changed(\.root)
+  }
+  
+  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
+  ///
+  /// Using Changes under
+  ///
+  /// - Parameters:
+  ///   - selector:
+  ///   - compare:
+  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
+  public func changedDriver() -> Driver<Element.Value> {
+    changedDriver(\.root)
+  }
+}
+
 extension ObservableType where Element : ChangesType {
   
   public typealias Composing = Changes<Element.Value>.Composing
