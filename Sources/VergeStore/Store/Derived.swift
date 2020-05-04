@@ -109,13 +109,10 @@ public class Derived<Value>: DerivedType {
   ///
   /// - Parameter postFilter: Returns the objects are equals
   /// - Returns:
-  @discardableResult
-  fileprivate func setDropsOutput(_ dropsOutput: @escaping (Changes<Value>) -> Bool) -> Self {
+  fileprivate func setDropsOutput(_ dropsOutput: @escaping (Changes<Value>) -> Bool){
     innerStore.setNotificationFilter { changes in
       !dropsOutput(changes)
     }
-
-    return self
   }
   
   /// Subscribe the state changes

@@ -113,7 +113,9 @@ public struct MemoizeMap<Input, Output> {
 
 extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
     
-  /// ✅ Using implicit drop-input with Equatable
+  /// Projects a specified shape from Input.
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
   public init(
     map: @escaping (Changes<Input.Value>) -> Output
@@ -125,21 +127,14 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
       update: { .updated(map($0.asChanges())) }
     )
   }
-  
-  /// Projects a specified shape from Input.
-  /// Memoization is available, with Equatable.
-  public static func map(_ map: @escaping (Input) -> Output) -> Self {
-    .init(map: map)
-  }
-  
+    
 }
 
 extension MemoizeMap where Input : ChangesType {
   
   /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
   ///
-  /// ✅ Active Memoization with Fragment's version
-  ///
+  /// - Complexity: ✅ Active Memoization with Fragment's version
   /// - Parameter map:
   /// - Returns:
   public static func map(_ map: @escaping (Changes<Input.Value>) -> Fragment<Output>) -> MemoizeMap<Input, Output> {
@@ -173,7 +168,7 @@ extension MemoizeMap {
     
   /// Projects a specified shape from Input.
   ///
-  /// ❗️ No memoization, additionally you need to call `dropsInput` to get memoization.
+  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
   ///
   /// - Parameter map:
   /// - Returns:
@@ -181,6 +176,5 @@ extension MemoizeMap {
     .init(dropInput: { _ in false }, map: map)
   }
   
-
 }
 
