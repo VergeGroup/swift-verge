@@ -137,12 +137,12 @@ extension MemoizeMap where Input : ChangesType {
   /// - Complexity: ✅ Active Memoization with Fragment's version
   /// - Parameter map:
   /// - Returns:
-  public static func map(_ map: @escaping (Changes<Input.Value>) -> Fragment<Output>) -> MemoizeMap<Input, Output> {
+  public static func map(_ map: @escaping (Changes<Input.Value>.Composing) -> Fragment<Output>) -> MemoizeMap<Input, Output> {
             
     return .init(
       makeInitial: {
         
-        map($0.asChanges()).wrappedValue
+        map($0.asChanges().makeComposing()).wrappedValue
         
     }, update: { changes in
       
@@ -150,7 +150,7 @@ extension MemoizeMap where Input : ChangesType {
         compose: { a in
           // avoid copying body state
           // returns only version
-          a._map(map).version
+          map(a).version
       },
         comparer: { $0 == $1 })
       
@@ -158,7 +158,7 @@ extension MemoizeMap where Input : ChangesType {
         return .noChanages
       }
       
-      return .updated(map(changes.asChanges()).wrappedValue)
+      return .updated(map(changes.asChanges().makeComposing()).wrappedValue)
     })
   }
   

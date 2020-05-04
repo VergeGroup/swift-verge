@@ -188,7 +188,7 @@ extension StoreType where State : DatabaseEmbedding {
     }
         
     let d = underlyingDerived.chain(
-      .init(map: { $0.current }),
+      .init(map: { $0.root }),
       dropsOutput: { changes in
         changes.noChanges(\.root, {
           dropsOutput($0.wrapped, $1.wrapped)
@@ -221,7 +221,7 @@ extension StoreType where State : DatabaseEmbedding {
         #if DEBUG
         checker.register(); defer { checker.unregister() }
         #endif
-        if let wrapped = $0.current.wrapped {
+        if let wrapped = $0.root.wrapped {
           lastValue.swap(wrapped)
           return .init(wrapped, isUsingFallback: false)
         }

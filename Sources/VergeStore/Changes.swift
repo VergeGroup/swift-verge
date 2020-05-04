@@ -127,6 +127,7 @@ public final class Changes<Value>: ChangesType {
     )
   }
   
+  @inlinable
   public func asChanges() -> Changes<Value> {
     self
   }
@@ -264,6 +265,11 @@ public final class Changes<Value>: ChangesType {
       version: nextVersion
     )
   }
+  
+  @inline(__always)
+  func makeComposing() -> Composing {
+    .init(source: self)
+  }
 
 }
 
@@ -316,13 +322,7 @@ extension Changes {
       _read {
         yield source[dynamicMember: keyPath]
       }
-    }
-    
-    // Currently Special-case, it will become official support.
-    func _map<T>(_ closure: (Changes<Value>) -> T) -> T {
-      closure(source)
-    }
-             
+    }        
   }
 }
 

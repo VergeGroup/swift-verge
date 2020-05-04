@@ -153,13 +153,20 @@ public class Derived<Value>: DerivedType {
   ///   - dropsOutput: a condition to drop a duplicated(no-changes) object. (Default: no drops)
   /// - Returns:
   public func chain<NewState>(
-    _ map: MemoizeMap<Changes<Value>, NewState>,
+    _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
     dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
     queue: DispatchQueue? = nil
     ) -> Derived<NewState> {
         
     let d = Derived<NewState>(
-      get: map,
+      get: .init(makeInitial: {
+        map.makeInitial($0.makeComposing())
+      }, update: {
+        switch map.makeResult($0.makeComposing()) {
+        case .noChanages: return .noChanages
+        case .updated(let s): return .updated(s)
+        }
+      }),
       set: { _ in },
       initialUpstreamState: changes,
       subscribeUpstreamState: { callback in
@@ -187,7 +194,7 @@ public class Derived<Value>: DerivedType {
   ///   - map:
   /// - Returns:
   public func chain<NewState: Equatable>(
-    _ map: MemoizeMap<Changes<Value>, NewState>,
+    _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
     chain(map, dropsOutput: { !$0.hasChanges }, queue: queue)
