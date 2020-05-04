@@ -204,6 +204,12 @@ public class Derived<Value>: DerivedType {
   
 }
 
+extension Derived: CustomReflectable {
+  public var customMirror: Mirror {
+    Mirror.init(self, children: ["changes" : changes], displayStyle: .struct, ancestorRepresentation: .generated)
+  }
+}
+
 extension Derived : Equatable {
   public static func == (lhs: Derived<Value>, rhs: Derived<Value>) -> Bool {
     lhs === rhs

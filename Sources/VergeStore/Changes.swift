@@ -299,6 +299,23 @@ public final class Changes<Value>: ChangesType {
 
 }
 
+extension Changes: CustomReflectable {
+  
+  public var customMirror: Mirror {
+    Mirror.init(
+      self,
+      children: [
+        "version" : version,
+        "previous": previous,
+        "current" : current
+      ],
+      displayStyle: .struct,
+      ancestorRepresentation: .generated
+    )
+  }
+  
+}
+
 // MARK: - Nested Types
 
 extension Changes {
