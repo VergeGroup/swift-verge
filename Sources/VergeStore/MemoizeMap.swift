@@ -146,13 +146,9 @@ extension MemoizeMap where Input : ChangesType {
         
     }, update: { changes in
       
-      let versionUpdated = changes.asChanges().hasChanges(
-        compose: { a in
-          // avoid copying body state
-          // returns only version
-          map(a).version
-      },
-        comparer: { $0 == $1 })
+      // avoid copying body state
+      // returns only version
+      let versionUpdated = changes.asChanges().hasChanges({ map($0).version }, ==)
       
       guard versionUpdated else {
         return .noChanages

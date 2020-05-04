@@ -117,10 +117,10 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
       update: { changes in
                 
         let hasChanges = changes.asChanges().hasChanges(
-          compose: { (composing) -> Input.Value.Database in
+          { (composing) -> Input.Value.Database in
             let db = path(composing.root)
             return db
-        }, comparer: comparer.curried()
+        }, comparer.curried()
         )
         
         guard hasChanges else {
