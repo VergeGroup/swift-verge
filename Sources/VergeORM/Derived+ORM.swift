@@ -45,9 +45,11 @@ extension EntityType {
 public struct EntityWrapper<Entity: EntityType> {
   
   public private(set) var wrapped: Entity?
+  public let id: Entity.EntityID
   
-  public init(_ wrapped: Entity?) {
-    self.wrapped = wrapped
+  public init(id: Entity.EntityID, entity: Entity?) {
+    self.id = id
+    self.wrapped = entity
   }
 
   public subscript<Property>(dynamicMember keyPath: KeyPath<Entity, Property>) -> Property? {
@@ -64,11 +66,13 @@ extension EntityWrapper: Equatable where Entity: Equatable {
 public struct NonNullEntityWrapper<Entity: EntityType> {
   
   public private(set) var wrapped: Entity
+  public let id: Entity.EntityID
   
   public let isUsingFallback: Bool
   
-  public init(_ wrapped: Entity, isUsingFallback: Bool) {
-    self.wrapped = wrapped
+  public init(entity: Entity, isUsingFallback: Bool) {
+    self.id = entity.entityID
+    self.wrapped = entity
     self.isUsingFallback = isUsingFallback
   }
   
@@ -98,7 +102,8 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
     return .init(
       makeInitial: { changes in
         .init(
-          path(changes.current).entities.table(Entity.self).find(by: entityID)
+          id: entityID,
+          entity: path(changes.current).entities.table(Entity.self).find(by: entityID)
         )
     },
       update: { changes in
@@ -115,7 +120,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
         }
         
         let entity = path(changes.current).entities.table(Entity.self).find(by: entityID)
-        return .updated(.init(entity))
+        return .updated(.init(id: entityID, entity: entity))
     })
   }
   
@@ -231,9 +236,9 @@ extension StoreType where State : DatabaseEmbedding {
         #endif
         if let wrapped = $0.root.wrapped {
           lastValue.swap(wrapped)
-          return .init(wrapped, isUsingFallback: false)
+          return .init(entity: wrapped, isUsingFallback: false)
         }
-        return .init(lastValue.value, isUsingFallback: true)
+        return .init(entity: lastValue.value, isUsingFallback: true)
       }))
     
   }
