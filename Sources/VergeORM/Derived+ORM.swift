@@ -253,6 +253,30 @@ extension StoreType where State : DatabaseEmbedding {
   
 }
 
+/// A result instance that contains created Derived object
+/// While creating non-null derived from entity id, some entity may be not founded.
+/// Created derived object are stored in hashed storage to the consumer can check if the entity was not found by the id.
+public struct DerivedNonNullResult<Entity: EntityType> {
+  
+  /// A dictionary of Derived that stored by id
+  /// It's faster than filtering values array to use this dictionary to find missing id or created id.
+  public private(set) var storage: [Entity.EntityID : Entity.NonNullDerived] = [:]
+  
+  /// An array of Derived that orderd by specified the order of id.
+  public private(set) var values: [Entity.NonNullDerived]
+  
+  fileprivate init() {
+    self.storage = [:]
+    self.values = []
+  }
+  
+  fileprivate mutating func append(derived: Entity.NonNullDerived, id: Entity.EntityID) {
+    storage[id] = derived
+    values.append(derived)
+  }
+  
+}
+
 extension StoreType where State : DatabaseEmbedding {
   
   @inline(__always)
@@ -292,17 +316,15 @@ extension StoreType where State : DatabaseEmbedding {
   ) -> Entity.NonNullDerived {
     derivedNonNull(from: entity, dropsOutput: ==)
   }
-  
-  public typealias NonNullDerivedRecord<Entity: EntityType> = [Entity.EntityID : Entity.NonNullDerived]
-  
+    
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entityIDs: S,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
-  ) -> NonNullDerivedRecord<Entity> where S.Element == Entity.EntityID {
-    entityIDs.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
+  ) -> DerivedNonNullResult<Entity> where S.Element == Entity.EntityID {
+    entityIDs.reduce(into: DerivedNonNullResult<Entity>()) { (r, e) in
       do {
-        r[e] = try derivedNonNull(from: e, dropsOutput: dropsOutput)
+        r.append(derived: try derivedNonNull(from: e, dropsOutput: dropsOutput), id: e)
       } catch {
         //
       }
@@ -312,7 +334,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from entityIDs: S
-  ) -> NonNullDerivedRecord<Entity> where S.Element == Entity.EntityID {
+  ) -> DerivedNonNullResult<Entity> where S.Element == Entity.EntityID {
     derivedNonNull(from: entityIDs, dropsOutput: ==)
   }
   
@@ -320,14 +342,14 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType>(
     from entityIDs: Set<Entity.EntityID>,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
-  ) -> NonNullDerivedRecord<Entity> {
+  ) -> DerivedNonNullResult<Entity> {
     derivedNonNull(from: AnySequence.init(entityIDs.makeIterator), dropsOutput: dropsOutput)
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entityIDs: Set<Entity.EntityID>
-  ) -> NonNullDerivedRecord<Entity> {
+  ) -> DerivedNonNullResult<Entity> {
     derivedNonNull(from: entityIDs, dropsOutput: ==)
   }
   
@@ -335,16 +357,20 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entities: S,
     dropsOutput: @escaping (S.Element?, S.Element?) -> Bool = { _, _ in false }
-  ) -> NonNullDerivedRecord<Entity> where S.Element == Entity {
-    entities.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
-      r[e.entityID] = derivedNonNull(from: e, dropsOutput: dropsOutput)
+  ) -> DerivedNonNullResult<Entity> where S.Element == Entity {
+    entities.reduce(into: DerivedNonNullResult<Entity>()) { (r, e) in
+      do {
+        r.append(derived: try derivedNonNull(from: e, dropsOutput: dropsOutput), id: e.entityID)
+      } catch {
+        //
+      }
     }
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from entities: S
-  ) -> NonNullDerivedRecord<Entity> where S.Element == Entity {
+  ) -> DerivedNonNullResult<Entity> where S.Element == Entity {
     derivedNonNull(from: entities, dropsOutput: ==)
   }
     
@@ -352,14 +378,14 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType>(
     from entities: Set<Entity>,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
-  ) -> NonNullDerivedRecord<Entity> {
+  ) -> DerivedNonNullResult<Entity> {
     derivedNonNull(from: AnySequence.init(entities.makeIterator))
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entities: Set<Entity>
-  ) -> NonNullDerivedRecord<Entity> {
+  ) -> DerivedNonNullResult<Entity> {
     derivedNonNull(from: entities, dropsOutput: ==)
   }
   
@@ -382,17 +408,14 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from insertionResults: S,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
-  ) -> NonNullDerivedRecord<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
-    
-    insertionResults.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
-      r[e.entityID] = derivedNonNull(from: e.entity, dropsOutput: dropsOutput)
-    }
+  ) -> DerivedNonNullResult<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
+    derivedNonNull(from: insertionResults.map { $0.entity })
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from insertionResults: S
-  ) -> NonNullDerivedRecord<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
+  ) -> DerivedNonNullResult<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
     
     derivedNonNull(from: insertionResults, dropsOutput: ==)
   }
