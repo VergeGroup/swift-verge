@@ -36,6 +36,8 @@ public struct MemoizeMap<Input, Output> {
   private let _makeInitial: (Input) -> Output
   private var _dropInput: (Input) -> Bool
   private var _update: (Input) -> Result
+  
+  fileprivate(set) var identifier: NSString?
     
   public init(
     makeInitial: @escaping (Input) -> Output,
@@ -111,23 +113,10 @@ public struct MemoizeMap<Input, Output> {
    
 }
 
-extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
-    
-  /// Projects a specified shape from Input.
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameter map:
-  public init(
-    map: @escaping (Changes<Input.Value>) -> Output
-  ) {
-    
-    self.init(
-      makeInitial: { map($0.asChanges()) },
-      dropInput: { $0.asChanges().noChanges(\.root) },
-      update: { .updated(map($0.asChanges())) }
-    )
+extension MemoizeMap {
+  private static func makeUniqueKey(modifier: String) -> NSString {
+    "\(modifier)\(ObjectIdentifier(Input.self))\(ObjectIdentifier(Output.self))" as NSString
   }
-    
 }
 
 extension MemoizeMap where Input : ChangesType {
@@ -158,7 +147,56 @@ extension MemoizeMap where Input : ChangesType {
     })
   }
   
+  /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
+  ///
+  /// - Complexity: ✅ Active Memoization with Fragment's version
+  /// - Parameter map:
+  /// - Returns:
+  public static func map(_ keyPath: KeyPath<Changes<Input.Value>.Composing, Fragment<Output>>) -> MemoizeMap<Input, Output> {
+        
+    var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
+    instance.identifier = Self.makeUniqueKey(modifier: "\(#file)\(#line)\(ObjectIdentifier(keyPath))")
+    return instance
+  }
+  
 }
+
+extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
+  
+  /// Projects a specified shape from Input.
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
+  /// - Parameter map:
+  public init(
+    map: @escaping (Changes<Input.Value>.Composing) -> Output
+  ) {
+    
+    self.init(
+      makeInitial: { map($0.asChanges().makeComposing()) },
+      dropInput: { $0.asChanges().noChanges(\.root) },
+      update: { .updated(map($0.asChanges().makeComposing())) }
+    )
+  }
+  
+  /// Projects a specified shape from Input.
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
+  /// - Parameter map:
+  public static func map(_ map: @escaping (Changes<Input.Value>.Composing) -> Output) -> Self {
+    .init(map: map)
+  }
+  
+  /// Projects a specified shape from Input.
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
+  /// - Parameter map:
+  public static func map(_ keyPath: KeyPath<Changes<Input.Value>.Composing, Output>) -> Self {
+    var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
+    instance.identifier = Self.makeUniqueKey(modifier: "\(#file)\(#line)\(ObjectIdentifier(keyPath))")
+    return instance
+  }
+}
+
 
 extension MemoizeMap {
     
@@ -170,6 +208,18 @@ extension MemoizeMap {
   /// - Returns:
   public static func map(_ map: @escaping (Input) -> Output) -> Self {
     .init(dropInput: { _ in false }, map: map)
+  }
+  
+  /// Projects a specified shape from Input.
+  ///
+  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
+  ///
+  /// - Parameter map:
+  /// - Returns:
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self {
+    var instance = map({ $0[keyPath: keyPath] })
+    instance.identifier = Self.makeUniqueKey(modifier: "\(#file)\(#line)\(ObjectIdentifier(keyPath))")
+    return instance
   }
   
 }

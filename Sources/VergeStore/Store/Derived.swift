@@ -199,8 +199,25 @@ public class Derived<Value>: DerivedType {
     _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
-    chain(map, dropsOutput: { !$0.hasChanges }, queue: queue)
+    
+    func makeNew() -> Derived<NewState> {
+      chain(map, dropsOutput: { !$0.hasChanges }, queue: queue)
+    }
+    
+    guard let identifier = map.identifier.map({ "\($0)\(String(describing: queue.map(ObjectIdentifier.init)))" }) as NSString? else {
+      return makeNew()
+    }
+   
+    guard let cached = chainCahce.object(forKey: identifier) as? Derived<NewState> else {
+      let instance = makeNew()
+      chainCahce.setObject(instance, forKey: identifier)
+      return instance
+    }
+    
+    return cached
   }
+  
+  private let chainCahce = NSCache<NSString, AnyObject>()
   
 }
 
@@ -417,7 +434,8 @@ extension StoreType {
   /// - Returns:
   public func derived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
-    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false }
+    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
+    queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
     
     let derived = Derived<NewState>(
@@ -427,7 +445,7 @@ extension StoreType {
     },
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
-        asStore().sinkChanges(dropsFirst: true, queue: nil, receive: callback)
+        asStore().sinkChanges(dropsFirst: true, queue: queue, receive: callback)
     },
       retainsUpstream: nil
     )
@@ -444,9 +462,25 @@ extension StoreType {
   /// - Parameter memoizeMap:
   /// - Returns:
   public func derived<NewState: Equatable>(
-    _ memoizeMap: MemoizeMap<Changes<State>, NewState>
+    _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
+    queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
-    derived(memoizeMap, dropsOutput: { $0.asChanges().noChanges(\.root) })
+        
+    func makeNew() -> Derived<NewState> {
+      derived(memoizeMap, dropsOutput: { $0.asChanges().noChanges(\.root) }, queue: queue)
+    }
+    
+    guard let identifier = memoizeMap.identifier.map({ "\($0)\(String(describing: queue.map(ObjectIdentifier.init)))" }) as NSString? else {
+      return makeNew()
+    }
+    
+    guard let cached = asStore().derivedCache.object(forKey: identifier) as? Derived<NewState> else {
+      let instance = makeNew()
+      asStore().derivedCache.setObject(instance, forKey: identifier)
+      return instance
+    }
+    
+    return cached
   }
     
   /// Returns Binding Derived object

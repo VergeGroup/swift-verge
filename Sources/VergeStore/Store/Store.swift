@@ -84,6 +84,8 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   private let _backingStorage: StateStorage<Changes<State>>
   private let _activityEmitter: EventEmitter<Activity> = .init()
   
+  let derivedCache = NSCache<NSString, AnyObject>()
+  
   public private(set) var logger: StoreLogger?
     
   /// An initializer
