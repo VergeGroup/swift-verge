@@ -1,6 +1,6 @@
 # Verge - Flux and ORM for creating iOS App with SwiftUI and UIKit
 
-## Verge 7.0.0 Beta
+## Verge 7.0.0 rc.1
 
 ![](https://user-images.githubusercontent.com/1888355/80621676-98133a80-8a82-11ea-952f-3c3e52f9c222.png)
 
