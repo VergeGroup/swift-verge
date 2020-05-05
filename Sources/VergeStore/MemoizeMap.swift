@@ -266,12 +266,12 @@ enum KeyPathIdentifierStore {
 
 fileprivate enum Static {
   
-  static var cache1: VergeConcurrency.Atomic<[String : Int]> = .init([:])
-  static var cache2: VergeConcurrency.Atomic<[String : Int]> = .init([:])
-  static var cache3: VergeConcurrency.Atomic<[String : Int]> = .init([:])
+  static var cache1: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
+  static var cache2: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
+  static var cache3: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
   
   static func modify<I, O>(
-    on storage: VergeConcurrency.Atomic<[String : Int]>,
+    on storage: VergeConcurrency.RecursiveLockAtomic<[String : Int]>,
     for memoizeMap: inout MemoizeMap<I, O>,
     key: Int
   ) {

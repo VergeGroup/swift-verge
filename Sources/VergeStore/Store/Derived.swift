@@ -276,7 +276,7 @@ extension Derived where Value == Any {
     
     let initial = (s0.value, s1.value)
     
-    let buffer = VergeConcurrency.Atomic<Shape>.init(initial)
+    let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
     return Derived<Shape>(
       get: MemoizeMap<Shape, Shape>.init(map: { $0 }),
@@ -324,7 +324,7 @@ extension Derived where Value == Any {
     
     let initial = (s0.value, s1.value, s2.value)
     
-    let buffer = VergeConcurrency.Atomic<Shape>.init(initial)
+    let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
     return Derived<Shape>(
       get: MemoizeMap<Shape, Shape>.init(map: { $0 }),

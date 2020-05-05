@@ -44,7 +44,7 @@ import os
 /// ```
 public final class VergeAnyCancellable: Hashable, CancellableType {
   
-  private let lock = NSLock()
+  private let lock = VergeConcurrency.UnfairLock()
   
   private var wasCancelled = false
 

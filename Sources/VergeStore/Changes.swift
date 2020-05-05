@@ -321,7 +321,7 @@ extension Changes {
     
     let value: Value
     
-    let cachedComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
+    let cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath : Any]>
     
     init(value: Value) {
       self.value = value
@@ -330,7 +330,7 @@ extension Changes {
     
     private init(
       value: Value,
-      cachedComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
+      cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath : Any]>
     ) {
       self.value = value
       self.cachedComputedValueStorage = cachedComputedValueStorage

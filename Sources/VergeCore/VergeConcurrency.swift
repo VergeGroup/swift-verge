@@ -37,7 +37,7 @@ public enum VergeConcurrency {
   }
   
   /// An atomic variable.
-  public final class Atomic<Value> {
+  public final class RecursiveLockAtomic<Value> {
     
     public var unsafelyWrappedValue: Value {
       _read { yield _value }

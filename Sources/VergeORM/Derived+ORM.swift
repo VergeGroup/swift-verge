@@ -231,7 +231,7 @@ extension StoreType where State : DatabaseEmbedding {
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) -> Entity.NonNullDerived {
     
-    let lastValue = VergeConcurrency.Atomic<Entity>.init(entity)
+    let lastValue = VergeConcurrency.RecursiveLockAtomic<Entity>.init(entity)
     
     #if DEBUG
     let checker = VergeConcurrency.SynchronizationTracker()

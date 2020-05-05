@@ -289,7 +289,7 @@ final class VergeStoreTests: XCTestCase {
     counter.assertForOverFulfill = true
     counter.expectedFulfillmentCount = 1001
     
-    let results: VergeConcurrency.Atomic<[Int]> = .init([])
+    let results: VergeConcurrency.RecursiveLockAtomic<[Int]> = .init([])
     
     let sub = store.sinkChanges(dropsFirst: false) { (changes) in
       results.modify {
