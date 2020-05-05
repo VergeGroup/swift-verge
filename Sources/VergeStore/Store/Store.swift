@@ -84,7 +84,8 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   private let _backingStorage: StateStorage<Changes<State>>
   private let _activityEmitter: EventEmitter<Activity> = .init()
   
-  let derivedCache = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
+  let derivedCache1 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
+  let derivedCache2 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
   
   public private(set) var logger: StoreLogger?
     

@@ -243,6 +243,45 @@ final class DerivedCacheTests: XCTestCase {
     
   }
   
+  func test_identify_keypath_specify_queue_main() {
+    
+    let store1 = DemoStore()
+    let store2 = DemoStore()
+    
+    XCTAssert(store1.derived(.map(\.count), queue: .main) === store1.derived(.map(\.count), queue: .main))
+    XCTAssert(store1.derived(.map(\.count)) !== store1.derived(.map(\.count), queue: .main))
+    XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
+    
+  }
+  
+  func test_identify_keypath_specify_queue_any() {
+    
+    let store1 = DemoStore()
+    let store2 = DemoStore()
+    
+    let queue = DispatchQueue(label: "test")
+    let queue2 = DispatchQueue(label: "test")
+    
+    XCTAssert(store1.derived(.map(\.count), queue: queue) === store1.derived(.map(\.count), queue: queue))
+    XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))
+    XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: queue2))
+    XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
+        
+  }
+  
+  func test_identify_keypath_specify_queue_global() {
+    
+    let store1 = DemoStore()
+    let store2 = DemoStore()
+    
+    let queue = DispatchQueue.global()
+    
+    XCTAssert(store1.derived(.map(\.count), queue: queue) === store1.derived(.map(\.count), queue: queue))
+    XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))
+    XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
+    
+  }
+  
   func test_identify_by_instance() {
     
     let store1 = DemoStore()

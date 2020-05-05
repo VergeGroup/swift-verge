@@ -147,21 +147,14 @@ public class Derived<Value>: DerivedType {
   ) -> VergeAnyCancellable {
     sinkChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
-    
-  /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
-  /// - Parameters:
-  ///   - queue: a queue to receive object
-  ///   - map:
-  ///   - dropsOutput: a condition to drop a duplicated(no-changes) object. (Default: no drops)
-  /// - Returns:
-  public func chain<NewState>(
+  
+  fileprivate func _makeChain<NewState>(
     _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
-    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
     queue: DispatchQueue? = nil
-    ) -> Derived<NewState> {
+  ) -> Derived<NewState> {
     
     vergeSignpostEvent("Derived.chain.new")
-        
+    
     let d = Derived<NewState>(
       get: .init(makeInitial: {
         map.makeInitial($0.makeComposing())
@@ -182,11 +175,50 @@ public class Derived<Value>: DerivedType {
     },
       retainsUpstream: self
     )
-    
-    d.setDropsOutput(dropsOutput)
-    
+        
     return d
     
+  }
+    
+  /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
+  /// - Parameters:
+  ///   - queue: a queue to receive object
+  ///   - map:
+  ///   - dropsOutput: a condition to drop a duplicated(no-changes) object. (Default: no drops)
+  /// - Returns: Derived object that cached depends on the specified parameters
+  public func chain<NewState>(
+    _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
+    dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
+    queue: DispatchQueue? = nil
+    ) -> Derived<NewState> {
+    
+    vergeSignpostEvent("Derived.chain.new")
+    
+    let derived = chainCahce2.withValue { cache -> Derived<NewState> in
+      
+      let identifier = "\(map.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      
+      guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
+        let instance = _makeChain(map, queue: queue)
+        cache.setObject(instance, forKey: identifier)
+        return instance
+      }
+      
+      vergeSignpostEvent("Derived.chain.reuse")
+      return cached
+    }
+    
+    if let dropsOutput = dropsOutput {
+      
+      let chained: Derived<NewState> = derived._makeChain(.map(\.root), queue: queue)
+      chained.setDropsOutput(dropsOutput)
+      
+      return chained
+      
+    } else {
+      return derived
+    }
+        
   }
   
   /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
@@ -196,18 +228,19 @@ public class Derived<Value>: DerivedType {
   /// - Parameters:
   ///   - queue: a queue to receive object
   ///   - map:
-  /// - Returns:
+  /// - Returns: Derived object that cached depends on the specified parameters
   public func chain<NewState: Equatable>(
     _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
     
-    return chainCahce.withValue { cache in
+    return chainCahce1.withValue { cache in
       
       let identifier = "\(map.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
-        let instance = chain(map, dropsOutput: { !$0.hasChanges }, queue: queue)
+        let instance = _makeChain(map, queue: queue)
+        instance.setDropsOutput({ !$0.hasChanges })
         cache.setObject(instance, forKey: identifier)
         return instance
       }
@@ -218,8 +251,9 @@ public class Derived<Value>: DerivedType {
           
   }
   
-  private let chainCahce = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
-  
+  private let chainCahce1 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
+  private let chainCahce2 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
+
 }
 
 extension Derived: CustomReflectable {
@@ -427,18 +461,10 @@ public final class BindingDerived<State>: Derived<State> {
 
 extension StoreType {
   
-  /// Returns Dervived object with making
-  ///
-  /// - Parameter
-  ///   - memoizeMap:
-  ///   - dropsOutput: Predicate to drops object if found a duplicated output
-  /// - Returns:
-  public func derived<NewState>(
+  private func _makeDerived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
-    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
-    
     let derived = Derived<NewState>(
       get: memoizeMap,
       set: { _ in
@@ -450,29 +476,70 @@ extension StoreType {
     },
       retainsUpstream: nil
     )
-    
-    derived.setDropsOutput(dropsOutput)
-    
     return derived
+  }
+  
+  /// Returns Dervived object with making
+  ///
+  /// - Parameter
+  ///   - memoizeMap:
+  ///   - dropsOutput: Predicate to drops object if found a duplicated output
+  /// - Returns: Derived object that cached depends on the specified parameters
+  public func derived<NewState>(
+    _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
+    dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
+    queue: DispatchQueue? = nil
+  ) -> Derived<NewState> {
+        
+    let derived = asStore().derivedCache2.withValue { cache -> Derived<NewState> in
+      
+      let identifier = "\(memoizeMap.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      
+      guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
+        let instance = _makeDerived(memoizeMap, queue: queue)
+        cache.setObject(instance, forKey: identifier)
+        return instance
+      }
+      
+      vergeSignpostEvent("Store.derived.reuse")
+      
+      return cached
+      
+    }
+    
+    if let dropsOutput = dropsOutput {
+      
+      let chained = derived._makeChain(.map(\.root), queue: queue)
+      chained.setDropsOutput(dropsOutput)
+            
+      return chained
+      
+    } else {
+
+      return derived
+      
+    }
+       
   }
     
   /// Returns Dervived object with making
   ///
-  /// ✅ Drops duplicated the output with Equatable comparison.
+  /// - Complexity: ✅ Drops duplicated the output with Equatable comparison.
   ///
   /// - Parameter memoizeMap:
-  /// - Returns:
+  /// - Returns: Derived object that cached depends on the specified parameters
   public func derived<NewState: Equatable>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
     
-    return asStore().derivedCache.withValue { cache in
+    return asStore().derivedCache1.withValue { cache in
       
       let identifier = "\(memoizeMap.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
-        let instance = derived(memoizeMap, dropsOutput: { $0.asChanges().noChanges(\.root) }, queue: queue)
+        let instance = _makeDerived(memoizeMap, queue: queue)
+        instance.setDropsOutput({ $0.asChanges().noChanges(\.root) })
         cache.setObject(instance, forKey: identifier)
         return instance
       }
