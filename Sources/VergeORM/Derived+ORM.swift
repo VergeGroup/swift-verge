@@ -45,9 +45,11 @@ extension EntityType {
 public struct EntityWrapper<Entity: EntityType> {
   
   public private(set) var wrapped: Entity?
+  public let id: Entity.EntityID
   
-  fileprivate init(_ wrapped: Entity?) {
-    self.wrapped = wrapped
+  public init(id: Entity.EntityID, entity: Entity?) {
+    self.id = id
+    self.wrapped = entity
   }
 
   public subscript<Property>(dynamicMember keyPath: KeyPath<Entity, Property>) -> Property? {
@@ -56,21 +58,39 @@ public struct EntityWrapper<Entity: EntityType> {
   
 }
 
+extension EntityWrapper: Equatable where Entity: Equatable {
+  
+}
+
+extension EntityWrapper: Hashable where Entity: Hashable {
+  
+}
+
 @dynamicMemberLookup
 public struct NonNullEntityWrapper<Entity: EntityType> {
   
   public private(set) var wrapped: Entity
+  public let id: Entity.EntityID
   
   public let isUsingFallback: Bool
   
-  fileprivate init(_ wrapped: Entity, isUsingFallback: Bool) {
-    self.wrapped = wrapped
+  public init(entity: Entity, isUsingFallback: Bool) {
+    self.id = entity.entityID
+    self.wrapped = entity
     self.isUsingFallback = isUsingFallback
   }
   
   public subscript<Property>(dynamicMember keyPath: KeyPath<Entity, Property>) -> Property {
     wrapped[keyPath: keyPath]
   }
+  
+}
+
+extension NonNullEntityWrapper: Equatable where Entity: Equatable {
+  
+}
+
+extension NonNullEntityWrapper: Hashable where Entity: Hashable {
   
 }
 
@@ -90,16 +110,17 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
     return .init(
       makeInitial: { changes in
         .init(
-          path(changes.current).entities.table(Entity.self).find(by: entityID)
+          id: entityID,
+          entity: path(changes.current).entities.table(Entity.self).find(by: entityID)
         )
     },
       update: { changes in
                 
         let hasChanges = changes.asChanges().hasChanges(
-          compose: { (composing) -> Input.Value.Database in
+          { (composing) -> Input.Value.Database in
             let db = path(composing.root)
             return db
-        }, comparer: comparer.curried()
+        }, comparer.curried()
         )
         
         guard hasChanges else {
@@ -107,7 +128,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
         }
         
         let entity = path(changes.current).entities.table(Entity.self).find(by: entityID)
-        return .updated(.init(entity))
+        return .updated(.init(id: entityID, entity: entity))
     })
   }
   
@@ -188,7 +209,7 @@ extension StoreType where State : DatabaseEmbedding {
     }
         
     let d = underlyingDerived.chain(
-      .init(map: { $0.current }),
+      .init(map: { $0.root }),
       dropsOutput: { changes in
         changes.noChanges(\.root, {
           dropsOutput($0.wrapped, $1.wrapped)
@@ -210,7 +231,7 @@ extension StoreType where State : DatabaseEmbedding {
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) -> Entity.NonNullDerived {
     
-    let lastValue = VergeConcurrency.Atomic<Entity>.init(entity)
+    let lastValue = VergeConcurrency.RecursiveLockAtomic<Entity>.init(entity)
     
     #if DEBUG
     let checker = VergeConcurrency.SynchronizationTracker()
@@ -221,13 +242,37 @@ extension StoreType where State : DatabaseEmbedding {
         #if DEBUG
         checker.register(); defer { checker.unregister() }
         #endif
-        if let wrapped = $0.current.wrapped {
+        if let wrapped = $0.root.wrapped {
           lastValue.swap(wrapped)
-          return .init(wrapped, isUsingFallback: false)
+          return .init(entity: wrapped, isUsingFallback: false)
         }
-        return .init(lastValue.value, isUsingFallback: true)
+        return .init(entity: lastValue.value, isUsingFallback: true)
       }))
     
+  }
+  
+}
+
+/// A result instance that contains created Derived object
+/// While creating non-null derived from entity id, some entity may be not founded.
+/// Created derived object are stored in hashed storage to the consumer can check if the entity was not found by the id.
+public struct DerivedResult<Entity: EntityType, Derived: AnyObject> {
+  
+  /// A dictionary of Derived that stored by id
+  /// It's faster than filtering values array to use this dictionary to find missing id or created id.
+  public private(set) var storage: [Entity.EntityID : Derived] = [:]
+  
+  /// An array of Derived that orderd by specified the order of id.
+  public private(set) var values: [Derived]
+  
+  public init() {
+    self.storage = [:]
+    self.values = []
+  }
+  
+  public mutating func append(derived: Derived, id: Entity.EntityID) {
+    storage[id] = derived
+    values.append(derived)
   }
   
 }
@@ -272,39 +317,73 @@ extension StoreType where State : DatabaseEmbedding {
     derivedNonNull(from: entity, dropsOutput: ==)
   }
   
-  public typealias NonNullDerivedRecord<Entity: EntityType> = [Entity.EntityID : Entity.NonNullDerived]
+  public typealias NonNullDerivedResult<Entity: EntityType> = DerivedResult<Entity, Entity.NonNullDerived>
+    
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType, S: Sequence>(
+    from entityIDs: S,
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
+  ) -> NonNullDerivedResult<Entity> where S.Element == Entity.EntityID {
+    entityIDs.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
+      do {
+        r.append(derived: try derivedNonNull(from: e, dropsOutput: dropsOutput), id: e)
+      } catch {
+        //
+      }
+    }
+  }
+  
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
+    from entityIDs: S
+  ) -> NonNullDerivedResult<Entity> where S.Element == Entity.EntityID {
+    derivedNonNull(from: entityIDs, dropsOutput: ==)
+  }
+  
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType>(
+    from entityIDs: Set<Entity.EntityID>,
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
+  ) -> NonNullDerivedResult<Entity> {
+    derivedNonNull(from: AnySequence.init(entityIDs.makeIterator), dropsOutput: dropsOutput)
+  }
+  
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType & Equatable>(
+    from entityIDs: Set<Entity.EntityID>
+  ) -> NonNullDerivedResult<Entity> {
+    derivedNonNull(from: entityIDs, dropsOutput: ==)
+  }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entities: S,
     dropsOutput: @escaping (S.Element?, S.Element?) -> Bool = { _, _ in false }
-  ) -> NonNullDerivedRecord<Entity> where S.Element == Entity {
-    entities.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
-      r[e.entityID] = derivedNonNull(from: e, dropsOutput: dropsOutput)
+  ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
+    entities.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
+      r.append(derived: derivedNonNull(from: e, dropsOutput: dropsOutput), id: e.entityID)
     }
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from entities: S
-  ) -> NonNullDerivedRecord<Entity> where S.Element == Entity {
+  ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
     derivedNonNull(from: entities, dropsOutput: ==)
   }
-  
+    
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entities: Set<Entity>,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
-  ) -> NonNullDerivedRecord<Entity> {
-    entities.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
-      r[e.entityID] = derivedNonNull(from: e, dropsOutput: dropsOutput)
-    }
+  ) -> NonNullDerivedResult<Entity> {
+    derivedNonNull(from: AnySequence.init(entities.makeIterator))
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entities: Set<Entity>
-  ) -> NonNullDerivedRecord<Entity> {
+  ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: entities, dropsOutput: ==)
   }
   
@@ -327,17 +406,14 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from insertionResults: S,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
-  ) -> NonNullDerivedRecord<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
-    
-    insertionResults.reduce(into: NonNullDerivedRecord<Entity>()) { (r, e) in
-      r[e.entityID] = derivedNonNull(from: e.entity, dropsOutput: dropsOutput)
-    }
+  ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
+    derivedNonNull(from: insertionResults.map { $0.entity })
   }
   
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from insertionResults: S
-  ) -> NonNullDerivedRecord<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
+  ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
     
     derivedNonNull(from: insertionResults, dropsOutput: ==)
   }

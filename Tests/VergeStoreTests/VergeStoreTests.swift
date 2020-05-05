@@ -190,32 +190,6 @@ final class VergeStoreTests: XCTestCase {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
     
-  @available(iOS 13.0, *)
-  func testStateSubscription() {
-    
-    let store = Store()
-    let dispatcher = RootDispatcher(targetStore: store)
-    
-    let expectation = XCTestExpectation()
-            
-    let getter = store.getterBuilder().mapWithoutPreFilter { $0 }.build()
-    
-    getter
-      .dropFirst()
-      .sink { (state) in
-        
-        XCTAssertEqual(state.count, 1)
-        expectation.fulfill()
-    }
-    .store(in: &subs)
-    
-    DispatchQueue.global().async {
-      dispatcher.increment()
-    }
-    
-    wait(for: [expectation], timeout: 1)
-  }
-  
   func testDispatch() {
     
     dispatcher.resetCount()
@@ -285,7 +259,7 @@ final class VergeStoreTests: XCTestCase {
     var subscriptions = Set<VergeAnyCancellable>()
     var count = 0
     
-    store.subscribeChanges { (changes) in
+    store.sinkChanges { (changes) in
       count += 1
     }
     .store(in: &subscriptions)
@@ -315,9 +289,9 @@ final class VergeStoreTests: XCTestCase {
     counter.assertForOverFulfill = true
     counter.expectedFulfillmentCount = 1001
     
-    let results: VergeConcurrency.Atomic<[Int]> = .init([])
+    let results: VergeConcurrency.RecursiveLockAtomic<[Int]> = .init([])
     
-    let sub = store.subscribeChanges(dropsFirst: false) { (changes) in
+    let sub = store.sinkChanges(dropsFirst: false) { (changes) in
       results.modify {
         $0.append(changes.count)
       }

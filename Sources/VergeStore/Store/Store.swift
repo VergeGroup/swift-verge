@@ -84,6 +84,9 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   private let _backingStorage: StateStorage<Changes<State>>
   private let _activityEmitter: EventEmitter<Activity> = .init()
   
+  let derivedCache1 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
+  let derivedCache2 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
+  
   public private(set) var logger: StoreLogger?
     
   /// An initializer
@@ -157,7 +160,7 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func subscribeChanges(
+  public func sinkChanges(
     dropsFirst: Bool = false,
     queue: DispatchQueue? = nil,
     receive: @escaping (Changes<State>) -> Void
@@ -199,10 +202,22 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
     
   }
   
+  /// Subscribe the state changes
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkChanges")
+  public func subscribeChanges(
+    dropsFirst: Bool = false,
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Changes<State>) -> Void
+  ) -> VergeAnyCancellable {
+   sinkChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+  
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func subscribeActivity(
+  public func sinkActivity(
     queue: DispatchQueue? = nil,
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
@@ -215,14 +230,25 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
       }
       return .init(cancellable)
     } else {
-//      let lock = NSRecursiveLock()
+      //      let lock = NSRecursiveLock()
       let cancellable = _activityEmitter.add { activity in
-//        lock.lock(); defer { lock.unlock() }
+        //        lock.lock(); defer { lock.unlock() }
         receive(activity)
       }
       return .init(cancellable)
     }
+    
+  }
   
+  /// Subscribe the activity
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkActivity")
+  public func subscribeActivity(
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Activity) -> Void
+  ) -> VergeAnyCancellable {
+    sinkActivity(queue: queue, receive: receive)
   }
              
 }

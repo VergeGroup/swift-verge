@@ -85,11 +85,11 @@ enum MigrationExample {
             
       let _: Changes<ViewModel.State> = viewModel.changes
       
-      _ = viewModel.subscribeChanges { (changes: Changes<ViewModel.State>) in
+      _ = viewModel.sinkChanges { (changes: Changes<ViewModel.State>) in
         
       }
       
-      _ = viewModel.subscribeActivity { (activity: ViewModel.Activity) in
+      _ = viewModel.sinkActivity { (activity: ViewModel.Activity) in
         
       }
       

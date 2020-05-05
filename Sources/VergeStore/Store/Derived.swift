@@ -32,6 +32,8 @@ public protocol DerivedType {
 }
 
 /// A container object that provides the current value and changes from the source Store.
+///
+/// Conforms to Equatable that compares pointer personality.
 public class Derived<Value>: DerivedType {
   
   public static func constant(_ value: Value) -> Derived<Value> {
@@ -109,27 +111,24 @@ public class Derived<Value>: DerivedType {
   ///
   /// - Parameter postFilter: Returns the objects are equals
   /// - Returns:
-  @discardableResult
-  fileprivate func setDropsOutput(_ dropsOutput: @escaping (Changes<Value>) -> Bool) -> Self {
+  fileprivate func setDropsOutput(_ dropsOutput: @escaping (Changes<Value>) -> Bool){
     innerStore.setNotificationFilter { changes in
       !dropsOutput(changes)
     }
-
-    return self
   }
   
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func subscribeChanges(
+  public func sinkChanges(
     dropsFirst: Bool = false,
     queue: DispatchQueue? = nil,
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     
-    innerStore.subscribeChanges(
-    dropsFirst: dropsFirst,
-    queue: queue
+    innerStore.sinkChanges(
+      dropsFirst: dropsFirst,
+      queue: queue
     ) { (changes) in
       withExtendedLifetime(self) {}
       receive(changes)
@@ -137,24 +136,38 @@ public class Derived<Value>: DerivedType {
     .asAutoCancellable()
   }
     
-  /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
-  /// - Parameters:
-  ///   - queue: a queue to receive object
-  ///   - map:
-  ///   - dropsOutput: a condition to drop a duplicated(no-changes) object. (Default: no drops)
-  /// - Returns:
-  public func chain<NewState>(
-    _ map: MemoizeMap<Changes<Value>, NewState>,
-    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
+  /// Subscribe the state changes
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkChanges")
+  public func subscribeChanges(
+    dropsFirst: Bool = false,
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Changes<Value>) -> Void
+  ) -> VergeAnyCancellable {
+    sinkChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+  
+  fileprivate func _makeChain<NewState>(
+    _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
     queue: DispatchQueue? = nil
-    ) -> Derived<NewState> {
-        
+  ) -> Derived<NewState> {
+    
+    vergeSignpostEvent("Derived.chain.new", label: "\(type(of: Value.self)) -> \(type(of: NewState.self))")
+    
     let d = Derived<NewState>(
-      get: map,
+      get: .init(makeInitial: {
+        map.makeInitial($0.makeComposing())
+      }, update: {
+        switch map.makeResult($0.makeComposing()) {
+        case .noChanages: return .noChanages
+        case .updated(let s): return .updated(s)
+        }
+      }),
       set: { _ in },
       initialUpstreamState: changes,
       subscribeUpstreamState: { callback in
-        self.innerStore.subscribeChanges(
+        self.innerStore.sinkChanges(
           dropsFirst: true,
           queue: queue,
           receive: callback
@@ -162,11 +175,48 @@ public class Derived<Value>: DerivedType {
     },
       retainsUpstream: self
     )
-    
-    d.setDropsOutput(dropsOutput)
-    
+        
     return d
     
+  }
+    
+  /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
+  /// - Parameters:
+  ///   - queue: a queue to receive object
+  ///   - map:
+  ///   - dropsOutput: a condition to drop a duplicated(no-changes) object. (Default: no drops)
+  /// - Returns: Derived object that cached depends on the specified parameters
+  public func chain<NewState>(
+    _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
+    dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
+    queue: DispatchQueue? = nil
+    ) -> Derived<NewState> {
+        
+    let derived = chainCahce2.withValue { cache -> Derived<NewState> in
+      
+      let identifier = "\(map.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      
+      guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
+        let instance = _makeChain(map, queue: queue)
+        cache.setObject(instance, forKey: identifier)
+        return instance
+      }
+      
+      vergeSignpostEvent("Derived.chain.reuse", label: "\(type(of: Value.self)) -> \(type(of: NewState.self))")
+      return cached
+    }
+    
+    if let dropsOutput = dropsOutput {
+      
+      let chained: Derived<NewState> = derived._makeChain(.map(\.root), queue: queue)
+      chained.setDropsOutput(dropsOutput)
+      
+      return chained
+      
+    } else {
+      return derived
+    }
+        
   }
   
   /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
@@ -176,14 +226,70 @@ public class Derived<Value>: DerivedType {
   /// - Parameters:
   ///   - queue: a queue to receive object
   ///   - map:
-  /// - Returns:
+  /// - Returns: Derived object that cached depends on the specified parameters
   public func chain<NewState: Equatable>(
-    _ map: MemoizeMap<Changes<Value>, NewState>,
+    _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
-    chain(map, dropsOutput: { !$0.hasChanges }, queue: queue)
+    
+    return chainCahce1.withValue { cache in
+      
+      let identifier = "\(map.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      
+      guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
+        let instance = _makeChain(map, queue: queue)
+        instance.setDropsOutput({ !$0.hasChanges })
+        cache.setObject(instance, forKey: identifier)
+        return instance
+      }
+      
+      vergeSignpostEvent("Derived.chain.reuse", label: "\(type(of: Value.self)) -> \(type(of: NewState.self))")
+      return cached
+    }
+          
   }
   
+  private let chainCahce1 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
+  private let chainCahce2 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
+
+}
+
+extension Derived: CustomReflectable {
+  public var customMirror: Mirror {
+    Mirror.init(self, children: ["changes" : changes], displayStyle: .struct, ancestorRepresentation: .generated)
+  }
+}
+
+extension Derived : Equatable {
+  public static func == (lhs: Derived<Value>, rhs: Derived<Value>) -> Bool {
+    lhs === rhs
+  }
+}
+
+extension Derived : Hashable {
+  public func hash(into hasher: inout Hasher) {
+    ObjectIdentifier(self).hash(into: &hasher)
+  }
+}
+
+extension Derived where Value : Equatable {
+  
+  /// Subscribe the state changes
+  ///
+  /// Receives a value only changed
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkChangedValue(
+    dropsFirst: Bool = false,
+    queue: DispatchQueue? = nil,
+    receive: @escaping (Value) -> Void
+  ) -> VergeAnyCancellable {
+    sinkChanges(dropsFirst: dropsFirst, queue: queue) { (changes) in
+      changes.ifChanged { value in
+        receive(value)
+      }
+    }
+  }
 }
 
 extension Derived where Value == Any {
@@ -202,7 +308,7 @@ extension Derived where Value == Any {
     
     let initial = (s0.value, s1.value)
     
-    let buffer = VergeConcurrency.Atomic<Shape>.init(initial)
+    let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
     return Derived<Shape>(
       get: MemoizeMap<Shape, Shape>.init(map: { $0 }),
@@ -210,14 +316,14 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
                 
-        let _s0 = s0.subscribeChanges(dropsFirst: true, queue: nil) { (s0) in
+        let _s0 = s0.sinkChanges(dropsFirst: true, queue: nil) { (s0) in
           buffer.modify { value in
             value.0 = s0.current
             callback(value)
           }
         }
         
-        let _s1 = s1.subscribeChanges(dropsFirst: true, queue: nil) { (s1) in
+        let _s1 = s1.sinkChanges(dropsFirst: true, queue: nil) { (s1) in
           buffer.modify { value in
             value.1 = s1.current
             callback(value)
@@ -250,7 +356,7 @@ extension Derived where Value == Any {
     
     let initial = (s0.value, s1.value, s2.value)
     
-    let buffer = VergeConcurrency.Atomic<Shape>.init(initial)
+    let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
     return Derived<Shape>(
       get: MemoizeMap<Shape, Shape>.init(map: { $0 }),
@@ -258,21 +364,21 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
         
-        let _s0 = s0.subscribeChanges(dropsFirst: true, queue: nil) { (s0) in
+        let _s0 = s0.sinkChanges(dropsFirst: true, queue: nil) { (s0) in
           buffer.modify { value in
             value.0 = s0.current
             callback(value)
           }
         }
         
-        let _s1 = s1.subscribeChanges(dropsFirst: true, queue: nil) { (s1) in
+        let _s1 = s1.sinkChanges(dropsFirst: true, queue: nil) { (s1) in
           buffer.modify { value in
             value.1 = s1.current
             callback(value)
           }
         }
         
-        let _s2 = s2.subscribeChanges(dropsFirst: true, queue: nil) { (s2) in
+        let _s2 = s2.sinkChanges(dropsFirst: true, queue: nil) { (s2) in
           buffer.modify { value in
             value.2 = s2.current
             callback(value)
@@ -353,17 +459,12 @@ public final class BindingDerived<State>: Derived<State> {
 
 extension StoreType {
   
-  /// Returns Dervived object with making
-  ///
-  /// - Parameter
-  ///   - memoizeMap:
-  ///   - dropsOutput: Predicate to drops object if found a duplicated output
-  /// - Returns:
-  public func derived<NewState>(
+  private func _makeDerived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
-    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false }
+    queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
     
+    vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
     let derived = Derived<NewState>(
       get: memoizeMap,
       set: { _ in
@@ -371,26 +472,84 @@ extension StoreType {
     },
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
-        asStore().subscribeChanges(dropsFirst: true, queue: nil, receive: callback)
+        asStore().sinkChanges(dropsFirst: true, queue: queue, receive: callback)
     },
       retainsUpstream: nil
     )
-    
-    derived.setDropsOutput(dropsOutput)
-    
     return derived
+  }
+  
+  /// Returns Dervived object with making
+  ///
+  /// - Parameter
+  ///   - memoizeMap:
+  ///   - dropsOutput: Predicate to drops object if found a duplicated output
+  /// - Returns: Derived object that cached depends on the specified parameters
+  public func derived<NewState>(
+    _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
+    dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
+    queue: DispatchQueue? = nil
+  ) -> Derived<NewState> {
+        
+    let derived = asStore().derivedCache2.withValue { cache -> Derived<NewState> in
+      
+      let identifier = "\(memoizeMap.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      
+      guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
+        let instance = _makeDerived(memoizeMap, queue: queue)
+        cache.setObject(instance, forKey: identifier)
+        return instance
+      }
+      
+      vergeSignpostEvent("Store.derived.reuse", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
+      
+      return cached
+      
+    }
+    
+    if let dropsOutput = dropsOutput {
+      
+      let chained = derived._makeChain(.map(\.root), queue: queue)
+      chained.setDropsOutput(dropsOutput)
+            
+      return chained
+      
+    } else {
+
+      return derived
+      
+    }
+       
   }
     
   /// Returns Dervived object with making
   ///
-  /// ✅ Drops duplicated the output with Equatable comparison.
+  /// - Complexity: ✅ Drops duplicated the output with Equatable comparison.
   ///
   /// - Parameter memoizeMap:
-  /// - Returns:
+  /// - Returns: Derived object that cached depends on the specified parameters
   public func derived<NewState: Equatable>(
-    _ memoizeMap: MemoizeMap<Changes<State>, NewState>
+    _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
+    queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
-    derived(memoizeMap, dropsOutput: { $0.asChanges().noChanges(\.root) })
+    
+    return asStore().derivedCache1.withValue { cache in
+      
+      let identifier = "\(memoizeMap.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      
+      guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
+        let instance = _makeDerived(memoizeMap, queue: queue)
+        instance.setDropsOutput({ $0.asChanges().noChanges(\.root) })
+        cache.setObject(instance, forKey: identifier)
+        return instance
+      }
+      
+      vergeSignpostEvent("Store.derived.reuse", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
+            
+      return cached
+
+    }
+                
   }
     
   /// Returns Binding Derived object
@@ -419,7 +578,7 @@ extension StoreType {
     },
       initialUpstreamState: asStore().changes,
       subscribeUpstreamState: { callback in
-        asStore().subscribeChanges(dropsFirst: true, queue: nil, receive: callback)
+        asStore().sinkChanges(dropsFirst: true, queue: nil, receive: callback)
     }, retainsUpstream: nil)
     
     derived.setDropsOutput(dropsOutput)

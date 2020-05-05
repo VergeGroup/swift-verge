@@ -21,13 +21,19 @@
 
 import Foundation
 
+#if !COCOAPODS
+import VergeCore
+#endif
+
+fileprivate let counter = VergeConcurrency.AtomicInt(initialValue: 0)
+
 /// A pipeline object to make derived data from the source store.
 /// It supports Memoization
 ///
 /// - TODO:
 ///   - make identifier to cache Derived<T>
 public struct MemoizeMap<Input, Output> {
-  
+       
   public enum Result {
     case updated(Output)
     case noChanages
@@ -36,6 +42,8 @@ public struct MemoizeMap<Input, Output> {
   private let _makeInitial: (Input) -> Output
   private var _dropInput: (Input) -> Bool
   private var _update: (Input) -> Result
+  
+  fileprivate(set) var identifier: Int = counter.getAndIncrement()
     
   public init(
     makeInitial: @escaping (Input) -> Output,
@@ -111,43 +119,173 @@ public struct MemoizeMap<Input, Output> {
    
 }
 
-extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
-    
-  /// ✅ Using implicit drop-input with Equatable
+extension MemoizeMap where Input : ChangesType {
+  
+  /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
+  ///
+  /// - Complexity: ✅ Active Memoization with Fragment's version
   /// - Parameter map:
-  public init(
-    map: @escaping (Input) -> Output
-  ) {
-    
-    self.init(
-      makeInitial: map,
-      dropInput: { $0.asChanges().noChanges(\.root) },
-      update: { .updated(map($0)) }
-    )
+  /// - Returns:
+  public static func map(_ map: @escaping (Changes<Input.Value>.Composing) -> Fragment<Output>) -> MemoizeMap<Input, Output> {
+            
+    return .init(
+      makeInitial: {
+        
+        map($0.asChanges().makeComposing()).wrappedValue
+        
+    }, update: { changes in
+      
+      // avoid copying body state
+      // returns only version
+      let versionUpdated = changes.asChanges().hasChanges({ map($0).version }, ==)
+      
+      guard versionUpdated else {
+        return .noChanages
+      }
+      
+      return .updated(map(changes.asChanges().makeComposing()).wrappedValue)
+    })
   }
   
-  /// Projects a specified shape from Input.
-  /// Memoization is available, with Equatable.
-  public static func map(_ map: @escaping (Input) -> Output) -> Self {
-    .init(map: map)
+  /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
+  ///
+  /// - Complexity: ✅ Active Memoization with Fragment's version
+  /// - Parameter map:
+  /// - Returns:
+  public static func map(_ keyPath: KeyPath<Changes<Input.Value>.Composing, Fragment<Output>>) -> MemoizeMap<Input, Output> {
+        
+    var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
+    
+    Static.modify(
+      on: Static.cache1,
+      for: &instance,
+      key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+    )
+    
+    return instance
   }
   
 }
 
-extension MemoizeMap where Input : ChangesType {
+extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   
+  /// Projects a specified shape from Input.
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
+  /// - Parameter map:
+  public init(
+    map: @escaping (Changes<Input.Value>.Composing) -> Output
+  ) {
+    
+    self.init(
+      makeInitial: { map($0.asChanges().makeComposing()) },
+      dropInput: { $0.asChanges().noChanges(\.root) },
+      update: { .updated(map($0.asChanges().makeComposing())) }
+    )
+  }
+  
+  /// Projects a specified shape from Input.
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
+  /// - Parameter map:
+  public static func map(_ map: @escaping (Changes<Input.Value>.Composing) -> Output) -> Self {
+    .init(map: map)
+  }
+  
+  /// Projects a specified shape from Input.
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
+  /// - Parameter map:
+  public static func map(_ keyPath: KeyPath<Changes<Input.Value>.Composing, Output>) -> Self {
+    var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
+        
+    Static.modify(
+      on: Static.cache2,
+      for: &instance,
+      key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+    )
+    
+    return instance
+  }
 }
+
 
 extension MemoizeMap {
     
   /// Projects a specified shape from Input.
   ///
-  /// ❗️ No memoization, additionally you need to call `dropsInput` to get memoization.
+  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
   ///
   /// - Parameter map:
   /// - Returns:
   public static func map(_ map: @escaping (Input) -> Output) -> Self {
     .init(dropInput: { _ in false }, map: map)
   }
+  
+  /// Projects a specified shape from Input.
+  ///
+  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
+  ///
+  /// - Parameter map:
+  /// - Returns:
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self {
+            
+    var instance = map({ $0[keyPath: keyPath] })
+    
+    Static.modify(
+      on: Static.cache3,
+      for: &instance,
+      key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+    )
+                    
+    return instance
+  }
+  
 }
 
+// No Thread safety
+enum KeyPathIdentifierStore {
+  
+  private static let counter = VergeConcurrency.AtomicInt(initialValue: 0)
+  
+  static var cache: VergeConcurrency.UnfairLockAtomic<[AnyKeyPath : Int]> = .init([:])
+  
+  static func getLocalIdentifier(_ keyPath: AnyKeyPath) -> Int {
+    cache.modify { cache -> Int in
+      if let value = cache[keyPath] {
+        return value
+      } else {
+        let v = counter.getAndIncrement()
+        cache[keyPath] = v
+        return v
+      }
+    }
+  }
+  
+}
+
+fileprivate enum Static {
+  
+  static var cache1: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
+  static var cache2: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
+  static var cache3: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
+  
+  static func modify<I, O>(
+    on storage: VergeConcurrency.RecursiveLockAtomic<[String : Int]>,
+    for memoizeMap: inout MemoizeMap<I, O>,
+    key: Int
+  ) {
+    
+    storage.modify { cache in
+      
+      let combinedKey = "\(ObjectIdentifier(I.self))\(ObjectIdentifier(O.self))\(key)"
+      
+      if let id = cache[combinedKey] {
+        memoizeMap.identifier = id
+      } else {
+        cache[combinedKey] = memoizeMap.identifier
+      }
+    }
+  }
+     
+}

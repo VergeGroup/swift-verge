@@ -34,7 +34,7 @@ enum Sample {
     override func viewDidLoad() {
       super.viewDidLoad()
       
-      store.subscribeChanges { [weak self] (changes) in
+      store.sinkChanges { [weak self] (changes) in
         self?.update(changes: changes)
       }
       .store(in: &subscriptions)

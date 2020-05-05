@@ -10,7 +10,9 @@ import RxSwift
 import RxCocoa
 
 fileprivate var storage_subject: Void?
-fileprivate var storage_lock: Void?
+
+extension Storage: ReactiveCompatible {}
+extension Store: ReactiveCompatible {}
 
 extension Reactive where Base : StoreType {
   
@@ -81,6 +83,33 @@ extension ObservableType {
   
 }
 
+extension ObservableType where Element : ChangesType, Element.Value : Equatable {
+  
+  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
+  ///
+  /// Using Changes under
+  ///
+  /// - Parameters:
+  ///   - selector:
+  ///   - compare:
+  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
+  public func changed() -> Observable<Element.Value> {
+    changed(\.root)
+  }
+  
+  /// Returns an observable sequence that contains only changed elements according to the `comparer`.
+  ///
+  /// Using Changes under
+  ///
+  /// - Parameters:
+  ///   - selector:
+  ///   - compare:
+  /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
+  public func changedDriver() -> Driver<Element.Value> {
+    changedDriver(\.root)
+  }
+}
+
 extension ObservableType where Element : ChangesType {
   
   public typealias Composing = Changes<Element.Value>.Composing
@@ -96,7 +125,7 @@ extension ObservableType where Element : ChangesType {
   public func changed<S>(_ selector: @escaping (Composing) -> S, _ compare: @escaping (S, S) -> Bool) -> Observable<S> {
     
     return flatMap { changes -> Observable<S> in
-      let _r = changes.asChanges().ifChanged(compose: selector, comparer: compare) { value in
+      let _r = changes.asChanges().ifChanged(selector, compare) { value in
         return value
       }
       return _r.map { .just($0) } ?? .empty()

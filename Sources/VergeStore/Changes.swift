@@ -111,11 +111,11 @@ public final class Changes<Value>: ChangesType {
     self.innerCurrent = innerCurrent
     self.version = version
     
-    vergeSignpostEvent("Changes.init")
+    vergeSignpostEvent("Changes.init", label: "\(type(of: self))")
   }
   
   deinit {
-    vergeSignpostEvent("Changes.deinit")
+    vergeSignpostEvent("Changes.deinit", label: "\(type(of: self))")
   }
   
   @inline(__always)
@@ -127,6 +127,7 @@ public final class Changes<Value>: ChangesType {
     )
   }
   
+  @inlinable
   public func asChanges() -> Changes<Value> {
     self
   }
@@ -143,43 +144,48 @@ public final class Changes<Value>: ChangesType {
     }
   }
   
-  public typealias Selector<T> = KeyPath<Composing, T>
+  public typealias ChangesKeyPath<T> = KeyPath<Composing, T>
   
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   ///
   @inline(__always)
-  public func noChanges<T: Equatable>(_ selector: Selector<T>) -> Bool {
-    !hasChanges(selector, ==)
+  public func noChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
+    !hasChanges(keyPath, ==)
   }
   
   @inline(__always)
-  public func noChanges<T>(_ selector: Selector<T>, _ compare: (T, T) -> Bool) -> Bool {
+  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ compare: (T, T) -> Bool) -> Bool {
     
-    !hasChanges(selector, compare)
+    !hasChanges(keyPath, compare)
   }
   
   @inline(__always)
-  public func noChanges<T>(_ selector: Selector<T>, _ comparer: Comparer<T>) -> Bool {
+  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: Comparer<T>) -> Bool {
     
-    !hasChanges(selector, comparer.equals)
+    !hasChanges(keyPath, comparer.equals)
   }
     
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   ///
   @inline(__always)
-  public func hasChanges<T: Equatable>(_ selector: Selector<T>) -> Bool {
-    hasChanges(selector, ==)
+  public func hasChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
+    hasChanges(keyPath, ==)
   }
   
   @inline(__always)
-  public func hasChanges<T>(_ selector: Selector<T>, _ comparer: Comparer<T>) -> Bool {
-    hasChanges(selector, comparer.equals)
+  public func hasChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: Comparer<T>) -> Bool {
+    hasChanges(keyPath, comparer.equals)
+  }
+  
+  @inline(__always)
+  public func hasChanges<T>(_ keyPath: ChangesKeyPath<T>, _ compare: (T, T) -> Bool) -> Bool {
+    hasChanges({ $0[keyPath: keyPath] }, compare)
   }
   
   @inline(__always)
   public func hasChanges<Composed>(
-    compose: (Composing) -> Composed,
-    comparer: (Composed, Composed) -> Bool
+    _ compose: (Composing) -> Composed,
+    _ compare: (Composed, Composed) -> Bool
   ) -> Bool {
     
     let signpost = VergeSignpostTransaction("Changes.hasChanges(compose:comparer:)")
@@ -195,37 +201,45 @@ public final class Changes<Value>: ChangesType {
     
     let old = Composing(source: previousValue)
         
-    guard !comparer(compose(old), compose(current)) else {
+    guard !compare(compose(old), compose(current)) else {
       return false
     }
     
     return true
   }
-  
-  @inline(__always)
-  public func hasChanges<T>(_ selector: Selector<T>, _ compare: (T, T) -> Bool) -> Bool {
-    guard let old = previous else {
-      return true
-    }
-    return !compare(Composing(source: old)[keyPath: selector], Composing(source: self)[keyPath: selector])
-  }
-    
+       
   /// Do a closure if value specified by keyPath contains changes.
   @inline(__always)
-  public func ifChanged<T: Equatable, Result>(_ keyPath: Selector<T>, _ perform: (T) throws -> Result) rethrows -> Result? {
+  public func ifChanged<T: Equatable, Result>(_ keyPath: ChangesKeyPath<T>, _ perform: (T) throws -> Result) rethrows -> Result? {
     try ifChanged(keyPath, ==, perform)
   }
   
   /// Do a closure if value specified by keyPath contains changes.
-  public func ifChanged<T, Result>(_ selector: Selector<T>, _ comparer: (T, T) -> Bool, _ perform: (T) throws -> Result) rethrows -> Result? {
+  public func ifChanged<T, Result>(_ selector: ChangesKeyPath<T>, _ comparer: (T, T) -> Bool, _ perform: (T) throws -> Result) rethrows -> Result? {
     guard hasChanges(selector, comparer) else { return nil }
     return try perform(Composing(source: self)[keyPath: selector])
   }
   
-  public func ifChanged<Composed, Result>(
+  public func ifChanged<Composed: Equatable, Result>(
+    _ compose: (Composing) -> Composed,
+    _ perform: (Composed) throws -> Result
+  ) rethrows -> Result? {
+    try ifChanged(compose, ==, perform)
+  }
+  
+  @available(*, deprecated, renamed: "ifChanged(_:_:)")
+  public func ifChanged<Composed: Equatable, Result>(
     compose: (Composing) -> Composed,
-    comparer: (Composed, Composed) -> Bool,
     perform: (Composed) throws -> Result
+  ) rethrows -> Result? {
+    try ifChanged(compose, perform)
+  }
+  
+  @inline(__always)
+  public func ifChanged<Composed, Result>(
+    _ compose: (Composing) -> Composed,
+    _ comparer: (Composed, Composed) -> Bool,
+    _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     
     let current = Composing(source: self)
@@ -246,6 +260,16 @@ public final class Changes<Value>: ChangesType {
     return try perform(composedNew)
   }
   
+  @inline(__always)
+  @available(*, deprecated, renamed: "ifChanged(_:_:_:)")
+  public func ifChanged<Composed, Result>(
+    compose: (Composing) -> Composed,
+    comparer: (Composed, Composed) -> Bool,
+    perform: (Composed) throws -> Result
+  ) rethrows -> Result? {
+    try ifChanged(compose, comparer, perform)
+  }
+  
   public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
     Changes<U>(
       previous: try previous.map { try $0.map(transform) },
@@ -264,7 +288,29 @@ public final class Changes<Value>: ChangesType {
       version: nextVersion
     )
   }
+  
+  @inline(__always)
+  func makeComposing() -> Composing {
+    .init(source: self)
+  }
 
+}
+
+extension Changes: CustomReflectable {
+  
+  public var customMirror: Mirror {
+    Mirror.init(
+      self,
+      children: [
+        "version" : version,
+        "previous": previous as Any,
+        "current" : current
+      ],
+      displayStyle: .struct,
+      ancestorRepresentation: .generated
+    )
+  }
+  
 }
 
 // MARK: - Nested Types
@@ -275,7 +321,7 @@ extension Changes {
     
     let value: Value
     
-    let cachedComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
+    let cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath : Any]>
     
     init(value: Value) {
       self.value = value
@@ -284,7 +330,7 @@ extension Changes {
     
     private init(
       value: Value,
-      cachedComputedValueStorage: VergeConcurrency.Atomic<[AnyKeyPath : Any]>
+      cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath : Any]>
     ) {
       self.value = value
       self.cachedComputedValueStorage = cachedComputedValueStorage
@@ -299,6 +345,7 @@ extension Changes {
 
 extension Changes {
   
+  // TODO: Composer might be better name
   @dynamicMemberLookup
   public struct Composing {
     
@@ -316,8 +363,7 @@ extension Changes {
       _read {
         yield source[dynamicMember: keyPath]
       }
-    }
-        
+    }        
   }
 }
 

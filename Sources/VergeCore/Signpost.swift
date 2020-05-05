@@ -4,27 +4,33 @@ import os
 @usableFromInline
 enum SignpostConstants {
   @usableFromInline
-  static let performanceLog = OSLog(subsystem: "me.muukii.Verge", category: "performance")
+  static let performanceLog = { () -> OSLog in
+    if #available(iOSApplicationExtension 13.0, *) {
+      return OSLog(subsystem: "lib.verge", category: "performance")
+    } else {
+      return OSLog(subsystem: "lib.verge", category: "performance")
+    }
+  }()
   @usableFromInline
-  static let activityLog = OSLog(subsystem: "me.muukii.Verge", category: "activity")
+  static let pointOfInterestLog = OSLog(subsystem: "lib.verge", category: .pointsOfInterest)
 }
 
 @inlinable
 public func vergeSignpostEvent(_ event: StaticString) {
   #if DEBUG
   if #available(iOS 12, macOS 10.14, *) {
-    let id = OSSignpostID(log: SignpostConstants.activityLog)
-    os_signpost(.event, log: SignpostConstants.activityLog, name: event, signpostID: id)
+    let id = OSSignpostID(log: SignpostConstants.pointOfInterestLog)
+    os_signpost(.event, log: SignpostConstants.pointOfInterestLog, name: event, signpostID: id)
   }
   #endif
 }
 
 @inlinable
-public func vergeSignpostEvent(_ event: StaticString, label: String) {
+public func vergeSignpostEvent(_ event: StaticString, label: @autoclosure () -> String) {
   #if DEBUG
   if #available(iOS 12, macOS 10.14, *) {
-    let id = OSSignpostID(log: SignpostConstants.activityLog)
-    os_signpost(.event, log: SignpostConstants.activityLog, name: event, signpostID: id, "%@", label)
+    let id = OSSignpostID(log: SignpostConstants.pointOfInterestLog)
+    os_signpost(.event, log: SignpostConstants.pointOfInterestLog, name: event, signpostID: id, "%@", label())
   }
   #endif
 }
@@ -32,45 +38,78 @@ public func vergeSignpostEvent(_ event: StaticString, label: String) {
 
 public struct VergeSignpostTransaction {
   
+  #if DEBUG
   @usableFromInline
   let _end: () -> Void
+  public let rawID: os_signpost_id_t
+  #endif
   
   @inlinable
+  @inline(__always)
   public init(_ name: StaticString) {
     #if DEBUG
     if #available(iOS 12, macOS 10.14, *) {
       let id = OSSignpostID(log: SignpostConstants.performanceLog)
+      self.rawID = id.rawValue
       os_signpost(.begin, log: SignpostConstants.performanceLog, name: name, signpostID: id)
       _end = {
         os_signpost(.end, log: SignpostConstants.performanceLog, name: name, signpostID: id)
       }
     } else {
+      rawID = 0
       _end = {}
     }
     #else
-    _end = {}
     #endif
   }
   
   @inlinable
-  public init(_ name: StaticString, label: String) {
+  @inline(__always)
+  public init(_ name: StaticString, label: @autoclosure () -> String) {
     #if DEBUG
     if #available(iOS 12, macOS 10.14, *) {
       let id = OSSignpostID(log: SignpostConstants.performanceLog)
-      os_signpost(.begin, log: SignpostConstants.performanceLog, name: name, signpostID: id, "Begin: %@", label)
+      self.rawID = id.rawValue
+      let _label = label()
+      os_signpost(.begin, log: SignpostConstants.performanceLog, name: name, signpostID: id, "Begin: %@", _label)
       _end = {
-        os_signpost(.end, log: SignpostConstants.performanceLog, name: name, signpostID: id, "End: %@", label)
+        os_signpost(.end, log: SignpostConstants.performanceLog, name: name, signpostID: id, "End: %@", _label)
       }
     } else {
+      rawID = 0
       _end = {}
     }
     #else
-    _end = {}
     #endif
   }
-    
+  
   @inlinable
+  @inline(__always)
+  public func event(name: StaticString, label: @autoclosure () -> String) {
+    #if DEBUG
+    if #available(iOS 12, macOS 10.14, *) {
+      let id = OSSignpostID(rawID)
+      os_signpost(.event, log: SignpostConstants.pointOfInterestLog, name: name, signpostID: id, "%@", label())
+    }
+    #endif
+  }
+  
+  @inlinable
+  @inline(__always)
+  public func event(name: StaticString) {
+    #if DEBUG
+    if #available(iOS 12, macOS 10.14, *) {
+      let id = OSSignpostID(rawID)
+      os_signpost(.event, log: SignpostConstants.pointOfInterestLog, name: name, signpostID: id)
+    }
+    #endif
+  }
+  
+  @inlinable
+  @inline(__always)
   public func end() {
+    #if DEBUG
     _end()
+    #endif
   }
 }

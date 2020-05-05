@@ -36,4 +36,15 @@ final class DemoStore: VergeStore.Store<DemoState, Never> {
   init() {
     super.init(initialState: .init(), logger: nil)
   }
+  
+  func increment() {
+    commit {
+      $0.count += 1
+    }
+  }
+  
+  func empty() {
+    commit { _ in
+    }
+  }
 }

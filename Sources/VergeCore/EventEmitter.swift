@@ -44,7 +44,7 @@ import os
 /// ```
 public final class VergeAnyCancellable: Hashable, CancellableType {
   
-  private let lock = NSLock()
+  private let lock = VergeConcurrency.UnfairLock()
   
   private var wasCancelled = false
 
@@ -218,12 +218,12 @@ public final class EventEmitter<Event>: EventEmitterType {
     lock.lock()
     targets = subscribers.values
     lock.unlock()
+    let signpost = VergeSignpostTransaction("EventEmitter.emits")
     targets.forEach {
-      #if DEBUG
-      vergeSignpostEvent("EventEmitter.emit")
-      #endif
+      signpost.event(name: "EventEmitter.oneEmit")
       $0(event)
     }
+    signpost.end()
   }
   
   @discardableResult

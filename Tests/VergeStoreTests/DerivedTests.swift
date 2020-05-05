@@ -12,28 +12,8 @@ import XCTest
 import VergeStore
 
 final class DerivedTests: XCTestCase {
-  
-  final class StoreWrapper: StoreWrapperType {
-    
-    typealias State = DemoState
-    
-    enum Activity {}
-    
-    let store = DefaultStore.init(initialState: .init(), logger: nil)
-    
-    func increment() {
-      commit {
-        $0.count += 1
-      }
-    }
-    
-    func empty() {
-      commit { _ in
-      }
-    }
-  }
-  
-  let wrapper = StoreWrapper()
+   
+  let wrapper = DemoStore()
   
   func testSlice() {
                 
@@ -76,7 +56,7 @@ final class DerivedTests: XCTestCase {
     expectation.expectedFulfillmentCount = 1
     expectation.assertForOverFulfill = true
     
-    let subscription = baseSlice.subscribeChanges(dropsFirst: true) { (changes) in
+    let subscription = baseSlice.sinkChanges(dropsFirst: true) { (changes) in
       expectation.fulfill()
     }
 
@@ -104,7 +84,7 @@ final class DerivedTests: XCTestCase {
     
     weak var weakBaseSlice = baseSlice
             
-    var slice: Derived<Int>! = baseSlice.chain(.map { $0.current })
+    var slice: Derived<Int>! = baseSlice.chain(.map { $0.root })
     
     baseSlice = nil
     
@@ -165,7 +145,7 @@ final class DerivedTests: XCTestCase {
     
     XCTAssert(d.value == (0, ""))
         
-    let sub = d.subscribeChanges { (changes) in
+    let sub = d.sinkChanges { (changes) in
       
       updateCount.fulfill()
       
@@ -217,7 +197,7 @@ final class DerivedTests: XCTestCase {
     
     XCTAssert(d.value == (0, 0))
     
-    let sub = d.subscribeChanges { (changes) in
+    let sub = d.sinkChanges { (changes) in
       
       updateCount.fulfill()
       
@@ -245,6 +225,83 @@ final class DerivedTests: XCTestCase {
     
     wait(for: [updateCount, update1, update0], timeout: 10)
     withExtendedLifetime(sub) {}
+  }
+      
+}
+
+final class DerivedCacheTests: XCTestCase {
+  
+  func test_identify_keypath() {
+    
+    let store1 = DemoStore()
+    let store2 = DemoStore()
+    
+    XCTAssert(store1.derived(.map(\.count)) === store1.derived(.map(\.count)))
+    
+    /// Stored in each store
+    XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
+    
+  }
+  
+  func test_identify_keypath_specify_queue_main() {
+    
+    let store1 = DemoStore()
+    let store2 = DemoStore()
+    
+    XCTAssert(store1.derived(.map(\.count), queue: .main) === store1.derived(.map(\.count), queue: .main))
+    XCTAssert(store1.derived(.map(\.count)) !== store1.derived(.map(\.count), queue: .main))
+    XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
+    
+  }
+  
+  func test_identify_keypath_specify_queue_any() {
+    
+    let store1 = DemoStore()
+    let store2 = DemoStore()
+    
+    let queue = DispatchQueue(label: "test")
+    let queue2 = DispatchQueue(label: "test")
+    
+    XCTAssert(store1.derived(.map(\.count), queue: queue) === store1.derived(.map(\.count), queue: queue))
+    XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))
+    XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: queue2))
+    XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
+        
+  }
+  
+  func test_identify_keypath_specify_queue_global() {
+    
+    let store1 = DemoStore()
+    let store2 = DemoStore()
+    
+    let queue = DispatchQueue.global()
+    
+    XCTAssert(store1.derived(.map(\.count), queue: queue) === store1.derived(.map(\.count), queue: queue))
+    XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))
+    XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
+    
+  }
+  
+  func test_identify_by_instance() {
+    
+    let store1 = DemoStore()
+    
+    XCTAssert(store1.derived(.map { $0.count }) !== store1.derived(.map { $0.count }))
+   
+    let map = MemoizeMap<Changes<DemoState>, Int>.map { $0.count }
+    
+    XCTAssert(store1.derived(map) === store1.derived(map))
+
+  }
+  
+  func test_cachingDerived_concurrent() {
+    
+    let store1 = DemoStore()
+    
+    DispatchQueue.concurrentPerform(iterations: 10000) { _ in
+      XCTAssert(store1.derived(.map(\.count)) === store1.derived(.map(\.count)))
+    }
+    
   }
   
 }
