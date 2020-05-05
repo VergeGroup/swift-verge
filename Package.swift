@@ -17,8 +17,10 @@ let package = Package(
   dependencies: [
   ],
   targets: [
-    .target(name: "VergeCore", dependencies: []),
-    .target(name: "VergeStore", dependencies: ["VergeCore"]),
-    .target(name: "VergeORM", dependencies: ["VergeCore", "VergeStore"]),
-  ]
+    .target(name: "VergeObjcBridge", dependencies: []),
+    .target(name: "VergeCore", dependencies: ["VergeObjcBridge"]),
+    .target(name: "VergeStore", dependencies: ["VergeCore", "VergeObjcBridge"]),
+    .target(name: "VergeORM", dependencies: ["VergeCore", "VergeStore", "VergeObjcBridge"]),
+  ],
+  swiftLanguageVersions: [.v5]
 )

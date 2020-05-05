@@ -9,5 +9,6 @@
 #ifndef VergeObjcBridge_h
 #define VergeObjcBridge_h
 
+#import "AtomicBridges.h"
 
 #endif /* VergeObjcBridge_h */

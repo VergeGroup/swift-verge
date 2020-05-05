@@ -17,6 +17,8 @@
 import Foundation
 import libkern
 
+import VergeObjcBridge
+
 extension VergeConcurrency {
   /// A concurrency utility class that supports locking-free synchronization on mutating an object
   /// reference. Unlike using a lock, concurrent read and write accesses to this class is allowed. At
@@ -59,7 +61,7 @@ extension VergeConcurrency {
     public func compareAndSet(expect: ValueType, newValue: ValueType) -> Bool {
       let expectPointer = unsafePassUnretainedPointer(value: expect)
       let newValuePointer = unsafePassUnretainedPointer(value: newValue)
-      
+
       if AtomicBridges.comparePointer(pointer, withExpectedPointer: expectPointer, andSwapPointer: newValuePointer) {
         // If pointer swap succeeded, a memory berrier is created, so we can safely write the new
         // value.

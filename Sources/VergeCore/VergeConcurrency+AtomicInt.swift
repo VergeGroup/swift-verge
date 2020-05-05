@@ -17,10 +17,12 @@
 import Foundation
 import libkern
 
+import VergeObjcBridge
+
 extension VergeConcurrency {
           
   public class AtomicInt {
-    
+        
     /// The current value.
     public var value: Int {
       get {

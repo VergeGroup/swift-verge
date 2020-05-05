@@ -30,8 +30,13 @@ Pod::Spec.new do |s|
     ss.dependency 'Verge/Rx'
   end
 
+   s.subspec 'ObjcBridge' do |ss|
+    ss.source_files = 'Sources/VergeObjcBridge/**/*.{h,m}'    
+   end
+
   s.subspec 'Core' do |ss|
-    ss.source_files = 'Sources/VergeCore/**/*[.swift, .h, .m]'    
+    ss.source_files = 'Sources/VergeCore/**/*.{swift,h,m}'    
+    ss.dependency 'Verge/ObjcBridge'
   end
 
   s.subspec 'Store' do |ss|

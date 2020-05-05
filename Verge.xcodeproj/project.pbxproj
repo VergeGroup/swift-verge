@@ -50,6 +50,12 @@
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
+		4B5E84A324618D1C009A0CA8 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
+		4B5E84A424618D1C009A0CA8 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B5E84AD24618D39009A0CA8 /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */; };
+		4B5E84AF24618D82009A0CA8 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
+		4B5E84BC2461901E009A0CA8 /* VergeObjcBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5E84BB24619006009A0CA8 /* VergeObjcBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B5E84BD24619046009A0CA8 /* AtomicBridges.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5E84AC24618D39009A0CA8 /* AtomicBridges.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B65F8EF1FB4C0DC00A90A67 /* VergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */; };
 		4B65F8FA1FB4C75800A90A67 /* CycleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8F91FB4C75800A90A67 /* CycleViewModel.swift */; };
 		4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B68394623705ACD002FFC5A /* VergeStoreTests.swift */; };
@@ -82,10 +88,7 @@
 		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
 		4B86D824244A24B5008D3040 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D823244A24B5008D3040 /* Extensions.swift */; };
 		4B86D826244A2A1D008D3040 /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D825244A2A1D008D3040 /* Sample.swift */; };
-		4B8F5AB024615EE6005F68B6 /* AtomicBridges.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8F5AAE24615EE6005F68B6 /* AtomicBridges.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4B8F5AB124615EE6005F68B6 /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5AAF24615EE6005F68B6 /* AtomicBridges.m */; };
 		4B8F5AB7246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */; };
-		4B8F5AB9246161B9005F68B6 /* Bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8F5AB824616170005F68B6 /* Bridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B8F5ABB24616416005F68B6 /* VergeConcurrency+AtomicReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */; };
 		4B91B3782440B9C4005082D7 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B91B3792440B9C4005082D7 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -226,6 +229,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
+		};
+		4B5E84A124618D1C009A0CA8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B5E849B24618D1C009A0CA8;
+			remoteInfo = VergeObjcBridge;
+		};
+		4B5E84B124618D82009A0CA8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B5E849B24618D1C009A0CA8;
+			remoteInfo = VergeObjcBridge;
 		};
 		4B65F8F21FB4C0DC00A90A67 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -415,6 +432,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				4BB4F7F423D32A2C0039C897 /* VergeCore.framework in Embed Frameworks */,
+				4B5E84A424618D1C009A0CA8 /* VergeObjcBridge.framework in Embed Frameworks */,
 				4BB4F7F823D32A2C0039C897 /* VergeORM.framework in Embed Frameworks */,
 				4BB4F7FC23D32A2C0039C897 /* VergeStore.framework in Embed Frameworks */,
 			);
@@ -478,6 +496,11 @@
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
 		4B57FD1923A29DAD00E41D06 /* EntityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityType.swift; sourceTree = "<group>"; };
+		4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeObjcBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B5E849F24618D1C009A0CA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AtomicBridges.m; sourceTree = "<group>"; };
+		4B5E84AC24618D39009A0CA8 /* AtomicBridges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicBridges.h; sourceTree = "<group>"; };
+		4B5E84BB24619006009A0CA8 /* VergeObjcBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeObjcBridge.h; sourceTree = "<group>"; };
 		4B65F8EC1FB4C0DC00A90A67 /* VergeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeTests.swift; sourceTree = "<group>"; };
 		4B65F8F01FB4C0DC00A90A67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -516,10 +539,7 @@
 		4B86D825244A2A1D008D3040 /* Sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sample.swift; sourceTree = "<group>"; };
 		4B89538423CCE3B1002F95C8 /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTests.swift; sourceTree = "<group>"; };
 		4B8EB4F823C034A900035B2A /* Comparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparer.swift; sourceTree = "<group>"; };
-		4B8F5AAE24615EE6005F68B6 /* AtomicBridges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicBridges.h; sourceTree = "<group>"; };
-		4B8F5AAF24615EE6005F68B6 /* AtomicBridges.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AtomicBridges.m; sourceTree = "<group>"; };
 		4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VergeConcurrency+AtomicInt.swift"; sourceTree = "<group>"; };
-		4B8F5AB824616170005F68B6 /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
 		4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VergeConcurrency+AtomicReference.swift"; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -650,6 +670,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B5E849924618D1C009A0CA8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B65F8E91FB4C0DC00A90A67 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -712,6 +739,7 @@
 				4BB4F7F323D32A2C0039C897 /* VergeCore.framework in Frameworks */,
 				4BB4F7F723D32A2C0039C897 /* VergeORM.framework in Frameworks */,
 				4BB4F7FB23D32A2C0039C897 /* VergeStore.framework in Frameworks */,
+				4B5E84A324618D1C009A0CA8 /* VergeObjcBridge.framework in Frameworks */,
 				47CDF72ADEA675AA65834B0D /* Pods_SpotifyDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -739,6 +767,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B5E84AF24618D82009A0CA8 /* VergeObjcBridge.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -850,6 +879,25 @@
 			path = VergeORMTests;
 			sourceTree = "<group>";
 		};
+		4B5E84A924618D39009A0CA8 /* VergeObjcBridge */ = {
+			isa = PBXGroup;
+			children = (
+				4B5E849F24618D1C009A0CA8 /* Info.plist */,
+				4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */,
+				4B5E84AB24618D39009A0CA8 /* include */,
+				4B5E84BB24619006009A0CA8 /* VergeObjcBridge.h */,
+			);
+			path = VergeObjcBridge;
+			sourceTree = "<group>";
+		};
+		4B5E84AB24618D39009A0CA8 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				4B5E84AC24618D39009A0CA8 /* AtomicBridges.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
 		4B65F8ED1FB4C0DC00A90A67 /* VergeTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -897,6 +945,7 @@
 		4B84F3B02388066F00D8BC75 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				4B5E84A924618D39009A0CA8 /* VergeObjcBridge */,
 				4BB4F7E023D329E30039C897 /* SpotifyDemo */,
 				4BDBDF7523CE0C4200EEA112 /* VergeStoreDemoUIKit */,
 				4B949145239C264D00370067 /* VergeStoreDemoSwiftUI */,
@@ -939,6 +988,7 @@
 				4B1743A723C767670074C457 /* VergeRxTests.xctest */,
 				4BDBDF7423CE0C4200EEA112 /* VergeStoreDemoUIKit.app */,
 				4BB4F7DF23D329E20039C897 /* SpotifyDemo.app */,
+				4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1140,9 +1190,6 @@
 				4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */,
 				4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */,
 				4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */,
-				4B8F5AB824616170005F68B6 /* Bridge.h */,
-				4B8F5AAE24615EE6005F68B6 /* AtomicBridges.h */,
-				4B8F5AAF24615EE6005F68B6 /* AtomicBridges.m */,
 			);
 			path = VergeCore;
 			sourceTree = "<group>";
@@ -1166,6 +1213,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B5E849724618D1C009A0CA8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B5E84BD24619046009A0CA8 /* AtomicBridges.h in Headers */,
+				4B5E84BC2461901E009A0CA8 /* VergeObjcBridge.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B78631B233912AB009B9C1B /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1186,9 +1242,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B8F5AB9246161B9005F68B6 /* Bridge.h in Headers */,
 				4BFA22A023A63B56008D7BCB /* VergeCore.h in Headers */,
-				4B8F5AB024615EE6005F68B6 /* AtomicBridges.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1276,6 +1330,24 @@
 			productName = VergeNormalizerTests;
 			productReference = 4B475BC5239ADE1C008A03E1 /* VergeORMTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B5E84A824618D1C009A0CA8 /* Build configuration list for PBXNativeTarget "VergeObjcBridge" */;
+			buildPhases = (
+				4B5E849724618D1C009A0CA8 /* Headers */,
+				4B5E849824618D1C009A0CA8 /* Sources */,
+				4B5E849924618D1C009A0CA8 /* Frameworks */,
+				4B5E849A24618D1C009A0CA8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VergeObjcBridge;
+			productName = VergeObjcBridge;
+			productReference = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		4B65F8EB1FB4C0DC00A90A67 /* VergeTests */ = {
 			isa = PBXNativeTarget;
@@ -1414,6 +1486,7 @@
 				4BB4F7F623D32A2C0039C897 /* PBXTargetDependency */,
 				4BB4F7FA23D32A2C0039C897 /* PBXTargetDependency */,
 				4BB4F7FE23D32A2C0039C897 /* PBXTargetDependency */,
+				4B5E84A224618D1C009A0CA8 /* PBXTargetDependency */,
 			);
 			name = SpotifyDemo;
 			productName = SpotifyDemo;
@@ -1473,6 +1546,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4B5E84B224618D82009A0CA8 /* PBXTargetDependency */,
 			);
 			name = VergeCore;
 			productName = VergeSelector;
@@ -1500,6 +1574,9 @@
 					};
 					4B475BC4239ADE1C008A03E1 = {
 						CreatedOnToolsVersion = 11.2.1;
+					};
+					4B5E849B24618D1C009A0CA8 = {
+						CreatedOnToolsVersion = 11.4.1;
 					};
 					4B65F8EB1FB4C0DC00A90A67 = {
 						CreatedOnToolsVersion = 9.1;
@@ -1562,6 +1639,7 @@
 				4B78631F233912AB009B9C1B /* VergeStore */,
 				4B475BB1239AB954008A03E1 /* VergeORM */,
 				4B86A4851F969AD5002D54FE /* VergeClassic */,
+				4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */,
 				4BB4F7DE23D329E20039C897 /* SpotifyDemo */,
 				4B86A4961F969C7D002D54FE /* Verge-Demo */,
 				4B949127239C257500370067 /* VergeStoreDemoSwiftUI */,
@@ -1598,6 +1676,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4B475BC3239ADE1C008A03E1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B5E849A24618D1C009A0CA8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1876,6 +1961,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B5E849824618D1C009A0CA8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B5E84AD24618D39009A0CA8 /* AtomicBridges.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B65F8E81FB4C0DC00A90A67 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2010,7 +2103,6 @@
 				4B8F5AB7246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift in Sources */,
 				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
 				4B4AB16E244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift in Sources */,
-				4B8F5AB124615EE6005F68B6 /* AtomicBridges.m in Sources */,
 				4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */,
 				4B8F5ABB24616416005F68B6 /* VergeConcurrency+AtomicReference.swift in Sources */,
 				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,
@@ -2049,6 +2141,16 @@
 			isa = PBXTargetDependency;
 			target = 4B78631F233912AB009B9C1B /* VergeStore */;
 			targetProxy = 4B475BCB239ADE1C008A03E1 /* PBXContainerItemProxy */;
+		};
+		4B5E84A224618D1C009A0CA8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */;
+			targetProxy = 4B5E84A124618D1C009A0CA8 /* PBXContainerItemProxy */;
+		};
+		4B5E84B224618D82009A0CA8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */;
+			targetProxy = 4B5E84B124618D82009A0CA8 /* PBXContainerItemProxy */;
 		};
 		4B65F8F31FB4C0DC00A90A67 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2428,6 +2530,85 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4B5E84A524618D1C009A0CA8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeObjcBridge/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeObjcBridge;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B5E84A624618D1C009A0CA8 /* Benchmark */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeObjcBridge/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeObjcBridge;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Benchmark;
+		};
+		4B5E84A724618D1C009A0CA8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeObjcBridge/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeObjcBridge;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -3549,6 +3730,16 @@
 				4B475BCE239ADE1C008A03E1 /* Debug */,
 				4B67673A23D8973800D0C076 /* Benchmark */,
 				4B475BCF239ADE1C008A03E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B5E84A824618D1C009A0CA8 /* Build configuration list for PBXNativeTarget "VergeObjcBridge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B5E84A524618D1C009A0CA8 /* Debug */,
+				4B5E84A624618D1C009A0CA8 /* Benchmark */,
+				4B5E84A724618D1C009A0CA8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
