@@ -11,23 +11,23 @@ import XCTest
 
 class UtilTests: XCTestCase {
   
-  func testObjectIdentifier() {
-        
-    struct A {
+  struct A {
+    
+    struct B {
       
-      struct B {
+      struct A {
         
-        struct A {
-          
-        }
       }
     }
-    
-    
+  }
+  
+  func testObjectIdentifier() {
+                    
     let a = ObjectIdentifier(A.self)
     let b = ObjectIdentifier(A.B.A.self)
     
     XCTAssertNotEqual(a, b)
         
   }
+    
 }

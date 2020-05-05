@@ -31,7 +31,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'Core' do |ss|
-    ss.source_files = 'Sources/VergeCore/**/*.swift'    
+    ss.source_files = 'Sources/VergeCore/**/*[.swift, .h, .m]'    
   end
 
   s.subspec 'Store' do |ss|

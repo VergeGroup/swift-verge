@@ -149,8 +149,6 @@ extension MemoizeMap where Input : ChangesType {
   public static func map(_ keyPath: KeyPath<Changes<Input.Value>.Composing, Fragment<Output>>) -> MemoizeMap<Input, Output> {
         
     var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
-
-    let line = #line
     
     Static.modify { cache in
       let keyPathID = KeyPathIdentifierStore.getLocalIdentifier(keyPath)
@@ -197,9 +195,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   /// - Parameter map:
   public static func map(_ keyPath: KeyPath<Changes<Input.Value>.Composing, Output>) -> Self {
     var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
-    
-    let line = #line
-    
+        
     Static.modify { cache in
       let keyPathID = KeyPathIdentifierStore.getLocalIdentifier(keyPath)
       if let id = cache[keyPathID] {
@@ -235,9 +231,7 @@ extension MemoizeMap {
   public static func map(_ keyPath: KeyPath<Input, Output>) -> Self {
             
     var instance = map({ $0[keyPath: keyPath] })
-    
-    let line = #line
-    
+        
     Static.modify { cache in
       let keyPathID = KeyPathIdentifierStore.getLocalIdentifier(keyPath)
       if let id = cache[keyPathID] {

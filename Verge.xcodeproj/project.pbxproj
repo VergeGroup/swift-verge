@@ -23,6 +23,7 @@
 		4B1743AA23C767670074C457 /* VergeRxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1743A923C767670074C457 /* VergeRxTests.swift */; };
 		4B1743AC23C767670074C457 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; };
 		4B1743B323C767D90074C457 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; };
+		4B186CBD2461474E00A0611F /* ReflectingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B186CBC2461474E00A0611F /* ReflectingTests.swift */; };
 		4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */; };
 		4B1C011623D34A6B00BE9B24 /* SessionRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011523D34A6B00BE9B24 /* SessionRootView.swift */; };
 		4B1C011823D34A9F00BE9B24 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011723D34A9F00BE9B24 /* SafariView.swift */; };
@@ -81,6 +82,10 @@
 		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
 		4B86D824244A24B5008D3040 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D823244A24B5008D3040 /* Extensions.swift */; };
 		4B86D826244A2A1D008D3040 /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D825244A2A1D008D3040 /* Sample.swift */; };
+		4B8F5AB024615EE6005F68B6 /* AtomicBridges.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8F5AAE24615EE6005F68B6 /* AtomicBridges.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B8F5AB124615EE6005F68B6 /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5AAF24615EE6005F68B6 /* AtomicBridges.m */; };
+		4B8F5AB7246160AB005F68B6 /* AtomicInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5AB6246160AB005F68B6 /* AtomicInt.swift */; };
+		4B8F5AB9246161B9005F68B6 /* Bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8F5AB824616170005F68B6 /* Bridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B91B3782440B9C4005082D7 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B91B3792440B9C4005082D7 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B94913C239C25C600370067 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
@@ -446,6 +451,7 @@
 		4B1743A723C767670074C457 /* VergeRxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeRxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B1743A923C767670074C457 /* VergeRxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeRxTests.swift; sourceTree = "<group>"; };
 		4B1743AB23C767670074C457 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B186CBC2461474E00A0611F /* ReflectingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflectingTests.swift; sourceTree = "<group>"; };
 		4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoizeMap.swift; sourceTree = "<group>"; };
 		4B1C011523D34A6B00BE9B24 /* SessionRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRootView.swift; sourceTree = "<group>"; };
 		4B1C011723D34A9F00BE9B24 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
@@ -509,6 +515,10 @@
 		4B86D825244A2A1D008D3040 /* Sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sample.swift; sourceTree = "<group>"; };
 		4B89538423CCE3B1002F95C8 /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTests.swift; sourceTree = "<group>"; };
 		4B8EB4F823C034A900035B2A /* Comparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparer.swift; sourceTree = "<group>"; };
+		4B8F5AAE24615EE6005F68B6 /* AtomicBridges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicBridges.h; sourceTree = "<group>"; };
+		4B8F5AAF24615EE6005F68B6 /* AtomicBridges.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AtomicBridges.m; sourceTree = "<group>"; };
+		4B8F5AB6246160AB005F68B6 /* AtomicInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicInt.swift; sourceTree = "<group>"; };
+		4B8F5AB824616170005F68B6 /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B949146239C264D00370067 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -833,6 +843,7 @@
 				4B475BC9239ADE1C008A03E1 /* Info.plist */,
 				4B99D69223AF6C4300E26127 /* ProtocolTests.swift */,
 				4BF21F2F2458C1860045B5C2 /* UtilTests.swift */,
+				4B186CBC2461474E00A0611F /* ReflectingTests.swift */,
 			);
 			path = VergeORMTests;
 			sourceTree = "<group>";
@@ -1125,6 +1136,10 @@
 				4BFA229F23A63B56008D7BCB /* Info.plist */,
 				4BD79C0324477F430073A48B /* VergeConcurrency.swift */,
 				4B4AB16D244DF35E005E7283 /* SynchronizationTracker.swift */,
+				4B8F5AB6246160AB005F68B6 /* AtomicInt.swift */,
+				4B8F5AB824616170005F68B6 /* Bridge.h */,
+				4B8F5AAE24615EE6005F68B6 /* AtomicBridges.h */,
+				4B8F5AAF24615EE6005F68B6 /* AtomicBridges.m */,
 			);
 			path = VergeCore;
 			sourceTree = "<group>";
@@ -1168,7 +1183,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B8F5AB9246161B9005F68B6 /* Bridge.h in Headers */,
 				4BFA22A023A63B56008D7BCB /* VergeCore.h in Headers */,
+				4B8F5AB024615EE6005F68B6 /* AtomicBridges.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1517,6 +1534,7 @@
 					};
 					4BFA229B23A63B55008D7BCB = {
 						CreatedOnToolsVersion = 11.2.1;
+						LastSwiftMigration = 1140;
 					};
 				};
 			};
@@ -1847,6 +1865,7 @@
 				4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */,
 				4B80B74723F947A2000BCFB2 /* SetIndexTests.swift in Sources */,
 				4BC6EFB523A8C99900EFD688 /* State.swift in Sources */,
+				4B186CBD2461474E00A0611F /* ReflectingTests.swift in Sources */,
 				4B80B74323F92B3D000BCFB2 /* HashIndexTests.swift in Sources */,
 				4B6BF62B23AD7B74001E5361 /* CollectionPerformance.swift in Sources */,
 				4BAF902F23A92B69004D6356 /* MiddlewareTests.swift in Sources */,
@@ -1985,8 +2004,10 @@
 			files = (
 				4B73F08924041811006910E6 /* Log.swift in Sources */,
 				4BA3E1A523C359F40095629B /* Signpost.swift in Sources */,
+				4B8F5AB7246160AB005F68B6 /* AtomicInt.swift in Sources */,
 				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
 				4B4AB16E244DF35E005E7283 /* SynchronizationTracker.swift in Sources */,
+				4B8F5AB124615EE6005F68B6 /* AtomicBridges.m in Sources */,
 				4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */,
 				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,
 			);
@@ -2509,6 +2530,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -2537,6 +2559,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3411,6 +3434,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -3439,6 +3463,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3448,6 +3473,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;

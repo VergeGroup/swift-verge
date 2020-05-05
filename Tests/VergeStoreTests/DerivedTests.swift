@@ -247,4 +247,14 @@ final class DerivedTests: XCTestCase {
     withExtendedLifetime(sub) {}
   }
   
+  func testCachingDerived() {
+    
+    let store1 = StoreWrapper()
+    let store2 = StoreWrapper()
+    
+    XCTAssert(store1.derived(.map(\.count)) === store1.derived(.map(\.count)))
+    XCTAssert(store1.derived(.map(\.count)) === store2.derived(.map(\.count)))
+
+  }
+  
 }

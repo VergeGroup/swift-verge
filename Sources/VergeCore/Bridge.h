@@ -19,16 +19,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#import "AtomicBridges.h"
 
-#import <Foundation/Foundation.h>
-
-//! Project version number for VergeSelector.
-FOUNDATION_EXPORT double VergeSelectorVersionNumber;
-
-//! Project version string for VergeSelector.
-FOUNDATION_EXPORT const unsigned char VergeSelectorVersionString[];
-
-#import "Bridge.h"
 // In this header, you should import all the public headers of your framework using statements like #import <VergeSelector/PublicHeader.h>
 
 
