@@ -159,6 +159,8 @@ public class Derived<Value>: DerivedType {
     dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
     queue: DispatchQueue? = nil
     ) -> Derived<NewState> {
+    
+    vergeSignpostEvent("Derived.chain.new")
         
     let d = Derived<NewState>(
       get: .init(makeInitial: {
@@ -208,6 +210,7 @@ public class Derived<Value>: DerivedType {
       return instance
     }
     
+    vergeSignpostEvent("Derived.chain.reuse")
     return cached
   }
   
@@ -467,6 +470,8 @@ extension StoreType {
       asStore().derivedCache.setObject(instance, forKey: identifier)
       return instance
     }
+    
+    vergeSignpostEvent("Store.derived.reuse")
     
     return cached
 
