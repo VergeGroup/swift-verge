@@ -17,7 +17,9 @@
 import Foundation
 import libkern
 
+#if !COCOAPODS
 import VergeObjcBridge
+#endif
 
 extension VergeConcurrency {
   /// A concurrency utility class that supports locking-free synchronization on mutating an object
