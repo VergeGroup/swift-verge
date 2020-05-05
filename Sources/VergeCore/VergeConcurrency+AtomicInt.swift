@@ -29,7 +29,7 @@ extension VergeConcurrency {
         // Create a memory barrier to ensure the entire memory stack is in sync so we
         // can safely retrieve the value. This guarantees the initial value is in sync.
         atomic_thread_fence(memory_order_seq_cst)
-        return wrappedValue
+        return AtomicBridges.atomicLoad(wrappedValueOpaquePointer)
       }
       set {
         while true {
@@ -45,7 +45,13 @@ extension VergeConcurrency {
     ///
     /// - parameter initialValue: The initial value.
     public init(initialValue: Int) {
-      wrappedValue = initialValue
+       wrappedValue = UnsafeMutablePointer<Int>.allocate(capacity: 1)
+       wrappedValue.initialize(to: initialValue)
+    }
+    
+    deinit {
+      wrappedValue.deinitialize(count: 1)
+      wrappedValue.deallocate()
     }
     
     /// Atomically sets the new value, if the current value equals the expected value.
@@ -56,7 +62,9 @@ extension VergeConcurrency {
     @discardableResult
     public func compareAndSet(expect: Int, newValue: Int) -> Bool {
       var mutableExpected = expect
-      return AtomicBridges.compare(wrappedValueOpaquePointer, withExpected: UnsafeMutablePointer<Int>(&mutableExpected), andSwap: newValue)
+      return withUnsafeMutablePointer(to: &mutableExpected) { (pointer) -> Bool in
+        return AtomicBridges.compare(wrappedValueOpaquePointer, withExpected: pointer, andSwap: newValue)
+      }
     }
     
     /// Atomically increment the value and retrieve the new value.
@@ -119,11 +127,12 @@ extension VergeConcurrency {
     
     // MARK: - Private
     
-    private var wrappedValue: Int
+    private var wrappedValue: UnsafeMutablePointer<Int>
     
     private var wrappedValueOpaquePointer: OpaquePointer {
-      return OpaquePointer(UnsafeMutablePointer<Int>(&wrappedValue))
+      return OpaquePointer(wrappedValue)
     }
+      
   }
 
 }
