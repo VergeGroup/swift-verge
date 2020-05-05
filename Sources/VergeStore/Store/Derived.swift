@@ -199,17 +199,11 @@ public class Derived<Value>: DerivedType {
     _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
-    
-    func makeNew() -> Derived<NewState> {
-      chain(map, dropsOutput: { !$0.hasChanges }, queue: queue)
-    }
-    
-    guard let identifier = map.identifier.map({ "\($0)\(String(describing: queue.map(ObjectIdentifier.init)))" }) as NSString? else {
-      return makeNew()
-    }
+           
+    let identifier = "\(map.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
    
     guard let cached = chainCahce.object(forKey: identifier) as? Derived<NewState> else {
-      let instance = makeNew()
+      let instance = chain(map, dropsOutput: { !$0.hasChanges }, queue: queue)
       chainCahce.setObject(instance, forKey: identifier)
       return instance
     }
@@ -217,7 +211,7 @@ public class Derived<Value>: DerivedType {
     return cached
   }
   
-  private let chainCahce = NSCache<NSString, AnyObject>()
+  private let chainCahce = NSMapTable<NSString, AnyObject>.strongToWeakObjects()
   
 }
 
@@ -465,22 +459,17 @@ extension StoreType {
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
-        
-    func makeNew() -> Derived<NewState> {
-      derived(memoizeMap, dropsOutput: { $0.asChanges().noChanges(\.root) }, queue: queue)
-    }
-    
-    guard let identifier = memoizeMap.identifier.map({ "\($0)\(String(describing: queue.map(ObjectIdentifier.init)))" }) as NSString? else {
-      return makeNew()
-    }
+         
+    let identifier = "\(memoizeMap.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
     
     guard let cached = asStore().derivedCache.object(forKey: identifier) as? Derived<NewState> else {
-      let instance = makeNew()
+      let instance = derived(memoizeMap, dropsOutput: { $0.asChanges().noChanges(\.root) }, queue: queue)
       asStore().derivedCache.setObject(instance, forKey: identifier)
       return instance
     }
     
     return cached
+
   }
     
   /// Returns Binding Derived object

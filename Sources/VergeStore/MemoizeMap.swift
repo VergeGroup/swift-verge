@@ -27,7 +27,7 @@ import Foundation
 /// - TODO:
 ///   - make identifier to cache Derived<T>
 public struct MemoizeMap<Input, Output> {
-  
+       
   public enum Result {
     case updated(Output)
     case noChanages
@@ -37,7 +37,7 @@ public struct MemoizeMap<Input, Output> {
   private var _dropInput: (Input) -> Bool
   private var _update: (Input) -> Result
   
-  fileprivate(set) var identifier: NSString?
+  private(set) var identifier: String = UUID().uuidString
     
   public init(
     makeInitial: @escaping (Input) -> Output,
@@ -113,12 +113,6 @@ public struct MemoizeMap<Input, Output> {
    
 }
 
-extension MemoizeMap {
-  private static func makeUniqueKey(modifier: String) -> NSString {
-    "\(modifier)\(ObjectIdentifier(Input.self))\(ObjectIdentifier(Output.self))" as NSString
-  }
-}
-
 extension MemoizeMap where Input : ChangesType {
   
   /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
@@ -155,7 +149,18 @@ extension MemoizeMap where Input : ChangesType {
   public static func map(_ keyPath: KeyPath<Changes<Input.Value>.Composing, Fragment<Output>>) -> MemoizeMap<Input, Output> {
         
     var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
-    instance.identifier = Self.makeUniqueKey(modifier: "\(#file)\(#line)\(ObjectIdentifier(keyPath))")
+
+    let line = #line
+    
+    Static.modify { cache in
+      let keyPathID = KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+      if let id = cache[keyPathID] {
+        instance.identifier = id
+      } else {
+        cache[keyPathID] = instance.identifier
+      }
+    }
+    
     return instance
   }
   
@@ -192,7 +197,18 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   /// - Parameter map:
   public static func map(_ keyPath: KeyPath<Changes<Input.Value>.Composing, Output>) -> Self {
     var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
-    instance.identifier = Self.makeUniqueKey(modifier: "\(#file)\(#line)\(ObjectIdentifier(keyPath))")
+    
+    let line = #line
+    
+    Static.modify { cache in
+      let keyPathID = KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+      if let id = cache[keyPathID] {
+        instance.identifier = id
+      } else {
+        cache[keyPathID] = instance.identifier
+      }
+    }
+    
     return instance
   }
 }
@@ -217,10 +233,51 @@ extension MemoizeMap {
   /// - Parameter map:
   /// - Returns:
   public static func map(_ keyPath: KeyPath<Input, Output>) -> Self {
+            
     var instance = map({ $0[keyPath: keyPath] })
-    instance.identifier = Self.makeUniqueKey(modifier: "\(#file)\(#line)\(ObjectIdentifier(keyPath))")
+    
+    let line = #line
+    
+    Static.modify { cache in
+      let keyPathID = KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+      if let id = cache[keyPathID] {
+        instance.identifier = id
+      } else {
+        cache[keyPathID] = instance.identifier
+      }
+    }
+            
     return instance
   }
   
 }
 
+enum KeyPathIdentifierStore {
+  
+  static var cache: [AnyKeyPath : String] = [:]
+  
+  static func getLocalIdentifier(_ keyPath: AnyKeyPath) -> String {
+    if let id = cache[keyPath] {
+      return id
+    } else {
+      let newID = UUID().uuidString
+      cache[keyPath] = "KeyPath:\(newID)"
+      return newID
+    }
+  }
+  
+}
+
+fileprivate enum Static {
+  private static var cache: VergeConcurrency.Atomic<[Int : [String : String]]> = .init([:])
+  
+  static func modify<Result>(on line: Int = #line, modify: (inout [String : String]) -> Result) -> Result {
+    cache.modify { cache in
+      var target = cache[line, default: [:]]
+      let r = modify(&target)
+      cache[line] = target
+      return r
+    }
+  }
+     
+}
