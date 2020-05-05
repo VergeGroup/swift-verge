@@ -153,7 +153,7 @@ public class Derived<Value>: DerivedType {
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
     
-    vergeSignpostEvent("Derived.chain.new")
+    vergeSignpostEvent("Derived.chain.new", label: "\(type(of: Value.self)) -> \(type(of: NewState.self))")
     
     let d = Derived<NewState>(
       get: .init(makeInitial: {
@@ -191,9 +191,7 @@ public class Derived<Value>: DerivedType {
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
     queue: DispatchQueue? = nil
     ) -> Derived<NewState> {
-    
-    vergeSignpostEvent("Derived.chain.new")
-    
+        
     let derived = chainCahce2.withValue { cache -> Derived<NewState> in
       
       let identifier = "\(map.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
@@ -204,7 +202,7 @@ public class Derived<Value>: DerivedType {
         return instance
       }
       
-      vergeSignpostEvent("Derived.chain.reuse")
+      vergeSignpostEvent("Derived.chain.reuse", label: "\(type(of: Value.self)) -> \(type(of: NewState.self))")
       return cached
     }
     
@@ -245,7 +243,7 @@ public class Derived<Value>: DerivedType {
         return instance
       }
       
-      vergeSignpostEvent("Derived.chain.reuse")
+      vergeSignpostEvent("Derived.chain.reuse", label: "\(type(of: Value.self)) -> \(type(of: NewState.self))")
       return cached
     }
           
@@ -465,6 +463,8 @@ extension StoreType {
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
+    
+    vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
     let derived = Derived<NewState>(
       get: memoizeMap,
       set: { _ in
@@ -501,7 +501,7 @@ extension StoreType {
         return instance
       }
       
-      vergeSignpostEvent("Store.derived.reuse")
+      vergeSignpostEvent("Store.derived.reuse", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
       
       return cached
       
@@ -544,8 +544,8 @@ extension StoreType {
         return instance
       }
       
-      vergeSignpostEvent("Store.derived.reuse")
-      
+      vergeSignpostEvent("Store.derived.reuse", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
+            
       return cached
 
     }
