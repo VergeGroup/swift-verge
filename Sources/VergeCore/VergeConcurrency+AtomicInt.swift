@@ -19,16 +19,15 @@ import libkern
 
 extension VergeConcurrency {
           
-  /// A concurrency utility class that supports locking-free synchronization on mutating an integer
-  /// value. Unlike using a lock, concurrent read and write accesses to this class is allowed. At
-  /// the same time, concurrent operations using the atomic functions provided by this class ensures
-  /// synchronization correctness without the higher cost of locking.
   public class AtomicInt {
     
     /// The current value.
     public var value: Int {
       get {
-        return AtomicBridges.atomicLoad(wrappedValueOpaquePointer)
+        // Create a memory barrier to ensure the entire memory stack is in sync so we
+        // can safely retrieve the value. This guarantees the initial value is in sync.
+        atomic_thread_fence(memory_order_seq_cst)
+        return wrappedValue
       }
       set {
         while true {
@@ -44,13 +43,7 @@ extension VergeConcurrency {
     ///
     /// - parameter initialValue: The initial value.
     public init(initialValue: Int) {
-      wrappedValue = UnsafeMutablePointer<Int>.allocate(capacity: 1)
-      wrappedValue.initialize(to: initialValue)
-    }
-    
-    deinit {
-      wrappedValue.deinitialize(count: 1)
-      wrappedValue.deallocate()
+      wrappedValue = initialValue
     }
     
     /// Atomically sets the new value, if the current value equals the expected value.
@@ -61,9 +54,7 @@ extension VergeConcurrency {
     @discardableResult
     public func compareAndSet(expect: Int, newValue: Int) -> Bool {
       var mutableExpected = expect
-      return withUnsafeMutablePointer(to: &mutableExpected) { (pointer) -> Bool in
-        return AtomicBridges.compare(wrappedValueOpaquePointer, withExpected: pointer, andSwap: newValue)
-      }
+      return AtomicBridges.compare(wrappedValueOpaquePointer, withExpected: UnsafeMutablePointer<Int>(&mutableExpected), andSwap: newValue)
     }
     
     /// Atomically increment the value and retrieve the new value.
@@ -126,10 +117,11 @@ extension VergeConcurrency {
     
     // MARK: - Private
     
-    private var wrappedValue: UnsafeMutablePointer<Int>
+    private var wrappedValue: Int
     
     private var wrappedValueOpaquePointer: OpaquePointer {
-      return OpaquePointer(wrappedValue)
+      return OpaquePointer(UnsafeMutablePointer<Int>(&wrappedValue))
     }
   }
+
 }

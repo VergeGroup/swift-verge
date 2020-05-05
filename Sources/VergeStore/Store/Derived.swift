@@ -201,20 +201,24 @@ public class Derived<Value>: DerivedType {
     _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
-           
-    let identifier = "\(map.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
-   
-    guard let cached = chainCahce.object(forKey: identifier) as? Derived<NewState> else {
-      let instance = chain(map, dropsOutput: { !$0.hasChanges }, queue: queue)
-      chainCahce.setObject(instance, forKey: identifier)
-      return instance
-    }
     
-    vergeSignpostEvent("Derived.chain.reuse")
-    return cached
+    return chainCahce.withValue { cache in
+      
+      let identifier = "\(map.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      
+      guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
+        let instance = chain(map, dropsOutput: { !$0.hasChanges }, queue: queue)
+        cache.setObject(instance, forKey: identifier)
+        return instance
+      }
+      
+      vergeSignpostEvent("Derived.chain.reuse")
+      return cached
+    }
+          
   }
   
-  private let chainCahce = NSMapTable<NSString, AnyObject>.strongToWeakObjects()
+  private let chainCahce = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
   
 }
 
@@ -462,19 +466,23 @@ extension StoreType {
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
-         
-    let identifier = "\(memoizeMap.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
     
-    guard let cached = asStore().derivedCache.object(forKey: identifier) as? Derived<NewState> else {
-      let instance = derived(memoizeMap, dropsOutput: { $0.asChanges().noChanges(\.root) }, queue: queue)
-      asStore().derivedCache.setObject(instance, forKey: identifier)
-      return instance
-    }
-    
-    vergeSignpostEvent("Store.derived.reuse")
-    
-    return cached
+    return asStore().derivedCache.withValue { cache in
+      
+      let identifier = "\(memoizeMap.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      
+      guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
+        let instance = derived(memoizeMap, dropsOutput: { $0.asChanges().noChanges(\.root) }, queue: queue)
+        cache.setObject(instance, forKey: identifier)
+        return instance
+      }
+      
+      vergeSignpostEvent("Store.derived.reuse")
+      
+      return cached
 
+    }
+                
   }
     
   /// Returns Binding Derived object

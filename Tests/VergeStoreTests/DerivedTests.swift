@@ -12,28 +12,8 @@ import XCTest
 import VergeStore
 
 final class DerivedTests: XCTestCase {
-  
-  final class StoreWrapper: StoreWrapperType {
-    
-    typealias State = DemoState
-    
-    enum Activity {}
-    
-    let store = DefaultStore.init(initialState: .init(), logger: nil)
-    
-    func increment() {
-      commit {
-        $0.count += 1
-      }
-    }
-    
-    func empty() {
-      commit { _ in
-      }
-    }
-  }
-  
-  let wrapper = StoreWrapper()
+   
+  let wrapper = DemoStore()
   
   func testSlice() {
                 
@@ -246,15 +226,43 @@ final class DerivedTests: XCTestCase {
     wait(for: [updateCount, update1, update0], timeout: 10)
     withExtendedLifetime(sub) {}
   }
+      
+}
+
+final class DerivedCacheTests: XCTestCase {
   
-  func testCachingDerived() {
+  func test_identify_keypath() {
     
-    let store1 = StoreWrapper()
-    let store2 = StoreWrapper()
+    let store1 = DemoStore()
+    let store2 = DemoStore()
     
     XCTAssert(store1.derived(.map(\.count)) === store1.derived(.map(\.count)))
-    XCTAssert(store1.derived(.map(\.count)) === store2.derived(.map(\.count)))
+    
+    /// Stored in each store
+    XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
+    
+  }
+  
+  func test_identify_by_instance() {
+    
+    let store1 = DemoStore()
+    
+    XCTAssert(store1.derived(.map { $0.count }) !== store1.derived(.map { $0.count }))
+   
+    let map = MemoizeMap<Changes<DemoState>, Int>.map { $0.count }
+    
+    XCTAssert(store1.derived(map) === store1.derived(map))
 
+  }
+  
+  func test_cachingDerived_concurrent() {
+    
+    let store1 = DemoStore()
+    
+    DispatchQueue.concurrentPerform(iterations: 10000) { _ in
+      XCTAssert(store1.derived(.map(\.count)) === store1.derived(.map(\.count)))
+    }
+    
   }
   
 }

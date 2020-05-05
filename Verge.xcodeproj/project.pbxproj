@@ -46,7 +46,7 @@
 		4B475BC8239ADE1C008A03E1 /* VergeORMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */; };
 		4B475BD0239ADEB4008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
 		4B4AB16C244DEEE3005E7283 /* ReproduceDeadlockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */; };
-		4B4AB16E244DF35E005E7283 /* SynchronizationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16D244DF35E005E7283 /* SynchronizationTracker.swift */; };
+		4B4AB16E244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
@@ -84,8 +84,9 @@
 		4B86D826244A2A1D008D3040 /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D825244A2A1D008D3040 /* Sample.swift */; };
 		4B8F5AB024615EE6005F68B6 /* AtomicBridges.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8F5AAE24615EE6005F68B6 /* AtomicBridges.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B8F5AB124615EE6005F68B6 /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5AAF24615EE6005F68B6 /* AtomicBridges.m */; };
-		4B8F5AB7246160AB005F68B6 /* AtomicInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5AB6246160AB005F68B6 /* AtomicInt.swift */; };
+		4B8F5AB7246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */; };
 		4B8F5AB9246161B9005F68B6 /* Bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8F5AB824616170005F68B6 /* Bridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B8F5ABB24616416005F68B6 /* VergeConcurrency+AtomicReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */; };
 		4B91B3782440B9C4005082D7 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B91B3792440B9C4005082D7 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B94913C239C25C600370067 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
@@ -473,7 +474,7 @@
 		4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeORMTests.swift; sourceTree = "<group>"; };
 		4B475BC9239ADE1C008A03E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReproduceDeadlockTests.swift; sourceTree = "<group>"; };
-		4B4AB16D244DF35E005E7283 /* SynchronizationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizationTracker.swift; sourceTree = "<group>"; };
+		4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VergeConcurrency+SynchronizationTracker.swift"; sourceTree = "<group>"; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
 		4B57FD1923A29DAD00E41D06 /* EntityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityType.swift; sourceTree = "<group>"; };
@@ -517,8 +518,9 @@
 		4B8EB4F823C034A900035B2A /* Comparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparer.swift; sourceTree = "<group>"; };
 		4B8F5AAE24615EE6005F68B6 /* AtomicBridges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicBridges.h; sourceTree = "<group>"; };
 		4B8F5AAF24615EE6005F68B6 /* AtomicBridges.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AtomicBridges.m; sourceTree = "<group>"; };
-		4B8F5AB6246160AB005F68B6 /* AtomicInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicInt.swift; sourceTree = "<group>"; };
+		4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VergeConcurrency+AtomicInt.swift"; sourceTree = "<group>"; };
 		4B8F5AB824616170005F68B6 /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
+		4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VergeConcurrency+AtomicReference.swift"; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B949146239C264D00370067 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -1135,8 +1137,9 @@
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
 				4BFA229F23A63B56008D7BCB /* Info.plist */,
 				4BD79C0324477F430073A48B /* VergeConcurrency.swift */,
-				4B4AB16D244DF35E005E7283 /* SynchronizationTracker.swift */,
-				4B8F5AB6246160AB005F68B6 /* AtomicInt.swift */,
+				4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */,
+				4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */,
+				4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */,
 				4B8F5AB824616170005F68B6 /* Bridge.h */,
 				4B8F5AAE24615EE6005F68B6 /* AtomicBridges.h */,
 				4B8F5AAF24615EE6005F68B6 /* AtomicBridges.m */,
@@ -2004,11 +2007,12 @@
 			files = (
 				4B73F08924041811006910E6 /* Log.swift in Sources */,
 				4BA3E1A523C359F40095629B /* Signpost.swift in Sources */,
-				4B8F5AB7246160AB005F68B6 /* AtomicInt.swift in Sources */,
+				4B8F5AB7246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift in Sources */,
 				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
-				4B4AB16E244DF35E005E7283 /* SynchronizationTracker.swift in Sources */,
+				4B4AB16E244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift in Sources */,
 				4B8F5AB124615EE6005F68B6 /* AtomicBridges.m in Sources */,
 				4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */,
+				4B8F5ABB24616416005F68B6 /* VergeConcurrency+AtomicReference.swift in Sources */,
 				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

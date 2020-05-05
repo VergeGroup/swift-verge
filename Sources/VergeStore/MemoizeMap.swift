@@ -21,6 +21,12 @@
 
 import Foundation
 
+#if !COCOAPODS
+import VergeCore
+#endif
+
+fileprivate let counter = VergeConcurrency.AtomicInt(initialValue: 0)
+
 /// A pipeline object to make derived data from the source store.
 /// It supports Memoization
 ///
@@ -37,7 +43,7 @@ public struct MemoizeMap<Input, Output> {
   private var _dropInput: (Input) -> Bool
   private var _update: (Input) -> Result
   
-  private(set) var identifier: String = UUID().uuidString
+  fileprivate(set) var identifier: Int = counter.getAndIncrement()
     
   public init(
     makeInitial: @escaping (Input) -> Output,
@@ -150,14 +156,11 @@ extension MemoizeMap where Input : ChangesType {
         
     var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
     
-    Static.modify { cache in
-      let keyPathID = KeyPathIdentifierStore.getLocalIdentifier(keyPath)
-      if let id = cache[keyPathID] {
-        instance.identifier = id
-      } else {
-        cache[keyPathID] = instance.identifier
-      }
-    }
+    Static.modify(
+      on: Static.cache1,
+      for: &instance,
+      key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+    )
     
     return instance
   }
@@ -196,14 +199,11 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   public static func map(_ keyPath: KeyPath<Changes<Input.Value>.Composing, Output>) -> Self {
     var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
         
-    Static.modify { cache in
-      let keyPathID = KeyPathIdentifierStore.getLocalIdentifier(keyPath)
-      if let id = cache[keyPathID] {
-        instance.identifier = id
-      } else {
-        cache[keyPathID] = instance.identifier
-      }
-    }
+    Static.modify(
+      on: Static.cache2,
+      for: &instance,
+      key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+    )
     
     return instance
   }
@@ -231,46 +231,60 @@ extension MemoizeMap {
   public static func map(_ keyPath: KeyPath<Input, Output>) -> Self {
             
     var instance = map({ $0[keyPath: keyPath] })
-        
-    Static.modify { cache in
-      let keyPathID = KeyPathIdentifierStore.getLocalIdentifier(keyPath)
-      if let id = cache[keyPathID] {
-        instance.identifier = id
-      } else {
-        cache[keyPathID] = instance.identifier
-      }
-    }
-            
+    
+    Static.modify(
+      on: Static.cache3,
+      for: &instance,
+      key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+    )
+                    
     return instance
   }
   
 }
 
+// No Thread safety
 enum KeyPathIdentifierStore {
   
-  static var cache: [AnyKeyPath : String] = [:]
+  private static let counter = VergeConcurrency.AtomicInt(initialValue: 0)
   
-  static func getLocalIdentifier(_ keyPath: AnyKeyPath) -> String {
-    if let id = cache[keyPath] {
-      return id
-    } else {
-      let newID = UUID().uuidString
-      cache[keyPath] = "KeyPath:\(newID)"
-      return newID
+  static var cache: VergeConcurrency.UnfairLockAtomic<[AnyKeyPath : Int]> = .init([:])
+  
+  static func getLocalIdentifier(_ keyPath: AnyKeyPath) -> Int {
+    cache.modify { cache -> Int in
+      if let value = cache[keyPath] {
+        return value
+      } else {
+        let v = counter.getAndIncrement()
+        cache[keyPath] = v
+        return v
+      }
     }
   }
   
 }
 
 fileprivate enum Static {
-  private static var cache: VergeConcurrency.Atomic<[Int : [String : String]]> = .init([:])
   
-  static func modify<Result>(on line: Int = #line, modify: (inout [String : String]) -> Result) -> Result {
-    cache.modify { cache in
-      var target = cache[line, default: [:]]
-      let r = modify(&target)
-      cache[line] = target
-      return r
+  static var cache1: VergeConcurrency.Atomic<[String : Int]> = .init([:])
+  static var cache2: VergeConcurrency.Atomic<[String : Int]> = .init([:])
+  static var cache3: VergeConcurrency.Atomic<[String : Int]> = .init([:])
+  
+  static func modify<I, O>(
+    on storage: VergeConcurrency.Atomic<[String : Int]>,
+    for memoizeMap: inout MemoizeMap<I, O>,
+    key: Int
+  ) {
+    
+    storage.modify { cache in
+      
+      let combinedKey = "\(ObjectIdentifier(I.self))\(ObjectIdentifier(O.self))\(key)"
+      
+      if let id = cache[combinedKey] {
+        memoizeMap.identifier = id
+      } else {
+        cache[combinedKey] = memoizeMap.identifier
+      }
     }
   }
      
