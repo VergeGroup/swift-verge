@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<playground version='6.0' target-platform='ios' display-mode='rendered'>
+    <pages>
+        <page name='PlainStorePattern1'/>
+        <page name='PlainStorePattern2'/>
+        <page name='PlainStorePattern3'/>
+        <page name='PlainStorePattern4'/>
+        <page name='PlainStorePattern5'/>
+        <page name='VergeStorePattern'/>
+    </pages>
+</playground>
