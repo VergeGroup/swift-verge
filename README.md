@@ -2,9 +2,9 @@
 
 ## Verge 7.0.0 rc.1
 
-![](https://user-images.githubusercontent.com/1888355/80621676-98133a80-8a82-11ea-952f-3c3e52f9c222.png)
+![](https://user-images.githubusercontent.com/1888355/81214980-9a8e0b00-9013-11ea-8828-1f7c2fc53b87.png)
 
-> 🚧 Verge 7.0 is still in development. API and the concept of Verge might be changed a bit.
+> 🎪 Verge 7.0 release is almost there! (Currently quality checking)
 
 [**🔗 You can see more detail of Verge on Documentation**](https://muukii-app.gitbook.io/verge/)
 
