@@ -29,7 +29,7 @@ The characteristics are
 * Supports binding with Combine and RxSwift
 * Supports normalizing the state with ORM.
 
-<details><summary>Differences between other Flux libraries in iOS</summary>
+<details><summary>🌟 Differences between other Flux libraries in iOS</summary>
 <p>
 
 Firstly, Verge provides the functions to keep excellent performance in using Store-Pattern.
@@ -66,7 +66,7 @@ Specifically:
 </p>
 </details>
 
-<details><summary>See the first look of code</summary>
+<details><summary>🌟 Example code</summary>
 <p>
 
 ```swift
