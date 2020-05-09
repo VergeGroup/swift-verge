@@ -1,5 +1,7 @@
 # Verge - Flux and ORM for creating iOS App with SwiftUI and UIKit
 
+<sub>A Store-Pattern based data-flow architecture. Highly inspired by Vuex</sub>
+
 ## Verge 7.0.0 rc.1
 
 ![](https://user-images.githubusercontent.com/1888355/81214980-9a8e0b00-9013-11ea-8828-1f7c2fc53b87.png)
@@ -7,8 +9,6 @@
 > 🎪 Verge 7.0 release is almost there! (Currently quality checking)
 
 [**🔗 You can see more detail of Verge on Documentation**](https://muukii-app.gitbook.io/verge/)
-
-**A Store-Pattern based data-flow architecture.**
 
 <details><summary>See the first look of code</summary>
 <p>
