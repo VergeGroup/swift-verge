@@ -1,4 +1,4 @@
-# Verge - Flux and ORM for creating iOS App with SwiftUI and UIKit
+# Verge - a full-stack flux library for iOS App - SwiftUI / UIKit
 
 [![Swift 5.2](https://img.shields.io/badge/swift-5.2-ED523F.svg?style=flat)](https://swift.org/download/)
 ![Tests](https://github.com/muukii/Verge/workflows/Tests/badge.svg)
