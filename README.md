@@ -4,7 +4,7 @@
 
 ## Verge 7.0.0 rc.1
 
-![](https://user-images.githubusercontent.com/1888355/81214980-9a8e0b00-9013-11ea-8828-1f7c2fc53b87.png)
+![](https://user-images.githubusercontent.com/1888355/81477721-268e7580-9254-11ea-94fa-1c2135cdc16f.png)
 
 > 🎪 Verge 7.0 release is almost there! (Currently quality checking)
 
