@@ -1,12 +1,62 @@
 # Verge - Flux and ORM for creating iOS App with SwiftUI and UIKit
 
-<sub>A Store-Pattern based data-flow architecture. Highly inspired by Vuex</sub>
-
-## Verge 7.0.0 rc.1
+<sub>A Store-Pattern based data-flow architecture. Highly inspired by Vuex</sub><br>
+<sub>🎪 Verge 7.0 release is almost there! (Currently quality checking)</sub>
 
 ![](https://user-images.githubusercontent.com/1888355/81477721-268e7580-9254-11ea-94fa-1c2135cdc16f.png)
 
-> 🎪 Verge 7.0 release is almost there! (Currently quality checking)
+## Differences between other Flux libraries in iOS
+
+Firstly, Verge provides the functions to keep excellent performance in using Store-Pattern.
+
+Verge focuses on using in the real-world.
+
+For example, the application must have many features depends on its business.<br>
+Such as the application might be getting complicated.
+
+To solve this issue, we can choose Store-Pattern such as flux.
+
+At a glance, Flux architecture is amazing.<br>
+However, we have to follow the disadvantages behind it.
+
+They are coming from the application runs with Data-Driven (Mostly).<br>
+Data-Driven will cause some expensive calculations in the application that depends on the complexity of the application.<br>
+Sometimes, we may face some performance issues we can't overlook it.
+
+Redux and Vuex are already following that.
+
+- Redux
+  - reselect
+  - ORM
+- Vuex
+  - Getters
+  - ORM
+
+Verge is trying to do that in iOS application with Swift.
+
+Specifically:
+- Derived
+- ORM
+
+## Overview
+
+The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
+
+Plus, releasing from so many definition of the actions.<br>
+To be more Swift's Style on the writing code.
+
+`store.myOperation()` instead of `store.dispatch(.myOperation)`
+
+The characteristics are
+
+* Creates one or more Dispatcher. \(Single store, multiple dispatcher\)
+* A dispatcher can have dependencies service needs. \(e.g. API Client, DB\)
+* Method based dispatching action
+* Emits any events that isolated from State It's for SwiftUI's onReceive\(:\)
+* Supports Logging \(Commit, Performance monitoring\)
+* Supports binding with Combine and RxSwift
+* Supports normalizing the state with ORM.
+
 
 [**🔗 You can see more detail of Verge on Documentation**](https://muukii-app.gitbook.io/verge/)
 
@@ -62,58 +112,6 @@ struct MyView: View {
 
 </p>
 </details>
-
-## Overview
-
-The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
-
-Plus, releasing from so many definition of the actions.<br>
-To be more Swift's Style on the writing code.
-
-`store.myOperation()` instead of `store.dispatch(.myOperation)`
-
-The characteristics are
-
-* **Creates one or more Dispatcher. \(Single store, multiple dispatcher\)**
-* **A dispatcher can have dependencies service needs. \(e.g. API Client, DB\)**
-* **No switch-case to handle Mutation and Action**
-* **Emits any events that isolated from State It's for SwiftUI's onReceive\(:\)**
-* **Supports Logging \(Commit, Action, Performance monitoring\)**
-* **Supports binding with Combine and RxSwift**
-* **Supports normalizing the state with ORM.**
-
-## What differences between other Flux libraries in the iOS application world
-
-Firstly, Verge provides the functions to keep excellent performance in using Store-Pattern.
-
-Verge focuses on using in the real-world.
-
-For example, the application must have many features depends on its business.<br>
-Such as the application might be getting complicated.
-
-To solve this issue, we can choose Store-Pattern such as flux.
-
-At a glance, Flux architecture is amazing.<br>
-However, we have to follow the disadvantages behind it.
-
-They are coming from the application runs with Data-Driven (Mostly).<br>
-Data-Driven will cause some expensive calculations in the application that depends on the complexity of the application.<br>
-Sometimes, we may face some performance issues we can't overlook it.
-
-Redux and Vuex are already following that.
-
-- Redux
-  - reselect
-  - ORM
-- Vuex
-  - Getters
-  - ORM
-
-Verge is trying to do that in iOS application with Swift.
-
-Specifically:
-- Derived
-- ORM
 
 ## Prepare moving to SwiftUI from now with Verge
 
