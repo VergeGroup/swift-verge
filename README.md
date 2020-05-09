@@ -10,7 +10,27 @@
 
 <img width="480px" src="https://user-images.githubusercontent.com/1888355/81477721-268e7580-9254-11ea-94fa-1c2135cdc16f.png"/>
 
-## Differences between other Flux libraries in iOS
+## Overview
+
+The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
+
+Plus, releasing from so many definition of the actions.<br>
+To be more Swift's Style on the writing code.
+
+`store.myOperation()` instead of `store.dispatch(.myOperation)`
+
+The characteristics are
+
+* Creates one or more Dispatcher. \(Single store, multiple dispatcher\)
+* A dispatcher can have dependencies service needs. \(e.g. API Client, DB\)
+* Method based dispatching action
+* Emits any events that isolated from State It's for SwiftUI's onReceive\(:\)
+* Supports Logging \(Commit, Performance monitoring\)
+* Supports binding with Combine and RxSwift
+* Supports normalizing the state with ORM.
+
+<details><summary>Differences between other Flux libraries in iOS</summary>
+<p>
 
 Firstly, Verge provides the functions to keep excellent performance in using Store-Pattern.
 
@@ -43,25 +63,8 @@ Specifically:
 - Derived
 - ORM
 
-## Overview
-
-The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
-
-Plus, releasing from so many definition of the actions.<br>
-To be more Swift's Style on the writing code.
-
-`store.myOperation()` instead of `store.dispatch(.myOperation)`
-
-The characteristics are
-
-* Creates one or more Dispatcher. \(Single store, multiple dispatcher\)
-* A dispatcher can have dependencies service needs. \(e.g. API Client, DB\)
-* Method based dispatching action
-* Emits any events that isolated from State It's for SwiftUI's onReceive\(:\)
-* Supports Logging \(Commit, Performance monitoring\)
-* Supports binding with Combine and RxSwift
-* Supports normalizing the state with ORM.
-
+</p>
+</details>
 
 [**🔗 You can see more detail of Verge on Documentation**](https://muukii-app.gitbook.io/verge/)
 
@@ -118,6 +121,33 @@ struct MyView: View {
 </p>
 </details>
 
+## Modules overview
+
+### 📦 Store
+
+It provides core functions of Store-pattern.
+
+- State supports computed property with caching (like [Vuex's Getters](https://vuex.vuejs.org/guide/getters.html))
+- Derived object to create derived data from state-tree with performant (like [redux/reselect](https://github.com/reduxjs/reselect))
+
+### 📦 ORM
+
+It provides the function that manages performant many entity objects.<br>
+Technically, using Normalization.
+
+In the application that uses many entity objects, we sure highly recommend using such as ORM using Normalization.
+
+About more detail,
+https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape
+
+### 📦 Rx Extensions
+
+It provides several observable that compatible with RxSwift.
+
+## Usage
+
+[Please check it from here](https://muukii-app.gitbook.io/verge/)
+
 ## Prepare moving to SwiftUI from now with Verge
 
 SwiftUI's concept is similar to the concept of React, Vue, and Elm. <br>
@@ -130,33 +160,6 @@ And We can't say SwiftUI is ready for top production. <br>
 However, it would change.
 
 It's better to use the state management that fits SwiftUI from now. It's not only for that, current UIKit based applications can get more productivity as well.
-
-## Usage
-
-[Please check it from here](https://muukii-app.gitbook.io/verge/)
-
-## Modules overview
-
-### Store
-
-It provides core functions of Store-pattern.
-
-- State supports computed property with caching (like [Vuex's Getters](https://vuex.vuejs.org/guide/getters.html))
-- Derived object to create derived data from state-tree with performant (like [redux/reselect](https://github.com/reduxjs/reselect))
-
-### ORM
-
-It provides the function that manages performant many entity objects.<br>
-Technically, using Normalization.
-
-In the application that uses many entity objects, we sure highly recommend using such as ORM using Normalization.
-
-About more detail,
-https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape
-
-### Rx Extensions
-
-It provides several observable that compatible with RxSwift.
 
 ## Installation
 
