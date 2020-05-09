@@ -21,13 +21,13 @@ To be more Swift's Style on the writing code.
 
 The characteristics are
 
-* Creates one or more Dispatcher. \(Single store, multiple dispatcher\)
-* A dispatcher can have dependencies service needs. \(e.g. API Client, DB\)
 * Method based dispatching action
+* Separating the code in a large app
 * Emits any events that isolated from State It's for SwiftUI's onReceive\(:\)
-* Supports Logging \(Commit, Performance monitoring\)
-* Supports binding with Combine and RxSwift
-* Supports normalizing the state with ORM.
+* Logging \(Commit, Performance monitoring\)
+* Binding with Combine and RxSwift
+* Normalizing the state with ORM
+* Multi-threading
 
 <details><summary>🌟 Differences between other Flux libraries in iOS</summary>
 <p>
