@@ -1,5 +1,10 @@
 # Verge - Flux and ORM for creating iOS App with SwiftUI and UIKit
 
+[![Swift 5.2](https://img.shields.io/badge/swift-5.2-ED523F.svg?style=flat)](https://swift.org/download/)
+![Tests](https://github.com/muukii/Verge/workflows/Tests/badge.svg)
+![cocoapods](https://img.shields.io/cocoapods/v/Verge)
+
+
 <sub>A Store-Pattern based data-flow architecture. Highly inspired by Vuex</sub><br>
 <sub>🎪 Verge 7.0 release is almost there! (Currently quality checking)</sub>
 
