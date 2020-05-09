@@ -318,14 +318,14 @@ extension Derived where Value == Any {
                 
         let _s0 = s0.sinkChanges(dropsFirst: true, queue: nil) { (s0) in
           buffer.modify { value in
-            value.0 = s0.current
+            value.0 = s0.primitive
             callback(value)
           }
         }
         
         let _s1 = s1.sinkChanges(dropsFirst: true, queue: nil) { (s1) in
           buffer.modify { value in
-            value.1 = s1.current
+            value.1 = s1.primitive
             callback(value)
           }
         }
@@ -366,21 +366,21 @@ extension Derived where Value == Any {
         
         let _s0 = s0.sinkChanges(dropsFirst: true, queue: nil) { (s0) in
           buffer.modify { value in
-            value.0 = s0.current
+            value.0 = s0.primitive
             callback(value)
           }
         }
         
         let _s1 = s1.sinkChanges(dropsFirst: true, queue: nil) { (s1) in
           buffer.modify { value in
-            value.1 = s1.current
+            value.1 = s1.primitive
             callback(value)
           }
         }
         
         let _s2 = s2.sinkChanges(dropsFirst: true, queue: nil) { (s2) in
           buffer.modify { value in
-            value.2 = s2.current
+            value.2 = s2.primitive
             callback(value)
           }
         }

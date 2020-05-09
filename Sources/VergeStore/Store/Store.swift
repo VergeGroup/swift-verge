@@ -63,7 +63,7 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
       
   /// A current state.
   public var state: State {
-    _backingStorage.value.current
+    _backingStorage.value.primitive
   }
   
   /// A current changes state.
@@ -116,7 +116,7 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
     
     let returnValue = try _backingStorage.update { (state) -> Result in
       let startedTime = CFAbsoluteTimeGetCurrent()
-      var current = state.current
+      var current = state.primitive
       let r = try mutation(&current)
       state = state.makeNextChanges(with: current)
       elapsed = CFAbsoluteTimeGetCurrent() - startedTime
@@ -275,7 +275,7 @@ extension Store {
   ///
   /// Guarantees to emit the first event on started subscribing.
   public var statePublisher: AnyPublisher<State, Never> {
-    _backingStorage.valuePublisher.map(\.current).eraseToAnyPublisher()
+    _backingStorage.valuePublisher.map(\.primitive).eraseToAnyPublisher()
   }
     
   /// A publisher that repeatedly emits the changes when state updated

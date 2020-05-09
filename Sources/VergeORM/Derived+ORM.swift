@@ -111,7 +111,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
       makeInitial: { changes in
         .init(
           id: entityID,
-          entity: path(changes.current).entities.table(Entity.self).find(by: entityID)
+          entity: path(changes.primitive).entities.table(Entity.self).find(by: entityID)
         )
     },
       update: { changes in
@@ -127,7 +127,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
           return .noChanages
         }
         
-        let entity = path(changes.current).entities.table(Entity.self).find(by: entityID)
+        let entity = path(changes.primitive).entities.table(Entity.self).find(by: entityID)
         return .updated(.init(id: entityID, entity: entity))
     })
   }

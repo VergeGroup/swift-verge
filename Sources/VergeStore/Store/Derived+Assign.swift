@@ -46,7 +46,7 @@ extension Derived {
   ) -> VergeAnyCancellable {
     sinkChanges { [weak object] c in
       guard !dropsOutput(c) else { return }
-      object?[keyPath: keyPath] = c.current
+      object?[keyPath: keyPath] = c.primitive
     }
   }
     
@@ -120,7 +120,7 @@ extension Store {
     return { [weak self] value in
       guard !dropsOutput(value) else { return }
       self?.commit {
-        $0[keyPath: keyPath] = value.current
+        $0[keyPath: keyPath] = value.primitive
       }
     }
   }
