@@ -66,8 +66,6 @@ Specifically:
 </p>
 </details>
 
-[**🔗 You can see more detail of Verge on Documentation**](https://muukii-app.gitbook.io/verge/)
-
 <details><summary>See the first look of code</summary>
 <p>
 
@@ -146,7 +144,7 @@ It provides several observable that compatible with RxSwift.
 
 ## Usage
 
-[Please check it from here](https://muukii-app.gitbook.io/verge/)
+[**🔗 You can see more detail of Verge on Documentation**](https://muukii-app.gitbook.io/verge/)
 
 ## Prepare moving to SwiftUI from now with Verge
 
