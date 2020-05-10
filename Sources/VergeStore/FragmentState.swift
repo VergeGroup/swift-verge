@@ -21,7 +21,7 @@
 
 import Foundation
 
-public protocol FragmentType {
+public protocol FragmentType : Equatable {
   associatedtype State
   var version: UInt64 { get }
 }
@@ -46,6 +46,10 @@ public protocol FragmentType {
 @propertyWrapper
 public struct Fragment<State>: FragmentType {
   
+  public static func == (lhs: Fragment<State>, rhs: Fragment<State>) -> Bool {
+    lhs.version == rhs.version
+  }
+    
   public var version: UInt64 {
     _read {
       yield counter.version
@@ -68,6 +72,12 @@ public struct Fragment<State>: FragmentType {
     self
   }
   
+}
+
+extension Fragment where State : Equatable {
+  public static func == (lhs: Fragment<State>, rhs: Fragment<State>) -> Bool {
+    lhs.version == rhs.version || lhs.wrappedValue == rhs.wrappedValue
+  }
 }
 
 extension Comparer where Input : FragmentType {
