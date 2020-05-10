@@ -156,7 +156,7 @@ public class Derived<Value>: DerivedType {
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkState")
+  @available(*, deprecated, renamed: "sinkValue")
   public func subscribeChanges(
     dropsFirst: Bool = false,
     queue: TargetQueue? = nil,
