@@ -313,7 +313,7 @@ extension Derived where Value : Equatable {
   /// Receives a value only changed
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkStatePrimitiveValue")
+  @available(*, deprecated, renamed: "sinkChangedPrimitiveValue")
   public func sinkChangedValue(
     dropsFirst: Bool = false,
     queue: TargetQueue? = nil,
