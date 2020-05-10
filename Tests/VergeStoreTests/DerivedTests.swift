@@ -259,8 +259,8 @@ final class DerivedCacheTests: XCTestCase {
     let store1 = DemoStore()
     let store2 = DemoStore()
     
-    let queue = DispatchQueue(label: "test")
-    let queue2 = DispatchQueue(label: "test")
+    let queue = TargetQueue.specific(DispatchQueue(label: "test"))
+    let queue2 = TargetQueue.specific(DispatchQueue(label: "test"))
     
     XCTAssert(store1.derived(.map(\.count), queue: queue) === store1.derived(.map(\.count), queue: queue))
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))
@@ -274,7 +274,7 @@ final class DerivedCacheTests: XCTestCase {
     let store1 = DemoStore()
     let store2 = DemoStore()
     
-    let queue = DispatchQueue.global()
+    let queue = TargetQueue.specific(DispatchQueue.global())
     
     XCTAssert(store1.derived(.map(\.count), queue: queue) === store1.derived(.map(\.count), queue: queue))
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))
