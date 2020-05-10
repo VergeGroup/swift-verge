@@ -21,13 +21,24 @@
 
 import Foundation
 
-// currently light-weight
-public enum Scheduler {
+/// Describes queue to dispatch event
+/// Currently light-weight impl
+public enum TargetQueue {
+  
+  /// Use main queue, dispatches if needed (If it's already on main-queue, it won't)
   case main
-  case background(DispatchQueue)
+  /// Use specified queue, always dispatches
+  case specific(DispatchQueue)
 }
 
-extension Scheduler {
+extension TargetQueue {
+  
+  var identifier: String {
+    switch self {
+    case .main: return "main"
+    case .specific(let q): return "background-\(ObjectIdentifier(q))"
+    }
+  }
   
   func executor() -> (@escaping () -> Void) -> Void {
     
@@ -40,7 +51,7 @@ extension Scheduler {
           DispatchQueue.main.async(execute: block)
         }
       }
-    case .background(let queue):
+    case .specific(let queue):
       return { block in
         queue.async(execute: block)
       }

@@ -122,7 +122,7 @@ public class Derived<Value>: DerivedType {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkChanges(
     dropsFirst: Bool = false,
-    queue: DispatchQueue? = nil,
+    queue: TargetQueue? = nil,
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     
@@ -142,7 +142,7 @@ public class Derived<Value>: DerivedType {
   @available(*, deprecated, renamed: "sinkChanges")
   public func subscribeChanges(
     dropsFirst: Bool = false,
-    queue: DispatchQueue? = nil,
+    queue: TargetQueue? = nil,
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     sinkChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -150,7 +150,7 @@ public class Derived<Value>: DerivedType {
   
   fileprivate func _makeChain<NewState>(
     _ map: MemoizeMap<Changes<Value>, NewState>,
-    queue: DispatchQueue? = nil
+    queue: TargetQueue? = nil
   ) -> Derived<NewState> {
     
     vergeSignpostEvent("Derived.chain.new", label: "\(type(of: Value.self)) -> \(type(of: NewState.self))")
@@ -189,12 +189,12 @@ public class Derived<Value>: DerivedType {
   public func chain<NewState>(
     _ map: MemoizeMap<Changes<Value>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
-    queue: DispatchQueue? = nil
+    queue: TargetQueue? = nil
     ) -> Derived<NewState> {
         
     let derived = chainCahce2.withValue { cache -> Derived<NewState> in
       
-      let identifier = "\(map.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      let identifier = "\(map.identifier)\(String(describing: queue?.identifier))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeChain(map, queue: queue)
@@ -229,12 +229,12 @@ public class Derived<Value>: DerivedType {
   /// - Returns: Derived object that cached depends on the specified parameters
   public func chain<NewState: Equatable>(
     _ map: MemoizeMap<Changes<Value>, NewState>,
-    queue: DispatchQueue? = nil
+    queue: TargetQueue? = nil
   ) -> Derived<NewState> {
     
     return chainCahce1.withValue { cache in
       
-      let identifier = "\(map.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      let identifier = "\(map.identifier)\(String(describing: queue?.identifier))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeChain(map, queue: queue)
@@ -281,7 +281,7 @@ extension Derived where Value : Equatable {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkChangedValue(
     dropsFirst: Bool = false,
-    queue: DispatchQueue? = nil,
+    queue: TargetQueue? = nil,
     receive: @escaping (Value) -> Void
   ) -> VergeAnyCancellable {
     sinkChanges(dropsFirst: dropsFirst, queue: queue) { (changes) in
@@ -461,7 +461,7 @@ extension StoreType {
   
   private func _makeDerived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
-    queue: DispatchQueue? = nil
+    queue: TargetQueue? = nil
   ) -> Derived<NewState> {
     
     vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
@@ -488,12 +488,12 @@ extension StoreType {
   public func derived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
-    queue: DispatchQueue? = nil
+    queue: TargetQueue? = nil
   ) -> Derived<NewState> {
         
     let derived = asStore().derivedCache2.withValue { cache -> Derived<NewState> in
       
-      let identifier = "\(memoizeMap.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      let identifier = "\(memoizeMap.identifier)\(String(describing: queue?.identifier))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeDerived(memoizeMap, queue: queue)
@@ -530,12 +530,12 @@ extension StoreType {
   /// - Returns: Derived object that cached depends on the specified parameters
   public func derived<NewState: Equatable>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
-    queue: DispatchQueue? = nil
+    queue: TargetQueue? = nil
   ) -> Derived<NewState> {
     
     return asStore().derivedCache1.withValue { cache in
       
-      let identifier = "\(memoizeMap.identifier)\(String(describing: queue.map(ObjectIdentifier.init)))" as NSString
+      let identifier = "\(memoizeMap.identifier)\(String(describing: queue?.identifier))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeDerived(memoizeMap, queue: queue)

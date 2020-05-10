@@ -119,7 +119,7 @@
 		4BAE9FEA21DFA75A003DDF3D /* Verge+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */; };
 		4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */; };
 		4BAF902F23A92B69004D6356 /* MiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */; };
-		4BB1F98C2465ACB900AF5F0C /* Scheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB1F98B2465ACB900AF5F0C /* Scheduler.swift */; };
+		4BB1F98C2465ACB900AF5F0C /* TargetQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */; };
 		4BB451D223D446C00034CA58 /* AuthResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB451D123D446C00034CA58 /* AuthResponse.swift */; };
 		4BB4F7E223D329E30039C897 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F7E123D329E30039C897 /* AppDelegate.swift */; };
 		4BB4F7E423D329E30039C897 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F7E323D329E30039C897 /* SceneDelegate.swift */; };
@@ -567,7 +567,7 @@
 		4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Verge+Extension.swift"; sourceTree = "<group>"; };
 		4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddlewareTests.swift; sourceTree = "<group>"; };
-		4BB1F98B2465ACB900AF5F0C /* Scheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scheduler.swift; sourceTree = "<group>"; };
+		4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetQueue.swift; sourceTree = "<group>"; };
 		4BB451D123D446C00034CA58 /* AuthResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthResponse.swift; sourceTree = "<group>"; };
 		4BB4F7DF23D329E20039C897 /* SpotifyDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpotifyDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BB4F7E123D329E30039C897 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -941,7 +941,7 @@
 				4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */,
 				4BF470CC23CC36E8001A1D5D /* FragmentState.swift */,
 				4BF470D123CC3A43001A1D5D /* VersionCounter.swift */,
-				4BB1F98B2465ACB900AF5F0C /* Scheduler.swift */,
+				4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */,
 			);
 			path = VergeStore;
 			sourceTree = "<group>";
@@ -2015,7 +2015,7 @@
 				4B6B77AB243FA3EC00E0C0EA /* _StateTypeContainer.swift in Sources */,
 				4B0AFD6D2388643400AABA90 /* DefaultStoreLogger.swift in Sources */,
 				4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */,
-				4BB1F98C2465ACB900AF5F0C /* Scheduler.swift in Sources */,
+				4BB1F98C2465ACB900AF5F0C /* TargetQueue.swift in Sources */,
 				4BCE88B6245B1B8A006E20C3 /* ActivityTrace.swift in Sources */,
 				4BDB78222447934A00675D03 /* StoreWrapperType.swift in Sources */,
 				4B1F19C1243A82BC00CED46B /* StateType.swift in Sources */,

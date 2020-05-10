@@ -83,8 +83,11 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   /// You shouldn't access this directly unless special case.
   private let _backingStorage: StateStorage<Changes<State>>
   private let _activityEmitter: EventEmitter<Activity> = .init()
-  
+    
+  /// Cache for derived object each method. Don't share it with between methods.
   let derivedCache1 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
+  
+  /// Cache for derived object each method. Don't share it with between methods.
   let derivedCache2 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
   
   public private(set) var logger: StoreLogger?
@@ -162,21 +165,21 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkChanges(
     dropsFirst: Bool = false,
-    queue: DispatchQueue? = nil,
+    queue: TargetQueue? = nil,
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
     
-    if let queue = queue {
+    if let execute = queue?.executor() {
       
       if !dropsFirst {
         let value = _backingStorage.value.droppedPrevious()
-        queue.async {
+        execute {
           receive(value)
         }
       }
       
       let cancellable = _backingStorage.addDidUpdate { newValue in
-        queue.async {
+        execute {
           receive(newValue)
         }
       }
@@ -208,7 +211,7 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   @available(*, deprecated, renamed: "sinkChanges")
   public func subscribeChanges(
     dropsFirst: Bool = false,
-    queue: DispatchQueue? = nil,
+    queue: TargetQueue? = nil,
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
    sinkChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -218,13 +221,13 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkActivity(
-    queue: DispatchQueue? = nil,
+    queue: TargetQueue? = nil,
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
     
-    if let queue = queue {
+    if let execute = queue?.executor() {
       let cancellable = _activityEmitter.add { (activity) in
-        queue.async {
+        execute {
           receive(activity)
         }
       }
@@ -245,7 +248,7 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   @available(*, deprecated, renamed: "sinkActivity")
   public func subscribeActivity(
-    queue: DispatchQueue? = nil,
+    queue: TargetQueue? = nil,
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
     sinkActivity(queue: queue, receive: receive)
