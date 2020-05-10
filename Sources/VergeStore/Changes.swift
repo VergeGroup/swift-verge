@@ -88,6 +88,10 @@ public final class Changes<Value>: ChangesType {
   public var old: Value? { _read { yield previous?.current } }
   public var current: Value { _read { yield innerCurrent.value } }
   
+  
+  
+  public var root: Value { _read { yield innerCurrent.value } }
+  
   // MARK: - Initializers
     
   public convenience init(
@@ -144,7 +148,7 @@ public final class Changes<Value>: ChangesType {
     }
   }
   
-  public typealias ChangesKeyPath<T> = KeyPath<Composing, T>
+  public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
   
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   ///
@@ -184,7 +188,7 @@ public final class Changes<Value>: ChangesType {
   
   @inline(__always)
   public func hasChanges<Composed>(
-    _ compose: (Composing) -> Composed,
+    _ compose: (Changes) -> Composed,
     _ compare: (Composed, Composed) -> Bool
   ) -> Bool {
     
@@ -193,13 +197,13 @@ public final class Changes<Value>: ChangesType {
       signpost.end()
     }
     
-    let current = Composing(source: self)
+    let current = self
     
     guard let previousValue = previous else {
       return true
     }
     
-    let old = Composing(source: previousValue)
+    let old = previousValue
         
     guard !compare(compose(old), compose(current)) else {
       return false
@@ -217,11 +221,11 @@ public final class Changes<Value>: ChangesType {
   /// Do a closure if value specified by keyPath contains changes.
   public func ifChanged<T, Result>(_ selector: ChangesKeyPath<T>, _ comparer: (T, T) -> Bool, _ perform: (T) throws -> Result) rethrows -> Result? {
     guard hasChanges(selector, comparer) else { return nil }
-    return try perform(Composing(source: self)[keyPath: selector])
+    return try perform(self[keyPath: selector])
   }
   
   public func ifChanged<Composed: Equatable, Result>(
-    _ compose: (Composing) -> Composed,
+    _ compose: (Changes) -> Composed,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     try ifChanged(compose, ==, perform)
@@ -229,7 +233,7 @@ public final class Changes<Value>: ChangesType {
   
   @available(*, deprecated, renamed: "ifChanged(_:_:)")
   public func ifChanged<Composed: Equatable, Result>(
-    compose: (Composing) -> Composed,
+    compose: (Changes) -> Composed,
     perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     try ifChanged(compose, perform)
@@ -237,18 +241,18 @@ public final class Changes<Value>: ChangesType {
   
   @inline(__always)
   public func ifChanged<Composed, Result>(
-    _ compose: (Composing) -> Composed,
+    _ compose: (Changes) -> Composed,
     _ comparer: (Composed, Composed) -> Bool,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     
-    let current = Composing(source: self)
+    let current = self
     
     guard let previousValue = previous else {
-      return try perform(compose(.init(source: self)))
+      return try perform(compose(self))
     }
     
-    let old = Composing(source: previousValue)
+    let old = previousValue
     
     let composedOld = compose(old)
     let composedNew = compose(current)
@@ -263,7 +267,7 @@ public final class Changes<Value>: ChangesType {
   @inline(__always)
   @available(*, deprecated, renamed: "ifChanged(_:_:_:)")
   public func ifChanged<Composed, Result>(
-    compose: (Composing) -> Composed,
+    compose: (Changes) -> Composed,
     comparer: (Composed, Composed) -> Bool,
     perform: (Composed) throws -> Result
   ) rethrows -> Result? {
@@ -289,11 +293,6 @@ public final class Changes<Value>: ChangesType {
     )
   }
   
-  @inline(__always)
-  func makeComposing() -> Composing {
-    .init(source: self)
-  }
-
 }
 
 extension Changes: CustomReflectable {
@@ -341,36 +340,6 @@ extension Changes {
     }
   }
   
-}
-
-extension Changes {
-  
-  // TODO: Composer might be better name
-  @dynamicMemberLookup
-  public struct Composing {
-    
-    private let source: Changes<Value>
-    
-    public var root: Value {
-      source.current
-    }
-    
-    fileprivate init(source: Changes<Value>) {
-      self.source = source
-    }
-    
-    public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
-      _read {
-        yield source[dynamicMember: keyPath]
-      }
-    }        
-  }
-}
-
-extension Changes.Composing where Value : ExtendedStateType {
-  public var computed: Changes.ComputedProxy {
-    .init(source: source)
-  }
 }
 
 extension Changes where Value : ExtendedStateType {
@@ -509,7 +478,7 @@ extension _StateTypeContainer {
     }
         
     public init(_ compute: @escaping (Input) -> Output) {
-      self.init(.init(map: compute))
+      self.init(.map(compute))
     }
     
     @inlinable

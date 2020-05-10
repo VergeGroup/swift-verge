@@ -45,6 +45,7 @@ public struct MemoizeMap<Input, Output> {
   
   fileprivate(set) var identifier: Int = counter.getAndIncrement()
     
+  @_disfavoredOverload
   public init(
     makeInitial: @escaping (Input) -> Output,
     update: @escaping (Input) -> Result
@@ -126,12 +127,13 @@ extension MemoizeMap where Input : ChangesType {
   /// - Complexity: ✅ Active Memoization with Fragment's version
   /// - Parameter map:
   /// - Returns:
-  public static func map(_ map: @escaping (Changes<Input.Value>.Composing) -> Fragment<Output>) -> MemoizeMap<Input, Output> {
+  @_disfavoredOverload
+  public static func map(_ map: @escaping (Changes<Input.Value>) -> Fragment<Output>) -> MemoizeMap<Input, Output> {
             
     return .init(
       makeInitial: {
         
-        map($0.asChanges().makeComposing()).wrappedValue
+        map($0.asChanges()).wrappedValue
         
     }, update: { changes in
       
@@ -143,7 +145,7 @@ extension MemoizeMap where Input : ChangesType {
         return .noChanages
       }
       
-      return .updated(map(changes.asChanges().makeComposing()).wrappedValue)
+      return .updated(map(changes.asChanges()).wrappedValue)
     })
   }
   
@@ -152,7 +154,7 @@ extension MemoizeMap where Input : ChangesType {
   /// - Complexity: ✅ Active Memoization with Fragment's version
   /// - Parameter map:
   /// - Returns:
-  public static func map(_ keyPath: KeyPath<Changes<Input.Value>.Composing, Fragment<Output>>) -> MemoizeMap<Input, Output> {
+  public static func map(_ keyPath: KeyPath<Changes<Input.Value>, Fragment<Output>>) -> MemoizeMap<Input, Output> {
         
     var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
     
@@ -164,23 +166,66 @@ extension MemoizeMap where Input : ChangesType {
     
     return instance
   }
+    
+  /// Projects a specified shape from Input.
+  ///
+  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
+  ///
+  /// - Parameter map:
+  /// - Returns:
+  @_disfavoredOverload
+  public static func map(_ map: @escaping (Input) -> Output) -> Self {
+    .init(map: map)
+  }
+  
+  /// Projects a specified shape from Input.
+  ///
+  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
+  ///
+  /// - Parameter map:
+  /// - Returns:
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self {
+    
+    var instance = map({ $0[keyPath: keyPath] })
+    
+    Static.modify(
+      on: Static.cache4,
+      for: &instance,
+      key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+    )
+    
+    return instance
+  }
   
 }
 
 extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
+  
+  public init(
+    makeInitial: @escaping (Input) -> Output,
+    update: @escaping (Input) -> Result
+  ) {
+    
+    self.init(
+      makeInitial: { makeInitial($0) },
+      dropInput: { $0.asChanges().noChanges(\.root) },
+      update: { update($0) }
+    )
+    
+  }
   
   /// Projects a specified shape from Input.
   ///
   /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
   public init(
-    map: @escaping (Changes<Input.Value>.Composing) -> Output
+    map: @escaping (Input) -> Output
   ) {
     
     self.init(
-      makeInitial: { map($0.asChanges().makeComposing()) },
+      makeInitial: map,
       dropInput: { $0.asChanges().noChanges(\.root) },
-      update: { .updated(map($0.asChanges().makeComposing())) }
+      update: { .updated(map($0)) }
     )
   }
   
@@ -188,7 +233,8 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   ///
   /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
-  public static func map(_ map: @escaping (Changes<Input.Value>.Composing) -> Output) -> Self {
+  @_disfavoredOverload
+  public static func map(_ map: @escaping (Input) -> Output) -> Self {
     .init(map: map)
   }
   
@@ -196,7 +242,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   ///
   /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
-  public static func map(_ keyPath: KeyPath<Changes<Input.Value>.Composing, Output>) -> Self {
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self {
     var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
         
     Static.modify(
@@ -209,19 +255,19 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   }
 }
 
-
 extension MemoizeMap {
-    
+
   /// Projects a specified shape from Input.
   ///
   /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
   ///
   /// - Parameter map:
   /// - Returns:
+  @_disfavoredOverload
   public static func map(_ map: @escaping (Input) -> Output) -> Self {
     .init(dropInput: { _ in false }, map: map)
   }
-  
+
   /// Projects a specified shape from Input.
   ///
   /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
@@ -229,18 +275,18 @@ extension MemoizeMap {
   /// - Parameter map:
   /// - Returns:
   public static func map(_ keyPath: KeyPath<Input, Output>) -> Self {
-            
+
     var instance = map({ $0[keyPath: keyPath] })
-    
+
     Static.modify(
       on: Static.cache3,
       for: &instance,
       key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
     )
-                    
+
     return instance
   }
-  
+
 }
 
 // No Thread safety
@@ -269,6 +315,7 @@ fileprivate enum Static {
   static var cache1: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
   static var cache2: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
   static var cache3: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
+  static var cache4: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
   
   static func modify<I, O>(
     on storage: VergeConcurrency.RecursiveLockAtomic<[String : Int]>,
