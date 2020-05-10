@@ -37,6 +37,7 @@ extension Reactive where Base : DerivedType {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
+  @available(*, deprecated, renamed: "valueObservable")
   public func changesObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.Value>> {
     store.rx.stateObservable() 
       .do(onDispose: {
@@ -44,16 +45,4 @@ extension Reactive where Base : DerivedType {
       })
   }
     
-}
-
-extension Reactive where Base : DerivedType, Base.Value : Equatable {
-  
-  /// An observable that repeatedly emits the current state when state updated
-  ///
-  /// Guarantees to emit the first event on started
-  /// - Attention: ✅ Events drops duplicated items with Equatable
-  public var valueObservable: Observable<Base.Value> {
-    changesObservable().changed()
-  }
-  
 }
