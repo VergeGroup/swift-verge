@@ -23,14 +23,14 @@ class DerivedTests: XCTestCase {
     
     let nullableSelector = storage.derived(from: id)
     
-    XCTAssertNil(nullableSelector.value.wrapped)
+    XCTAssertNil(nullableSelector.primitiveValue.wrapped)
     
     XCTContext.runActivity(named: "simple") { (a) -> Void in
       let waiter = XCTWaiter()
       
       let didUpdate = XCTestExpectation()
       
-      nullableSelector.valuePublisher
+      nullableSelector.valuePublisher()
         .dropFirst(1).sink { _ in
           didUpdate.fulfill()
       }
@@ -55,8 +55,8 @@ class DerivedTests: XCTestCase {
         from: book
       )
       
-      XCTAssertNotNil(nullableSelector.value.wrapped)
-      XCTAssertNotNil(selector.value.wrapped)
+      XCTAssertNotNil(nullableSelector.primitiveValue.wrapped)
+      XCTAssertNotNil(selector.primitiveValue.wrapped)
       
       waiter.wait(for: [didUpdate], timeout: 2)
       
@@ -72,8 +72,8 @@ class DerivedTests: XCTestCase {
           }
         }
                 
-        XCTAssertEqual(selector.value.name, "Hey")
-        XCTAssertEqual(nullableSelector.value.name!, "Hey")
+        XCTAssertEqual(selector.primitiveValue.name, "Hey")
+        XCTAssertEqual(nullableSelector.primitiveValue.name!, "Hey")
         
       }
       
@@ -87,8 +87,8 @@ class DerivedTests: XCTestCase {
           }
         }
         
-        XCTAssertEqual(selector.value.name, "Hey")
-        XCTAssertEqual(nullableSelector.value.wrapped == nil, true)
+        XCTAssertEqual(selector.primitiveValue.name, "Hey")
+        XCTAssertEqual(nullableSelector.primitiveValue.wrapped == nil, true)
         
       }
     }
@@ -114,8 +114,8 @@ class DerivedTests: XCTestCase {
             
       let selector = storage.derivedNonNull(from: result)
       
-      XCTAssertEqual(selector.value.rawID, "some")
-      XCTAssertEqual(selector.value.name, "")
+      XCTAssertEqual(selector.primitiveValue.rawID, "some")
+      XCTAssertEqual(selector.primitiveValue.name, "")
       
       XCTContext.runActivity(named: "modify") { (_) -> Void in
         
@@ -129,7 +129,7 @@ class DerivedTests: XCTestCase {
           }
         }
         
-        XCTAssertEqual(selector.value.name, "Hey")
+        XCTAssertEqual(selector.primitiveValue.name, "Hey")
         
       }
       
@@ -143,7 +143,7 @@ class DerivedTests: XCTestCase {
           }
         }
         
-        XCTAssertEqual(selector.value.name, "Hey")
+        XCTAssertEqual(selector.primitiveValue.name, "Hey")
         
       }
     }
@@ -167,13 +167,13 @@ class DerivedTests: XCTestCase {
     
     let authorGetter = storage.derivedNonNull(from: result)
     
-    authorGetter.valuePublisher
+    authorGetter.valuePublisher()
       .dropFirst(1).sink { _ in
       updatedCount += 1
     }
     .store(in: &subscriptions)
     
-    XCTAssertEqual(authorGetter.value.name, "muukii")
+    XCTAssertEqual(authorGetter.primitiveValue.name, "muukii")
     
     XCTContext.runActivity(named: "updateName") { _ in
       
@@ -185,7 +185,7 @@ class DerivedTests: XCTestCase {
         }
       }
       
-      XCTAssertEqual(authorGetter.value.name, "Hiroshi")
+      XCTAssertEqual(authorGetter.primitiveValue.name, "Hiroshi")
       
     }
     
@@ -201,7 +201,7 @@ class DerivedTests: XCTestCase {
         }
       }
       
-      XCTAssertEqual(authorGetter.value.name, "Hiroshi")
+      XCTAssertEqual(authorGetter.primitiveValue.name, "Hiroshi")
       
     }
     

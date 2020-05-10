@@ -26,12 +26,12 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
   public let store: Store<State, Activity>
   
   public var state: Scope {
-    return store.state[keyPath: scope]
+    return store.primitiveState[keyPath: scope]
   }
   
   /// Returns current state from target store
   public var rootState: State {
-    return store.state
+    return store.primitiveState
   }
    
   private var logger: StoreLogger? {

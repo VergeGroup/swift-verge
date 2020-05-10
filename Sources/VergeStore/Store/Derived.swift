@@ -41,13 +41,18 @@ public class Derived<Value>: DerivedType {
   }
   
   /// A current state.
-  public var value: Value {
+  public var primitiveValue: Value {
+    innerStore.primitiveState
+  }
+  
+  /// A current changes state.
+  public var value: Changes<Value> {
     innerStore.state
   }
   
   /// A current changes state.
   public var changes: Changes<Value> {
-    innerStore.changes
+    innerStore.state
   }
   
   fileprivate let innerStore: Store<Value, Never>
@@ -306,7 +311,7 @@ extension Derived where Value == Any {
     
     typealias Shape = (S0, S1)
     
-    let initial = (s0.value, s1.value)
+    let initial = (s0.primitiveValue, s1.primitiveValue)
     
     let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
@@ -354,7 +359,7 @@ extension Derived where Value == Any {
     
     typealias Shape = (S0, S1, S2)
     
-    let initial = (s0.value, s1.value, s2.value)
+    let initial = (s0.primitiveValue, s1.primitiveValue, s2.primitiveValue)
     
     let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
@@ -408,12 +413,15 @@ extension Derived: ObservableObject {
   public var objectWillChange: ObservableObjectPublisher {
     innerStore.objectWillChange
   }
-  
-  /// A publisher that repeatedly emits the current state when state updated
+   
+  /// A publisher that repeatedly emits the changes when state updated
   ///
   /// Guarantees to emit the first event on started subscribing.
-  public var valuePublisher: AnyPublisher<Value, Never> {
-    innerStore.statePublisher
+  ///
+  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
+  /// - Returns:
+  public func valuePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<Value>, Never> {
+    innerStore.statePublisher(startsFromInitial: startsFromInitial)
       .handleEvents(receiveCancel: {
         withExtendedLifetime(self) {}
       })
@@ -426,6 +434,7 @@ extension Derived: ObservableObject {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
+  @available(*, deprecated, renamed: "valuePublisher")
   public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<Value>, Never> {
     innerStore.changesPublisher(startsFromInitial: startsFromInitial)
       .handleEvents(receiveCancel: {
@@ -441,14 +450,14 @@ extension Derived: ObservableObject {
 public final class BindingDerived<State>: Derived<State> {
   
   /// A current state.
-  public override var value: State {
-    get { innerStore.state }
+  public override var primitiveValue: State {
+    get { innerStore.primitiveState }
     set { _set(newValue) }
   }
   
   public var wrappedValue: State {
-    get { value }
-    set { value = newValue }
+    get { primitiveValue }
+    set { primitiveValue = newValue }
   }
   
   public var projectedValue: Self {
@@ -470,7 +479,7 @@ extension StoreType {
       set: { _ in
         
     },
-      initialUpstreamState: asStore().changes,
+      initialUpstreamState: asStore().state,
       subscribeUpstreamState: { callback in
         asStore().sinkChanges(dropsFirst: true, queue: queue, receive: callback)
     },
@@ -576,7 +585,7 @@ extension StoreType {
           set(&$0, state)
         }
     },
-      initialUpstreamState: asStore().changes,
+      initialUpstreamState: asStore().state,
       subscribeUpstreamState: { callback in
         asStore().sinkChanges(dropsFirst: true, queue: nil, receive: callback)
     }, retainsUpstream: nil)
