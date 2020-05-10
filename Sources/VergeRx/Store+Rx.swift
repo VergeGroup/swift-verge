@@ -24,11 +24,22 @@ extension Reactive where Base : StoreType {
     unsafeBitCast(base.asStore().__activityEmitter, to: EventEmitter<Base.Activity>.self)
   }
   
-  /// An observable that repeatedly emits the current state when state updated
+  /// An observable that repeatedly emits the changes when state updated
   ///
-  /// Guarantees to emit the first event on started
-  public var stateObservable: Observable<Base.State> {
-    storage.asObservable().map { $0.primitive }
+  /// Guarantees to emit the first event on started subscribing.
+  ///
+  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
+  /// - Returns:
+  public func stateObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.State>> {
+    if startsFromInitial {
+      return storage
+        .asObservable()
+        .skip(1)
+        .startWith(storage.value.droppedPrevious())
+    } else {
+      return storage
+        .asObservable()
+    }
   }
   
   /// An observable that repeatedly emits the changes when state updated
@@ -37,6 +48,7 @@ extension Reactive where Base : StoreType {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
+  @available(*, deprecated, renamed: "stateObservable")
   public func changesObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.State>> {
     if startsFromInitial {
       return storage

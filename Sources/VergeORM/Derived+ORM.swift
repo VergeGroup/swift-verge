@@ -295,7 +295,7 @@ extension StoreType where State : DatabaseEmbedding {
     
     let path = State.getterToDatabase
     
-    guard let initalValue = path(state).entities.table(Entity.self).find(by: entityID) else {
+    guard let initalValue = path(primitiveState).entities.table(Entity.self).find(by: entityID) else {
       throw VergeORMError.notFoundEntityFromDatabase
     }
    

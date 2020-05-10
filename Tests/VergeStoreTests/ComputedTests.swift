@@ -134,7 +134,7 @@ class Computed2Tests: XCTestCase {
     
     let store = MyStore()
     
-    let changes = store.changes
+    let changes = store.state
     
     measure {
       _ = changes.computed.filteredArray
@@ -146,7 +146,7 @@ class Computed2Tests: XCTestCase {
    
     let store = MyStore()
     
-    let changes = store.changes
+    let changes = store.state
     
     measure {
       _ = changes.computed.filteredArrayWithoutPreFilter
@@ -163,7 +163,7 @@ class Computed2Tests: XCTestCase {
         // no affects to array
         $0.num_1 += 1
       }
-      _ = store.changes.computed.filteredArray
+      _ = store.state.computed.filteredArray
     }
     
   }
@@ -177,7 +177,7 @@ class Computed2Tests: XCTestCase {
         // no affects to array
         $0.num_1 += 1
       }
-      _ = store.changes.computed.filteredArrayWithoutPreFilter
+      _ = store.state.computed.filteredArrayWithoutPreFilter
     }
     
   }
@@ -186,51 +186,51 @@ class Computed2Tests: XCTestCase {
     
     let store = MyStore()
         
-    XCTAssertEqual(store.changes.version, 0)
-    XCTAssertNil(store.changes.previous)
+    XCTAssertEqual(store.state.version, 0)
+    XCTAssertNil(store.state.previous)
     
-    XCTAssertEqual(store.changes.num_0, 0)
-    XCTAssertEqual(store.changes.hasChanges(\.num_0), true)
-    XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), true)
+    XCTAssertEqual(store.state.num_0, 0)
+    XCTAssertEqual(store.state.hasChanges(\.num_0), true)
+    XCTAssertEqual(store.state.hasChanges(\.computed.num_0), true)
                     
     store.commit {
       $0.num_0 = 0
     }
     
-    XCTAssertEqual(store.changes.hasChanges(\.num_0), false)
-    XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), false)
+    XCTAssertEqual(store.state.hasChanges(\.num_0), false)
+    XCTAssertEqual(store.state.hasChanges(\.computed.num_0), false)
     
     store.commit {
       $0.num_0 = 1
     }
         
-    XCTAssertEqual(store.changes.version, 2)
-    XCTAssertNotNil(store.changes.previous)
-    XCTAssertNil(store.changes.previous?.previous)
+    XCTAssertEqual(store.state.version, 2)
+    XCTAssertNotNil(store.state.previous)
+    XCTAssertNil(store.state.previous?.previous)
     
-    XCTAssertEqual(store.changes.hasChanges(\.num_0), true)
-    XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), true)
+    XCTAssertEqual(store.state.hasChanges(\.num_0), true)
+    XCTAssertEqual(store.state.hasChanges(\.computed.num_0), true)
 
     store.commit {
       $0.num_0 = 2
     }
     
-    XCTAssertEqual(store.changes.version, 3)
-    XCTAssertNotNil(store.changes.previous)
-    XCTAssertNil(store.changes.previous?.previous)
-    XCTAssertEqual(store.changes.previous?.num_0, 1)
+    XCTAssertEqual(store.state.version, 3)
+    XCTAssertNotNil(store.state.previous)
+    XCTAssertNil(store.state.previous?.previous)
+    XCTAssertEqual(store.state.previous?.num_0, 1)
     
-    XCTAssertEqual(store.changes.hasChanges(\.num_0), true)
-    XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), true)
+    XCTAssertEqual(store.state.hasChanges(\.num_0), true)
+    XCTAssertEqual(store.state.hasChanges(\.computed.num_0), true)
     
     store.commit {
       $0.num_0 = 2
     }
     
-    XCTAssertEqual(store.changes.version, 4)
+    XCTAssertEqual(store.state.version, 4)
 
-    XCTAssertEqual(store.changes.hasChanges(\.num_0), false)
-    XCTAssertEqual(store.changes.hasChanges(\.computed.num_0), false)
+    XCTAssertEqual(store.state.hasChanges(\.num_0), false)
+    XCTAssertEqual(store.state.hasChanges(\.computed.num_0), false)
   }
   
   func testCompose1() {
@@ -239,7 +239,7 @@ class Computed2Tests: XCTestCase {
     
     var count = 0
         
-    store.changes.ifChanged({ $0.computed.num_0 }, ==) { v in
+    store.state.ifChanged({ $0.computed.num_0 }, ==) { v in
         count += 1
     }
     
@@ -247,7 +247,7 @@ class Computed2Tests: XCTestCase {
       $0.num_0 = 0
     }
     
-    store.changes.ifChanged({ $0.computed.num_0 }, ==) { v in
+    store.state.ifChanged({ $0.computed.num_0 }, ==) { v in
         count += 1
     }
     
@@ -262,7 +262,7 @@ class Computed2Tests: XCTestCase {
     var count = 0
     
     func ifChange(_ perform: () -> Void) {
-      store.changes.ifChanged(
+      store.state.ifChanged(
         {
           (
             $0.num_1,
@@ -316,10 +316,10 @@ class Computed2Tests: XCTestCase {
     
     let store = MyStore()
     
-    _ = store.changes.num_0
+    _ = store.state.num_0
     store.commit { _ in }
 
-    let changes = store.changes
+    let changes = store.state
                   
     measure {
       DispatchQueue.concurrentPerform(iterations: 500) { (i) in
@@ -332,7 +332,7 @@ class Computed2Tests: XCTestCase {
   func testMinimumizeComupting() {
     
     let store = MyStore()
-    let changes = store.changes
+    let changes = store.state
     
     store.commit { _ in }
     

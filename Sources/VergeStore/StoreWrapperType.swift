@@ -69,13 +69,18 @@ extension StoreWrapperType where State == WrappedStore.State, Activity == Wrappe
 }
 
 extension StoreWrapperType {
-      
+    
+  public var state: Changes<WrappedStore.State> {
+    store.asStore().state
+  }
+
+  @available(*, deprecated, renamed: "state")
   public var changes: Changes<WrappedStore.State> {
     store.asStore().changes
   }
   
-  public var state: WrappedStore.State {
-    store.state
+  public var primitiveState: WrappedStore.State {
+    store.primitiveState
   }
   
   /// Subscribe the state changes
@@ -131,12 +136,13 @@ import Combine
 @available(iOS 13, macOS 10.15, *)
 extension StoreWrapperType where State == WrappedStore.State, Activity == WrappedStore.Activity {
   
-  public var statePublisher: AnyPublisher<State, Never> {
-    store.asStore().statePublisher
+  public func statePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
+    store.asStore().statePublisher(startsFromInitial: startsFromInitial)
   }
   
+  @available(*, deprecated, renamed: "statePublisher")
   public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
-    store.asStore().changesPublisher(startsFromInitial: startsFromInitial)
+    store.asStore().statePublisher(startsFromInitial: startsFromInitial)
   }
   
   public var activityPublisher: EventEmitter<Activity>.Publisher {

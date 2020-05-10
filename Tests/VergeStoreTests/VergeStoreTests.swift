@@ -197,7 +197,7 @@ final class VergeStoreTests: XCTestCase {
         
     dispatcher.resetCount()
     dispatcher.continuousIncrement()
-    XCTAssert(store.state.count == 2)
+    XCTAssert(store.primitiveState.count == 2)
   }
   
   func testTryMutation() {
@@ -213,29 +213,29 @@ final class VergeStoreTests: XCTestCase {
   
   func testMutatingOptionalNestedState() {
     
-    XCTAssert(store.state.optionalNested == nil)
+    XCTAssert(store.primitiveState.optionalNested == nil)
     dispatcher.setNestedState()
     dispatcher.setNestedState()
-    XCTAssert(store.state.optionalNested != nil)
+    XCTAssert(store.primitiveState.optionalNested != nil)
     dispatcher.setMyName()
-    XCTAssertEqual(store.state.optionalNested?.myName, "Muuk")
+    XCTAssertEqual(store.primitiveState.optionalNested?.myName, "Muuk")
     
     let d = OptionalNestedDispatcher(targetStore: store)
     d.setMyName()
-    XCTAssertEqual(store.state.optionalNested?.myName, "Hello")
+    XCTAssertEqual(store.primitiveState.optionalNested?.myName, "Hello")
   }
   
   func testMutatingNestedState() {
                
     let d = NestedDispatcher(targetStore: store)
     d.setMyName()
-    XCTAssertEqual(store.state.nested.myName, "Hello")
+    XCTAssertEqual(store.primitiveState.nested.myName, "Hello")
   }
   
   func testIncrement() {
     
     dispatcher.increment()
-    XCTAssertEqual(store.state.count, 1)
+    XCTAssertEqual(store.primitiveState.count, 1)
     
   }
   
@@ -243,7 +243,7 @@ final class VergeStoreTests: XCTestCase {
     
     dispatcher.setNestedState()
     dispatcher.setMyName()
-    XCTAssertEqual(store.state.optionalNested?.myName, "Muuk")
+    XCTAssertEqual(store.primitiveState.optionalNested?.myName, "Muuk")
   }
   
   func testReturnAnyValueFromMutation() {
@@ -319,11 +319,11 @@ final class VergeStoreTests: XCTestCase {
     
     XCTContext.runActivity(named: "Premise") { (activity) in
       
-      XCTAssertEqual(store.changes.hasChanges(\.count), true)
+      XCTAssertEqual(store.state.hasChanges(\.count), true)
       
       store.commit { _ in }
       
-      XCTAssertEqual(store.changes.hasChanges(\.count), false)
+      XCTAssertEqual(store.state.hasChanges(\.count), false)
       
     }
     
@@ -331,7 +331,7 @@ final class VergeStoreTests: XCTestCase {
       
       let exp1 = expectation(description: "")
       
-      _ = store.changesPublisher(startsFromInitial: true)
+      _ = store.statePublisher(startsFromInitial: true)
         .sink { changes in
           exp1.fulfill()
           XCTAssertEqual(changes.hasChanges(\.count), true)
@@ -347,7 +347,7 @@ final class VergeStoreTests: XCTestCase {
       
       let exp1 = expectation(description: "")
       
-      _ = store.changesPublisher(startsFromInitial: false)
+      _ = store.statePublisher(startsFromInitial: false)
         .sink { changes in
           exp1.fulfill()
           XCTAssertEqual(changes.hasChanges(\.count), false)
@@ -373,13 +373,13 @@ final class VergeStoreTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.state.count, store1.state.count)
+    XCTAssertEqual(store1.primitiveState.count, store1.primitiveState.count)
     
     store1.commit {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.state.count, store1.state.count)
+    XCTAssertEqual(store1.primitiveState.count, store1.primitiveState.count)
     
     withExtendedLifetime(sub, {})
     
@@ -398,13 +398,13 @@ final class VergeStoreTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.state.count, store1.state.count)
+    XCTAssertEqual(store1.primitiveState.count, store1.primitiveState.count)
     
     store1.commit {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.state.count, store1.state.count)
+    XCTAssertEqual(store1.primitiveState.count, store1.primitiveState.count)
     
     withExtendedLifetime(sub, {})
     

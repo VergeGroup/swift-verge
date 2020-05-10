@@ -31,7 +31,7 @@ public protocol StoreType: AnyObject {
   
   func asStore() -> Store<State, Activity>
   
-  var state: State { get }
+  var primitiveState: State { get }
 }
 
 public typealias NoActivityStoreBase<State: StateType> = Store<State, Never>
@@ -62,11 +62,16 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   public var store: Store<State, Activity> { self }
       
   /// A current state.
-  public var state: State {
+  public var primitiveState: State {
     _backingStorage.value.primitive
   }
   
+  public var state: Changes<State> {
+    _backingStorage.value
+  }
+  
   /// A current changes state.
+  @available(*, deprecated, renamed: "state")
   public var changes: Changes<State> {
     _backingStorage.value
   }
@@ -274,11 +279,20 @@ extension Store: ObservableObject {
 @available(iOS 13.0, macOS 10.15, *)
 extension Store {
   
-  /// A publisher that repeatedly emits the current state when state updated
+  /// A publisher that repeatedly emits the changes when state updated
   ///
   /// Guarantees to emit the first event on started subscribing.
-  public var statePublisher: AnyPublisher<State, Never> {
-    _backingStorage.valuePublisher.map(\.primitive).eraseToAnyPublisher()
+  ///
+  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
+  /// - Returns:
+  public func statePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
+    if startsFromInitial {
+      return _backingStorage.valuePublisher.dropFirst()
+        .merge(with: Just(_backingStorage.value.droppedPrevious()))
+        .eraseToAnyPublisher()
+    } else {
+      return _backingStorage.valuePublisher
+    }
   }
     
   /// A publisher that repeatedly emits the changes when state updated
@@ -287,6 +301,7 @@ extension Store {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
+  @available(*, deprecated, renamed: "statePublisher")
   public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
     if startsFromInitial {
       return _backingStorage.valuePublisher.dropFirst()

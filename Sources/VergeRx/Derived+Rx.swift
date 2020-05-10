@@ -18,12 +18,14 @@ extension Reactive where Base : DerivedType {
     unsafeBitCast(base.asDerived()._innerStore, to: Store<Base.Value, Never>.self)
   }
   
-  /// An observable that repeatedly emits the current state when state updated
+  /// An observable that repeatedly emits the changes when state updated
   ///
-  /// Guarantees to emit the first event on started
-  /// - Attention: ⚠️ Events may contain duplicated items by other sub-state modified in a store
-  public var valueObservable: Observable<Base.Value> {
-    store.rx.stateObservable
+  /// Guarantees to emit the first event on started subscribing.
+  ///
+  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
+  /// - Returns:
+  public func valueObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.Value>> {
+    store.rx.stateObservable()
       .do(onDispose: {
         withExtendedLifetime(self.base) {}
       })
@@ -36,7 +38,7 @@ extension Reactive where Base : DerivedType {
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
   public func changesObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.Value>> {
-    store.rx.changesObservable() 
+    store.rx.stateObservable() 
       .do(onDispose: {
         withExtendedLifetime(self.base) {}
       })

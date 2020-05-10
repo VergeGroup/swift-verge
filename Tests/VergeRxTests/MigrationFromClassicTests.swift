@@ -81,9 +81,9 @@ enum MigrationExample {
       
       let viewModel = ViewModel()
       
-      let _: ViewModel.State = viewModel.state
+      let _: ViewModel.State = viewModel.primitiveState
             
-      let _: Changes<ViewModel.State> = viewModel.changes
+      let _: Changes<ViewModel.State> = viewModel.state
       
       _ = viewModel.sinkChanges { (changes: Changes<ViewModel.State>) in
         
@@ -95,17 +95,14 @@ enum MigrationExample {
       
       rx: do {
         
-        let _: Observable<Changes<ViewModel.State>> = viewModel.rx.changesObservable()
-        
-        let _: Observable<ViewModel.State> = viewModel.rx.stateObservable
-        
+        let _: Observable<Changes<ViewModel.State>> = viewModel.rx.stateObservable()
+                
         let _: Signal<ViewModel.Activity> = viewModel.rx.activitySignal
       }
       
       combine: do {
         if #available(iOS 13, *) {
-          let _: AnyPublisher<ViewModel.State, Never> = viewModel.statePublisher
-          let _: AnyPublisher<Changes<ViewModel.State>, Never> = viewModel.changesPublisher()
+          let _: AnyPublisher<Changes<ViewModel.State>, Never> = viewModel.statePublisher()
           let _: EventEmitter<ViewModel.Activity>.Publisher = viewModel.activityPublisher
         }
       }
@@ -164,11 +161,10 @@ enum MigrationExample {
       
       let viewModel = MyViewModel()
       
+      _ = viewModel.primitiveState
       _ = viewModel.state
-      _ = viewModel.changes
       if #available(iOS 13, *) {
-        _ = viewModel.statePublisher
-        _ = viewModel.changesPublisher()
+        _ = viewModel.statePublisher()
         _ = viewModel.activityPublisher
       } else {
         // Fallback on earlier versions
@@ -213,7 +209,7 @@ enum MigrationExample {
       
       let viewModel = ViewModel()
       
-      _ = viewModel.rx.changesObservable
+      _ = viewModel.rx.stateObservable()
       
     }
     

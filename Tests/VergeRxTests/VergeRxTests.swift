@@ -18,11 +18,11 @@ class VergeRxTests: XCTestCase {
     
     XCTContext.runActivity(named: "Premise") { (activity) in
       
-      XCTAssertEqual(store.changes.hasChanges(\.count), true)
+      XCTAssertEqual(store.state.hasChanges(\.count), true)
       
       store.commit { _ in }
       
-      XCTAssertEqual(store.changes.hasChanges(\.count), false)
+      XCTAssertEqual(store.state.hasChanges(\.count), false)
       
     }
     
@@ -30,7 +30,7 @@ class VergeRxTests: XCTestCase {
       
       let exp1 = expectation(description: "")
       
-      _ = store.rx.changesObservable(startsFromInitial: true)
+      _ = store.rx.stateObservable(startsFromInitial: true)
         .subscribe(onNext: { changes in
           exp1.fulfill()
           XCTAssertEqual(changes.hasChanges(\.count), true)
@@ -46,7 +46,7 @@ class VergeRxTests: XCTestCase {
       
       let exp1 = expectation(description: "")
       
-      _ = store.rx.changesObservable(startsFromInitial: false)
+      _ = store.rx.stateObservable(startsFromInitial: false)
         .subscribe(onNext: { changes in
           exp1.fulfill()
           XCTAssertEqual(changes.hasChanges(\.count), false)

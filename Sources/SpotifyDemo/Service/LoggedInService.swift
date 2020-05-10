@@ -31,7 +31,7 @@ final class LoggedInService<State: LoggedInServiceStateType>: DispatcherBase<Sta
   
   override init(targetStore: Store<State, Never>) {
                 
-    let token = targetStore.state.service.auth.accessToken
+    let token = targetStore.primitiveState.service.auth.accessToken
     let authPlugin = AccessTokenPlugin { _ in token }
     self.apiProvider = .init(plugins: [authPlugin])
     super.init(targetStore: targetStore)
