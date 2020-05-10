@@ -28,8 +28,8 @@ import VergeCore
 public protocol ChangesType: AnyObject {
   
   associatedtype Value
-  var old: Value? { get }
-  var current: Value { get }
+  var previousPrimitive: Value? { get }
+  var primitive: Value { get }
   
   func asChanges() -> Changes<Value>
 }
@@ -85,8 +85,14 @@ public final class Changes<Value>: ChangesType {
   
   // MARK: - Computed Properties
     
-  public var old: Value? { _read { yield previous?.current } }
-  public var current: Value { _read { yield innerCurrent.value } }
+  @available(*, deprecated, renamed: "previousPrimitive")
+  public var old: Value? { previousPrimitive }
+  
+  @available(*, deprecated, renamed: "primitive")
+  public var current: Value { primitive }
+  
+  public var previousPrimitive: Value? { _read { yield previous?.primitive } }
+  public var primitive: Value { _read { yield innerCurrent.value } }
   
   
   
@@ -144,7 +150,7 @@ public final class Changes<Value>: ChangesType {
   @inlinable
   public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
     _read {
-      yield current[keyPath: keyPath]
+      yield primitive[keyPath: keyPath]
     }
   }
   
@@ -303,7 +309,7 @@ extension Changes: CustomReflectable {
       children: [
         "version" : version,
         "previous": previous as Any,
-        "current" : current
+        "primitive" : primitive
       ],
       displayStyle: .struct,
       ancestorRepresentation: .generated
@@ -432,7 +438,7 @@ extension Changes where Value : ExtendedStateType {
 extension Changes where Value : Equatable {
   
   public var hasChanges: Bool {
-    old != current
+    previousPrimitive != primitive
   }
   
   public func ifChanged(_ perform: (Value) throws -> Void) rethrows {

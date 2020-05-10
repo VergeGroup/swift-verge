@@ -28,7 +28,7 @@ extension Reactive where Base : StoreType {
   ///
   /// Guarantees to emit the first event on started
   public var stateObservable: Observable<Base.State> {
-    storage.asObservable().map { $0.current }
+    storage.asObservable().map { $0.primitive }
   }
   
   /// An observable that repeatedly emits the changes when state updated
