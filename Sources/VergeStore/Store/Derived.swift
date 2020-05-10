@@ -149,7 +149,7 @@ public class Derived<Value>: DerivedType {
   }
   
   fileprivate func _makeChain<NewState>(
-    _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
+    _ map: MemoizeMap<Changes<Value>, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
     
@@ -157,9 +157,9 @@ public class Derived<Value>: DerivedType {
     
     let d = Derived<NewState>(
       get: .init(makeInitial: {
-        map.makeInitial($0.makeComposing())
+        map.makeInitial($0)
       }, update: {
-        switch map.makeResult($0.makeComposing()) {
+        switch map.makeResult($0) {
         case .noChanages: return .noChanages
         case .updated(let s): return .updated(s)
         }
@@ -187,7 +187,7 @@ public class Derived<Value>: DerivedType {
   ///   - dropsOutput: a condition to drop a duplicated(no-changes) object. (Default: no drops)
   /// - Returns: Derived object that cached depends on the specified parameters
   public func chain<NewState>(
-    _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
+    _ map: MemoizeMap<Changes<Value>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
     queue: DispatchQueue? = nil
     ) -> Derived<NewState> {
@@ -228,7 +228,7 @@ public class Derived<Value>: DerivedType {
   ///   - map:
   /// - Returns: Derived object that cached depends on the specified parameters
   public func chain<NewState: Equatable>(
-    _ map: MemoizeMap<Changes<Value>.Composing, NewState>,
+    _ map: MemoizeMap<Changes<Value>, NewState>,
     queue: DispatchQueue? = nil
   ) -> Derived<NewState> {
     
@@ -508,7 +508,7 @@ extension StoreType {
     }
     
     if let dropsOutput = dropsOutput {
-      
+            
       let chained = derived._makeChain(.map(\.root), queue: queue)
       chained.setDropsOutput(dropsOutput)
             
