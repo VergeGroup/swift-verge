@@ -125,7 +125,7 @@ public class Derived<Value>: DerivedType {
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkChanges(
+  public func sinkValue(
     dropsFirst: Bool = false,
     queue: TargetQueue? = nil,
     receive: @escaping (Changes<Value>) -> Void
@@ -140,11 +140,23 @@ public class Derived<Value>: DerivedType {
     }
     .asAutoCancellable()
   }
+  
+  /// Subscribe the state changes
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkValue")
+  public func sinkChanges(
+    dropsFirst: Bool = false,
+    queue: TargetQueue? = nil,
+    receive: @escaping (Changes<Value>) -> Void
+  ) -> VergeAnyCancellable {    
+    sinkValue(dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
     
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkChanges")
+  @available(*, deprecated, renamed: "sinkState")
   public func subscribeChanges(
     dropsFirst: Bool = false,
     queue: TargetQueue? = nil,
@@ -284,16 +296,30 @@ extension Derived where Value : Equatable {
   /// Receives a value only changed
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkChangedPrimitiveValue(
+    dropsFirst: Bool = false,
+    queue: TargetQueue? = nil,
+    receive: @escaping (Value) -> Void
+  ) -> VergeAnyCancellable {
+    sinkValue(dropsFirst: dropsFirst, queue: queue) { (changes) in
+      changes.ifChanged { value in
+        receive(value)
+      }
+    }
+  }
+  
+  /// Subscribe the state changes
+  ///
+  /// Receives a value only changed
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkStatePrimitiveValue")
   public func sinkChangedValue(
     dropsFirst: Bool = false,
     queue: TargetQueue? = nil,
     receive: @escaping (Value) -> Void
   ) -> VergeAnyCancellable {
-    sinkChanges(dropsFirst: dropsFirst, queue: queue) { (changes) in
-      changes.ifChanged { value in
-        receive(value)
-      }
-    }
+    sinkChangedPrimitiveValue(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 }
 
@@ -321,14 +347,14 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
                 
-        let _s0 = s0.sinkChanges(dropsFirst: true, queue: nil) { (s0) in
+        let _s0 = s0.sinkValue(dropsFirst: true, queue: nil) { (s0) in
           buffer.modify { value in
             value.0 = s0.primitive
             callback(value)
           }
         }
         
-        let _s1 = s1.sinkChanges(dropsFirst: true, queue: nil) { (s1) in
+        let _s1 = s1.sinkValue(dropsFirst: true, queue: nil) { (s1) in
           buffer.modify { value in
             value.1 = s1.primitive
             callback(value)
@@ -369,21 +395,21 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
         
-        let _s0 = s0.sinkChanges(dropsFirst: true, queue: nil) { (s0) in
+        let _s0 = s0.sinkValue(dropsFirst: true, queue: nil) { (s0) in
           buffer.modify { value in
             value.0 = s0.primitive
             callback(value)
           }
         }
         
-        let _s1 = s1.sinkChanges(dropsFirst: true, queue: nil) { (s1) in
+        let _s1 = s1.sinkValue(dropsFirst: true, queue: nil) { (s1) in
           buffer.modify { value in
             value.1 = s1.primitive
             callback(value)
           }
         }
         
-        let _s2 = s2.sinkChanges(dropsFirst: true, queue: nil) { (s2) in
+        let _s2 = s2.sinkValue(dropsFirst: true, queue: nil) { (s2) in
           buffer.modify { value in
             value.2 = s2.primitive
             callback(value)
