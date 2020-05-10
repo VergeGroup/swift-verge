@@ -56,7 +56,7 @@ final class DerivedTests: XCTestCase {
     expectation.expectedFulfillmentCount = 1
     expectation.assertForOverFulfill = true
     
-    let subscription = baseSlice.sinkChanges(dropsFirst: true) { (changes) in
+    let subscription = baseSlice.sinkValue(dropsFirst: true) { (changes) in
       expectation.fulfill()
     }
 
@@ -145,7 +145,7 @@ final class DerivedTests: XCTestCase {
     
     XCTAssert(d.primitiveValue == (0, ""))
         
-    let sub = d.sinkChanges { (changes) in
+    let sub = d.sinkValue { (changes) in
       
       updateCount.fulfill()
       
@@ -197,7 +197,7 @@ final class DerivedTests: XCTestCase {
     
     XCTAssert(d.primitiveValue == (0, 0))
     
-    let sub = d.sinkChanges { (changes) in
+    let sub = d.sinkValue { (changes) in
       
       updateCount.fulfill()
       
