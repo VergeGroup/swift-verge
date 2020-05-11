@@ -131,7 +131,7 @@ public class Derived<Value>: DerivedType {
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     
-    innerStore.sinkChanges(
+    innerStore.sinkState(
       dropsFirst: dropsFirst,
       queue: queue
     ) { (changes) in
@@ -184,7 +184,7 @@ public class Derived<Value>: DerivedType {
       set: { _ in },
       initialUpstreamState: changes,
       subscribeUpstreamState: { callback in
-        self.innerStore.sinkChanges(
+        self.innerStore.sinkState(
           dropsFirst: true,
           queue: queue,
           receive: callback
@@ -507,7 +507,7 @@ extension StoreType {
     },
       initialUpstreamState: asStore().state,
       subscribeUpstreamState: { callback in
-        asStore().sinkChanges(dropsFirst: true, queue: queue, receive: callback)
+        asStore().sinkState(dropsFirst: true, queue: queue, receive: callback)
     },
       retainsUpstream: nil
     )
@@ -613,7 +613,7 @@ extension StoreType {
     },
       initialUpstreamState: asStore().state,
       subscribeUpstreamState: { callback in
-        asStore().sinkChanges(dropsFirst: true, queue: nil, receive: callback)
+        asStore().sinkState(dropsFirst: true, queue: nil, receive: callback)
     }, retainsUpstream: nil)
     
     derived.setDropsOutput(dropsOutput)

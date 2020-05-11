@@ -348,7 +348,7 @@ class Computed2Tests: XCTestCase {
     
     let store = MyStore()
             
-    let sub = store.sinkChanges { (changes) in
+    let sub = store.sinkState { (changes) in
       
       _ = changes.computed.nameCount
       _ = changes.computed.nameCount
@@ -385,7 +385,7 @@ class Computed2Tests: XCTestCase {
     var store: MyStore! = MyStore()
     weak var _store = store
     
-    let subscription = store.sinkChanges { (changes) in
+    let subscription = store.sinkState { (changes) in
 
       _ = changes.computed.nameCount
       _ = changes.computed.nameCount
