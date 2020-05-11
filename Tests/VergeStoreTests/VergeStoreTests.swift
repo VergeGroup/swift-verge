@@ -259,7 +259,7 @@ final class VergeStoreTests: XCTestCase {
     var subscriptions = Set<VergeAnyCancellable>()
     var count = 0
     
-    store.sinkChanges { (changes) in
+    store.sinkState { (changes) in
       count += 1
     }
     .store(in: &subscriptions)
@@ -291,7 +291,7 @@ final class VergeStoreTests: XCTestCase {
     
     let results: VergeConcurrency.RecursiveLockAtomic<[Int]> = .init([])
     
-    let sub = store.sinkChanges(dropsFirst: false) { (changes) in
+    let sub = store.sinkState(dropsFirst: false) { (changes) in
       results.modify {
         $0.append(changes.count)
       }

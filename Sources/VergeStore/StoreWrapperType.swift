@@ -86,18 +86,30 @@ extension StoreWrapperType {
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkChanges(
+  public func sinkState(
     dropsFirst: Bool = false,
     queue: TargetQueue? = nil,
     receive: @escaping (Changes<WrappedStore.State>) -> Void
   ) -> VergeAnyCancellable {
-    store.asStore().sinkChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
+    store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
   
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkChanges")
+  @available(*, deprecated, renamed: "sinkState")
+  public func sinkChanges(
+    dropsFirst: Bool = false,
+    queue: TargetQueue? = nil,
+    receive: @escaping (Changes<WrappedStore.State>) -> Void
+  ) -> VergeAnyCancellable {
+    store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+  
+  /// Subscribe the state changes
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkState")
   public func subscribeChanges(
     dropsFirst: Bool = false,
     queue: TargetQueue? = nil,
