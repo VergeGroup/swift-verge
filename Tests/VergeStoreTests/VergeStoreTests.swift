@@ -373,19 +373,19 @@ final class VergeStoreTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.primitiveState.count, store1.primitiveState.count)
+    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.count)
     
     store1.commit {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.primitiveState.count, store1.primitiveState.count)
+    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.count)
     
     withExtendedLifetime(sub, {})
     
   }
   
-  func testBinder() {
+  func testAsignee() {
     
     let store1 = DemoStore()
     let store2 = DemoStore()
@@ -398,15 +398,58 @@ final class VergeStoreTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.primitiveState.count, store1.primitiveState.count)
+    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.count)
     
     store1.commit {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.primitiveState.count, store1.primitiveState.count)
+    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.count)
     
     withExtendedLifetime(sub, {})
+    
+  }
+  
+  func testAsignee2() {
+    
+    final class DemoStore2: StoreWrapperType {
+      
+      typealias Activity = Never
+      
+      struct State {
+        var source: Changes<Int>
+      }
+      
+      let store: DefaultStore
+      var sub: VergeAnyCancellable? = nil
+      
+      init(sourceStore: DemoStore) {
+        
+        let d = sourceStore
+          .derived(.map(\.count))
+        
+        self.store = .init(initialState: .init(source: d.value), logger: nil)
+        
+        sub = d.assign(to: assignee(\.source))
+        
+      }
+    }
+
+    
+    let store1 = DemoStore()
+    let store2 = DemoStore2(sourceStore: store1)
+      
+    store1.commit {
+      $0.count += 1
+    }
+    
+    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.source.root)
+    
+    store1.commit {
+      $0.count += 1
+    }
+    
+    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.source.root)
     
   }
   

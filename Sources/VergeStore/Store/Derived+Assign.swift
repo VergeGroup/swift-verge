@@ -126,6 +126,19 @@ extension StoreType {
   }
   
   /**
+   Assignee to asign Changes object directly.
+   */
+  public func assignee<Value>(
+    _ keyPath: WritableKeyPath<State, Value>
+  ) -> (Value) -> Void {
+    return { [weak self] value in
+      self?.asStore().commit {
+        $0[keyPath: keyPath] = value
+      }
+    }
+  }
+  
+  /**
    Returns an asignee function to asign
    
    ```
