@@ -99,7 +99,7 @@ extension Derived {
   
 }
 
-extension Store {
+extension StoreType {
   
   /**
    Returns an asignee function to asign
@@ -114,12 +114,12 @@ extension Store {
    ```
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<Store.State, Value>,
+    _ keyPath: WritableKeyPath<State, Value>,
     dropsOutput: @escaping (Changes<Value>) -> Bool = { _ in false }
   ) -> (Changes<Value>) -> Void {
     return { [weak self] value in
       guard !dropsOutput(value) else { return }
-      self?.commit {
+      self?.asStore().commit {
         $0[keyPath: keyPath] = value.primitive
       }
     }
@@ -138,7 +138,7 @@ extension Store {
    ```
    */
   public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<Store.State, Value>
+    _ keyPath: WritableKeyPath<State, Value>
   ) -> (Changes<Value>) -> Void {
     assignee(keyPath, dropsOutput: { !$0.hasChanges })
   }
