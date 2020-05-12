@@ -93,7 +93,19 @@ extension StoreWrapperType {
   ) -> VergeAnyCancellable {
     store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
-  
+
+  /// Subscribe the state changes
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkState<Accumulate>(
+    scan: Scan<Changes<WrappedStore.State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: TargetQueue? = nil,
+    receive: @escaping (Changes<WrappedStore.State>, Accumulate) -> Void
+  ) -> VergeAnyCancellable {
+    store.asStore().sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.

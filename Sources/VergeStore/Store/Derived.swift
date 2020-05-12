@@ -140,7 +140,19 @@ public class Derived<Value>: DerivedType {
     }
     .asAutoCancellable()
   }
-  
+
+  /// Subscribe the state changes
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkValue<Accumulate>(
+    scan: Scan<Changes<Value>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: TargetQueue? = nil,
+    receive: @escaping (Changes<Value>, Accumulate) -> Void
+  ) -> VergeAnyCancellable {
+    innerStore.sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+    
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
