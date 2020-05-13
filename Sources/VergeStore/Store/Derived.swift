@@ -127,7 +127,7 @@ public class Derived<Value>: DerivedType {
   /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
   ///
   /// - Parameters:
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - dropsFirst: Drops the latest value on start. if true, receive closure will be called next time state is updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkValue(
