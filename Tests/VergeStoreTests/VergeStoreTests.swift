@@ -452,5 +452,20 @@ final class VergeStoreTests: XCTestCase {
     XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.source.root)
     
   }
+
+  func testScan() {
+
+    let store1 = DemoStore()
+
+    let expect = expectation(description: "")
+
+    let subscription = store.sinkState(scan: Scan(seed: 0, accumulator: { v, c in v += 1 })) { changes, accumulated in
+      XCTAssertEqual(accumulated, 1)
+      expect.fulfill()
+    }
+
+    withExtendedLifetime(subscription) {}
+    wait(for: [expect], timeout: 1)
+  }
   
 }

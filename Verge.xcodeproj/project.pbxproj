@@ -150,6 +150,7 @@
 		4BCC08432456228C00ECAB8A /* Derived+ORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC08412456222100ECAB8A /* Derived+ORM.swift */; };
 		4BCC0845245625DC00ECAB8A /* DatabaseEmbedding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC0844245625DC00ECAB8A /* DatabaseEmbedding.swift */; };
 		4BCC0847245626F300ECAB8A /* Comparer+ORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */; };
+		4BCE3039246AAD6800D35557 /* Scan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE3038246AAD6800D35557 /* Scan.swift */; };
 		4BCE88B6245B1B8A006E20C3 /* ActivityTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */; };
 		4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD260A4245C7F680052B4AC /* Derived+Assign.swift */; };
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
@@ -595,6 +596,7 @@
 		4BCC08412456222100ECAB8A /* Derived+ORM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Derived+ORM.swift"; sourceTree = "<group>"; };
 		4BCC0844245625DC00ECAB8A /* DatabaseEmbedding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseEmbedding.swift; sourceTree = "<group>"; };
 		4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Comparer+ORM.swift"; sourceTree = "<group>"; };
+		4BCE3038246AAD6800D35557 /* Scan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scan.swift; sourceTree = "<group>"; };
 		4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTrace.swift; sourceTree = "<group>"; };
 		4BD260A4245C7F680052B4AC /* Derived+Assign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Derived+Assign.swift"; sourceTree = "<group>"; };
 		4BD379EC23BD94D800CE474C /* AnyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEntity.swift; sourceTree = "<group>"; };
@@ -942,6 +944,7 @@
 				4BF470CC23CC36E8001A1D5D /* FragmentState.swift */,
 				4BF470D123CC3A43001A1D5D /* VersionCounter.swift */,
 				4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */,
+				4BCE3038246AAD6800D35557 /* Scan.swift */,
 			);
 			path = VergeStore;
 			sourceTree = "<group>";
@@ -2007,6 +2010,7 @@
 				4B6F6F3924521F1E00B6CC3A /* FragmentState.swift in Sources */,
 				4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */,
 				4BCBCA8D2381CC2B00F33B15 /* DetachedDispatcher.swift in Sources */,
+				4BCE3039246AAD6800D35557 /* Scan.swift in Sources */,
 				4B1F19C2243A82BC00CED46B /* Changes.swift in Sources */,
 				4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */,
 				4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */,

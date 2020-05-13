@@ -167,6 +167,11 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   
   /// Subscribe the state changes
   ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkState(
     dropsFirst: Bool = false,
@@ -192,16 +197,12 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
       return .init(cancellable)
       
     } else {
-      
-//      let lock = NSRecursiveLock()
-      
+
       if !dropsFirst {
-//        lock.lock(); defer { lock.unlock() }
         receive(_backingStorage.value.droppedPrevious())
       }
       
       let cancellable = _backingStorage.addDidUpdate { newValue in
-//        lock.lock(); defer { lock.unlock() }
         receive(newValue)
       }
       
@@ -209,7 +210,31 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
     }
     
   }
-  
+
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - scan: Accumulates a specified type of value over receiving updates.
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkState<Accumulate>(
+    scan: Scan<Changes<State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: TargetQueue? = nil,
+    receive: @escaping (Changes<State>, Accumulate) -> Void
+  ) -> VergeAnyCancellable {
+
+    sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+
+      let accumulate = scan.accumulate(changes)
+      receive(changes, accumulate)
+    }
+
+  }
+
   /// Subscribe the state changes
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
