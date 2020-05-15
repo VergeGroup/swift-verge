@@ -289,6 +289,10 @@ class ViewController: UIViewController {
 }
 ```
 
+
+
+
+
 ## Advanced Usage - to keep performance and scalability
 
 **Adding a cachable computed property in a State**
@@ -336,7 +340,7 @@ That condition to re-calculate is defined with `.ifChanged` method in the exampl
 And finally, it caches the result by first-time access and it returns cached value until if the source value changed.
 
 
-**Making a slice of the state**
+**Making a slice of the state (Selector) **
 
 We can create a slice object that derives a data from the state.
 
