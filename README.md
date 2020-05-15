@@ -119,7 +119,7 @@ struct MyView: View {
 </p>
 </details>
 
-## Basic Usage
+## 🍐 Basic Usage
 
 To start to use Verge in our app, we use these domains:
 
@@ -293,7 +293,7 @@ class ViewController: UIViewController {
 
 
 
-## Advanced Usage - to keep performance and scalability
+## ☂️ Advanced Usage - to keep performance and scalability
 
 **Adding a cachable computed property in a State**
 
