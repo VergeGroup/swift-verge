@@ -6,7 +6,6 @@
 
 
 <sub>A Store-Pattern based data-flow architecture. Highly inspired by Vuex</sub><br>
-<sub>🎪 Verge 7.0 release is almost there! (Currently quality checking)</sub>
 
 <img width="480px" src="https://user-images.githubusercontent.com/1888355/81477721-268e7580-9254-11ea-94fa-1c2135cdc16f.png"/>
 
