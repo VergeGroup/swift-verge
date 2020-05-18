@@ -124,6 +124,55 @@ extension StoreType {
       }
     }
   }
+
+  /**
+   Returns an asignee function to asign
+
+   ```
+   let store1 = Store()
+   let store2 = Store()
+
+   store1
+   .derived(.map(\.count))
+   .assign(to: store2.assignee(\.count))
+   ```
+   */
+  public func assignee<Value>(
+    _ keyPath: WritableKeyPath<State, Value?>,
+    dropsOutput: @escaping (Changes<Value?>) -> Bool = { _ in false }
+  ) -> (Changes<Value?>) -> Void {
+    return { [weak self] value in
+      guard !dropsOutput(value) else { return }
+      self?.asStore().commit {
+        $0[keyPath: keyPath] = value.primitive
+      }
+    }
+  }
+
+  /**
+   Returns an asignee function to asign
+
+   ```
+   let store1 = Store()
+   let store2 = Store()
+
+   store1
+   .derived(.map(\.count))
+   .assign(to: store2.assignee(\.count))
+   ```
+   */
+  public func assignee<Value>(
+    _ keyPath: WritableKeyPath<State, Value?>,
+    dropsOutput: @escaping (Changes<Value?>) -> Bool = { _ in false }
+  ) -> (Changes<Value>) -> Void {
+    return { [weak self] value in
+      let changes = value.map { Optional.some($0) }
+      guard !dropsOutput(changes) else { return }
+      self?.asStore().commit {
+        $0[keyPath: keyPath] = .some(value.primitive)
+      }
+    }
+  }
   
   /**
    Assignee to asign Changes object directly.
@@ -134,6 +183,32 @@ extension StoreType {
     return { [weak self] value in
       self?.asStore().commit {
         $0[keyPath: keyPath] = value
+      }
+    }
+  }
+
+  /**
+   Assignee to asign Changes object directly.
+   */
+  public func assignee<Value>(
+    _ keyPath: WritableKeyPath<State, Value?>
+  ) -> (Value?) -> Void {
+    return { [weak self] value in
+      self?.asStore().commit {
+        $0[keyPath: keyPath] = value
+      }
+    }
+  }
+
+  /**
+   Assignee to asign Changes object directly.
+   */
+  public func assignee<Value>(
+    _ keyPath: WritableKeyPath<State, Value?>
+  ) -> (Value) -> Void {
+    return { [weak self] value in
+      self?.asStore().commit {
+        $0[keyPath: keyPath] = .some(value)
       }
     }
   }
@@ -155,5 +230,40 @@ extension StoreType {
   ) -> (Changes<Value>) -> Void {
     assignee(keyPath, dropsOutput: { !$0.hasChanges })
   }
-  
+
+  /**
+   Returns an asignee function to asign
+
+   ```
+   let store1 = Store()
+   let store2 = Store()
+
+   store1
+   .derived(.map(\.count))
+   .assign(to: store2.assignee(\.count))
+   ```
+   */
+  public func assignee<Value: Equatable>(
+    _ keyPath: WritableKeyPath<State, Value?>
+  ) -> (Changes<Value?>) -> Void {
+    assignee(keyPath, dropsOutput: { !$0.hasChanges })
+  }
+
+  /**
+   Returns an asignee function to asign
+
+   ```
+   let store1 = Store()
+   let store2 = Store()
+
+   store1
+   .derived(.map(\.count))
+   .assign(to: store2.assignee(\.count))
+   ```
+   */
+  public func assignee<Value: Equatable>(
+    _ keyPath: WritableKeyPath<State, Value?>
+  ) -> (Changes<Value>) -> Void {
+    assignee(keyPath, dropsOutput: { !$0.hasChanges })
+  }
 }
