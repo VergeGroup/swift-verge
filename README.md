@@ -59,7 +59,7 @@ Redux and Vuex are already following that.
 Verge is trying to do that in iOS application with Swift.
 
 Specifically:
-- Derived
+- Derived (Similar to [facebookexperimental/Recoil](https://github.com/facebookexperimental/Recoil)'s Atom and Selector)
 - ORM
 
 </p>
