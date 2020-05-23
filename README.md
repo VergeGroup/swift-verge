@@ -13,6 +13,9 @@
 
 The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
 
+Recenlty, [facebookexperimental/Recoil](https://github.com/facebookexperimental/Recoil) has been opened.  
+Atoms and Selectors similar to `Derived`.
+
 Plus, releasing from so many definition of the actions.<br>
 To be more Swift's Style on the writing code.
 
