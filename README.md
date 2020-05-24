@@ -1,4 +1,4 @@
-# Verge - a full-stack flux library for iOS App - SwiftUI / UIKit
+# Verge - A performant state management library for iOS App - SwiftUI / UIKit
 
 [![Swift 5.2](https://img.shields.io/badge/swift-5.2-ED523F.svg?style=flat)](https://swift.org/download/)
 ![Tests](https://github.com/muukii/Verge/workflows/Tests/badge.svg)
