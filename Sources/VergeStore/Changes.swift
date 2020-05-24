@@ -223,6 +223,25 @@ public final class Changes<Value>: ChangesType {
   public func ifChanged<T: Equatable, Result>(_ keyPath: ChangesKeyPath<T>, _ perform: (T) throws -> Result) rethrows -> Result? {
     try ifChanged(keyPath, ==, perform)
   }
+
+  @inline(__always)
+  public func ifChanged<T0: Equatable, T1: Equatable, Result>(
+    _ keyPath0: ChangesKeyPath<T0>,
+    _ keyPath1: ChangesKeyPath<T1>,
+    _ perform: ((T0, T1)) throws -> Result
+  ) rethrows -> Result? {
+    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) }, ==, perform)
+  }
+
+  @inline(__always)
+  public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, Result>(
+    _ keyPath0: ChangesKeyPath<T0>,
+    _ keyPath1: ChangesKeyPath<T1>,
+    _ keyPath2: ChangesKeyPath<T2>,
+    _ perform: ((T0, T1, T2)) throws -> Result
+  ) rethrows -> Result? {
+    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) }, ==, perform)
+  }
   
   /// Do a closure if value specified by keyPath contains changes.
   public func ifChanged<T, Result>(_ selector: ChangesKeyPath<T>, _ comparer: (T, T) -> Bool, _ perform: (T) throws -> Result) rethrows -> Result? {
