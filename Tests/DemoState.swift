@@ -10,11 +10,15 @@ import Foundation
 
 import VergeStore
 
+struct NonEquatable {}
+
 struct DemoState: ExtendedStateType {
   
   var name: String = ""
   var count: Int = 0
   var items: [Int] = []
+
+  var nonEquatable: NonEquatable = .init()
   
   struct Extended: ExtendedType {
     
