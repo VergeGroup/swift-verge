@@ -695,8 +695,65 @@ class ViewController: UIViewController {
 <details><summary>Open</summary>
 <p>
 
-#Overview
+## Overview
 A declaration to add a computed-property into the state. It helps to add a property that does not need to be stored-property. It's like Swift's computed property like following:
+
+```swift
+struct State {
+ var items: [Item] = [] {
+
+ var itemsCount: Int {
+   items.count
+ }
+}
+```
+
+However, this Swift's computed-property will compute the value every state changed. It might become a serious issue on performance.
+
+Compared with Swift's computed property and this, this does not compute the value every state changes, It does compute depend on specified rules.
+That rules mainly come from the concept of Memoization.
+
+Example code:
+
+```swift
+struct State: ExtendedStateType {
+
+ var name: String = ...
+ var items: [Int] = []
+
+ struct Extended: ExtendedType {
+
+   static let instance = Extended()
+
+   let filteredArray = Field.Computed<[Int]> {
+     $0.items.filter { $0 > 300 }
+   }
+   .dropsInput {
+     $0.noChanges(\.items)
+   }
+ }
+}
+```
+
+```swift
+let store: MyStore<State, Never> = ...
+
+let state = store.state
+
+let result: [Int] = state.computed.filteredArray
+```
+
+## Instruction
+
+### Computed Property on State
+
+States may have a property that actually does not need to be stored property. In that case, we can use computed property.
+
+Although, we should take care of the cost of the computing to return value in that. What is that case? Followings explains that.
+
+> Computed concept is inspired from Vuex Getters. [https://vuex.vuejs.org/guide/getters.html](https://vuex.vuejs.org/guide/getters.html)
+
+
 
 </p>
 </details>
@@ -797,6 +854,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTk5MDk1MDcwNiw4MjM5NjU4OTQsLTE5OD
-I2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbLTIxMzA4Nzc2MDMsODIzOTY1ODk0LC0xOT
+gyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
 -->
