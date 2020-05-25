@@ -930,6 +930,24 @@ let derived: Derived<Int> = store.derived(.map(\.count))
 let derived: Derived<Int> = store.derived(.map { $0.count })
 ```
 
+Derived is an object (reference type). It provides a latest value from a store.
+This supports getting the value ad-hoc or subscribing the value updating.
+
+## Take a value
+Derived allows us to take the latest value at the time.
+
+```swift
+let value: Int = derived.value
+```
+
+## Subscribe the latest value Derived provides
+
+Derived allows us to subscribe to the updated value.
+
+```swift
+let cancellable = derived.sinkValue { (changes: Changes<Int>) in 
+}
+```
 
 </p>
 </details>
@@ -1022,6 +1040,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyNDU2MzE2MDYsODIzOTY1ODk0LC0xOT
+eyJoaXN0b3J5IjpbLTE4MjQ3ODg5OTEsODIzOTY1ODk0LC0xOT
 gyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
 -->
