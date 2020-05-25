@@ -1224,7 +1224,7 @@ To avoid this, we should do **Normalize** the State Shape. About Normalizing sta
 </details>
 
 <details><summary>Getting Started</summary>
-## Creates Database struct
+## Create Database struct
 
 **Database struct** contains the tables for each Entity. As a struct object, that allows to manage history and it can be embedded on the state that application uses.
 ‌
@@ -1233,6 +1233,62 @@ To avoid this, we should do **Normalize** the State Shape. About Normalizing sta
     -   Author entity
 
 ## Add DatabaseType protocol to your database struct
+
+```swift
+struct Database: DatabaseType {
+}
+```
+
+`DatabaseType` protocol has several constraints and provides functions with that. To satisfy those constraints, make it like following
+
+```swift
+struct Database: DatabaseType {
+
+  struct Schema: EntitySchemaType {
+
+  }
+
+  struct Indexes: IndexesType {
+
+  }
+
+  var _backingStorage: BackingStorage = .init()
+}
+```
+
+## Register EntityTable
+
+As an example, suppose we have Book and Author entities.
+
+```swift
+struct Book: EntityType {
+
+  typealias IdentifierType = String
+
+  var entityID: EntityID {
+    .init(rawID)
+  }
+
+  let rawID: String
+}
+
+struct Author: EntityType {
+
+  typealias IdentifierType = String
+
+  var entityID: EntityID {
+    .init(rawID)
+  }
+
+  let rawID: String
+}
+```
+
+By conforming to `EntityType` protocol, it can be used by Database as Entity. It needs `rawID` and you can set whatever type your Entity needs.
+
+And then, add these entities to Schema object.
+
+
 
 </details>
 
@@ -1318,7 +1374,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDg5NTU2MTc2LDE2MjA3MjgzMiwtMTAxOT
+eyJoaXN0b3J5IjpbMTE1MDIyMTM0LDE2MjA3MjgzMiwtMTAxOT
 A4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4
 MjldfQ==
 -->
