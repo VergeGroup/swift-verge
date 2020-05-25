@@ -1565,13 +1565,66 @@ struct Database: DatabaseType {
 </details>
 
 <details><summary>Makes a Derived for a entity</summary>
-<p>
-</p>
+
+## To create getter, Add DatabaseEmbedding protocol to your state-tree.
+
+```swift
+struct RootState: DatabaseEmbedding {
+
+  static let getterToDatabase: (RootState) -> RootState.Database = { $0.db }
+
+  struct Database: DatabaseType {
+    ...       
+  }
+
+  var db = Database()
+}
+```
+
+## Create getter from entity id
+
+```swift
+let id = Book.EntityID.init("some")
+
+let derived: Book.Derived = storage.derived(from: id)
+```
+
+## Get entity from Getter
+
+```swift
+let entity: Book = getter.value.wrapped
+```
+
+VergeORM supports create MemoizeSelector from Storage or Store.
+
+
 </details>
 
 <details><summary>Tips</summary>
-<p>
-</p>
+
+## Access to DB partially
+
+We may want to create common accessing code with using protocol if we have multiple database object.
+
+```swift
+protocol Partial {
+  var author: Author.EntityTableKey { get }
+}
+
+struct Database: DatabaseType {
+  
+  struct Schema: EntitySchemaType, Partial {
+    let book = Book.EntityTableKey()
+    let author = Author.EntityTableKey()
+  }
+  
+  struct Indexes: IndexesType {
+  }
+    
+  var _backingStorage: BackingStorage = .init()
+}
+```
+
 </details>
 
 ### 📦 VergeRx
@@ -1636,7 +1689,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTU5NDQ3NjU0MywxOTg0MzQ0NjY3LDE2Mj
-A3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgy
-NjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbLTE5NzY1OTkyMzMsMTk4NDM0NDY2NywxNj
+IwNzI4MzIsLTEwMTkwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4
+MjYwLC0xMjM0MjM0ODI5XX0=
 -->
