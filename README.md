@@ -1426,8 +1426,42 @@ let allBooks = state.db.indexes.allBooks
 **Accessing indexes**
 
 ```swift
+// Get the number of ids
+allBooks.count
 
+// Take all ids
+allBooks.forEach { id in ... }
+
+// Get the id with location
+let id: Book.ID = allBooks[0]
 ```
+
+Fetch the entities from index
+
+```swift
+let books: [Book] = state.db.entities.book.find(in: state.db.indexes.allBooks)
+// This syntax looks is a bit verbose.
+// We will take shorter syntax.
+```
+
+## Write Index
+
+To write index is similar with updating entities. Using `performBatchUpdates` , add or delete index through the `context` .
+
+```swift
+state.db.performBatchUpdates { (context) -> Book in
+
+  let book = Book(rawID: id.raw, authorID: Author.anonymous.id)
+  context.insertsOrUpdates.book.insert(book)
+
+  // Here 👋
+  context.indexes.allBooks.append(book.id)
+
+}
+```
+
+Since Index is updated manually here, you might want to manage it automatically.
+Using **Middleware**, it's possible.
 
 </details>
 
@@ -1508,7 +1542,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTEwNDIwOTI0MSwxOTg0MzQ0NjY3LDE2Mj
+eyJoaXN0b3J5IjpbMTE2NDk0NjAwNSwxOTg0MzQ0NjY3LDE2Mj
 A3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgy
 NjAsLTEyMzQyMzQ4MjldfQ==
 -->
