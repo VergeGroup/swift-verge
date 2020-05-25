@@ -610,6 +610,12 @@ extension StateType {
 }
 ```
 
+## Normalization
+
+**If you put the data that has relation-ship or complicated structure into state tree, it would be needed normalization to keep performance. Please check VergeORM module**
+
+[About more Normalization and why we need to do this]([https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/))
+
 </p>
 </details>
 
@@ -617,6 +623,19 @@ extension StateType {
 
 <details><summary>Open</summary>
 <p>
+
+## Update UI from State
+
+
+In subscribing the state and binding UI, it's most important to reduce the meaningless time to update UI.
+
+‌
+
+What things are the meaningless? that is the update UI which contains no updates.
+
+‌
+
+Basically, we can do this like followings
 
 </p>
 </details>
@@ -725,6 +744,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTkxODA4MTE2Nyw4MjM5NjU4OTQsLTE5OD
-I2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbLTEyMDA2NzA3MzgsODIzOTY1ODk0LC0xOT
+gyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
 -->
