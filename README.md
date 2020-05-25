@@ -1182,6 +1182,11 @@ In the application that uses many entity objects, we sure highly recommend using
 About more detail,
 https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape
 
+<details><h2>VergeORM Core Concepts</h2>
+</p>
+</p>
+</details>
+
 ### 📦 VergeRx
 
 It provides several observable that compatible with RxSwift.
@@ -1244,7 +1249,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5NDUzMDg5MjUsMTYyMDcyODMyLC0xMD
-E5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIz
-NDgyOV19
+eyJoaXN0b3J5IjpbNDk0MDQ3NTE2LDE2MjA3MjgzMiwtMTAxOT
+A4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4
+MjldfQ==
 -->
