@@ -1380,8 +1380,7 @@ Currently, we have the following types,‌
 	-  Manages identifiers with hashable keys
 -   **SetIndex**
     -   Set<EntityID>
--   **GroupByKeyIndex**
-    
+-   **GroupByKeyIndex**    
     -   [Key : [EntityID]]
         
     
@@ -1467,7 +1466,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyNjY0MjczMTksMTYyMDcyODMyLC0xMD
-E5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIz
-NDgyOV19
+eyJoaXN0b3J5IjpbMTk4NDM0NDY2NywxNjIwNzI4MzIsLTEwMT
+kwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0
+ODI5XX0=
 -->
