@@ -566,6 +566,19 @@ store
 <details><summary>Open</summary>
 <p>
 
+## Using single state tree (Not enforced)
+
+VergeStore uses a **single state-tree. (Recommended)** That means an object contains all of the application's state. With this, we can get to achieve **"single source of truth"**
+
+That state is managed by **Store**. It process updating the state and notify updated events to the subscribers.
+
+> 💡 VergeStore does support multiple state-tree as well. Depending on the case, we can create another Store instance.
+
+## Add computed property
+
+```swift
+
+
 </p>
 </details>
 
@@ -681,6 +694,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMj
-M0MjM0ODI5XX0=
+eyJoaXN0b3J5IjpbODE1MDI2MDk2LDgyMzk2NTg5NCwtMTk4Mj
+YxODI2MCwtMTIzNDIzNDgyOV19
 -->
