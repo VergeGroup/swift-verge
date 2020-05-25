@@ -1182,7 +1182,7 @@ In the application that uses many entity objects, we sure highly recommend using
 About more detail,
 https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape
 
-<details><h2>VergeORM Core Concepts</h2>
+<details><summary><h2>VergeORM Core Concepts</h2></summary>
 </p>
 
 VergeORM is a library to manage Object-Relational Mapping in the value-type struct.
@@ -1285,7 +1285,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDA3NTExNTMxLDE2MjA3MjgzMiwtMTAxOT
-A4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4
-MjldfQ==
+eyJoaXN0b3J5IjpbLTIxMDk3MDA2OTgsMTYyMDcyODMyLC0xMD
+E5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIz
+NDgyOV19
 -->
