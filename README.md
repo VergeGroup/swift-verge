@@ -497,6 +497,14 @@ print(store.state.todos)
 <details><summary>Open</summary>
 <p>
 
+## What activity does
+VergeStore supports send some events that won't be stored on state.
+Even if an application runs with Data-Driven, it might have some issues that not easy to something with Data-Driven.
+For example, something that would happen with the timer's trigger. This case is not easy with expressing state.
+Activity helps that can do easily.
+This means VergeStore can use Event-Driven from Data-Driven partially.
+We think it's not so special concept. SwiftUI supports these use cases as well that using Combine's Publisher.
+
 </p>
 </details>
 
@@ -620,6 +628,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyOTc5MjAzNDUsLTE5ODI2MTgyNjAsLT
-EyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbMTgxMTIxNjg1NiwtMTk4MjYxODI2MCwtMT
+IzNDIzNDgyOV19
 -->
