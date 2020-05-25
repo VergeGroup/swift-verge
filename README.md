@@ -396,19 +396,67 @@ It provides core functions of Store-pattern.
 
 ## Store
 
+<details><summary>Open</summary>
+<p>
+
+</p>
+</details>
+
 ## Mutation
+
+<details><summary>Open</summary>
+<p>
+
+</p>
+</details>
 
 ## Activity
 
+<details><summary>Open</summary>
+<p>
+
+</p>
+</details>
+
 ## State and shape
+
+<details><summary>Open</summary>
+<p>
+
+</p>
+</details>
 
 ## Changes from State
 
+<details><summary>Open</summary>
+<p>
+
+</p>
+</details>
+
 ## Derived - BindingDerived
+
+<details><summary>Open</summary>
+<p>
+
+</p>
+</details>
 
 ## Dispatcher - perform Mutation
 
+<details><summary>Open</summary>
+<p>
+
+</p>
+</details>
+
 ## Logging
+
+<details><summary>Open</summary>
+<p>
+
+</p>
+</details>
 
 ### 📦 VergeORM
 
@@ -482,6 +530,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU2NzczODA5MSwtMTk4MjYxODI2MCwtMT
+eyJoaXN0b3J5IjpbLTU4NjMwMjMyNSwtMTk4MjYxODI2MCwtMT
 IzNDIzNDgyOV19
 -->
