@@ -461,6 +461,34 @@ The only way to actually change state in a Store is by committing a mutation.
 Define a function that returns Mutation object. 
 That expresses that function is Mutation
 
+> Mutation does **NOT** allow to run asynchronous operation.
+
+## To define mutations in the Store
+
+```swift
+class MyDispatcher: MyStore.Dispatcher {
+
+  func addNewTodo(title: String) {
+    commit { (state: inout RootState) in
+      state.todos.append(Todo(title: title, hasCompleted: false))
+    }
+  }
+  
+}
+```
+
+## To run Mutation
+
+```swift
+let store = MyStore()
+let dispatcher = MyDispatcher(target: store)
+
+dispatcher.addNewTodo(title: "Create SwiftUI App")
+
+print(store.state.todos)
+// store.state.todos => [Todo(title: "Create SwiftUI App", hasCompleted: false)]
+```
+
 </p>
 </details>
 
@@ -584,6 +612,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0MjY5Mzk4NDYsLTE5ODI2MTgyNjAsLT
-EyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbNjMwOTY0NzYsLTE5ODI2MTgyNjAsLTEyMz
+QyMzQ4MjldfQ==
 -->
