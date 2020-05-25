@@ -394,7 +394,7 @@ It provides core functions of Store-pattern.
 - State supports computed property with caching (like [Vuex's Getters](https://vuex.vuejs.org/guide/getters.html))
 - Derived object to create derived data from state-tree with performant (like [redux/reselect](https://github.com/reduxjs/reselect))
 
-## Store
+## 🌑 Store
 
 <details><summary>Open</summary>
 <p>
@@ -451,7 +451,7 @@ store.increment()
 </p>
 </details>
 
-## Mutation
+## ☄️ Mutation
 
 <details><summary>Open</summary>
 <p>
@@ -492,7 +492,7 @@ print(store.state.todos)
 </p>
 </details>
 
-## Activity
+## ⚡️ Activity
 
 <details><summary>Open</summary>
 <p>
@@ -500,7 +500,7 @@ print(store.state.todos)
 </p>
 </details>
 
-## State and shape
+## 🪐 State and shape
 
 <details><summary>Open</summary>
 <p>
@@ -508,7 +508,7 @@ print(store.state.todos)
 </p>
 </details>
 
-## Changes from State
+## 🌟 Changes from State
 
 <details><summary>Open</summary>
 <p>
@@ -516,7 +516,15 @@ print(store.state.todos)
 </p>
 </details>
 
-## Derived - BindingDerived
+## 🛸 Computed property on State
+
+<details><summary>Open</summary>
+<p>
+
+</p>
+</details>
+
+## 🌙 Derived - BindingDerived
 
 <details><summary>Open</summary>
 <p>
@@ -612,6 +620,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjMwOTY0NzYsLTE5ODI2MTgyNjAsLTEyMz
-QyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbMTAzNDM1NjQ1NiwtMTk4MjYxODI2MCwtMT
+IzNDIzNDgyOV19
 -->
