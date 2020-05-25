@@ -7,8 +7,9 @@
 <img alt="swift5.2" src="https://img.shields.io/badge/swift-5.2-ED523F.svg?style=flat"/>
 <img alt="Tests" src="https://github.com/muukii/Verge/workflows/Tests/badge.svg"/>
 <img alt="cocoapods" src="https://img.shields.io/cocoapods/v/Verge" />
+</p>
 
-
+<p align="center">
 <img width="480px" src="https://user-images.githubusercontent.com/1888355/81477721-268e7580-9254-11ea-94fa-1c2135cdc16f.png"/>
 </p>
 
@@ -1162,6 +1163,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc3NjY4NjU2NCwtMTAxOTA4MzI5OCw4Mj
+eyJoaXN0b3J5IjpbLTkyOTgwNDQ1NiwtMTAxOTA4MzI5OCw4Mj
 M5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
