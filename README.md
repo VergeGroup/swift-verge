@@ -817,6 +817,80 @@ struct State {
 }
 ```
 
+However, as we said, this approach is not simple. And this can not handle easily a case that combining from multiple stored property. Next introduces one of the solutions.
+
+
+## Computed Properties
+
+VergeStore has a way of providing computed property with caching to reduce taking computing resource.
+
+Keywords are:
+-   ExtendedStateType    
+-   ExtendedType
+-   Field.Computed<T>
+    
+Above State code can be improved like following.
+
+```swift
+struct State: ExtendedStateType {
+
+  var name: String = ...
+  var items: [Int] = []
+  
+  struct Extended: ExtendedType {
+  
+    static let instance = Extended() 
+    
+    let filteredArray = Field.Computed<[Int]> {
+      $0.items.filter { $0 > 300 }
+    }
+    .dropsInput {
+      $0.noChanges(\.items)
+    }
+  }
+}
+```
+
+To access that computed property, we can do the followings:
+
+```swift
+let store: MyStore<State, Never> = ...
+
+let state = store.state
+
+let result: [Int] = state.computed.filteredArray
+```
+
+`store.computed.filteredArray` will be updated only when items updated. Since the results are stored as a cache, we can take value without computing.
+
+Followings are the steps describes when it computes while paying the cost.
+
+```swift
+let store: MyStore<State, Never> = ...
+
+// It computes
+store.state.computed.filteredArray
+
+// no computes because results cached with first-time access
+store.state.computed.filteredArray
+
+// State will change but no affects items
+store.commit {
+  $0.name = "Muukii"
+}
+
+// no computes because results cached with first-time access
+store.state.computed.filteredArray
+
+// State will change with it affects items
+store.commit {
+  $0.items.append(...)
+}
+
+// It computes new value
+store.state.computed.filteredArray
+```
+
 </p>
 </details>
 
@@ -916,6 +990,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIwMDY0MDg2NzEsODIzOTY1ODk0LC0xOT
+eyJoaXN0b3J5IjpbLTEyMDIwMzM0NTEsODIzOTY1ODk0LC0xOT
 gyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
 -->
