@@ -467,7 +467,56 @@ extension Changes where Value : Equatable {
 
 
 extension _StateTypeContainer {
-        
+
+  /**
+   A declaration to add a computed-property into the state.
+   It helps to add a property that does not need to be stored-property.
+   It's like Swift's computed property like following:
+
+   ```swift
+   struct State {
+     var items: [Item] = [] {
+
+     var itemsCount: Int {
+       items.count
+     }
+   }
+   ```
+   However, this Swift's computed-property will compute the value every state changed. It might become a serious issue on performance.
+
+   Compared with Swift's computed property and this,  this does not compute the value every state changes, It does compute depend on specified rules.
+   That rules mainly come from the concept of Memoization.
+
+   Example code:
+
+   ```swift
+   struct State: ExtendedStateType {
+
+     var name: String = ...
+     var items: [Int] = []
+
+     struct Extended: ExtendedType {
+
+       static let instance = Extended()
+
+       let filteredArray = Field.Computed<[Int]> {
+         $0.items.filter { $0 > 300 }
+       }
+       .dropsInput {
+         $0.noChanges(\.items)
+       }
+     }
+   }
+   ```
+
+   ```swift
+   let store: MyStore<State, Never> = ...
+
+   let state = store.state
+
+   let result: [Int] = state.computed.filteredArray
+   ```
+   */
   public struct Computed<Output> {
     
     public typealias Input = Changes<State>
@@ -506,8 +555,30 @@ extension _StateTypeContainer {
       self.init(.map(compute))
     }
 
+    /// Initialize Computed property that computes value from derived value
+    /// Drops duplicated derived value with Equatable of Derived type.
+    ///
+    /// - Parameters:
+    ///   - derive: A closure to create value from the state to put into the compute closure.
+    ///   - compute: A closure to compose a computed value from the derived value.
     public init<Derived: Equatable>(
       derive: @escaping (Input) -> Derived,
+      compute: @escaping (Derived) -> Output) {
+
+      self.init(derive: derive, dropsDerived: ==, compute: compute)
+    }
+
+    /// Initialize Computed property that computes value from derived value
+    ///
+    /// - Parameters:
+    ///   - derive: A closure to create value from the state to put into the compute closure.
+    ///   - dropsDerived:
+    ///     A predicate to drop a duplicated value, closure gets an old value and a new value.
+    ///     If return true, drops the value.
+    ///   - compute: A closure to compose a computed value from the derived value.
+    public init<Derived>(
+      derive: @escaping (Input) -> Derived,
+      dropsDerived: @escaping (Derived, Derived) -> Bool,
       compute: @escaping (Derived) -> Output) {
 
       self.init(
@@ -516,21 +587,23 @@ extension _StateTypeContainer {
             compute(derive(input))
         }) { input in
 
-          let result = input.ifChanged(derive) { (derived) in
+          let result = input.ifChanged(derive, dropsDerived) { (derived) in
             compute(derived)
           }
 
           switch result {
           case .none:
-            return  .noChanages
+            return .noChanages
           case .some(let wrapped):
             return .updated(wrapped)
           }
         }
       )
-
     }
-    
+
+    /**
+     Adds a rule to drop input value from the root state changed.
+     */
     @inlinable
     @inline(__always)
     public func dropsInput(while predicate: @escaping (Input) -> Bool) -> Self {
@@ -544,7 +617,10 @@ extension _StateTypeContainer {
     public func modified(_ modifier: (MemoizeMap<Input, Output>) -> MemoizeMap<Input, Output>) -> Self {
       .init(modifier(memoizeMap))
     }
-                       
+
+    /**
+     Registers callback-closure that will call when accessed the computed property
+     */
     @inlinable
     @inline(__always)
     public func onRead(_ clsoure: @escaping () -> Void) -> Self {
@@ -553,7 +629,10 @@ extension _StateTypeContainer {
       _self._onRead = clsoure
       return _self
     }
-    
+
+    /**
+     Registers callback-closure that will call when compute the value
+     */
     @inlinable
     @inline(__always)
     public func onTransform(_ closure: @escaping () -> Void) -> Self {
@@ -562,7 +641,10 @@ extension _StateTypeContainer {
       _self._onTransform = closure
       return _self
     }
-    
+
+    /**
+     Registers callback-closure that will call when hit the pre-filter
+     */
     @inlinable
     @inline(__always)
     public func onHitPreFilter(_ closure: @escaping () -> Void) -> Self {
@@ -571,7 +653,10 @@ extension _StateTypeContainer {
       _self._onHitPreFilter = closure
       return _self
     }
-    
+
+    /**
+     Registers callback-closure that will call when hit the cached value
+     */
     @inlinable
     @inline(__always)
     public func onHitCache(_ closure: @escaping () -> Void) -> Self {
@@ -580,7 +665,10 @@ extension _StateTypeContainer {
       _self._onHitCache = closure
       return _self
     }
-    
+
+    /**
+     Registers callback-closure that will call when hit the cached value
+     */
     @inlinable
     @inline(__always)
     public func onHitPreviousCache(_ closure: @escaping () -> Void) -> Self {

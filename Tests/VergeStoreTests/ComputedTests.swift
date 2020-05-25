@@ -16,6 +16,18 @@ fileprivate var nestedCounter: Int = 0
 fileprivate var rootReadCounter = 0
 fileprivate var rootPreFilterCounter = 0
 
+struct Counter {
+  var read = 0
+  var transform = 0
+  var hitPrefilter = 0
+
+  mutating func reset() {
+    self = Counter()
+  }
+}
+
+fileprivate var nameCount_derived_counter = Counter()
+
 class Computed2Tests: XCTestCase {
   
   struct RootState: ExtendedStateType {
@@ -112,6 +124,19 @@ class Computed2Tests: XCTestCase {
       }
       .onTransform {
         rootTransformCounter += 1
+      }
+
+      let nameCount_derived = Field.Computed.init(derive: { $0.name }) { (name) in
+        name.count
+      }
+      .onRead {
+        nameCount_derived_counter.read += 1
+      }
+      .onTransform {
+        nameCount_derived_counter.transform += 1
+      }
+      .onHitPreFilter {
+        nameCount_derived_counter.hitPrefilter += 1
       }
       
     }
@@ -434,5 +459,37 @@ class Computed2Tests: XCTestCase {
     
     withExtendedLifetime(subscription, {})
   }
-  
+
+  func testDerivedInitializer() {
+
+    let store = MyStore()
+
+    nameCount_derived_counter.reset()
+
+    XCTAssertEqual(store.state.computed.nameCount_derived, "muukii".count)
+    XCTAssertEqual(nameCount_derived_counter.read, 1)
+    XCTAssertEqual(nameCount_derived_counter.transform, 1)
+    XCTAssertEqual(nameCount_derived_counter.hitPrefilter, 0)
+
+    // commit unreated value
+    store.commit {
+      $0.num_0 += 1
+    }
+
+    XCTAssertEqual(store.state.computed.nameCount_derived, "muukii".count)
+    XCTAssertEqual(nameCount_derived_counter.read, 2)
+    XCTAssertEqual(nameCount_derived_counter.transform, 1)
+    XCTAssertEqual(nameCount_derived_counter.hitPrefilter, 1)
+
+    // commit reated value
+    store.commit {
+      $0.name = "H"
+    }
+
+    XCTAssertEqual(store.state.computed.nameCount_derived, "H".count)
+    XCTAssertEqual(nameCount_derived_counter.read, 3)
+    XCTAssertEqual(nameCount_derived_counter.transform, 2)
+    XCTAssertEqual(nameCount_derived_counter.hitPrefilter, 1)
+
+  }
 }
