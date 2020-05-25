@@ -1365,8 +1365,28 @@ To do this, we need to manage the Identifier of the entity and additionally, to 
 
 To do this, VergeORM provides Index feature. Index manages the set of identifiers in several structures.
 
->
->Meaning of Index might be a bit different than RDB's Index. At least, Index manages identifiers to find the entity faster than linear search.
+> 💡
+> Meaning of Index might be a bit different than RDB's Index. At least, Index manages identifiers to find the entity faster than linear search.
+
+Currently, we have the following types,‌
+-   **OrderedIDIndex**    
+    -   [EntityID]        
+    -   Manages identifiers in an ordered collection           
+-   **GroupByEntityIndex**
+    -   [EntityID : [EntityID]]
+    -   Manages identifiers that are grouped by another identifier
+-   **HashIndex**
+	-  [Key : EntityID]
+	-  Manages identifiers with hashable keys
+-   **SetIndex**
+    -   Set<EntityID>
+-   **GroupByKeyIndex**
+    
+    -   [Key : [EntityID]]
+        
+    
+
+‌
 
 </details>
 
@@ -1447,7 +1467,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTYwMzg2NDkwNCwxNjIwNzI4MzIsLTEwMT
-kwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0
-ODI5XX0=
+eyJoaXN0b3J5IjpbLTEyNjY0MjczMTksMTYyMDcyODMyLC0xMD
+E5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIz
+NDgyOV19
 -->
