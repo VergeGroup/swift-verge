@@ -505,6 +505,12 @@ Activity helps that can do easily.
 This means VergeStore can use Event-Driven from Data-Driven partially.
 We think it's not so special concept. SwiftUI supports these use cases as well that using Combine's Publisher.
 
+```swift
+func onReceive<P>(_ publisher: P, perform action: @escaping (P.Output) -> Void) -> some View where P : Publisher, P.Failure == Never
+```
+
+[Apple's SwiftUI Ref]([https://developer.apple.com/documentation/swiftui/view/3365935-onreceive](https://developer.apple.com/documentation/swiftui/view/3365935-onreceive))
+
 </p>
 </details>
 
@@ -628,6 +634,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTgxMTIxNjg1NiwtMTk4MjYxODI2MCwtMT
-IzNDIzNDgyOV19
+eyJoaXN0b3J5IjpbLTE1MDM0Nzk0NDAsLTE5ODI2MTgyNjAsLT
+EyMzQyMzQ4MjldfQ==
 -->
