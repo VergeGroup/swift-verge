@@ -1093,13 +1093,13 @@ DefaultStoreLogger is the pre-implemented logger that send the logs to OSLog.
 To enable logging, set the logger instance to Store's initializer.
 
 ```swift
-StoreBase<MyState, MyActivity>.init(
+Store<MyState, MyActivity>.init(
   initialState: ...,
   logger: DefaultStoreLogger.shared // 🤩
 )
 ```
 
-S
+Mainly, we can monitor log about commit in Xcode's console and Terminal.app
 
 ```
 2020-05-25 23:47:06.884304+0900 VergeStoreDemoSwiftUI[84086:2813713] [Commit] {
@@ -1115,6 +1115,20 @@ S
   "type" : "commit"
 }
 ```
+
+## Creating a customized logger
+
+```swift
+public protocol StoreLogger {
+  
+  func didCommit(log: CommitLog)
+  func didDispatch(log: DispatchLog)
+  
+  func didCreateDispatcher(log: DidCreateDispatcherLog)
+  func didDestroyDispatcher(log: DidDestroyDispatcherLog)
+}
+```
+
 </p>
 </details>
 
@@ -1190,7 +1204,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIwODYwMTcyOTgsMTYyMDcyODMyLC0xMD
-E5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIz
-NDgyOV19
+eyJoaXN0b3J5IjpbLTU5NTk3MTE0OSwxNjIwNzI4MzIsLTEwMT
+kwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0
+ODI5XX0=
 -->
