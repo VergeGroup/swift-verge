@@ -753,7 +753,69 @@ Although, we should take care of the cost of the computing to return value in th
 
 > Computed concept is inspired from Vuex Getters. [https://vuex.vuejs.org/guide/getters.html](https://vuex.vuejs.org/guide/getters.html)
 
+For example, there is itemsCount.
 
+```swift
+struct State {
+  var items: [Item] = []
+    
+  var itemsCount: Int = 0
+}
+```
+
+In order to become itemsCount dynamic value, it needs to be updated with updating items like this.
+
+```swift
+struct State {
+  var items: [Item] = [] {
+    didSet {
+      itemsCount = items.count
+    }
+  }
+    
+  var itemsCount: Int = 0
+}
+```
+
+We got it, but we don't think it's pretty simple. Actually we can do this like this.
+
+```swift
+struct State {
+  var items: [Item] = [] {
+  
+  var itemsCount: Int {
+    items.count
+  }
+}
+```
+
+With this, it did get to be more simple.
+
+```swift
+struct State {
+  var items: [Item] = []
+  
+  var processedItems: [ProcessedItem] {
+    items.map { $0.doSomeExpensiveProcessing() }
+  }
+}
+```
+
+As an example, Item can be processed with the something operation that takes expensive cost. We can replace this example with filter function. 
+
+This code looks is very simple and it has got data from source of truth. Every time we can get correct data. However we can look this takes a lot of the computing resources. In this case, it would be better to use didSet and update data.
+
+```swift
+struct State {
+  var items: [Item] = [] {
+    didSet {
+      processedItems = items.map { $0.doSomeExpensiveProcessing() }
+    }
+  }
+  
+  var processedItems: [ProcessedItem] = []
+}
+```
 
 </p>
 </details>
@@ -854,6 +916,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIxMzA4Nzc2MDMsODIzOTY1ODk0LC0xOT
+eyJoaXN0b3J5IjpbLTIwMDY0MDg2NzEsODIzOTY1ODk0LC0xOT
 gyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
 -->
