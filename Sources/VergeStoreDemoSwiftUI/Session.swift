@@ -22,14 +22,15 @@ final class Session: ObservableObject {
   
   let store = SessionStore()
   private(set) lazy var sessionDispatcher = SessionDispatcher(targetStore: store)
-  
+
   private(set) lazy var users = store.derived(
-    MemoizeMap.map { state in
-      state.db.entities.user.find(in: state.db.indexes.userIDs)
-    }
-    .dropsInput {
-      $0.noChanges(\.db.entities.user)
-  });
+    .map(
+      derive: { ($0.db.entities.user, $0.db.indexes.userIDs) },
+      dropsDerived: ==,
+      compute: { (userTable, index) in
+        userTable.find(in: index)
+    })
+  )
 
   init() {
     

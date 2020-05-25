@@ -196,6 +196,54 @@ extension MemoizeMap where Input : ChangesType {
     
     return instance
   }
+
+  /// Makes an instance that computes value from derived value
+  /// - Complexity: ✅ Active Memoization with Derived parameter
+  ///
+  /// - Parameters:
+  ///   - derive: A closure to create value from the state to put into the compute closure.
+  ///   - dropsDerived:
+  ///     A predicate to drop a duplicated value, closure gets an old value and a new value.
+  ///     If return true, drops the value.
+  ///   - compute: A closure to compose a computed value from the derived value.
+  public static func map<Derived>(
+    derive: @escaping (Changes<Input.Value>) -> Derived,
+    dropsDerived: @escaping (Derived, Derived) -> Bool,
+    compute: @escaping (Derived) -> Output
+  ) -> Self {
+
+    .init(
+      makeInitial: { input in
+        compute(derive(input.asChanges()))
+    }) { input in
+
+      let result = input.asChanges().ifChanged(derive, dropsDerived) { (derived) in
+        compute(derived)
+      }
+
+      switch result {
+      case .none:
+        return .noChanages
+      case .some(let wrapped):
+        return .updated(wrapped)
+      }
+    }
+  }
+
+  /// Makes an instance that computes value from derived value
+  /// Drops duplicated derived value with Equatable of Derived type.
+  /// - Complexity: ✅ Active Memoization with Derived parameter
+  ///
+  /// - Parameters:
+  ///   - derive: A closure to create value from the state to put into the compute closure.
+  ///   - compute: A closure to compose a computed value from the derived value.
+  public static func map<Derived: Equatable>(
+    derive: @escaping (Changes<Input.Value>) -> Derived,
+    compute: @escaping (Derived) -> Output
+  ) -> Self {
+
+    self.map(derive: derive, dropsDerived: ==, compute: compute)
+  }
   
 }
 
