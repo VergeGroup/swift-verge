@@ -387,14 +387,14 @@ You can check the detail of this from [our documentation](https://muukii-app.git
 
 ## Modules overview
 
-### 📦 Store
+### 📦 VergeStore
 
 It provides core functions of Store-pattern.
 
 - State supports computed property with caching (like [Vuex's Getters](https://vuex.vuejs.org/guide/getters.html))
 - Derived object to create derived data from state-tree with performant (like [redux/reselect](https://github.com/reduxjs/reselect))
 
-### 📦 ORM
+### 📦 VergeORM
 
 It provides the function that manages performant many entity objects.<br>
 Technically, using Normalization.
@@ -404,7 +404,7 @@ In the application that uses many entity objects, we sure highly recommend using
 About more detail,
 https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape
 
-### 📦 Rx Extensions
+### 📦 VergeRx
 
 It provides several observable that compatible with RxSwift.
 
@@ -466,5 +466,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbLTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ
+==
 -->
