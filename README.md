@@ -394,6 +394,8 @@ It provides core functions of Store-pattern.
 - State supports computed property with caching (like [Vuex's Getters](https://vuex.vuejs.org/guide/getters.html))
 - Derived object to create derived data from state-tree with performant (like [redux/reselect](https://github.com/reduxjs/reselect))
 
+
+
 ### 📦 VergeORM
 
 It provides the function that manages performant many entity objects.<br>
@@ -466,6 +468,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ
-==
+eyJoaXN0b3J5IjpbMzEzNTkzMjMyLC0xOTgyNjE4MjYwLC0xMj
+M0MjM0ODI5XX0=
 -->
