@@ -1565,7 +1565,7 @@ struct Database: DatabaseType {
 </details>
 
 <details><summary>Makes a Derived for a entity</summary>
-
+<p>
 ## To create getter, Add DatabaseEmbedding protocol to your state-tree.
 
 ```swift
@@ -1597,7 +1597,7 @@ let entity: Book = getter.value.wrapped
 
 VergeORM supports create MemoizeSelector from Storage or Store.
 
-
+</p>
 </details>
 
 <details><summary>Tips</summary>
@@ -1697,7 +1697,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTk5ODg0MTMwNSwxOTg0MzQ0NjY3LDE2Mj
-A3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgy
-NjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbLTEyNDMxNzQyOTQsMTk4NDM0NDY2NywxNj
+IwNzI4MzIsLTEwMTkwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4
+MjYwLC0xMjM0MjM0ODI5XX0=
 -->
