@@ -1135,7 +1135,17 @@ public protocol StoreLogger {
 
 ## Utilities
 
+<details><summary>Open</summary>
+<p>
 
+## Fragment\<State>
+
+## Fragment helps compare if state was updated without Equatable
+
+‌In a single state tree, comparing for reducing the number of updates would be most important for keep performance. However, implementing Equatable is not easy basically. Instead, adding a like flag that indicates updated itself, it would be easy
+
+</p>
+</details>
 
 ### 📦 VergeORM
 
@@ -1209,7 +1219,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExOTg2NTU5MiwxNjIwNzI4MzIsLTEwMT
+eyJoaXN0b3J5IjpbMTA0MTk4NDkxOSwxNjIwNzI4MzIsLTEwMT
 kwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0
 ODI5XX0=
 -->
