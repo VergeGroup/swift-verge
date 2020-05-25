@@ -1118,11 +1118,12 @@ Mainly, we can monitor log about commit in Xcode's console and Terminal.app
 
 ## Creating a customized logger
 
+If you need a customized logger, you can create that with `StoreLogger` protocol.
+
 ```swift
 public protocol StoreLogger {
   
   func didCommit(log: CommitLog)
-  func didDispatch(log: DispatchLog)
   
   func didCreateDispatcher(log: DidCreateDispatcherLog)
   func didDestroyDispatcher(log: DidDestroyDispatcherLog)
@@ -1131,6 +1132,10 @@ public protocol StoreLogger {
 
 </p>
 </details>
+
+## Utilities
+
+
 
 ### 📦 VergeORM
 
@@ -1204,7 +1209,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU5NTk3MTE0OSwxNjIwNzI4MzIsLTEwMT
+eyJoaXN0b3J5IjpbLTExOTg2NTU5MiwxNjIwNzI4MzIsLTEwMT
 kwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0
 ODI5XX0=
 -->
