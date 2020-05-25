@@ -581,24 +581,7 @@ extension _StateTypeContainer {
       dropsDerived: @escaping (Derived, Derived) -> Bool,
       compute: @escaping (Derived) -> Output) {
 
-      self.init(
-        MemoizeMap<Input, Output>.init(
-          makeInitial: { input in
-            compute(derive(input))
-        }) { input in
-
-          let result = input.ifChanged(derive, dropsDerived) { (derived) in
-            compute(derived)
-          }
-
-          switch result {
-          case .none:
-            return .noChanages
-          case .some(let wrapped):
-            return .updated(wrapped)
-          }
-        }
-      )
+      self.init(.map(derive: derive, dropsDerived: dropsDerived, compute: compute))
     }
 
     /**
