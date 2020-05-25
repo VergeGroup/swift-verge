@@ -547,6 +547,16 @@ final class Store: StoreBase<State, Activity>, DispatcherType {
 
 > In this sample, Store has DispatcherType. If you create the application not so much complicated, you don't need separate Store and Dispatcher.
 
+```swift
+let store = Store()
+
+store
+  .activityPublisher
+  .sink { event in
+    // do something
+  }
+  .store(in: &subscriptions)
+```
 
 </p>
 </details>
@@ -671,6 +681,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjQyMTkxMjc2LC0xOTgyNjE4MjYwLC0xMj
+eyJoaXN0b3J5IjpbODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMj
 M0MjM0ODI5XX0=
 -->
