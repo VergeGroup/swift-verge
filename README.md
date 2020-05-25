@@ -404,37 +404,50 @@ It provides core functions of Store-pattern.
 -   manages the state object that contains the application state    
 -   commits **Mutation** to update the state
 
-Define Store
+### Defines Store
 
 ```swift
-struct  State:  StateType  {
-
-var  count:  Int  =  0
-
+struct State: StateType {
+  var count: Int = 0
 }
 
-enum  Activity  {
-
-case happen
-
+enum Activity {
+  case happen
 }
 
-final  class  MyStore:  StoreBase<State,  Activity>  {
-
-init()  {
-
-super.init(
-
-initialState:  .init(),
-
-logger:  DefaultStoreLogger.shared
-
-)
-
-}
-
+final class MyStore: StoreBase<State, Activity> {
+  
+  init() {
+    super.init(
+      initialState: .init(),
+      logger: DefaultStoreLogger.shared
+    )
+  }
+   
 }
 ```
+
+### Adds Mutation
+
+```swift
+final class MyStore: StoreBase<State, Activity> {
+
+  func increment() {
+    commit {
+      $0.count += 0
+    }
+  }
+  
+}
+```
+
+### Commit mutation
+
+```swift
+let store = MyStore()
+store.increment()
+```
+
 </p>
 </details>
 
@@ -566,6 +579,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTM4ODA1MzY2OSwtMTk4MjYxODI2MCwtMT
+eyJoaXN0b3J5IjpbLTU2MDE3MDgwMywtMTk4MjYxODI2MCwtMT
 IzNDIzNDgyOV19
 -->
