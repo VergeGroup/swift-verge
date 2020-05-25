@@ -1133,10 +1133,7 @@ public protocol StoreLogger {
 </p>
 </details>
 
-## Utilities
-
-<details><summary>Open</summary>
-<p>
+<details><summary>Utilities</summary>
 
 ## Fragment\<State>
 
@@ -1169,7 +1166,6 @@ appState.yourState.name
 appState.$yourState.counter.value 
 ```
 
-</p>
 </details>
 
 ### 📦 VergeORM
@@ -1224,6 +1220,7 @@ To avoid this, we should do **Normalize** the State Shape. About Normalizing sta
 </details>
 
 <details><summary>Getting Started</summary>
+
 ## Create Database struct
 
 **Database struct** contains the tables for each Entity. As a struct object, that allows to manage history and it can be embedded on the state that application uses.
@@ -1347,6 +1344,7 @@ db.performBatchUpdates { (context) in
 </details>
 
 <details><summary>Index</summary>
+
 ## To find the entity faster, Index.
 
 As shown in the Getting Started section, we can get entities by the following code.
@@ -1565,7 +1563,7 @@ struct Database: DatabaseType {
 </details>
 
 <details><summary>Makes a Derived for a entity</summary>
-<p>
+
 ## To create getter, Add DatabaseEmbedding protocol to your state-tree.
 
 ```swift
@@ -1597,7 +1595,6 @@ let entity: Book = getter.value.wrapped
 
 VergeORM supports create MemoizeSelector from Storage or Store.
 
-</p>
 </details>
 
 <details><summary>Tips</summary>
@@ -1697,7 +1694,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyNDMxNzQyOTQsMTk4NDM0NDY2NywxNj
-IwNzI4MzIsLTEwMTkwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4
-MjYwLC0xMjM0MjM0ODI5XX0=
+eyJoaXN0b3J5IjpbLTE0MDIzODY1OCwxOTg0MzQ0NjY3LDE2Mj
+A3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgy
+NjAsLTEyMzQyMzQ4MjldfQ==
 -->
