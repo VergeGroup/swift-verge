@@ -1,12 +1,12 @@
-# Verge - A performant state management library for iOS App - SwiftUI / UIKit
+<center>
+<h1>Verge</h1>
+<sub>A performant state management library for iOS App - SwiftUI / UIKit</sub>
 
-<h1 align="center">Verge</h1>
-<sub
-
+<img alt="swift5.2" src="https://img.shields.io/badge/swift-5.2-ED523F.svg?style=flat"/>
 [![Swift 5.2](https://img.shields.io/badge/swift-5.2-ED523F.svg?style=flat)](https://swift.org/download/)
 ![Tests](https://github.com/muukii/Verge/workflows/Tests/badge.svg)
 ![cocoapods](https://img.shields.io/cocoapods/v/Verge)
-
+</center>
 
 <sub>A Store-Pattern based data-flow architecture. Highly inspired by Vuex</sub><br>
 
@@ -1162,6 +1162,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTk3NjU2NzI4MSwtMTAxOTA4MzI5OCw4Mj
+eyJoaXN0b3J5IjpbLTI5MzA4NTk0MiwtMTAxOTA4MzI5OCw4Mj
 M5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
