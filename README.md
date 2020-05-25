@@ -511,6 +511,43 @@ func onReceive<P>(_ publisher: P, perform action: @escaping (P.Output) -> Void) 
 
 [Apple's SwiftUI Ref]([https://developer.apple.com/documentation/swiftui/view/3365935-onreceive](https://developer.apple.com/documentation/swiftui/view/3365935-onreceive))
 
+## Sends Activity
+
+In sample code following this
+
+```swift
+final class MyStore: StoreBase<State, Never>
+```
+
+`Never` means no activity.
+To send activity to subscriber, starting from defining the Activity.
+
+```swift
+struct State {
+    
+}
+
+enum Activity {
+  case didSendMessage
+}
+
+final class Store: StoreBase<State, Activity>, DispatcherType {
+  
+  var target: StoreBase<State, Activity> { self }
+  
+  init() {
+    super.init(initialState: .init(), logger: DefaultLogger.shared)
+  }
+  
+  func sendMessage() {
+    send(.didSendMessage)
+  }
+}
+```
+
+> In this sample, Store has DispatcherType. If you create the application not so much complicated, you don't need separate Store and Dispatcher.
+
+
 </p>
 </details>
 
@@ -634,6 +671,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1MDM0Nzk0NDAsLTE5ODI2MTgyNjAsLT
-EyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbNjQyMTkxMjc2LC0xOTgyNjE4MjYwLC0xMj
+M0MjM0ODI5XX0=
 -->
