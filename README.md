@@ -1288,7 +1288,61 @@ By conforming to `EntityType` protocol, it can be used by Database as Entity. It
 
 And then, add these entities to Schema object.
 
+```swift
+struct Database: DatabaseType {
 
+  struct Schema: EntitySchemaType {
+    let book = Book.EntityTableKey()
+    let author = Book.EntityTableKey()
+  }
+
+  struct Indexes: IndexesType {
+    // In this time, we don't touch here.
+  }
+
+  var _backingStorage: BackingStorage = .init()
+}
+```
+
+Finally, you can use Database object like this.
+
+```swift
+let db = RootState.Database()
+
+let bookEntityTable: EntityTable<Book, Read> = db.entities.book
+```
+
+You can get aEntityTable object for Book.
+And then you can use these methods.
+
+```swift
+bookEntityTable.all()
+bookEntityTable.find(by: <#T##VergeTypedIdentifier<Book>#>)
+bookEntityTable.find(in: <#T##Sequence#>)
+```
+
+> 💡
+> These syntax are realized by Swift's dynamicMemberLookup. If you have curiosity, please check out the source-code.
+
+## Update Database
+
+To update Database object(Insert, Update, Delete), use `performbatchUpdates` method.
+
+```swift
+db.performBatchUpdates { (context) in
+  // Put the updating code here
+}
+```
+
+Example:
+```swift
+db.performBatchUpdates { (context) in
+  let book = Book(rawID: "some")
+  context.book.insert(book)
+}
+
+// db.entities.book.count == 1
+```
 
 </details>
 
@@ -1374,7 +1428,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE1MDIyMTM0LDE2MjA3MjgzMiwtMTAxOT
-A4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4
-MjldfQ==
+eyJoaXN0b3J5IjpbMTQ4MTY5NTA2OSwxNjIwNzI4MzIsLTEwMT
+kwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0
+ODI5XX0=
 -->
