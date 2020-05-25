@@ -623,9 +623,7 @@ extension StateType {
 </p>
 </details>
 
-## 🌟 Changes from State
-
-<details><summary>Open</summary>
+<details><summary>🌟 Changes from State</summary>
 <p>
 
 ## Update UI from State
@@ -694,9 +692,7 @@ class ViewController: UIViewController {
 </p>
 </details>
 
-## 🛸 Computed property on State
-
-<details><summary>Open</summary>
+<details><summary>🛸 Computed property on State</summary>
 <p>
 
 ## Overview
@@ -898,9 +894,7 @@ store.state.computed.filteredArray
 </p>
 </details>
 
-## 🌙 Derived - BindingDerived
-
-<details><summary>Open</summary>
+<details><summary>🌙 Derived - BindingDerived</summary>
 <p>
 
 > **Derived** is inspired by [redux/reselect](https://github.com/reduxjs/reselect).
@@ -1007,9 +1001,7 @@ extension StoreType {
 </p>
 </details>
 
-## 🚀 Dispatcher - perform Mutation
-
-<details><summary>Open</summary>
+<details><summary>🚀 Dispatcher - perform Mutation</summary>
 <p>
 
 # What Dispatcher does
@@ -1078,9 +1070,6 @@ let loggedInDispatcher = LoggedInDispatcher(...)
 let loggedOutDispatcher = LoggedOutDispatcher(...)
 ```
 
-
-
-</p>
 </details>
 
 <details><summary>🔭 Logging</summary>
@@ -1690,7 +1679,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDUwMjQyMjg1LDE5ODQzNDQ2NjcsMTYyMD
-cyODMyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2
-MCwtMTIzNDIzNDgyOV19
+eyJoaXN0b3J5IjpbMTE4MDMzMTA4NiwxOTg0MzQ0NjY3LDE2Mj
+A3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgy
+NjAsLTEyMzQyMzQ4MjldfQ==
 -->
