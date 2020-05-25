@@ -1625,6 +1625,14 @@ struct Database: DatabaseType {
 }
 ```
 
+```swift
+func access<DB: DatabaseType>(db: DB) -> Int where DB.Schema : Partial {
+  db.entities.author.all().count
+}
+```
+
+Inside of access function, it supports only accessing to entity Partial protocol has.
+
 </details>
 
 ### 📦 VergeRx
@@ -1689,7 +1697,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5NzY1OTkyMzMsMTk4NDM0NDY2NywxNj
-IwNzI4MzIsLTEwMTkwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4
-MjYwLC0xMjM0MjM0ODI5XX0=
+eyJoaXN0b3J5IjpbLTk5ODg0MTMwNSwxOTg0MzQ0NjY3LDE2Mj
+A3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgy
+NjAsLTEyMzQyMzQ4MjldfQ==
 -->
