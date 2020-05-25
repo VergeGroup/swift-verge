@@ -1347,8 +1347,27 @@ db.performBatchUpdates { (context) in
 </details>
 
 <details><summary>Index</summary>
-<p>
-</p>
+## To find the entity faster, Index.
+
+As shown in the Getting Started section, we can get entities by the following code.
+
+```swift
+let db =  RootState.Database()
+
+db.bookEntityTable.all()
+
+db.bookEntityTable.find(by: <#T##VergeTypedIdentifier<Book>#>)
+
+db.bookEntityTable.find(in: <#T##Sequence#>)
+```
+
+To do this, we need to manage the Identifier of the entity and additionally, to get an array of entities, we need to manage the order of Identifier.
+
+To do this, VergeORM provides Index feature. Index manages the set of identifiers in several structures.
+
+>
+>Meaning of Index might be a bit different than RDB's Index. At least, Index manages identifiers to find the entity faster than linear search.
+
 </details>
 
 <details><summary>Middleware</summary>
@@ -1428,7 +1447,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQ4MTY5NTA2OSwxNjIwNzI4MzIsLTEwMT
+eyJoaXN0b3J5IjpbMTYwMzg2NDkwNCwxNjIwNzI4MzIsLTEwMT
 kwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0
 ODI5XX0=
 -->
