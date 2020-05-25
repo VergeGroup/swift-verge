@@ -949,7 +949,8 @@ let cancellable = derived.sinkValue { (changes: Changes<Int>) in
 }
 ```
 
-> ✅ Please, carefully handle a cancellable object. A concealable object that returns that subscribe method is similar to AnyCancellable of Combine.framework. We need to retain that until we don't need to get the update event.
+> ✅ 
+> Please, carefully handle a cancellable object. A concealable object that returns that subscribe method is similar to AnyCancellable of Combine.framework. We need to retain that until we don't need to get the update event.
 
 ## Supports other Reactive Frameworks
 We might need to use some Reactive framework to integrate other sequence. Derived allows us to make to a sequence from itself. Currently, it supports Combine.framework and RxSwift.framework.
@@ -1023,6 +1024,32 @@ class MyDispatcher: MyStore.Dispatcher {
 let store = MyStore()
 let dispatcher = MyDispatcher(target: store)
 ```
+
+> 💡 
+> Actual type of MyStore.Dispatcher is DispatcherBase<State, Never> It is a typealias to write shortly.
+
+Managing dependencies code
+
+```swift
+class MyDispatcher: MyStore.Dispatcher {
+
+  let apiClient: APIClient
+
+  init(apiClient: APIClient, target store: StoreBase<RootState>) {
+    self.apiClient = apiClient
+    super.init(target: store)
+  }
+}
+
+let store = MyStore()
+let apiClient = APIClient()
+let dispatcher = MyDispatcher(apiClient: apiClient, target: store)
+```
+
+## Create multiple Dispatcher
+
+
+
 
 </p>
 </details>
@@ -1107,6 +1134,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE2Mzc4ODgsODIzOTY1ODk0LC0xOTgyNj
-E4MjYwLC0xMjM0MjM0ODI5XX0=
+eyJoaXN0b3J5IjpbMTQwNTM4NDQ0Myw4MjM5NjU4OTQsLTE5OD
+I2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
