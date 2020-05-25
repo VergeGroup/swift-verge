@@ -1083,10 +1083,7 @@ let loggedOutDispatcher = LoggedOutDispatcher(...)
 </p>
 </details>
 
-## 🔭 Logging
-
-<details><summary>Open</summary>
-<p>
+<details><summary>🔭 Logging</summary>
 
 ## Start logging from DefaultStoreLogger
 DefaultStoreLogger is the pre-implemented logger that send the logs to OSLog.
@@ -1130,7 +1127,6 @@ public protocol StoreLogger {
 }
 ```
 
-</p>
 </details>
 
 <details><summary>Utilities</summary>
@@ -1694,7 +1690,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0MDIzODY1OCwxOTg0MzQ0NjY3LDE2Mj
-A3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgy
-NjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbNDUwMjQyMjg1LDE5ODQzNDQ2NjcsMTYyMD
+cyODMyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2
+MCwtMTIzNDIzNDgyOV19
 -->
