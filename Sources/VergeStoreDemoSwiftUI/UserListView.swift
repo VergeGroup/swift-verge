@@ -15,7 +15,7 @@ struct UserListView: View {
   
   @EnvironmentObject var session: Session
   
-  private var users: GetterSource<SessionState, [Entity.User]> {
+  private var users: Derived<[Entity.User]> {
     session.users
   }
            
@@ -23,7 +23,7 @@ struct UserListView: View {
     
     NavigationView {
       List {
-        ForEach(users.value) { user in
+        ForEach(users.value.root) { user in
           NavigationLink(destination: SubmitView(user: user)) {
             Text(user.name)
           }

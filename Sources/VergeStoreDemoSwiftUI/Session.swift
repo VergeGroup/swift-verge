@@ -23,19 +23,14 @@ final class Session: ObservableObject {
   let store = SessionStore()
   private(set) lazy var sessionDispatcher = SessionDispatcher(targetStore: store)
   
-  private(set) lazy var users = self.store.getterBuilder()
-    .do(onReceive: { v in
-      print(v)
-    })
-    .changed(selector: \.db.entities.user, comparer: .init(==))
-    .do(onReceive: { v in
-      print(v)
-    })
-    .map { state in
+  private(set) lazy var users = store.derived(
+    MemoizeMap.map { state in
       state.db.entities.user.find(in: state.db.indexes.userIDs)
-  }
-  .build()
-  
+    }
+    .dropsInput {
+      $0.noChanges(\.db.entities.user)
+  });
+
   init() {
     
   }
