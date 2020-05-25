@@ -532,7 +532,7 @@ print(store.state.todos)
 </p>
 </details>
 
-## Dispatcher - perform Mutation
+## 🚀 Dispatcher - perform Mutation
 
 <details><summary>Open</summary>
 <p>
@@ -540,7 +540,7 @@ print(store.state.todos)
 </p>
 </details>
 
-## Logging
+## 🔭 Logging
 
 <details><summary>Open</summary>
 <p>
@@ -620,6 +620,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTAzNDM1NjQ1NiwtMTk4MjYxODI2MCwtMT
-IzNDIzNDgyOV19
+eyJoaXN0b3J5IjpbLTEyOTc5MjAzNDUsLTE5ODI2MTgyNjAsLT
+EyMzQyMzQ4MjldfQ==
 -->
