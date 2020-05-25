@@ -1223,6 +1223,31 @@ To avoid this, we should do **Normalize** the State Shape. About Normalizing sta
 </p>
 </details>
 
+<details><summary>Getting Started</summary>
+</p>
+</p>
+</details>
+
+<details><summary>Index</summary>
+</p>
+</p>
+</details>
+
+<details><summary>Middleware</summary>
+</p>
+</p>
+</details>
+
+<details><summary>Makes a Derived for a entity</summary>
+</p>
+</p>
+</details>
+
+<details><summary>Tips</summary>
+</p>
+</p>
+</details>
+
 ### 📦 VergeRx
 
 It provides several observable that compatible with RxSwift.
@@ -1285,7 +1310,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM1NzA2MDc1NywxNjIwNzI4MzIsLTEwMT
-kwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0
-ODI5XX0=
+eyJoaXN0b3J5IjpbNDI5OTY0NDg4LDE2MjA3MjgzMiwtMTAxOT
+A4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4
+MjldfQ==
 -->
