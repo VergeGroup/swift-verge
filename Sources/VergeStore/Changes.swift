@@ -505,6 +505,31 @@ extension _StateTypeContainer {
     public init(_ compute: @escaping (Input) -> Output) {
       self.init(.map(compute))
     }
+
+    public init<Derived: Equatable>(
+      derive: @escaping (Input) -> Derived,
+      compute: @escaping (Derived) -> Output) {
+
+      self.init(
+        MemoizeMap<Input, Output>.init(
+          makeInitial: { input in
+            compute(derive(input))
+        }) { input in
+
+          let result = input.ifChanged(derive) { (derived) in
+            compute(derived)
+          }
+
+          switch result {
+          case .none:
+            return  .noChanages
+          case .some(let wrapped):
+            return .updated(wrapped)
+          }
+        }
+      )
+
+    }
     
     @inlinable
     @inline(__always)
