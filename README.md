@@ -949,6 +949,25 @@ let cancellable = derived.sinkValue { (changes: Changes<Int>) in
 }
 ```
 
+> ✅ Please, carefully handle a cancellable object. A concealable object that returns that subscribe method is similar to AnyCancellable of Combine.framework. We need to retain that until we don't need to get the update event.
+
+## Supports other Reactive Frameworks
+We might need to use some Reactive framework to integrate other sequence. Derived allows us to make to a sequence from itself. Currently, it supports Combine.framework and RxSwift.framework.
+
+### + Combine
+
+```swift
+derived
+  .valuePublisher()
+  .sink { (changes: Changes<Int>) in
+  
+  }
+```
+
+### + RxSwift
+
+> 💡You need to install Verge
+
 </p>
 </details>
 
@@ -1040,6 +1059,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4MjQ3ODg5OTEsODIzOTY1ODk0LC0xOT
-gyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
+eyJoaXN0b3J5IjpbMTQwMzA4MTUxMyw4MjM5NjU4OTQsLTE5OD
+I2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
