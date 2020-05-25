@@ -1,3 +1,7 @@
+<p align="center">
+<img width="240" alt="Frame 8" src="https://user-images.githubusercontent.com/1888355/82828305-b6d2e880-9eeb-11ea-9c3b-7659da42b499.png">
+</p>
+
 <h1 align="center">Verge</h1>
 <p align="center">
 <sub>A performant state management library for iOS App - SwiftUI / UIKit</sub>
