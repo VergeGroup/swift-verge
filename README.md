@@ -398,9 +398,7 @@ It provides core functions of Store-pattern.
 - State supports computed property with caching (like [Vuex's Getters](https://vuex.vuejs.org/guide/getters.html))
 - Derived object to create derived data from state-tree with performant (like [redux/reselect](https://github.com/reduxjs/reselect))
 
-## 🌑 Store
-
-<details><summary>Open</summary>
+<details><summary>🌑 Store</summary>
 <p>
 
 **Store** 
@@ -455,9 +453,7 @@ store.increment()
 </p>
 </details>
 
-## ☄️ Mutation
-
-<details><summary>Open</summary>
+<details><summary>☄️ Mutation</summary>
 <p>
 
 ## What Mutation is
@@ -496,9 +492,7 @@ print(store.state.todos)
 </p>
 </details>
 
-## ⚡️ Activity
-
-<details><summary>Open</summary>
+<details><summary>⚡️ Activity</summary>
 <p>
 
 ## What activity does
@@ -565,9 +559,7 @@ store
 </p>
 </details>
 
-## 🪐 State and shape
-
-<details><summary>Open</summary>
+<details><summary>🪐 State and shape</summary>
 <p>
 
 ## Using single state tree (Not enforced)
@@ -1679,7 +1671,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE4MDMzMTA4NiwxOTg0MzQ0NjY3LDE2Mj
-A3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgy
-NjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbODE5MDI5MTIsMTk4NDM0NDY2NywxNjIwNz
+I4MzIsLTEwMTkwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYw
+LC0xMjM0MjM0ODI5XX0=
 -->
