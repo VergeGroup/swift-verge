@@ -966,7 +966,23 @@ derived
 
 ### + RxSwift
 
-> 💡You need to install Verge
+> 💡You need to install VergeRx module to use this.
+
+```swift
+derived.rx
+  .changesObservable()
+  .subscribe(onNext: { (changes: Changes<Int>) in
+  
+  })
+```
+
+## Memoization to keep good performance
+
+Mostly Derived is used for projecting the specified shape from the source object. 
+And some cases may contain an expensive operation. In that case, we can consider to tune Memoization up.​ 
+We can see the detail of Memoization from below link.
+
+[Wiki - Memoization]([https://en.wikipedia.org/wiki/Memoization](https://en.wikipedia.org/wiki/Memoization))
 
 </p>
 </details>
@@ -1059,6 +1075,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQwMzA4MTUxMyw4MjM5NjU4OTQsLTE5OD
+eyJoaXN0b3J5IjpbLTkyNzkxOTI1NCw4MjM5NjU4OTQsLTE5OD
 I2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
