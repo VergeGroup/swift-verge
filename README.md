@@ -399,6 +399,42 @@ It provides core functions of Store-pattern.
 <details><summary>Open</summary>
 <p>
 
+**Store** 
+-   a reference type object    
+-   manages the state object that contains the application state    
+-   commits **Mutation** to update the state
+
+Define Store
+
+```swift
+struct  State:  StateType  {
+
+var  count:  Int  =  0
+
+}
+
+enum  Activity  {
+
+case happen
+
+}
+
+final  class  MyStore:  StoreBase<State,  Activity>  {
+
+init()  {
+
+super.init(
+
+initialState:  .init(),
+
+logger:  DefaultStoreLogger.shared
+
+)
+
+}
+
+}
+```
 </p>
 </details>
 
@@ -530,6 +566,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU4NjMwMjMyNSwtMTk4MjYxODI2MCwtMT
+eyJoaXN0b3J5IjpbMTM4ODA1MzY2OSwtMTk4MjYxODI2MCwtMT
 IzNDIzNDgyOV19
 -->
