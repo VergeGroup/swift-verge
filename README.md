@@ -1466,8 +1466,45 @@ Using **Middleware**, it's possible.
 </details>
 
 <details><summary>Middleware</summary>
-<p>
-</p>
+## Perform any operation for each of all updates
+
+Using Middleware, you can perform any operation for each of all updates.
+‌
+For example,
+-   Manage Index according to updated entities, for each of all updates
+
+## Register Middleware
+
+In DatabaseType protocol, we can return the set of middlewares. This property would be called for each update.
+
+```swift
+struct Database: DatabaseType {
+
+  ...
+
+  var middlewares: [AnyMiddleware<RootState.Database>] {
+    [
+      // Here
+    ]
+  }  
+}
+```
+
+We can return `MiddlewareType` object here. However since it's a generic protocol, it needs to wrap up with AnyMiddleware object to return as an array.
+
+**struct AnyMiddleware**
+
+```swift
+public struct AnyMiddleware<Database> : MiddlewareType where Database : VergeORM.DatabaseType {
+
+    public init<Base>(_ base: Base) where Database == Base.Database, Base : VergeORM.MiddlewareType
+
+    public init(performAfterUpdates: @escaping (DatabaseBatchUpdateContext<Database>) -> ())
+
+    public func performAfterUpdates(context: DatabaseBatchUpdateContext<Database>)
+}
+```
+
 </details>
 
 <details><summary>Makes a Derived for a entity</summary>
@@ -1542,7 +1579,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE2NDk0NjAwNSwxOTg0MzQ0NjY3LDE2Mj
+eyJoaXN0b3J5IjpbLTc3MTc0NzQ3MywxOTg0MzQ0NjY3LDE2Mj
 A3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgy
 NjAsLTEyMzQyMzQ4MjldfQ==
 -->
