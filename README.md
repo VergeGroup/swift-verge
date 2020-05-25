@@ -1048,6 +1048,31 @@ let dispatcher = MyDispatcher(apiClient: apiClient, target: store)
 
 ## Create multiple Dispatcher
 
+![image](https://user-images.githubusercontent.com/1888355/82821486-28586a00-9edf-11ea-8c98-062eafcc4f16.png)
+
+We can create multiple Dispatcher each use-cases.
+
+For example, In case the timing of getting dependencies that to be needed by run Action or Mutation is different, it will not be easy to define in the one dispatcher. We will have the optional properties in there.
+
+In this case, creating multiple dispatchers will help us. Define the dispatcher each the timing of getting dependencies.
+
+```swift
+class LoggedInDispatcher: MyStore.Dispatcher {
+  
+  let apiClientNeedsAuthToken = ...
+  ...
+}
+
+class LoggedOutDispatcher: DispatcherBase<RootState> {
+
+  let apiClientWithoutAuthToken = ...
+  ...
+}
+
+let store = MyStore()
+let loggedInDispatcher = LoggedInDispatcher(...)
+let loggedOutDispatcher = LoggedOutDispatcher(...)
+```
 
 
 
@@ -1134,6 +1159,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQwNTM4NDQ0Myw4MjM5NjU4OTQsLTE5OD
-I2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbLTEwMTkwODMyOTgsODIzOTY1ODk0LC0xOT
+gyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
 -->
