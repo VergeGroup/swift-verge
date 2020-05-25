@@ -899,6 +899,38 @@ store.state.computed.filteredArray
 <details><summary>Open</summary>
 <p>
 
+> **Derived** is inspired by [redux/reselect](https://github.com/reduxjs/reselect).
+
+Derived's functions are:
+-   Computes the derived data from the state tree
+-   Emit the updated data with updating Store
+-   Supports subscribe the data
+-   Supports Memoization
+
+## Overview
+### Setting up the Store
+
+```swift
+struct State {
+  var title: String = ""
+  var count: Int = 0
+}
+
+let store = StoreBase<State, Never>(initialState: .init(), logger: nil)
+```
+
+### Create a Derived object
+
+```swift
+let derived: Derived<Int> = store.derived(.map(\.count))
+
+// we can write also this.
+// However, we recommend do above way as possible
+// because it enables cache.
+let derived: Derived<Int> = store.derived(.map { $0.count })
+```
+
+
 </p>
 </details>
 
@@ -990,6 +1022,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyMDIwMzM0NTEsODIzOTY1ODk0LC0xOT
+eyJoaXN0b3J5IjpbLTEyNDU2MzE2MDYsODIzOTY1ODk0LC0xOT
 gyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
 -->
