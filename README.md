@@ -984,6 +984,21 @@ We can see the detail of Memoization from below link.
 
 [Wiki - Memoization]([https://en.wikipedia.org/wiki/Memoization](https://en.wikipedia.org/wiki/Memoization))
 
+## Suppress the map operation that projects no changes
+
+In create Derived method, we can get the detail that how we suppress the no need updating and updated event.
+
+```swift
+extension StoreType {
+
+  public func derived<NewState>(
+    _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
+    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false }
+  ) -> Derived<NewState>
+  
+}
+```
+
 </p>
 </details>
 
@@ -991,6 +1006,23 @@ We can see the detail of Memoization from below link.
 
 <details><summary>Open</summary>
 <p>
+
+# What Dispatcher does
+
+Dispatcher's needs is **to update the state that Store manages** and to **manage dependencies to create Mutation and Action.**
+
+**Dispatcher does not have own state. Dispatcher runs with Store.**
+
+**Example**
+
+```swift
+class MyDispatcher: MyStore.Dispatcher {
+
+}
+
+let store = MyStore()
+let dispatcher = MyDispatcher(target: store)
+```
 
 </p>
 </details>
@@ -1075,6 +1107,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTkyNzkxOTI1NCw4MjM5NjU4OTQsLTE5OD
-I2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbMTE2Mzc4ODgsODIzOTY1ODk0LC0xOTgyNj
+E4MjYwLC0xMjM0MjM0ODI5XX0=
 -->
