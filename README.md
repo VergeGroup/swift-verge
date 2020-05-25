@@ -1382,10 +1382,52 @@ Currently, we have the following types,‌
     -   Set<EntityID>
 -   **GroupByKeyIndex**    
     -   [Key : [EntityID]]
-        
-    
+            
+## Register Index
 
-‌
+Let's take a look at how to register Index. The whole index is here.
+
+```swift
+struct Database: DatabaseType {
+
+  struct Schema: EntitySchemaType {
+    let book = Book.EntityTableKey()
+    let author = Book.EntityTableKey()
+  }
+
+  struct Indexes: IndexesType {
+    // 👋 Here!
+  }
+
+  var _backingStorage: BackingStorage = .init()
+}
+```
+
+Indexes struct describes the set of indexes. All of the indexes managed by VergeORM would be here.
+
+For now, we add a simple ordered index just like this.
+
+```swift
+struct Indexes: IndexesType {
+  let allBooks = IndexKey<OrderedIDIndex<Schema, Book>>()
+  // or OrderedIDIndex<Schema, Book>.Key()
+}
+```
+
+With this, now we have index property on DatabaseType.indexes.
+
+```swift
+let allBooks = state.db.indexes.allBooks
+// allBooks: OrderedIDIndex<Database.Schema, Book>
+```
+
+## Read Index
+
+**Accessing indexes**
+
+```swift
+
+```
 
 </details>
 
@@ -1466,7 +1508,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk4NDM0NDY2NywxNjIwNzI4MzIsLTEwMT
-kwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0
-ODI5XX0=
+eyJoaXN0b3J5IjpbMTEwNDIwOTI0MSwxOTg0MzQ0NjY3LDE2Mj
+A3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgy
+NjAsLTEyMzQyMzQ4MjldfQ==
 -->
