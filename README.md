@@ -1,7 +1,7 @@
-<center>
-<h1>Verge</h1>
+<h1 align="center">Verge</h1>
+<p align="center">
 <sub>A performant state management library for iOS App - SwiftUI / UIKit</sub>
-</center>
+</p>
 
 <p align="center">
 <img alt="swift5.2" src="https://img.shields.io/badge/swift-5.2-ED523F.svg?style=flat"/>
@@ -1163,6 +1163,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTkyOTgwNDQ1NiwtMTAxOTA4MzI5OCw4Mj
-M5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbMTYyMDcyODMyLC0xMDE5MDgzMjk4LDgyMz
+k2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIzNDgyOV19
 -->
