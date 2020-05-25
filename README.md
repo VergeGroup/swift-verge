@@ -577,7 +577,38 @@ That state is managed by **Store**. It process updating the state and notify upd
 ## Add computed property
 
 ```swift
+struct State: StateType {
+  
+  var count: Int = 0
+  
+  var countText: String {
+    return count.description
+  }
+  
+}
+```
 
+Although in some of cases, the cost of computing might be higher which depends on how it create the value from stored properties.
+
+## StateType protocol helps to modify
+
+VergeStore provides `StateType` protocol as a helper.
+
+It will be used in State struct that Store uses. `StateType` protocol is just providing the extensions to mutate easily in the nested state.
+
+```swift
+public protocol StateType {
+}
+
+extension StateType {
+
+  public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T.Wrapped) throws -> Void) rethrows where T : VergeStore._VergeStore_OptionalProtocol
+
+  public mutating func update<T>(target keyPath: WritableKeyPath<Self, T>, update: (inout T) throws -> Void) rethrows
+
+  public mutating func update(update: (inout Self) throws -> Void) rethrows
+}
+```
 
 </p>
 </details>
@@ -694,6 +725,6 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODE1MDI2MDk2LDgyMzk2NTg5NCwtMTk4Mj
-YxODI2MCwtMTIzNDIzNDgyOV19
+eyJoaXN0b3J5IjpbMTkxODA4MTE2Nyw4MjM5NjU4OTQsLTE5OD
+I2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
