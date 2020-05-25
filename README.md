@@ -1088,6 +1088,33 @@ let loggedOutDispatcher = LoggedOutDispatcher(...)
 <details><summary>Open</summary>
 <p>
 
+## Start logging from DefaultStoreLogger
+DefaultStoreLogger is the pre-implemented logger that send the logs to OSLog.
+To enable logging, set the logger instance to Store's initializer.
+
+```swift
+StoreBase<MyState, MyActivity>.init(
+  initialState: ...,
+  logger: DefaultStoreLogger.shared // 🤩
+)
+```
+
+S
+
+```
+2020-05-25 23:47:06.884304+0900 VergeStoreDemoSwiftUI[84086:2813713] [Commit] {
+  "store" : "VergeStore.Store<VergeStoreDemoSwiftUI.SessionState, Swift.Never>()",
+  "tookMilliseconds" : 0.19299983978271484,
+  "trace" : {
+    "createdAt" : "2020-05-25T14:47:06Z",
+    "file" : "\/Users\/muukii\/.ghq\/github.com\/muukii\/Verge\/worktree\/space1\/Sources\/VergeStoreDemoSwiftUI\/Session.swift",
+    "function" : "submitNewPost(title:from:)",
+    "line" : 129,
+    "name" : ""
+  },
+  "type" : "commit"
+}
+```
 </p>
 </details>
 
@@ -1163,6 +1190,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTYyMDcyODMyLC0xMDE5MDgzMjk4LDgyMz
-k2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIzNDgyOV19
+eyJoaXN0b3J5IjpbLTIwODYwMTcyOTgsMTYyMDcyODMyLC0xMD
+E5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIz
+NDgyOV19
 -->
