@@ -1152,7 +1152,7 @@ appState.$yourState.counter.value
 
 </details>
 
-<details><summary>Optimization Tips</summary>
+<details><summary>🎛Optimization Tips</summary>
 
 ## Writing high-performance state-management
 
@@ -1686,8 +1686,8 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTIzNjc2NTM2LDc1ODk5OTkzMywxMDczNT
-Q2MjgxLDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyODMyLC0x
-MDE5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzND
-IzNDgyOV19
+eyJoaXN0b3J5IjpbLTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1OD
+k5OTkzMywxMDczNTQ2MjgxLDgxOTAyOTEyLDE5ODQzNDQ2Njcs
+MTYyMDcyODMyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NCwtMTk4Mj
+YxODI2MCwtMTIzNDIzNDgyOV19
 -->
