@@ -22,7 +22,7 @@
 The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
 
 Recenlty, [facebookexperimental/Recoil](https://github.com/facebookexperimental/Recoil) has been opened.  
-Atoms and Selectors similar to `Derived`.
+Atoms and Selectors similar to ours `Derived`.
 
 Plus, releasing from so many definition of the actions.<br>
 To be more Swift's Style on the writing code.
@@ -31,6 +31,7 @@ To be more Swift's Style on the writing code.
 
 The characteristics are
 
+* Functions that focuses on 
 * Method based dispatching action
 * Separating the code in a large app
 * Emits any events that isolated from State It's for SwiftUI's onReceive\(:\)
@@ -1675,7 +1676,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTk4NzIzOTIyOCw4MTkwMjkxMiwxOTg0Mz
+eyJoaXN0b3J5IjpbMTQ1NDc4MDg3NCw4MTkwMjkxMiwxOTg0Mz
 Q0NjY3LDE2MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQs
 LTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
