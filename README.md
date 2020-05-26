@@ -1156,6 +1156,8 @@ appState.$yourState.counter.value
 
 ## Writing high-performance state-management
 
+> WIP
+
 </details>
 
 ### 📦 VergeORM
@@ -1684,8 +1686,8 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTQ2MzM4MjAsNzU4OTk5OTMzLDEwNzM1ND
-YyODEsODE5MDI5MTIsMTk4NDM0NDY2NywxNjIwNzI4MzIsLTEw
-MTkwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0Mj
-M0ODI5XX0=
+eyJoaXN0b3J5IjpbMTIzNjc2NTM2LDc1ODk5OTkzMywxMDczNT
+Q2MjgxLDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyODMyLC0x
+MDE5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzND
+IzNDgyOV19
 -->
