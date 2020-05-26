@@ -31,7 +31,7 @@ To be more Swift's Style on the writing code.
 
 The characteristics are
 
-* Functions that focuses on 
+* Functions that gains performance (Automatic / Manual - Memoization)
 * Method based dispatching action
 * Separating the code in a large app
 * Emits any events that isolated from State It's for SwiftUI's onReceive\(:\)
@@ -1676,7 +1676,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQ1NDc4MDg3NCw4MTkwMjkxMiwxOTg0Mz
+eyJoaXN0b3J5IjpbMTA3MzU0NjI4MSw4MTkwMjkxMiwxOTg0Mz
 Q0NjY3LDE2MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQs
 LTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
