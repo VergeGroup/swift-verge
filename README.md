@@ -19,6 +19,8 @@
 
 ## Overview - focusing on faster performance
 
+> You can find fully documentation from [Here](#modules-overview)
+
 The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
 
 Recenlty, [facebookexperimental/Recoil](https://github.com/facebookexperimental/Recoil) has been opened.  
@@ -40,7 +42,7 @@ The characteristics are
 * Normalizing the state with ORM
 * Multi-threading
 
-<details><summary>🌟 Differences between other Flux libraries in iOS</summary>
+<details><summary>✅ Differences between other Flux libraries in iOS</summary>
 <p>
 
 Firstly, Verge provides the functions to keep excellent performance in using Store-Pattern.
@@ -77,7 +79,7 @@ Specifically:
 </p>
 </details>
 
-<details><summary>🌟 Example code</summary>
+<details><summary>💡 Example code</summary>
 <p>
 
 ```swift
@@ -1676,7 +1678,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTA3MzU0NjI4MSw4MTkwMjkxMiwxOTg0Mz
-Q0NjY3LDE2MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQs
-LTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbNzU4OTk5OTMzLDEwNzM1NDYyODEsODE5MD
+I5MTIsMTk4NDM0NDY2NywxNjIwNzI4MzIsLTEwMTkwODMyOTgs
+ODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
 -->
