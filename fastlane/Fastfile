@@ -25,6 +25,10 @@ platform :ios do
     scan(scheme: "All")
   end
 
+  lane :test_light do
+    scan(scheme: "LightAll", device: "iPhone 11 Pro")
+  end
+
   lane :test_rx do
     scan(scheme: "VergeRx")
   end
