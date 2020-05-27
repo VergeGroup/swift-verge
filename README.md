@@ -614,7 +614,7 @@ extension StateType {
 ```
 
 > There is `ExtendedStateType` from StateType.
-> This provies us to get more stuff that increase performance and produc
+> This provies us to get more stuff that increases performance and productivity.
 
 ## Normalization
 
@@ -1691,7 +1691,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIwOTQ1ODU2NTEsNzI3MTU1NjkyLC0xMz
+eyJoaXN0b3J5IjpbLTE1MDYyNDI0NTksNzI3MTU1NjkyLC0xMz
 UwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4
 MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3MjgzMiwtMTAxOT
 A4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4
