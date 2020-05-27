@@ -577,7 +577,7 @@ That state is managed by **Store**. It process updating the state and notify upd
 
 > 💡 VergeStore does support multiple state-tree as well. Depending on the case, we can create another Store instance.
 
-## Add computed property
+## Add a computed property
 
 ```swift
 struct State: StateType {
@@ -1688,9 +1688,9 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5MjI2MDc1NDAsNzI3MTU1NjkyLC0xMz
-UwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4
-MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3MjgzMiwtMTAxOT
-A4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4
-MjldfQ==
+eyJoaXN0b3J5IjpbMTUzMDcwNzk3LDcyNzE1NTY5MiwtMTM1MD
+IyNDM2MSwxMjM2NzY1MzYsNzU4OTk5OTMzLDEwNzM1NDYyODEs
+ODE5MDI5MTIsMTk4NDM0NDY2NywxNjIwNzI4MzIsLTEwMTkwOD
+MyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0ODI5
+XX0=
 -->
