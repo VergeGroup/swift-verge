@@ -26,10 +26,10 @@ The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex]
 Recenlty, [facebookexperimental/Recoil](https://github.com/facebookexperimental/Recoil) has been opened.  
 Atoms and Selectors similar to ours `Derived`.
 
-Plus, releasing from so many definition of the actions.<br>
+Plus, releasing from so many definition of the actions. (e.g. enum)<br>
 To be more Swift's Style on the writing code.
 
-`store.myOperation()` instead of `store.dispatch(.myOperation)`
+We can do `store.myOperation()` instead of `store.dispatch(.myOperation)`
 
 The characteristics are
 
@@ -1693,9 +1693,9 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zOD
-I2MDIyOSw3MjcxNTU2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2
-LDc1ODk5OTkzMywxMDczNTQ2MjgxLDgxOTAyOTEyLDE5ODQzND
-Q2NjcsMTYyMDcyODMyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NCwt
-MTk4MjYxODI2MCwtMTIzNDIzNDgyOV19
+eyJoaXN0b3J5IjpbLTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4Nz
+IxMjc3MTcsLTM4MjYwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2
+MSwxMjM2NzY1MzYsNzU4OTk5OTMzLDEwNzM1NDYyODEsODE5MD
+I5MTIsMTk4NDM0NDY2NywxNjIwNzI4MzIsLTEwMTkwODMyOTgs
+ODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
 -->
