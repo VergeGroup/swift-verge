@@ -310,6 +310,9 @@ class ViewController: UIViewController {
 
 <details><summary>☂️ Advanced Usage - to keep performance and scalability</summary>
 
+## ☂️ Advanced Usage - to keep performance and scalability
+
+
 **Adding a cachable computed property in a State**
 
 We can add a computed property in a state to get a derived value with stored property,<br>
@@ -1690,7 +1693,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjg3NzczMzIwLC0xODcyMTI3NzE3LC0zOD
+eyJoaXN0b3J5IjpbODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zOD
 I2MDIyOSw3MjcxNTU2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2
 LDc1ODk5OTkzMywxMDczNTQ2MjgxLDgxOTAyOTEyLDE5ODQzND
 Q2NjcsMTYyMDcyODMyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NCwt
