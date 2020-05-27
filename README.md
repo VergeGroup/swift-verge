@@ -1636,11 +1636,7 @@ Inside of access function, it supports only accessing to entity Partial protocol
 
 It provides several observable that compatible with RxSwift.
 
-## More Documentations
-
-[**🔗 You can see more detail of Verge on Documentation**](https://muukii-app.gitbook.io/verge/)
-
-## Prepare moving to SwiftUI from now with Verge
+# Prepare moving to SwiftUI from now with Verge
 
 SwiftUI's concept is similar to the concept of React, Vue, and Elm. <br>
 Therefore, the concept of state management will become to be similar as well.
@@ -1653,7 +1649,7 @@ However, it would change.
 
 It's better to use the state management that fits SwiftUI from now. It's not only for that, current UIKit based applications can get more productivity as well.
 
-## Installation
+# Installation
 
 With Cocoapods,
 
@@ -1684,19 +1680,19 @@ To use Verge in your code, define import decralation following.
 import Verge
 ```
 
-## Author
+# Author
 
 [muukii](https://github.com/muukii)
 
-## License
+# License
 
 Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4NzIxMjc3MTcsLTM4MjYwMjI5LDcyNz
-E1NTY5MiwtMTM1MDIyNDM2MSwxMjM2NzY1MzYsNzU4OTk5OTMz
-LDEwNzM1NDYyODEsODE5MDI5MTIsMTk4NDM0NDY2NywxNjIwNz
-I4MzIsLTEwMTkwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYw
-LC0xMjM0MjM0ODI5XX0=
+eyJoaXN0b3J5IjpbMjg3NzczMzIwLC0xODcyMTI3NzE3LC0zOD
+I2MDIyOSw3MjcxNTU2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2
+LDc1ODk5OTkzMywxMDczNTQ2MjgxLDgxOTAyOTEyLDE5ODQzND
+Q2NjcsMTYyMDcyODMyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NCwt
+MTk4MjYxODI2MCwtMTIzNDIzNDgyOV19
 -->
