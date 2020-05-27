@@ -40,6 +40,10 @@ public protocol DerivedType {
 /// Conforms to Equatable that compares pointer personality.
 public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
 
+  public enum Attribute: Hashable {
+    case dropsDuplicatedOutput
+  }
+  
   public static func constant(_ value: Value) -> Derived<Value> {
     .init(constant: value)
   }
@@ -76,6 +80,8 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   
   private let subscription: VergeAnyCancellable
   private let retainsUpstream: Any?
+
+  public private(set) var attributes: Set<Attribute> = .init()
   
   // MARK: - Initializers
       
@@ -123,14 +129,15 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   public func asDerived() -> Derived<Value> {
     self
   }
-    
-  ///
-  /// - Parameter postFilter: Returns the objects are equals
-  /// - Returns:
-  fileprivate func setDropsOutput(_ dropsOutput: @escaping (Changes<Value>) -> Bool){
-    innerStore.setNotificationFilter { changes in
-      !dropsOutput(changes)
+
+  public func removeDuplicates(by predicate: @escaping (Changes<Value>) -> Bool) -> Derived<Value> {
+    guard !attributes.contains(.dropsDuplicatedOutput) else {
+      assertionFailure("\(self) has already applied removeDuplicates")
+      return self
     }
+    let chained = chain(.init(dropInput: predicate, map: { $0.root }))
+    chained.attributes.insert(.dropsDuplicatedOutput)
+    return chained
   }
   
   /// Subscribe the state changes
@@ -258,12 +265,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
     }
     
     if let dropsOutput = dropsOutput {
-      
-      let chained: Derived<NewState> = derived._makeChain(.map(\.root), queue: queue)
-      chained.setDropsOutput(dropsOutput)
-      
-      return chained
-      
+      return derived.removeDuplicates(by: dropsOutput)
     } else {
       return derived
     }
@@ -288,8 +290,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
       let identifier = "\(map.identifier)\(String(describing: queue?.identifier))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
-        let instance = _makeChain(map, queue: queue)
-        instance.setDropsOutput({ !$0.hasChanges })
+        let instance = _makeChain(map, queue: queue).removeDuplicates(by: { !$0.hasChanges })
         cache.setObject(instance, forKey: identifier)
         return instance
       }
@@ -481,6 +482,15 @@ public final class BindingDerived<State>: Derived<State> {
   public var projectedValue: Self {
     self
   }
+
+  ///
+  /// - Parameter postFilter: Returns the objects are equals
+  /// - Returns:
+  fileprivate func setDropsOutput(_ dropsOutput: @escaping (Changes<Value>) -> Bool) {
+    innerStore.setNotificationFilter { changes in
+      !dropsOutput(changes)
+    }
+  }
     
 }
 
@@ -535,16 +545,9 @@ extension StoreType {
     }
     
     if let dropsOutput = dropsOutput {
-            
-      let chained = derived._makeChain(.map(\.root), queue: queue)
-      chained.setDropsOutput(dropsOutput)
-            
-      return chained
-      
+      return derived.removeDuplicates(by: dropsOutput)
     } else {
-
       return derived
-      
     }
        
   }
@@ -566,7 +569,7 @@ extension StoreType {
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeDerived(memoizeMap, queue: queue)
-        instance.setDropsOutput({ $0.asChanges().noChanges(\.root) })
+          .removeDuplicates(by: { $0.asChanges().noChanges(\.root) })
         cache.setObject(instance, forKey: identifier)
         return instance
       }
@@ -609,7 +612,7 @@ extension StoreType {
     }, retainsUpstream: nil)
     
     derived.setDropsOutput(dropsOutput)
-    
+
     return derived
   }
   
