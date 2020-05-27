@@ -413,7 +413,7 @@ It provides core functions of Store-pattern.
 -   manages the state object that contains the application state    
 -   commits **Mutation** to update the state
 
-## Defines Store
+## Define a Store
 
 ```swift
 struct State: StateType {
@@ -424,7 +424,7 @@ enum Activity {
   case happen
 }
 
-final class MyStore: StoreBase<State, Activity> {
+final class MyStore: Store<State, Activity> {
   
   init() {
     super.init(
@@ -436,10 +436,10 @@ final class MyStore: StoreBase<State, Activity> {
 }
 ```
 
-## Adds Mutation
+## Add a Mutation
 
 ```swift
-final class MyStore: StoreBase<State, Activity> {
+final class MyStore: Store<State, Activity> {
 
   func increment() {
     commit {
@@ -450,7 +450,7 @@ final class MyStore: StoreBase<State, Activity> {
 }
 ```
 
-## Commit mutation
+## Commit the mutation
 
 ```swift
 let store = MyStore()
@@ -1688,7 +1688,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc0NDY1MjA4OCw3MjcxNTU2OTIsLTEzNT
+eyJoaXN0b3J5IjpbLTQ4MDY1ODg5Nyw3MjcxNTU2OTIsLTEzNT
 AyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywxMDczNTQ2Mjgx
 LDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyODMyLC0xMDE5MD
 gzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIzNDgy
