@@ -691,7 +691,7 @@ class ViewController: UIViewController {
 </p>
 </details>
 
-<details><summary>🛸 Computed property on State</summary>
+<details><summary>🛸 Extended Computed property on State</summary>
 <p>
 
 ## Overview
@@ -819,7 +819,7 @@ struct State {
 However, as we said, this approach is not simple. And this can not handle easily a case that combining from multiple stored property. Next introduces one of the solutions.
 
 
-## Extened Computed Properties
+## Extended Computed Properties
 
 VergeStore has a way of providing computed property with caching to reduce taking computing resource.
 
@@ -1688,7 +1688,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTAzMTQzMTAxMSw3MjcxNTU2OTIsLTEzNT
+eyJoaXN0b3J5IjpbMTc0NDY1MjA4OCw3MjcxNTU2OTIsLTEzNT
 AyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywxMDczNTQ2Mjgx
 LDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyODMyLC0xMDE5MD
 gzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIzNDgy
