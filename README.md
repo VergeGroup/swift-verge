@@ -613,6 +613,9 @@ extension StateType {
 }
 ```
 
+> There is `ExtendedStateType` from StateType.
+> This provies us to get more stuff that increase performance and produc
+
 ## Normalization
 
 **If you put the data that has relation-ship or complicated structure into state tree, it would be needed normalization to keep performance. Please check VergeORM module**
@@ -1688,9 +1691,9 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTUzMDcwNzk3LDcyNzE1NTY5MiwtMTM1MD
-IyNDM2MSwxMjM2NzY1MzYsNzU4OTk5OTMzLDEwNzM1NDYyODEs
-ODE5MDI5MTIsMTk4NDM0NDY2NywxNjIwNzI4MzIsLTEwMTkwOD
-MyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYwLC0xMjM0MjM0ODI5
-XX0=
+eyJoaXN0b3J5IjpbLTIwOTQ1ODU2NTEsNzI3MTU1NjkyLC0xMz
+UwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4
+MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3MjgzMiwtMTAxOT
+A4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4
+MjldfQ==
 -->
