@@ -480,7 +480,7 @@ struct MyState {
 class MyStore: Store<MyState, Never> {
 
   func addNewTodo(title: String) {
-    commit { (state: inout RootState) in
+    commit { (state: inout MyState) in
       state.todos.append(Todo(title: title, hasCompleted: false))
     }
   }
@@ -492,9 +492,7 @@ class MyStore: Store<MyState, Never> {
 
 ```swift
 let store = MyStore()
-let dispatcher = MyDispatcher(target: store)
-
-dispatcher.addNewTodo(title: "Create SwiftUI App")
+store.addNewTodo(title: "Create SwiftUI App")
 
 print(store.state.todos)
 // store.state.todos => [Todo(title: "Create SwiftUI App", hasCompleted: false)]
@@ -525,7 +523,7 @@ func onReceive<P>(_ publisher: P, perform action: @escaping (P.Output) -> Void) 
 In sample code following this
 
 ```swift
-final class MyStore: StoreBase<State, Never>
+final class MyStore: Store<State, Never>
 ```
 
 `Never` means no activity.
@@ -540,10 +538,8 @@ enum Activity {
   case didSendMessage
 }
 
-final class Store: StoreBase<State, Activity>, DispatcherType {
-  
-  var target: StoreBase<State, Activity> { self }
-  
+final class MyStore: Store<State, Activity> {
+    
   init() {
     super.init(initialState: .init(), logger: DefaultLogger.shared)
   }
@@ -1692,9 +1688,9 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQyOTUyOTc0OCw3MjcxNTU2OTIsLTEzNT
-AyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywxMDczNTQ2Mjgx
-LDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyODMyLC0xMDE5MD
-gzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIzNDgy
-OV19
+eyJoaXN0b3J5IjpbLTE5MjI2MDc1NDAsNzI3MTU1NjkyLC0xMz
+UwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4
+MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3MjgzMiwtMTAxOT
+A4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4
+MjldfQ==
 -->
