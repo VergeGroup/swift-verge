@@ -132,7 +132,7 @@ struct MyView: View {
 </p>
 </details>
 
-## Contents
+# Contents
 
 <details><summary>🍐 Basic Usage</summary>
 
@@ -399,9 +399,9 @@ You can check the detail of this from [our documentation](https://muukii-app.git
 
 </details>
 
-## Modules overview
+# Docs
 
-### 📦 VergeStore
+## 📦 VergeStore
 
 It provides core functions of Store-pattern.
 
@@ -1168,7 +1168,7 @@ appState.$yourState.counter.value
 
 </details>
 
-### 📦 VergeORM - Normalization
+## 📦 VergeORM - Normalization
 
 It provides the function that manages performant many entity objects.<br>
 Technically, using Normalization.
@@ -1632,7 +1632,7 @@ Inside of access function, it supports only accessing to entity Partial protocol
 
 </details>
 
-### 📦 VergeRx
+## 📦 VergeRx
 
 It provides several observable that compatible with RxSwift.
 
@@ -1694,7 +1694,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyODgxMDkyMTUsLTM4MjYwMjI5LDcyNz
+eyJoaXN0b3J5IjpbLTE4NzIxMjc3MTcsLTM4MjYwMjI5LDcyNz
 E1NTY5MiwtMTM1MDIyNDM2MSwxMjM2NzY1MzYsNzU4OTk5OTMz
 LDEwNzM1NDYyODEsODE5MDI5MTIsMTk4NDM0NDY2NywxNjIwNz
 I4MzIsLTEwMTkwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYw
