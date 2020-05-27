@@ -473,7 +473,11 @@ That expresses that function is Mutation
 ## To define mutations in the Store
 
 ```swift
-class MyDispatcher: MyStore.Dispatcher {
+struct MyState {
+  var todos: [TODO] = []
+}
+
+class MyStore: Store<MyState, Never> {
 
   func addNewTodo(title: String) {
     commit { (state: inout RootState) in
@@ -1688,7 +1692,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTQ4MDY1ODg5Nyw3MjcxNTU2OTIsLTEzNT
+eyJoaXN0b3J5IjpbMTQyOTUyOTc0OCw3MjcxNTU2OTIsLTEzNT
 AyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywxMDczNTQ2Mjgx
 LDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyODMyLC0xMDE5MD
 gzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIzNDgy
