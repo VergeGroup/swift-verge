@@ -1009,7 +1009,7 @@ extension StoreType {
 <details><summary>🚀 Dispatcher - perform Mutation</summary>
 <p>
 
-# What Dispatcher does
+## What Dispatcher does
 
 Dispatcher's needs is **to update the state that Store manages** and to **manage dependencies to create Mutation and Action.**
 
@@ -1694,9 +1694,9 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTI1NTQ2OTAyMCwtMzgyNjAyMjksNzI3MT
-U1NjkyLC0xMzUwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMs
-MTA3MzU0NjI4MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3Mj
-gzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAs
-LTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbLTExNjg5NjMwOTEsLTM4MjYwMjI5LDcyNz
+E1NTY5MiwtMTM1MDIyNDM2MSwxMjM2NzY1MzYsNzU4OTk5OTMz
+LDEwNzM1NDYyODEsODE5MDI5MTIsMTk4NDM0NDY2NywxNjIwNz
+I4MzIsLTEwMTkwODMyOTgsODIzOTY1ODk0LC0xOTgyNjE4MjYw
+LC0xMjM0MjM0ODI5XX0=
 -->
