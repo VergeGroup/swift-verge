@@ -1158,6 +1158,8 @@ appState.$yourState.counter.value
 
 > WIP
 
+* ExtendedComputedProperty
+
 </details>
 
 ### 📦 VergeORM
@@ -1686,8 +1688,8 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1OD
-k5OTkzMywxMDczNTQ2MjgxLDgxOTAyOTEyLDE5ODQzNDQ2Njcs
-MTYyMDcyODMyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NCwtMTk4Mj
-YxODI2MCwtMTIzNDIzNDgyOV19
+eyJoaXN0b3J5IjpbNzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMz
+Y3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMiwx
+OTg0MzQ0NjY3LDE2MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5Nj
+U4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
