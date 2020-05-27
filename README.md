@@ -819,7 +819,7 @@ struct State {
 However, as we said, this approach is not simple. And this can not handle easily a case that combining from multiple stored property. Next introduces one of the solutions.
 
 
-## Computed Properties
+## Extened Computed Properties
 
 VergeStore has a way of providing computed property with caching to reduce taking computing resource.
 
@@ -1688,8 +1688,9 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMz
-Y3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMiwx
-OTg0MzQ0NjY3LDE2MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5Nj
-U4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbMTAzMTQzMTAxMSw3MjcxNTU2OTIsLTEzNT
+AyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywxMDczNTQ2Mjgx
+LDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyODMyLC0xMDE5MD
+gzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzNDIzNDgy
+OV19
 -->
