@@ -306,12 +306,9 @@ class ViewController: UIViewController {
   }
 }
 ```
+</detail>
 
-
-
-
-
-## ☂️ Advanced Usage - to keep performance and scalability
+<detail><summary>☂️ Advanced Usage - to keep performance and scalability</summary>
 
 **Adding a cachable computed property in a State**
 
@@ -400,6 +397,7 @@ let dispatcher = MyDispatcher(target: store)
 Additionally, We can create a dispatcher that focuses the specified sub-tree of the state.<br>
 You can check the detail of this from [our documentation](https://muukii-app.gitbook.io/verge/docs-vergestore/dispatcher).
 
+</detail>
 
 ## Modules overview
 
@@ -1696,9 +1694,9 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTYyNDA1NjYwLC0zODI2MDIyOSw3MjcxNT
-U2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywx
-MDczNTQ2MjgxLDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyOD
-MyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwt
-MTIzNDIzNDgyOV19
+eyJoaXN0b3J5IjpbLTI1NTQ2OTAyMCwtMzgyNjAyMjksNzI3MT
+U1NjkyLC0xMzUwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMs
+MTA3MzU0NjI4MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3Mj
+gzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAs
+LTEyMzQyMzQ4MjldfQ==
 -->
