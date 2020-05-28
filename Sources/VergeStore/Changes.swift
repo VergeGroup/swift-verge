@@ -558,6 +558,7 @@ extension _StateTypeContainer {
     /// Initialize Computed property that computes value from derived value
     /// Drops duplicated derived value with Equatable of Derived type.
     ///
+    /// - Complexity: ✅ Drops duplicated derived values.
     /// - Parameters:
     ///   - derive: A closure to create value from the state to put into the compute closure.
     ///   - compute: A closure to compose a computed value from the derived value.
@@ -570,6 +571,9 @@ extension _StateTypeContainer {
 
     /// Initialize Computed property that computes value from derived value
     ///
+    /// - Complexity:
+    ///   - ✅ Drops duplicated derived values
+    ///   - 💡 depends on dropsDerived closure
     /// - Parameters:
     ///   - derive: A closure to create value from the state to put into the compute closure.
     ///   - dropsDerived:
