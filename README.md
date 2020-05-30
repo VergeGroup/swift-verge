@@ -867,9 +867,12 @@ let store = StoreBase<State, Never>(initialState: .init(), logger: nil)
 
 ### Create a Derived object
 
+**Select tree of
 ```swift
 let derived: Derived<Int> = store.derived(.map(\.count))
+```
 
+```swift
 // we can write also this.
 // However, we recommend do above way as possible
 // because it enables cache.
@@ -931,7 +934,7 @@ We can see the detail of Memoization from below link.
 
 [Wiki - Memoization]([https://en.wikipedia.org/wiki/Memoization](https://en.wikipedia.org/wiki/Memoization))
 
-## Skip the map operation if the source state has no changes
+## Skips the map operation if the source state has no changes
 
 In create Derived method, we can get the detail that how we suppress the no need updating and updated event.
 
@@ -1705,7 +1708,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTAwMDQxODk4NCwyMDE1ODkzMTExLC03ND
+eyJoaXN0b3J5IjpbMTA1MDcyMTQwMSwyMDE1ODkzMTExLC03ND
 A2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEwNiw3NzM0MTcxMjAs
 LTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMjc3MTcsLTM4Mj
 YwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2MSwxMjM2NzY1MzYs
