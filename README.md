@@ -1173,7 +1173,7 @@ appState.$yourState.counter.value
 > WIP
 
 * ExtendedComputedProperty
-* Compatibles State with Equatable 
+* Make the state compatible with Equatable as possible.
 
 </details>
 
@@ -1699,11 +1699,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMzg2MzM3ODIsLTc0MDYxNjY0MCwtMzk3ND
-IxNTQsLTcxODU2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2
-NjI3MDc4NSwtMTg3MjEyNzcxNywtMzgyNjAyMjksNzI3MTU1Nj
-kyLC0xMzUwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMsMTA3
-MzU0NjI4MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3MjgzMi
-wtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjBdfQ==
+eyJoaXN0b3J5IjpbMjA2NDAzOTg2NSwtNzQwNjE2NjQwLC0zOT
+c0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQs
+ODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zODI2MDIyOSw3MjcxNT
+U2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywx
+MDczNTQ2MjgxLDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyOD
+MyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MF19
 
 -->
