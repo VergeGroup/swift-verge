@@ -1136,7 +1136,11 @@ let loggedOutDispatcher = LoggedOutDispatcher(...)
 `Dispatcher` supports to commit specified scope of the state.
 It helps to mutate with focused on a part of the large state tree.
 
-Assuming the state is like this
+Here is a sample state that assuming a large app.
+We have `database`, `logged-in` and `logged-out state`.
+`database` means normalized state shape to manage many entities.
+
+And then let's think about the case of creating a dispatcher focuses on the logged-in state.
 
 - AppState
 	- db: Database
@@ -1812,11 +1816,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjEwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OT
-k3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1
-MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMT
-U4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2
-LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3Mj
-EyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYx
-XX0=
+eyJoaXN0b3J5IjpbNjY0OTcyMDg4LDIxMDQ1MTE3OTksLTc5Mj
+c0NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUy
+MjAsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxOD
+QyMjUzNiwyMDE1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0
+LC03MTg1NjEwNiw3NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNz
+A3ODUsLTE4NzIxMjc3MTcsLTM4MjYwMjI5LDcyNzE1NTY5Ml19
+
 -->
