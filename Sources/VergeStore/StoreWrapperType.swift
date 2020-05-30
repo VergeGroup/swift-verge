@@ -63,6 +63,7 @@ extension StoreWrapperType {
 }
 
 extension StoreWrapperType where State == WrappedStore.State, Activity == WrappedStore.Activity {
+  @inline(__always)
   public func asStore() -> Store<State, Activity> {
     store.asStore()
   }

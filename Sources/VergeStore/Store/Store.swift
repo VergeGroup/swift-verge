@@ -25,6 +25,10 @@ import Foundation
 @_exported import VergeCore
 #endif
 
+#if canImport(Combine)
+import Combine
+#endif
+
 public protocol StoreType: AnyObject {
   associatedtype State
   associatedtype Activity = Never
@@ -48,16 +52,22 @@ public typealias StoreBase<State, Activity> = Store<State, Activity>
 ///   }
 /// }
 /// ```
-open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType {
-  
-  public var scope: WritableKeyPath<State, State> = \State.self
-    
+open class Store<State, Activity>: ObservableObjectBase, CustomReflectable, StoreType, DispatcherType {
+
   public typealias Scope = State
-    
   public typealias Dispatcher = DispatcherBase<State, Activity>
   public typealias ScopedDispatcher<Scope> = ScopedDispatcherBase<State, Activity, Scope>
-  
   public typealias Value = State
+
+  #if canImport(Combine)
+  /// A Publisher to compatible SwiftUI
+  @available(iOS 13.0, macOS 10.15, *)
+  public final override var objectWillChange: ObservableObjectPublisher {
+    _backingStorage.objectWillChange
+  }
+  #endif
+  
+  public var scope: WritableKeyPath<State, State> = \State.self
   
   public var store: Store<State, Activity> { self }
       
@@ -86,8 +96,8 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
 
   /// A backing storage that manages current state.
   /// You shouldn't access this directly unless special case.
-  private let _backingStorage: StateStorage<Changes<State>>
-  private let _activityEmitter: EventEmitter<Activity> = .init()
+  let _backingStorage: StateStorage<Changes<State>>
+  let _activityEmitter: EventEmitter<Activity> = .init()
     
   /// Cache for derived object each method. Don't share it with between methods.
   let derivedCache1 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
@@ -160,7 +170,8 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
       displayStyle: .struct
     )
   }
-  
+
+  @inline(__always)
   public func asStore() -> Store<State, Activity> {
     self
   }
@@ -297,67 +308,3 @@ open class Store<State, Activity>: CustomReflectable, StoreType, DispatcherType 
   }
              
 }
-
-#if canImport(Combine)
-
-import Foundation
-import Combine
-
-@available(iOS 13.0, macOS 10.15, *)
-extension Store: ObservableObject {
-  
-  /// A Publisher to compatible SwiftUI
-  public var objectWillChange: ObservableObjectPublisher {
-    _backingStorage.objectWillChange
-  }
-    
-}
-
-@available(iOS 13.0, macOS 10.15, *)
-extension Store {
-  
-  /// A publisher that repeatedly emits the changes when state updated
-  ///
-  /// Guarantees to emit the first event on started subscribing.
-  ///
-  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
-  /// - Returns:
-  public func statePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
-    if startsFromInitial {
-      return _backingStorage.valuePublisher.dropFirst()
-        .merge(with: Just(_backingStorage.value.droppedPrevious()))
-        .eraseToAnyPublisher()
-    } else {
-      return _backingStorage.valuePublisher
-    }
-  }
-    
-  /// A publisher that repeatedly emits the changes when state updated
-  ///
-  /// Guarantees to emit the first event on started subscribing.
-  ///
-  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
-  /// - Returns:
-  @available(*, deprecated, renamed: "statePublisher")
-  public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
-    if startsFromInitial {
-      return _backingStorage.valuePublisher.dropFirst()
-        .merge(with: Just(_backingStorage.value.droppedPrevious()))
-        .eraseToAnyPublisher()
-    } else {
-      return _backingStorage.valuePublisher
-    }
-  }
-  
-  public var activityPublisher: EventEmitter<Activity>.Publisher {
-    _activityEmitter.publisher
-  }
-   
-}
-
-@available(iOS 13.0, macOS 10.15, *)
-extension DispatcherBase: ObservableObject {
-
-}
-
-#endif

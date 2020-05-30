@@ -32,6 +32,21 @@ public typealias GroupByIndex<
   GroupedEntity
 >
 
+/// A Indexing store
+///
+/// {
+///   Grouping-ID : [
+///     - Grouped-ID
+///     - Grouped-ID
+///     - Grouped-ID
+///   ],
+///   Grouping-ID : [
+///     - Grouped-ID
+///     - Grouped-ID
+///     - Grouped-ID
+///   ]
+/// }
+///
 public struct GroupByEntityIndex<
   Schema: EntitySchemaType,
   GroupEntity: EntityType,
@@ -53,7 +68,12 @@ public struct GroupByEntityIndex<
   public func groups() -> Set<GroupEntity.EntityID> {
     Set(backing.keys)
   }
-  
+
+  /// Returns stored identifier related with the grouping identifier
+  ///
+  /// - Complexity: O(n)
+  /// - Parameter groupEntityID:
+  /// - Returns:
   public func orderedID(in groupEntityID: GroupEntity.EntityID) -> OrderedIDIndex<Schema, GroupedEntity> {
     backing[groupEntityID, default: .init()]
   }
