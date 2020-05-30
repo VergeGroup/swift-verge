@@ -423,6 +423,7 @@ It provides core functions of Store-pattern.
 -   a reference type object    
 -   manages the state object that contains the application state    
 -   commits **Mutation** to update the state
+-  Compatible with SwiftUI's observableObject and `UseState`
 
 ## Define a Store
 
@@ -848,10 +849,11 @@ store.state.computed.filteredArray
 > **Derived** is inspired by [redux/reselect](https://github.com/reduxjs/reselect).
 
 Derived's functions are:
--   Computes the derived data from the state tree
--   Emit the updated data with updating Store
--   Supports subscribe the data
--   Supports Memoization
+-  Computes the derived data from the state tree
+-  Emit the updated data with updating Store
+-  Supports subscribe the data
+-  Supports Memoization
+-  Compatible with SwiftUI's observableObject and `UseState`
 
 ## Overview
 
@@ -1832,11 +1834,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI4MTQ0ODQ5OCwtMTA3MTU1MTU0NCwtMT
-g5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3NDY3MzEsLTg5OTc4
-NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1MjIwLDQ4MzYwODUzNy
-wyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0MjI1MzYsMjAxNTg5
-MzExMSwtNzQwNjE2NjQwLC0zOTc0MjE1NCwtNzE4NTYxMDYsNz
-czNDE3MTIwLC0yMTU4NDY5OTQsODY2MjcwNzg1LC0xODcyMTI3
-NzE3XX0=
+eyJoaXN0b3J5IjpbMTAwMjM5OTk1NCwxMjgxNDQ4NDk4LC0xMD
+cxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3OTksLTc5Mjc0
+NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMj
+AsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQy
+MjUzNiwyMDE1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC
+03MTg1NjEwNiw3NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNzA3
+ODVdfQ==
 -->
