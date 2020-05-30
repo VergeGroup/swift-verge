@@ -894,7 +894,7 @@ let derived = store.derived(.map(derive: { ($0.name, $0.age) }, dropsDerived: ==
 
 > ✅
 > This method is quite optimized the performance If you create a Derived object that computes a new shape value that using multiple values from the state.
-> Derived object drops not changed input value with the specified derived value from the derive closure.
+> Because Derived object uses the specified derived value to create a new shape value, It can detect no need to compute that value if the input derived value not changed.
 
 Derived is an object (reference type). It provides a latest value from a store.
 This supports getting the value ad-hoc or subscribing the value updating.
@@ -1725,10 +1725,10 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwOD
-c5NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03NDA2MTY2NDAs
-LTM5NzQyMTU0LC03MTg1NjEwNiw3NzM0MTcxMjAsLTIxNTg0Nj
-k5NCw4NjYyNzA3ODUsLTE4NzIxMjc3MTcsLTM4MjYwMjI5LDcy
-NzE1NTY5MiwtMTM1MDIyNDM2MSwxMjM2NzY1MzYsNzU4OTk5OT
-MzLDEwNzM1NDYyODEsODE5MDI5MTIsMTk4NDM0NDY2N119
+eyJoaXN0b3J5IjpbLTgwMDE3NzY2OCw0ODM2MDg1MzcsMjA2Nj
+gzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMTU4OTMxMTEs
+LTc0MDYxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2LDc3MzQxNz
+EyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcxNywt
+MzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMzY3Nj
+UzNiw3NTg5OTk5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMl19
 -->
