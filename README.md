@@ -867,7 +867,8 @@ let store = StoreBase<State, Never>(initialState: .init(), logger: nil)
 
 ### Create a Derived object
 
-**Select tree of
+**Select a tree from the state**
+
 ```swift
 let derived: Derived<Int> = store.derived(.map(\.count))
 ```
@@ -877,6 +878,12 @@ let derived: Derived<Int> = store.derived(.map(\.count))
 // However, we recommend do above way as possible
 // because it enables cache.
 let derived: Derived<Int> = store.derived(.map { $0.count })
+```
+
+**Compute a value from the state**
+
+```swift
+let derived = store.derived(.map(derive: { ($0.aaa, $0.bbb) }, dropsDerived: ==)
 ```
 
 Derived is an object (reference type). It provides a latest value from a store.
@@ -1708,11 +1715,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTA1MDcyMTQwMSwyMDE1ODkzMTExLC03ND
-A2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEwNiw3NzM0MTcxMjAs
-LTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMjc3MTcsLTM4Mj
-YwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2MSwxMjM2NzY1MzYs
-NzU4OTk5OTMzLDEwNzM1NDYyODEsODE5MDI5MTIsMTk4NDM0ND
-Y2NywxNjIwNzI4MzIsLTEwMTkwODMyOTgsODIzOTY1ODk0XX0=
+eyJoaXN0b3J5IjpbNDAwMzQ3OTYzLDIwMTU4OTMxMTEsLTc0MD
+YxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2LDc3MzQxNzEyMCwt
+MjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcxNywtMzgyNj
+AyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMzY3NjUzNiw3
+NTg5OTk5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMiwxOTg0MzQ0Nj
+Y3LDE2MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTRdfQ==
 
 -->
