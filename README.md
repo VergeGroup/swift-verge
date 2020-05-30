@@ -512,7 +512,7 @@ print(store.state.todos)
 </p>
 </details>
 
-<details><summary>⚡️ Activity</summary>
+<details><summary>⚡️ Activity - a volatile event from an action</summary>
 <p>
 
 ## What activity does
@@ -1698,10 +1698,10 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE3MDkyMjAxNzcsLTcxODU2MTA2LDc3Mz
-QxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcx
-NywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMz
-Y3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMiwx
-OTg0MzQ0NjY3LDE2MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5Nj
-U4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbMTU0NDcyOTA5MiwtNzE4NTYxMDYsNzczND
+E3MTIwLC0yMTU4NDY5OTQsODY2MjcwNzg1LC0xODcyMTI3NzE3
+LC0zODI2MDIyOSw3MjcxNTU2OTIsLTEzNTAyMjQzNjEsMTIzNj
+c2NTM2LDc1ODk5OTkzMywxMDczNTQ2MjgxLDgxOTAyOTEyLDE5
+ODQzNDQ2NjcsMTYyMDcyODMyLC0xMDE5MDgzMjk4LDgyMzk2NT
+g5NCwtMTk4MjYxODI2MCwtMTIzNDIzNDgyOV19
 -->
