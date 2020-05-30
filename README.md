@@ -1316,8 +1316,10 @@ Please enables signpost profiling.
 
 > WIP
 
-To integrate SwiftUI, we can use `UseState` struct 
+To integrate SwiftUI, we can use `UseState` struct or `@ObservedObject` property wrapper.
 UseState never doing memory allocations.
+
+Either way are fine, but UseState enables injecting the state into specific location of view hierarchy.
 
 Injects Store
 
@@ -1899,11 +1901,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzNTc4ODg2NzYsMTI4MTQ0ODQ5OCwtMT
-A3MTU1MTU0NCwtMTg5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3
-NDY3MzEsLTg5OTc4NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1Mj
-IwLDQ4MzYwODUzNywyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0
-MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2NjQwLC0zOTc0MjE1NC
-wtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQsODY2Mjcw
-Nzg1XX0=
+eyJoaXN0b3J5IjpbMjA2OTU4OTU1NCwxMjgxNDQ4NDk4LC0xMD
+cxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3OTksLTc5Mjc0
+NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMj
+AsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQy
+MjUzNiwyMDE1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC
+03MTg1NjEwNiw3NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNzA3
+ODVdfQ==
 -->
