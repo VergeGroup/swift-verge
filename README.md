@@ -1014,7 +1014,7 @@ store
 </p>
 </details>
 
-<details><summary>🚀 Dispatcher - perform Mutation</summary>
+<details><summary>🚀 Dispatcher - performs a mutation from away</summary>
 <p>
 
 ## What Dispatcher does
@@ -1698,10 +1698,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM5NzQyMTU0LC03MTg1NjEwNiw3NzM0MT
-cxMjAsLTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMjc3MTcs
-LTM4MjYwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2MSwxMjM2Nz
-Y1MzYsNzU4OTk5OTMzLDEwNzM1NDYyODEsODE5MDI5MTIsMTk4
-NDM0NDY2NywxNjIwNzI4MzIsLTEwMTkwODMyOTgsODIzOTY1OD
-k0LC0xOTgyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
+eyJoaXN0b3J5IjpbMTQ0Njk0MzI1MCwtMzk3NDIxNTQsLTcxOD
+U2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwt
+MTg3MjEyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMj
+I0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4MSw4
+MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3MjgzMiwtMTAxOTA4Mz
+I5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4Mjld
+fQ==
 -->
