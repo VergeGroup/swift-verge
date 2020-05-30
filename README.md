@@ -1057,7 +1057,7 @@ Dispatcher allows us to update the state of the Store from away the store and to
 **Example**
 
 ```swift
-class MyDispatcher: MyStore.Dispatcher {
+final class MyDispatcher: MyStore.Dispatcher {
 
 }
 
@@ -1071,13 +1071,13 @@ let dispatcher = MyDispatcher(targetStore: store)
 Managing dependencies code
 
 ```swift
-class MyDispatcher: MyStore.Dispatcher {
+final class MyDispatcher: MyStore.Dispatcher {
 
   let apiClient: APIClient
 
-  init(apiClient: APIClient, target store: Store<RootState>) {
+  init(apiClient: APIClient, targetStore: Store<RootState>) {
     self.apiClient = apiClient
-    super.init(targetStore: store)
+    super.init(targetStore: targetStore)
   }
 
   // an example of fetching data and commit
@@ -1099,6 +1099,8 @@ class MyDispatcher: MyStore.Dispatcher {
 let store = MyStore()
 let apiClient = APIClient()
 let dispatcher = MyDispatcher(apiClient: apiClient, target: store)
+
+dispatcher.fetchData()
 ```
 
 ## Create multiple Dispatcher
@@ -1128,6 +1130,10 @@ let store = MyStore()
 let loggedInDispatcher = LoggedInDispatcher(...)
 let loggedOutDispatcher = LoggedOutDispatcher(...)
 ```
+
+## Create scoped dispatcher
+
+	Dispatcher
 
 </details>
 
@@ -1751,11 +1757,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzMzgwNDYyNDEsLTc5Mjc0NjczMSwtOD
-k5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4
-NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQyMjUzNiwyMD
-E1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEw
-Niw3NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4Nz
-IxMjc3MTcsLTM4MjYwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2
-MV19
+eyJoaXN0b3J5IjpbMTM1NzQwMzQzMiwtNzkyNzQ2NzMxLC04OT
+k3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1
+MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMT
+U4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2
+LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3Mj
+EyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYx
+XX0=
 -->
