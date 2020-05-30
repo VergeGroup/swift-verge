@@ -1170,9 +1170,9 @@ Like this, we can create a dispatcher each use-cases.
 
 ### Detaching to other tree
 
-Just in case, ScopedDispatcher
+Just in case, ScopedDispatcher supports also mutating on other state tree.
 
-Moving on more deeper
+**Moving on more deeper**
 
 ```swift
 final class LoggedInService: Store.ScopedDispatcher<LoggedInState> {
@@ -1186,7 +1186,7 @@ final class LoggedInService: Store.ScopedDispatcher<LoggedInState> {
 }
 ```
 
-Detaches from root
+**Detaches from root**
 
 ```swift
 final class LoggedInService: Store.ScopedDispatcher<LoggedInState> {
@@ -1822,11 +1822,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjUyMjk1NDc2LDIxMDQ1MTE3OTksLTc5Mj
-c0NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUy
-MjAsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxOD
-QyMjUzNiwyMDE1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0
-LC03MTg1NjEwNiw3NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNz
-A3ODUsLTE4NzIxMjc3MTcsLTM4MjYwMjI5LDcyNzE1NTY5Ml19
-
+eyJoaXN0b3J5IjpbLTE4OTU0ODA3MDAsMjEwNDUxMTc5OSwtNz
+kyNzQ2NzMxLC04OTk3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUy
+NTIyMCw0ODM2MDg1MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNz
+E4NDIyNTM2LDIwMTU4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIx
+NTQsLTcxODU2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2Nj
+I3MDc4NSwtMTg3MjEyNzcxNywtMzgyNjAyMjksNzI3MTU1Njky
+XX0=
 -->
