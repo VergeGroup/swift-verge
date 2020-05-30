@@ -1158,6 +1158,8 @@ final class LoggedInService: Store.ScopedDispatcher<State.TreeA> {
 }
 ```
 
+### Detaching to other 
+
 Moving on more deeper.
 
 ```swift
@@ -1172,7 +1174,7 @@ final class LoggedInService: Store.ScopedDispatcher<State.TreeA> {
 }
 ```
 
-Step back to hi
+Detaches from root
 
 ```swift
 final class LoggedInService: Store.ScopedDispatcher<State.TreeA> {
@@ -1808,11 +1810,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1OTgzNTgyOTYsLTc5Mjc0NjczMSwtOD
-k5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4
-NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQyMjUzNiwyMD
-E1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEw
-Niw3NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4Nz
-IxMjc3MTcsLTM4MjYwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2
-MV19
+eyJoaXN0b3J5IjpbMjQ3NTY5MzM1LC03OTI3NDY3MzEsLTg5OT
+c4NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1MjIwLDQ4MzYwODUz
+NywyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0MjI1MzYsMjAxNT
+g5MzExMSwtNzQwNjE2NjQwLC0zOTc0MjE1NCwtNzE4NTYxMDYs
+NzczNDE3MTIwLC0yMTU4NDY5OTQsODY2MjcwNzg1LC0xODcyMT
+I3NzE3LC0zODI2MDIyOSw3MjcxNTU2OTIsLTEzNTAyMjQzNjFd
+fQ==
 -->
