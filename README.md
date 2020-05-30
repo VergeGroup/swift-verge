@@ -898,7 +898,7 @@ let derived = store.derived(.map(derive: { ($0.name, $0.age) }, dropsDerived: ==
 
 **Most manually way of creating a Derived object**
 
-We can create fully tuned up Derived object with using custom initialized MemoizedMap.
+We can create fully tuned up Derived object with using custom initialized `MemoizedMap`.
 Most of the cases, we don't need to do this.
 Because several overloaded methods enable optimizations automatically that depending on doing things.
 Verge shows current optimization status from the Complexity column of Xcode documentation.
@@ -1736,7 +1736,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI1ODQyNTU2MSwtMTI2NDI1MDUzMywxNT
+eyJoaXN0b3J5IjpbLTg5OTc4NTk4NywtMTI2NDI1MDUzMywxNT
 Q0NTI1MjIwLDQ4MzYwODUzNywyMDY2ODM0NDY3LDU3MDg3OTQx
 NCw3MTg0MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2NjQwLC0zOT
 c0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQs
