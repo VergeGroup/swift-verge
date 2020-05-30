@@ -471,7 +471,7 @@ store.increment()
 </p>
 </details>
 
-<details><summary>☄️ Mutation</summary>
+<details><summary>☄️ Mutation - updates the state of the store</summary>
 <p>
 
 ## What Mutation is
@@ -1698,7 +1698,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExNDEzNDM1NDMsLTcxODU2MTA2LDc3Mz
+eyJoaXN0b3J5IjpbLTE3MDkyMjAxNzcsLTcxODU2MTA2LDc3Mz
 QxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcx
 NywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMz
 Y3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMiwx
