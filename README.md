@@ -1283,7 +1283,7 @@ appState.$yourState.counter.value
 
 </details>
 
-<details><summary>🎛Optimization Tips</summary>
+<details><summary>🎛 Optimization Tips</summary>
 
 ## Writing high-performance state-management
 
@@ -1832,11 +1832,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwNzE1NTE1NDQsLTE4OTU0ODA3MDAsMj
-EwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3ODU5ODcsLTEyNjQy
-NTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1MzcsMjA2NjgzNDQ2Ny
-w1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMTU4OTMxMTEsLTc0MDYx
-NjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2LDc3MzQxNzEyMCwtMj
-E1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcxNywtMzgyNjAy
-MjldfQ==
+eyJoaXN0b3J5IjpbMTI4MTQ0ODQ5OCwtMTA3MTU1MTU0NCwtMT
+g5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3NDY3MzEsLTg5OTc4
+NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1MjIwLDQ4MzYwODUzNy
+wyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0MjI1MzYsMjAxNTg5
+MzExMSwtNzQwNjE2NjQwLC0zOTc0MjE1NCwtNzE4NTYxMDYsNz
+czNDE3MTIwLC0yMTU4NDY5OTQsODY2MjcwNzg1LC0xODcyMTI3
+NzE3XX0=
 -->
