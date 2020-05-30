@@ -842,7 +842,7 @@ store.state.computed.filteredArray
 </p>
 </details>
 
-<details><summary>🌙 Derived / BindingDerived - slices</summary>
+<details><summary>🌙 Derived / BindingDerived - derives a any shape value from the state</summary>
 <p>
 
 > **Derived** is inspired by [redux/reselect](https://github.com/reduxjs/reselect).
@@ -1698,10 +1698,10 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjkwMDA1OTk4LC03MTg1NjEwNiw3NzM0MT
-cxMjAsLTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMjc3MTcs
-LTM4MjYwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2MSwxMjM2Nz
-Y1MzYsNzU4OTk5OTMzLDEwNzM1NDYyODEsODE5MDI5MTIsMTk4
-NDM0NDY2NywxNjIwNzI4MzIsLTEwMTkwODMyOTgsODIzOTY1OD
-k0LC0xOTgyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
+eyJoaXN0b3J5IjpbLTEwMzM3MjE2MTgsLTcxODU2MTA2LDc3Mz
+QxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcx
+NywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMz
+Y3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMiwx
+OTg0MzQ0NjY3LDE2MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5Nj
+U4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
