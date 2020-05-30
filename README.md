@@ -854,18 +854,8 @@ Derived's functions are:
 -   Supports Memoization
 
 ## Overview
-### Setting up the Store
 
-```swift
-struct State {
-  var title: String = ""
-  var count: Int = 0
-}
-
-let store = Store<State, Never>(initialState: .init(), logger: nil)
-```
-
-### Create a Derived object
+### Create a Derived object from the Store
 
 **Select a tree from the state**
 
@@ -1722,7 +1712,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzE4NjQ5NTYxLDcxODQyMjUzNiwyMDE1OD
+eyJoaXN0b3J5IjpbNTcwODc5NDE0LDcxODQyMjUzNiwyMDE1OD
 kzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEwNiw3
 NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMj
 c3MTcsLTM4MjYwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2MSwx
