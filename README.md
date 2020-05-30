@@ -1050,7 +1050,7 @@ store
 
 ## What Dispatcher does
 
-Dispatcher allows us **to update the state that Store manages from away the store** and to **manage dependencies to create Mutation**
+Dispatcher allows us to update the state of the Store from away the store and to manage dependencies to create Mutation.
 
 **Dispatcher does not have own state. Dispatcher runs with Store.**
 
@@ -1062,7 +1062,7 @@ class MyDispatcher: MyStore.Dispatcher {
 }
 
 let store = MyStore()
-let dispatcher = MyDispatcher(target: store)
+let dispatcher = MyDispatcher(targetStore: store)
 ```
 
 > 💡 
@@ -1736,7 +1736,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQ1OTI4ODIxOSwtODk5Nzg1OTg3LC0xMj
+eyJoaXN0b3J5IjpbLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMj
 Y0MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0
 NjcsNTcwODc5NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03ND
 A2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEwNiw3NzM0MTcxMjAs
