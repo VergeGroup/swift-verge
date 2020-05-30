@@ -35,8 +35,10 @@ open class _VergeObservableObjectBase {
   #endif
 }
 
+#if canImport(Combine)
 @available(iOS 13.0, macOS 10.15, *)
 extension _VergeObservableObjectBase: ObservableObject {
 
 
 }
+#endif

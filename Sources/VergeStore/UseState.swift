@@ -21,7 +21,10 @@
 
 import Foundation
 
+#if canImport(SwiftUI) && canImport(Combine)
+
 import SwiftUI
+import Combine
 
 /**
  A view that injects a state from `Store` or `Derived`.
@@ -74,3 +77,5 @@ extension UseState where StateProvider : DerivedType {
   }
 
 }
+
+#endif
