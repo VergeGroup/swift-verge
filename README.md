@@ -892,6 +892,9 @@ let derived = store.derived(.map(derive: { ($0.name, $0.age) }, dropsDerived: ==
 })
 ```
 
+> ✅
+> If you create an Derived object that computes a new shape value from the state that using multiple values
+
 Derived is an object (reference type). It provides a latest value from a store.
 This supports getting the value ad-hoc or subscribing the value updating.
 
@@ -1721,10 +1724,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4ND
-IyNTM2LDIwMTU4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQs
-LTcxODU2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MD
-c4NSwtMTg3MjEyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0x
-MzUwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMsMTA3MzU0Nj
-I4MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3MjgzMl19
+eyJoaXN0b3J5IjpbLTg4MTU2MDM4NiwyMDY2ODM0NDY3LDU3MD
+g3OTQxNCw3MTg0MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2NjQw
+LC0zOTc0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4ND
+Y5OTQsODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zODI2MDIyOSw3
+MjcxNTU2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OT
+kzMywxMDczNTQ2MjgxLDgxOTAyOTEyLDE5ODQzNDQ2NjddfQ==
+
 -->
