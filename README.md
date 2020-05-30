@@ -1319,35 +1319,41 @@ Please enables signpost profiling.
 To integrate SwiftUI, we can use `UseState` struct.
 
 ```swift
-
-struct UserListView: View {
+struct MyView: View {
   
-  var session: Session
+  let: Derived<[Entity.User]>
 
-  private var users: Derived<[Entity.User]> {
-    session.users
-  }
-           
-  var body: some View {
-    
+  var body: some View {    
     NavigationView {
-      UseState(users) { state in
+      UseState(users) { derived in
         List {
           ForEach(state.value.root) { user in
-            NavigationLink(destination: SubmitView(session: self.session, user: user)) {
-              Text(user.name)
-            }
+            ...
           }
         }
       }
-      .navigationBarTitle("Users")
-    }
-    .onAppear {
-      self.session.sessionDispatcher.insertSampleUsers()
     }
   }
 }
+```
 
+```swift
+struct MyView: View {
+  
+  let: Store<MyState, Never>
+
+  var body: some View {    
+    NavigationView {
+      UseState(store) { store in
+        List {
+          ForEach(state.value.root) { user in
+            ...
+          }
+        }
+      }
+    }
+  }
+}
 ```
 
 </details>
@@ -1874,7 +1880,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4OTI1OTExNDYsMTI4MTQ0ODQ5OCwtMT
+eyJoaXN0b3J5IjpbLTE2ODY4MTQxMDgsMTI4MTQ0ODQ5OCwtMT
 A3MTU1MTU0NCwtMTg5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3
 NDY3MzEsLTg5OTc4NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1Mj
 IwLDQ4MzYwODUzNywyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0
