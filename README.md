@@ -1050,7 +1050,7 @@ store
 
 ## What Dispatcher does
 
-Dispatcher's needs is **to update the state that Store manages** and to **manage dependencies to create Mutation and Action.**
+Dispatcher allows us **to update the state that Store manages from away the store** and to **manage dependencies to create Mutation**
 
 **Dispatcher does not have own state. Dispatcher runs with Store.**
 
@@ -1736,11 +1736,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTg5OTc4NTk4NywtMTI2NDI1MDUzMywxNT
-Q0NTI1MjIwLDQ4MzYwODUzNywyMDY2ODM0NDY3LDU3MDg3OTQx
-NCw3MTg0MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2NjQwLC0zOT
-c0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQs
-ODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zODI2MDIyOSw3MjcxNT
-U2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzM119
-
+eyJoaXN0b3J5IjpbMTQ1OTI4ODIxOSwtODk5Nzg1OTg3LC0xMj
+Y0MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0
+NjcsNTcwODc5NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03ND
+A2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEwNiw3NzM0MTcxMjAs
+LTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMjc3MTcsLTM4Mj
+YwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2MSwxMjM2NzY1MzZd
+fQ==
 -->
