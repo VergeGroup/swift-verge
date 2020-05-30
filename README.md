@@ -1172,7 +1172,8 @@ appState.$yourState.counter.value
 
 > WIP
 
-* Simplify the state shape, thinking normalization to be reduction of 
+* Simplify the state shape, thinking normalization to reduce the number of operations on mutating.
+* Passes Changes object to oa
 * Using ExtendedComputedProperty
 * Makes the state compatible with Equatable as possible to create a good Derived object 
 * Reduces creating new Derived object. Instead, share Derived.
@@ -1703,7 +1704,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1NzIwNzc0MDksLTc0MDYxNjY0MCwtMz
+eyJoaXN0b3J5IjpbLTE4Nzc1NjcxMTEsLTc0MDYxNjY0MCwtMz
 k3NDIxNTQsLTcxODU2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0
 LDg2NjI3MDc4NSwtMTg3MjEyNzcxNywtMzgyNjAyMjksNzI3MT
 U1NjkyLC0xMzUwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMs
