@@ -18,19 +18,67 @@ final class DerivedTests: XCTestCase {
   func testSlice() {
                 
     let slice = wrapper.derived(.map { $0.count })
-    
+
     XCTAssertEqual(slice.primitiveValue, 0)
+    XCTAssertEqual(slice.changes.root, 0)
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
     
     wrapper.increment()
-    
+
     XCTAssertEqual(slice.primitiveValue, 1)
+    XCTAssertEqual(slice.changes.root, 1)
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
       
     wrapper.empty()
-    
+
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), false)
+    XCTAssertEqual(slice.changes.version, 1)
+    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+
+    wrapper.empty()
+
+    XCTAssertEqual(slice.primitiveValue, 1)
+    XCTAssertEqual(slice.changes.version, 1)
+    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+
+    wrapper.increment()
+
+    XCTAssertEqual(slice.primitiveValue, 2)
+    XCTAssertEqual(slice.changes.version, 2)
+    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+  }
+
+  func testSlice2() {
+
+    let slice = wrapper.derived(.map { $0.count }, dropsOutput: { $0.noChanges(\.root) })
+
+    XCTAssertEqual(slice.primitiveValue, 0)
+    XCTAssertEqual(slice.changes.root, 0)
+    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+
+    wrapper.increment()
+
+    XCTAssertEqual(slice.primitiveValue, 1)
+    XCTAssertEqual(slice.changes.root, 1)
+    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+
+    wrapper.empty()
+
+    XCTAssertEqual(slice.primitiveValue, 1)
+    XCTAssertEqual(slice.changes.version, 1)
+    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+
+    wrapper.empty()
+
+    XCTAssertEqual(slice.primitiveValue, 1)
+    XCTAssertEqual(slice.changes.version, 1)
+    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+
+    wrapper.increment()
+
+    XCTAssertEqual(slice.primitiveValue, 2)
+    XCTAssertEqual(slice.changes.version, 2)
+    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
   }
   
   func testBinding() {

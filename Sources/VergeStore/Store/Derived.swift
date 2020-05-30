@@ -135,7 +135,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
       assertionFailure("\(self) has already applied removeDuplicates")
       return self
     }
-    let chained = chain(.init(dropInput: predicate, map: { $0.root }))
+    let chained = _makeChain(.init(dropInput: predicate, map: { $0.root }))
     chained.attributes.insert(.dropsDuplicatedOutput)
     return chained
   }
@@ -308,7 +308,16 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
 
 extension Derived: CustomReflectable {
   public var customMirror: Mirror {
-    Mirror.init(self, children: ["changes" : changes], displayStyle: .struct, ancestorRepresentation: .generated)
+    Mirror.init(
+      self,
+      children: [
+        "upstream" : retainsUpstream as Any,
+        "attributes" : attributes,
+        "changes" : changes
+    ],
+      displayStyle: .struct,
+      ancestorRepresentation: .generated
+    )
   }
 }
 
@@ -569,7 +578,9 @@ extension StoreType {
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeDerived(memoizeMap, queue: queue)
-          .removeDuplicates(by: { $0.asChanges().noChanges(\.root) })
+          .removeDuplicates(by: {
+            $0.asChanges().noChanges(\.root)            
+          })
         cache.setObject(instance, forKey: identifier)
         return instance
       }
