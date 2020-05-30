@@ -893,7 +893,8 @@ let derived = store.derived(.map(derive: { ($0.name, $0.age) }, dropsDerived: ==
 ```
 
 > ✅
-> If you create an Derived object that computes a new shape value from the state that using multiple values
+> This method is quite optimized the performance If you create a Derived object that computes a new shape value that using multiple values from the state.
+> Specified derived value from the derive closure
 
 Derived is an object (reference type). It provides a latest value from a store.
 This supports getting the value ad-hoc or subscribing the value updating.
@@ -1724,7 +1725,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTg4MTU2MDM4NiwyMDY2ODM0NDY3LDU3MD
+eyJoaXN0b3J5IjpbLTEyMzM4OTY5MCwyMDY2ODM0NDY3LDU3MD
 g3OTQxNCw3MTg0MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2NjQw
 LC0zOTc0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4ND
 Y5OTQsODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zODI2MDIyOSw3
