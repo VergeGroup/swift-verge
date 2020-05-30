@@ -1175,7 +1175,8 @@ appState.$yourState.counter.value
 * Using ExtendedComputedProperty
 * Makes the state compatible with Equatable as possible.
 * Reduces creating new Derived object. Instead, share Derived.
-* 
+* Makes Derived with a simple keyPath to enables caching Derived.
+* Uses Fragment property wrapper to enables Equatability.
 
 </details>
 
@@ -1701,11 +1702,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc3MzQ3NTAyOCwtNzQwNjE2NjQwLC0zOT
-c0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQs
-ODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zODI2MDIyOSw3MjcxNT
-U2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywx
-MDczNTQ2MjgxLDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyOD
-MyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MF19
-
+eyJoaXN0b3J5IjpbLTE5Njc0NjI1MzMsLTc0MDYxNjY0MCwtMz
+k3NDIxNTQsLTcxODU2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0
+LDg2NjI3MDc4NSwtMTg3MjEyNzcxNywtMzgyNjAyMjksNzI3MT
+U1NjkyLC0xMzUwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMs
+MTA3MzU0NjI4MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3Mj
+gzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MTgyNjBd
+fQ==
 -->
