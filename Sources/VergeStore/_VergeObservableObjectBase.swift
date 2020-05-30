@@ -21,14 +21,18 @@
 
 import Foundation
 
+#if canImport(Combine)
 import Combine
+#endif
 
 open class _VergeObservableObjectBase {
 
+  #if canImport(Combine)
   @available(iOS 13.0, macOS 10.15, *)
   public var objectWillChange: ObservableObjectPublisher {
-    fatalError()
+    fatalError("Must be override")
   }
+  #endif
 }
 
 @available(iOS 13.0, macOS 10.15, *)
