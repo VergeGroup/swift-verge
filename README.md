@@ -901,6 +901,8 @@ let derived = store.derived(.map(derive: { ($0.name, $0.age) }, dropsDerived: ==
 We can create fully tuned up Derived object with using custom initialized MemoizedMap.
 Most of cases
 
+<img width="533" alt="CleanShot 2020-05-31 at 00 46 27@2x" src="https://user-images.githubusercontent.com/1888355/83332811-41df2480-a2d8-11ea-8da0-d86c127fc926.png">
+
 Derived is an object (reference type). It provides a latest value from a store.
 This supports getting the value ad-hoc or subscribing the value updating.
 
@@ -1730,11 +1732,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0OD
-M2MDg1MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2
-LDIwMTU4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLTcxOD
-U2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwt
-MTg3MjEyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMj
-I0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4MV19
+eyJoaXN0b3J5IjpbMTkyODg1NDI1OSwtMTI2NDI1MDUzMywxNT
+Q0NTI1MjIwLDQ4MzYwODUzNywyMDY2ODM0NDY3LDU3MDg3OTQx
+NCw3MTg0MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2NjQwLC0zOT
+c0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQs
+ODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zODI2MDIyOSw3MjcxNT
+U2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzM119
 
 -->
