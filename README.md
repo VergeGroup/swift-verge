@@ -1172,8 +1172,10 @@ appState.$yourState.counter.value
 
 > WIP
 
-* ExtendedComputedProperty
-* Make the state compatible with Equatable as possible.
+* Using ExtendedComputedProperty
+* Makes the state compatible with Equatable as possible.
+* Reduces creating new Derived object. Instead, share Derived.
+* 
 
 </details>
 
@@ -1699,7 +1701,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjA2NDAzOTg2NSwtNzQwNjE2NjQwLC0zOT
+eyJoaXN0b3J5IjpbMTc3MzQ3NTAyOCwtNzQwNjE2NjQwLC0zOT
 c0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQs
 ODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zODI2MDIyOSw3MjcxNT
 U2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywx
