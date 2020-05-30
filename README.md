@@ -883,7 +883,7 @@ let derived: Derived<Int> = store.derived(.map { $0.count })
 **Compute a value from the state**
 
 Derived can create any type of value what we need.
-`
+MemoizeMap
 
 ```swift
 let derived = store.derived(.map(derive: { ($0.name, $0.age) }, dropsDerived: ==) { args in
@@ -1722,11 +1722,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE3MTQ0NDcyMDQsMjAxNTg5MzExMSwtNz
-QwNjE2NjQwLC0zOTc0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIw
-LC0yMTU4NDY5OTQsODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zOD
-I2MDIyOSw3MjcxNTU2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2
-LDc1ODk5OTkzMywxMDczNTQ2MjgxLDgxOTAyOTEyLDE5ODQzND
-Q2NjcsMTYyMDcyODMyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NF19
+eyJoaXN0b3J5IjpbNzE4NDIyNTM2LDIwMTU4OTMxMTEsLTc0MD
+YxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2LDc3MzQxNzEyMCwt
+MjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcxNywtMzgyNj
+AyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMzY3NjUzNiw3
+NTg5OTk5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMiwxOTg0MzQ0Nj
+Y3LDE2MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTRdfQ==
 
 -->
