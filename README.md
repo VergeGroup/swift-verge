@@ -132,9 +132,10 @@ struct MyView: View {
 </p>
 </details>
 
-# Roadmap
+# Roadmap - Enhancement Idee
 
-- [ ] Imp
+- [ ] Improvement ORM
+- [ ] Integrate with Realm to manage the State (like Facebook Messenger)
 
 # Contents
 
@@ -1697,10 +1698,10 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzczNDE3MTIwLC0yMTU4NDY5OTQsODY2Mj
-cwNzg1LC0xODcyMTI3NzE3LC0zODI2MDIyOSw3MjcxNTU2OTIs
-LTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywxMDczNT
-Q2MjgxLDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyODMyLC0x
-MDE5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MCwtMTIzND
-IzNDgyOV19
+eyJoaXN0b3J5IjpbLTcxODU2MTA2LDc3MzQxNzEyMCwtMjE1OD
+Q2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcxNywtMzgyNjAyMjks
+NzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OT
+k5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2
+MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MT
+gyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
