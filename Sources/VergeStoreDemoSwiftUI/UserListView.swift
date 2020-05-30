@@ -13,8 +13,8 @@ import VergeCore
 
 struct UserListView: View {
   
-  @EnvironmentObject var session: Session
-  
+  var session: Session
+
   private var users: Derived<[Entity.User]> {
     session.users
   }
@@ -22,10 +22,12 @@ struct UserListView: View {
   var body: some View {
     
     NavigationView {
-      List {
-        ForEach(users.value.root) { user in
-          NavigationLink(destination: SubmitView(user: user)) {
-            Text(user.name)
+      UseState(users) { state in
+        List {
+          ForEach(state.value.root) { user in
+            NavigationLink(destination: SubmitView(session: self.session, user: user)) {
+              Text(user.name)
+            }
           }
         }
       }
@@ -37,9 +39,9 @@ struct UserListView: View {
   }
 }
 
-struct SubmitView: View {
+struct SubmitView: View, Equatable {
   
-  @EnvironmentObject var session: Session
+  var session: Session
   
   let samples = [
     "cart",
@@ -64,37 +66,41 @@ struct SubmitView: View {
   }
   
   var body: some View {
-    VStack {
-      Button(action: {
-        self.session.sessionDispatcher.submitNewPost(title: self.samples.randomElement()!, from: self.user)
-      }) {
-        Text("Submit")
-      }
-      List {
-        ForEach(posts) { post in
-          PostView(post: post)
+    UseState(session.store) { (store) in
+      VStack {
+        Button(action: {
+          self.session.sessionDispatcher.submitNewPost(title: self.samples.randomElement()!, from: self.user)
+        }) {
+          Text("Submit")
+        }
+        List {
+          ForEach(self.posts) { post in
+            PostView(session: self.session, post: post)
+          }
         }
       }
     }
   }
 }
 
-struct AllPostsView: View {
+struct AllPostsView: View, Equatable {
   
-  @EnvironmentObject var session: Session
+  var session: Session
   
   private var posts: [Entity.Post] {
     session.store.primitiveState.db.entities.post.find(in: session.store.primitiveState.db.indexes.postIDs)
   }
     
   var body: some View {
-    NavigationView {
-      List {
-        ForEach(posts) { post in
-          PostView(post: post)
+    UseState(session.store) { _ in
+      NavigationView {
+        List {
+          ForEach(self.posts) { post in
+            PostView(session: self.session, post: post)
+          }
         }
+        .navigationBarTitle("Posts")
       }
-      .navigationBarTitle("Posts")
     }
   }
   
@@ -102,7 +108,7 @@ struct AllPostsView: View {
 
 struct PostView: View {
   
-  @EnvironmentObject var session: Session
+  var session: Session
   
   let post: Entity.Post
   

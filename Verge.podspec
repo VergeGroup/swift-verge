@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
 
   s.default_subspec = 'Core'
 
-  s.weak_frameworks = ['Combine']
+  s.weak_frameworks = ['Combine', 'SwiftUI']
 
   s.subspec 'Classic' do |ss|
     ss.dependency 'RxSwift', '~> 5'

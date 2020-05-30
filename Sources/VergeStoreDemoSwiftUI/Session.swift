@@ -14,13 +14,14 @@ import VergeCore
 import VergeStore
 import VergeORM
 
-final class Session: ObservableObject {
+final class Session: Equatable {
   
-  var objectWillChange: ObservableObjectPublisher {
-    store.objectWillChange
+  static func == (lhs: Session, rhs: Session) -> Bool {
+    lhs === rhs
   }
-  
+
   let store = SessionStore()
+  
   private(set) lazy var sessionDispatcher = SessionDispatcher(targetStore: store)
 
   private(set) lazy var users = store.derived(
@@ -33,7 +34,7 @@ final class Session: ObservableObject {
   )
 
   init() {
-    
+
   }
   
 }

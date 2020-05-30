@@ -25,6 +25,10 @@ import Foundation
 import VergeCore
 #endif
 
+#if canImport(Combine)
+import Combine
+#endif
+
 public protocol DerivedType {
   associatedtype Value
   
@@ -34,11 +38,18 @@ public protocol DerivedType {
 /// A container object that provides the current value and changes from the source Store.
 ///
 /// Conforms to Equatable that compares pointer personality.
-public class Derived<Value>: DerivedType {
-  
+public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
+
   public static func constant(_ value: Value) -> Derived<Value> {
     .init(constant: value)
   }
+
+  #if canImport(Combine)
+  @available(iOS 13.0, macOS 10.15, *)
+  public final override var objectWillChange: ObservableObjectPublisher {
+    innerStore.objectWillChange
+  }
+  #endif
   
   /// A current state.
   public var primitiveValue: Value {
@@ -55,7 +66,7 @@ public class Derived<Value>: DerivedType {
     innerStore.state
   }
   
-  fileprivate let innerStore: Store<Value, Never>
+  let innerStore: Store<Value, Never>
   
   public var _innerStore: UnsafeMutableRawPointer {
     Unmanaged.passUnretained(innerStore).toOpaque()
@@ -452,48 +463,6 @@ extension Derived where Value == Any {
   }
   
 }
-
-#if canImport(Combine)
-
-import Combine
-
-@available(iOS 13, macOS 10.15, *)
-extension Derived: ObservableObject {
-  public var objectWillChange: ObservableObjectPublisher {
-    innerStore.objectWillChange
-  }
-   
-  /// A publisher that repeatedly emits the changes when state updated
-  ///
-  /// Guarantees to emit the first event on started subscribing.
-  ///
-  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
-  /// - Returns:
-  public func valuePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<Value>, Never> {
-    innerStore.statePublisher(startsFromInitial: startsFromInitial)
-      .handleEvents(receiveCancel: {
-        withExtendedLifetime(self) {}
-      })
-      .eraseToAnyPublisher()
-  }
-  
-  /// A publisher that repeatedly emits the changes when state updated
-  ///
-  /// Guarantees to emit the first event on started subscribing.
-  ///
-  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
-  /// - Returns:
-  @available(*, deprecated, renamed: "valuePublisher")
-  public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<Value>, Never> {
-    innerStore.changesPublisher(startsFromInitial: startsFromInitial)
-      .handleEvents(receiveCancel: {
-        withExtendedLifetime(self) {}
-      })
-      .eraseToAnyPublisher()
-  }
-}
-
-#endif
 
 @propertyWrapper
 public final class BindingDerived<State>: Derived<State> {

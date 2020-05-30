@@ -10,24 +10,18 @@ import SwiftUI
 
 struct ContentView: View {
   
-  @EnvironmentObject var session: Session
+  var session: Session
   
   var body: some View {
     TabView {
-      UserListView()
+      UserListView(session: session)
         .tabItem {
           Text("Users")
       }
-      AllPostsView()
+      AllPostsView(session: session)
         .tabItem {
           Text("All Post")
       }
     }    
-  }
-}
-
-struct ContentView_Previews: PreviewProvider {
-  static var previews: some View {
-    ContentView()
   }
 }
