@@ -1135,7 +1135,20 @@ let loggedOutDispatcher = LoggedOutDispatcher(...)
 
 `Dispatcher` supports to commit specified scope of the state.
 
-Assume
+Assuming the state is like this
+
+- AppState
+	- LoggedInState
+	- LoggedOutState
+
+```swift
+ final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
+    
+    init(store: Store) {
+      super.init(targetStore: store, scope: \.treeA)
+    }
+    }
+```
 
 </details>
 
@@ -1759,11 +1772,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTY1MTg4MjA2OSwtNzkyNzQ2NzMxLC04OT
-k3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1
-MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMT
-U4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2
-LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3Mj
-EyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYx
-XX0=
+eyJoaXN0b3J5IjpbMzQ1MDk5MjgxLC03OTI3NDY3MzEsLTg5OT
+c4NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1MjIwLDQ4MzYwODUz
+NywyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0MjI1MzYsMjAxNT
+g5MzExMSwtNzQwNjE2NjQwLC0zOTc0MjE1NCwtNzE4NTYxMDYs
+NzczNDE3MTIwLC0yMTU4NDY5OTQsODY2MjcwNzg1LC0xODcyMT
+I3NzE3LC0zODI2MDIyOSw3MjcxNTU2OTIsLTEzNTAyMjQzNjFd
+fQ==
 -->
