@@ -1332,7 +1332,7 @@ The datastore can be stored anywhere because it's built by struct type.
 It allows that to adapt to state-shape already exists.
 
 ```swift
-struct YourAppState: StateType {
+struct YourAppState {
   
   // VergeORM's datastore 
   struct Database: DatabaseType {
@@ -1832,11 +1832,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTMyNzM0MTUzOCwtMTg5NTQ4MDcwMCwyMT
-A0NTExNzk5LC03OTI3NDY3MzEsLTg5OTc4NTk4NywtMTI2NDI1
-MDUzMywxNTQ0NTI1MjIwLDQ4MzYwODUzNywyMDY2ODM0NDY3LD
-U3MDg3OTQxNCw3MTg0MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2
-NjQwLC0zOTc0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMT
-U4NDY5OTQsODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zODI2MDIy
-OV19
+eyJoaXN0b3J5IjpbMjU1Mzc1NTUxLC0xODk1NDgwNzAwLDIxMD
+Q1MTE3OTksLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUw
+NTMzLDE1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNT
+cwODc5NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03NDA2MTY2
+NDAsLTM5NzQyMTU0LC03MTg1NjEwNiw3NzM0MTcxMjAsLTIxNT
+g0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMjc3MTcsLTM4MjYwMjI5
+XX0=
 -->
