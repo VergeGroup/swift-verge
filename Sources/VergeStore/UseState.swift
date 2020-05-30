@@ -23,8 +23,14 @@ import Foundation
 
 import SwiftUI
 
+/**
+ A view that injects a state from `Store` or `Derived`.
+ `content: @escaping (StateProvider) -> Content` will continue updates each `Store` or `Derived` updating
+ - TODO:
+   - Setting memoization and dropping duplicated output value
+ */
 @available(iOS 13.0, macOS 10.15, *)
-public struct UseState<StateProvider: ObservableObjectBase, Content: View>: View {
+public struct UseState<StateProvider: _VergeObservableObjectBase, Content: View>: View {
 
   @ObservedObject private var observableObject: StateProvider
   private let content: (StateProvider) -> Content
@@ -38,6 +44,10 @@ public struct UseState<StateProvider: ObservableObjectBase, Content: View>: View
 @available(iOS 13.0, macOS 10.15, *)
 extension UseState where StateProvider : StoreType {
 
+  /// Initialize from `Store`
+  /// - Parameters:
+  ///   - store:
+  ///   - content:
   public init(
     _ store: StateProvider,
     @ViewBuilder content: @escaping (StateProvider) -> Content
@@ -51,6 +61,10 @@ extension UseState where StateProvider : StoreType {
 @available(iOS 13.0, macOS 10.15, *)
 extension UseState where StateProvider : DerivedType {
 
+  /// Initialize from `Derived`
+  /// - Parameters:
+  ///   - derived:
+  ///   - content: 
   public init(
     _ derived: StateProvider,
     @ViewBuilder content: @escaping (StateProvider) -> Content

@@ -52,7 +52,7 @@ public typealias StoreBase<State, Activity> = Store<State, Activity>
 ///   }
 /// }
 /// ```
-open class Store<State, Activity>: ObservableObjectBase, CustomReflectable, StoreType, DispatcherType {
+open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable, StoreType, DispatcherType {
 
   public typealias Scope = State
   public typealias Dispatcher = DispatcherBase<State, Activity>

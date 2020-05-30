@@ -38,7 +38,7 @@ public protocol DerivedType {
 /// A container object that provides the current value and changes from the source Store.
 ///
 /// Conforms to Equatable that compares pointer personality.
-public class Derived<Value>: ObservableObjectBase, DerivedType {
+public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
 
   public static func constant(_ value: Value) -> Derived<Value> {
     .init(constant: value)

@@ -23,7 +23,7 @@ import Foundation
 
 import Combine
 
-open class ObservableObjectBase {
+open class _VergeObservableObjectBase {
 
   @available(iOS 13.0, macOS 10.15, *)
   public var objectWillChange: ObservableObjectPublisher {
@@ -32,7 +32,7 @@ open class ObservableObjectBase {
 }
 
 @available(iOS 13.0, macOS 10.15, *)
-extension ObservableObjectBase: ObservableObject {
+extension _VergeObservableObjectBase: ObservableObject {
 
 
 }
