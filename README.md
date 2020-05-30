@@ -870,6 +870,13 @@ let derived: Derived<Int> = store.derived(.map(\.count))
 let derived: Derived<Int> = store.derived(.map { $0.count })
 ```
 
+**Technically, 
+```swift
+extension StoreType {
+  public func derived<NewState>(_ memoizeMap: MemoizeMap<Changes<State>, NewState>, dropsOutput: ((Changes<NewState>) -> Bool)? = nil, queue: TargetQueue? = nil) -> Derived<NewState>
+}
+```
+
 **Compute a value from the state**
 
 Derived can create any type of value what we need.
@@ -1712,11 +1719,10 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTcwODc5NDE0LDcxODQyMjUzNiwyMDE1OD
-kzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEwNiw3
-NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMj
-c3MTcsLTM4MjYwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2MSwx
-MjM2NzY1MzYsNzU4OTk5OTMzLDEwNzM1NDYyODEsODE5MDI5MT
-IsMTk4NDM0NDY2NywxNjIwNzI4MzIsLTEwMTkwODMyOThdfQ==
-
+eyJoaXN0b3J5IjpbLTIxNDQxNjkyOSw1NzA4Nzk0MTQsNzE4ND
+IyNTM2LDIwMTU4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQs
+LTcxODU2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MD
+c4NSwtMTg3MjEyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0x
+MzUwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMsMTA3MzU0Nj
+I4MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3MjgzMl19
 -->
