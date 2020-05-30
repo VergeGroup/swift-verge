@@ -1080,11 +1080,15 @@ class MyDispatcher: MyStore.Dispatcher {
     super.init(target: store)
   }
 
+  // an example for fetching data and stores
   func fetchData() {
-    apiClient.fetchData { result in
+    apiClient.fetchData { [weak self] result in
       switch result {
       case .success(let data):
-        let items = data.
+        let items = data.encode(...)
+        self?.commit {
+          $0.fetchedItems = items
+        }
       case .failure(let error):
       // handles error
       }
@@ -1747,7 +1751,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzMDg4OTc1NiwtNzkyNzQ2NzMxLC04OT
+eyJoaXN0b3J5IjpbMTQxNzM2NDIxMCwtNzkyNzQ2NzMxLC04OT
 k3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1
 MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMT
 U4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2
