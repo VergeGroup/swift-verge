@@ -1312,6 +1312,46 @@ Please enables signpost profiling.
 
 </details>
 
+<details><summary>🏎 SwiftUI</summary>
+
+> WIP
+
+To integrate SwiftUI, we can use `UseState` struct.
+
+```swift
+
+struct UserListView: View {
+  
+  var session: Session
+
+  private var users: Derived<[Entity.User]> {
+    session.users
+  }
+           
+  var body: some View {
+    
+    NavigationView {
+      UseState(users) { state in
+        List {
+          ForEach(state.value.root) { user in
+            NavigationLink(destination: SubmitView(session: self.session, user: user)) {
+              Text(user.name)
+            }
+          }
+        }
+      }
+      .navigationBarTitle("Users")
+    }
+    .onAppear {
+      self.session.sessionDispatcher.insertSampleUsers()
+    }
+  }
+}
+
+```
+
+</details>
+
 ## 📦 VergeORM - Normalization
 
 It provides the function that manages performant many entity objects.<br>
@@ -1834,11 +1874,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTAwMjM5OTk1NCwxMjgxNDQ4NDk4LC0xMD
-cxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3OTksLTc5Mjc0
-NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMj
-AsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQy
-MjUzNiwyMDE1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC
-03MTg1NjEwNiw3NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNzA3
-ODVdfQ==
+eyJoaXN0b3J5IjpbLTE4OTI1OTExNDYsMTI4MTQ0ODQ5OCwtMT
+A3MTU1MTU0NCwtMTg5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3
+NDY3MzEsLTg5OTc4NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1Mj
+IwLDQ4MzYwODUzNywyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0
+MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2NjQwLC0zOTc0MjE1NC
+wtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQsODY2Mjcw
+Nzg1XX0=
 -->
