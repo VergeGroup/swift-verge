@@ -842,7 +842,7 @@ store.state.computed.filteredArray
 </p>
 </details>
 
-<details><summary>🌙 Derived - BindingDerived</summary>
+<details><summary>🌙 Derived / BindingDerived - slices</summary>
 <p>
 
 > **Derived** is inspired by [redux/reselect](https://github.com/reduxjs/reselect).
@@ -1698,10 +1698,10 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyNzczMTI5OCwtNzE4NTYxMDYsNzczND
-E3MTIwLC0yMTU4NDY5OTQsODY2MjcwNzg1LC0xODcyMTI3NzE3
-LC0zODI2MDIyOSw3MjcxNTU2OTIsLTEzNTAyMjQzNjEsMTIzNj
-c2NTM2LDc1ODk5OTkzMywxMDczNTQ2MjgxLDgxOTAyOTEyLDE5
-ODQzNDQ2NjcsMTYyMDcyODMyLC0xMDE5MDgzMjk4LDgyMzk2NT
-g5NCwtMTk4MjYxODI2MCwtMTIzNDIzNDgyOV19
+eyJoaXN0b3J5IjpbMjkwMDA1OTk4LC03MTg1NjEwNiw3NzM0MT
+cxMjAsLTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMjc3MTcs
+LTM4MjYwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2MSwxMjM2Nz
+Y1MzYsNzU4OTk5OTMzLDEwNzM1NDYyODEsODE5MDI5MTIsMTk4
+NDM0NDY2NywxNjIwNzI4MzIsLTEwMTkwODMyOTgsODIzOTY1OD
+k0LC0xOTgyNjE4MjYwLC0xMjM0MjM0ODI5XX0=
 -->
