@@ -1079,6 +1079,17 @@ class MyDispatcher: MyStore.Dispatcher {
     self.apiClient = apiClient
     super.init(target: store)
   }
+
+  func fetchData() {
+    apiClient.fetchData { result in
+      switch result {
+      case .success(let data):
+        let items = data.
+      case .failure(let error):
+      // handles error
+      }
+    }    
+  }
 }
 
 let store = MyStore()
@@ -1736,11 +1747,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMj
-Y0MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0
-NjcsNTcwODc5NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03ND
-A2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEwNiw3NzM0MTcxMjAs
-LTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMjc3MTcsLTM4Mj
-YwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2MSwxMjM2NzY1MzZd
-fQ==
+eyJoaXN0b3J5IjpbLTEzMDg4OTc1NiwtNzkyNzQ2NzMxLC04OT
+k3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1
+MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMT
+U4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2
+LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3Mj
+EyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYx
+XX0=
 -->
