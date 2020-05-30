@@ -931,7 +931,7 @@ We can see the detail of Memoization from below link.
 
 [Wiki - Memoization]([https://en.wikipedia.org/wiki/Memoization](https://en.wikipedia.org/wiki/Memoization))
 
-## Suppress the map operation that projects no changes
+## Skip the map operation if the source state has no changes
 
 In create Derived method, we can get the detail that how we suppress the no need updating and updated event.
 
@@ -1705,11 +1705,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjAxNTg5MzExMSwtNzQwNjE2NjQwLC0zOT
-c0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQs
-ODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zODI2MDIyOSw3MjcxNT
-U2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywx
-MDczNTQ2MjgxLDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyOD
-MyLC0xMDE5MDgzMjk4LDgyMzk2NTg5NCwtMTk4MjYxODI2MF19
+eyJoaXN0b3J5IjpbMTAwMDQxODk4NCwyMDE1ODkzMTExLC03ND
+A2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEwNiw3NzM0MTcxMjAs
+LTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMjc3MTcsLTM4Mj
+YwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2MSwxMjM2NzY1MzYs
+NzU4OTk5OTMzLDEwNzM1NDYyODEsODE5MDI5MTIsMTk4NDM0ND
+Y2NywxNjIwNzI4MzIsLTEwMTkwODMyOTgsODIzOTY1ODk0XX0=
 
 -->
