@@ -1300,6 +1300,9 @@ appState.$yourState.counter.value
 
 </details>
 
+<details><summary>Performance monitoring</summary>
+</details>
+
 ## 📦 VergeORM - Normalization
 
 It provides the function that manages performant many entity objects.<br>
@@ -1822,11 +1825,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwMjA4MzE3MDksLTE4OTU0ODA3MDAsMj
-EwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3ODU5ODcsLTEyNjQy
-NTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1MzcsMjA2NjgzNDQ2Ny
-w1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMTU4OTMxMTEsLTc0MDYx
-NjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2LDc3MzQxNzEyMCwtMj
-E1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcxNywtMzgyNjAy
-MjldfQ==
+eyJoaXN0b3J5IjpbNTQ0ODg3NTU5LC0xODk1NDgwNzAwLDIxMD
+Q1MTE3OTksLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUw
+NTMzLDE1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNT
+cwODc5NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03NDA2MTY2
+NDAsLTM5NzQyMTU0LC03MTg1NjEwNiw3NzM0MTcxMjAsLTIxNT
+g0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMjc3MTcsLTM4MjYwMjI5
+XX0=
 -->
