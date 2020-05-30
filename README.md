@@ -1318,24 +1318,9 @@ Please enables signpost profiling.
 
 To integrate SwiftUI, we can use `UseState` struct.
 
-```swift
-struct MyView: View {
-  
-  let: Derived<[Entity.User]>
+Use
 
-  var body: some View {    
-    NavigationView {
-      UseState(users) { derived in
-        List {
-          ForEach(state.value.root) { user in
-            ...
-          }
-        }
-      }
-    }
-  }
-}
-```
+Injects Store
 
 ```swift
 struct MyView: View {
@@ -1344,7 +1329,24 @@ struct MyView: View {
 
   var body: some View {    
     NavigationView {
-      UseState(store) { store in
+      UseState(store) { (store: Store<MyState, Never>) in
+        ...
+      }
+    }
+  }
+}
+```
+
+Injects Derived
+
+```swift
+struct MyView: View {
+  
+  let: Derived<[Entity.User]>
+
+  var body: some View {    
+    NavigationView {
+      UseState(users) { (derived: Derived<[Entity.User]>) in
         List {
           ForEach(state.value.root) { user in
             ...
@@ -1355,6 +1357,7 @@ struct MyView: View {
   }
 }
 ```
+
 
 </details>
 
@@ -1880,11 +1883,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2ODY4MTQxMDgsMTI4MTQ0ODQ5OCwtMT
-A3MTU1MTU0NCwtMTg5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3
-NDY3MzEsLTg5OTc4NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1Mj
-IwLDQ4MzYwODUzNywyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0
-MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2NjQwLC0zOTc0MjE1NC
-wtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQsODY2Mjcw
-Nzg1XX0=
+eyJoaXN0b3J5IjpbODk2NTM4MTM1LDEyODE0NDg0OTgsLTEwNz
+E1NTE1NDQsLTE4OTU0ODA3MDAsMjEwNDUxMTc5OSwtNzkyNzQ2
+NzMxLC04OTk3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMC
+w0ODM2MDg1MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIy
+NTM2LDIwMTU4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLT
+cxODU2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4
+NV19
 -->
