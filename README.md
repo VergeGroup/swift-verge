@@ -898,7 +898,8 @@ let derived = store.derived(.map(derive: { ($0.name, $0.age) }, dropsDerived: ==
 
 **Most manually way of creating a Derived object**
 
-
+We can create fully tuned up Derived object with using custom initialized MemoizedMap.
+Most of cases
 
 Derived is an object (reference type). It provides a latest value from a store.
 This supports getting the value ad-hoc or subscribing the value updating.
@@ -1729,10 +1730,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTU0NDUyNTIyMCw0ODM2MDg1MzcsMjA2Nj
-gzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMTU4OTMxMTEs
-LTc0MDYxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2LDc3MzQxNz
-EyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcxNywt
-MzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMzY3Nj
-UzNiw3NTg5OTk5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMl19
+eyJoaXN0b3J5IjpbLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0OD
+M2MDg1MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2
+LDIwMTU4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLTcxOD
+U2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwt
+MTg3MjEyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMj
+I0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4MV19
+
 -->
