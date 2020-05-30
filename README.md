@@ -416,7 +416,7 @@ It provides core functions of Store-pattern.
 - State supports computed property with caching (like [Vuex's Getters](https://vuex.vuejs.org/guide/getters.html))
 - Derived object to create derived data from state-tree with performant (like [redux/reselect](https://github.com/reduxjs/reselect))
 
-<details><summary>🌑 Store</summary>
+<details><summary>🌑 Store - retains a state</summary>
 <p>
 
 **Store** 
@@ -1698,10 +1698,10 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTcxODU2MTA2LDc3MzQxNzEyMCwtMjE1OD
-Q2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcxNywtMzgyNjAyMjks
-NzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OT
-k5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2
-MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTQsLTE5ODI2MT
-gyNjAsLTEyMzQyMzQ4MjldfQ==
+eyJoaXN0b3J5IjpbLTExNDEzNDM1NDMsLTcxODU2MTA2LDc3Mz
+QxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcx
+NywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMz
+Y3NjUzNiw3NTg5OTk5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMiwx
+OTg0MzQ0NjY3LDE2MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5Nj
+U4OTQsLTE5ODI2MTgyNjAsLTEyMzQyMzQ4MjldfQ==
 -->
