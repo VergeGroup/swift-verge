@@ -35,15 +35,27 @@ public protocol DerivedType {
   func asDerived() -> Derived<Value>
 }
 
-/// A container object that provides the current value and changes from the source Store.
-///
-/// Conforms to Equatable that compares pointer personality.
+/**
+ A container object that provides the current value and changes from the source Store.
+
+ Derived's functions are:
+ - Computes the derived data from the state tree
+ - Emit the updated data with updating Store
+ - Supports subscribe the data
+ - Supports Memoization
+
+ Conforms to Equatable that compares pointer personality.
+ */
 public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
 
   public enum Attribute: Hashable {
     case dropsDuplicatedOutput
   }
-  
+
+  /// Returns Derived object that provides constant value.
+  ///
+  /// - Parameter value:
+  /// - Returns:
   public static func constant(_ value: Value) -> Derived<Value> {
     .init(constant: value)
   }
@@ -130,6 +142,9 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
     self
   }
 
+  /// Returns new Derived object that provides only changed value
+  ///
+  /// - Parameter predicate: Return true, removes value
   public func removeDuplicates(by predicate: @escaping (Changes<Value>) -> Bool) -> Derived<Value> {
     guard !attributes.contains(.dropsDuplicatedOutput) else {
       assertionFailure("\(self) has already applied removeDuplicates")
@@ -239,6 +254,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   }
     
   /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
+  /// 
   /// - Parameters:
   ///   - queue: a queue to receive object
   ///   - map:
@@ -474,6 +490,9 @@ extension Derived where Value == Any {
   
 }
 
+/**
+ A Derived object that can writable.
+ */
 @propertyWrapper
 public final class BindingDerived<State>: Derived<State> {
   
@@ -527,6 +546,7 @@ extension StoreType {
   
   /// Returns Dervived object with making
   ///
+  /// - Complexity: 💡 It's better to set `dropsOutput` predicate.
   /// - Parameter
   ///   - memoizeMap:
   ///   - dropsOutput: Predicate to drops object if found a duplicated output
@@ -594,6 +614,8 @@ extension StoreType {
   }
     
   /// Returns Binding Derived object
+  ///
+  /// - Complexity: 💡 It's better to set `dropsOutput` predicate.
   /// - Parameters:
   ///   - name:
   ///   - get:
@@ -629,7 +651,7 @@ extension StoreType {
   
   /// Returns Binding Derived object
   ///
-  /// ✅ Drops duplicated the output with Equatable comparison.
+  /// - Complexity: ✅ Drops duplicated the output with Equatable comparison.
   /// - Parameters:
   ///   - name:
   ///   - get:
