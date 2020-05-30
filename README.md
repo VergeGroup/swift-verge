@@ -899,14 +899,18 @@ let derived = store.derived(.map(derive: { ($0.name, $0.age) }, dropsDerived: ==
 **Most manually way of creating a Derived object**
 
 We can create fully tuned up Derived object with using custom initialized MemoizedMap.
-Most of cases
+Most of the cases, we don't need to do this.
+Because several overloaded methods enable optimizations automatically that depending on doing things.
+Verge shows current optimization status from the Complexity column of Xcode documentation.
 
 <img width="533" alt="CleanShot 2020-05-31 at 00 46 27@2x" src="https://user-images.githubusercontent.com/1888355/83332811-41df2480-a2d8-11ea-8da0-d86c127fc926.png">
+
+
+## Take a value
 
 Derived is an object (reference type). It provides a latest value from a store.
 This supports getting the value ad-hoc or subscribing the value updating.
 
-## Take a value
 Derived allows us to take the latest value at the time.
 
 ```swift
@@ -1732,7 +1736,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTkyODg1NDI1OSwtMTI2NDI1MDUzMywxNT
+eyJoaXN0b3J5IjpbMTI1ODQyNTU2MSwtMTI2NDI1MDUzMywxNT
 Q0NTI1MjIwLDQ4MzYwODUzNywyMDY2ODM0NDY3LDU3MDg3OTQx
 NCw3MTg0MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2NjQwLC0zOT
 c0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQs
