@@ -1317,8 +1317,7 @@ Please enables signpost profiling.
 > WIP
 
 To integrate SwiftUI, we can use `UseState` struct.
-
-Use
+UseState never doing memory allocations.
 
 Injects Store
 
@@ -1326,6 +1325,21 @@ Injects Store
 struct MyView: View {
   
   let: Store<MyState, Never>
+
+  var body: some View {    
+    NavigationView {
+      UseState(store) { (store: Store<MyState, Never>) in
+        ...
+      }
+    }
+  }
+}
+```
+
+```swift
+struct MyView: View {
+  
+  @ObservedObject var: Store<MyState, Never>
 
   var body: some View {    
     NavigationView {
@@ -1883,11 +1897,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODk2NTM4MTM1LDEyODE0NDg0OTgsLTEwNz
-E1NTE1NDQsLTE4OTU0ODA3MDAsMjEwNDUxMTc5OSwtNzkyNzQ2
-NzMxLC04OTk3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMC
-w0ODM2MDg1MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIy
-NTM2LDIwMTU4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLT
-cxODU2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4
-NV19
+eyJoaXN0b3J5IjpbNTY1Nzg4MSwxMjgxNDQ4NDk4LC0xMDcxNT
+UxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3OTksLTc5Mjc0Njcz
+MSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMjAsND
+gzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQyMjUz
+NiwyMDE1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC03MT
+g1NjEwNiw3NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNzA3ODVd
+fQ==
 -->
