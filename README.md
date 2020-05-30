@@ -877,7 +877,7 @@ extension StoreType {
 }
 ```
 
-`MemoizeMap` manages transforming value
+`MemoizeMap` manages to transform value from the state and keep performance that way of drops transform operations if the input value no changes.
 
 **Compute a value from the state**
 
@@ -1721,10 +1721,10 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzcwODI3MjYyLDU3MDg3OTQxNCw3MTg0Mj
-I1MzYsMjAxNTg5MzExMSwtNzQwNjE2NjQwLC0zOTc0MjE1NCwt
-NzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQsODY2MjcwNz
-g1LC0xODcyMTI3NzE3LC0zODI2MDIyOSw3MjcxNTU2OTIsLTEz
-NTAyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywxMDczNTQ2Mj
-gxLDgxOTAyOTEyLDE5ODQzNDQ2NjcsMTYyMDcyODMyXX0=
+eyJoaXN0b3J5IjpbMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4ND
+IyNTM2LDIwMTU4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQs
+LTcxODU2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MD
+c4NSwtMTg3MjEyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0x
+MzUwMjI0MzYxLDEyMzY3NjUzNiw3NTg5OTk5MzMsMTA3MzU0Nj
+I4MSw4MTkwMjkxMiwxOTg0MzQ0NjY3LDE2MjA3MjgzMl19
 -->
