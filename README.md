@@ -1137,16 +1137,17 @@ let loggedOutDispatcher = LoggedOutDispatcher(...)
 It helps to mutate with focused on a part of the large state tree.
 
 Here is a sample state that assuming a large app.
-We have `database`, `logged-in` and `logged-out state`.
-`database` means normalized state shape to manage many entities.
-
-And then let's think about the case of creating a dispatcher focuses on the logged-in state.
 
 - AppState
 	- db: Database
 	- loggedIn: LoggedInState
 		- myInfo: MyInfoState
 	- loggedOut: LoggedOutState
+
+We have `database`, `logged-in` and `logged-out state`.
+`database` means normalized state shape to manage many entities.
+
+And then let's think about the case of creating a dispatcher focuses on the logged-in state.
 
 
 ```swift
@@ -1163,6 +1164,9 @@ final class LoggedInService: Store.ScopedDispatcher<LoggedInState> {
   }
 }
 ```
+
+In LoggedInService, commit mutates `LoggedInState` directly.
+We c
 
 ### Detaching to other tree
 
@@ -1816,11 +1820,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjY0OTcyMDg4LDIxMDQ1MTE3OTksLTc5Mj
-c0NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUy
-MjAsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxOD
-QyMjUzNiwyMDE1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0
-LC03MTg1NjEwNiw3NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNz
-A3ODUsLTE4NzIxMjc3MTcsLTM4MjYwMjI5LDcyNzE1NTY5Ml19
-
+eyJoaXN0b3J5IjpbLTEyNDI2NDkzODQsMjEwNDUxMTc5OSwtNz
+kyNzQ2NzMxLC04OTk3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUy
+NTIyMCw0ODM2MDg1MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNz
+E4NDIyNTM2LDIwMTU4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIx
+NTQsLTcxODU2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2Nj
+I3MDc4NSwtMTg3MjEyNzcxNywtMzgyNjAyMjksNzI3MTU1Njky
+XX0=
 -->
