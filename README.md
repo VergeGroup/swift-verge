@@ -1138,12 +1138,13 @@ let loggedOutDispatcher = LoggedOutDispatcher(...)
 Assuming the state is like this
 
 - AppState
+	- db: Database
 	- loggedIn: LoggedInState
 		- myInfo: MyInfoState
 	- loggedOut: LoggedOutState
 
 ```swift
-final class LoggedInDispatcher: Store.ScopedDispatcher<State.TreeA> {
+final class LoggedInService: Store.ScopedDispatcher<State.TreeA> {
     
   init(store: Store) {
     super.init(targetStore: store, scope: \.loggedIn)
@@ -1157,8 +1158,10 @@ final class LoggedInDispatcher: Store.ScopedDispatcher<State.TreeA> {
 }
 ```
 
+Moving on more deeper.
+
 ```swift
-final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
+final class LoggedInService: Store.ScopedDispatcher<State.TreeA> {
  
   func detachingOperation() {
     let myInfo = detached(by: \.myInfo)
@@ -1169,12 +1172,14 @@ final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
 }
 ```
 
+Step back to hi
+
 ```swift
-final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
+final class LoggedInService: Store.ScopedDispatcher<State.TreeA> {
  
   func detachingOperation() {
-    let loggedOut = detached(from: \.loggedOut)
-    loggedOut.commit { (state: LoggedOutState) in
+    let db = detached(from: \.db)
+    db.commit { (state: Database) in
     
     }
   }
@@ -1803,7 +1808,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwODgzNDA0MTQsLTc5Mjc0NjczMSwtOD
+eyJoaXN0b3J5IjpbLTE1OTgzNTgyOTYsLTc5Mjc0NjczMSwtOD
 k5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4
 NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQyMjUzNiwyMD
 E1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEw
