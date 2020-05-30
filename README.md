@@ -1248,7 +1248,7 @@ public protocol StoreLogger {
 
 </details>
 
-<details><summary>Utilities</summary>
+<details><summary>🧰 Utilities</summary>
 
 ## Fragment\<State>
 
@@ -1300,7 +1300,13 @@ appState.$yourState.counter.value
 
 </details>
 
-<details><summary>Performance monitoring</summary>
+<details><summary>🏎 Performance monitoring</summary>
+
+> WIP
+
+Verge supports `os_sign_post`
+We can check the performance from Xcode Instruments.
+
 </details>
 
 ## 📦 VergeORM - Normalization
@@ -1825,7 +1831,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTQ0ODg3NTU5LC0xODk1NDgwNzAwLDIxMD
+eyJoaXN0b3J5IjpbMzA1NjU4NTY3LC0xODk1NDgwNzAwLDIxMD
 Q1MTE3OTksLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUw
 NTMzLDE1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNT
 cwODc5NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03NDA2MTY2
