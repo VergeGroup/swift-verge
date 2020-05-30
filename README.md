@@ -1173,7 +1173,8 @@ appState.$yourState.counter.value
 > WIP
 
 * Simplify the state shape, thinking normalization to reduce the number of operations on mutating.
-* Passes Changes object as it is to other something.
+* Passes Changes object as it is if you want to bring the large state tree somewhere.
+	* Since Changes is a reference type, reduces the cost of copy.
 * Using ExtendedComputedProperty
 * Makes the state compatible with Equatable as possible to create a good Derived object 
 * Reduces creating new Derived object. Instead, share Derived.
@@ -1704,7 +1705,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTc5NzMxMDk1NCwtNzQwNjE2NjQwLC0zOT
+eyJoaXN0b3J5IjpbLTU5MTY0MDY3MCwtNzQwNjE2NjQwLC0zOT
 c0MjE1NCwtNzE4NTYxMDYsNzczNDE3MTIwLC0yMTU4NDY5OTQs
 ODY2MjcwNzg1LC0xODcyMTI3NzE3LC0zODI2MDIyOSw3MjcxNT
 U2OTIsLTEzNTAyMjQzNjEsMTIzNjc2NTM2LDc1ODk5OTkzMywx
