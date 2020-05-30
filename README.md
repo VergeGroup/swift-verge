@@ -1134,7 +1134,7 @@ let loggedOutDispatcher = LoggedOutDispatcher(...)
 ## Create scoped dispatcher
 
 `Dispatcher` supports to commit specified scope of the state.
-It helps to mutate the large state tree 
+It helps to mutate with focused on a part of the large state tree.
 
 Assuming the state is like this
 
@@ -1143,6 +1143,7 @@ Assuming the state is like this
 	- loggedIn: LoggedInState
 		- myInfo: MyInfoState
 	- loggedOut: LoggedOutState
+
 
 ```swift
 final class LoggedInService: Store.ScopedDispatcher<LoggedInState> {
@@ -1811,11 +1812,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExOTE0NzIyNzIsLTc5Mjc0NjczMSwtOD
-k5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4
-NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQyMjUzNiwyMD
-E1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEw
-Niw3NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4Nz
-IxMjc3MTcsLTM4MjYwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2
-MV19
+eyJoaXN0b3J5IjpbMjEwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OT
+k3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1
+MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMT
+U4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2
+LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3Mj
+EyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYx
+XX0=
 -->
