@@ -1139,11 +1139,11 @@ Assuming the state is like this
 
 - AppState
 	- loggedIn: LoggedInState
-		- 
+		- myInfo: MyInfoState
 	- loggedOut: LoggedOutState
 
 ```swift
-final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
+final class LoggedInDispatcher: Store.ScopedDispatcher<State.TreeA> {
     
   init(store: Store) {
     super.init(targetStore: store, scope: \.loggedIn)
@@ -1161,7 +1161,20 @@ final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
 final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
  
   func detachingOperation() {
-    commit { (state: LoggedInState) in
+    let myInfo = detached(by: \.myInfo)
+    myInfo.commit { (state: MyInfo) in
+    
+    }
+  }
+}
+```
+
+```swift
+final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
+ 
+  func detachingOperation() {
+    let loggedOut = detached(from: \.loggedOut)
+    loggedOut.commit { (state: LoggedOutState) in
     
     }
   }
@@ -1790,11 +1803,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc5MjE4MTEzOSwtNzkyNzQ2NzMxLC04OT
-k3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1
-MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMT
-U4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2
-LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3Mj
-EyNzcxNywtMzgyNjAyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYx
-XX0=
+eyJoaXN0b3J5IjpbLTEwODgzNDA0MTQsLTc5Mjc0NjczMSwtOD
+k5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4
+NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQyMjUzNiwyMD
+E1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEw
+Niw3NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4Nz
+IxMjc3MTcsLTM4MjYwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2
+MV19
 -->
