@@ -862,7 +862,7 @@ struct State {
   var count: Int = 0
 }
 
-let store = StoreBase<State, Never>(initialState: .init(), logger: nil)
+let store = Store<State, Never>(initialState: .init(), logger: nil)
 ```
 
 ### Create a Derived object
@@ -1722,11 +1722,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzE4NDIyNTM2LDIwMTU4OTMxMTEsLTc0MD
-YxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2LDc3MzQxNzEyMCwt
-MjE1ODQ2OTk0LDg2NjI3MDc4NSwtMTg3MjEyNzcxNywtMzgyNj
-AyMjksNzI3MTU1NjkyLC0xMzUwMjI0MzYxLDEyMzY3NjUzNiw3
-NTg5OTk5MzMsMTA3MzU0NjI4MSw4MTkwMjkxMiwxOTg0MzQ0Nj
-Y3LDE2MjA3MjgzMiwtMTAxOTA4MzI5OCw4MjM5NjU4OTRdfQ==
+eyJoaXN0b3J5IjpbNzE4NjQ5NTYxLDcxODQyMjUzNiwyMDE1OD
+kzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEwNiw3
+NzM0MTcxMjAsLTIxNTg0Njk5NCw4NjYyNzA3ODUsLTE4NzIxMj
+c3MTcsLTM4MjYwMjI5LDcyNzE1NTY5MiwtMTM1MDIyNDM2MSwx
+MjM2NzY1MzYsNzU4OTk5OTMzLDEwNzM1NDYyODEsODE5MDI5MT
+IsMTk4NDM0NDY2NywxNjIwNzI4MzIsLTEwMTkwODMyOThdfQ==
 
 -->
