@@ -27,11 +27,13 @@ import VergeCore
 
 fileprivate let counter = VergeConcurrency.AtomicInt(initialValue: 0)
 
+/**
+ `MemoizeMap` manages to transform value from the state and keep performance that way of drops transform operations if the input value no changes.
+
+ */
 /// A pipeline object to make derived data from the source store.
 /// It supports Memoization
 ///
-/// - TODO:
-///   - make identifier to cache Derived<T>
 public struct MemoizeMap<Input, Output> {
        
   public enum Result {

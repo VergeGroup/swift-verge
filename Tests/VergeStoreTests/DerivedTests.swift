@@ -80,6 +80,8 @@ final class DerivedTests: XCTestCase {
     XCTAssertEqual(slice.changes.version, 2)
     XCTAssertEqual(slice.changes.hasChanges(\.root), true)
   }
+
+
   
   func testBinding() {
     
