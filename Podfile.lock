@@ -1,11 +1,11 @@
 PODS:
-  - Alamofire (5.0.5)
+  - Alamofire (5.2.1)
   - JAYSON (2.1.0)
   - Moya (14.0.0):
     - Moya/Core (= 14.0.0)
   - Moya/Core (14.0.0):
     - Alamofire (~> 5.0)
-  - Reveal-SDK (24)
+  - Reveal-SDK (26)
 
 DEPENDENCIES:
   - JAYSON
@@ -20,11 +20,11 @@ SPEC REPOS:
     - Reveal-SDK
 
 SPEC CHECKSUMS:
-  Alamofire: df2f8f826963b08b9a870791ad48e07a10090b2e
+  Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
   JAYSON: 4280ff193d900fb11314434affac47673507757e
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
-  Reveal-SDK: 5d7e56b8f018c0a88b3a2c10bf68d598bbd3b071
+  Reveal-SDK: 5f94f14aff3d5f2a49f246edcd266fa4472679e9
 
-PODFILE CHECKSUM: ccc0dc1487e3e6161890ae57ac125733fbe095f7
+PODFILE CHECKSUM: f1a4571c280e1bace388c3a97408bcbf3bddbd4f
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.1
