@@ -1304,11 +1304,11 @@ appState.$yourState.counter.value
 
 <details><summary>🏎 Performance monitoring</summary>
 
-> WIP
-
 Verge supports `os_sign_post`
 We can check the performance from Xcode Instruments.
 Please enables signpost profiling.
+
+![CleanShot 2020-05-31 at 14 22 16@2x](https://user-images.githubusercontent.com/1888355/83345130-80152c00-a34a-11ea-925a-6c6a609be102.png)
 
 </details>
 
@@ -1902,11 +1902,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODQ3MzQ3Nzc0LDEyODE0NDg0OTgsLTEwNz
-E1NTE1NDQsLTE4OTU0ODA3MDAsMjEwNDUxMTc5OSwtNzkyNzQ2
-NzMxLC04OTk3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMC
-w0ODM2MDg1MzcsMjA2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIy
-NTM2LDIwMTU4OTMxMTEsLTc0MDYxNjY0MCwtMzk3NDIxNTQsLT
-cxODU2MTA2LDc3MzQxNzEyMCwtMjE1ODQ2OTk0LDg2NjI3MDc4
-NV19
+eyJoaXN0b3J5IjpbOTcxNjc0NTk3LDg0NzM0Nzc3NCwxMjgxND
+Q4NDk4LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3
+OTksLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLD
+E1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5
+NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03NDA2MTY2NDAsLT
+M5NzQyMTU0LC03MTg1NjEwNiw3NzM0MTcxMjAsLTIxNTg0Njk5
+NF19
 -->
