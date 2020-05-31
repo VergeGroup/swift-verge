@@ -1,31 +1,23 @@
-//
-//  Session.swift
-//  SpotifyDemo
-//
-//  Created by muukii on 2020/01/18.
-//  Copyright © 2020 muukii. All rights reserved.
-//
 
 import Foundation
 
 import Combine
 
-typealias AppLoggedInStack = LoggedInStack<LoggedInSessionState>
-typealias AppLoggedOutStack = LoggedOutStack<LoggedOutSessionState>
+import SpotifyService
 
 final class Session: ObservableObject {
   
   var objectWillChange: ObservableObjectPublisher = .init()
       
-  let stackContainer: StackContainer<LoggedInSessionState, LoggedOutSessionState>
+  let stack: BackendStack
   
   private var subscriptions = Set<AnyCancellable>()
   
   init() {
     
-    self.stackContainer = .init(auth: nil)
+    self.stack = .init(auth: nil)
     
-    stackContainer.$stack.sink { [weak self] _ in
+    stack.$stack.sink { [weak self] _ in
       self?.objectWillChange.send()
     }
     .store(in: &subscriptions)
@@ -33,6 +25,6 @@ final class Session: ObservableObject {
   }
   
   func receiveAuthCode(_ code: Auth.AuthCode) {
-    stackContainer.receiveAuthCode(code)
+    stack.receiveAuthCode(code)
   }
 }

@@ -1,12 +1,13 @@
 
-import SwiftUI
+import Foundation
 
 import SpotifyService
 
-struct ContentView: View {
-    
+struct LoggedOutView: View {
+
+  let stack: LoggedOutStack
   @State private var isConnecting = false
-  
+
   var body: some View {
     VStack {
       Text("Hello, World!")
@@ -21,10 +22,3 @@ struct ContentView: View {
     }
   }
 }
-
-struct ContentView_Previews: PreviewProvider {
-  static var previews: some View {
-    ContentView()
-  }
-}
-

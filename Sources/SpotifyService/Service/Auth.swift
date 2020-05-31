@@ -1,22 +1,15 @@
-//
-//  Requests.swift
-//  SpotifyDemo
-//
-//  Created by muukii on 2020/01/18.
-//  Copyright © 2020 muukii. All rights reserved.
-//
 
 import Foundation
 
-enum Auth {
+public enum Auth {
   
-  struct AuthCode {
+  public struct AuthCode {
     let raw: String
   }
   
-  static let callBackURI = "verge-spotify://callback"
+  public static let callBackURI = "verge-spotify://callback"
   
-  static func authorization() -> URL {
+  public static func authorization() -> URL {
     
     var components = URLComponents(string: "https://accounts.spotify.com/authorize")!
     components.queryItems = [
@@ -28,7 +21,7 @@ enum Auth {
     return components.url!
   }
   
-  static func parseCallback(url: URL) -> AuthCode? {
+  public static func parseCallback(url: URL) -> AuthCode? {
     
     let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
     let code = components?.queryItems?.first { $0.name == "code" }?.value

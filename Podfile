@@ -14,8 +14,13 @@ abstract_target 'Demo' do
 
 end
 
-target 'SpotifyDemo' do
+target 'SpotifyService' do
+
   pod 'JAYSON'
   pod 'Moya'
-  pod 'Reveal-SDK'
+
+  target 'SpotifyDemo' do
+    pod 'Reveal-SDK'
+  end
+
 end
