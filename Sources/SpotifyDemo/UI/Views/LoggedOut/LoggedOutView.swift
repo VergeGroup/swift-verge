@@ -3,6 +3,7 @@ import Foundation
 
 import SpotifyService
 import VergeStore
+import SwiftUI
 
 struct LoggedOutView: View {
 
@@ -11,7 +12,7 @@ struct LoggedOutView: View {
 
   var body: some View {
     UseState(stack.derivedState) { derived in
-      ProcessingOverlay(isProcessing: derived.value.isLoginProcessing) {
+      ProcessingOverlay(isProcessing: derived.isLoginProcessing) {
         VStack {
           Text("Hello, World!")
           Button(action: {

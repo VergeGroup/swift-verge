@@ -11,6 +11,24 @@
         }
       },
       {
+        "package": "FetchImage",
+        "repositoryURL": "git@github.com:kean/FetchImage.git",
+        "state": {
+          "branch": null,
+          "revision": "b9ea4f9f97a4bc9fde452cea277d25d0a4f8f6df",
+          "version": "0.2.1"
+        }
+      },
+      {
+        "package": "Nuke",
+        "repositoryURL": "https://github.com/kean/Nuke.git",
+        "state": {
+          "branch": null,
+          "revision": "1267d1c7cdfb7e3ac7bc654db0e5cfd6a9f18c9e",
+          "version": "9.1.0"
+        }
+      },
+      {
         "package": "RxSwift",
         "repositoryURL": "git@github.com:ReactiveX/RxSwift.git",
         "state": {

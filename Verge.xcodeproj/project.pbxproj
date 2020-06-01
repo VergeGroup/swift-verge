@@ -44,6 +44,10 @@
 		4B2AE0D6248590E60086A42C /* LoggedOutBackendStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D5248590E60086A42C /* LoggedOutBackendStack.swift */; };
 		4B2AE0D82485913B0086A42C /* MoyaProvider+Combin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D72485913B0086A42C /* MoyaProvider+Combin.swift */; };
 		4B2AE0DA2485915D0086A42C /* Publisher+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D92485915D0086A42C /* Publisher+.swift */; };
+		4B2AE0DD2485A2460086A42C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0DB2485A2410086A42C /* SettingsView.swift */; };
+		4B2AE0E02485A3240086A42C /* SettingsViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0DE2485A27E0086A42C /* SettingsViewComponents.swift */; };
+		4B2AE0E52485A45B0086A42C /* FetchImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4B2AE0E42485A45B0086A42C /* FetchImage */; };
+		4B2AE0E72485A4860086A42C /* NetworkImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0E62485A4860086A42C /* NetworkImageView.swift */; };
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
 		4B3834DD2482330C008A0B47 /* UseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834DC2482330C008A0B47 /* UseState.swift */; };
 		4B3834DF248235AD008A0B47 /* _VergeObservableObjectBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834DE248235AD008A0B47 /* _VergeObservableObjectBase.swift */; };
@@ -70,6 +74,7 @@
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
+		4B5869202485BD2000CE4407 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B58691F2485BD2000CE4407 /* Util.swift */; };
 		4B5E84A324618D1C009A0CA8 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
 		4B5E84A424618D1C009A0CA8 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B5E84AD24618D39009A0CA8 /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */; };
@@ -587,6 +592,9 @@
 		4B2AE0D5248590E60086A42C /* LoggedOutBackendStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedOutBackendStack.swift; sourceTree = "<group>"; };
 		4B2AE0D72485913B0086A42C /* MoyaProvider+Combin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MoyaProvider+Combin.swift"; sourceTree = "<group>"; };
 		4B2AE0D92485915D0086A42C /* Publisher+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+.swift"; sourceTree = "<group>"; };
+		4B2AE0DB2485A2410086A42C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		4B2AE0DE2485A27E0086A42C /* SettingsViewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewComponents.swift; sourceTree = "<group>"; };
+		4B2AE0E62485A4860086A42C /* NetworkImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
 		4B2F001D2459DC4A0034DA40 /* All.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = All.xctestplan; path = /Users/muukii/.ghq/github.com/muukii/Verge/worktree/space1/Tests/All.xctestplan; sourceTree = "<absolute>"; };
 		4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizeDisplayValueTests.swift; sourceTree = "<group>"; };
 		4B3834DC2482330C008A0B47 /* UseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseState.swift; sourceTree = "<group>"; };
@@ -614,6 +622,7 @@
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
 		4B57FD1923A29DAD00E41D06 /* EntityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityType.swift; sourceTree = "<group>"; };
+		4B58691F2485BD2000CE4407 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeObjcBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B5E849F24618D1C009A0CA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AtomicBridges.m; sourceTree = "<group>"; };
@@ -911,6 +920,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B2AE0E52485A45B0086A42C /* FetchImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1306,6 +1316,7 @@
 				4BB4F7E923D329E40039C897 /* Preview Content */,
 				4BB4F83323D345580039C897 /* UI */,
 				4BB64CE524838E400017699A /* import.swift */,
+				4B58691F2485BD2000CE4407 /* Util.swift */,
 			);
 			path = SpotifyDemo;
 			sourceTree = "<group>";
@@ -1371,6 +1382,7 @@
 				4BB64CEE24838F7A0017699A /* HomeView.swift */,
 				4BB64CF024838F7F0017699A /* SearchView.swift */,
 				4BB64CF224838F860017699A /* YourLibraryView.swift */,
+				4B2AE0DB2485A2410086A42C /* SettingsView.swift */,
 			);
 			path = LoggedIn;
 			sourceTree = "<group>";
@@ -1398,6 +1410,8 @@
 				4BB64CFB248391550017699A /* SpotifyUIKit.h */,
 				4BB64CFC248391550017699A /* Info.plist */,
 				4BB64D062483916F0017699A /* SampleView.swift */,
+				4B2AE0DE2485A27E0086A42C /* SettingsViewComponents.swift */,
+				4B2AE0E62485A4860086A42C /* NetworkImageView.swift */,
 			);
 			path = SpotifyUIKit;
 			sourceTree = "<group>";
@@ -1789,6 +1803,8 @@
 				4BB64CFF248391550017699A /* PBXTargetDependency */,
 			);
 			name = SpotifyDemo;
+			packageProductDependencies = (
+			);
 			productName = SpotifyDemo;
 			productReference = 4BB4F7DF23D329E20039C897 /* SpotifyDemo.app */;
 			productType = "com.apple.product-type.application";
@@ -1833,6 +1849,9 @@
 			dependencies = (
 			);
 			name = SpotifyUIKit;
+			packageProductDependencies = (
+				4B2AE0E42485A45B0086A42C /* FetchImage */,
+			);
 			productName = SpotifyUIKit;
 			productReference = 4BB64CF9248391550017699A /* SpotifyUIKit.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1984,6 +2003,7 @@
 			packageReferences = (
 				4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */,
 				4B5140072483F01400463CE6 /* XCRemoteSwiftPackageReference "CombineExt" */,
+				4B2AE0E12485A4360086A42C /* XCRemoteSwiftPackageReference "FetchImage" */,
 			);
 			productRefGroup = 4B86A4871F969AD5002D54FE /* Products */;
 			projectDirPath = "";
@@ -2479,9 +2499,11 @@
 				4BB64CE424838E2C0017699A /* LoggedOutView.swift in Sources */,
 				4B2AE0CC248587EB0086A42C /* IndicatorView.swift in Sources */,
 				4BB64CE624838E400017699A /* import.swift in Sources */,
+				4B5869202485BD2000CE4407 /* Util.swift in Sources */,
 				4BB64CE824838EC20017699A /* LoggedInView.swift in Sources */,
 				4BB4F7E623D329E30039C897 /* ContentView.swift in Sources */,
 				4B1C011623D34A6B00BE9B24 /* SessionRootView.swift in Sources */,
+				4B2AE0DD2485A2460086A42C /* SettingsView.swift in Sources */,
 				4BB64CF124838F800017699A /* SearchView.swift in Sources */,
 				4BB64CED24838F330017699A /* RootTabView.swift in Sources */,
 				4BB64CEF24838F7A0017699A /* HomeView.swift in Sources */,
@@ -2524,6 +2546,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BB64D072483916F0017699A /* SampleView.swift in Sources */,
+				4B2AE0E72485A4860086A42C /* NetworkImageView.swift in Sources */,
+				4B2AE0E02485A3240086A42C /* SettingsViewComponents.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4628,6 +4652,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4B2AE0E12485A4360086A42C /* XCRemoteSwiftPackageReference "FetchImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:kean/FetchImage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.1;
+			};
+		};
 		4B5140072483F01400463CE6 /* XCRemoteSwiftPackageReference "CombineExt" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:CombineCommunity/CombineExt.git";
@@ -4647,6 +4679,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4B2AE0E42485A45B0086A42C /* FetchImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B2AE0E12485A4360086A42C /* XCRemoteSwiftPackageReference "FetchImage" */;
+			productName = FetchImage;
+		};
 		4B5140082483F01400463CE6 /* CombineExt */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4B5140072483F01400463CE6 /* XCRemoteSwiftPackageReference "CombineExt" */;

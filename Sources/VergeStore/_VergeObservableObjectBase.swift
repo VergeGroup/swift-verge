@@ -33,6 +33,7 @@ open class _VergeObservableObjectBase {
     fatalError("Must be override")
   }
   #endif
+
 }
 
 #if canImport(Combine)

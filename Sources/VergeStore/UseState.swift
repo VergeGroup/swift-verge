@@ -33,48 +33,138 @@ import Combine
    - Setting memoization and dropping duplicated output value
  */
 @available(iOS 13.0, macOS 10.15, *)
-public struct UseState<StateProvider: _VergeObservableObjectBase, Content: View>: View {
+public struct UseState<Value, Content: View>: View {
 
-  @ObservedObject private var observableObject: StateProvider
-  private let content: (StateProvider) -> Content
+  @ObservedObject private var observableObject: _VergeObservableObjectBase
+
+  private let content: (Changes<Value>) -> Content
+  private let updateValue: () -> Changes<Value>
+
+  fileprivate init(
+    updateTrigger: _VergeObservableObjectBase,
+    updateValue: @escaping () -> Changes<Value>,
+    content: @escaping (Changes<Value>) -> Content
+  ) {
+    self.observableObject = updateTrigger
+    self.content = content
+    self.updateValue = updateValue
+  }
 
   public var body: some View {
-    content(observableObject)
+    let changes = updateValue()
+    return content(changes)
   }
 
 }
 
 @available(iOS 13.0, macOS 10.15, *)
-extension UseState where StateProvider : StoreType {
+extension UseState {
 
   /// Initialize from `Store`
+  ///
+  /// - Complexity: Depends on the map parameter
   /// - Parameters:
   ///   - store:
   ///   - content:
-  public init(
-    _ store: StateProvider,
-    @ViewBuilder content: @escaping (StateProvider) -> Content
+  public init<Store: StoreType>(
+    _ store: Store,
+    _ map: MemoizeMap<Changes<Store.State>, Value>,
+    @ViewBuilder content: @escaping (Changes<Value>) -> Content
   ) {
-    self.content = content
-    self.observableObject = store
+
+    var current: Changes<Value>?
+
+    let store = store.asStore()
+
+    self.init(
+      updateTrigger: store,
+      updateValue: {
+        if let _current = current {
+          switch map.makeResult(store.state) {
+          case .noChanages:
+            return _current
+          case .updated(let value):
+            let next = _current.makeNextChanges(with: value)
+            current = next
+            return next
+          }
+        } else {
+          let first = Changes<Value>(old: nil, new: map.makeInitial(store.state))
+          current = first
+          return first
+        }
+    },
+      content: content
+    )
+
   }
 
-}
+  /// Initialize from `Store`
+  ///
+  /// - Complexity: ⚠️ No memoization
+  /// - Parameters:
+  ///   - store:
+  ///   - content:
+  public init<Store: StoreType>(
+    _ store: Store,
+    @ViewBuilder content: @escaping (Changes<Value>) -> Content
+  ) where Value == Store.State {
+    self.init(store, .map(\.root), content: content)
+  }
 
-@available(iOS 13.0, macOS 10.15, *)
-extension UseState where StateProvider : DerivedType {
+  /// Initialize from `Store`
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
+  /// - Parameters:
+  ///   - store:
+  ///   - content:
+  public init<Store: StoreType>(
+    _ store: Store,
+    @ViewBuilder content: @escaping (Changes<Value>) -> Content
+  ) where Value == Store.State, Value : Equatable {
+    self.init(store, .map(\.root), content: content)
+  }
 
   /// Initialize from `Derived`
+  ///
+  /// - Complexity: Depends on the map parameter
   /// - Parameters:
   ///   - derived:
-  ///   - content: 
-  public init(
-    _ derived: StateProvider,
-    @ViewBuilder content: @escaping (StateProvider) -> Content
+  ///   - content:
+  public init<Derived: DerivedType>(
+    _ derived: Derived,
+    _ map: MemoizeMap<Changes<Derived.Value>, Value>,
+    @ViewBuilder content: @escaping (Changes<Value>) -> Content
   ) {
-    self.content = content
-    self.observableObject = derived
+    self.init(derived.asDerived().innerStore, map, content: content)
   }
+
+  /// Initialize from `Derived`
+  ///
+  /// - Complexity: ⚠️ No memoization
+  /// - Parameters:
+  ///   - derived:
+  ///   - content:
+  public init<Derived: DerivedType>(
+    _ derived: Derived,
+    @ViewBuilder content: @escaping (Changes<Value>) -> Content
+  ) where Value == Derived.Value {
+    self.init(derived, .map(\.root), content: content)
+  }
+
+  /// Initialize from `Derived`
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
+  /// - Parameters:
+  ///   - derived:
+  ///   - content:
+  public init<Derived: DerivedType>(
+    _ derived: Derived,
+    @ViewBuilder content: @escaping (Changes<Value>) -> Content
+  ) where Value == Derived.Value, Value : Equatable {
+    self.init(derived, .map(\.root), content: content)
+  }
+
 
 }
 

@@ -6,9 +6,14 @@ struct HomeView: View {
   let stack: LoggedInStack
 
   var body: some View {
-    Text("HomeView")
-      .onAppear {
-        self.stack.service.fetchTop()
+    NavigationView {
+      VStack {
+        NavigationLink("Settings", destination: SettingsView(stack: stack))
+        Text("HomeView")
+      }
+    }
+    .onAppear {
+      self.stack.service.fetchTop()
     }
   }
 }
