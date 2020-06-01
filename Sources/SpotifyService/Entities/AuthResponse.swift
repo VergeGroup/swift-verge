@@ -2,7 +2,7 @@
 import Foundation
 import JAYSON
 
-public struct AuthResponse: Decodable {
+public struct AuthResponse: Decodable, Equatable {
   
   let accessToken: String
   let tokenType: String

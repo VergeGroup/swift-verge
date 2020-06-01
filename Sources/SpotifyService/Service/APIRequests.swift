@@ -33,6 +33,22 @@ enum APIRequests {
       )
     )
   }
+
+  static func getMeTopArtist(limit: Int, offset: Int) -> Templates.JSONResponse.Auth.Request {
+    .init(
+      path: "me/top/artists",
+      method: .get,
+      headers: [:],
+      task: .requestParameters(
+        parameters: [
+          // timerange:
+         "limit" : limit,
+         "offset" : offset,
+        ],
+        encoding: URLEncoding.default
+      )
+    )
+  }
   
 }
 

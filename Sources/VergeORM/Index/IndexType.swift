@@ -45,11 +45,9 @@ fileprivate struct IndexWrapper<Schema: EntitySchemaType> {
 
 @dynamicMemberLookup
 public struct IndexesStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
-  
+
   private typealias Key = AnyKeyPath
-  
-  private let indexed = Indexes()
-  
+
   private var backing: [Key : IndexWrapper<Schema>] = [:]
   
   init() {

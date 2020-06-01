@@ -7,7 +7,8 @@ import Moya
 import VergeStore
 
 public struct LoggedOutServiceState {
-  
+
+  var isLoginProcessing: Bool = false
 }
 
 public final class LoggedOutService: BackendStore.ScopedDispatcher<LoggedOutServiceState> {
@@ -19,17 +20,13 @@ public final class LoggedOutService: BackendStore.ScopedDispatcher<LoggedOutServ
   }
   
   public func fetchToken(code: Auth.AuthCode) -> Future<AuthResponse, MoyaError> {
-    Future<AuthResponse, MoyaError> { (promise) in
-      self.apiProvider.request(.init(APIRequests.token(code: code))) { (result) in
-        switch result {
-        case .success(let response):
-          let auth = try! AuthResponse.init(from: try! JSON(data: response.data))
-          promise(.success(auth))
-        case .failure(let error):
-          promise(.failure(error))
-        }
-      }
+
+    apiProvider.requestPublisher(MultiTarget(APIRequests.token(code: code)))
+      .map { response in
+        try! AuthResponse.init(from: try! JSON(data: response.data))
     }
+    .start()
+
   }
 }
 

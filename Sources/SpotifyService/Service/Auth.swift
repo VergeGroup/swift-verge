@@ -15,7 +15,8 @@ public enum Auth {
     components.queryItems = [
       .init(name: "client_id", value: Secret.clientID),
       .init(name: "response_type", value: "code"),
-      .init(name: "redirect_uri", value: callBackURI)
+      .init(name: "redirect_uri", value: callBackURI),
+      .init(name: "scope", value: ["user-top-read"].joined(separator: " "))
     ]
 
     return components.url!

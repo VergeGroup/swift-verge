@@ -6,7 +6,7 @@ struct LoggedInView: View {
   let stack: LoggedInStack
 
   var body: some View {
-    RootTabView()
+    RootTabView(stack: stack)
       .onAppear {
         self.stack.service.fetchMe()
     }

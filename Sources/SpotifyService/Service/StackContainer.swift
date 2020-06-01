@@ -3,6 +3,12 @@ import Foundation
 
 import Combine
 import VergeStore
+import CombineExt
+import Moya
+
+public enum BackendError: Swift.Error {
+  case unknown
+}
 
 public final class BackendStack: ObservableObject {
   
@@ -32,28 +38,40 @@ public final class BackendStack: ObservableObject {
     
   }
   
-  public func receiveAuthCode(_ code: Auth.AuthCode) {
+  public func receiveAuthCode(_ code: Auth.AuthCode) -> Future<Void, Error> {
     
-    guard case .loggedOut(let stack) = stack else {
-      return
+    guard case .loggedOut(let loggedOutStack) = stack else {
+      return .failure(BackendError.unknown)
     }
-    
-    stack.service.fetchToken(code: code)
-      .sink(receiveCompletion: { (completion) in
-        switch completion {
-        case .failure(let error):
-          assertionFailure("\(error)")
-        case .finished:
-          break
-        }
-      }) { (auth) in
 
+    loggedOutStack.service.commit {
+      $0.isLoginProcessing = true
+    }
+
+    return loggedOutStack.service.fetchToken(code: code)
+      .map { auth -> LoggedInStack in
         self.store.commit {
           $0.loggedIn = .init(auth: auth)
         }
-        self.stack = .loggedIn(.init(store: self.store))
+        let loggedInStack = LoggedInStack(store: self.store)
+        return loggedInStack
     }
-    .store(in: &subscriptions)
+    .mapError { $0 as Error }
+    .flatMap { stack in
+      stack.service.fetchMe()
+        .mapError { $0 as Error }
+        .map { _ in stack }
+    }
+    .handleEvents(
+      receiveOutput: { stack in
+        self.stack = .loggedIn(stack)
+    }, receiveCompletion: { comp in
+      loggedOutStack.service.commit {
+        $0.isLoginProcessing = false
+      }
+    })
+      .map { _ in }
+      .start()
 
   }
 }

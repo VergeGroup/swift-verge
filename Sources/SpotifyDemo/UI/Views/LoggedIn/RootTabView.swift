@@ -1,11 +1,14 @@
 import SwiftUI
+import SpotifyService
 
 struct RootTabView: View {
+
+  let stack: LoggedInStack
 
   var body: some View {
 
     TabView {
-      HomeView()
+      HomeView(stack: stack)
         .tag(1)
         .tabItem {
           Text("Home")

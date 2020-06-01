@@ -190,7 +190,13 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   }
 }
 
-extension EntityTable: Equatable where Entity : Equatable {
+extension EntityTable: Equatable {
+  public static func == (lhs: EntityTable<Schema, Entity>, rhs: EntityTable<Schema, Entity>) -> Bool {
+    (lhs.updatedMarker) == (rhs.updatedMarker)
+  }
+}
+
+extension EntityTable where Entity : Equatable {
   public static func == (lhs: EntityTable<Schema, Entity>, rhs: EntityTable<Schema, Entity>) -> Bool {
     (lhs.rawTable) == (rhs.rawTable)
   }

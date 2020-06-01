@@ -175,7 +175,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   
 }
 
-public struct DatabaseEntityUpdatesResult<Schema: EntitySchemaType> {
+public struct DatabaseEntityUpdatesResult<Schema: EntitySchemaType>: Equatable {
   
   let updated: [EntityName : Set<AnyHashable>]
   let deleted: [EntityName : Set<AnyHashable>]

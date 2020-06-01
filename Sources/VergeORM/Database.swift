@@ -66,8 +66,31 @@ public struct AnyMiddleware<Database: DatabaseType>: MiddlewareType {
   }
 }
 
-/// A protocol indicates it is a root object as a Database
-/// As a Database, it provides the tables of the entity, the index storage.
+/**
+
+ A protocol indicates it is a root object as a Database
+ As a Database, it provides the tables of the entity, the index storage.
+
+ Here is boilerplate
+ ```swift
+ public struct Database: DatabaseType {
+
+  public struct Schema: EntitySchemaType {
+
+    public init() {}
+  }
+
+  public struct Indexes: IndexesType {
+
+    public init() {}
+  }
+
+  public var _backingStorage: BackingStorage = .init()
+
+}
+ ```
+ */
+
 public protocol DatabaseType: DatabaseEmbedding where Database == Self {
     
   associatedtype Schema: EntitySchemaType
@@ -88,8 +111,14 @@ extension DatabaseType {
   public var middlewares: [AnyMiddleware<Self>] { [] }
 }
 
-public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType> {
-  
+public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType>: Equatable {
+
+  public static func == (lhs: DatabaseStorage<Schema, Indexes>, rhs: DatabaseStorage<Schema, Indexes>) -> Bool {
+    guard lhs.entityUpdatedMarker == rhs.entityUpdatedMarker else { return false }
+    guard lhs.indexUpdatedMarker == rhs.indexUpdatedMarker else { return false }
+    return true
+  }
+
   private(set) public var entityUpdatedMarker = VersionCounter()
   private(set) public var indexUpdatedMarker = VersionCounter()
   internal(set) public var lastUpdatesResult: DatabaseEntityUpdatesResult<Schema>?

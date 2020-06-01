@@ -32,6 +32,10 @@
 		4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050F623D5C841000A2779 /* StoreLogger.swift */; };
 		4B2050F923D5C85B000A2779 /* MutationTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050F823D5C85B000A2779 /* MutationTrace.swift */; };
 		4B264EF823BD13BC001BD9A0 /* DatabaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */; };
+		4B2AE0B824856EB10086A42C /* Entities.Me.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0B724856EB10086A42C /* Entities.Me.swift */; };
+		4B2AE0C0248571B20086A42C /* SpotifyServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0BF248571B20086A42C /* SpotifyServiceTests.swift */; };
+		4B2AE0C2248571B20086A42C /* SpotifyService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB64CBC248380EF0017699A /* SpotifyService.framework */; };
+		4B2AE0CA248573A30086A42C /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0C9248573A30086A42C /* Logger.swift */; };
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
 		4B3834DD2482330C008A0B47 /* UseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834DC2482330C008A0B47 /* UseState.swift */; };
 		4B3834DF248235AD008A0B47 /* _VergeObservableObjectBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834DE248235AD008A0B47 /* _VergeObservableObjectBase.swift */; };
@@ -50,6 +54,11 @@
 		4B475BD0239ADEB4008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
 		4B4AB16C244DEEE3005E7283 /* ReproduceDeadlockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */; };
 		4B4AB16E244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */; };
+		4B5140002483E3FE00463CE6 /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B513FFF2483E3FE00463CE6 /* Entities.swift */; };
+		4B5140022483E41A00463CE6 /* Entities.Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5140012483E41A00463CE6 /* Entities.Image.swift */; };
+		4B5140042483E51100463CE6 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5140032483E51100463CE6 /* Util.swift */; };
+		4B5140062483E5D800463CE6 /* Entities.Artist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5140052483E5D800463CE6 /* Entities.Artist.swift */; };
+		4B5140092483F01400463CE6 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 4B5140082483F01400463CE6 /* CombineExt */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
@@ -234,6 +243,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4B17438E23C766D70074C457;
 			remoteInfo = VergeRx;
+		};
+		4B2AE0C3248571B20086A42C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4BB64CBB248380EF0017699A;
+			remoteInfo = SpotifyService;
 		};
 		4B3DC07123A66840008A4627 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -550,6 +566,11 @@
 		4B2050F623D5C841000A2779 /* StoreLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreLogger.swift; sourceTree = "<group>"; };
 		4B2050F823D5C85B000A2779 /* MutationTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationTrace.swift; sourceTree = "<group>"; };
 		4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseError.swift; sourceTree = "<group>"; };
+		4B2AE0B724856EB10086A42C /* Entities.Me.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.Me.swift; sourceTree = "<group>"; };
+		4B2AE0BD248571B20086A42C /* SpotifyServiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpotifyServiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B2AE0BF248571B20086A42C /* SpotifyServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyServiceTests.swift; sourceTree = "<group>"; };
+		4B2AE0C1248571B20086A42C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B2AE0C9248573A30086A42C /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		4B2F001D2459DC4A0034DA40 /* All.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = All.xctestplan; path = /Users/muukii/.ghq/github.com/muukii/Verge/worktree/space1/Tests/All.xctestplan; sourceTree = "<absolute>"; };
 		4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizeDisplayValueTests.swift; sourceTree = "<group>"; };
 		4B3834DC2482330C008A0B47 /* UseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseState.swift; sourceTree = "<group>"; };
@@ -570,6 +591,10 @@
 		4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReproduceDeadlockTests.swift; sourceTree = "<group>"; };
 		4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VergeConcurrency+SynchronizationTracker.swift"; sourceTree = "<group>"; };
 		4B4C80342462D47E00AD1DB4 /* Verge.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Verge.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		4B513FFF2483E3FE00463CE6 /* Entities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.swift; sourceTree = "<group>"; };
+		4B5140012483E41A00463CE6 /* Entities.Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.Image.swift; sourceTree = "<group>"; };
+		4B5140032483E51100463CE6 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+		4B5140052483E5D800463CE6 /* Entities.Artist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.Artist.swift; sourceTree = "<group>"; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
 		4B57FD1923A29DAD00E41D06 /* EntityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityType.swift; sourceTree = "<group>"; };
@@ -752,6 +777,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B2AE0BA248571B20086A42C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B2AE0C2248571B20086A42C /* SpotifyService.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B475BAF239AB954008A03E1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -853,6 +886,7 @@
 				4BB64CC9248381450017699A /* VergeCore.framework in Frameworks */,
 				4BB64CD5248381450017699A /* VergeStore.framework in Frameworks */,
 				4BB64CCD248381450017699A /* VergeObjcBridge.framework in Frameworks */,
+				4B5140092483F01400463CE6 /* CombineExt in Frameworks */,
 				B6D2A295D283D02D610259EF /* Pods_SpotifyService.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -964,6 +998,15 @@
 				4BB64CE924838EE20017699A /* LoggedIn */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		4B2AE0BE248571B20086A42C /* SpotifyServiceTests */ = {
+			isa = PBXGroup;
+			children = (
+				4B2AE0BF248571B20086A42C /* SpotifyServiceTests.swift */,
+				4B2AE0C1248571B20086A42C /* Info.plist */,
+			);
+			path = SpotifyServiceTests;
 			sourceTree = "<group>";
 		};
 		4B475BB3239AB954008A03E1 /* VergeORM */ = {
@@ -1126,6 +1169,7 @@
 				4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */,
 				4BB64CBC248380EF0017699A /* SpotifyService.framework */,
 				4BB64CF9248391550017699A /* SpotifyUIKit.framework */,
+				4B2AE0BD248571B20086A42C /* SpotifyServiceTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1226,6 +1270,10 @@
 			isa = PBXGroup;
 			children = (
 				4BB451D123D446C00034CA58 /* AuthResponse.swift */,
+				4B513FFF2483E3FE00463CE6 /* Entities.swift */,
+				4B2AE0B724856EB10086A42C /* Entities.Me.swift */,
+				4B5140012483E41A00463CE6 /* Entities.Image.swift */,
+				4B5140052483E5D800463CE6 /* Entities.Artist.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -1286,6 +1334,8 @@
 				4BB4F80023D32AB70039C897 /* Secret.swift */,
 				4BB4F83223D345470039C897 /* Service */,
 				4BB451D023D446920034CA58 /* Entities */,
+				4B5140032483E51100463CE6 /* Util.swift */,
+				4B2AE0C9248573A30086A42C /* Logger.swift */,
 			);
 			path = SpotifyService;
 			sourceTree = "<group>";
@@ -1355,13 +1405,14 @@
 		4BF2BCCD238A653000F70CDA /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				4B2F001D2459DC4A0034DA40 /* All.xctestplan */,
 				4B95BE59244F10F200124F6B /* DemoState.swift */,
-				4B1743A823C767670074C457 /* VergeRxTests */,
+				4B2F001D2459DC4A0034DA40 /* All.xctestplan */,
+				4B2AE0BE248571B20086A42C /* SpotifyServiceTests */,
 				4BE9455023AD1B180060F977 /* VergeCoreTests */,
-				4B65F8ED1FB4C0DC00A90A67 /* VergeTests */,
-				4B68394523705ACD002FFC5A /* VergeStoreTests */,
 				4B475BC6239ADE1C008A03E1 /* VergeORMTests */,
+				4B1743A823C767670074C457 /* VergeRxTests */,
+				4B68394523705ACD002FFC5A /* VergeStoreTests */,
+				4B65F8ED1FB4C0DC00A90A67 /* VergeTests */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1495,6 +1546,24 @@
 			name = VergeRxTests;
 			productName = VergeRxTests;
 			productReference = 4B1743A723C767670074C457 /* VergeRxTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4B2AE0BC248571B20086A42C /* SpotifyServiceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B2AE0C5248571B20086A42C /* Build configuration list for PBXNativeTarget "SpotifyServiceTests" */;
+			buildPhases = (
+				4B2AE0B9248571B20086A42C /* Sources */,
+				4B2AE0BA248571B20086A42C /* Frameworks */,
+				4B2AE0BB248571B20086A42C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4B2AE0C4248571B20086A42C /* PBXTargetDependency */,
+			);
+			name = SpotifyServiceTests;
+			productName = SpotifyServiceTests;
+			productReference = 4B2AE0BD248571B20086A42C /* SpotifyServiceTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		4B475BB1239AB954008A03E1 /* VergeORM */ = {
@@ -1719,6 +1788,9 @@
 				4BB64CD8248381450017699A /* PBXTargetDependency */,
 			);
 			name = SpotifyService;
+			packageProductDependencies = (
+				4B5140082483F01400463CE6 /* CombineExt */,
+			);
 			productName = SpotifyService;
 			productReference = 4BB64CBC248380EF0017699A /* SpotifyService.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1807,7 +1879,7 @@
 		4B86A47D1F969AD5002D54FE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1130;
+				LastSwiftUpdateCheck = 1150;
 				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = muukii;
 				TargetAttributes = {
@@ -1816,6 +1888,9 @@
 					};
 					4B1743A623C767670074C457 = {
 						CreatedOnToolsVersion = 11.3;
+					};
+					4B2AE0BC248571B20086A42C = {
+						CreatedOnToolsVersion = 11.5;
 					};
 					4B475BB1239AB954008A03E1 = {
 						CreatedOnToolsVersion = 11.2.1;
@@ -1884,6 +1959,7 @@
 			mainGroup = 4B86A47C1F969AD5002D54FE;
 			packageReferences = (
 				4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */,
+				4B5140072483F01400463CE6 /* XCRemoteSwiftPackageReference "CombineExt" */,
 			);
 			productRefGroup = 4B86A4871F969AD5002D54FE /* Products */;
 			projectDirPath = "";
@@ -1906,6 +1982,7 @@
 				4B68394323705ACD002FFC5A /* VergeStoreTests */,
 				4B475BC4239ADE1C008A03E1 /* VergeORMTests */,
 				4B1743A623C767670074C457 /* VergeRxTests */,
+				4B2AE0BC248571B20086A42C /* SpotifyServiceTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1919,6 +1996,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4B1743A523C767670074C457 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B2AE0BB248571B20086A42C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2212,6 +2296,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B2AE0B9248571B20086A42C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B2AE0C0248571B20086A42C /* SpotifyServiceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B475BAE239AB954008A03E1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2378,12 +2470,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B5140042483E51100463CE6 /* Util.swift in Sources */,
 				4BB64CDE248381EC0017699A /* Auth.swift in Sources */,
+				4B2AE0B824856EB10086A42C /* Entities.Me.swift in Sources */,
 				4BB64CDD248381EC0017699A /* LoggedOutService.swift in Sources */,
 				4BB64CE22483834B0017699A /* BackendStore.swift in Sources */,
+				4B5140022483E41A00463CE6 /* Entities.Image.swift in Sources */,
 				4BB64CDB248381EC0017699A /* StackContainer.swift in Sources */,
+				4B5140062483E5D800463CE6 /* Entities.Artist.swift in Sources */,
 				4BB64CDA248381EC0017699A /* Secret.swift in Sources */,
 				4BB64CE0248381F40017699A /* AuthResponse.swift in Sources */,
+				4B5140002483E3FE00463CE6 /* Entities.swift in Sources */,
+				4B2AE0CA248573A30086A42C /* Logger.swift in Sources */,
 				4BB64CDF248381EC0017699A /* APIRequests.swift in Sources */,
 				4BB64CDC248381EC0017699A /* LoggedInService.swift in Sources */,
 			);
@@ -2448,6 +2546,11 @@
 			isa = PBXTargetDependency;
 			target = 4B17438E23C766D70074C457 /* VergeRx */;
 			targetProxy = 4B1743B523C767D90074C457 /* PBXContainerItemProxy */;
+		};
+		4B2AE0C4248571B20086A42C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4BB64CBB248380EF0017699A /* SpotifyService */;
+			targetProxy = 4B2AE0C3248571B20086A42C /* PBXContainerItemProxy */;
 		};
 		4B3DC07223A66840008A4627 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2770,6 +2873,70 @@
 				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeRxTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4B2AE0C6248571B20086A42C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SpotifyServiceTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyServiceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B2AE0C7248571B20086A42C /* Benchmark */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SpotifyServiceTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyServiceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Benchmark;
+		};
+		4B2AE0C8248571B20086A42C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SpotifyServiceTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyServiceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -4256,6 +4423,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		4B2AE0C5248571B20086A42C /* Build configuration list for PBXNativeTarget "SpotifyServiceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B2AE0C6248571B20086A42C /* Debug */,
+				4B2AE0C7248571B20086A42C /* Benchmark */,
+				4B2AE0C8248571B20086A42C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4B475BBD239AB954008A03E1 /* Build configuration list for PBXNativeTarget "VergeORM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -4419,6 +4596,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4B5140072483F01400463CE6 /* XCRemoteSwiftPackageReference "CombineExt" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:CombineCommunity/CombineExt.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
 		4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:ReactiveX/RxSwift.git";
@@ -4430,6 +4615,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4B5140082483F01400463CE6 /* CombineExt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B5140072483F01400463CE6 /* XCRemoteSwiftPackageReference "CombineExt" */;
+			productName = CombineExt;
+		};
 		4BDBDFA323CE0DD100EEA112 /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */;
