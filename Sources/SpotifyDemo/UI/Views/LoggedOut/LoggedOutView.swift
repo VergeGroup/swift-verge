@@ -2,6 +2,7 @@
 import Foundation
 
 import SpotifyService
+import VergeStore
 
 struct LoggedOutView: View {
 
@@ -9,16 +10,20 @@ struct LoggedOutView: View {
   @State private var isConnecting = false
 
   var body: some View {
-    VStack {
-      Text("Hello, World!")
-      Button(action: {
-        self.isConnecting = true
-      }) {
-        Text("Connect with Spotify")
+    UseState(stack.derivedState) { derived in
+      ProcessingOverlay(isProcessing: derived.value.isLoginProcessing) {
+        VStack {
+          Text("Hello, World!")
+          Button(action: {
+            self.isConnecting = true
+          }) {
+            Text("Connect with Spotify")
+          }
+        }
+        .sheet(isPresented: self.$isConnecting) {
+          SafariView(url: Auth.authorization())
+        }
       }
-    }
-    .sheet(isPresented: $isConnecting) {
-      SafariView(url: Auth.authorization())
     }
   }
 }

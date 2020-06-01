@@ -6,12 +6,7 @@ import JAYSON
 import Moya
 import VergeStore
 
-public struct LoggedOutServiceState {
-
-  var isLoginProcessing: Bool = false
-}
-
-public final class LoggedOutService: BackendStore.ScopedDispatcher<LoggedOutServiceState> {
+public final class LoggedOutService: BackendStore.ScopedDispatcher<LoggedOutBackendState> {
   
   let apiProvider = MoyaProvider<MultiTarget>()
 
@@ -27,14 +22,5 @@ public final class LoggedOutService: BackendStore.ScopedDispatcher<LoggedOutServ
     }
     .start()
 
-  }
-}
-
-public final class LoggedOutStack {
-
-  public let service: LoggedOutService
-  
-  init(store: BackendStore) {
-    self.service = .init(targetStore: store)
   }
 }

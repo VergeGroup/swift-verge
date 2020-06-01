@@ -36,6 +36,14 @@
 		4B2AE0C0248571B20086A42C /* SpotifyServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0BF248571B20086A42C /* SpotifyServiceTests.swift */; };
 		4B2AE0C2248571B20086A42C /* SpotifyService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB64CBC248380EF0017699A /* SpotifyService.framework */; };
 		4B2AE0CA248573A30086A42C /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0C9248573A30086A42C /* Logger.swift */; };
+		4B2AE0CC248587EB0086A42C /* IndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0CB248587EB0086A42C /* IndicatorView.swift */; };
+		4B2AE0CE248590620086A42C /* LoggedInBackendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0CD248590620086A42C /* LoggedInBackendState.swift */; };
+		4B2AE0D02485907C0086A42C /* LoggedOutBackendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0CF2485907C0086A42C /* LoggedOutBackendState.swift */; };
+		4B2AE0D22485909E0086A42C /* BackendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D12485909E0086A42C /* BackendState.swift */; };
+		4B2AE0D4248590C80086A42C /* LoggedInBackendStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D3248590C80086A42C /* LoggedInBackendStack.swift */; };
+		4B2AE0D6248590E60086A42C /* LoggedOutBackendStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D5248590E60086A42C /* LoggedOutBackendStack.swift */; };
+		4B2AE0D82485913B0086A42C /* MoyaProvider+Combin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D72485913B0086A42C /* MoyaProvider+Combin.swift */; };
+		4B2AE0DA2485915D0086A42C /* Publisher+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D92485915D0086A42C /* Publisher+.swift */; };
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
 		4B3834DD2482330C008A0B47 /* UseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834DC2482330C008A0B47 /* UseState.swift */; };
 		4B3834DF248235AD008A0B47 /* _VergeObservableObjectBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834DE248235AD008A0B47 /* _VergeObservableObjectBase.swift */; };
@@ -571,6 +579,14 @@
 		4B2AE0BF248571B20086A42C /* SpotifyServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyServiceTests.swift; sourceTree = "<group>"; };
 		4B2AE0C1248571B20086A42C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B2AE0C9248573A30086A42C /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		4B2AE0CB248587EB0086A42C /* IndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorView.swift; sourceTree = "<group>"; };
+		4B2AE0CD248590620086A42C /* LoggedInBackendState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedInBackendState.swift; sourceTree = "<group>"; };
+		4B2AE0CF2485907C0086A42C /* LoggedOutBackendState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedOutBackendState.swift; sourceTree = "<group>"; };
+		4B2AE0D12485909E0086A42C /* BackendState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendState.swift; sourceTree = "<group>"; };
+		4B2AE0D3248590C80086A42C /* LoggedInBackendStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedInBackendStack.swift; sourceTree = "<group>"; };
+		4B2AE0D5248590E60086A42C /* LoggedOutBackendStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedOutBackendStack.swift; sourceTree = "<group>"; };
+		4B2AE0D72485913B0086A42C /* MoyaProvider+Combin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MoyaProvider+Combin.swift"; sourceTree = "<group>"; };
+		4B2AE0D92485915D0086A42C /* Publisher+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+.swift"; sourceTree = "<group>"; };
 		4B2F001D2459DC4A0034DA40 /* All.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = All.xctestplan; path = /Users/muukii/.ghq/github.com/muukii/Verge/worktree/space1/Tests/All.xctestplan; sourceTree = "<absolute>"; };
 		4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizeDisplayValueTests.swift; sourceTree = "<group>"; };
 		4B3834DC2482330C008A0B47 /* UseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseState.swift; sourceTree = "<group>"; };
@@ -1305,7 +1321,6 @@
 		4BB4F83223D345470039C897 /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				4B9622D923D439A9004F8088 /* StackContainer.swift */,
 				4BB4F80F23D33F970039C897 /* LoggedInService.swift */,
 				4B9622D723D4381A004F8088 /* LoggedOutService.swift */,
 				4BB4F80223D32DBD0039C897 /* Auth.swift */,
@@ -1330,12 +1345,20 @@
 			children = (
 				4BB64CBE248380EF0017699A /* SpotifyService.h */,
 				4BB64CBF248380EF0017699A /* Info.plist */,
-				4BB64CE12483834B0017699A /* BackendStore.swift */,
 				4BB4F80023D32AB70039C897 /* Secret.swift */,
+				4BB64CE12483834B0017699A /* BackendStore.swift */,
+				4B2AE0D12485909E0086A42C /* BackendState.swift */,
+				4B2AE0CD248590620086A42C /* LoggedInBackendState.swift */,
+				4B2AE0CF2485907C0086A42C /* LoggedOutBackendState.swift */,
+				4B9622D923D439A9004F8088 /* StackContainer.swift */,
+				4B2AE0D3248590C80086A42C /* LoggedInBackendStack.swift */,
+				4B2AE0D5248590E60086A42C /* LoggedOutBackendStack.swift */,
 				4BB4F83223D345470039C897 /* Service */,
 				4BB451D023D446920034CA58 /* Entities */,
 				4B5140032483E51100463CE6 /* Util.swift */,
 				4B2AE0C9248573A30086A42C /* Logger.swift */,
+				4B2AE0D72485913B0086A42C /* MoyaProvider+Combin.swift */,
+				4B2AE0D92485915D0086A42C /* Publisher+.swift */,
 			);
 			path = SpotifyService;
 			sourceTree = "<group>";
@@ -1364,6 +1387,7 @@
 			isa = PBXGroup;
 			children = (
 				4B1C011723D34A9F00BE9B24 /* SafariView.swift */,
+				4B2AE0CB248587EB0086A42C /* IndicatorView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -2453,6 +2477,7 @@
 				4BB4F7E423D329E30039C897 /* SceneDelegate.swift in Sources */,
 				4B1C011823D34A9F00BE9B24 /* SafariView.swift in Sources */,
 				4BB64CE424838E2C0017699A /* LoggedOutView.swift in Sources */,
+				4B2AE0CC248587EB0086A42C /* IndicatorView.swift in Sources */,
 				4BB64CE624838E400017699A /* import.swift in Sources */,
 				4BB64CE824838EC20017699A /* LoggedInView.swift in Sources */,
 				4BB4F7E623D329E30039C897 /* ContentView.swift in Sources */,
@@ -2474,13 +2499,20 @@
 				4BB64CDE248381EC0017699A /* Auth.swift in Sources */,
 				4B2AE0B824856EB10086A42C /* Entities.Me.swift in Sources */,
 				4BB64CDD248381EC0017699A /* LoggedOutService.swift in Sources */,
+				4B2AE0D4248590C80086A42C /* LoggedInBackendStack.swift in Sources */,
 				4BB64CE22483834B0017699A /* BackendStore.swift in Sources */,
 				4B5140022483E41A00463CE6 /* Entities.Image.swift in Sources */,
+				4B2AE0CE248590620086A42C /* LoggedInBackendState.swift in Sources */,
+				4B2AE0D6248590E60086A42C /* LoggedOutBackendStack.swift in Sources */,
 				4BB64CDB248381EC0017699A /* StackContainer.swift in Sources */,
+				4B2AE0D22485909E0086A42C /* BackendState.swift in Sources */,
 				4B5140062483E5D800463CE6 /* Entities.Artist.swift in Sources */,
+				4B2AE0D02485907C0086A42C /* LoggedOutBackendState.swift in Sources */,
 				4BB64CDA248381EC0017699A /* Secret.swift in Sources */,
+				4B2AE0DA2485915D0086A42C /* Publisher+.swift in Sources */,
 				4BB64CE0248381F40017699A /* AuthResponse.swift in Sources */,
 				4B5140002483E3FE00463CE6 /* Entities.swift in Sources */,
+				4B2AE0D82485913B0086A42C /* MoyaProvider+Combin.swift in Sources */,
 				4B2AE0CA248573A30086A42C /* Logger.swift in Sources */,
 				4BB64CDF248381EC0017699A /* APIRequests.swift in Sources */,
 				4BB64CDC248381EC0017699A /* LoggedInService.swift in Sources */,
