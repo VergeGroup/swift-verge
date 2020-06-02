@@ -465,6 +465,51 @@ extension Changes where Value : Equatable {
   }
 }
 
+extension Changes: Sequence where Value: Sequence {
+
+  public __consuming func makeIterator() -> Value.Iterator {
+    root.makeIterator()
+  }
+
+  public typealias Element = Value.Element
+  public typealias Iterator = Value.Iterator
+
+}
+
+extension Changes: Collection where Value: Collection {
+  public subscript(position: Value.Index) -> Value.Element {
+    _read {
+      yield root[position]
+    }
+  }
+
+  public var startIndex: Value.Index {
+    root.startIndex
+  }
+
+  public var endIndex: Value.Index {
+    root.endIndex
+  }
+
+  public func index(after i: Value.Index) -> Value.Index {
+    root.index(after: i)
+  }
+
+  public typealias Index = Value.Index
+
+}
+
+extension Changes: BidirectionalCollection where Value: BidirectionalCollection {
+  public func index(before i: Value.Index) -> Value.Index {
+     root.index(before: i)
+  }
+}
+
+extension Changes: RandomAccessCollection where Value: RandomAccessCollection {
+  public func index(before i: Value.Index) -> Value.Index {
+    root.index(before: i)
+  }
+}
 
 extension _StateTypeContainer {
 

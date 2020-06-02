@@ -217,6 +217,15 @@
 		4BDBDFA623CE0DD100EEA112 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA523CE0DD100EEA112 /* RxSwift */; };
 		4BDCA8F524868AF70024126A /* Entities.Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8F424868AF70024126A /* Entities.Playlist.swift */; };
 		4BDCA8F724868BB50024126A /* Entities.User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8F624868BB50024126A /* Entities.User.swift */; };
+		4BDCA8FA2486A4090024126A /* UserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8F92486A4090024126A /* UserDetailView.swift */; };
+		4BDCA8FC2486A4A00024126A /* AllPostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8FB2486A4A00024126A /* AllPostsView.swift */; };
+		4BDCA8FE2486A6970024126A /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8FD2486A6970024126A /* PostView.swift */; };
+		4BDCA9002486A8630024126A /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8FF2486A8630024126A /* Entities.swift */; };
+		4BDCA9022486AFBC0024126A /* PostDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA9012486AFBC0024126A /* PostDetailView.swift */; };
+		4BDCA9032486B0D60024126A /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
+		4BDCA9042486B0D60024126A /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4BDCA9072486B0F60024126A /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
+		4BDCA9082486B0F60024126A /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BE9455423AD1B180060F977 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */; };
 		4BF21F302458C1860045B5C2 /* UtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF21F2F2458C1860045B5C2 /* UtilTests.swift */; };
@@ -462,6 +471,20 @@
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
 		};
+		4BDCA9052486B0D60024126A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
+			remoteInfo = VergeCore;
+		};
+		4BDCA9092486B0F60024126A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B5E849B24618D1C009A0CA8;
+			remoteInfo = VergeObjcBridge;
+		};
 		4BE9455523AD1B180060F977 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -504,7 +527,9 @@
 			dstSubfolderSpec = 10;
 			files = (
 				4B94913D239C25C600370067 /* VergeStore.framework in Embed Frameworks */,
+				4BDCA9082486B0F60024126A /* VergeObjcBridge.framework in Embed Frameworks */,
 				4B949142239C25CA00370067 /* VergeORM.framework in Embed Frameworks */,
+				4BDCA9042486B0D60024126A /* VergeCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -754,6 +779,11 @@
 		4BDBDF8823CE0C7800EEA112 /* Sources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources.swift; sourceTree = "<group>"; };
 		4BDCA8F424868AF70024126A /* Entities.Playlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.Playlist.swift; sourceTree = "<group>"; };
 		4BDCA8F624868BB50024126A /* Entities.User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.User.swift; sourceTree = "<group>"; };
+		4BDCA8F92486A4090024126A /* UserDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailView.swift; sourceTree = "<group>"; };
+		4BDCA8FB2486A4A00024126A /* AllPostsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPostsView.swift; sourceTree = "<group>"; };
+		4BDCA8FD2486A6970024126A /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
+		4BDCA8FF2486A8630024126A /* Entities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.swift; sourceTree = "<group>"; };
+		4BDCA9012486AFBC0024126A /* PostDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailView.swift; sourceTree = "<group>"; };
 		4BE9454F23AD1B180060F977 /* VergeCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BE9455323AD1B180060F977 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitterTests.swift; sourceTree = "<group>"; };
@@ -888,7 +918,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B94913C239C25C600370067 /* VergeStore.framework in Frameworks */,
+				4BDCA9032486B0D60024126A /* VergeCore.framework in Frameworks */,
 				4B949141239C25CA00370067 /* VergeORM.framework in Frameworks */,
+				4BDCA9072486B0F60024126A /* VergeObjcBridge.framework in Frameworks */,
 				4C309BD4F308564F99ED30A5 /* Pods_Demo_VergeStoreDemoSwiftUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1281,9 +1313,14 @@
 				4B94914B239C264D00370067 /* AppDelegate.swift */,
 				4B94914C239C264D00370067 /* ContentView.swift */,
 				4B94915E239CF1CF00370067 /* UserListView.swift */,
+				4BDCA8FB2486A4A00024126A /* AllPostsView.swift */,
+				4BDCA8FD2486A6970024126A /* PostView.swift */,
+				4BDCA8F92486A4090024126A /* UserDetailView.swift */,
+				4BDCA9012486AFBC0024126A /* PostDetailView.swift */,
 				4B94914D239C264D00370067 /* Info.plist */,
 				4B94914E239C264D00370067 /* SceneDelegate.swift */,
 				4B949156239C26C100370067 /* Session.swift */,
+				4BDCA8FF2486A8630024126A /* Entities.swift */,
 			);
 			path = VergeStoreDemoSwiftUI;
 			sourceTree = "<group>";
@@ -1789,6 +1826,8 @@
 			dependencies = (
 				4B94913F239C25C600370067 /* PBXTargetDependency */,
 				4B949144239C25CA00370067 /* PBXTargetDependency */,
+				4BDCA9062486B0D60024126A /* PBXTargetDependency */,
+				4BDCA90A2486B0F60024126A /* PBXTargetDependency */,
 			);
 			name = VergeStoreDemoSwiftUI;
 			productName = VergeStoreDemoSwiftUI;
@@ -2496,8 +2535,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B949157239C26C100370067 /* Session.swift in Sources */,
+				4BDCA9022486AFBC0024126A /* PostDetailView.swift in Sources */,
 				4B94915F239CF1CF00370067 /* UserListView.swift in Sources */,
+				4BDCA8FE2486A6970024126A /* PostView.swift in Sources */,
 				4B949153239C264D00370067 /* ContentView.swift in Sources */,
+				4BDCA8FC2486A4A00024126A /* AllPostsView.swift in Sources */,
+				4BDCA8FA2486A4090024126A /* UserDetailView.swift in Sources */,
+				4BDCA9002486A8630024126A /* Entities.swift in Sources */,
 				4B949152239C264D00370067 /* AppDelegate.swift in Sources */,
 				4B949155239C264D00370067 /* SceneDelegate.swift in Sources */,
 			);
@@ -2766,6 +2810,16 @@
 			isa = PBXTargetDependency;
 			target = 4B78631F233912AB009B9C1B /* VergeStore */;
 			targetProxy = 4BDBDF9A23CE0C8E00EEA112 /* PBXContainerItemProxy */;
+		};
+		4BDCA9062486B0D60024126A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
+			targetProxy = 4BDCA9052486B0D60024126A /* PBXContainerItemProxy */;
+		};
+		4BDCA90A2486B0F60024126A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */;
+			targetProxy = 4BDCA9092486B0F60024126A /* PBXContainerItemProxy */;
 		};
 		4BE9455623AD1B180060F977 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3542,9 +3596,10 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Sources/VergeStoreDemoSwiftUI/Preview Content\"";
+				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Sources/VergeStoreDemoSwiftUI/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4032,9 +4087,10 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Sources/VergeStoreDemoSwiftUI/Preview Content\"";
+				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Sources/VergeStoreDemoSwiftUI/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4057,9 +4113,10 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Sources/VergeStoreDemoSwiftUI/Preview Content\"";
+				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Sources/VergeStoreDemoSwiftUI/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

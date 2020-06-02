@@ -14,13 +14,13 @@ struct ContentView: View {
   
   var body: some View {
     TabView {
-      UserListView(session: session)
-        .tabItem {
-          Text("Users")
-      }
       AllPostsView(session: session)
         .tabItem {
           Text("All Post")
+      }
+      UserListView(session: session)
+        .tabItem {
+          Text("Users")
       }
     }    
   }

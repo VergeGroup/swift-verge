@@ -35,42 +35,12 @@ final class Session: Equatable {
 
   init() {
 
+    sessionDispatcher.insertSampleUsers()
+    sessionDispatcher.insertSamplePosts()
   }
   
 }
 
-enum Entity {
-  struct Post: EntityType, Identifiable, Equatable {
-    
-    typealias EntityIDRawType = String
-    var entityID: EntityID {
-      .init(rawID)
-    }
-    let rawID: String
-    var title: String
-    var userID: User.EntityID
-    var commentIDs: [Comment.EntityID] = []
-  }
-  
-  struct User: EntityType, Identifiable, Equatable {
-    typealias EntityIDRawType = String
-    var entityID: EntityID {
-      .init(rawID)
-    }
-    let rawID: String
-    var name: String
-  }
-  
-  struct Comment: EntityType, Identifiable, Equatable {
-    typealias EntityIDRawType = String
-    var entityID: EntityID {
-      .init(rawID)
-    }
-    let rawID: String
-    var text: String
-    var postID: Post.EntityID
-  }
-}
 
 struct SessionState: StateType {
   
@@ -96,12 +66,14 @@ struct SessionState: StateType {
 
 }
 
-final class SessionStore: StoreBase<SessionState, Never> {
+final class SessionStore: Store<SessionState, Never> {
       
   init() {
     super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
   }
 }
+
+let queue = DispatchQueue.global(qos: .default)
 
 final class SessionDispatcher: SessionStore.Dispatcher {
   
@@ -128,18 +100,34 @@ final class SessionDispatcher: SessionStore.Dispatcher {
   }
   
   func submitNewPost(title: String, from user: Entity.User) {
-    commit { (s) in
-      let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.entityID)
-      s.db.performBatchUpdates { (context) in
-        
-        let postID = context.post.insert(post).entityID
-        context.indexes.postIDs.append(postID)
-        
-        context.indexes.postIDsAuthorGrouped.update(in: user.entityID) { (index) in
-          index.append(postID)
+    queue.async {
+      self.commit { (s) in
+        let post = Entity.Post(rawID: UUID().uuidString, title: title, userID: user.entityID)
+        s.db.performBatchUpdates { (context) in
+
+          let postID = context.post.insert(post).entityID
+          context.indexes.postIDs.append(postID)
+
+          context.indexes.postIDsAuthorGrouped.update(in: user.entityID) { (index) in
+            index.append(postID)
+          }
         }
       }
     }
+
+  }
+
+  func insertSamplePosts() {
+    queue.async {
+      self.commit {
+        $0.db.performBatchUpdates { context in
+          let posts = (0..<10000).map { i in Entity.Post(rawID: UUID().uuidString, title: "\(i)", userID: .init("paul")) }
+          let results = context.post.insert(posts)
+          context.indexes.postIDs.append(contentsOf: results.map { $0.entityID })
+        }
+      }
+    }
+
   }
 }
 
