@@ -1331,7 +1331,7 @@ struct MyView: View {
 
   var body: some View {    
     NavigationView {
-      UseState(store) { (store: Store<MyState, Never>) in
+      UseState(store) { (state: Changes<MyState>) in
         ...
       }
     }
@@ -1360,7 +1360,7 @@ struct MyView: View {
   let users: Derived<[Entity.User]>
 
   var body: some View {    
-    UseState(users) { (derived: Derived<[Entity.User]>) in
+    UseState(users) { (users: Changes<[Entity.User]>) in
       ...
     }
   }
@@ -1902,11 +1902,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTcxNjc0NTk3LDg0NzM0Nzc3NCwxMjgxND
-Q4NDk4LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3
-OTksLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLD
-E1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5
-NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03NDA2MTY2NDAsLT
-M5NzQyMTU0LC03MTg1NjEwNiw3NzM0MTcxMjAsLTIxNTg0Njk5
-NF19
+eyJoaXN0b3J5IjpbLTM0MTQyNDM4Miw5NzE2NzQ1OTcsODQ3Mz
+Q3Nzc0LDEyODE0NDg0OTgsLTEwNzE1NTE1NDQsLTE4OTU0ODA3
+MDAsMjEwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3ODU5ODcsLT
+EyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1MzcsMjA2Njgz
+NDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMTU4OTMxMTEsLT
+c0MDYxNjY0MCwtMzk3NDIxNTQsLTcxODU2MTA2LDc3MzQxNzEy
+MF19
 -->
