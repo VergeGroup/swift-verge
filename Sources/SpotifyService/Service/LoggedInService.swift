@@ -47,12 +47,12 @@ public final class LoggedInService: BackendStore.ScopedDispatcher<LoggedInBacken
       .handleEvents(receiveOutput: { response in
         do {
           let json = try JSON(data: response.data)
-          let items = try json.next("items").getArray().map { json in
-            try Entities.Artist(from: json)
-          }
-          self.commit {
-            $0.db.performBatchUpdates {
-              $0.artists.insert(items)
+          try self.commit {
+            try $0.db.performBatchUpdates { context in
+              let items = try json.next("items").getArray().map { json in
+                try Entities.Artist(from: json, context: context)
+              }
+              context.artist.insert(items)
               return
             }
           }
@@ -62,6 +62,33 @@ public final class LoggedInService: BackendStore.ScopedDispatcher<LoggedInBacken
       })
       .map { _ in }
       .start()
+  }
+
+  public func fetchMePlaylist() -> Future<Void, MoyaError> {
+
+    apiProvider.requestPublisher(APIRequests.getMePlaylist(limit: 20, offset: 0))
+      .handleEvents(receiveOutput: { response in
+        do {
+          let json = try JSON(data: response.data)
+          try self.commit {
+            try $0.db.performBatchUpdates { context in
+              let items = try json.next("items").getArray().map { json in
+                try Entities.Playlist(from: json, context: context)
+              }
+              let results = context.playlist.insert(items)
+              context.indexes.playlistIndex.removeAll()
+
+              context.indexes.playlistIndex.append(contentsOf: results.map { $0.entityID })
+              return
+            }
+          }
+        } catch {
+          Log.error(error)
+        }
+      })
+      .map { _ in }
+      .start()
+
   }
   
 }

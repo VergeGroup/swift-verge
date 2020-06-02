@@ -49,6 +49,21 @@ enum APIRequests {
       )
     )
   }
+
+  static func getMePlaylist(limit: Int, offset: Int) -> Templates.JSONResponse.Auth.Request {
+    .init(
+      path: "me/playlists",
+      method: .get,
+      headers: [:],
+      task: .requestParameters(
+        parameters: [
+          "limit" : limit,
+          "offset" : offset,
+        ],
+        encoding: URLEncoding.default
+      )
+    )
+  }
   
 }
 

@@ -215,6 +215,8 @@
 		4BDBDF9923CE0C8E00EEA112 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BDBDFA423CE0DD100EEA112 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA323CE0DD100EEA112 /* RxCocoa */; };
 		4BDBDFA623CE0DD100EEA112 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA523CE0DD100EEA112 /* RxSwift */; };
+		4BDCA8F524868AF70024126A /* Entities.Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8F424868AF70024126A /* Entities.Playlist.swift */; };
+		4BDCA8F724868BB50024126A /* Entities.User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8F624868BB50024126A /* Entities.User.swift */; };
 		4BE9455423AD1B180060F977 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */; };
 		4BF21F302458C1860045B5C2 /* UtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF21F2F2458C1860045B5C2 /* UtilTests.swift */; };
@@ -750,6 +752,8 @@
 		4BDBDF8223CE0C4400EEA112 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4BDBDF8423CE0C4400EEA112 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BDBDF8823CE0C7800EEA112 /* Sources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources.swift; sourceTree = "<group>"; };
+		4BDCA8F424868AF70024126A /* Entities.Playlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.Playlist.swift; sourceTree = "<group>"; };
+		4BDCA8F624868BB50024126A /* Entities.User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.User.swift; sourceTree = "<group>"; };
 		4BE9454F23AD1B180060F977 /* VergeCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BE9455323AD1B180060F977 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitterTests.swift; sourceTree = "<group>"; };
@@ -1300,6 +1304,8 @@
 				4B2AE0B724856EB10086A42C /* Entities.Me.swift */,
 				4B5140012483E41A00463CE6 /* Entities.Image.swift */,
 				4B5140052483E5D800463CE6 /* Entities.Artist.swift */,
+				4BDCA8F624868BB50024126A /* Entities.User.swift */,
+				4BDCA8F424868AF70024126A /* Entities.Playlist.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -1377,6 +1383,7 @@
 		4BB64CE924838EE20017699A /* LoggedIn */ = {
 			isa = PBXGroup;
 			children = (
+				4BDCA8F824868D7C0024126A /* New Group */,
 				4BB64CE724838EC20017699A /* LoggedInView.swift */,
 				4BB64CEC24838F330017699A /* RootTabView.swift */,
 				4BB64CEE24838F7A0017699A /* HomeView.swift */,
@@ -1428,6 +1435,13 @@
 				4BDBDF8423CE0C4400EEA112 /* Info.plist */,
 			);
 			path = VergeStoreDemoUIKit;
+			sourceTree = "<group>";
+		};
+		4BDCA8F824868D7C0024126A /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "New Group";
 			sourceTree = "<group>";
 		};
 		4BE9455023AD1B180060F977 /* VergeCoreTests */ = {
@@ -2519,6 +2533,7 @@
 			files = (
 				4B5140042483E51100463CE6 /* Util.swift in Sources */,
 				4BB64CDE248381EC0017699A /* Auth.swift in Sources */,
+				4BDCA8F724868BB50024126A /* Entities.User.swift in Sources */,
 				4B2AE0B824856EB10086A42C /* Entities.Me.swift in Sources */,
 				4BB64CDD248381EC0017699A /* LoggedOutService.swift in Sources */,
 				4B2AE0D4248590C80086A42C /* LoggedInBackendStack.swift in Sources */,
@@ -2530,6 +2545,7 @@
 				4B2AE0D22485909E0086A42C /* BackendState.swift in Sources */,
 				4B5140062483E5D800463CE6 /* Entities.Artist.swift in Sources */,
 				4B2AE0D02485907C0086A42C /* LoggedOutBackendState.swift in Sources */,
+				4BDCA8F524868AF70024126A /* Entities.Playlist.swift in Sources */,
 				4BB64CDA248381EC0017699A /* Secret.swift in Sources */,
 				4B2AE0DA2485915D0086A42C /* Publisher+.swift in Sources */,
 				4BB64CE0248381F40017699A /* AuthResponse.swift in Sources */,

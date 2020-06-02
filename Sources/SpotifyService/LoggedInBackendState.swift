@@ -9,13 +9,17 @@ public struct Database: DatabaseType, Equatable {
 
     public init() {}
 
-    public let artists = Entities.Artist.EntityTableKey()
+    public let artist = Entities.Artist.EntityTableKey()
+    public let playlist = Entities.Playlist.EntityTableKey()
     public let me = Entities.Me.EntityTableKey()
+    public let user = Entities.User.EntityTableKey()
   }
 
   public struct Indexes: IndexesType {
 
     public init() {}
+
+    public let playlistIndex = IndexKey<OrderedIDIndex<Schema, Entities.Playlist>>()
   }
 
   public var _backingStorage: BackingStorage = .init()
@@ -24,8 +28,8 @@ public struct Database: DatabaseType, Equatable {
 
 public struct LoggedInBackendState: ExtendedStateType, Equatable, DatabaseEmbedding {
 
-  let auth: AuthResponse
-  var db: Database = .init()
+  public let auth: AuthResponse
+  public var db: Database = .init()
 
   public static var getterToDatabase: (LoggedInBackendState) -> Database {
     \.db

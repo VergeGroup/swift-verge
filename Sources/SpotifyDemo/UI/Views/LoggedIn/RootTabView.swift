@@ -18,7 +18,7 @@ struct RootTabView: View {
         .tabItem {
           Text("Search")
       }
-      YourLibraryView()
+      YourLibraryView(stack: stack)
         .tag(3)
         .tabItem {
           Text("Your Library")
