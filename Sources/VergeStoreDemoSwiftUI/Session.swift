@@ -42,7 +42,7 @@ final class Session: Equatable {
 }
 
 
-struct SessionState: StateType {
+struct SessionState: ExtendedStateType {
   
   struct Database: DatabaseType {
     
@@ -54,15 +54,23 @@ struct SessionState: StateType {
     }
     
     struct Indexes: IndexesType {
-      let userIDs = IndexKey<OrderedIDIndex<Schema, Entity.User>>()
-      let postIDs = IndexKey<OrderedIDIndex<Schema, Entity.Post>>()
-      let postIDsAuthorGrouped = IndexKey<GroupByEntityIndex<Schema, Entity.User, Entity.Post>>()
+      let userIDs = OrderedIDIndex<Schema, Entity.User>.Key()
+      let postIDs = OrderedIDIndex<Schema, Entity.Post>.Key()
+      let postIDsAuthorGrouped = GroupByEntityIndex<Schema, Entity.User, Entity.Post>.Key()
+      let comments = GroupByEntityIndex<Schema, Entity.Post, Entity.Comment>.Key()
     }
        
     var _backingStorage: BackingStorage = .init()
   }
     
   var db: Database = .init()
+
+  struct Extended: ExtendedType {
+
+    static let instance: SessionState.Extended = .init()
+
+
+  }
 
 }
 
@@ -115,6 +123,22 @@ final class SessionDispatcher: SessionStore.Dispatcher {
       }
     }
 
+  }
+
+  func submitComment(body: String, on postID: Entity.Post.EntityID) {
+    queue.async {
+      self.commit {
+        $0.db.performBatchUpdates { context in
+          let comment = Entity.Comment(rawID: UUID().uuidString, text: body, postID: postID)
+          context.comment.insert(comment)
+
+          context.indexes.comments.update(in: postID) { (index) in
+            index.append(comment.entityID)
+          }
+          
+        }
+      }
+    }
   }
 
   func insertSamplePosts() {

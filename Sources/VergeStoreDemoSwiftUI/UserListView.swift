@@ -4,7 +4,7 @@ import VergeStore
 
 struct UserListView: View {
   
-  var session: Session
+  let session: Session
 
   private var users: Derived<[Entity.User]> {
     session.users

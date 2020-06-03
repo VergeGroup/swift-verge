@@ -22,6 +22,10 @@ struct ContentView: View {
         .tabItem {
           Text("Users")
       }
+      DualDisplayView(session: session)
+        .tabItem {
+          Text("Dual")
+      }
     }    
   }
 }
