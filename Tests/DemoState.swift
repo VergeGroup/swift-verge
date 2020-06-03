@@ -23,7 +23,7 @@ struct DemoState: ExtendedStateType, Equatable {
   var count: Int = 0
   var items: [Int] = []
 
-  var dictionary: [String : LargeRecord] = [:]
+  @Fragment var dictionary: [String : LargeRecord] = [:]
 
   @Fragment var nonEquatable: NonEquatable = .init()
   
@@ -61,9 +61,10 @@ final class DemoStore: VergeStore.Store<DemoState, Never> {
 
   func setDictionaryLargeItems() {
     commit {
-      for i in 0..<10000 {
-        $0.dictionary[UUID().uuidString] = LargeRecord()
+      let dic = (0..<10000).reduce(into: $0.dictionary) { (r, i) in
+        r[UUID().uuidString] = LargeRecord()
       }
+      $0.dictionary = dic
     }
   }
 
@@ -72,7 +73,6 @@ final class DemoStore: VergeStore.Store<DemoState, Never> {
       $0.dictionary[UUID().uuidString] = LargeRecord()
     }
   }
-
 
 }
 

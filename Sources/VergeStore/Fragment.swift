@@ -28,50 +28,50 @@ public protocol FragmentType : Equatable {
 
 /**
  A structure that manages sub-state-tree from root-state-tree.
- 
+
  When you create derived data for this sub-tree, you may need to activate memoization.
  The reason why it needs memoization, the derived data does not need to know if other sub-state-tree updated.
  Better memoization must know owning state-tree has been updated at least.
  To get this done, it's not always we need to support Equatable.
  It's easier to detect the difference than detect equals.
- 
+
  Fragment is a wrapper structure and manages version number inside.
  It increments the version number each wrapped value updated.
- 
+
  Memoization can use that version if it should pass new input.
- 
+
  To activate this feature, you can check this method.
  `MemoizeMap.map(_ map: @escaping (Changes<Input.Value>) -> Fragment<Output>) -> MemoizeMap<Input, Output>`
  */
 @propertyWrapper
 public struct Fragment<State>: FragmentType {
-  
+
   public static func == (lhs: Fragment<State>, rhs: Fragment<State>) -> Bool {
     lhs.version == rhs.version
   }
-    
+
   public var version: UInt64 {
     _read {
       yield counter.version
     }
   }
-  
+
   private(set) public var counter: VersionCounter = .init()
-  
+
   public init(wrappedValue: State) {
     self.wrappedValue = wrappedValue
   }
-  
+
   public var wrappedValue: State {
     didSet {
       counter.markAsUpdated()
     }
   }
-  
+
   public var projectedValue: Fragment<State> {
     self
   }
-  
+
 }
 
 extension Fragment where State : Equatable {
@@ -81,7 +81,7 @@ extension Fragment where State : Equatable {
 }
 
 extension Comparer where Input : FragmentType {
-  
+
   public static func versionEquals() -> Comparer<Input> {
     Comparer<Input>.init { $0.version == $1.version }
   }
