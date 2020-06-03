@@ -98,6 +98,7 @@
 		4B786324233912AB009B9C1B /* VergeStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B786322233912AB009B9C1B /* VergeStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B786327233912AB009B9C1B /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B786328233912AB009B9C1B /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B7A71D024874A8900A116F7 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A71CF24874A8900A116F7 /* PerformanceTests.swift */; };
 		4B8035FB244CB96B0028BD32 /* MigrationFromClassicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8035FA244CB96B0028BD32 /* MigrationFromClassicTests.swift */; };
 		4B8035FC244CB9900028BD32 /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */; };
 		4B80B74323F92B3D000BCFB2 /* HashIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B80B74223F92B3D000BCFB2 /* HashIndexTests.swift */; };
@@ -671,6 +672,7 @@
 		4B786320233912AB009B9C1B /* VergeStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B786322233912AB009B9C1B /* VergeStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeStore.h; sourceTree = "<group>"; };
 		4B786323233912AB009B9C1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B7A71CF24874A8900A116F7 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		4B7F385123895B24000B9ACF /* Store+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Store+Rx.swift"; sourceTree = "<group>"; };
 		4B8035FA244CB96B0028BD32 /* MigrationFromClassicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationFromClassicTests.swift; sourceTree = "<group>"; };
 		4B80B74223F92B3D000BCFB2 /* HashIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashIndexTests.swift; sourceTree = "<group>"; };
@@ -1152,6 +1154,7 @@
 				4B71CEED23B14394004520CE /* ActivityTests.swift */,
 				4B1F19C3243A88A000CED46B /* ComputedTests.swift */,
 				4B93C874247A523500372BC4 /* SyntaxTests.swift */,
+				4B7A71CF24874A8900A116F7 /* PerformanceTests.swift */,
 			);
 			path = VergeStoreTests;
 			sourceTree = "<group>";
@@ -2466,6 +2469,7 @@
 				4B95BE5A244F10F200124F6B /* DemoState.swift in Sources */,
 				4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */,
 				4B93C875247A523500372BC4 /* SyntaxTests.swift in Sources */,
+				4B7A71D024874A8900A116F7 /* PerformanceTests.swift in Sources */,
 				4B6B77AE243FA6B300E0C0EA /* FilterTests.swift in Sources */,
 				4B86D826244A2A1D008D3040 /* Sample.swift in Sources */,
 				4B1F19C4243A88A000CED46B /* ComputedTests.swift in Sources */,
