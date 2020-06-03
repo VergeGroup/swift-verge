@@ -137,6 +137,7 @@
 		4B95BE5A244F10F200124F6B /* DemoState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B95BE59244F10F200124F6B /* DemoState.swift */; };
 		4B99D69323AF6C4300E26127 /* ProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B99D69223AF6C4300E26127 /* ProtocolTests.swift */; };
 		4B9AF03E2487FB16001BAAFC /* DualDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF03D2487FB16001BAAFC /* DualDisplayView.swift */; };
+		4B9AF04824880145001BAAFC /* VergeSwiftUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B9AF04624880145001BAAFC /* VergeSwiftUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4BA3E1A523C359F40095629B /* Signpost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA3E1A423C359F40095629B /* Signpost.swift */; };
@@ -718,6 +719,9 @@
 		4B9622D923D439A9004F8088 /* StackContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackContainer.swift; sourceTree = "<group>"; };
 		4B99D69223AF6C4300E26127 /* ProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolTests.swift; sourceTree = "<group>"; };
 		4B9AF03D2487FB16001BAAFC /* DualDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualDisplayView.swift; sourceTree = "<group>"; };
+		4B9AF04424880145001BAAFC /* VergeSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B9AF04624880145001BAAFC /* VergeSwiftUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeSwiftUI.h; sourceTree = "<group>"; };
+		4B9AF04724880145001BAAFC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherType.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		4BA3E1A423C359F40095629B /* Signpost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signpost.swift; sourceTree = "<group>"; };
@@ -930,6 +934,13 @@
 				4B949141239C25CA00370067 /* VergeORM.framework in Frameworks */,
 				4BDCA9072486B0F60024126A /* VergeObjcBridge.framework in Frameworks */,
 				4C309BD4F308564F99ED30A5 /* Pods_Demo_VergeStoreDemoSwiftUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B9AF04124880145001BAAFC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1205,6 +1216,7 @@
 				4BFA229D23A63B56008D7BCB /* VergeCore */,
 				4B475BB3239AB954008A03E1 /* VergeORM */,
 				4B17439023C766D70074C457 /* VergeRx */,
+				4B9AF04524880145001BAAFC /* VergeSwiftUI */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -1243,6 +1255,7 @@
 				4BB64CBC248380EF0017699A /* SpotifyService.framework */,
 				4BB64CF9248391550017699A /* SpotifyUIKit.framework */,
 				4B2AE0BD248571B20086A42C /* SpotifyServiceTests.xctest */,
+				4B9AF04424880145001BAAFC /* VergeSwiftUI.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1343,6 +1356,15 @@
 				4B949148239C264D00370067 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		4B9AF04524880145001BAAFC /* VergeSwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				4B9AF04624880145001BAAFC /* VergeSwiftUI.h */,
+				4B9AF04724880145001BAAFC /* Info.plist */,
+			);
+			path = VergeSwiftUI;
 			sourceTree = "<group>";
 		};
 		4BB451D023D446920034CA58 /* Entities */ = {
@@ -1576,6 +1598,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B86A48B1F969AD6002D54FE /* Verge.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B9AF03F24880145001BAAFC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B9AF04824880145001BAAFC /* VergeSwiftUI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1846,6 +1876,24 @@
 			productReference = 4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */;
 			productType = "com.apple.product-type.application";
 		};
+		4B9AF04324880145001BAAFC /* VergeSwiftUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B9AF04924880145001BAAFC /* Build configuration list for PBXNativeTarget "VergeSwiftUI" */;
+			buildPhases = (
+				4B9AF03F24880145001BAAFC /* Headers */,
+				4B9AF04024880145001BAAFC /* Sources */,
+				4B9AF04124880145001BAAFC /* Frameworks */,
+				4B9AF04224880145001BAAFC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VergeSwiftUI;
+			productName = VergeSwiftUI;
+			productReference = 4B9AF04424880145001BAAFC /* VergeSwiftUI.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		4BB4F7DE23D329E20039C897 /* SpotifyDemo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4BB4F7F023D329E40039C897 /* Build configuration list for PBXNativeTarget "SpotifyDemo" */;
@@ -2034,6 +2082,9 @@
 					4B949127239C257500370067 = {
 						CreatedOnToolsVersion = 11.2.1;
 					};
+					4B9AF04324880145001BAAFC = {
+						CreatedOnToolsVersion = 11.5;
+					};
 					4BB4F7DE23D329E20039C897 = {
 						CreatedOnToolsVersion = 11.3;
 					};
@@ -2079,6 +2130,7 @@
 				4B78631F233912AB009B9C1B /* VergeStore */,
 				4B475BB1239AB954008A03E1 /* VergeORM */,
 				4B86A4851F969AD5002D54FE /* VergeClassic */,
+				4B9AF04324880145001BAAFC /* VergeSwiftUI */,
 				4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */,
 				4BB4F7DE23D329E20039C897 /* SpotifyDemo */,
 				4BB64CF8248391550017699A /* SpotifyUIKit */,
@@ -2184,6 +2236,13 @@
 				4B949151239C264D00370067 /* LaunchScreen.storyboard in Resources */,
 				4B949150239C264D00370067 /* Preview Assets.xcassets in Resources */,
 				4B94914F239C264D00370067 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B9AF04224880145001BAAFC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2560,6 +2619,13 @@
 				4BDCA9002486A8630024126A /* Entities.swift in Sources */,
 				4B949152239C264D00370067 /* AppDelegate.swift in Sources */,
 				4B949155239C264D00370067 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B9AF04024880145001BAAFC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4146,6 +4212,88 @@
 			};
 			name = Release;
 		};
+		4B9AF04A24880145001BAAFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeSwiftUI/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeSwiftUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B9AF04B24880145001BAAFC /* Benchmark */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeSwiftUI/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeSwiftUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Benchmark;
+		};
+		4B9AF04C24880145001BAAFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/VergeSwiftUI/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeSwiftUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		4BB4F7F123D329E40039C897 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3F07A8480C2ABFC93877F196 /* Pods-SpotifyService-SpotifyDemo.debug.xcconfig */;
@@ -4674,6 +4822,16 @@
 				4B94913A239C257700370067 /* Debug */,
 				4B67673523D8973800D0C076 /* Benchmark */,
 				4B94913B239C257700370067 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B9AF04924880145001BAAFC /* Build configuration list for PBXNativeTarget "VergeSwiftUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B9AF04A24880145001BAAFC /* Debug */,
+				4B9AF04B24880145001BAAFC /* Benchmark */,
+				4B9AF04C24880145001BAAFC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
