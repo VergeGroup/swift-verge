@@ -139,7 +139,9 @@ struct MyView: View {
 
 # Contents
 
-<details><summary> Demo apps</summary>
+<details><summary>🎰 Demo apps</summary>
+
+You can find the schemes of demo apps from Xcode project.
 
 * SpotifyDemo (SwiftUI)
 	* A demo application that uses Spotify API
@@ -1912,7 +1914,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTYzMTEzNDkzMywtMzQxNDI0MzgyLDk3MT
+eyJoaXN0b3J5IjpbMTI3MTA3MjA0NiwtMzQxNDI0MzgyLDk3MT
 Y3NDU5Nyw4NDczNDc3NzQsMTI4MTQ0ODQ5OCwtMTA3MTU1MTU0
 NCwtMTg5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3NDY3MzEsLT
 g5OTc4NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1MjIwLDQ4MzYw
