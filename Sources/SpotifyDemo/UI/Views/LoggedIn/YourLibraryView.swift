@@ -20,14 +20,26 @@ struct MePlaylistView: View {
 
   var body: some View {
 
-    UseState(stack.derivedState, .map { state in
-      state.db.entities.playlist.find(in: state.db.indexes.playlistIndex)
-    }) { playlists in
+    UseState(
+
+      stack.derivedState,
+
+      MemoizeMap.map { state in
+        state.db.entities.playlist.find(in: state.db.indexes.playlistIndex)
+      }
+      .dropsInput { $0.noChanges(\.db.indexes.playlistIndex) }
+
+    ) { playlists in
+
       List {
         ForEach(playlists.root, id: \.entityID) { (f) in
           Text(f.name)
+            .onAppear {
+              print(f.name)
+          }
         }
       }
+
     }
   }
 }

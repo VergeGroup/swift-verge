@@ -64,6 +64,7 @@ public final class LoggedInService: BackendStore.ScopedDispatcher<LoggedInBacken
       .start()
   }
 
+  @discardableResult
   public func fetchMePlaylist() -> Future<Void, MoyaError> {
 
     apiProvider.requestPublisher(APIRequests.getMePlaylist(limit: 20, offset: 0))
