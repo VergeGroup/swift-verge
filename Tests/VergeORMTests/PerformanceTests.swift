@@ -71,12 +71,10 @@ class PerformanceTests: XCTestCase {
     
     measure {
       state.db.performBatchUpdates { (context) in
-        
-        for i in 0..<1000 {
-          let author = Author(rawID: "author.\(i)")
-          context.author.insert(author)
-        }
-        
+
+        let authors = (0..<10000).map { i in Author(rawID: "author.\(i)") }
+        context.author.insert(authors)
+
       }
     }
            
@@ -102,7 +100,7 @@ class PerformanceTests: XCTestCase {
     measure {
       state.db.performBatchUpdates { (context) in
         
-        let authors = (0..<1000).map { i in
+        let authors = (0..<3000).map { i in
           Author(rawID: "author.\(i)")
         }
         
