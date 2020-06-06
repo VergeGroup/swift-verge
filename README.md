@@ -139,10 +139,11 @@ struct MyView: View {
 
 # Contents
 
-<details><summary>🍐 Demo apps</summary>
+<details><summary> Demo apps</summary>
 
 * SpotifyDemo (SwiftUI)
-	* A demo application that uses SpotifyA
+	* A demo application that uses Spotify API
+	* Basically, it displays your playlist and something else
 * VergeStoreDemoSwiftUI
 * VergeStoreDemoUIKit
 
@@ -1911,11 +1912,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzA3OTc0Mjc1LC0zNDE0MjQzODIsOTcxNj
-c0NTk3LDg0NzM0Nzc3NCwxMjgxNDQ4NDk4LC0xMDcxNTUxNTQ0
-LC0xODk1NDgwNzAwLDIxMDQ1MTE3OTksLTc5Mjc0NjczMSwtOD
-k5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4
-NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQyMjUzNiwyMD
-E1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQyMTU0LC03MTg1NjEw
-Nl19
+eyJoaXN0b3J5IjpbMTYzMTEzNDkzMywtMzQxNDI0MzgyLDk3MT
+Y3NDU5Nyw4NDczNDc3NzQsMTI4MTQ0ODQ5OCwtMTA3MTU1MTU0
+NCwtMTg5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3NDY3MzEsLT
+g5OTc4NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1MjIwLDQ4MzYw
+ODUzNywyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0MjI1MzYsMj
+AxNTg5MzExMSwtNzQwNjE2NjQwLC0zOTc0MjE1NCwtNzE4NTYx
+MDZdfQ==
 -->
