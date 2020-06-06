@@ -93,6 +93,7 @@
 		4B6F6F3924521F1E00B6CC3A /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CC23CC36E8001A1D5D /* Fragment.swift */; };
 		4B6F6F3A24521F1E00B6CC3A /* VersionCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470D123CC3A43001A1D5D /* VersionCounter.swift */; };
 		4B6F6F3B24521F2B00B6CC3A /* CounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CE23CC3949001A1D5D /* CounterTests.swift */; };
+		4B71A469248C089C009B3918 /* Realm+Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71A468248C089C009B3918 /* Realm+Util.swift */; };
 		4B71CEEE23B14394004520CE /* ActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71CEED23B14394004520CE /* ActivityTests.swift */; };
 		4B73F08924041811006910E6 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B73F08824041811006910E6 /* Log.swift */; };
 		4B786324233912AB009B9C1B /* VergeStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B786322233912AB009B9C1B /* VergeStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -200,6 +201,8 @@
 		4BCC0847245626F300ECAB8A /* Comparer+ORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */; };
 		4BCE3039246AAD6800D35557 /* Scan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE3038246AAD6800D35557 /* Scan.swift */; };
 		4BCE88B6245B1B8A006E20C3 /* ActivityTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */; };
+		4BD068AD248C138000E05687 /* RealmObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD068AC248C138000E05687 /* RealmObjects.swift */; };
+		4BD068AE248C13B300E05687 /* RealmObjects.Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71A46A248C09C7009B3918 /* RealmObjects.Session.swift */; };
 		4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD260A4245C7F680052B4AC /* Derived+Assign.swift */; };
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
 		4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD79C0324477F430073A48B /* VergeConcurrency.swift */; };
@@ -671,6 +674,8 @@
 		4B6B77AA243FA3EB00E0C0EA /* _StateTypeContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = _StateTypeContainer.swift; sourceTree = "<group>"; };
 		4B6BF62923AD7B55001E5361 /* CollectionPerformance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionPerformance.swift; sourceTree = "<group>"; };
 		4B6E360F23A7ED1900EB490C /* IndexType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexType.swift; sourceTree = "<group>"; };
+		4B71A468248C089C009B3918 /* Realm+Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Util.swift"; sourceTree = "<group>"; };
+		4B71A46A248C09C7009B3918 /* RealmObjects.Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObjects.Session.swift; sourceTree = "<group>"; };
 		4B71CEED23B14394004520CE /* ActivityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTests.swift; sourceTree = "<group>"; };
 		4B73F08824041811006910E6 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		4B786320233912AB009B9C1B /* VergeStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -775,6 +780,7 @@
 		4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Comparer+ORM.swift"; sourceTree = "<group>"; };
 		4BCE3038246AAD6800D35557 /* Scan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scan.swift; sourceTree = "<group>"; };
 		4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTrace.swift; sourceTree = "<group>"; };
+		4BD068AC248C138000E05687 /* RealmObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObjects.swift; sourceTree = "<group>"; };
 		4BD260A4245C7F680052B4AC /* Derived+Assign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Derived+Assign.swift"; sourceTree = "<group>"; };
 		4BD379EC23BD94D800CE474C /* AnyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEntity.swift; sourceTree = "<group>"; };
 		4BD79C0324477F430073A48B /* VergeConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeConcurrency.swift; sourceTree = "<group>"; };
@@ -1433,6 +1439,7 @@
 			children = (
 				4BB64CBE248380EF0017699A /* SpotifyService.h */,
 				4BB64CBF248380EF0017699A /* Info.plist */,
+				4B71A468248C089C009B3918 /* Realm+Util.swift */,
 				4BB4F80023D32AB70039C897 /* Secret.swift */,
 				4BB64CE12483834B0017699A /* BackendStore.swift */,
 				4B2AE0D12485909E0086A42C /* BackendState.swift */,
@@ -1447,6 +1454,8 @@
 				4B2AE0C9248573A30086A42C /* Logger.swift */,
 				4B2AE0D72485913B0086A42C /* MoyaProvider+Combin.swift */,
 				4B2AE0D92485915D0086A42C /* Publisher+.swift */,
+				4BD068AC248C138000E05687 /* RealmObjects.swift */,
+				4B71A46A248C09C7009B3918 /* RealmObjects.Session.swift */,
 			);
 			path = SpotifyService;
 			sourceTree = "<group>";
@@ -2661,6 +2670,7 @@
 				4BB64CDE248381EC0017699A /* Auth.swift in Sources */,
 				4BDCA8F724868BB50024126A /* Entities.User.swift in Sources */,
 				4B2AE0B824856EB10086A42C /* Entities.Me.swift in Sources */,
+				4BD068AD248C138000E05687 /* RealmObjects.swift in Sources */,
 				4BB64CDD248381EC0017699A /* LoggedOutService.swift in Sources */,
 				4B2AE0D4248590C80086A42C /* LoggedInBackendStack.swift in Sources */,
 				4BB64CE22483834B0017699A /* BackendStore.swift in Sources */,
@@ -2668,6 +2678,7 @@
 				4B2AE0CE248590620086A42C /* LoggedInBackendState.swift in Sources */,
 				4B2AE0D6248590E60086A42C /* LoggedOutBackendStack.swift in Sources */,
 				4BB64CDB248381EC0017699A /* StackContainer.swift in Sources */,
+				4BD068AE248C13B300E05687 /* RealmObjects.Session.swift in Sources */,
 				4B2AE0D22485909E0086A42C /* BackendState.swift in Sources */,
 				4B5140062483E5D800463CE6 /* Entities.Artist.swift in Sources */,
 				4B2AE0D02485907C0086A42C /* LoggedOutBackendState.swift in Sources */,
@@ -2678,6 +2689,7 @@
 				4B5140002483E3FE00463CE6 /* Entities.swift in Sources */,
 				4B2AE0D82485913B0086A42C /* MoyaProvider+Combin.swift in Sources */,
 				4B2AE0CA248573A30086A42C /* Logger.swift in Sources */,
+				4B71A469248C089C009B3918 /* Realm+Util.swift in Sources */,
 				4BB64CDF248381EC0017699A /* APIRequests.swift in Sources */,
 				4BB64CDC248381EC0017699A /* LoggedInService.swift in Sources */,
 			);

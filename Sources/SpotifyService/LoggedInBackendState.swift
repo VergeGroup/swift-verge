@@ -28,15 +28,10 @@ public struct Database: DatabaseType, Equatable {
 
 public struct LoggedInBackendState: ExtendedStateType, Equatable, DatabaseEmbedding {
 
-  public let auth: AuthResponse
   public var db: Database = .init()
 
   public static var getterToDatabase: (LoggedInBackendState) -> Database {
     \.db
-  }
-
-  init(auth: AuthResponse) {
-    self.auth = auth
   }
 
   public struct Extended: ExtendedType {

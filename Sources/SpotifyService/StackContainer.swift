@@ -21,21 +21,58 @@ public final class BackendStack: ObservableObject {
   
   private var subscriptions = Set<AnyCancellable>()
   public let store: BackendStore
+  public let externalDataSource: ExternalDataSource
+  public var bag = Set<VergeAnyCancellable>()
   
-  public init(auth: AuthResponse?) {
+  public init(identifier: String) {
 
-    self.store = .init(initialState: .init(), logger: DefaultStoreLogger.shared)
-    
-    switch auth {
+    self.externalDataSource = .init(identifier: identifier)
+
+    let _store = BackendStore.init(initialState: .init(), logger: DefaultStoreLogger.shared)
+    self.store = _store
+
+    let session = try! externalDataSource
+      .makeUserDataRealm()
+      .object(ofType: RealmObjects.Session.self)
+
+    syncSession: do {
+
+      _store.commit {
+        $0.session = session.freeze()
+      }
+
+      let token = session.observe { (change: ObjectChange<RealmObjects.Session>) in
+        switch change {
+        case .error(let error):
+          Log.error(error)
+        case .change(let object, _):
+          _store.commit {
+            $0.session = object.freeze()
+          }
+        case .deleted:
+          break
+        }
+      }
+
+      VergeAnyCancellable {
+        token.invalidate()
+      }
+      .store(in: &bag)
+
+    }
+
+    let token = session.authAccessToken
+
+    switch token {
     case .none:
       self.stack = .loggedOut(.init(store: store))
-    case .some(let auth):
+    case .some:
       store.commit {
-        $0.loggedIn = .init(auth: auth)
+        $0.loggedIn = .init()
       }
       self.stack = .loggedIn(.init(store: store))
     }
-    
+
   }
   
   public func receiveAuthCode(_ code: Auth.AuthCode) -> Future<Void, Error> {
@@ -50,8 +87,24 @@ public final class BackendStack: ObservableObject {
 
     return loggedOutStack.service.fetchToken(code: code)
       .map { auth -> LoggedInStack in
+
+        let realmWrapper = self.externalDataSource.makeUserDataRealm()
+
+        do {
+          try realmWrapper.write { (transaction) in
+            let session = try transaction.object(ofType: RealmObjects.Session.self)
+            session.authAccessToken = auth.accessToken
+            session.authExpiresIn.value = auth.expiresIn
+            session.authScope = auth.scope
+            session.authRefreshToken = auth.refreshToken
+            session.authTokenType = auth.tokenType
+          }
+        } catch {
+          Log.error("\(error)")
+        }
+
         self.store.commit {
-          $0.loggedIn = .init(auth: auth)
+          $0.loggedIn = .init()
         }
         let loggedInStack = LoggedInStack(store: self.store)
         return loggedInStack
@@ -76,3 +129,115 @@ public final class BackendStack: ObservableObject {
   }
 }
 
+import RealmSwift
+
+public final class ExternalDataSource {
+
+  private static let realmSchemaVersion: UInt64 = {
+
+    let versions: [UInt64] = [
+      101,
+    ]
+
+    return versions.last!
+  }()
+
+  private static var rootDirectoryPath: String {
+    let root = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
+    return (root as NSString).appendingPathComponent(Bundle.main.bundleIdentifier!)
+  }
+
+  private let workingDirectory: String
+
+  init(identifier: String) {
+
+    self.workingDirectory = Self.rootDirectoryPath + "/\(identifier)"
+
+    makeDirectory: do {
+      try FileManager.default.createDirectory(atPath: workingDirectory, withIntermediateDirectories: true, attributes: [:])
+    } catch {
+      fatalError("Failed to create directory Path: \(workingDirectory)")
+    }
+
+    let wrapper = makeUserDataRealm()
+
+    try! wrapper.write { (realm) in
+      let session = try realm.object(ofType: RealmObjects.Session.self)
+      print(session)
+    }
+
+  }
+
+  func makeUserDataRealm() -> RealmWrapper {
+
+    let configuration = RealmSwift.Realm.Configuration(
+      fileURL: URL(fileURLWithPath: workingDirectory + "/user_data.realm"),
+      inMemoryIdentifier: nil,
+      encryptionKey: nil,
+      readOnly: false,
+      schemaVersion: Self.realmSchemaVersion,
+      migrationBlock: { (migration, oldSchemaVersion) -> Void in
+
+    },
+      objectTypes: [
+        RealmObjects.Session.self
+    ])
+
+    let wrapper = try! RealmWrapper(configuration: configuration)
+    return wrapper
+  }
+}
+
+public protocol SingleRecordType where Self: RealmSwift.Object  {
+  var uniqueID: String { get }
+  static var uniqueIDValue: String { get }
+}
+
+extension SingleRecordType {
+  public static var uniqueIDValue: String {
+    return String(reflecting: Self.self)
+  }
+}
+
+enum SingleRecordError : Error {
+  case failedToDetach
+}
+
+extension RealmWrapper {
+
+  func object<SingleRecord: SingleRecordType>(ofType type: SingleRecord.Type) throws -> SingleRecord {
+    if let object = realm.object(ofType: SingleRecord.self, forPrimaryKey: SingleRecord.uniqueIDValue) {
+      return object
+    }
+    return try write {
+      try $0.object(ofType: SingleRecord.self)
+    }
+  }
+
+}
+
+extension RealmWrapperTransaction {
+
+  func object<SingleRecord: SingleRecordType>(ofType type: SingleRecord.Type) throws -> SingleRecord {
+    try SingleRecord.fetchOrCreate(on: self.realm)
+  }
+
+}
+
+extension SingleRecordType {
+
+  fileprivate static func fetchOrCreate(on realm: Realm) throws -> Self {
+
+    func create(_ realm: Realm) throws -> Self {
+      let object = self.init()
+      realm.add(object, update: .error)
+      return object
+    }
+
+    if let object = realm.object(ofType: self, forPrimaryKey: Self.uniqueIDValue) {
+      return object
+    }
+    return try create(realm)
+  }
+
+}

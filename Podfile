@@ -19,6 +19,7 @@ target 'SpotifyService' do
   pod 'JAYSON'
   pod 'Moya'
   pod 'Bulk/BulkLogger'
+  pod 'RealmSwift'
 
   target 'SpotifyDemo' do
     pod 'Reveal-SDK'

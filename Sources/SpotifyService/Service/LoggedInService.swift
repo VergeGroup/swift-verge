@@ -13,7 +13,7 @@ public final class LoggedInService: BackendStore.ScopedDispatcher<LoggedInBacken
   
   init(targetStore: WrappedStore) {
     // TODO: Refresh-token
-    let token = targetStore.state.loggedIn!.auth.accessToken
+    let token = targetStore.state.session!.authAccessToken!
     let authPlugin = AccessTokenPlugin { _ in token }
     self.apiProvider = .init(plugins: [authPlugin])
     super.init(targetStore: targetStore, scope: \.loggedIn!)

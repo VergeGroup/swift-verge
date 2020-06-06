@@ -15,7 +15,7 @@ final class Session: ObservableObject {
   
   init() {
     
-    self.stack = .init(auth: nil)
+    self.stack = .init(identifier: "Container.Demo")
     
     stack.$stack.sink { [weak self] _ in
       self?.objectWillChange.send()

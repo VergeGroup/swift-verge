@@ -8,12 +8,18 @@ PODS:
     - Moya/Core (= 14.0.0)
   - Moya/Core (14.0.0):
     - Alamofire (~> 5.0)
+  - Realm (5.0.2):
+    - Realm/Headers (= 5.0.2)
+  - Realm/Headers (5.0.2)
+  - RealmSwift (5.0.2):
+    - Realm (= 5.0.2)
   - Reveal-SDK (26)
 
 DEPENDENCIES:
   - Bulk/BulkLogger
   - JAYSON
   - Moya
+  - RealmSwift
   - Reveal-SDK
 
 SPEC REPOS:
@@ -22,6 +28,8 @@ SPEC REPOS:
     - Bulk
     - JAYSON
     - Moya
+    - Realm
+    - RealmSwift
     - Reveal-SDK
 
 SPEC CHECKSUMS:
@@ -29,8 +37,10 @@ SPEC CHECKSUMS:
   Bulk: b63db26d327f9d6dd57ab09568ad5152f9d6337d
   JAYSON: 4280ff193d900fb11314434affac47673507757e
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
+  Realm: 6b6f096671b64b04d08974177cabb2ff9343d153
+  RealmSwift: a3db6be0488bf3e1d5314c2956cefe98a65cdd01
   Reveal-SDK: 5f94f14aff3d5f2a49f246edcd266fa4472679e9
 
-PODFILE CHECKSUM: 313d11e97f874cdd872f39ff4ff2ccf7850786b8
+PODFILE CHECKSUM: a3c956eee2afed4aad880f4a1c754774ef88d76f
 
 COCOAPODS: 1.9.1
