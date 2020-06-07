@@ -75,10 +75,10 @@ struct AppContainerView: View {
           }
         } else {
           Color(.lightGray)
+            .edgesIgnoringSafeArea(.all)
         }
       }
     }
-    .edgesIgnoringSafeArea(.all)
     .onAppear {
       self.viewModel.prepare()
     }

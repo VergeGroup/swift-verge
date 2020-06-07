@@ -65,6 +65,8 @@ public final class BackendStackManager: ObservableObject {
     setCurrentIdentifier(nil)
 
     current = nil
+
+    makeAndActivate()
   }
 
 }

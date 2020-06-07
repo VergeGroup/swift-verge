@@ -96,20 +96,23 @@ public final class BackendStack: ObservableObject, Equatable {
         let realmWrapper = self.externalDataSource.makeUserDataRealm()
 
         do {
-          try realmWrapper.write { (transaction) in
+          let session = try realmWrapper.write { (transaction) -> RealmObjects.Session in
             let session = try transaction.object(ofType: RealmObjects.Session.self)
             session.update(with: auth)
-            self.store.commit {
-              $0.session = session.freeze()
-            }
+            transaction.realm.add(session)
+            return session
+          }
+
+          self.store.commit {
+            $0.session = session.freeze()
+            $0.loggedIn = .init()
           }
         } catch {
+          assertionFailure()
           Log.error("\(error)")
         }
 
-        self.store.commit {
-          $0.loggedIn = .init()
-        }
+
         let loggedInStack = LoggedInStack(store: self.store)
         return loggedInStack
     }
