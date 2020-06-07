@@ -70,7 +70,7 @@ struct AppContainerView: View {
             Button(action: {
               self.viewModel.runCurrent()
             }, label: {
-              Text("Start \("hoge")")
+              Text("Start")
             })
           }
         } else {
