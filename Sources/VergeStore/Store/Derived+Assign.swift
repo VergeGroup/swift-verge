@@ -266,4 +266,34 @@ extension StoreType {
   ) -> (Changes<Value>) -> Void {
     assignee(keyPath, dropsOutput: { !$0.hasChanges })
   }
+
 }
+
+#if canImport(Combine)
+
+import Combine
+
+@available(iOS 13.0, macOS 10.15, *)
+extension Publisher {
+
+  /**
+   Assigns a Publishers's value to a property of a store.
+
+   - Attention: Store won't be retained.
+   - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
+   - Author: Verge
+   */
+  public func assign(
+    to binder: @escaping (Output) -> Void
+  ) -> VergeAnyCancellable {
+    let cancellable = sink(receiveCompletion: { _ in }) { (value) in
+      binder(value)
+    }
+    return .init {
+      cancellable.cancel()
+    }
+  }
+
+}
+
+#endif

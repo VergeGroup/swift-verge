@@ -7,7 +7,7 @@ import SpotifyService
 
 struct SessionRootView: View {
   
-  @EnvironmentObject var session: Session
+  @ObservedObject var session: Session
   
   private var loggedInStack: LoggedInStack? {
     switch session.stack.stack {

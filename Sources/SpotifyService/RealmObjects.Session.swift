@@ -27,6 +27,14 @@ extension RealmObjects {
     @objc dynamic
     var authScope: String?
 
+    func update(with auth: AuthResponse) {
+      authAccessToken = auth.accessToken
+      authExpiresIn.value = auth.expiresIn
+      authScope = auth.scope
+      authRefreshToken = auth.refreshToken
+      authTokenType = auth.tokenType
+    }
+
   }
 
 }

@@ -10,8 +10,12 @@ public enum BackendError: Swift.Error {
   case unknown
 }
 
-public final class BackendStack: ObservableObject {
+public final class BackendStack: ObservableObject, Equatable {
   
+  public static func == (lhs: BackendStack, rhs: BackendStack) -> Bool {
+    lhs === rhs
+  }
+
   public enum Stack {
     case loggedIn(LoggedInStack)
     case loggedOut(LoggedOutStack)
@@ -74,7 +78,8 @@ public final class BackendStack: ObservableObject {
     }
 
   }
-  
+
+  @discardableResult
   public func receiveAuthCode(_ code: Auth.AuthCode) -> Future<Void, Error> {
     
     guard case .loggedOut(let loggedOutStack) = stack else {
@@ -93,11 +98,10 @@ public final class BackendStack: ObservableObject {
         do {
           try realmWrapper.write { (transaction) in
             let session = try transaction.object(ofType: RealmObjects.Session.self)
-            session.authAccessToken = auth.accessToken
-            session.authExpiresIn.value = auth.expiresIn
-            session.authScope = auth.scope
-            session.authRefreshToken = auth.refreshToken
-            session.authTokenType = auth.tokenType
+            session.update(with: auth)
+            self.store.commit {
+              $0.session = session.freeze()
+            }
           }
         } catch {
           Log.error("\(error)")

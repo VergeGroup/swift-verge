@@ -13,15 +13,19 @@ final class Session: ObservableObject {
   
   private var subscriptions = Set<AnyCancellable>()
   
-  init() {
+  init(stack: BackendStack) {
     
-    self.stack = .init(identifier: "Container.Demo")
+    self.stack = stack
     
     stack.$stack.sink { [weak self] _ in
       self?.objectWillChange.send()
     }
     .store(in: &subscriptions)
         
+  }
+
+  deinit {
+    Log.debug("deinit \(self)")
   }
   
   func receiveAuthCode(_ code: Auth.AuthCode) {

@@ -1,6 +1,8 @@
 
 import Foundation
 import VergeStore
+import Combine
+import CombineExt
 
 public final class LoggedInStack {
 
@@ -8,9 +10,13 @@ public final class LoggedInStack {
 
   public let derivedState: Derived<LoggedInBackendState>
 
+  private let store: BackendStore
+
   init(store: BackendStore) {
 
     self.service = .init(targetStore: store)
+
+    self.store = store
 
     self.derivedState = store.derived(
       MemoizeMap
@@ -21,4 +27,13 @@ public final class LoggedInStack {
     )
 
   }
+
+  public func logout() -> Future<Void, Error> {
+    Future { promise in
+      // do something async operations
+      BackendStackManager.shared.deactivate(stack: self)
+      promise(.success(()))
+    }
+  }
+
 }

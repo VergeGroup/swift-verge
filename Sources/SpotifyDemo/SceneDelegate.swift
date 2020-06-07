@@ -14,7 +14,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         assertionFailure("Auth Error")
         return
       }
-      AppContainer.currentActiveSession?.receiveAuthCode(code)
+      if let current = BackendStackManager.shared.current {
+        current.receiveAuthCode(code)
+      } else {
+        assertionFailure("No current active.")
+      }
     }
   }
 
@@ -25,11 +29,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     // Create the SwiftUI view that provides the window contents.
     
-    let session = Session()
-    AppContainer.currentActiveSession = session
-    
-    let contentView = SessionRootView()
-      .environmentObject(session)
+    let viewModel = AppContainerViewModel()
+    let contentView = AppContainerView(viewModel: viewModel)
 
     // Use a UIHostingController as window root view controller.
     if let windowScene = scene as? UIWindowScene {
