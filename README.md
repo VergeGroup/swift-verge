@@ -1297,8 +1297,11 @@ appState.$yourState.counter.value
 
 ## assign - assignee
 
-In specific cases
+In specific cases, it needs to projects value from others into the Store.
+- Having multiple stores and needs to be integrated with each other.
+- Having other reactive streams and needs to be stored the value in the Store
 
+In th
 
 Assigns the value from other Store's state to Store's state.
 
@@ -1949,11 +1952,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjQyMTc4OTI3LDE2OTU1NzUwMjMsMTI3MT
-A3MjA0NiwtMzQxNDI0MzgyLDk3MTY3NDU5Nyw4NDczNDc3NzQs
-MTI4MTQ0ODQ5OCwtMTA3MTU1MTU0NCwtMTg5NTQ4MDcwMCwyMT
-A0NTExNzk5LC03OTI3NDY3MzEsLTg5OTc4NTk4NywtMTI2NDI1
-MDUzMywxNTQ0NTI1MjIwLDQ4MzYwODUzNywyMDY2ODM0NDY3LD
-U3MDg3OTQxNCw3MTg0MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2
-NjQwXX0=
+eyJoaXN0b3J5IjpbMTIxNDg4MjI2OSwyNDIxNzg5MjcsMTY5NT
+U3NTAyMywxMjcxMDcyMDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3
+LDg0NzM0Nzc3NCwxMjgxNDQ4NDk4LC0xMDcxNTUxNTQ0LC0xOD
+k1NDgwNzAwLDIxMDQ1MTE3OTksLTc5Mjc0NjczMSwtODk5Nzg1
+OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4NTM3LD
+IwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQyMjUzNiwyMDE1ODkz
+MTExXX0=
 -->
