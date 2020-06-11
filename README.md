@@ -15,6 +15,7 @@
 
 <p align="center">
 <img width="480px" src="https://user-images.githubusercontent.com/1888355/81477721-268e7580-9254-11ea-94fa-1c2135cdc16f.png"/>
+<img width="419" src="https://user-images.githubusercontent.com/1888355/84425708-fbd17b80-ac5c-11ea-8e69-8e90fecbaf92.png" />
 </p>
 
 ## Overview - focusing on faster performance
@@ -1914,11 +1915,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI3MTA3MjA0NiwtMzQxNDI0MzgyLDk3MT
-Y3NDU5Nyw4NDczNDc3NzQsMTI4MTQ0ODQ5OCwtMTA3MTU1MTU0
-NCwtMTg5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3NDY3MzEsLT
-g5OTc4NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1MjIwLDQ4MzYw
-ODUzNywyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0MjI1MzYsMj
-AxNTg5MzExMSwtNzQwNjE2NjQwLC0zOTc0MjE1NCwtNzE4NTYx
-MDZdfQ==
+eyJoaXN0b3J5IjpbMTY5NTU3NTAyMywxMjcxMDcyMDQ2LC0zND
+E0MjQzODIsOTcxNjc0NTk3LDg0NzM0Nzc3NCwxMjgxNDQ4NDk4
+LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3OTksLT
+c5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLDE1NDQ1
+MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5NDE0LD
+cxODQyMjUzNiwyMDE1ODkzMTExLC03NDA2MTY2NDAsLTM5NzQy
+MTU0XX0=
 -->
