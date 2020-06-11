@@ -1308,6 +1308,16 @@ store1
   .assign(to: store2.assignee(\.count))
 ```
 
+Assigns the value to 
+
+```swift
+let publisher: Combine.Publisher<Int>
+let store2 = Store()
+
+publisher  
+  .assign(to: store2.assignee(\.count))
+```
+
 </details>
 
 <details><summary>🎛 Optimization Tips</summary>
@@ -1936,11 +1946,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjc1ODU4NjgwLDE2OTU1NzUwMjMsMTI3MT
-A3MjA0NiwtMzQxNDI0MzgyLDk3MTY3NDU5Nyw4NDczNDc3NzQs
-MTI4MTQ0ODQ5OCwtMTA3MTU1MTU0NCwtMTg5NTQ4MDcwMCwyMT
-A0NTExNzk5LC03OTI3NDY3MzEsLTg5OTc4NTk4NywtMTI2NDI1
-MDUzMywxNTQ0NTI1MjIwLDQ4MzYwODUzNywyMDY2ODM0NDY3LD
-U3MDg3OTQxNCw3MTg0MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2
-NjQwXX0=
+eyJoaXN0b3J5IjpbLTcxOTgyNDY5MywxNjk1NTc1MDIzLDEyNz
+EwNzIwNDYsLTM0MTQyNDM4Miw5NzE2NzQ1OTcsODQ3MzQ3Nzc0
+LDEyODE0NDg0OTgsLTEwNzE1NTE1NDQsLTE4OTU0ODA3MDAsMj
+EwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3ODU5ODcsLTEyNjQy
+NTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1MzcsMjA2NjgzNDQ2Ny
+w1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMTU4OTMxMTEsLTc0MDYx
+NjY0MF19
 -->
