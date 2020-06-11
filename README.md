@@ -1301,7 +1301,7 @@ In specific cases, it needs to projects value from others into the Store.
 - Having multiple stores and needs to be integrated with each other.
 - Having other reactive streams and needs to be stored the value in the Store
 
-In th
+In these cases, `assign` and `assignee` operators help.
 
 Assigns the value from other Store's state to Store's state.
 
@@ -1952,11 +1952,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTIxNDg4MjI2OSwyNDIxNzg5MjcsMTY5NT
-U3NTAyMywxMjcxMDcyMDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3
-LDg0NzM0Nzc3NCwxMjgxNDQ4NDk4LC0xMDcxNTUxNTQ0LC0xOD
-k1NDgwNzAwLDIxMDQ1MTE3OTksLTc5Mjc0NjczMSwtODk5Nzg1
-OTg3LC0xMjY0MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4NTM3LD
-IwNjY4MzQ0NjcsNTcwODc5NDE0LDcxODQyMjUzNiwyMDE1ODkz
-MTExXX0=
+eyJoaXN0b3J5IjpbNTQ3OTg2ODU0LDI0MjE3ODkyNywxNjk1NT
+c1MDIzLDEyNzEwNzIwNDYsLTM0MTQyNDM4Miw5NzE2NzQ1OTcs
+ODQ3MzQ3Nzc0LDEyODE0NDg0OTgsLTEwNzE1NTE1NDQsLTE4OT
+U0ODA3MDAsMjEwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3ODU5
+ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1MzcsMj
+A2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMTU4OTMx
+MTFdfQ==
 -->
