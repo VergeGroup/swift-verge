@@ -1266,15 +1266,15 @@ public protocol StoreLogger {
 
 ## Fragment\<State>
 
-## Fragment helps compare if state was updated without Equatable
+### Fragment helps compare if state was updated without Equatable
 
 ‌In a single state tree, comparing for reducing the number of updates would be most important for keep performance. However, implementing Equatable is not easy basically. Instead, adding a like flag that indicates updated itself, it would be easy
 
-## Actually, we need to get to flag that means different, it no need to be equal
+### Actually, we need to get to flag that means different, it no need to be equal
 
 Actually, we need to get to flag that means **different**, it no need to be **equal**.
 
-## Fragment does embed state with flag‌
+### Fragment does embed state with flag‌
 
 Now we can use Fragment struct that is a container for wrapping inside state up. With dynamicMemberLookup, we can access the properties without new property. Fragment has `UpdatedMarker`, we can compare if the state was updated with this.
 
@@ -1923,11 +1923,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0ODExMTk0MjMsMTY5NTU3NTAyMywxMj
-cxMDcyMDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3LDg0NzM0Nzc3
-NCwxMjgxNDQ4NDk4LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLD
-IxMDQ1MTE3OTksLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0
-MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0Nj
-csNTcwODc5NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03NDA2
-MTY2NDBdfQ==
+eyJoaXN0b3J5IjpbMTY1MDM1OTMzMCwxNjk1NTc1MDIzLDEyNz
+EwNzIwNDYsLTM0MTQyNDM4Miw5NzE2NzQ1OTcsODQ3MzQ3Nzc0
+LDEyODE0NDg0OTgsLTEwNzE1NTE1NDQsLTE4OTU0ODA3MDAsMj
+EwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3ODU5ODcsLTEyNjQy
+NTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1MzcsMjA2NjgzNDQ2Ny
+w1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMTU4OTMxMTEsLTc0MDYx
+NjY0MF19
 -->
