@@ -1876,7 +1876,7 @@ It's better to use the state management that fits SwiftUI from now. It's not onl
 # Questions?
 
 We accept your questions  about usage of Verge and something else in GitHub Issues.
-
+日本語での質問も大丈夫です
 
 # Installation
 
@@ -1923,7 +1923,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5MDczODA5NDgsMTY5NTU3NTAyMywxMj
+eyJoaXN0b3J5IjpbLTE0ODExMTk0MjMsMTY5NTU3NTAyMywxMj
 cxMDcyMDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3LDg0NzM0Nzc3
 NCwxMjgxNDQ4NDk4LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLD
 IxMDQ1MTE3OTksLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0
