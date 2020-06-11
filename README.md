@@ -1875,21 +1875,21 @@ It's better to use the state management that fits SwiftUI from now. It's not onl
 
 # Installation
 
-With Cocoapods,
+## CocoaPods
 
-VergeStore
+**VergeStore**
 
 ```ruby
 pod 'Verge/Store'
 ```
 
-VergeORM
+**VergeORM**
 
 ```ruby
 pod 'Verge/ORM'
 ```
 
-VergeRx
+**VergeRx**
 
 ```ruby
 pod 'Verge/Rx'
@@ -1904,6 +1904,10 @@ To use Verge in your code, define import decralation following.
 import Verge
 ```
 
+## SwiftPM
+
+Verge supports S
+
 # Author
 
 [🇯🇵Muukii (Hiroshi Kimura)](https://github.com/muukii)
@@ -1914,11 +1918,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjA1ODI1MzIzMSwxNjk1NTc1MDIzLDEyNz
-EwNzIwNDYsLTM0MTQyNDM4Miw5NzE2NzQ1OTcsODQ3MzQ3Nzc0
-LDEyODE0NDg0OTgsLTEwNzE1NTE1NDQsLTE4OTU0ODA3MDAsMj
-EwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3ODU5ODcsLTEyNjQy
-NTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1MzcsMjA2NjgzNDQ2Ny
-w1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMTU4OTMxMTEsLTc0MDYx
-NjY0MF19
+eyJoaXN0b3J5IjpbLTE0MTEzNDg0NDMsMTY5NTU3NTAyMywxMj
+cxMDcyMDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3LDg0NzM0Nzc3
+NCwxMjgxNDQ4NDk4LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLD
+IxMDQ1MTE3OTksLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0
+MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0Nj
+csNTcwODc5NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03NDA2
+MTY2NDBdfQ==
 -->
