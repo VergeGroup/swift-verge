@@ -1873,6 +1873,11 @@ However, it would change.
 
 It's better to use the state management that fits SwiftUI from now. It's not only for that, current UIKit based applications can get more productivity as well.
 
+# Questions?
+
+We accept your questions  about usage of Verge and something else in GitHub Issues.
+
+
 # Installation
 
 ## CocoaPods
@@ -1918,11 +1923,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMzE2OTc0OTg1LDE2OTU1NzUwMjMsMTI3MT
-A3MjA0NiwtMzQxNDI0MzgyLDk3MTY3NDU5Nyw4NDczNDc3NzQs
-MTI4MTQ0ODQ5OCwtMTA3MTU1MTU0NCwtMTg5NTQ4MDcwMCwyMT
-A0NTExNzk5LC03OTI3NDY3MzEsLTg5OTc4NTk4NywtMTI2NDI1
-MDUzMywxNTQ0NTI1MjIwLDQ4MzYwODUzNywyMDY2ODM0NDY3LD
-U3MDg3OTQxNCw3MTg0MjI1MzYsMjAxNTg5MzExMSwtNzQwNjE2
-NjQwXX0=
+eyJoaXN0b3J5IjpbLTE5MDczODA5NDgsMTY5NTU3NTAyMywxMj
+cxMDcyMDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3LDg0NzM0Nzc3
+NCwxMjgxNDQ4NDk4LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLD
+IxMDQ1MTE3OTksLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0
+MjUwNTMzLDE1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0Nj
+csNTcwODc5NDE0LDcxODQyMjUzNiwyMDE1ODkzMTExLC03NDA2
+MTY2NDBdfQ==
 -->
