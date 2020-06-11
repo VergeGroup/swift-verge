@@ -19,6 +19,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+/**
+ Dispatcher allows us to update the state of the Store from away the store and to manage dependencies to create Mutation.
+ */
 open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
       
   public let scope: WritableKeyPath<State, Scope>
@@ -56,6 +59,9 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
     
 }
 
+/**
+ Dispatcher allows us to update the state of the Store from away the store and to manage dependencies to create Mutation.
+ */
 open class DispatcherBase<State, Activity>: ScopedDispatcherBase<State, Activity, State> {
       
   public init(

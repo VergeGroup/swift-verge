@@ -32,7 +32,7 @@ import Foundation
    // Current restriction, you need put the typealias as Scope points to State.
    typealias Scope = State
    
-   struct State: StateType {
+   struct State {
      ...
    }
    

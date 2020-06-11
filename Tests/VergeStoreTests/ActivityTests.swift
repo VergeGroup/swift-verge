@@ -18,7 +18,7 @@ import Combine
 @available(iOS 13, macOS 10.15, *)
 class ActivityTests: XCTestCase {
   
-  struct State: StateType {
+  struct State {
     
   }
   
