@@ -1905,6 +1905,7 @@ It's better to use the state management that fits SwiftUI from now. It's not onl
 # Questions?
 
 We accept your questions  about usage of Verge and something else in GitHub Issues.
+
 日本語での質問も大丈夫です
 
 # Installation
@@ -1944,7 +1945,7 @@ Verge supports also SwiftPM.
 
 # Author
 
-[🇯🇵Muukii (Hiroshi Kimura)](https://github.com/muukii)
+[🇯🇵 Muukii (Hiroshi Kimura)](https://github.com/muukii)
 
 # License
 
@@ -1952,11 +1953,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTQ3OTg2ODU0LDI0MjE3ODkyNywxNjk1NT
-c1MDIzLDEyNzEwNzIwNDYsLTM0MTQyNDM4Miw5NzE2NzQ1OTcs
-ODQ3MzQ3Nzc0LDEyODE0NDg0OTgsLTEwNzE1NTE1NDQsLTE4OT
-U0ODA3MDAsMjEwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3ODU5
-ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1MzcsMj
-A2NjgzNDQ2Nyw1NzA4Nzk0MTQsNzE4NDIyNTM2LDIwMTU4OTMx
-MTFdfQ==
+eyJoaXN0b3J5IjpbMTk4NDM3MTkwNCw1NDc5ODY4NTQsMjQyMT
+c4OTI3LDE2OTU1NzUwMjMsMTI3MTA3MjA0NiwtMzQxNDI0Mzgy
+LDk3MTY3NDU5Nyw4NDczNDc3NzQsMTI4MTQ0ODQ5OCwtMTA3MT
+U1MTU0NCwtMTg5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3NDY3
+MzEsLTg5OTc4NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1MjIwLD
+Q4MzYwODUzNywyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0MjI1
+MzZdfQ==
 -->
