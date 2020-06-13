@@ -15,7 +15,7 @@ import Combine
 @available(iOS 13.0, *)
 final class VergeStoreTests: XCTestCase {
       
-  struct State {
+  struct State: StateType {
     
     struct TreeA {
       
