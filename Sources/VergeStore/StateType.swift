@@ -21,8 +21,8 @@
 
 import Foundation
 
-/// A protocol describes the type is a state of the store.
-/// Store requires State object that has StateType.
+/// A protocol provides stuff to help to mutate itself.
+/// Not required to use with Store's state
 ///
 /// You may use ExtendedStateType to define computed property with caching to be performant.
 public protocol StateType {
