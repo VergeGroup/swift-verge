@@ -5,7 +5,7 @@
 <h1 align="center">Verge</h1>
 <p align="center">
 <sub>A faster and scalable state management library for iOS App - SwiftUI / UIKit</sub><br/>
-<sub>Mainly it inspired by <b>Vuex</b></sub>
+<sub>Mainly, it inspired by <a hrfef="https://vuex.vuejs.org/"><b>Vuex</b></a></sub>
 </p>
 
 <p align="center">
@@ -1954,7 +1954,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTg2MTk0MTczMSwxOTg0MzcxOTA0LDU0Nz
+eyJoaXN0b3J5IjpbLTM0NDAwNzQzNywxOTg0MzcxOTA0LDU0Nz
 k4Njg1NCwyNDIxNzg5MjcsMTY5NTU3NTAyMywxMjcxMDcyMDQ2
 LC0zNDE0MjQzODIsOTcxNjc0NTk3LDg0NzM0Nzc3NCwxMjgxND
 Q4NDk4LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3
