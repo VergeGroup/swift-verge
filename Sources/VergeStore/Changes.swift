@@ -97,12 +97,23 @@ public final class Changes<Value>: ChangesType, Equatable {
   
   @available(*, deprecated, renamed: "primitive")
   public var current: Value { primitive }
-  
+
+  /// Returns a previous value as primitive
+  /// We can't access `.computed` from this.
+  ///
+  /// - Important: a returns value won't change against pointer-personality
   public var previousPrimitive: Value? { _read { yield previous?.primitive } }
+
+  /// Returns a value as primitive
+  /// We can't access `.computed` from this.
+  ///
+  /// - Important: a returns value won't change against pointer-personality
   public var primitive: Value { _read { yield innerCurrent.value } }
-  
-  
-  
+
+  /// Returns a value as primitive
+  /// We can't access `.computed` from this.
+  ///
+  /// - Important: a returns value won't change against pointer-personality
   public var root: Value { _read { yield innerCurrent.value } }
   
   // MARK: - Initializers
@@ -149,7 +160,8 @@ public final class Changes<Value>: ChangesType, Equatable {
     self
   }
   
-  /// To create initial changes object
+  /// Returns a Changes object that dropped previous value.
+  /// It returns always true in `ifChanged`
   public func droppedPrevious() -> Changes<Value> {
     cloneWithDropsPrevious()
   }
