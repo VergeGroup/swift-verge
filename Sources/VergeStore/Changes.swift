@@ -73,10 +73,17 @@ public protocol ChangesType: AnyObject {
    }
  }
  ```
+
+ - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
+ This means Changes will return equals if different pointer but the value is the same.
  */
 @dynamicMemberLookup
-public final class Changes<Value>: ChangesType {
-  
+public final class Changes<Value>: ChangesType, Equatable {
+
+  public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
+    lhs === rhs
+  }
+
   // MARK: - Stored Properties
 
   let previous: Changes<Value>?
@@ -90,12 +97,23 @@ public final class Changes<Value>: ChangesType {
   
   @available(*, deprecated, renamed: "primitive")
   public var current: Value { primitive }
-  
+
+  /// Returns a previous value as primitive
+  /// We can't access `.computed` from this.
+  ///
+  /// - Important: a returns value won't change against pointer-personality
   public var previousPrimitive: Value? { _read { yield previous?.primitive } }
+
+  /// Returns a value as primitive
+  /// We can't access `.computed` from this.
+  ///
+  /// - Important: a returns value won't change against pointer-personality
   public var primitive: Value { _read { yield innerCurrent.value } }
-  
-  
-  
+
+  /// Returns a value as primitive
+  /// We can't access `.computed` from this.
+  ///
+  /// - Important: a returns value won't change against pointer-personality
   public var root: Value { _read { yield innerCurrent.value } }
   
   // MARK: - Initializers
@@ -142,7 +160,8 @@ public final class Changes<Value>: ChangesType {
     self
   }
   
-  /// To create initial changes object
+  /// Returns a Changes object that dropped previous value.
+  /// It returns always true in `ifChanged`
   public func droppedPrevious() -> Changes<Value> {
     cloneWithDropsPrevious()
   }
