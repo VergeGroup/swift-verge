@@ -73,10 +73,17 @@ public protocol ChangesType: AnyObject {
    }
  }
  ```
+
+ - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
+ This means Changes will return equals if different pointer but the value is the same.
  */
 @dynamicMemberLookup
-public final class Changes<Value>: ChangesType {
-  
+public final class Changes<Value>: ChangesType, Equatable {
+
+  public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
+    lhs === rhs
+  }
+
   // MARK: - Stored Properties
 
   let previous: Changes<Value>?
