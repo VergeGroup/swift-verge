@@ -4,8 +4,10 @@
 
 <h1 align="center">Verge</h1>
 <p align="center">
-<sub>A faster and scalable state management library for iOS App - SwiftUI / UIKit</sub><br/>
+<sub>A faster and scalable flux library for iOS App - SwiftUI / UIKit</sub><br/>
 <sub>Mainly, it inspired by <a hrfef="https://vuex.vuejs.org/"><b>Vuex</b></a></sub>
+<br/>
+<sub>Used in production at <a hrfef="https://eure.jp/"><b>Eureka, Inc.</b></a></sub>
 </p>
 
 <p align="center">
@@ -1954,11 +1956,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM0NDAwNzQzNywxOTg0MzcxOTA0LDU0Nz
-k4Njg1NCwyNDIxNzg5MjcsMTY5NTU3NTAyMywxMjcxMDcyMDQ2
-LC0zNDE0MjQzODIsOTcxNjc0NTk3LDg0NzM0Nzc3NCwxMjgxND
-Q4NDk4LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3
-OTksLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLD
-E1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5
-NDE0XX0=
+eyJoaXN0b3J5IjpbMTMyNTIwMzM5MiwtMzQ0MDA3NDM3LDE5OD
+QzNzE5MDQsNTQ3OTg2ODU0LDI0MjE3ODkyNywxNjk1NTc1MDIz
+LDEyNzEwNzIwNDYsLTM0MTQyNDM4Miw5NzE2NzQ1OTcsODQ3Mz
+Q3Nzc0LDEyODE0NDg0OTgsLTEwNzE1NTE1NDQsLTE4OTU0ODA3
+MDAsMjEwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3ODU5ODcsLT
+EyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1MzcsMjA2Njgz
+NDQ2N119
 -->
