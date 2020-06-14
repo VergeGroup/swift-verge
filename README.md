@@ -4,7 +4,8 @@
 
 <h1 align="center">Verge</h1>
 <p align="center">
-<sub>A faster and scalable state management library for iOS App - SwiftUI / UIKit</sub>
+<sub>A faster and scalable state management library for iOS App - SwiftUI / UIKit</sub><br/>
+<sub>Mainly it inspired by <b>Vuex</b></sub>
 </p>
 
 <p align="center">
@@ -21,7 +22,7 @@
 
 > You can find fully documentation from [Here](#modules-overview)
 
-The concept of Verge Store is inspired by [Redux](https://redux.js.org/), [Vuex](https://vuex.vuejs.org/) and [ReSwift](https://github.com/ReSwift/ReSwift).
+The concept of Verge Store is inspired by [Vuex](https://vuex.vuejs.org/), [Redux](https://redux.js.org/)  and [ReSwift](https://github.com/ReSwift/ReSwift).
 
 Recenlty, [facebookexperimental/Recoil](https://github.com/facebookexperimental/Recoil) has been opened.  
 Atoms and Selectors similar to ours `Derived`.
@@ -1953,11 +1954,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk4NDM3MTkwNCw1NDc5ODY4NTQsMjQyMT
-c4OTI3LDE2OTU1NzUwMjMsMTI3MTA3MjA0NiwtMzQxNDI0Mzgy
-LDk3MTY3NDU5Nyw4NDczNDc3NzQsMTI4MTQ0ODQ5OCwtMTA3MT
-U1MTU0NCwtMTg5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3NDY3
-MzEsLTg5OTc4NTk4NywtMTI2NDI1MDUzMywxNTQ0NTI1MjIwLD
-Q4MzYwODUzNywyMDY2ODM0NDY3LDU3MDg3OTQxNCw3MTg0MjI1
-MzZdfQ==
+eyJoaXN0b3J5IjpbLTg2MTk0MTczMSwxOTg0MzcxOTA0LDU0Nz
+k4Njg1NCwyNDIxNzg5MjcsMTY5NTU3NTAyMywxMjcxMDcyMDQ2
+LC0zNDE0MjQzODIsOTcxNjc0NTk3LDg0NzM0Nzc3NCwxMjgxND
+Q4NDk4LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3
+OTksLTc5Mjc0NjczMSwtODk5Nzg1OTg3LC0xMjY0MjUwNTMzLD
+E1NDQ1MjUyMjAsNDgzNjA4NTM3LDIwNjY4MzQ0NjcsNTcwODc5
+NDE0XX0=
 -->
