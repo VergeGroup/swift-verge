@@ -20,6 +20,11 @@
 <img alt="VergeStore sample code" width="495" src="https://user-images.githubusercontent.com/1888355/84426195-c5e0c700-ac5d-11ea-94ab-6604c64caca0.png"/>
 </p>
 
+## Requirements
+
+* Swift 5.2 +
+* iOS 10 +
+
 ## Overview - focusing on faster performance
 
 > You can find fully documentation from [Here](#modules-overview)
@@ -1956,11 +1961,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTMyNTIwMzM5MiwtMzQ0MDA3NDM3LDE5OD
-QzNzE5MDQsNTQ3OTg2ODU0LDI0MjE3ODkyNywxNjk1NTc1MDIz
-LDEyNzEwNzIwNDYsLTM0MTQyNDM4Miw5NzE2NzQ1OTcsODQ3Mz
-Q3Nzc0LDEyODE0NDg0OTgsLTEwNzE1NTE1NDQsLTE4OTU0ODA3
-MDAsMjEwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3ODU5ODcsLT
-EyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2MDg1MzcsMjA2Njgz
-NDQ2N119
+eyJoaXN0b3J5IjpbLTE0NTYxMjAyMzQsMTMyNTIwMzM5MiwtMz
+Q0MDA3NDM3LDE5ODQzNzE5MDQsNTQ3OTg2ODU0LDI0MjE3ODky
+NywxNjk1NTc1MDIzLDEyNzEwNzIwNDYsLTM0MTQyNDM4Miw5Nz
+E2NzQ1OTcsODQ3MzQ3Nzc0LDEyODE0NDg0OTgsLTEwNzE1NTE1
+NDQsLTE4OTU0ODA3MDAsMjEwNDUxMTc5OSwtNzkyNzQ2NzMxLC
+04OTk3ODU5ODcsLTEyNjQyNTA1MzMsMTU0NDUyNTIyMCw0ODM2
+MDg1MzddfQ==
 -->
