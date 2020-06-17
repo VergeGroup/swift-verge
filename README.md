@@ -1382,7 +1382,7 @@ struct MyView: View {
 }
 ```
 
-## 📦 VergeORM - Normalization
+# 📦 VergeORM - Normalization
 
 It provides the function that manages performant many entity objects.<br>
 Technically, using Normalization.
@@ -1392,8 +1392,7 @@ In the application that uses many entity objects, we sure highly recommend using
 About more detail,
 https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape
 
-<details><summary>VergeORM Core Concepts</summary>
-<p>
+# VergeORM Core Concepts
 
 VergeORM is a library to manage Object-Relational Mapping in the value-type struct.
 
@@ -1430,10 +1429,7 @@ To avoid this, we should do **Normalize** the State Shape. About Normalizing sta
 -   Supports find, insert, delete with easy plain implementations.    
 -   Supports batch update with context, anywhere it can abort and revert to current state.
 
-</p>
-</details>
-
-<details><summary>Getting Started</summary>
+# Getting Started
 
 ## Create Database struct
 
@@ -1555,9 +1551,7 @@ db.performBatchUpdates { (context) in
 // db.entities.book.count == 1
 ```
 
-</details>
-
-<details><summary>Index</summary>
+# Index
 
 ## To find the entity faster, Index.
 
@@ -1675,9 +1669,8 @@ state.db.performBatchUpdates { (context) -> Book in
 Since Index is updated manually here, you might want to manage it automatically.
 Using **Middleware**, it's possible.
 
-</details>
+# Middleware
 
-<details><summary>Middleware</summary>
 ## Perform any operation for each of all updates
 
 Using Middleware, you can perform any operation for each of all updates.
@@ -1773,10 +1766,7 @@ struct Database: DatabaseType {
 }
 ```
 
-
-</details>
-
-<details><summary>Makes a Derived for a entity</summary>
+# Makes a Derived for a entity
 
 ## To create getter, Add DatabaseEmbedding protocol to your state-tree.
 
@@ -1809,9 +1799,7 @@ let entity: Book = getter.value.wrapped
 
 VergeORM supports create MemoizeSelector from Storage or Store.
 
-</details>
-
-<details><summary>Tips</summary>
+# Tips
 
 ## Access to DB partially
 
@@ -1843,8 +1831,6 @@ func access<DB: DatabaseType>(db: DB) -> Int where DB.Schema : Partial {
 ```
 
 Inside of access function, it supports only accessing to entity Partial protocol has.
-
-</details>
 
 ## 📦 VergeRx
 
@@ -1914,7 +1900,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyNDcwODQ2MzYsMTc0NzQ1MTAyMywtMT
+eyJoaXN0b3J5IjpbLTEzOTU1ODM3MDQsMTc0NzQ1MTAyMywtMT
 YxNjc4ODIsLTE0NTYxMjAyMzQsMTMyNTIwMzM5MiwtMzQ0MDA3
 NDM3LDE5ODQzNzE5MDQsNTQ3OTg2ODU0LDI0MjE3ODkyNywxNj
 k1NTc1MDIzLDEyNzEwNzIwNDYsLTM0MTQyNDM4Miw5NzE2NzQ1
