@@ -160,8 +160,6 @@ You can find the schemes of demo apps from Xcode project.
 
 </details>
 
-<details><summary>🍐 Basic Usage</summary>
-
 
 ## 🍐 Basic Usage
 
@@ -332,9 +330,6 @@ class ViewController: UIViewController {
   }
 }
 ```
-</details>
-
-<details><summary>☂️ Advanced Usage - to keep performance and scalability</summary>
 
 ## ☂️ Advanced Usage - to keep performance and scalability
 
@@ -425,8 +420,6 @@ let dispatcher = MyDispatcher(target: store)
 
 Additionally, We can create a dispatcher that focuses the specified sub-tree of the state.<br>
 You can check the detail of this from [our documentation](https://muukii-app.gitbook.io/verge/docs-vergestore/dispatcher).
-
-</details>
 
 # Docs
 
@@ -1962,11 +1955,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc0NzQ1MTAyMywtMTYxNjc4ODIsLTE0NT
-YxMjAyMzQsMTMyNTIwMzM5MiwtMzQ0MDA3NDM3LDE5ODQzNzE5
-MDQsNTQ3OTg2ODU0LDI0MjE3ODkyNywxNjk1NTc1MDIzLDEyNz
-EwNzIwNDYsLTM0MTQyNDM4Miw5NzE2NzQ1OTcsODQ3MzQ3Nzc0
-LDEyODE0NDg0OTgsLTEwNzE1NTE1NDQsLTE4OTU0ODA3MDAsMj
-EwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3ODU5ODcsLTEyNjQy
-NTA1MzNdfQ==
+eyJoaXN0b3J5IjpbNzkwNzQ5NTY3LDE3NDc0NTEwMjMsLTE2MT
+Y3ODgyLC0xNDU2MTIwMjM0LDEzMjUyMDMzOTIsLTM0NDAwNzQz
+NywxOTg0MzcxOTA0LDU0Nzk4Njg1NCwyNDIxNzg5MjcsMTY5NT
+U3NTAyMywxMjcxMDcyMDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3
+LDg0NzM0Nzc3NCwxMjgxNDQ4NDk4LC0xMDcxNTUxNTQ0LC0xOD
+k1NDgwNzAwLDIxMDQ1MTE3OTksLTc5Mjc0NjczMSwtODk5Nzg1
+OTg3XX0=
 -->
