@@ -835,11 +835,7 @@ store.commit {
 store.state.computed.filteredArray
 ```
 
-</p>
-</details>
-
-<details><summary>🌙 Derived / BindingDerived - derives a any shape value from the state</summary>
-<p>
+# 🌙 Derived / BindingDerived - derives a any shape value from the state
 
 > **Derived** is inspired by [redux/reselect](https://github.com/reduxjs/reselect).
 
@@ -974,11 +970,7 @@ extension StoreType {
 }
 ```
 
-</p>
-</details>
-
-<details><summary>⚡️ Activity - a volatile event from an action</summary>
-<p>
+# ⚡️ Activity - a volatile event from an action
 
 ## What activity does
 VergeStore supports send some events that won't be stored on state.
@@ -1039,11 +1031,7 @@ store
   .store(in: &subscriptions)
 ```
 
-</p>
-</details>
-
-<details><summary>🚀 Dispatcher - performs a mutation from away the store</summary>
-<p>
+# 🚀 Dispatcher - performs a mutation from away the store
 
 ## What Dispatcher does
 
@@ -1197,9 +1185,7 @@ final class LoggedInService: Store.ScopedDispatcher<LoggedInState> {
 }
 ```
 
-</details>
-
-<details><summary>🔭 Logging</summary>
+# 🔭 Logging
 
 ## Start logging from DefaultStoreLogger
 DefaultStoreLogger is the pre-implemented logger that send the logs to OSLog.
@@ -1243,9 +1229,7 @@ public protocol StoreLogger {
 }
 ```
 
-</details>
-
-<details><summary>🧰 Utilities</summary>
+# 🧰 Utilities
 
 ## Fragment\<State>
 
@@ -1307,9 +1291,7 @@ publisher
   .assign(to: store2.assignee(\.count))
 ```
 
-</details>
-
-<details><summary>🎛 Optimization Tips</summary>
+# 🎛 Optimization Tips
 
 ## Writing high-performance state-management
 
@@ -1334,9 +1316,7 @@ Please enables signpost profiling.
 
 ![CleanShot 2020-05-31 at 14 22 16@2x](https://user-images.githubusercontent.com/1888355/83345130-80152c00-a34a-11ea-925a-6c6a609be102.png)
 
-</details>
-
-<details><summary>📱 SwiftUI</summary>
+# 📱 SwiftUI
 
 > WIP
 
@@ -1401,8 +1381,6 @@ struct MyView: View {
   }
 }
 ```
-
-</details>
 
 ## 📦 VergeORM - Normalization
 
@@ -1936,11 +1914,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTI5ODc3ODg0OSwxNzQ3NDUxMDIzLC0xNj
-E2Nzg4MiwtMTQ1NjEyMDIzNCwxMzI1MjAzMzkyLC0zNDQwMDc0
-MzcsMTk4NDM3MTkwNCw1NDc5ODY4NTQsMjQyMTc4OTI3LDE2OT
-U1NzUwMjMsMTI3MTA3MjA0NiwtMzQxNDI0MzgyLDk3MTY3NDU5
-Nyw4NDczNDc3NzQsMTI4MTQ0ODQ5OCwtMTA3MTU1MTU0NCwtMT
-g5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3NDY3MzEsLTg5OTc4
-NTk4N119
+eyJoaXN0b3J5IjpbLTEyNDcwODQ2MzYsMTc0NzQ1MTAyMywtMT
+YxNjc4ODIsLTE0NTYxMjAyMzQsMTMyNTIwMzM5MiwtMzQ0MDA3
+NDM3LDE5ODQzNzE5MDQsNTQ3OTg2ODU0LDI0MjE3ODkyNywxNj
+k1NTc1MDIzLDEyNzEwNzIwNDYsLTM0MTQyNDM4Miw5NzE2NzQ1
+OTcsODQ3MzQ3Nzc0LDEyODE0NDg0OTgsLTEwNzE1NTE1NDQsLT
+E4OTU0ODA3MDAsMjEwNDUxMTc5OSwtNzkyNzQ2NzMxLC04OTk3
+ODU5ODddfQ==
 -->
