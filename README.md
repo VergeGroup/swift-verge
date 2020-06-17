@@ -421,15 +421,14 @@ You can check the detail of this from [our documentation](https://muukii-app.git
 
 # Docs
 
-## 📦 VergeStore
+# 📦 VergeStore
 
 It provides core functions of Store-pattern.
 
 - State supports computed property with caching (like [Vuex's Getters](https://vuex.vuejs.org/guide/getters.html))
 - Derived object to create derived data from state-tree with performant (like [redux/reselect](https://github.com/reduxjs/reselect))
 
-<details><summary>🌑 Store - retains a state</summary>
-<p>
+# 🌑 Store - retains a state
 
 **Store** 
 -   a reference type object    
@@ -480,9 +479,6 @@ final class MyStore: Store<State, Activity> {
 let store = MyStore()
 store.increment()
 ```
-
-</p>
-</details>
 
 <details><summary>☄️ Mutation - updates the state of the store</summary>
 <p>
@@ -1953,7 +1949,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTY3MTczNzU2LDE3NDc0NTEwMjMsLTE2MT
+eyJoaXN0b3J5IjpbNTQ4NDM5ODQ5LDE3NDc0NTEwMjMsLTE2MT
 Y3ODgyLC0xNDU2MTIwMjM0LDEzMjUyMDMzOTIsLTM0NDAwNzQz
 NywxOTg0MzcxOTA0LDU0Nzk4Njg1NCwyNDIxNzg5MjcsMTY5NT
 U3NTAyMywxMjcxMDcyMDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3
