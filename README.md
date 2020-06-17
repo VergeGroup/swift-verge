@@ -480,8 +480,7 @@ let store = MyStore()
 store.increment()
 ```
 
-<details><summary>☄️ Mutation - updates the state of the store</summary>
-<p>
+# ☄️ Mutation - updates the state of the store
 
 ## What Mutation is
 The only way to actually change state in a Store is by committing a mutation. 
@@ -518,11 +517,7 @@ print(store.state.todos)
 // store.state.todos => [Todo(title: "Create SwiftUI App", hasCompleted: false)]
 ```
 
-</p>
-</details>
-
-<details><summary>🪐 State - a data describes the current state of the app</summary>
-<p>
+# 🪐 State - a data describes the current state of the app
 
 ## Using single state tree (Not enforced)
 
@@ -577,11 +572,7 @@ extension StateType {
 
 [About more Normalization and why we need to do this]([https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/))
 
-</p>
-</details>
-
-<details><summary>🌟 Changes object - helps detecting differences and reduces copy-cosuming</summary>
-<p>
+# 🌟 Changes object - helps detecting differences and reduces copy-cosuming
 
 ## Update UI from State
 
@@ -646,11 +637,7 @@ class ViewController: UIViewController {
 }
 ```
 
-</p>
-</details>
-
-<details><summary>🛸 Extended Computed property on the State</summary>
-<p>
+# 🛸 Extended Computed property on the State
 
 ## Overview
 A declaration to add a computed-property into the state. It helps to add a property that does not need to be stored-property. It's like Swift's computed property like following:
@@ -1949,11 +1936,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTQ4NDM5ODQ5LDE3NDc0NTEwMjMsLTE2MT
-Y3ODgyLC0xNDU2MTIwMjM0LDEzMjUyMDMzOTIsLTM0NDAwNzQz
-NywxOTg0MzcxOTA0LDU0Nzk4Njg1NCwyNDIxNzg5MjcsMTY5NT
-U3NTAyMywxMjcxMDcyMDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3
-LDg0NzM0Nzc3NCwxMjgxNDQ4NDk4LC0xMDcxNTUxNTQ0LC0xOD
-k1NDgwNzAwLDIxMDQ1MTE3OTksLTc5Mjc0NjczMSwtODk5Nzg1
-OTg3XX0=
+eyJoaXN0b3J5IjpbLTI5ODc3ODg0OSwxNzQ3NDUxMDIzLC0xNj
+E2Nzg4MiwtMTQ1NjEyMDIzNCwxMzI1MjAzMzkyLC0zNDQwMDc0
+MzcsMTk4NDM3MTkwNCw1NDc5ODY4NTQsMjQyMTc4OTI3LDE2OT
+U1NzUwMjMsMTI3MTA3MjA0NiwtMzQxNDI0MzgyLDk3MTY3NDU5
+Nyw4NDczNDc3NzQsMTI4MTQ0ODQ5OCwtMTA3MTU1MTU0NCwtMT
+g5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3NDY3MzEsLTg5OTc4
+NTk4N119
 -->
