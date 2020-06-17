@@ -394,8 +394,6 @@ derived.sinkChanges { (changes: Changes<Int>) in
 }
 ```
 
-[Details here](https://muukii-app.gitbook.io/verge/docs-vergestore/derived-bindingderived)
-
 **Creating a Dispatcher**
 
 Store arrows us to define an action in itself, that might cause gain complexity in supporting a large application.<br>
@@ -1955,7 +1953,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzkwNzQ5NTY3LDE3NDc0NTEwMjMsLTE2MT
+eyJoaXN0b3J5IjpbNTY3MTczNzU2LDE3NDc0NTEwMjMsLTE2MT
 Y3ODgyLC0xNDU2MTIwMjM0LDEzMjUyMDMzOTIsLTM0NDAwNzQz
 NywxOTg0MzcxOTA0LDU0Nzk4Njg1NCwyNDIxNzg5MjcsMTY5NT
 U3NTAyMywxMjcxMDcyMDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3
