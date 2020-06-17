@@ -1306,9 +1306,7 @@ publisher
 * Makes Derived with a simple keyPath to enables caching Derived.
 * Uses Fragment property wrapper to enables Differentiability.
 
-</details>
-
-<details><summary>🏎 Performance monitoring</summary>
+# 🏎 Performance monitoring
 
 Verge supports `os_sign_post`
 We can check the performance from Xcode Instruments.
@@ -1900,7 +1898,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzOTU1ODM3MDQsMTc0NzQ1MTAyMywtMT
+eyJoaXN0b3J5IjpbLTEzMTU0Mzk3NDMsMTc0NzQ1MTAyMywtMT
 YxNjc4ODIsLTE0NTYxMjAyMzQsMTMyNTIwMzM5MiwtMzQ0MDA3
 NDM3LDE5ODQzNzE5MDQsNTQ3OTg2ODU0LDI0MjE3ODkyNywxNj
 k1NTc1MDIzLDEyNzEwNzIwNDYsLTM0MTQyNDM4Miw5NzE2NzQ1
