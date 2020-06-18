@@ -119,8 +119,8 @@ public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType>: E
     return true
   }
 
-  private(set) public var entityUpdatedMarker = VersionCounter()
-  private(set) public var indexUpdatedMarker = VersionCounter()
+  private(set) public var entityUpdatedMarker = NonAtomicVersionCounter()
+  private(set) public var indexUpdatedMarker = NonAtomicVersionCounter()
   internal(set) public var lastUpdatesResult: DatabaseEntityUpdatesResult<Schema>?
   
   var entityBackingStorage: EntityTablesStorage<Schema> = .init()

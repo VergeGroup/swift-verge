@@ -16,7 +16,7 @@ final class CounterTests: XCTestCase {
     
   func testCounter() {
     
-    var counter = VersionCounter()
+    var counter = NonAtomicVersionCounter()
     
     for _ in 0..<100 {
       
@@ -27,7 +27,7 @@ final class CounterTests: XCTestCase {
   }
   
   func testCounterPerformance() {
-    var counter = VersionCounter()
+    var counter = NonAtomicVersionCounter()
     if #available(iOS 13.0, *) {
       measure(metrics: [XCTCPUMetric()]) {
         counter.markAsUpdated()

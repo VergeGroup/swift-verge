@@ -91,7 +91,7 @@
 		4B6BF62B23AD7B74001E5361 /* CollectionPerformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6BF62923AD7B55001E5361 /* CollectionPerformance.swift */; };
 		4B6E361023A7ED1900EB490C /* IndexType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6E360F23A7ED1900EB490C /* IndexType.swift */; };
 		4B6F6F3924521F1E00B6CC3A /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CC23CC36E8001A1D5D /* Fragment.swift */; };
-		4B6F6F3A24521F1E00B6CC3A /* VersionCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470D123CC3A43001A1D5D /* VersionCounter.swift */; };
+		4B6F6F3A24521F1E00B6CC3A /* NonAtomicVersionCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */; };
 		4B6F6F3B24521F2B00B6CC3A /* CounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CE23CC3949001A1D5D /* CounterTests.swift */; };
 		4B71A469248C089C009B3918 /* Realm+Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71A468248C089C009B3918 /* Realm+Util.swift */; };
 		4B71CEEE23B14394004520CE /* ActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71CEED23B14394004520CE /* ActivityTests.swift */; };
@@ -815,7 +815,7 @@
 		4BF3C2EA24209324006B1726 /* MultithreadingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultithreadingTests.swift; sourceTree = "<group>"; };
 		4BF470CC23CC36E8001A1D5D /* Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
 		4BF470CE23CC3949001A1D5D /* CounterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterTests.swift; sourceTree = "<group>"; };
-		4BF470D123CC3A43001A1D5D /* VersionCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionCounter.swift; sourceTree = "<group>"; };
+		4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonAtomicVersionCounter.swift; sourceTree = "<group>"; };
 		4BF76680244E1B5300A5EA10 /* Derived.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Derived.swift; sourceTree = "<group>"; };
 		4BF76682244E242500A5EA10 /* DerivedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedTests.swift; sourceTree = "<group>"; };
 		4BFA229C23A63B55008D7BCB /* VergeCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1204,7 +1204,7 @@
 				4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */,
 				4BF470CC23CC36E8001A1D5D /* Fragment.swift */,
 				4BE33C6824875CD800F3F2C6 /* _COWFragment.swift */,
-				4BF470D123CC3A43001A1D5D /* VersionCounter.swift */,
+				4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */,
 				4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */,
 				4BCE3038246AAD6800D35557 /* Scan.swift */,
 				4B3834DC2482330C008A0B47 /* UseState.swift */,
@@ -2562,7 +2562,7 @@
 			files = (
 				4B427419236F269C00C302C8 /* Store.swift in Sources */,
 				4B3834DD2482330C008A0B47 /* UseState.swift in Sources */,
-				4B6F6F3A24521F1E00B6CC3A /* VersionCounter.swift in Sources */,
+				4B6F6F3A24521F1E00B6CC3A /* NonAtomicVersionCounter.swift in Sources */,
 				4B6F6F3924521F1E00B6CC3A /* Fragment.swift in Sources */,
 				4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */,
 				4BCBCA8D2381CC2B00F33B15 /* DetachedDispatcher.swift in Sources */,
