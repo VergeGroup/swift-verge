@@ -1241,9 +1241,9 @@ public protocol StoreLogger {
 
 Actually, we need to get to flag that means **different**, it no need to be **equal**.
 
-### Fragment does embed state with flag‌
+### Fragment does embed state with ve
 
-Now we can use Fragment struct that is a container for wrapping inside state up. With dynamicMemberLookup, we can access the properties without new property. Fragment has `UpdatedMarker`, we can compare if the state was updated with this.
+Now we can use Fragment struct that is a container for wrapping inside state up. 
 
 ```swift
 struct YourState {
@@ -1259,7 +1259,7 @@ appState.yourState.name
 
 // get unique value that indicates updated to compare with previous value.
 // this value would be updated on every mutation of this tree.
-appState.$yourState.counter.value 
+appState.$yourState.version
 ```
 
 ## assign - assignee
@@ -1899,11 +1899,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTYxNjA3NDg3LC0xMzE1NDM5NzQzLDE3ND
-c0NTEwMjMsLTE2MTY3ODgyLC0xNDU2MTIwMjM0LDEzMjUyMDMz
-OTIsLTM0NDAwNzQzNywxOTg0MzcxOTA0LDU0Nzk4Njg1NCwyND
-IxNzg5MjcsMTY5NTU3NTAyMywxMjcxMDcyMDQ2LC0zNDE0MjQz
-ODIsOTcxNjc0NTk3LDg0NzM0Nzc3NCwxMjgxNDQ4NDk4LC0xMD
-cxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3OTksLTc5Mjc0
-NjczMV19
+eyJoaXN0b3J5IjpbLTE4Mjk3NTE5MTIsLTEzMTU0Mzk3NDMsMT
+c0NzQ1MTAyMywtMTYxNjc4ODIsLTE0NTYxMjAyMzQsMTMyNTIw
+MzM5MiwtMzQ0MDA3NDM3LDE5ODQzNzE5MDQsNTQ3OTg2ODU0LD
+I0MjE3ODkyNywxNjk1NTc1MDIzLDEyNzEwNzIwNDYsLTM0MTQy
+NDM4Miw5NzE2NzQ1OTcsODQ3MzQ3Nzc0LDEyODE0NDg0OTgsLT
+EwNzE1NTE1NDQsLTE4OTU0ODA3MDAsMjEwNDUxMTc5OSwtNzky
+NzQ2NzMxXX0=
 -->
