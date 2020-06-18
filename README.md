@@ -1243,7 +1243,9 @@ Actually, we need to get to flag that means **different**, it no need to be **eq
 
 ### Fragment does embed state with versioning
 
-`Fragment` manages the version of itself, the version will increment each modified that can't detect how exactly modified.
+`Fragment` manages the version of itself, the version will increment each modification. however, it can't get how exactly modified from the modification.  and Fragment returns equality by comparing their version.
+That is the reason why Fragment may return boolean that false negative.
+If Fragment returns equality false, it may be actually equals.
 
 ```swift
 struct YourState {
@@ -1899,11 +1901,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzOTgwMzcwMTIsLTEzMTU0Mzk3NDMsMT
-c0NzQ1MTAyMywtMTYxNjc4ODIsLTE0NTYxMjAyMzQsMTMyNTIw
-MzM5MiwtMzQ0MDA3NDM3LDE5ODQzNzE5MDQsNTQ3OTg2ODU0LD
-I0MjE3ODkyNywxNjk1NTc1MDIzLDEyNzEwNzIwNDYsLTM0MTQy
-NDM4Miw5NzE2NzQ1OTcsODQ3MzQ3Nzc0LDEyODE0NDg0OTgsLT
-EwNzE1NTE1NDQsLTE4OTU0ODA3MDAsMjEwNDUxMTc5OSwtNzky
-NzQ2NzMxXX0=
+eyJoaXN0b3J5IjpbMzI3ODk5MzI0LC0xMzk4MDM3MDEyLC0xMz
+E1NDM5NzQzLDE3NDc0NTEwMjMsLTE2MTY3ODgyLC0xNDU2MTIw
+MjM0LDEzMjUyMDMzOTIsLTM0NDAwNzQzNywxOTg0MzcxOTA0LD
+U0Nzk4Njg1NCwyNDIxNzg5MjcsMTY5NTU3NTAyMywxMjcxMDcy
+MDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3LDg0NzM0Nzc3NCwxMj
+gxNDQ4NDk4LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1
+MTE3OTldfQ==
 -->
