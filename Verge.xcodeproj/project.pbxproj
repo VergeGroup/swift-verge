@@ -1548,15 +1548,15 @@
 			isa = PBXGroup;
 			children = (
 				4BFA229E23A63B56008D7BCB /* VergeCore.h */,
+				4BFA229F23A63B56008D7BCB /* Info.plist */,
+				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
 				4B73F08824041811006910E6 /* Log.swift */,
 				4BA3E1A423C359F40095629B /* Signpost.swift */,
-				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
-				4BFA229F23A63B56008D7BCB /* Info.plist */,
 				4BD79C0324477F430073A48B /* VergeConcurrency.swift */,
-				4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */,
 				4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */,
 				4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */,
+				4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */,
 			);
 			path = VergeCore;
 			sourceTree = "<group>";
