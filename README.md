@@ -1305,7 +1305,7 @@ publisher
 * Reduces creating new Derived object. Instead, share Derived.
 * Makes Derived with a simple keyPath to enables caching Derived.
 * Uses Fragment property wrapper to enables Differentiability.
-* Uses Fragment property wrapper to enables Equatable that contains false positive.
+* Uses Fragment property wrapper to enables Equatable easily that contains false negative.
 
 # 🏎 Performance monitoring
 
@@ -1899,11 +1899,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTA0MzIwNzczMiwtMTMxNTQzOTc0MywxNz
-Q3NDUxMDIzLC0xNjE2Nzg4MiwtMTQ1NjEyMDIzNCwxMzI1MjAz
-MzkyLC0zNDQwMDc0MzcsMTk4NDM3MTkwNCw1NDc5ODY4NTQsMj
-QyMTc4OTI3LDE2OTU1NzUwMjMsMTI3MTA3MjA0NiwtMzQxNDI0
-MzgyLDk3MTY3NDU5Nyw4NDczNDc3NzQsMTI4MTQ0ODQ5OCwtMT
-A3MTU1MTU0NCwtMTg5NTQ4MDcwMCwyMTA0NTExNzk5LC03OTI3
-NDY3MzFdfQ==
+eyJoaXN0b3J5IjpbOTYxNjA3NDg3LC0xMzE1NDM5NzQzLDE3ND
+c0NTEwMjMsLTE2MTY3ODgyLC0xNDU2MTIwMjM0LDEzMjUyMDMz
+OTIsLTM0NDAwNzQzNywxOTg0MzcxOTA0LDU0Nzk4Njg1NCwyND
+IxNzg5MjcsMTY5NTU3NTAyMywxMjcxMDcyMDQ2LC0zNDE0MjQz
+ODIsOTcxNjc0NTk3LDg0NzM0Nzc3NCwxMjgxNDQ4NDk4LC0xMD
+cxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1MTE3OTksLTc5Mjc0
+NjczMV19
 -->
