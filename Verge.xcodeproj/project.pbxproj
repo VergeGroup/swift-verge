@@ -190,6 +190,7 @@
 		4BB64D00248391550017699A /* SpotifyUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB64CF9248391550017699A /* SpotifyUIKit.framework */; };
 		4BB64D01248391560017699A /* SpotifyUIKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB64CF9248391550017699A /* SpotifyUIKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BB64D072483916F0017699A /* SampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB64D062483916F0017699A /* SampleView.swift */; };
+		4BC35667249BD70B0096B15B /* Indexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC35666249BD70B0096B15B /* Indexed.swift */; };
 		4BC6EFAF23A8BF7800EFD688 /* OrderedIDIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFAE23A8BF7800EFD688 /* OrderedIDIndex.swift */; };
 		4BC6EFB123A8BFAF00EFD688 /* GroupByEntityIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB023A8BFAF00EFD688 /* GroupByEntityIndex.swift */; };
 		4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */; };
@@ -770,6 +771,7 @@
 		4BB64CFC248391550017699A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BB64D062483916F0017699A /* SampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleView.swift; sourceTree = "<group>"; };
 		4BBFF45D24389D3D005BA03C /* Changes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Changes.swift; sourceTree = "<group>"; };
+		4BC35666249BD70B0096B15B /* Indexed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Indexed.swift; sourceTree = "<group>"; };
 		4BC6EFAE23A8BF7800EFD688 /* OrderedIDIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedIDIndex.swift; sourceTree = "<group>"; };
 		4BC6EFB023A8BFAF00EFD688 /* GroupByEntityIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupByEntityIndex.swift; sourceTree = "<group>"; };
 		4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedIDIndexTests.swift; sourceTree = "<group>"; };
@@ -1554,6 +1556,7 @@
 				4BA3E1A423C359F40095629B /* Signpost.swift */,
 				4B42740C236F1D2D00C302C8 /* Storage.swift */,
 				4BD79C0324477F430073A48B /* VergeConcurrency.swift */,
+				4BC35666249BD70B0096B15B /* Indexed.swift */,
 				4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */,
 				4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */,
 				4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */,
@@ -2725,6 +2728,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B73F08924041811006910E6 /* Log.swift in Sources */,
+				4BC35667249BD70B0096B15B /* Indexed.swift in Sources */,
 				4BA3E1A523C359F40095629B /* Signpost.swift in Sources */,
 				4B8F5AB7246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift in Sources */,
 				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
