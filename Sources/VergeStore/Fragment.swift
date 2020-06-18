@@ -56,7 +56,7 @@ public struct Fragment<State>: FragmentType {
     }
   }
 
-  private(set) public var counter: VersionCounter = .init()
+  private(set) public var counter: NonAtomicVersionCounter = .init()
 
   public init(wrappedValue: State) {
     self.wrappedValue = wrappedValue

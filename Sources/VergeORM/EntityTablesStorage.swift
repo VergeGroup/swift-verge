@@ -41,7 +41,7 @@ struct EntityRawTable: Equatable {
   
   typealias RawTable = [AnyHashable : AnyEntity]
   
-  private(set) var updatedMarker = VersionCounter()
+  private(set) var updatedMarker = NonAtomicVersionCounter()
 
   private(set) var entities: RawTable = [:]
   
@@ -67,7 +67,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   let entityName: EntityName = Entity.entityName
   
-  public var updatedMarker: VersionCounter {
+  public var updatedMarker: NonAtomicVersionCounter {
     _read { yield rawTable.updatedMarker }
   }
     
