@@ -1241,9 +1241,9 @@ public protocol StoreLogger {
 
 Actually, we need to get to flag that means **different**, it no need to be **equal**.
 
-### Fragment does embed state with ve
+### Fragment does embed state with versioning
 
-Now we can use Fragment struct that is a container for wrapping inside state up. 
+`Fragment` manages the version of itself, the version will increment each modified that can't detect how exactly modified.
 
 ```swift
 struct YourState {
@@ -1899,7 +1899,7 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4Mjk3NTE5MTIsLTEzMTU0Mzk3NDMsMT
+eyJoaXN0b3J5IjpbLTEzOTgwMzcwMTIsLTEzMTU0Mzk3NDMsMT
 c0NzQ1MTAyMywtMTYxNjc4ODIsLTE0NTYxMjAyMzQsMTMyNTIw
 MzM5MiwtMzQ0MDA3NDM3LDE5ODQzNzE5MDQsNTQ3OTg2ODU0LD
 I0MjE3ODkyNywxNjk1NTc1MDIzLDEyNzEwNzIwNDYsLTM0MTQy
