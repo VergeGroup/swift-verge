@@ -1252,10 +1252,12 @@ struct YourState {
   var name: String = ...
 }
 
-struct AppState {
+struct AppState: Equatable {
 
   @Fragment var yourState YourState = .init()
 }
+
+> Since `Fragment` enables `Equatable` in yourState, AppState can be Equatable with synthesizing.
 
 appState.yourState.name
 
@@ -1901,11 +1903,11 @@ Verge is released under the MIT license.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMzI3ODk5MzI0LC0xMzk4MDM3MDEyLC0xMz
-E1NDM5NzQzLDE3NDc0NTEwMjMsLTE2MTY3ODgyLC0xNDU2MTIw
-MjM0LDEzMjUyMDMzOTIsLTM0NDAwNzQzNywxOTg0MzcxOTA0LD
-U0Nzk4Njg1NCwyNDIxNzg5MjcsMTY5NTU3NTAyMywxMjcxMDcy
-MDQ2LC0zNDE0MjQzODIsOTcxNjc0NTk3LDg0NzM0Nzc3NCwxMj
-gxNDQ4NDk4LC0xMDcxNTUxNTQ0LC0xODk1NDgwNzAwLDIxMDQ1
-MTE3OTldfQ==
+eyJoaXN0b3J5IjpbMTM2MDcwNTAwMywtMTM5ODAzNzAxMiwtMT
+MxNTQzOTc0MywxNzQ3NDUxMDIzLC0xNjE2Nzg4MiwtMTQ1NjEy
+MDIzNCwxMzI1MjAzMzkyLC0zNDQwMDc0MzcsMTk4NDM3MTkwNC
+w1NDc5ODY4NTQsMjQyMTc4OTI3LDE2OTU1NzUwMjMsMTI3MTA3
+MjA0NiwtMzQxNDI0MzgyLDk3MTY3NDU5Nyw4NDczNDc3NzQsMT
+I4MTQ0ODQ5OCwtMTA3MTU1MTU0NCwtMTg5NTQ4MDcwMCwyMTA0
+NTExNzk5XX0=
 -->
