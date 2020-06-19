@@ -1,0 +1,80 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="180" height="180">
+<circle cx="90" cy="90" r="90" fill="white"/>
+</mask>
+<g mask="url(#mask0)">
+<rect x="-30" y="-30" width="240" height="240" fill="#B367FF"/>
+<g style="mix-blend-mode:multiply">
+<rect x="91.1077" y="218.387" width="184" height="30" transform="rotate(-135 91.1077 218.387)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="112.321" y="197.174" width="184" height="30" transform="rotate(-135 112.321 197.174)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="133.534" y="175.96" width="184" height="30" transform="rotate(-135 133.534 175.96)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="154.747" y="154.747" width="184" height="30" transform="rotate(-135 154.747 154.747)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="175.96" y="133.534" width="184" height="30" transform="rotate(-135 175.96 133.534)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="197.174" y="112.321" width="184" height="30" transform="rotate(-135 197.174 112.321)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="175.96" y="133.534" width="184" height="30" transform="rotate(-135 175.96 133.534)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="154.747" y="154.747" width="184" height="30" transform="rotate(-135 154.747 154.747)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="133.534" y="175.96" width="184" height="30" transform="rotate(-135 133.534 175.96)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="112.321" y="197.174" width="184" height="30" transform="rotate(-135 112.321 197.174)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="91.1077" y="218.387" width="184" height="30" transform="rotate(-135 91.1077 218.387)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="154.747" y="154.747" width="184" height="30" transform="rotate(-135 154.747 154.747)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="133.534" y="175.96" width="184" height="30" transform="rotate(-135 133.534 175.96)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="112.321" y="197.174" width="184" height="30" transform="rotate(-135 112.321 197.174)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="91.1077" y="218.387" width="184" height="30" transform="rotate(-135 91.1077 218.387)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="133.534" y="175.96" width="184" height="30" transform="rotate(-135 133.534 175.96)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="112.321" y="197.174" width="184" height="30" transform="rotate(-135 112.321 197.174)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="91.1077" y="218.387" width="184" height="30" transform="rotate(-135 91.1077 218.387)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="112.321" y="197.174" width="184" height="30" transform="rotate(-135 112.321 197.174)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="91.1077" y="218.387" width="184" height="30" transform="rotate(-135 91.1077 218.387)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:multiply">
+<rect x="91.1077" y="218.387" width="184" height="30" transform="rotate(-135 91.1077 218.387)" fill="#636363" fill-opacity="0.1"/>
+</g>
+<g style="mix-blend-mode:soft-light">
+<rect x="-30" y="-30" width="240" height="240" fill="url(#paint0_linear)"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear" x1="19" y1="19" x2="170" y2="170" gradientUnits="userSpaceOnUse">
+<stop stop-color="white" stop-opacity="0"/>
+<stop offset="1" stop-color="#040004"/>
+</linearGradient>
+</defs>
+</svg>
