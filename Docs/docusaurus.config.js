@@ -19,7 +19,7 @@ module.exports = {
       title: 'Verge',
       logo: {
         alt: 'Verge Logo',
-        src: 'img/verge-logo.svg',
+        src: 'img/sidebar-logo@2x.png',
       },
       links: [
         {
