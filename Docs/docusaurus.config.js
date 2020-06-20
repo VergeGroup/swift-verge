@@ -7,7 +7,7 @@ module.exports = {
   organizationName: 'VergeGroup',
   projectName: 'Verge',
   themeConfig: {
-    image: '../img/ogimage.png',
+    image: '../img/ogimage2.png',
     googleAnalytics: {
       trackingID: 'UA-163893115-1',
       anonymizeIP: true,
