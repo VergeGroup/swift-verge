@@ -21,7 +21,8 @@ module.exports = {
         alt: 'Verge Logo',
         src: 'img/verge-logo.svg',
       },
-      links: [{
+      links: [
+        {
           to: 'docs/',
           activeBasePath: 'docs',
           label: 'Docs',
@@ -36,14 +37,19 @@ module.exports = {
     },
     footer: {
       style: 'dark',
-      links: [{
-        title: 'More',
-        items: [{
-          label: 'GitHub',
-          href: 'https://github.com/VergeGroup/Verge',
-        }, ],
-      }, ],
-      copyright: `Copyright © ${new Date().getFullYear()} Verge, Inc. Built with Docusaurus.`,
+      links: [
+        {
+          title: 'More',
+          items: [
+            {
+              label: 'GitHub',
+              href: 'https://github.com/VergeGroup/Verge',
+            },
+          ],
+        },
+      ],
+      copyright: `Copyright © ${
+          new Date().getFullYear()} VergeGroup. Built with Docusaurus.`,
     },
   },
   presets: [
