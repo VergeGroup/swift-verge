@@ -9,17 +9,30 @@ import VergeORM
 
 public final class LoggedInService: BackendStore.ScopedDispatcher<LoggedInBackendState> {
 
-  private let apiProvider: MoyaProvider<Templates.JSONResponse.Auth.Request>
-  
+  private let apiProvider: RefreshTokenProvider<Templates.JSONResponse.Auth.Request>
+
   init(targetStore: WrappedStore) {
-    // TODO: Refresh-token
-    let token = targetStore.state.session!.authAccessToken!
-    let authPlugin = AccessTokenPlugin { _ in token }
-    self.apiProvider = .init(plugins: [authPlugin])
+
+    let auth = try! targetStore.state.session!.composeAuthResponse()
+
+    let _refreshTokenAPIProvider: MoyaProvider<AuthRequest> = .init()
+
+    self.apiProvider = .init(tokenController: .init(initial: auth, refresh: { auth in
+      _refreshTokenAPIProvider
+        .requestPublisher(APIRequests.refreshToken(refreshToken: auth.refreshToken))
+        .tryMap {
+          let json = try JSON(data: $0.data)
+          var newAuth = auth
+          try newAuth.update(refreshTokenResponse: json)
+          return newAuth
+      }
+      .eraseToAnyPublisher()
+    }))
+    
     super.init(targetStore: targetStore, scope: \.loggedIn!)
   }
   
-  public func fetchMe() -> Future<Void, MoyaError> {
+  public func fetchMe() -> Future<Void, Error> {
 
     apiProvider.requestPublisher(APIRequests.me())
       .handleEvents(receiveOutput: { response in
@@ -42,7 +55,7 @@ public final class LoggedInService: BackendStore.ScopedDispatcher<LoggedInBacken
   }
 
   @discardableResult
-  public func fetchTop() -> Future<Void, MoyaError> {
+  public func fetchTop() -> Future<Void, Error> {
     apiProvider.requestPublisher(APIRequests.getMeTopArtist(limit: 20, offset: 0))
       .handleEvents(receiveOutput: { response in
         do {
@@ -65,7 +78,7 @@ public final class LoggedInService: BackendStore.ScopedDispatcher<LoggedInBacken
   }
 
   @discardableResult
-  public func fetchMePlaylist() -> Future<Void, MoyaError> {
+  public func fetchMePlaylist() -> Future<Void, Error> {
 
     apiProvider.requestPublisher(APIRequests.getMePlaylist(limit: 20, offset: 0))
       .handleEvents(receiveOutput: { response in

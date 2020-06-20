@@ -142,6 +142,7 @@
 		4B9AF03E2487FB16001BAAFC /* DualDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF03D2487FB16001BAAFC /* DualDisplayView.swift */; };
 		4B9AF04824880145001BAAFC /* VergeSwiftUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B9AF04624880145001BAAFC /* VergeSwiftUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
+		4B9CC71E249E70360045CCF8 /* RefreshTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9CC71D249E70360045CCF8 /* RefreshTokenProvider.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4BA3E1A523C359F40095629B /* Signpost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA3E1A423C359F40095629B /* Signpost.swift */; };
 		4BA5914F23DF5146007F614C /* FunctionBuilders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA5914E23DF5146007F614C /* FunctionBuilders.swift */; };
@@ -732,6 +733,7 @@
 		4B9AF04624880145001BAAFC /* VergeSwiftUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeSwiftUI.h; sourceTree = "<group>"; };
 		4B9AF04724880145001BAAFC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherType.swift; sourceTree = "<group>"; };
+		4B9CC71D249E70360045CCF8 /* RefreshTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshTokenProvider.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		4BA3E1A423C359F40095629B /* Signpost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signpost.swift; sourceTree = "<group>"; };
 		4BA5914E23DF5146007F614C /* FunctionBuilders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionBuilders.swift; sourceTree = "<group>"; };
@@ -1450,6 +1452,7 @@
 				4B5140032483E51100463CE6 /* Util.swift */,
 				4B2AE0C9248573A30086A42C /* Logger.swift */,
 				4B2AE0D72485913B0086A42C /* MoyaProvider+Combin.swift */,
+				4B9CC71D249E70360045CCF8 /* RefreshTokenProvider.swift */,
 				4B2AE0D92485915D0086A42C /* Publisher+.swift */,
 				4BD068AC248C138000E05687 /* RealmObjects.swift */,
 				4B71A46A248C09C7009B3918 /* RealmObjects.Session.swift */,
@@ -2676,6 +2679,7 @@
 				4B2AE0CE248590620086A42C /* LoggedInBackendState.swift in Sources */,
 				4B2AE0D6248590E60086A42C /* LoggedOutBackendStack.swift in Sources */,
 				4BB64CDB248381EC0017699A /* StackContainer.swift in Sources */,
+				4B9CC71E249E70360045CCF8 /* RefreshTokenProvider.swift in Sources */,
 				4BD068AE248C13B300E05687 /* RealmObjects.Session.swift in Sources */,
 				4B2AE0D22485909E0086A42C /* BackendState.swift in Sources */,
 				4B5140062483E5D800463CE6 /* Entities.Artist.swift in Sources */,

@@ -35,6 +35,16 @@ extension RealmObjects {
       authTokenType = auth.tokenType
     }
 
+    func composeAuthResponse() throws -> AuthResponse {
+      return .init(
+        accessToken: try authAccessToken.unwrap(),
+        tokenType: try authTokenType.unwrap(),
+        expiresIn: try authExpiresIn.value.unwrap(),
+        refreshToken: try authRefreshToken.unwrap(),
+        scope: try authScope.unwrap()
+      )
+    }
+
   }
 
 }

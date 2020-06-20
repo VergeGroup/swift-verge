@@ -10,6 +10,11 @@ struct HomeView: View {
       VStack {
         NavigationLink("Settings", destination: SettingsView(stack: stack))
         Text("HomeView")
+        Button(action: {
+          _ = self.stack.logout()
+        }) {
+          Text("Logout")
+        }
       }
     }
     .onAppear {

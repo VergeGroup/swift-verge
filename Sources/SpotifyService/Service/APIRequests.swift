@@ -21,6 +21,22 @@ enum APIRequests {
       )
     )
   }
+
+  static func refreshToken(refreshToken: String) -> AuthRequest {
+
+    .init(
+      path: "token",
+      method: .post,
+      headers: ["Authorization" : "Basic \("\(Secret.clientID):\(Secret.clientSecret)".data(using: .utf8)!.base64EncodedString())"],
+      task: .requestParameters(
+        parameters: [
+          "grant_type" : "refresh_token",
+          "refresh_token" : refreshToken,
+        ],
+        encoding: URLEncoding.default
+      )
+    )
+  }
   
   static func me() -> Templates.JSONResponse.Auth.Request {
     .init(
