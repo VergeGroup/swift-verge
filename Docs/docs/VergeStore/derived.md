@@ -4,7 +4,9 @@ title: Derived / BindingDerived - derives a any shape value from the state
 sidebar_label: Derived / BindingDerived
 ---
 
-> **Derived** is inspired by [redux/reselect](https://github.com/reduxjs/reselect).
+:::info
+**Derived** is inspired by [redux/reselect](https://github.com/reduxjs/reselect).
+:::
 
 Derived's functions are:
 
@@ -54,9 +56,10 @@ let derived = store.derived(.map(derive: { ($0.name, $0.age) }, dropsDerived: ==
 })
 ```
 
-> ✅
-> This method is quite optimized the performance If you create a Derived object that computes a new shape value that using multiple values from the state.
-> Because Derived object uses the specified derived value to create a new shape value, It can detect no need to compute that value if the input derived value not changed.
+:::info
+This method is quite optimized the performance If you create a Derived object that computes a new shape value that using multiple values from the state.  
+Because Derived object uses the specified derived value to create a new shape value, It can detect no need to compute that value if the input derived value not changed.
+:::
 
 **Most manually way of creating a Derived object**
 
@@ -91,8 +94,11 @@ let cancellable = derived.sinkValue { (changes: Changes<Int>) in
 }
 ```
 
-> ✅
-> Please, carefully handle a cancellable object. A concealable object that returns that subscribe method is similar to AnyCancellable of Combine.framework. We need to retain that until we don't need to get the update event.
+:::caution
+Please, carefully handle a cancellable object.  
+A concealable object that returns that subscribe method is similar to AnyCancellable of Combine.framework.  
+We need to retain that until we don't need to get the update event.
+:::
 
 ## Supports other Reactive Frameworks
 
@@ -110,7 +116,9 @@ derived
 
 ### + RxSwift
 
-> 💡You need to install VergeRx module to use this.
+:::caution
+💡You need to install VergeRx module to use this.
+:::
 
 ```swift
 derived.rx

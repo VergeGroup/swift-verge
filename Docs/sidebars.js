@@ -4,6 +4,7 @@ module.exports = {
       label: 'Verge',
       collapsed: false,
       items: [
+        "installation",
         "motivation",
         "Overview",
       ]

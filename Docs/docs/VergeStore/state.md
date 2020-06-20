@@ -10,7 +10,9 @@ VergeStore uses a **single state-tree. (Recommended)** That means an object cont
 
 That state is managed by **Store**. It process updating the state and notify updated events to the subscribers.
 
-> 💡 VergeStore does support multiple state-tree as well. Depending on the case, we can create another Store instance.
+:::info
+💡 VergeStore does support multiple state-tree as well. Depending on the case, we can create another Store instance.
+:::
 
 ## Add a computed property
 
@@ -48,8 +50,10 @@ extension StateType {
 }
 ```
 
-> There is `ExtendedStateType` from StateType.
-> This provies us to get more stuff that increases performance and productivity.
+:::tip You have one more thing
+There is `ExtendedStateType` from StateType.
+This provies us to get more stuff that **increases performance** and productivity.
+:::
 
 ## Normalization
 

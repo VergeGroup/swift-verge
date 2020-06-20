@@ -61,7 +61,9 @@ States may have a property that actually does not need to be stored property. In
 
 Although, we should take care of the cost of the computing to return value in that. What is that case? Followings explains that.
 
-> Computed concept is inspired from Vuex Getters. [https://vuex.vuejs.org/guide/getters.html](https://vuex.vuejs.org/guide/getters.html)
+:::info
+Computed concept is inspired from Vuex Getters. [https://vuex.vuejs.org/guide/getters.html](https://vuex.vuejs.org/guide/getters.html)
+:::
 
 For example, there is itemsCount.
 

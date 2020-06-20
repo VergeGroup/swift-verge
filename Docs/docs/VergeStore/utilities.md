@@ -4,7 +4,7 @@ title: Utilities
 sidebar_label: Utilities
 ---
 
-## Fragment\<State\>
+## `Fragment<State>`
 
 ### Fragment helps compare if state was updated without Equatable
 

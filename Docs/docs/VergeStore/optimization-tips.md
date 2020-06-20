@@ -6,8 +6,6 @@ sidebar_label: Optimization Tips
 
 ## Writing high-performance state-management
 
-> WIP
-
 - Simplify the state shape, thinking normalization to reduce the number of operations on mutating.
 - Passes Changes object as it is if you want to bring the large state tree somewhere. \* Since `Changes` is a reference type, it reduces the cost of copy.
 - Using ExtendedComputedProperty

@@ -10,7 +10,9 @@ The only way to actually change state in a Store is by committing a mutation.
 Define a function that returns Mutation object.
 That expresses that function is Mutation
 
-> Mutation does **NOT** allow to run asynchronous operation.
+:::caution
+Mutation does **NOT** allow to run asynchronous operation.
+:::
 
 ## To define mutations in the Store
 

@@ -1,15 +1,14 @@
 ---
 id: store
-title: Store - retains a state
+title: Store - a storage of the state
 sidebar_label: Store
 ---
 
-**Store**
-
-- a reference type object
-- manages the state object that contains the application state
-- commits **Mutation** to update the state
-- Compatible with SwiftUI's observableObject and `UseState`
+- Store is
+  - A reference type object
+  - Manages the state object that contains the application state
+  - Receives **Mutation** to update the state with thread-safety
+  - Compatible with SwiftUI's observableObject and `UseState`
 
 ## Define a Store
 
