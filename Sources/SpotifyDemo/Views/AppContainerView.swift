@@ -67,6 +67,7 @@ struct AppContainerView: View {
           if state.isRunning {
             SessionRootView(session: .init(stack: state.primitive.current!))
           } else {
+            Text("Development Menu")
             Button(action: {
               self.viewModel.runCurrent()
             }, label: {

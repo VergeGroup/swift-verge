@@ -1,6 +1,7 @@
 import SwiftUI
 import VergeStore
 import SpotifyService
+import SpotifyUIKit
 
 struct YourLibraryView: View {
 
@@ -32,10 +33,18 @@ struct MePlaylistView: View {
     ) { playlists in
 
       List {
-        ForEach(playlists.root, id: \.entityID) { (f) in
-          Text(f.name)
-            .onAppear {
-              print(f.name)
+        ForEach(playlists.root, id: \.entityID) { (item) in
+          HStack {
+
+            NetworkImageView(item.images.first ?? AnyNetworkImage.empty)
+              .frame(width: 60, height: 60)
+              .aspectRatio(1, contentMode: .fill)
+              .mask(Circle())
+
+            Text(item.name)
+              .onAppear {
+                print(item.name)
+            }
           }
         }
       }
