@@ -7,7 +7,7 @@ module.exports = {
   organizationName: 'VergeGroup',
   projectName: 'Verge',
   themeConfig: {
-    image: 'img/ogimage.png',
+    image: '../img/ogimage.png',
     googleAnalytics: {
       trackingID: 'UA-163893115-1',
       anonymizeIP: true,
@@ -21,8 +21,7 @@ module.exports = {
         alt: 'Verge Logo',
         src: 'img/verge-logo.svg',
       },
-      links: [
-        {
+      links: [{
           to: 'docs/',
           activeBasePath: 'docs',
           label: 'Docs',
@@ -37,17 +36,13 @@ module.exports = {
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/VergeGroup/Verge',
-            },
-          ],
-        },
-      ],
+      links: [{
+        title: 'More',
+        items: [{
+          label: 'GitHub',
+          href: 'https://github.com/VergeGroup/Verge',
+        }, ],
+      }, ],
       copyright: `Copyright © ${new Date().getFullYear()} Verge, Inc. Built with Docusaurus.`,
     },
   },
