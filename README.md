@@ -1,5 +1,7 @@
 <p align="center">
+  <a href="https://vergegroup.github.io/Verge/">
 <img width="240" alt="Frame 8" src="https://user-images.githubusercontent.com/1888355/82828305-b6d2e880-9eeb-11ea-9c3b-7659da42b499.png">
+    </a>
 </p>
 
 <h1 align="center">Verge</h1>
@@ -11,13 +13,15 @@
 </p>
 
 <p align="center">
+ <a href="https://vergegroup.github.io/Verge/">
+   <b>Please see the website</b>
+  </a>
+  </p>
+
+<p align="center">
 <img alt="swift5.2" src="https://img.shields.io/badge/swift-5.2-ED523F.svg?style=flat"/>
 <img alt="Tests" src="https://github.com/muukii/Verge/workflows/Tests/badge.svg"/>
 <img alt="cocoapods" src="https://img.shields.io/cocoapods/v/Verge" />
-</p>
-
-<p align="center">
-<img alt="VergeStore sample code" width="495" src="https://user-images.githubusercontent.com/1888355/84426195-c5e0c700-ac5d-11ea-94ab-6604c64caca0.png"/>
 </p>
 
 ## Requirements
