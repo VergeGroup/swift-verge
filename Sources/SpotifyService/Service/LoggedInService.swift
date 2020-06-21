@@ -11,7 +11,10 @@ public final class LoggedInService: BackendStore.ScopedDispatcher<LoggedInBacken
 
   private let apiProvider: RefreshTokenProvider<Templates.JSONResponse.Auth.Request>
 
-  init(targetStore: WrappedStore) {
+  init(
+    externalDataSource: ExternalDataSource,
+    targetStore: WrappedStore
+  ) {
 
     let auth = try! targetStore.state.session!.composeAuthResponse()
 
@@ -24,6 +27,11 @@ public final class LoggedInService: BackendStore.ScopedDispatcher<LoggedInBacken
           let json = try JSON(data: $0.data)
           var newAuth = auth
           try newAuth.update(refreshTokenResponse: json)
+          let realmWrapper = externalDataSource.makeUserDataRealm()
+          realmWrapper.asyncWrite { transaction in
+            let session = try transaction.object(ofType: RealmObjects.Session.self)
+            session.update(with: newAuth)
+          }
           return newAuth
       }
       .eraseToAnyPublisher()

@@ -17,30 +17,54 @@ final class RefreshTokenProvider<Target: TargetType> {
 
   func requestPublisher(_ target: Target) -> AnyPublisher<Response, Error> {
 
-    tokenController.validate()
+    let request = AnyPublisher<Response, MoyaError>.init { (s) in
+      let cancellable = self.innerProvider.request(target) { (result) in
+        switch result {
+        case .success(let response):
+          do {
+            let response = try response.filterSuccessfulStatusAndRedirectCodes()
+            s.send(response)
+          } catch let error as MoyaError {
+            s.send(completion: .failure(error))
+          } catch {
+            assertionFailure()
+          }
+        case .failure(let error):
+          s.send(completion: .failure(error))
+        }
+      }
+      return AnyCancellable {
+        cancellable.cancel()
+      }
+    }
+
+    return tokenController.validate()
       .setFailureType(to: Error.self)
-      .flatMap { _ in
-        AnyPublisher<Response, Error>.init { (s) in
-          let cancellable = self.innerProvider.request(target) { (result) in
-            switch result {
-            case .success(let response):
-              do {
-                let response = try response.filterSuccessfulStatusAndRedirectCodes()
-                s.send(response)
-              } catch let error as MoyaError {
-                s.send(completion: .failure(error))
-              } catch {
-                assertionFailure()
-              }
-            case .failure(let error):
-              s.send(completion: .failure(error))
-            }
+      .flatMap { [tokenController = tokenController] _ in
+        request.catch { (error: MoyaError) -> AnyPublisher<Response, Error> in
+          guard case .statusCode(let response) = error else {
+            return Fail(error: error).mapError { $0 }.eraseToAnyPublisher()
           }
-          return AnyCancellable {
-            cancellable.cancel()
+          guard case 401 = response.statusCode else {
+            return Fail(error: error).mapError { $0 }.eraseToAnyPublisher()
           }
+          return tokenController.refresh()
+            .flatMap { _ in
+              request
+                .mapError { $0 }
+                .handleEvents(receiveCompletion: { completion in
+                  switch completion {
+                  case .finished:
+                    break
+                  case .failure(let error):
+                    Log.error(error)
+                  }
+                })
+          }
+          .eraseToAnyPublisher()
         }
     }
+    .mapError { $0 }
     .eraseToAnyPublisher()
 
   }

@@ -61,6 +61,7 @@ public struct RealmWrapper {
     return result
   }
 
+  @discardableResult
   public func asyncWrite<Return>(
     _ file: StaticString = #file,
     _ function: StaticString = #function,

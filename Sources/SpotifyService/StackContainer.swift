@@ -41,6 +41,10 @@ public final class BackendStack: ObservableObject, Equatable {
 
     syncSession: do {
 
+      /**
+       Here is an example that uses Realm in Verge
+       */
+
       _store.commit {
         $0.session = session.freeze()
       }
@@ -74,7 +78,11 @@ public final class BackendStack: ObservableObject, Equatable {
       store.commit {
         $0.loggedIn = .init()
       }
-      self.stack = .loggedIn(.init(store: store))
+      self.stack = .loggedIn(.init(
+        externalDataSource: externalDataSource,
+        store: store
+        )
+      )
     }
 
   }
@@ -99,7 +107,7 @@ public final class BackendStack: ObservableObject, Equatable {
           let session = try realmWrapper.write { (transaction) -> RealmObjects.Session in
             let session = try transaction.object(ofType: RealmObjects.Session.self)
             session.update(with: auth)
-            transaction.realm.add(session)
+            transaction.realm.add(session, update: .all)
             return session
           }
 
@@ -112,8 +120,11 @@ public final class BackendStack: ObservableObject, Equatable {
           Log.error("\(error)")
         }
 
+        let loggedInStack = LoggedInStack(
+          externalDataSource: self.externalDataSource,
+          store: self.store
+        )
 
-        let loggedInStack = LoggedInStack(store: self.store)
         return loggedInStack
     }
     .mapError { $0 as Error }

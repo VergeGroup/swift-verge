@@ -12,9 +12,15 @@ public final class LoggedInStack {
 
   private let store: BackendStore
 
-  init(store: BackendStore) {
+  init(
+    externalDataSource: ExternalDataSource,
+    store: BackendStore
+  ) {
 
-    self.service = .init(targetStore: store)
+    self.service = .init(
+      externalDataSource: externalDataSource,
+      targetStore: store
+    )
 
     self.store = store
 
