@@ -66,3 +66,15 @@ class ViewController: UIViewController {
 
 }
 ```
+
+## Make Changes object the first-time value
+
+If you have a `Changes` from anywhere, it might have previous value,  
+Using `ifChanged` might return false because compared with the previous one.  
+You can create the Changed object that always returns true from `ifChanged` with followings:
+
+```swift
+let changes: Changes<State>
+
+let firstTimeChanges: Changes<State> = changes.droppedPrevious()
+```
