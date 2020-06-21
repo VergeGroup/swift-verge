@@ -20,32 +20,32 @@ final class DerivedTests: XCTestCase {
     let slice = wrapper.derived(.map { $0.count })
 
     XCTAssertEqual(slice.primitiveValue, 0)
-    XCTAssertEqual(slice.changes.root, 0)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.root, 0)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
     
     wrapper.increment()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.changes.root, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.root, 1)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
       
     wrapper.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.changes.version, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.version, 1)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
 
     wrapper.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.changes.version, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.version, 1)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
 
     wrapper.increment()
 
     XCTAssertEqual(slice.primitiveValue, 2)
-    XCTAssertEqual(slice.changes.version, 2)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.version, 2)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
   }
 
   func testSlice2() {
@@ -53,32 +53,32 @@ final class DerivedTests: XCTestCase {
     let slice = wrapper.derived(.map { $0.count }, dropsOutput: { $0.noChanges(\.root) })
 
     XCTAssertEqual(slice.primitiveValue, 0)
-    XCTAssertEqual(slice.changes.root, 0)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.root, 0)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
 
     wrapper.increment()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.changes.root, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.root, 1)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
 
     wrapper.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.changes.version, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.version, 1)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
 
     wrapper.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.changes.version, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.version, 1)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
 
     wrapper.increment()
 
     XCTAssertEqual(slice.primitiveValue, 2)
-    XCTAssertEqual(slice.changes.version, 2)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.version, 2)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
   }
 
 
@@ -141,29 +141,29 @@ final class DerivedTests: XCTestCase {
     weak var weakSlice = slice
         
     XCTAssertEqual(slice.primitiveValue, 0)
-    XCTAssertEqual(slice.changes.version, 0)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.version, 0)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.increment()
         
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.changes.version, 1)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.version, 1)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.empty()
     
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.changes.version, 1) // with memoized, version not changed
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.version, 1) // with memoized, version not changed
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.increment()
     
     XCTAssertEqual(slice.primitiveValue, 2)
-    XCTAssertEqual(slice.changes.version, 2)
-    XCTAssertEqual(slice.changes.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.version, 2)
+    XCTAssertEqual(slice.value.hasChanges(\.root), true)
     XCTAssertNotNil(weakBaseSlice)
 
     slice = nil
