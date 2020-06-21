@@ -1,13 +1,21 @@
 module.exports = {
   title: 'Verge',
   tagline: 'A performant flux library for iOS App - SwiftUI / UIKit',
-  url: 'https://vergegroup.github.io/Verge/',
+  url: 'https://vergegroup.github.io',
   baseUrl: '/Verge/',
   favicon: 'img/favicon.ico',
   organizationName: 'VergeGroup',
   projectName: 'Verge',
   themeConfig: {
-    image: '../img/ogimage2.png',
+    announcementBar: {
+      id: 'support_us', // Any value that will identify this message.
+      content:
+        '⭐️ Verge 7 is ready to use on SwiftUI.  If you like this, give it a star on <a href="https://github.com/VergeGroup/Verge">GitHub</a>! ⭐️',
+      backgroundColor: '#fafbfc', // Defaults to `#fff`.
+      textColor: '#091E42', // Defaults to `#000`.
+    },
+    defaultDarkMode: true,
+    image: 'img/ogimage2.png',
     googleAnalytics: {
       trackingID: 'UA-163893115-1',
       anonymizeIP: true,
@@ -48,8 +56,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${
-          new Date().getFullYear()} VergeGroup. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} VergeGroup. Built with Docusaurus.`,
     },
   },
   presets: [
