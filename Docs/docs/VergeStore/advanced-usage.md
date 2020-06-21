@@ -4,11 +4,11 @@ title: Advanced usage
 sidebar_label: Advanced usage
 ---
 
-## ☂️ Advanced Usage - to keep performance and scalability
+## To keep performance and scalability
 
-**Adding a cachable computed property in a State**
+## Adding a cachable computed property in a State
 
-We can add a computed property in a state to get a derived value with stored property,<br/>
+We can add a computed property in a state to get a derived value with stored property,  
 and that computed property works fine as well other stored property.
 
 ```swift
@@ -21,7 +21,7 @@ struct MyState {
 }
 ```
 
-However, this patterns might cause an expensive cost of operation depends on how they computes. <br/>
+However, this patterns might cause an expensive cost of operation depends on how they computes.  
 To solve it, Verge arrows us to define the computed property with another approach.
 
 ```swift
@@ -45,12 +45,12 @@ let store: MyStore
 store.changes.computed.filteredArray
 ```
 
-This defined computed array calculates only if changed specified value.<br/>
+This defined computed array calculates only if changed specified value.  
 That condition to re-calculate is defined with `.ifChanged` method in the example code.
 
 And finally, it caches the result by first-time access and it returns cached value until if the source value changed.
 
-**Making a slice of the state (Selector)**
+## Making a slice of the state (Selector)
 
 We can create a slice object that derives a data from the state.
 
@@ -65,12 +65,12 @@ derived.sinkChanges { (changes: Changes<Int>) in
 }
 ```
 
-**Creating a Dispatcher**
+## Creating a Dispatcher
 
-Store arrows us to define an action in itself, that might cause gain complexity in supporting a large application.<br/>
-To solve this, Verge offers us to create an object that dispatches an action to the store.<br/>
-We can separate the code of actions to keep maintainability.<br/>
-that also help us to manage a different type of dependencies.<br/>
+Store arrows us to define an action in itself, that might cause gain complexity in supporting a large application.  
+To solve this, Verge offers us to create an object that dispatches an action to the store.  
+We can separate the code of actions to keep maintainability.  
+that also help us to manage a different type of dependencies.
 
 For example, the case of those dependencies different between logged-in and logged-out.
 
@@ -82,10 +82,11 @@ class MyDispatcher: MyStore.Dispatcher {
     }
   }
 }
-
-let store: MyStore
-let dispatcher = MyDispatcher(target: store)
 ```
 
-Additionally, We can create a dispatcher that focuses the specified sub-tree of the state.<br/>
-You can check the detail of this from [our documentation](https://muukii-app.gitbook.io/verge/docs-vergestore/dispatcher).
+```swift
+let store: MyStore
+let dispatcher = MyDispatcher(target: store)
+
+dispatcher.moreOperation()
+```

@@ -7,7 +7,8 @@ sidebar_label: Optimization Tips
 ## Writing high-performance state-management
 
 - Simplify the state shape, thinking normalization to reduce the number of operations on mutating.
-- Passes Changes object as it is if you want to bring the large state tree somewhere. \* Since `Changes` is a reference type, it reduces the cost of copy.
+- Passes Changes object as it is if you want to bring the large state tree somewhere.
+  - Since `Changes` is a reference type, it reduces the cost of copy.
 - Using ExtendedComputedProperty
 - Makes the state compatible with Equatable as possible to create a good Derived object
 - Reduces creating new Derived object. Instead, share Derived.
@@ -15,7 +16,7 @@ sidebar_label: Optimization Tips
 - Uses Fragment property wrapper to enables Differentiability.
 - Uses Fragment property wrapper to enables Equatable easily that contains false negative.
 
-# 🏎 Performance monitoring
+## 🏎 Performance monitoring
 
 Verge supports `os_sign_post`
 We can check the performance from Xcode Instruments.
@@ -23,7 +24,7 @@ Please enables signpost profiling.
 
 ![CleanShot 2020-05-31 at 14 22 16@2x](https://user-images.githubusercontent.com/1888355/83345130-80152c00-a34a-11ea-925a-6c6a609be102.png)
 
-# 📱 SwiftUI
+## 📱 SwiftUI
 
 > WIP
 
