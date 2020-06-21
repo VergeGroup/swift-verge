@@ -78,6 +78,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   }
   
   /// A current changes state.
+  @available(*, deprecated, renamed: "value")
   public var changes: Changes<Value> {
     innerStore.state
   }
@@ -88,7 +89,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
     Unmanaged.passUnretained(innerStore).toOpaque()
   }
       
-  fileprivate let _set: (Value) -> Void
+  fileprivate let _set: ((Value) -> Void)?
   
   private let subscription: VergeAnyCancellable
   private let retainsUpstream: Any?
@@ -96,17 +97,24 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   public private(set) var attributes: Set<Attribute> = .init()
   
   // MARK: - Initializers
-      
+
   private init(constant: Value) {
     self.innerStore = .init(initialState: constant, logger: nil)
     self._set = { _ in }
     self.subscription = .init(onDeinit: {})
     self.retainsUpstream = nil
   }
-        
+
+  /// Low-level initializer
+  /// - Parameters:
+  ///   - get: MemoizeMap to make a `Value` from `UpstreamState`
+  ///   - set: A closure to apply new-value to `UpstreamState`, it will need in creating `BindingDerived`.
+  ///   - initialUpstreamState: Initial value of the `UpstreamState`
+  ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
+  ///   - retainsUpstream: Any instances to retain in this instance.
   public init<UpstreamState>(
     get: MemoizeMap<UpstreamState, Value>,
-    set: @escaping (Value) -> Void,
+    set: ((Value) -> Void)?,
     initialUpstreamState: UpstreamState,
     subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
     retainsUpstream: Any?
@@ -238,7 +246,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
         }
       }),
       set: { _ in },
-      initialUpstreamState: changes,
+      initialUpstreamState: value,
       subscribeUpstreamState: { callback in
         self.innerStore.sinkState(
           dropsFirst: true,
@@ -329,7 +337,7 @@ extension Derived: CustomReflectable {
       children: [
         "upstream" : retainsUpstream as Any,
         "attributes" : attributes,
-        "changes" : changes
+        "value" : value
     ],
       displayStyle: .struct,
       ancestorRepresentation: .generated
@@ -499,7 +507,13 @@ public final class BindingDerived<State>: Derived<State> {
   /// A current state.
   public override var primitiveValue: State {
     get { innerStore.primitiveState }
-    set { _set(newValue) }
+    set {
+      guard let set = _set else {
+        assertionFailure("Setter closure is unset. NewValue won't be applied. \(newValue)")
+        return
+      }
+      set(newValue)
+    }
   }
   
   public var wrappedValue: State {
