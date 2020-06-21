@@ -39,7 +39,7 @@ class ViewController: UIViewController {
       })
       .disposed(by: disposeBag)
     
-    viewModel.rx.changesObservable()
+    viewModel.rx.stateObservable()
       .observeOn(MainScheduler.instance)
       .bind { [weak self] (changes) in
         self?.update(changes: changes)
@@ -85,7 +85,7 @@ final class ViewModel: ViewModelBase<ViewModelState, ViewModelActivity> {
     self.rootStore = parent
     super.init(initialState: .init(), logger: nil)
     
-    parent.rx.stateObservable
+    parent.rx.stateObservable()
       .bind { [weak self] state in
         self?.commit {
           $0.count = state.count

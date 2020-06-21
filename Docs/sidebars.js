@@ -7,6 +7,7 @@ module.exports = {
         "installation",
         "motivation",
         "Overview",
+        "demo",
       ]
     },
     {
