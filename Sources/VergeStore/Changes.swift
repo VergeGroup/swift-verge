@@ -175,19 +175,20 @@ public final class Changes<Value>: ChangesType, Equatable {
   
   public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
   
-  /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
-  ///
+ /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
   @inline(__always)
   public func noChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
     !hasChanges(keyPath, ==)
   }
-  
+
+  /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
   @inline(__always)
   public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ compare: (T, T) -> Bool) -> Bool {
     
     !hasChanges(keyPath, compare)
   }
-  
+
+  /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
   @inline(__always)
   public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: Comparer<T>) -> Bool {
     
@@ -195,22 +196,23 @@ public final class Changes<Value>: ChangesType, Equatable {
   }
     
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
-  ///
   @inline(__always)
   public func hasChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
     hasChanges(keyPath, ==)
   }
-  
+
+  /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   @inline(__always)
   public func hasChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: Comparer<T>) -> Bool {
     hasChanges(keyPath, comparer.equals)
   }
-  
+
+  /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   @inline(__always)
   public func hasChanges<T>(_ keyPath: ChangesKeyPath<T>, _ compare: (T, T) -> Bool) -> Bool {
     hasChanges({ $0[keyPath: keyPath] }, compare)
   }
-  
+
   @inline(__always)
   public func hasChanges<Composed>(
     _ compose: (Changes) -> Composed,
