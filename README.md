@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://vergegroup.github.io/Verge/">
-<img width="240" alt="Frame 8" src="https://user-images.githubusercontent.com/1888355/82828305-b6d2e880-9eeb-11ea-9c3b-7659da42b499.png">
+<img width="256" alt="VergeIcon" src="https://user-images.githubusercontent.com/1888355/85240806-7d52b600-b474-11ea-8179-f9fe49636877.png">
     </a>
 </p>
 
@@ -107,14 +107,3 @@ Verge supports also SwiftPM.
 ## License
 
 Verge is released under the MIT license.
-
-
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbMTM2MDcwNTAwMywtMTM5ODAzNzAxMiwtMT
-MxNTQzOTc0MywxNzQ3NDUxMDIzLC0xNjE2Nzg4MiwtMTQ1NjEy
-MDIzNCwxMzI1MjAzMzkyLC0zNDQwMDc0MzcsMTk4NDM3MTkwNC
-w1NDc5ODY4NTQsMjQyMTc4OTI3LDE2OTU1NzUwMjMsMTI3MTA3
-MjA0NiwtMzQxNDI0MzgyLDk3MTY3NDU5Nyw4NDczNDc3NzQsMT
-I4MTQ0ODQ5OCwtMTA3MTU1MTU0NCwtMTg5NTQ4MDcwMCwyMTA0
-NTExNzk5XX0=
--->
