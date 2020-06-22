@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://vergegroup.github.io/Verge/">
-<img width="256" alt="VergeIcon" src="https://user-images.githubusercontent.com/1888355/85240806-7d52b600-b474-11ea-8179-f9fe49636877.png">
+<img width="256" alt="VergeIcon" src="https://user-images.githubusercontent.com/1888355/85241314-5ac19c80-b476-11ea-9be6-e04ed3bc6994.png">
     </a>
 </p>
 
