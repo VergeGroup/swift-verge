@@ -521,7 +521,7 @@ public final class BindingDerived<State>: Derived<State> {
     set { primitiveValue = newValue }
   }
   
-  public var projectedValue: Self {
+  public var projectedValue: BindingDerived<State> {
     self
   }
 
