@@ -8,11 +8,11 @@ module.exports = {
   projectName: 'Verge',
   themeConfig: {
     announcementBar: {
-      id: 'support_us', // Any value that will identify this message.
+      id: 'support_us',  // Any value that will identify this message.
       content:
-        '⭐️ Verge 7 is ready to use on SwiftUI.  If you like this, give it a star on <a href="https://github.com/VergeGroup/Verge">GitHub</a>! ⭐️',
-      backgroundColor: '#fafbfc', // Defaults to `#fff`.
-      textColor: '#091E42', // Defaults to `#000`.
+          '⭐️ Verge 7 is ready to use on SwiftUI.  If you like this, give it a star on <a href="https://github.com/VergeGroup/Verge">GitHub</a>! ⭐️',
+      backgroundColor: '#fafbfc',  // Defaults to `#fff`.
+      textColor: '#091E42',        // Defaults to `#000`.
     },
     defaultDarkMode: true,
     image: 'img/ogimage2.png',
@@ -37,6 +37,12 @@ module.exports = {
           position: 'left',
         },
         {
+          to: 'docs/VergeStore/BasicUsage',
+          activeBasePath: 'docs/VergeStore/BasicUsage',
+          label: 'Basic usage',
+          position: 'left',
+        },
+        {
           href: 'https://github.com/VergeGroup/Verge',
           label: 'GitHub',
           position: 'right',
@@ -56,7 +62,8 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} VergeGroup. Built with Docusaurus.`,
+      copyright: `Copyright © ${
+          new Date().getFullYear()} VergeGroup. Built with Docusaurus.`,
     },
   },
   presets: [
