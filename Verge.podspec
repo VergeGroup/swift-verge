@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   
   s.swift_version = '5.2'
 
-  s.default_subspec = 'Core'
+  s.default_subspec = 'Store'
 
   s.weak_frameworks = ['Combine', 'SwiftUI']
 
