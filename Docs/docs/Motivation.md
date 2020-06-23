@@ -29,3 +29,10 @@ For example, Verge provides these stuff to tune performance up.
 
 - Derived (Similar to [facebookexperimental/Recoil](https://github.com/facebookexperimental/Recoil)'s Selector)
 - ORM
+
+## Supports volatile events - Activity
+
+We use an event as `Activity` that won't be stored in the state.  
+This concept would help us to describe something that is not easy to describe as a state in the client application.
+
+<img width="513" src="https://user-images.githubusercontent.com/1888355/85392055-fc83df00-b585-11ea-866d-7ab11dfa823a.png" />
