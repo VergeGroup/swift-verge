@@ -8,16 +8,237 @@
 
 /* Begin PBXBuildFile section */
 		4B7149E724A4FC90006EB6D5 /* Demo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B7149E524A4FC90006EB6D5 /* Demo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B714A3024A4FCE3006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A2F24A4FCE3006EB6D5 /* AppDelegate.swift */; };
+		4B714A3224A4FCE3006EB6D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A3124A4FCE3006EB6D5 /* SceneDelegate.swift */; };
+		4B714A3424A4FCE3006EB6D5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A3324A4FCE3006EB6D5 /* ContentView.swift */; };
+		4B714A3624A4FCE4006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A3524A4FCE4006EB6D5 /* Assets.xcassets */; };
+		4B714A3924A4FCE4006EB6D5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A3824A4FCE4006EB6D5 /* Preview Assets.xcassets */; };
+		4B714A3C24A4FCE4006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A3A24A4FCE4006EB6D5 /* LaunchScreen.storyboard */; };
+		4B714A4824A4FCF9006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A4724A4FCF9006EB6D5 /* AppDelegate.swift */; };
+		4B714A4A24A4FCF9006EB6D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A4924A4FCF9006EB6D5 /* SceneDelegate.swift */; };
+		4B714A4C24A4FCF9006EB6D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A4B24A4FCF9006EB6D5 /* ViewController.swift */; };
+		4B714A4F24A4FCF9006EB6D5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A4D24A4FCF9006EB6D5 /* Main.storyboard */; };
+		4B714A5124A4FCF9006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A5024A4FCF9006EB6D5 /* Assets.xcassets */; };
+		4B714A5424A4FCF9006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A5224A4FCF9006EB6D5 /* LaunchScreen.storyboard */; };
+		4B714A6024A4FD18006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A5F24A4FD18006EB6D5 /* AppDelegate.swift */; };
+		4B714A6224A4FD18006EB6D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A6124A4FD18006EB6D5 /* SceneDelegate.swift */; };
+		4B714A6424A4FD18006EB6D5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A6324A4FD18006EB6D5 /* ContentView.swift */; };
+		4B714A6624A4FD18006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A6524A4FD18006EB6D5 /* Assets.xcassets */; };
+		4B714A6924A4FD18006EB6D5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A6824A4FD18006EB6D5 /* Preview Assets.xcassets */; };
+		4B714A6C24A4FD18006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A6A24A4FD18006EB6D5 /* LaunchScreen.storyboard */; };
+		4B714A7824A4FD2C006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A7724A4FD2C006EB6D5 /* AppDelegate.swift */; };
+		4B714A7A24A4FD2C006EB6D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A7924A4FD2C006EB6D5 /* SceneDelegate.swift */; };
+		4B714A7C24A4FD2C006EB6D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A7B24A4FD2C006EB6D5 /* ViewController.swift */; };
+		4B714A7F24A4FD2C006EB6D5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A7D24A4FD2C006EB6D5 /* Main.storyboard */; };
+		4B714A8124A4FD2D006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A8024A4FD2D006EB6D5 /* Assets.xcassets */; };
+		4B714A8424A4FD2D006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A8224A4FD2D006EB6D5 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4B714A0324A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BFA229C23A63B55008D7BCB;
+			remoteInfo = VergeCore;
+		};
+		4B714A0524A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B17438F23C766D70074C457;
+			remoteInfo = VergeRx;
+		};
+		4B714A0724A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B786320233912AB009B9C1B;
+			remoteInfo = VergeStore;
+		};
+		4B714A0924A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B475BB2239AB954008A03E1;
+			remoteInfo = VergeORM;
+		};
+		4B714A0B24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B86A4861F969AD5002D54FE;
+			remoteInfo = VergeClassic;
+		};
+		4B714A0D24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B9AF04424880145001BAAFC;
+			remoteInfo = VergeSwiftUI;
+		};
+		4B714A0F24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B5E849C24618D1C009A0CA8;
+			remoteInfo = VergeObjcBridge;
+		};
+		4B714A1124A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BB4F7DF23D329E20039C897;
+			remoteInfo = SpotifyDemo;
+		};
+		4B714A1324A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BB64CF9248391550017699A;
+			remoteInfo = SpotifyUIKit;
+		};
+		4B714A1524A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BB64CBC248380EF0017699A;
+			remoteInfo = SpotifyService;
+		};
+		4B714A1724A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B86A4971F969C7D002D54FE;
+			remoteInfo = "Verge-Demo";
+		};
+		4B714A1924A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B949128239C257500370067;
+			remoteInfo = VergeStoreDemoSwiftUI;
+		};
+		4B714A1B24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BDBDF7423CE0C4200EEA112;
+			remoteInfo = VergeStoreDemoUIKit;
+		};
+		4B714A1D24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B65F8EC1FB4C0DC00A90A67;
+			remoteInfo = VergeTests;
+		};
+		4B714A1F24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BE9454F23AD1B180060F977;
+			remoteInfo = VergeCoreTests;
+		};
+		4B714A2124A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B68394423705ACD002FFC5A;
+			remoteInfo = VergeStoreTests;
+		};
+		4B714A2324A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B475BC5239ADE1C008A03E1;
+			remoteInfo = VergeORMTests;
+		};
+		4B714A2524A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B1743A723C767670074C457;
+			remoteInfo = VergeRxTests;
+		};
+		4B714A2724A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B2AE0BD248571B20086A42C;
+			remoteInfo = SpotifyServiceTests;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		4B7149E224A4FC90006EB6D5 /* Demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B7149E524A4FC90006EB6D5 /* Demo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Demo.h; sourceTree = "<group>"; };
 		4B7149E624A4FC90006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Verge.xcodeproj; path = ../Verge.xcodeproj; sourceTree = "<group>"; };
+		4B714A2D24A4FCE3006EB6D5 /* SpotifyDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpotifyDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B714A2F24A4FCE3006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4B714A3124A4FCE3006EB6D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4B714A3324A4FCE3006EB6D5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4B714A3524A4FCE4006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B714A3824A4FCE4006EB6D5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4B714A3B24A4FCE4006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4B714A3D24A4FCE4006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B714A4524A4FCF9006EB6D5 /* Verge-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Verge-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B714A4724A4FCF9006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4B714A4924A4FCF9006EB6D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4B714A4B24A4FCF9006EB6D5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		4B714A4E24A4FCF9006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4B714A5024A4FCF9006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B714A5324A4FCF9006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4B714A5524A4FCF9006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B714A5D24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B714A5F24A4FD18006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4B714A6124A4FD18006EB6D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4B714A6324A4FD18006EB6D5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4B714A6524A4FD18006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B714A6824A4FD18006EB6D5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4B714A6B24A4FD18006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4B714A6D24A4FD18006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B714A7524A4FD2C006EB6D5 /* VergeStoreDemoUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B714A7724A4FD2C006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4B714A7924A4FD2C006EB6D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4B714A7B24A4FD2C006EB6D5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		4B714A7E24A4FD2C006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4B714A8024A4FD2D006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B714A8324A4FD2D006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4B714A8524A4FD2D006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4B7149DF24A4FC90006EB6D5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714A2A24A4FCE3006EB6D5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714A4224A4FCF9006EB6D5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714A5A24A4FD18006EB6D5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714A7224A4FD2C006EB6D5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -30,7 +251,12 @@
 		4B7149D824A4FC90006EB6D5 = {
 			isa = PBXGroup;
 			children = (
+				4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */,
 				4B7149E424A4FC90006EB6D5 /* Demo */,
+				4B714A2E24A4FCE3006EB6D5 /* SpotifyDemo */,
+				4B714A4624A4FCF9006EB6D5 /* Verge-Demo */,
+				4B714A5E24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI */,
+				4B714A7624A4FD2C006EB6D5 /* VergeStoreDemoUIKit */,
 				4B7149E324A4FC90006EB6D5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -39,6 +265,10 @@
 			isa = PBXGroup;
 			children = (
 				4B7149E224A4FC90006EB6D5 /* Demo.framework */,
+				4B714A2D24A4FCE3006EB6D5 /* SpotifyDemo.app */,
+				4B714A4524A4FCF9006EB6D5 /* Verge-Demo.app */,
+				4B714A5D24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI.app */,
+				4B714A7524A4FD2C006EB6D5 /* VergeStoreDemoUIKit.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -50,6 +280,104 @@
 				4B7149E624A4FC90006EB6D5 /* Info.plist */,
 			);
 			path = Demo;
+			sourceTree = "<group>";
+		};
+		4B7149EE24A4FCAA006EB6D5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */,
+				4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */,
+				4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */,
+				4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */,
+				4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */,
+				4B714A0E24A4FCAB006EB6D5 /* VergeSwiftUI.framework */,
+				4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */,
+				4B714A1224A4FCAB006EB6D5 /* SpotifyDemo.app */,
+				4B714A1424A4FCAB006EB6D5 /* SpotifyUIKit.framework */,
+				4B714A1624A4FCAB006EB6D5 /* SpotifyService.framework */,
+				4B714A1824A4FCAB006EB6D5 /* Verge-Demo.app */,
+				4B714A1A24A4FCAB006EB6D5 /* VergeStoreDemoSwiftUI.app */,
+				4B714A1C24A4FCAB006EB6D5 /* VergeStoreDemoUIKit.app */,
+				4B714A1E24A4FCAB006EB6D5 /* VergeTests.xctest */,
+				4B714A2024A4FCAB006EB6D5 /* VergeCoreTests.xctest */,
+				4B714A2224A4FCAB006EB6D5 /* VergeStoreTests.xctest */,
+				4B714A2424A4FCAB006EB6D5 /* VergeORMTests.xctest */,
+				4B714A2624A4FCAB006EB6D5 /* VergeRxTests.xctest */,
+				4B714A2824A4FCAB006EB6D5 /* SpotifyServiceTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4B714A2E24A4FCE3006EB6D5 /* SpotifyDemo */ = {
+			isa = PBXGroup;
+			children = (
+				4B714A2F24A4FCE3006EB6D5 /* AppDelegate.swift */,
+				4B714A3124A4FCE3006EB6D5 /* SceneDelegate.swift */,
+				4B714A3324A4FCE3006EB6D5 /* ContentView.swift */,
+				4B714A3524A4FCE4006EB6D5 /* Assets.xcassets */,
+				4B714A3A24A4FCE4006EB6D5 /* LaunchScreen.storyboard */,
+				4B714A3D24A4FCE4006EB6D5 /* Info.plist */,
+				4B714A3724A4FCE4006EB6D5 /* Preview Content */,
+			);
+			path = SpotifyDemo;
+			sourceTree = "<group>";
+		};
+		4B714A3724A4FCE4006EB6D5 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4B714A3824A4FCE4006EB6D5 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		4B714A4624A4FCF9006EB6D5 /* Verge-Demo */ = {
+			isa = PBXGroup;
+			children = (
+				4B714A4724A4FCF9006EB6D5 /* AppDelegate.swift */,
+				4B714A4924A4FCF9006EB6D5 /* SceneDelegate.swift */,
+				4B714A4B24A4FCF9006EB6D5 /* ViewController.swift */,
+				4B714A4D24A4FCF9006EB6D5 /* Main.storyboard */,
+				4B714A5024A4FCF9006EB6D5 /* Assets.xcassets */,
+				4B714A5224A4FCF9006EB6D5 /* LaunchScreen.storyboard */,
+				4B714A5524A4FCF9006EB6D5 /* Info.plist */,
+			);
+			path = "Verge-Demo";
+			sourceTree = "<group>";
+		};
+		4B714A5E24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				4B714A5F24A4FD18006EB6D5 /* AppDelegate.swift */,
+				4B714A6124A4FD18006EB6D5 /* SceneDelegate.swift */,
+				4B714A6324A4FD18006EB6D5 /* ContentView.swift */,
+				4B714A6524A4FD18006EB6D5 /* Assets.xcassets */,
+				4B714A6A24A4FD18006EB6D5 /* LaunchScreen.storyboard */,
+				4B714A6D24A4FD18006EB6D5 /* Info.plist */,
+				4B714A6724A4FD18006EB6D5 /* Preview Content */,
+			);
+			path = VergeStoreDemoSwiftUI;
+			sourceTree = "<group>";
+		};
+		4B714A6724A4FD18006EB6D5 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4B714A6824A4FD18006EB6D5 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		4B714A7624A4FD2C006EB6D5 /* VergeStoreDemoUIKit */ = {
+			isa = PBXGroup;
+			children = (
+				4B714A7724A4FD2C006EB6D5 /* AppDelegate.swift */,
+				4B714A7924A4FD2C006EB6D5 /* SceneDelegate.swift */,
+				4B714A7B24A4FD2C006EB6D5 /* ViewController.swift */,
+				4B714A7D24A4FD2C006EB6D5 /* Main.storyboard */,
+				4B714A8024A4FD2D006EB6D5 /* Assets.xcassets */,
+				4B714A8224A4FD2D006EB6D5 /* LaunchScreen.storyboard */,
+				4B714A8524A4FD2D006EB6D5 /* Info.plist */,
+			);
+			path = VergeStoreDemoUIKit;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -84,16 +412,97 @@
 			productReference = 4B7149E224A4FC90006EB6D5 /* Demo.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		4B714A2C24A4FCE3006EB6D5 /* SpotifyDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B714A3E24A4FCE4006EB6D5 /* Build configuration list for PBXNativeTarget "SpotifyDemo" */;
+			buildPhases = (
+				4B714A2924A4FCE3006EB6D5 /* Sources */,
+				4B714A2A24A4FCE3006EB6D5 /* Frameworks */,
+				4B714A2B24A4FCE3006EB6D5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SpotifyDemo;
+			productName = SpotifyDemo;
+			productReference = 4B714A2D24A4FCE3006EB6D5 /* SpotifyDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4B714A4424A4FCF9006EB6D5 /* Verge-Demo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B714A5624A4FCF9006EB6D5 /* Build configuration list for PBXNativeTarget "Verge-Demo" */;
+			buildPhases = (
+				4B714A4124A4FCF9006EB6D5 /* Sources */,
+				4B714A4224A4FCF9006EB6D5 /* Frameworks */,
+				4B714A4324A4FCF9006EB6D5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Verge-Demo";
+			productName = "Verge-Demo";
+			productReference = 4B714A4524A4FCF9006EB6D5 /* Verge-Demo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4B714A5C24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B714A6E24A4FD18006EB6D5 /* Build configuration list for PBXNativeTarget "VergeStoreDemoSwiftUI" */;
+			buildPhases = (
+				4B714A5924A4FD18006EB6D5 /* Sources */,
+				4B714A5A24A4FD18006EB6D5 /* Frameworks */,
+				4B714A5B24A4FD18006EB6D5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VergeStoreDemoSwiftUI;
+			productName = VergeStoreDemoSwiftUI;
+			productReference = 4B714A5D24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4B714A7424A4FD2C006EB6D5 /* VergeStoreDemoUIKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B714A8624A4FD2D006EB6D5 /* Build configuration list for PBXNativeTarget "VergeStoreDemoUIKit" */;
+			buildPhases = (
+				4B714A7124A4FD2C006EB6D5 /* Sources */,
+				4B714A7224A4FD2C006EB6D5 /* Frameworks */,
+				4B714A7324A4FD2C006EB6D5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VergeStoreDemoUIKit;
+			productName = VergeStoreDemoUIKit;
+			productReference = 4B714A7524A4FD2C006EB6D5 /* VergeStoreDemoUIKit.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		4B7149D924A4FC90006EB6D5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1150;
 				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = muukii;
 				TargetAttributes = {
 					4B7149E124A4FC90006EB6D5 = {
+						CreatedOnToolsVersion = 11.5;
+					};
+					4B714A2C24A4FCE3006EB6D5 = {
+						CreatedOnToolsVersion = 11.5;
+					};
+					4B714A4424A4FCF9006EB6D5 = {
+						CreatedOnToolsVersion = 11.5;
+					};
+					4B714A5C24A4FD18006EB6D5 = {
+						CreatedOnToolsVersion = 11.5;
+					};
+					4B714A7424A4FD2C006EB6D5 = {
 						CreatedOnToolsVersion = 11.5;
 					};
 				};
@@ -109,18 +518,204 @@
 			mainGroup = 4B7149D824A4FC90006EB6D5;
 			productRefGroup = 4B7149E324A4FC90006EB6D5 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 4B7149EE24A4FCAA006EB6D5 /* Products */;
+					ProjectRef = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				4B7149E124A4FC90006EB6D5 /* Demo */,
+				4B714A2C24A4FCE3006EB6D5 /* SpotifyDemo */,
+				4B714A4424A4FCF9006EB6D5 /* Verge-Demo */,
+				4B714A5C24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI */,
+				4B714A7424A4FD2C006EB6D5 /* VergeStoreDemoUIKit */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VergeCore.framework;
+			remoteRef = 4B714A0324A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VergeRx.framework;
+			remoteRef = 4B714A0524A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VergeStore.framework;
+			remoteRef = 4B714A0724A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VergeORM.framework;
+			remoteRef = 4B714A0924A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VergeClassic.framework;
+			remoteRef = 4B714A0B24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A0E24A4FCAB006EB6D5 /* VergeSwiftUI.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VergeSwiftUI.framework;
+			remoteRef = 4B714A0D24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VergeObjcBridge.framework;
+			remoteRef = 4B714A0F24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A1224A4FCAB006EB6D5 /* SpotifyDemo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = SpotifyDemo.app;
+			remoteRef = 4B714A1124A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A1424A4FCAB006EB6D5 /* SpotifyUIKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SpotifyUIKit.framework;
+			remoteRef = 4B714A1324A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A1624A4FCAB006EB6D5 /* SpotifyService.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SpotifyService.framework;
+			remoteRef = 4B714A1524A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A1824A4FCAB006EB6D5 /* Verge-Demo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Verge-Demo.app";
+			remoteRef = 4B714A1724A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A1A24A4FCAB006EB6D5 /* VergeStoreDemoSwiftUI.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = VergeStoreDemoSwiftUI.app;
+			remoteRef = 4B714A1924A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A1C24A4FCAB006EB6D5 /* VergeStoreDemoUIKit.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = VergeStoreDemoUIKit.app;
+			remoteRef = 4B714A1B24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A1E24A4FCAB006EB6D5 /* VergeTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = VergeTests.xctest;
+			remoteRef = 4B714A1D24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A2024A4FCAB006EB6D5 /* VergeCoreTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = VergeCoreTests.xctest;
+			remoteRef = 4B714A1F24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A2224A4FCAB006EB6D5 /* VergeStoreTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = VergeStoreTests.xctest;
+			remoteRef = 4B714A2124A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A2424A4FCAB006EB6D5 /* VergeORMTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = VergeORMTests.xctest;
+			remoteRef = 4B714A2324A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A2624A4FCAB006EB6D5 /* VergeRxTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = VergeRxTests.xctest;
+			remoteRef = 4B714A2524A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B714A2824A4FCAB006EB6D5 /* SpotifyServiceTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SpotifyServiceTests.xctest;
+			remoteRef = 4B714A2724A4FCAB006EB6D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		4B7149E024A4FC90006EB6D5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714A2B24A4FCE3006EB6D5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B714A3C24A4FCE4006EB6D5 /* LaunchScreen.storyboard in Resources */,
+				4B714A3924A4FCE4006EB6D5 /* Preview Assets.xcassets in Resources */,
+				4B714A3624A4FCE4006EB6D5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714A4324A4FCF9006EB6D5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B714A5424A4FCF9006EB6D5 /* LaunchScreen.storyboard in Resources */,
+				4B714A5124A4FCF9006EB6D5 /* Assets.xcassets in Resources */,
+				4B714A4F24A4FCF9006EB6D5 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714A5B24A4FD18006EB6D5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B714A6C24A4FD18006EB6D5 /* LaunchScreen.storyboard in Resources */,
+				4B714A6924A4FD18006EB6D5 /* Preview Assets.xcassets in Resources */,
+				4B714A6624A4FD18006EB6D5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714A7324A4FD2C006EB6D5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B714A8424A4FD2D006EB6D5 /* LaunchScreen.storyboard in Resources */,
+				4B714A8124A4FD2D006EB6D5 /* Assets.xcassets in Resources */,
+				4B714A7F24A4FD2C006EB6D5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,7 +729,98 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B714A2924A4FCE3006EB6D5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B714A3024A4FCE3006EB6D5 /* AppDelegate.swift in Sources */,
+				4B714A3224A4FCE3006EB6D5 /* SceneDelegate.swift in Sources */,
+				4B714A3424A4FCE3006EB6D5 /* ContentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714A4124A4FCF9006EB6D5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B714A4C24A4FCF9006EB6D5 /* ViewController.swift in Sources */,
+				4B714A4824A4FCF9006EB6D5 /* AppDelegate.swift in Sources */,
+				4B714A4A24A4FCF9006EB6D5 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714A5924A4FD18006EB6D5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B714A6024A4FD18006EB6D5 /* AppDelegate.swift in Sources */,
+				4B714A6224A4FD18006EB6D5 /* SceneDelegate.swift in Sources */,
+				4B714A6424A4FD18006EB6D5 /* ContentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714A7124A4FD2C006EB6D5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B714A7C24A4FD2C006EB6D5 /* ViewController.swift in Sources */,
+				4B714A7824A4FD2C006EB6D5 /* AppDelegate.swift in Sources */,
+				4B714A7A24A4FD2C006EB6D5 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		4B714A3A24A4FCE4006EB6D5 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B714A3B24A4FCE4006EB6D5 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		4B714A4D24A4FCF9006EB6D5 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B714A4E24A4FCF9006EB6D5 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		4B714A5224A4FCF9006EB6D5 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B714A5324A4FCF9006EB6D5 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		4B714A6A24A4FD18006EB6D5 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B714A6B24A4FD18006EB6D5 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		4B714A7D24A4FD2C006EB6D5 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B714A7E24A4FD2C006EB6D5 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		4B714A8224A4FD2D006EB6D5 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B714A8324A4FD2D006EB6D5 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		4B7149E824A4FC90006EB6D5 /* Debug */ = {
@@ -303,6 +989,156 @@
 			};
 			name = Release;
 		};
+		4B714A3F24A4FCE4006EB6D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"SpotifyDemo/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = SpotifyDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B714A4024A4FCE4006EB6D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"SpotifyDemo/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = SpotifyDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4B714A5724A4FCF9006EB6D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Verge-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "app.muukii.Verge-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B714A5824A4FCF9006EB6D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Verge-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "app.muukii.Verge-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4B714A6F24A4FD18006EB6D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"VergeStoreDemoSwiftUI/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = VergeStoreDemoSwiftUI/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeStoreDemoSwiftUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B714A7024A4FD18006EB6D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"VergeStoreDemoSwiftUI/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = VergeStoreDemoSwiftUI/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeStoreDemoSwiftUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4B714A8724A4FD2D006EB6D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = VergeStoreDemoUIKit/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeStoreDemoUIKit;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B714A8824A4FD2D006EB6D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = VergeStoreDemoUIKit/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeStoreDemoUIKit;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -320,6 +1156,42 @@
 			buildConfigurations = (
 				4B7149EB24A4FC90006EB6D5 /* Debug */,
 				4B7149EC24A4FC90006EB6D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B714A3E24A4FCE4006EB6D5 /* Build configuration list for PBXNativeTarget "SpotifyDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B714A3F24A4FCE4006EB6D5 /* Debug */,
+				4B714A4024A4FCE4006EB6D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B714A5624A4FCF9006EB6D5 /* Build configuration list for PBXNativeTarget "Verge-Demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B714A5724A4FCF9006EB6D5 /* Debug */,
+				4B714A5824A4FCF9006EB6D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B714A6E24A4FD18006EB6D5 /* Build configuration list for PBXNativeTarget "VergeStoreDemoSwiftUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B714A6F24A4FD18006EB6D5 /* Debug */,
+				4B714A7024A4FD18006EB6D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B714A8624A4FD2D006EB6D5 /* Build configuration list for PBXNativeTarget "VergeStoreDemoUIKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B714A8724A4FD2D006EB6D5 /* Debug */,
+				4B714A8824A4FD2D006EB6D5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
