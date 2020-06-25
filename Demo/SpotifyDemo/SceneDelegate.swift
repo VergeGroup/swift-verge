@@ -1,18 +1,26 @@
-//
-//  SceneDelegate.swift
-//  SpotifyDemo
-//
-//  Created by muukii on 2020/06/26.
-//  Copyright © 2020 muukii. All rights reserved.
-//
 
 import UIKit
 import SwiftUI
 
+import SpotifyService
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
   var window: UIWindow?
-
+  
+  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    if let url = URLContexts.first(where: { $0.url.absoluteString.contains(Auth.callBackURI) })?.url {
+      guard let code = Auth.parseCallback(url: url) else {
+        assertionFailure("Auth Error")
+        return
+      }
+      if let current = BackendStackManager.shared.current {
+        current.receiveAuthCode(code)
+      } else {
+        assertionFailure("No current active.")
+      }
+    }
+  }
 
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
     // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -20,7 +28,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
     // Create the SwiftUI view that provides the window contents.
-    let contentView = ContentView()
+    
+    let viewModel = AppContainerViewModel()
+    let contentView = AppContainerView(viewModel: viewModel)
 
     // Use a UIHostingController as window root view controller.
     if let windowScene = scene as? UIWindowScene {

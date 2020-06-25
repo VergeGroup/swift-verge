@@ -3,42 +3,134 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		13BD6D0FA0ABF698AFCCA4D8 /* Pods_Demo_VergeStoreDemoSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 823BB27FFFB6D98FF641E929 /* Pods_Demo_VergeStoreDemoSwiftUI.framework */; };
 		4B7149E724A4FC90006EB6D5 /* Demo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B7149E524A4FC90006EB6D5 /* Demo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4B714A3024A4FCE3006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A2F24A4FCE3006EB6D5 /* AppDelegate.swift */; };
-		4B714A3224A4FCE3006EB6D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A3124A4FCE3006EB6D5 /* SceneDelegate.swift */; };
-		4B714A3424A4FCE3006EB6D5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A3324A4FCE3006EB6D5 /* ContentView.swift */; };
-		4B714A3624A4FCE4006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A3524A4FCE4006EB6D5 /* Assets.xcassets */; };
-		4B714A3924A4FCE4006EB6D5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A3824A4FCE4006EB6D5 /* Preview Assets.xcassets */; };
-		4B714A3C24A4FCE4006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A3A24A4FCE4006EB6D5 /* LaunchScreen.storyboard */; };
-		4B714A4824A4FCF9006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A4724A4FCF9006EB6D5 /* AppDelegate.swift */; };
-		4B714A4A24A4FCF9006EB6D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A4924A4FCF9006EB6D5 /* SceneDelegate.swift */; };
-		4B714A4C24A4FCF9006EB6D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A4B24A4FCF9006EB6D5 /* ViewController.swift */; };
-		4B714A4F24A4FCF9006EB6D5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A4D24A4FCF9006EB6D5 /* Main.storyboard */; };
-		4B714A5124A4FCF9006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A5024A4FCF9006EB6D5 /* Assets.xcassets */; };
-		4B714A5424A4FCF9006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A5224A4FCF9006EB6D5 /* LaunchScreen.storyboard */; };
-		4B714A6024A4FD18006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A5F24A4FD18006EB6D5 /* AppDelegate.swift */; };
-		4B714A6224A4FD18006EB6D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A6124A4FD18006EB6D5 /* SceneDelegate.swift */; };
-		4B714A6424A4FD18006EB6D5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A6324A4FD18006EB6D5 /* ContentView.swift */; };
-		4B714A6624A4FD18006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A6524A4FD18006EB6D5 /* Assets.xcassets */; };
-		4B714A6924A4FD18006EB6D5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A6824A4FD18006EB6D5 /* Preview Assets.xcassets */; };
-		4B714A6C24A4FD18006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A6A24A4FD18006EB6D5 /* LaunchScreen.storyboard */; };
-		4B714A7824A4FD2C006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A7724A4FD2C006EB6D5 /* AppDelegate.swift */; };
-		4B714A7A24A4FD2C006EB6D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A7924A4FD2C006EB6D5 /* SceneDelegate.swift */; };
-		4B714A7C24A4FD2C006EB6D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714A7B24A4FD2C006EB6D5 /* ViewController.swift */; };
-		4B714A7F24A4FD2C006EB6D5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A7D24A4FD2C006EB6D5 /* Main.storyboard */; };
-		4B714A8124A4FD2D006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A8024A4FD2D006EB6D5 /* Assets.xcassets */; };
-		4B714A8424A4FD2D006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714A8224A4FD2D006EB6D5 /* LaunchScreen.storyboard */; };
-		4B714A9224A4FD51006EB6D5 /* SpotifyUIKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B714A9024A4FD51006EB6D5 /* SpotifyUIKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B714A9524A4FD51006EB6D5 /* SpotifyUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */; };
 		4B714A9624A4FD51006EB6D5 /* SpotifyUIKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714AA424A4FD61006EB6D5 /* SpotifyService.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B714AA224A4FD61006EB6D5 /* SpotifyService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B714AA724A4FD61006EB6D5 /* SpotifyService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714AA024A4FD61006EB6D5 /* SpotifyService.framework */; };
 		4B714AA824A4FD61006EB6D5 /* SpotifyService.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714AA024A4FD61006EB6D5 /* SpotifyService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714AB024A4FE19006EB6D5 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714AAF24A4FE19006EB6D5 /* CombineExt */; };
+		4B714AC624A4FE37006EB6D5 /* FetchImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714AC524A4FE37006EB6D5 /* FetchImage */; };
+		4B714AE324A4FF2C006EB6D5 /* import.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AC724A4FF2C006EB6D5 /* import.swift */; };
+		4B714AE424A4FF2C006EB6D5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714AC924A4FF2C006EB6D5 /* Preview Assets.xcassets */; };
+		4B714AE524A4FF2C006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714ACA24A4FF2C006EB6D5 /* Assets.xcassets */; };
+		4B714AE624A4FF2C006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714ACB24A4FF2C006EB6D5 /* AppDelegate.swift */; };
+		4B714AE724A4FF2C006EB6D5 /* IndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714ACD24A4FF2C006EB6D5 /* IndicatorView.swift */; };
+		4B714AE824A4FF2C006EB6D5 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714ACE24A4FF2C006EB6D5 /* SafariView.swift */; };
+		4B714AE924A4FF2C006EB6D5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714ACF24A4FF2C006EB6D5 /* ContentView.swift */; };
+		4B714AEA24A4FF2C006EB6D5 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AD024A4FF2C006EB6D5 /* Session.swift */; };
+		4B714AEC24A4FF2C006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714AD324A4FF2C006EB6D5 /* LaunchScreen.storyboard */; };
+		4B714AED24A4FF2C006EB6D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AD524A4FF2C006EB6D5 /* SceneDelegate.swift */; };
+		4B714AEE24A4FF2C006EB6D5 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AD624A4FF2C006EB6D5 /* Util.swift */; };
+		4B714AEF24A4FF2C006EB6D5 /* AppContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AD824A4FF2C006EB6D5 /* AppContainerView.swift */; };
+		4B714AF024A4FF2C006EB6D5 /* LoggedOutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714ADA24A4FF2C006EB6D5 /* LoggedOutView.swift */; };
+		4B714AF124A4FF2C006EB6D5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714ADC24A4FF2C006EB6D5 /* SettingsView.swift */; };
+		4B714AF224A4FF2C006EB6D5 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714ADD24A4FF2C006EB6D5 /* SearchView.swift */; };
+		4B714AF324A4FF2C006EB6D5 /* YourLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714ADE24A4FF2C006EB6D5 /* YourLibraryView.swift */; };
+		4B714AF424A4FF2C006EB6D5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714ADF24A4FF2C006EB6D5 /* HomeView.swift */; };
+		4B714AF524A4FF2C006EB6D5 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AE024A4FF2C006EB6D5 /* RootTabView.swift */; };
+		4B714AF624A4FF2C006EB6D5 /* LoggedInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AE124A4FF2C006EB6D5 /* LoggedInView.swift */; };
+		4B714AF724A4FF2C006EB6D5 /* SessionRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AE224A4FF2C006EB6D5 /* SessionRootView.swift */; };
+		4B714B0324A4FF45006EB6D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AF824A4FF45006EB6D5 /* ViewController.swift */; };
+		4B714B0424A4FF45006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714AFA24A4FF45006EB6D5 /* LaunchScreen.storyboard */; };
+		4B714B0524A4FF45006EB6D5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714AFC24A4FF45006EB6D5 /* Main.storyboard */; };
+		4B714B0624A4FF45006EB6D5 /* CycleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AFE24A4FF45006EB6D5 /* CycleViewModel.swift */; };
+		4B714B0724A4FF45006EB6D5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AFF24A4FF45006EB6D5 /* Logger.swift */; };
+		4B714B0824A4FF45006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714B0024A4FF45006EB6D5 /* Assets.xcassets */; };
+		4B714B0A24A4FF45006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B0224A4FF45006EB6D5 /* AppDelegate.swift */; };
+		4B714B3224A4FF82006EB6D5 /* SettingsViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B2D24A4FF82006EB6D5 /* SettingsViewComponents.swift */; };
+		4B714B3324A4FF82006EB6D5 /* SampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B2E24A4FF82006EB6D5 /* SampleView.swift */; };
+		4B714B3424A4FF82006EB6D5 /* SpotifyUIKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B714B2F24A4FF82006EB6D5 /* SpotifyUIKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B714B3624A4FF82006EB6D5 /* NetworkImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B3124A4FF82006EB6D5 /* NetworkImageView.swift */; };
+		4B714B5724A4FF92006EB6D5 /* Secret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B3724A4FF91006EB6D5 /* Secret.swift */; };
+		4B714B5824A4FF92006EB6D5 /* LoggedOutBackendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B3824A4FF91006EB6D5 /* LoggedOutBackendState.swift */; };
+		4B714B5A24A4FF92006EB6D5 /* RealmObjects.Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B3A24A4FF91006EB6D5 /* RealmObjects.Session.swift */; };
+		4B714B5B24A4FF92006EB6D5 /* LoggedInService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B3C24A4FF91006EB6D5 /* LoggedInService.swift */; };
+		4B714B5C24A4FF92006EB6D5 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B3D24A4FF91006EB6D5 /* Auth.swift */; };
+		4B714B5D24A4FF92006EB6D5 /* APIRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B3E24A4FF91006EB6D5 /* APIRequests.swift */; };
+		4B714B5E24A4FF92006EB6D5 /* LoggedOutService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B3F24A4FF91006EB6D5 /* LoggedOutService.swift */; };
+		4B714B5F24A4FF92006EB6D5 /* Realm+Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4024A4FF91006EB6D5 /* Realm+Util.swift */; };
+		4B714B6024A4FF92006EB6D5 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4124A4FF91006EB6D5 /* Util.swift */; };
+		4B714B6124A4FF92006EB6D5 /* LoggedOutBackendStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4224A4FF91006EB6D5 /* LoggedOutBackendStack.swift */; };
+		4B714B6224A4FF92006EB6D5 /* BackendStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4324A4FF91006EB6D5 /* BackendStore.swift */; };
+		4B714B6324A4FF92006EB6D5 /* LoggedInBackendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4424A4FF91006EB6D5 /* LoggedInBackendState.swift */; };
+		4B714B6424A4FF92006EB6D5 /* SpotifyService.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B714B4524A4FF91006EB6D5 /* SpotifyService.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B714B6524A4FF92006EB6D5 /* StackContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4624A4FF91006EB6D5 /* StackContainer.swift */; };
+		4B714B6624A4FF92006EB6D5 /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4824A4FF91006EB6D5 /* Entities.swift */; };
+		4B714B6724A4FF92006EB6D5 /* Entities.Artist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4924A4FF91006EB6D5 /* Entities.Artist.swift */; };
+		4B714B6824A4FF92006EB6D5 /* Entities.Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4A24A4FF91006EB6D5 /* Entities.Playlist.swift */; };
+		4B714B6924A4FF92006EB6D5 /* Entities.User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4B24A4FF91006EB6D5 /* Entities.User.swift */; };
+		4B714B6A24A4FF92006EB6D5 /* Entities.Me.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4C24A4FF91006EB6D5 /* Entities.Me.swift */; };
+		4B714B6B24A4FF92006EB6D5 /* Entities.Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4D24A4FF91006EB6D5 /* Entities.Image.swift */; };
+		4B714B6C24A4FF92006EB6D5 /* AuthResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4E24A4FF91006EB6D5 /* AuthResponse.swift */; };
+		4B714B6D24A4FF92006EB6D5 /* LoggedInBackendStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B4F24A4FF91006EB6D5 /* LoggedInBackendStack.swift */; };
+		4B714B6E24A4FF92006EB6D5 /* Publisher+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5024A4FF91006EB6D5 /* Publisher+.swift */; };
+		4B714B6F24A4FF92006EB6D5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5124A4FF91006EB6D5 /* Logger.swift */; };
+		4B714B7024A4FF92006EB6D5 /* MoyaProvider+Combin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5224A4FF91006EB6D5 /* MoyaProvider+Combin.swift */; };
+		4B714B7124A4FF92006EB6D5 /* BackendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5324A4FF91006EB6D5 /* BackendState.swift */; };
+		4B714B7224A4FF92006EB6D5 /* RefreshTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5424A4FF91006EB6D5 /* RefreshTokenProvider.swift */; };
+		4B714B7324A4FF92006EB6D5 /* BackendStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5524A4FF91006EB6D5 /* BackendStackManager.swift */; };
+		4B714B7424A4FF92006EB6D5 /* RealmObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5624A4FF92006EB6D5 /* RealmObjects.swift */; };
+		4B714B7624A4FFAF006EB6D5 /* FetchImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714B7524A4FFAF006EB6D5 /* FetchImage */; };
+		4B714B7724A4FFE0006EB6D5 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; platformFilter = ios; };
+		4B714B7924A4FFE0006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
+		4B714B7B24A4FFE0006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; platformFilter = ios; };
+		4B714B7D24A4FFE0006EB6D5 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; platformFilter = ios; };
+		4B714B8124A50006006EB6D5 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714B8024A50006006EB6D5 /* CombineExt */; };
+		4B714B9424A50065006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8224A50064006EB6D5 /* AppDelegate.swift */; };
+		4B714B9524A50065006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714B8424A50064006EB6D5 /* LaunchScreen.storyboard */; };
+		4B714B9624A50065006EB6D5 /* PostDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8624A50064006EB6D5 /* PostDetailView.swift */; };
+		4B714B9824A50065006EB6D5 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8824A50064006EB6D5 /* PostView.swift */; };
+		4B714B9924A50065006EB6D5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8924A50064006EB6D5 /* ContentView.swift */; };
+		4B714B9A24A50065006EB6D5 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8A24A50065006EB6D5 /* UserListView.swift */; };
+		4B714B9B24A50065006EB6D5 /* UserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8B24A50065006EB6D5 /* UserDetailView.swift */; };
+		4B714B9C24A50065006EB6D5 /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8C24A50065006EB6D5 /* Entities.swift */; };
+		4B714B9D24A50065006EB6D5 /* AllPostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8D24A50065006EB6D5 /* AllPostsView.swift */; };
+		4B714B9E24A50065006EB6D5 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8E24A50065006EB6D5 /* Session.swift */; };
+		4B714B9F24A50065006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714B8F24A50065006EB6D5 /* Assets.xcassets */; };
+		4B714BA024A50065006EB6D5 /* DualDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B9024A50065006EB6D5 /* DualDisplayView.swift */; };
+		4B714BA124A50065006EB6D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B9124A50065006EB6D5 /* SceneDelegate.swift */; };
+		4B714BA224A50065006EB6D5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714B9324A50065006EB6D5 /* Preview Assets.xcassets */; };
+		4B714BAD24A50070006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714BA424A50070006EB6D5 /* LaunchScreen.storyboard */; };
+		4B714BAE24A50070006EB6D5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714BA624A50070006EB6D5 /* Main.storyboard */; };
+		4B714BAF24A50070006EB6D5 /* Sources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714BA824A50070006EB6D5 /* Sources.swift */; };
+		4B714BB024A50070006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714BA924A50070006EB6D5 /* Assets.xcassets */; };
+		4B714BB224A50070006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714BAB24A50070006EB6D5 /* AppDelegate.swift */; };
+		4B714BB324A50070006EB6D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714BAC24A50070006EB6D5 /* ViewController.swift */; };
+		4B714BB424A50094006EB6D5 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; };
+		4B714BB524A50094006EB6D5 /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BB624A50094006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
+		4B714BB724A50094006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BB824A50094006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; };
+		4B714BB924A50094006EB6D5 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BBA24A50094006EB6D5 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; };
+		4B714BBB24A50094006EB6D5 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BBC24A500A6006EB6D5 /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */; };
+		4B714BBD24A500A6006EB6D5 /* VergeClassic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BBE24A500A6006EB6D5 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; };
+		4B714BBF24A500A6006EB6D5 /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BC124A500B2006EB6D5 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; };
+		4B714BC224A500B2006EB6D5 /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BC324A500B2006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
+		4B714BC424A500B2006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BC524A500B2006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; };
+		4B714BC624A500B2006EB6D5 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BC724A500B2006EB6D5 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; };
+		4B714BC824A500B2006EB6D5 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BCA24A500BC006EB6D5 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; };
+		4B714BCB24A500BC006EB6D5 /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BCC24A500BC006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
+		4B714BCD24A500BC006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BCE24A500BC006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; };
+		4B714BCF24A500BC006EB6D5 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BD024A500BC006EB6D5 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */; };
+		4B714BD124A500BC006EB6D5 /* VergeRx.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BD224A500BC006EB6D5 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; };
+		4B714BD324A500BC006EB6D5 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9557558F01303402FCDDE2A7 /* Pods_Demo_VergeStoreDemoUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA16EEB0DF281CD9411B8A6E /* Pods_Demo_VergeStoreDemoUIKit.framework */; };
 		C35D763A6BC06F1C9BC9DF9E /* Pods_SpotifyService_SpotifyDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD3E331DC830854E203EE9C /* Pods_SpotifyService_SpotifyDemo.framework */; };
 		ED954F9E013950B84ADD7C4C /* Pods_SpotifyService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3114F85E3DB9175EF2B569F8 /* Pods_SpotifyService.framework */; };
@@ -94,48 +186,6 @@
 			remoteGlobalIDString = 4B5E849C24618D1C009A0CA8;
 			remoteInfo = VergeObjcBridge;
 		};
-		4B714A1124A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4BB4F7DF23D329E20039C897;
-			remoteInfo = SpotifyDemo;
-		};
-		4B714A1324A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4BB64CF9248391550017699A;
-			remoteInfo = SpotifyUIKit;
-		};
-		4B714A1524A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4BB64CBC248380EF0017699A;
-			remoteInfo = SpotifyService;
-		};
-		4B714A1724A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B86A4971F969C7D002D54FE;
-			remoteInfo = "Verge-Demo";
-		};
-		4B714A1924A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B949128239C257500370067;
-			remoteInfo = VergeStoreDemoSwiftUI;
-		};
-		4B714A1B24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4BDBDF7423CE0C4200EEA112;
-			remoteInfo = VergeStoreDemoUIKit;
-		};
 		4B714A1D24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
@@ -171,13 +221,6 @@
 			remoteGlobalIDString = 4B1743A723C767670074C457;
 			remoteInfo = VergeRxTests;
 		};
-		4B714A2724A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B2AE0BD248571B20086A42C;
-			remoteInfo = SpotifyServiceTests;
-		};
 		4B714A9324A4FD51006EB6D5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B7149D924A4FC90006EB6D5 /* Project object */;
@@ -202,7 +245,52 @@
 			dstSubfolderSpec = 10;
 			files = (
 				4B714A9624A4FD51006EB6D5 /* SpotifyUIKit.framework in Embed Frameworks */,
+				4B714BB924A50094006EB6D5 /* VergeORM.framework in Embed Frameworks */,
+				4B714BBB24A50094006EB6D5 /* VergeStore.framework in Embed Frameworks */,
+				4B714BB724A50094006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */,
 				4B714AA824A4FD61006EB6D5 /* SpotifyService.framework in Embed Frameworks */,
+				4B714BB524A50094006EB6D5 /* VergeCore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714BC024A500A6006EB6D5 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4B714BBD24A500A6006EB6D5 /* VergeClassic.framework in Embed Frameworks */,
+				4B714BBF24A500A6006EB6D5 /* VergeCore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714BC924A500B2006EB6D5 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4B714BC624A500B2006EB6D5 /* VergeORM.framework in Embed Frameworks */,
+				4B714BC224A500B2006EB6D5 /* VergeCore.framework in Embed Frameworks */,
+				4B714BC824A500B2006EB6D5 /* VergeStore.framework in Embed Frameworks */,
+				4B714BC424A500B2006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B714BD424A500BC006EB6D5 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4B714BD124A500BC006EB6D5 /* VergeRx.framework in Embed Frameworks */,
+				4B714BCF24A500BC006EB6D5 /* VergeORM.framework in Embed Frameworks */,
+				4B714BD324A500BC006EB6D5 /* VergeStore.framework in Embed Frameworks */,
+				4B714BCB24A500BC006EB6D5 /* VergeCore.framework in Embed Frameworks */,
+				4B714BCD24A500BC006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -218,43 +306,97 @@
 		4B7149E624A4FC90006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Verge.xcodeproj; path = ../Verge.xcodeproj; sourceTree = "<group>"; };
 		4B714A2D24A4FCE3006EB6D5 /* SpotifyDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpotifyDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B714A2F24A4FCE3006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4B714A3124A4FCE3006EB6D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		4B714A3324A4FCE3006EB6D5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		4B714A3524A4FCE4006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4B714A3824A4FCE4006EB6D5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		4B714A3B24A4FCE4006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		4B714A3D24A4FCE4006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B714A4524A4FCF9006EB6D5 /* Verge-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Verge-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B714A4724A4FCF9006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4B714A4924A4FCF9006EB6D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		4B714A4B24A4FCF9006EB6D5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		4B714A4E24A4FCF9006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		4B714A5024A4FCF9006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4B714A5324A4FCF9006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		4B714A5524A4FCF9006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B714A5D24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B714A5F24A4FD18006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4B714A6124A4FD18006EB6D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		4B714A6324A4FD18006EB6D5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		4B714A6524A4FD18006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4B714A6824A4FD18006EB6D5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		4B714A6B24A4FD18006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		4B714A6D24A4FD18006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B714A7524A4FD2C006EB6D5 /* VergeStoreDemoUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B714A7724A4FD2C006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4B714A7924A4FD2C006EB6D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		4B714A7B24A4FD2C006EB6D5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		4B714A7E24A4FD2C006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		4B714A8024A4FD2D006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4B714A8324A4FD2D006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		4B714A8524A4FD2D006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpotifyUIKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B714A9024A4FD51006EB6D5 /* SpotifyUIKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpotifyUIKit.h; sourceTree = "<group>"; };
-		4B714A9124A4FD51006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B714AA024A4FD61006EB6D5 /* SpotifyService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpotifyService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B714AA224A4FD61006EB6D5 /* SpotifyService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpotifyService.h; sourceTree = "<group>"; };
-		4B714AA324A4FD61006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B714AC724A4FF2C006EB6D5 /* import.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = import.swift; sourceTree = "<group>"; };
+		4B714AC924A4FF2C006EB6D5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4B714ACA24A4FF2C006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B714ACB24A4FF2C006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4B714ACD24A4FF2C006EB6D5 /* IndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndicatorView.swift; sourceTree = "<group>"; };
+		4B714ACE24A4FF2C006EB6D5 /* SafariView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
+		4B714ACF24A4FF2C006EB6D5 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4B714AD024A4FF2C006EB6D5 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		4B714AD124A4FF2C006EB6D5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B714AD424A4FF2C006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4B714AD524A4FF2C006EB6D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4B714AD624A4FF2C006EB6D5 /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+		4B714AD824A4FF2C006EB6D5 /* AppContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppContainerView.swift; sourceTree = "<group>"; };
+		4B714ADA24A4FF2C006EB6D5 /* LoggedOutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggedOutView.swift; sourceTree = "<group>"; };
+		4B714ADC24A4FF2C006EB6D5 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		4B714ADD24A4FF2C006EB6D5 /* SearchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		4B714ADE24A4FF2C006EB6D5 /* YourLibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YourLibraryView.swift; sourceTree = "<group>"; };
+		4B714ADF24A4FF2C006EB6D5 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		4B714AE024A4FF2C006EB6D5 /* RootTabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
+		4B714AE124A4FF2C006EB6D5 /* LoggedInView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggedInView.swift; sourceTree = "<group>"; };
+		4B714AE224A4FF2C006EB6D5 /* SessionRootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionRootView.swift; sourceTree = "<group>"; };
+		4B714AF824A4FF45006EB6D5 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		4B714AFB24A4FF45006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4B714AFD24A4FF45006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
+		4B714AFE24A4FF45006EB6D5 /* CycleViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CycleViewModel.swift; sourceTree = "<group>"; };
+		4B714AFF24A4FF45006EB6D5 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		4B714B0024A4FF45006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B714B0124A4FF45006EB6D5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B714B0224A4FF45006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4B714B2D24A4FF82006EB6D5 /* SettingsViewComponents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewComponents.swift; sourceTree = "<group>"; };
+		4B714B2E24A4FF82006EB6D5 /* SampleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleView.swift; sourceTree = "<group>"; };
+		4B714B2F24A4FF82006EB6D5 /* SpotifyUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotifyUIKit.h; sourceTree = "<group>"; };
+		4B714B3024A4FF82006EB6D5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B714B3124A4FF82006EB6D5 /* NetworkImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkImageView.swift; sourceTree = "<group>"; };
+		4B714B3724A4FF91006EB6D5 /* Secret.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Secret.swift; sourceTree = "<group>"; };
+		4B714B3824A4FF91006EB6D5 /* LoggedOutBackendState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggedOutBackendState.swift; sourceTree = "<group>"; };
+		4B714B3924A4FF91006EB6D5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B714B3A24A4FF91006EB6D5 /* RealmObjects.Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmObjects.Session.swift; sourceTree = "<group>"; };
+		4B714B3C24A4FF91006EB6D5 /* LoggedInService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggedInService.swift; sourceTree = "<group>"; };
+		4B714B3D24A4FF91006EB6D5 /* Auth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
+		4B714B3E24A4FF91006EB6D5 /* APIRequests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIRequests.swift; sourceTree = "<group>"; };
+		4B714B3F24A4FF91006EB6D5 /* LoggedOutService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggedOutService.swift; sourceTree = "<group>"; };
+		4B714B4024A4FF91006EB6D5 /* Realm+Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Realm+Util.swift"; sourceTree = "<group>"; };
+		4B714B4124A4FF91006EB6D5 /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+		4B714B4224A4FF91006EB6D5 /* LoggedOutBackendStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggedOutBackendStack.swift; sourceTree = "<group>"; };
+		4B714B4324A4FF91006EB6D5 /* BackendStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackendStore.swift; sourceTree = "<group>"; };
+		4B714B4424A4FF91006EB6D5 /* LoggedInBackendState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggedInBackendState.swift; sourceTree = "<group>"; };
+		4B714B4524A4FF91006EB6D5 /* SpotifyService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotifyService.h; sourceTree = "<group>"; };
+		4B714B4624A4FF91006EB6D5 /* StackContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StackContainer.swift; sourceTree = "<group>"; };
+		4B714B4824A4FF91006EB6D5 /* Entities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entities.swift; sourceTree = "<group>"; };
+		4B714B4924A4FF91006EB6D5 /* Entities.Artist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entities.Artist.swift; sourceTree = "<group>"; };
+		4B714B4A24A4FF91006EB6D5 /* Entities.Playlist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entities.Playlist.swift; sourceTree = "<group>"; };
+		4B714B4B24A4FF91006EB6D5 /* Entities.User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entities.User.swift; sourceTree = "<group>"; };
+		4B714B4C24A4FF91006EB6D5 /* Entities.Me.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entities.Me.swift; sourceTree = "<group>"; };
+		4B714B4D24A4FF91006EB6D5 /* Entities.Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entities.Image.swift; sourceTree = "<group>"; };
+		4B714B4E24A4FF91006EB6D5 /* AuthResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthResponse.swift; sourceTree = "<group>"; };
+		4B714B4F24A4FF91006EB6D5 /* LoggedInBackendStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggedInBackendStack.swift; sourceTree = "<group>"; };
+		4B714B5024A4FF91006EB6D5 /* Publisher+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Publisher+.swift"; sourceTree = "<group>"; };
+		4B714B5124A4FF91006EB6D5 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		4B714B5224A4FF91006EB6D5 /* MoyaProvider+Combin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MoyaProvider+Combin.swift"; sourceTree = "<group>"; };
+		4B714B5324A4FF91006EB6D5 /* BackendState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackendState.swift; sourceTree = "<group>"; };
+		4B714B5424A4FF91006EB6D5 /* RefreshTokenProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshTokenProvider.swift; sourceTree = "<group>"; };
+		4B714B5524A4FF91006EB6D5 /* BackendStackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackendStackManager.swift; sourceTree = "<group>"; };
+		4B714B5624A4FF92006EB6D5 /* RealmObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmObjects.swift; sourceTree = "<group>"; };
+		4B714B8224A50064006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4B714B8524A50064006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4B714B8624A50064006EB6D5 /* PostDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDetailView.swift; sourceTree = "<group>"; };
+		4B714B8724A50064006EB6D5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B714B8824A50064006EB6D5 /* PostView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
+		4B714B8924A50064006EB6D5 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4B714B8A24A50065006EB6D5 /* UserListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
+		4B714B8B24A50065006EB6D5 /* UserDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDetailView.swift; sourceTree = "<group>"; };
+		4B714B8C24A50065006EB6D5 /* Entities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entities.swift; sourceTree = "<group>"; };
+		4B714B8D24A50065006EB6D5 /* AllPostsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllPostsView.swift; sourceTree = "<group>"; };
+		4B714B8E24A50065006EB6D5 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		4B714B8F24A50065006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B714B9024A50065006EB6D5 /* DualDisplayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DualDisplayView.swift; sourceTree = "<group>"; };
+		4B714B9124A50065006EB6D5 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4B714B9324A50065006EB6D5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4B714BA524A50070006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4B714BA724A50070006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
+		4B714BA824A50070006EB6D5 /* Sources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sources.swift; sourceTree = "<group>"; };
+		4B714BA924A50070006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B714BAA24A50070006EB6D5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B714BAB24A50070006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4B714BAC24A50070006EB6D5 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		79AE80BD9C633D16F47512FB /* Pods-Demo-VergeStoreDemoUIKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoUIKit.release.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit.release.xcconfig"; sourceTree = "<group>"; };
 		7CC20B4761208C7A47226CB1 /* Pods-SpotifyService-SpotifyDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService-SpotifyDemo.debug.xcconfig"; path = "Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		823BB27FFFB6D98FF641E929 /* Pods_Demo_VergeStoreDemoSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Demo_VergeStoreDemoSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -271,6 +413,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B714AB024A4FE19006EB6D5 /* CombineExt in Frameworks */,
+				4B714AC624A4FE37006EB6D5 /* FetchImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,7 +423,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B714A9524A4FD51006EB6D5 /* SpotifyUIKit.framework in Frameworks */,
+				4B714BBA24A50094006EB6D5 /* VergeStore.framework in Frameworks */,
+				4B714BB424A50094006EB6D5 /* VergeCore.framework in Frameworks */,
 				4B714AA724A4FD61006EB6D5 /* SpotifyService.framework in Frameworks */,
+				4B714BB824A50094006EB6D5 /* VergeORM.framework in Frameworks */,
+				4B714BB624A50094006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
 				C35D763A6BC06F1C9BC9DF9E /* Pods_SpotifyService_SpotifyDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -288,6 +436,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B714BBC24A500A6006EB6D5 /* VergeClassic.framework in Frameworks */,
+				4B714BBE24A500A6006EB6D5 /* VergeCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,7 +445,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B714BC324A500B2006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
+				4B714BC524A500B2006EB6D5 /* VergeORM.framework in Frameworks */,
+				4B714BC724A500B2006EB6D5 /* VergeStore.framework in Frameworks */,
 				13BD6D0FA0ABF698AFCCA4D8 /* Pods_Demo_VergeStoreDemoSwiftUI.framework in Frameworks */,
+				4B714BC124A500B2006EB6D5 /* VergeCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,7 +457,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B714BCC24A500BC006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
+				4B714BCE24A500BC006EB6D5 /* VergeORM.framework in Frameworks */,
+				4B714BD224A500BC006EB6D5 /* VergeStore.framework in Frameworks */,
 				9557558F01303402FCDDE2A7 /* Pods_Demo_VergeStoreDemoUIKit.framework in Frameworks */,
+				4B714BD024A500BC006EB6D5 /* VergeRx.framework in Frameworks */,
+				4B714BCA24A500BC006EB6D5 /* VergeCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,6 +470,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B714B7624A4FFAF006EB6D5 /* FetchImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,7 +478,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B714B7924A4FFE0006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
+				4B714B7B24A4FFE0006EB6D5 /* VergeORM.framework in Frameworks */,
+				4B714B7D24A4FFE0006EB6D5 /* VergeStore.framework in Frameworks */,
 				ED954F9E013950B84ADD7C4C /* Pods_SpotifyService.framework in Frameworks */,
+				4B714B8124A50006006EB6D5 /* CombineExt in Frameworks */,
+				4B714B7724A4FFE0006EB6D5 /* VergeCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,18 +540,11 @@
 				4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */,
 				4B714A0E24A4FCAB006EB6D5 /* VergeSwiftUI.framework */,
 				4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */,
-				4B714A1224A4FCAB006EB6D5 /* SpotifyDemo.app */,
-				4B714A1424A4FCAB006EB6D5 /* SpotifyUIKit.framework */,
-				4B714A1624A4FCAB006EB6D5 /* SpotifyService.framework */,
-				4B714A1824A4FCAB006EB6D5 /* Verge-Demo.app */,
-				4B714A1A24A4FCAB006EB6D5 /* VergeStoreDemoSwiftUI.app */,
-				4B714A1C24A4FCAB006EB6D5 /* VergeStoreDemoUIKit.app */,
 				4B714A1E24A4FCAB006EB6D5 /* VergeTests.xctest */,
 				4B714A2024A4FCAB006EB6D5 /* VergeCoreTests.xctest */,
 				4B714A2224A4FCAB006EB6D5 /* VergeStoreTests.xctest */,
 				4B714A2424A4FCAB006EB6D5 /* VergeORMTests.xctest */,
 				4B714A2624A4FCAB006EB6D5 /* VergeRxTests.xctest */,
-				4B714A2824A4FCAB006EB6D5 /* SpotifyServiceTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -394,35 +552,32 @@
 		4B714A2E24A4FCE3006EB6D5 /* SpotifyDemo */ = {
 			isa = PBXGroup;
 			children = (
-				4B714A2F24A4FCE3006EB6D5 /* AppDelegate.swift */,
-				4B714A3124A4FCE3006EB6D5 /* SceneDelegate.swift */,
-				4B714A3324A4FCE3006EB6D5 /* ContentView.swift */,
-				4B714A3524A4FCE4006EB6D5 /* Assets.xcassets */,
-				4B714A3A24A4FCE4006EB6D5 /* LaunchScreen.storyboard */,
-				4B714A3D24A4FCE4006EB6D5 /* Info.plist */,
-				4B714A3724A4FCE4006EB6D5 /* Preview Content */,
+				4B714ACB24A4FF2C006EB6D5 /* AppDelegate.swift */,
+				4B714ACA24A4FF2C006EB6D5 /* Assets.xcassets */,
+				4B714AD224A4FF2C006EB6D5 /* Base.lproj */,
+				4B714ACC24A4FF2C006EB6D5 /* Components */,
+				4B714ACF24A4FF2C006EB6D5 /* ContentView.swift */,
+				4B714AC724A4FF2C006EB6D5 /* import.swift */,
+				4B714AD124A4FF2C006EB6D5 /* Info.plist */,
+				4B714AC824A4FF2C006EB6D5 /* Preview Content */,
+				4B714AD524A4FF2C006EB6D5 /* SceneDelegate.swift */,
+				4B714AD024A4FF2C006EB6D5 /* Session.swift */,
+				4B714AD624A4FF2C006EB6D5 /* Util.swift */,
+				4B714AD724A4FF2C006EB6D5 /* Views */,
 			);
 			path = SpotifyDemo;
-			sourceTree = "<group>";
-		};
-		4B714A3724A4FCE4006EB6D5 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				4B714A3824A4FCE4006EB6D5 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		4B714A4624A4FCF9006EB6D5 /* Verge-Demo */ = {
 			isa = PBXGroup;
 			children = (
-				4B714A4724A4FCF9006EB6D5 /* AppDelegate.swift */,
-				4B714A4924A4FCF9006EB6D5 /* SceneDelegate.swift */,
-				4B714A4B24A4FCF9006EB6D5 /* ViewController.swift */,
-				4B714A4D24A4FCF9006EB6D5 /* Main.storyboard */,
-				4B714A5024A4FCF9006EB6D5 /* Assets.xcassets */,
-				4B714A5224A4FCF9006EB6D5 /* LaunchScreen.storyboard */,
-				4B714A5524A4FCF9006EB6D5 /* Info.plist */,
+				4B714B0224A4FF45006EB6D5 /* AppDelegate.swift */,
+				4B714B0024A4FF45006EB6D5 /* Assets.xcassets */,
+				4B714AF924A4FF45006EB6D5 /* Base.lproj */,
+				4B714AFE24A4FF45006EB6D5 /* CycleViewModel.swift */,
+				4B714B0124A4FF45006EB6D5 /* Info.plist */,
+				4B714AFF24A4FF45006EB6D5 /* Logger.swift */,
+				4B714AF824A4FF45006EB6D5 /* ViewController.swift */,
 			);
 			path = "Verge-Demo";
 			sourceTree = "<group>";
@@ -430,35 +585,34 @@
 		4B714A5E24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				4B714A5F24A4FD18006EB6D5 /* AppDelegate.swift */,
-				4B714A6124A4FD18006EB6D5 /* SceneDelegate.swift */,
-				4B714A6324A4FD18006EB6D5 /* ContentView.swift */,
-				4B714A6524A4FD18006EB6D5 /* Assets.xcassets */,
-				4B714A6A24A4FD18006EB6D5 /* LaunchScreen.storyboard */,
-				4B714A6D24A4FD18006EB6D5 /* Info.plist */,
-				4B714A6724A4FD18006EB6D5 /* Preview Content */,
+				4B714B8D24A50065006EB6D5 /* AllPostsView.swift */,
+				4B714B8224A50064006EB6D5 /* AppDelegate.swift */,
+				4B714B8F24A50065006EB6D5 /* Assets.xcassets */,
+				4B714B8324A50064006EB6D5 /* Base.lproj */,
+				4B714B8924A50064006EB6D5 /* ContentView.swift */,
+				4B714B9024A50065006EB6D5 /* DualDisplayView.swift */,
+				4B714B8C24A50065006EB6D5 /* Entities.swift */,
+				4B714B8724A50064006EB6D5 /* Info.plist */,
+				4B714B8624A50064006EB6D5 /* PostDetailView.swift */,
+				4B714B8824A50064006EB6D5 /* PostView.swift */,
+				4B714B9224A50065006EB6D5 /* Preview Content */,
+				4B714B9124A50065006EB6D5 /* SceneDelegate.swift */,
+				4B714B8E24A50065006EB6D5 /* Session.swift */,
+				4B714B8B24A50065006EB6D5 /* UserDetailView.swift */,
+				4B714B8A24A50065006EB6D5 /* UserListView.swift */,
 			);
 			path = VergeStoreDemoSwiftUI;
-			sourceTree = "<group>";
-		};
-		4B714A6724A4FD18006EB6D5 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				4B714A6824A4FD18006EB6D5 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		4B714A7624A4FD2C006EB6D5 /* VergeStoreDemoUIKit */ = {
 			isa = PBXGroup;
 			children = (
-				4B714A7724A4FD2C006EB6D5 /* AppDelegate.swift */,
-				4B714A7924A4FD2C006EB6D5 /* SceneDelegate.swift */,
-				4B714A7B24A4FD2C006EB6D5 /* ViewController.swift */,
-				4B714A7D24A4FD2C006EB6D5 /* Main.storyboard */,
-				4B714A8024A4FD2D006EB6D5 /* Assets.xcassets */,
-				4B714A8224A4FD2D006EB6D5 /* LaunchScreen.storyboard */,
-				4B714A8524A4FD2D006EB6D5 /* Info.plist */,
+				4B714BAB24A50070006EB6D5 /* AppDelegate.swift */,
+				4B714BA924A50070006EB6D5 /* Assets.xcassets */,
+				4B714BA324A50070006EB6D5 /* Base.lproj */,
+				4B714BAA24A50070006EB6D5 /* Info.plist */,
+				4B714BA824A50070006EB6D5 /* Sources.swift */,
+				4B714BAC24A50070006EB6D5 /* ViewController.swift */,
 			);
 			path = VergeStoreDemoUIKit;
 			sourceTree = "<group>";
@@ -466,8 +620,11 @@
 		4B714A8F24A4FD51006EB6D5 /* SpotifyUIKit */ = {
 			isa = PBXGroup;
 			children = (
-				4B714A9024A4FD51006EB6D5 /* SpotifyUIKit.h */,
-				4B714A9124A4FD51006EB6D5 /* Info.plist */,
+				4B714B3024A4FF82006EB6D5 /* Info.plist */,
+				4B714B3124A4FF82006EB6D5 /* NetworkImageView.swift */,
+				4B714B2E24A4FF82006EB6D5 /* SampleView.swift */,
+				4B714B2D24A4FF82006EB6D5 /* SettingsViewComponents.swift */,
+				4B714B2F24A4FF82006EB6D5 /* SpotifyUIKit.h */,
 			);
 			path = SpotifyUIKit;
 			sourceTree = "<group>";
@@ -475,10 +632,145 @@
 		4B714AA124A4FD61006EB6D5 /* SpotifyService */ = {
 			isa = PBXGroup;
 			children = (
-				4B714AA224A4FD61006EB6D5 /* SpotifyService.h */,
-				4B714AA324A4FD61006EB6D5 /* Info.plist */,
+				4B714B5524A4FF91006EB6D5 /* BackendStackManager.swift */,
+				4B714B5324A4FF91006EB6D5 /* BackendState.swift */,
+				4B714B4324A4FF91006EB6D5 /* BackendStore.swift */,
+				4B714B4724A4FF91006EB6D5 /* Entities */,
+				4B714B3924A4FF91006EB6D5 /* Info.plist */,
+				4B714B4F24A4FF91006EB6D5 /* LoggedInBackendStack.swift */,
+				4B714B4424A4FF91006EB6D5 /* LoggedInBackendState.swift */,
+				4B714B4224A4FF91006EB6D5 /* LoggedOutBackendStack.swift */,
+				4B714B3824A4FF91006EB6D5 /* LoggedOutBackendState.swift */,
+				4B714B5124A4FF91006EB6D5 /* Logger.swift */,
+				4B714B5224A4FF91006EB6D5 /* MoyaProvider+Combin.swift */,
+				4B714B5024A4FF91006EB6D5 /* Publisher+.swift */,
+				4B714B4024A4FF91006EB6D5 /* Realm+Util.swift */,
+				4B714B3A24A4FF91006EB6D5 /* RealmObjects.Session.swift */,
+				4B714B5624A4FF92006EB6D5 /* RealmObjects.swift */,
+				4B714B5424A4FF91006EB6D5 /* RefreshTokenProvider.swift */,
+				4B714B3724A4FF91006EB6D5 /* Secret.swift */,
+				4B714B3B24A4FF91006EB6D5 /* Service */,
+				4B714B4524A4FF91006EB6D5 /* SpotifyService.h */,
+				4B714B4624A4FF91006EB6D5 /* StackContainer.swift */,
+				4B714B4124A4FF91006EB6D5 /* Util.swift */,
 			);
 			path = SpotifyService;
+			sourceTree = "<group>";
+		};
+		4B714AC824A4FF2C006EB6D5 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4B714AC924A4FF2C006EB6D5 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		4B714ACC24A4FF2C006EB6D5 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4B714ACD24A4FF2C006EB6D5 /* IndicatorView.swift */,
+				4B714ACE24A4FF2C006EB6D5 /* SafariView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4B714AD224A4FF2C006EB6D5 /* Base.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				4B714AD324A4FF2C006EB6D5 /* LaunchScreen.storyboard */,
+			);
+			path = Base.lproj;
+			sourceTree = "<group>";
+		};
+		4B714AD724A4FF2C006EB6D5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4B714AD824A4FF2C006EB6D5 /* AppContainerView.swift */,
+				4B714AD924A4FF2C006EB6D5 /* LoggedOut */,
+				4B714ADB24A4FF2C006EB6D5 /* LoggedIn */,
+				4B714AE224A4FF2C006EB6D5 /* SessionRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4B714AD924A4FF2C006EB6D5 /* LoggedOut */ = {
+			isa = PBXGroup;
+			children = (
+				4B714ADA24A4FF2C006EB6D5 /* LoggedOutView.swift */,
+			);
+			path = LoggedOut;
+			sourceTree = "<group>";
+		};
+		4B714ADB24A4FF2C006EB6D5 /* LoggedIn */ = {
+			isa = PBXGroup;
+			children = (
+				4B714ADC24A4FF2C006EB6D5 /* SettingsView.swift */,
+				4B714ADD24A4FF2C006EB6D5 /* SearchView.swift */,
+				4B714ADE24A4FF2C006EB6D5 /* YourLibraryView.swift */,
+				4B714ADF24A4FF2C006EB6D5 /* HomeView.swift */,
+				4B714AE024A4FF2C006EB6D5 /* RootTabView.swift */,
+				4B714AE124A4FF2C006EB6D5 /* LoggedInView.swift */,
+			);
+			path = LoggedIn;
+			sourceTree = "<group>";
+		};
+		4B714AF924A4FF45006EB6D5 /* Base.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				4B714AFA24A4FF45006EB6D5 /* LaunchScreen.storyboard */,
+				4B714AFC24A4FF45006EB6D5 /* Main.storyboard */,
+			);
+			path = Base.lproj;
+			sourceTree = "<group>";
+		};
+		4B714B3B24A4FF91006EB6D5 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				4B714B3C24A4FF91006EB6D5 /* LoggedInService.swift */,
+				4B714B3D24A4FF91006EB6D5 /* Auth.swift */,
+				4B714B3E24A4FF91006EB6D5 /* APIRequests.swift */,
+				4B714B3F24A4FF91006EB6D5 /* LoggedOutService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		4B714B4724A4FF91006EB6D5 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				4B714B4824A4FF91006EB6D5 /* Entities.swift */,
+				4B714B4924A4FF91006EB6D5 /* Entities.Artist.swift */,
+				4B714B4A24A4FF91006EB6D5 /* Entities.Playlist.swift */,
+				4B714B4B24A4FF91006EB6D5 /* Entities.User.swift */,
+				4B714B4C24A4FF91006EB6D5 /* Entities.Me.swift */,
+				4B714B4D24A4FF91006EB6D5 /* Entities.Image.swift */,
+				4B714B4E24A4FF91006EB6D5 /* AuthResponse.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		4B714B8324A50064006EB6D5 /* Base.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				4B714B8424A50064006EB6D5 /* LaunchScreen.storyboard */,
+			);
+			path = Base.lproj;
+			sourceTree = "<group>";
+		};
+		4B714B9224A50065006EB6D5 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4B714B9324A50065006EB6D5 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		4B714BA324A50070006EB6D5 /* Base.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				4B714BA424A50070006EB6D5 /* LaunchScreen.storyboard */,
+				4B714BA624A50070006EB6D5 /* Main.storyboard */,
+			);
+			path = Base.lproj;
 			sourceTree = "<group>";
 		};
 		AD6DE38C48444B06D801C3C3 /* Pods */ = {
@@ -493,7 +785,6 @@
 				7CC20B4761208C7A47226CB1 /* Pods-SpotifyService-SpotifyDemo.debug.xcconfig */,
 				B30CE7812DD52F9ECAE1AB51 /* Pods-SpotifyService-SpotifyDemo.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -523,7 +814,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714A9224A4FD51006EB6D5 /* SpotifyUIKit.h in Headers */,
+				4B714B3424A4FF82006EB6D5 /* SpotifyUIKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -531,7 +822,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714AA424A4FD61006EB6D5 /* SpotifyService.h in Headers */,
+				4B714B6424A4FF92006EB6D5 /* SpotifyService.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -552,6 +843,10 @@
 			dependencies = (
 			);
 			name = Demo;
+			packageProductDependencies = (
+				4B714AAF24A4FE19006EB6D5 /* CombineExt */,
+				4B714AC524A4FE37006EB6D5 /* FetchImage */,
+			);
 			productName = Demo;
 			productReference = 4B7149E224A4FC90006EB6D5 /* Demo.framework */;
 			productType = "com.apple.product-type.framework";
@@ -585,6 +880,7 @@
 				4B714A4124A4FCF9006EB6D5 /* Sources */,
 				4B714A4224A4FCF9006EB6D5 /* Frameworks */,
 				4B714A4324A4FCF9006EB6D5 /* Resources */,
+				4B714BC024A500A6006EB6D5 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -604,6 +900,7 @@
 				4B714A5A24A4FD18006EB6D5 /* Frameworks */,
 				4B714A5B24A4FD18006EB6D5 /* Resources */,
 				DC43746BDDDCFFB780119717 /* [CP] Embed Pods Frameworks */,
+				4B714BC924A500B2006EB6D5 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -623,6 +920,7 @@
 				4B714A7224A4FD2C006EB6D5 /* Frameworks */,
 				4B714A7324A4FD2C006EB6D5 /* Resources */,
 				4A903D6C4891932C0C09CDDF /* [CP] Embed Pods Frameworks */,
+				4B714BD424A500BC006EB6D5 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -647,6 +945,9 @@
 			dependencies = (
 			);
 			name = SpotifyUIKit;
+			packageProductDependencies = (
+				4B714B7524A4FFAF006EB6D5 /* FetchImage */,
+			);
 			productName = SpotifyUIKit;
 			productReference = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */;
 			productType = "com.apple.product-type.framework";
@@ -666,6 +967,9 @@
 			dependencies = (
 			);
 			name = SpotifyService;
+			packageProductDependencies = (
+				4B714B8024A50006006EB6D5 /* CombineExt */,
+			);
 			productName = SpotifyService;
 			productReference = 4B714AA024A4FD61006EB6D5 /* SpotifyService.framework */;
 			productType = "com.apple.product-type.framework";
@@ -685,21 +989,27 @@
 					};
 					4B714A2C24A4FCE3006EB6D5 = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1150;
 					};
 					4B714A4424A4FCF9006EB6D5 = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1150;
 					};
 					4B714A5C24A4FD18006EB6D5 = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1150;
 					};
 					4B714A7424A4FD2C006EB6D5 = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1150;
 					};
 					4B714A8D24A4FD51006EB6D5 = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1150;
 					};
 					4B714A9F24A4FD61006EB6D5 = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1150;
 					};
 				};
 			};
@@ -712,6 +1022,10 @@
 				Base,
 			);
 			mainGroup = 4B7149D824A4FC90006EB6D5;
+			packageReferences = (
+				4B714AAE24A4FE19006EB6D5 /* XCRemoteSwiftPackageReference "CombineExt" */,
+				4B714AC424A4FE37006EB6D5 /* XCRemoteSwiftPackageReference "FetchImage" */,
+			);
 			productRefGroup = 4B7149E324A4FC90006EB6D5 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -783,48 +1097,6 @@
 			remoteRef = 4B714A0F24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		4B714A1224A4FCAB006EB6D5 /* SpotifyDemo.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = SpotifyDemo.app;
-			remoteRef = 4B714A1124A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A1424A4FCAB006EB6D5 /* SpotifyUIKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SpotifyUIKit.framework;
-			remoteRef = 4B714A1324A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A1624A4FCAB006EB6D5 /* SpotifyService.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SpotifyService.framework;
-			remoteRef = 4B714A1524A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A1824A4FCAB006EB6D5 /* Verge-Demo.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "Verge-Demo.app";
-			remoteRef = 4B714A1724A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A1A24A4FCAB006EB6D5 /* VergeStoreDemoSwiftUI.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = VergeStoreDemoSwiftUI.app;
-			remoteRef = 4B714A1924A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A1C24A4FCAB006EB6D5 /* VergeStoreDemoUIKit.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = VergeStoreDemoUIKit.app;
-			remoteRef = 4B714A1B24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		4B714A1E24A4FCAB006EB6D5 /* VergeTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -860,13 +1132,6 @@
 			remoteRef = 4B714A2524A4FCAB006EB6D5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		4B714A2824A4FCAB006EB6D5 /* SpotifyServiceTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = SpotifyServiceTests.xctest;
-			remoteRef = 4B714A2724A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -881,9 +1146,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714A3C24A4FCE4006EB6D5 /* LaunchScreen.storyboard in Resources */,
-				4B714A3924A4FCE4006EB6D5 /* Preview Assets.xcassets in Resources */,
-				4B714A3624A4FCE4006EB6D5 /* Assets.xcassets in Resources */,
+				4B714AE524A4FF2C006EB6D5 /* Assets.xcassets in Resources */,
+				4B714AEC24A4FF2C006EB6D5 /* LaunchScreen.storyboard in Resources */,
+				4B714AE424A4FF2C006EB6D5 /* Preview Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -891,9 +1156,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714A5424A4FCF9006EB6D5 /* LaunchScreen.storyboard in Resources */,
-				4B714A5124A4FCF9006EB6D5 /* Assets.xcassets in Resources */,
-				4B714A4F24A4FCF9006EB6D5 /* Main.storyboard in Resources */,
+				4B714B0424A4FF45006EB6D5 /* LaunchScreen.storyboard in Resources */,
+				4B714B0824A4FF45006EB6D5 /* Assets.xcassets in Resources */,
+				4B714B0524A4FF45006EB6D5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -901,9 +1166,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714A6C24A4FD18006EB6D5 /* LaunchScreen.storyboard in Resources */,
-				4B714A6924A4FD18006EB6D5 /* Preview Assets.xcassets in Resources */,
-				4B714A6624A4FD18006EB6D5 /* Assets.xcassets in Resources */,
+				4B714BA224A50065006EB6D5 /* Preview Assets.xcassets in Resources */,
+				4B714B9F24A50065006EB6D5 /* Assets.xcassets in Resources */,
+				4B714B9524A50065006EB6D5 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -911,9 +1176,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714A8424A4FD2D006EB6D5 /* LaunchScreen.storyboard in Resources */,
-				4B714A8124A4FD2D006EB6D5 /* Assets.xcassets in Resources */,
-				4B714A7F24A4FD2C006EB6D5 /* Main.storyboard in Resources */,
+				4B714BAD24A50070006EB6D5 /* LaunchScreen.storyboard in Resources */,
+				4B714BB024A50070006EB6D5 /* Assets.xcassets in Resources */,
+				4B714BAE24A50070006EB6D5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1087,9 +1352,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714A3024A4FCE3006EB6D5 /* AppDelegate.swift in Sources */,
-				4B714A3224A4FCE3006EB6D5 /* SceneDelegate.swift in Sources */,
-				4B714A3424A4FCE3006EB6D5 /* ContentView.swift in Sources */,
+				4B714AEF24A4FF2C006EB6D5 /* AppContainerView.swift in Sources */,
+				4B714AF624A4FF2C006EB6D5 /* LoggedInView.swift in Sources */,
+				4B714AF524A4FF2C006EB6D5 /* RootTabView.swift in Sources */,
+				4B714AF424A4FF2C006EB6D5 /* HomeView.swift in Sources */,
+				4B714AE824A4FF2C006EB6D5 /* SafariView.swift in Sources */,
+				4B714AED24A4FF2C006EB6D5 /* SceneDelegate.swift in Sources */,
+				4B714AE924A4FF2C006EB6D5 /* ContentView.swift in Sources */,
+				4B714AF224A4FF2C006EB6D5 /* SearchView.swift in Sources */,
+				4B714AF324A4FF2C006EB6D5 /* YourLibraryView.swift in Sources */,
+				4B714AEE24A4FF2C006EB6D5 /* Util.swift in Sources */,
+				4B714AEA24A4FF2C006EB6D5 /* Session.swift in Sources */,
+				4B714AE624A4FF2C006EB6D5 /* AppDelegate.swift in Sources */,
+				4B714AF024A4FF2C006EB6D5 /* LoggedOutView.swift in Sources */,
+				4B714AF724A4FF2C006EB6D5 /* SessionRootView.swift in Sources */,
+				4B714AE724A4FF2C006EB6D5 /* IndicatorView.swift in Sources */,
+				4B714AE324A4FF2C006EB6D5 /* import.swift in Sources */,
+				4B714AF124A4FF2C006EB6D5 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1097,9 +1376,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714A4C24A4FCF9006EB6D5 /* ViewController.swift in Sources */,
-				4B714A4824A4FCF9006EB6D5 /* AppDelegate.swift in Sources */,
-				4B714A4A24A4FCF9006EB6D5 /* SceneDelegate.swift in Sources */,
+				4B714B0A24A4FF45006EB6D5 /* AppDelegate.swift in Sources */,
+				4B714B0324A4FF45006EB6D5 /* ViewController.swift in Sources */,
+				4B714B0724A4FF45006EB6D5 /* Logger.swift in Sources */,
+				4B714B0624A4FF45006EB6D5 /* CycleViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1107,9 +1387,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714A6024A4FD18006EB6D5 /* AppDelegate.swift in Sources */,
-				4B714A6224A4FD18006EB6D5 /* SceneDelegate.swift in Sources */,
-				4B714A6424A4FD18006EB6D5 /* ContentView.swift in Sources */,
+				4B714B9424A50065006EB6D5 /* AppDelegate.swift in Sources */,
+				4B714B9A24A50065006EB6D5 /* UserListView.swift in Sources */,
+				4B714B9D24A50065006EB6D5 /* AllPostsView.swift in Sources */,
+				4B714B9824A50065006EB6D5 /* PostView.swift in Sources */,
+				4B714B9924A50065006EB6D5 /* ContentView.swift in Sources */,
+				4B714B9C24A50065006EB6D5 /* Entities.swift in Sources */,
+				4B714B9B24A50065006EB6D5 /* UserDetailView.swift in Sources */,
+				4B714BA124A50065006EB6D5 /* SceneDelegate.swift in Sources */,
+				4B714B9624A50065006EB6D5 /* PostDetailView.swift in Sources */,
+				4B714B9E24A50065006EB6D5 /* Session.swift in Sources */,
+				4B714BA024A50065006EB6D5 /* DualDisplayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1117,9 +1405,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714A7C24A4FD2C006EB6D5 /* ViewController.swift in Sources */,
-				4B714A7824A4FD2C006EB6D5 /* AppDelegate.swift in Sources */,
-				4B714A7A24A4FD2C006EB6D5 /* SceneDelegate.swift in Sources */,
+				4B714BB324A50070006EB6D5 /* ViewController.swift in Sources */,
+				4B714BB224A50070006EB6D5 /* AppDelegate.swift in Sources */,
+				4B714BAF24A50070006EB6D5 /* Sources.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1127,6 +1415,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B714B3324A4FF82006EB6D5 /* SampleView.swift in Sources */,
+				4B714B3624A4FF82006EB6D5 /* NetworkImageView.swift in Sources */,
+				4B714B3224A4FF82006EB6D5 /* SettingsViewComponents.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1134,6 +1425,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B714B6B24A4FF92006EB6D5 /* Entities.Image.swift in Sources */,
+				4B714B6D24A4FF92006EB6D5 /* LoggedInBackendStack.swift in Sources */,
+				4B714B6724A4FF92006EB6D5 /* Entities.Artist.swift in Sources */,
+				4B714B7324A4FF92006EB6D5 /* BackendStackManager.swift in Sources */,
+				4B714B6124A4FF92006EB6D5 /* LoggedOutBackendStack.swift in Sources */,
+				4B714B5C24A4FF92006EB6D5 /* Auth.swift in Sources */,
+				4B714B6924A4FF92006EB6D5 /* Entities.User.swift in Sources */,
+				4B714B6024A4FF92006EB6D5 /* Util.swift in Sources */,
+				4B714B6524A4FF92006EB6D5 /* StackContainer.swift in Sources */,
+				4B714B7124A4FF92006EB6D5 /* BackendState.swift in Sources */,
+				4B714B7024A4FF92006EB6D5 /* MoyaProvider+Combin.swift in Sources */,
+				4B714B6624A4FF92006EB6D5 /* Entities.swift in Sources */,
+				4B714B6F24A4FF92006EB6D5 /* Logger.swift in Sources */,
+				4B714B6324A4FF92006EB6D5 /* LoggedInBackendState.swift in Sources */,
+				4B714B6824A4FF92006EB6D5 /* Entities.Playlist.swift in Sources */,
+				4B714B7224A4FF92006EB6D5 /* RefreshTokenProvider.swift in Sources */,
+				4B714B7424A4FF92006EB6D5 /* RealmObjects.swift in Sources */,
+				4B714B5724A4FF92006EB6D5 /* Secret.swift in Sources */,
+				4B714B5E24A4FF92006EB6D5 /* LoggedOutService.swift in Sources */,
+				4B714B5A24A4FF92006EB6D5 /* RealmObjects.Session.swift in Sources */,
+				4B714B6E24A4FF92006EB6D5 /* Publisher+.swift in Sources */,
+				4B714B6224A4FF92006EB6D5 /* BackendStore.swift in Sources */,
+				4B714B6A24A4FF92006EB6D5 /* Entities.Me.swift in Sources */,
+				4B714B5B24A4FF92006EB6D5 /* LoggedInService.swift in Sources */,
+				4B714B5F24A4FF92006EB6D5 /* Realm+Util.swift in Sources */,
+				4B714B5D24A4FF92006EB6D5 /* APIRequests.swift in Sources */,
+				4B714B6C24A4FF92006EB6D5 /* AuthResponse.swift in Sources */,
+				4B714B5824A4FF92006EB6D5 /* LoggedOutBackendState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1153,52 +1472,52 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		4B714A3A24A4FCE4006EB6D5 /* LaunchScreen.storyboard */ = {
+		4B714AD324A4FF2C006EB6D5 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				4B714A3B24A4FCE4006EB6D5 /* Base */,
+				4B714AD424A4FF2C006EB6D5 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
-		4B714A4D24A4FCF9006EB6D5 /* Main.storyboard */ = {
+		4B714AFA24A4FF45006EB6D5 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				4B714A4E24A4FCF9006EB6D5 /* Base */,
+				4B714AFB24A4FF45006EB6D5 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		4B714AFC24A4FF45006EB6D5 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B714AFD24A4FF45006EB6D5 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		4B714A5224A4FCF9006EB6D5 /* LaunchScreen.storyboard */ = {
+		4B714B8424A50064006EB6D5 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				4B714A5324A4FCF9006EB6D5 /* Base */,
+				4B714B8524A50064006EB6D5 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
-		4B714A6A24A4FD18006EB6D5 /* LaunchScreen.storyboard */ = {
+		4B714BA424A50070006EB6D5 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				4B714A6B24A4FD18006EB6D5 /* Base */,
+				4B714BA524A50070006EB6D5 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
-		4B714A7D24A4FD2C006EB6D5 /* Main.storyboard */ = {
+		4B714BA624A50070006EB6D5 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				4B714A7E24A4FD2C006EB6D5 /* Base */,
+				4B714BA724A50070006EB6D5 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		4B714A8224A4FD2D006EB6D5 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4B714A8324A4FD2D006EB6D5 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1374,7 +1693,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7CC20B4761208C7A47226CB1 /* Pods-SpotifyService-SpotifyDemo.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SpotifyDemo/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
@@ -1386,6 +1707,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1395,7 +1717,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B30CE7812DD52F9ECAE1AB51 /* Pods-SpotifyService-SpotifyDemo.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SpotifyDemo/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
@@ -1416,6 +1740,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Verge-Demo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1425,6 +1750,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "app.muukii.Verge-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1434,6 +1760,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Verge-Demo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1453,6 +1780,7 @@
 			baseConfigurationReference = 8BC3303C2BD976DD9734BDA9 /* Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"VergeStoreDemoSwiftUI/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
@@ -1464,6 +1792,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeStoreDemoSwiftUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1474,6 +1803,7 @@
 			baseConfigurationReference = 183B8CD63E3A820A537C2EC1 /* Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"VergeStoreDemoSwiftUI/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
@@ -1495,6 +1825,7 @@
 			baseConfigurationReference = 96600602DAADE2DFF0BC0217 /* Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = VergeStoreDemoUIKit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1503,6 +1834,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.VergeStoreDemoUIKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1513,6 +1845,7 @@
 			baseConfigurationReference = 79AE80BD9C633D16F47512FB /* Pods-Demo-VergeStoreDemoUIKit.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = VergeStoreDemoUIKit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1529,6 +1862,7 @@
 		4B714A9824A4FD51006EB6D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1545,6 +1879,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyUIKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1553,6 +1888,7 @@
 		4B714A9924A4FD51006EB6D5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1578,6 +1914,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EEDBBBCBF1ADEBEABF793B55 /* Pods-SpotifyService.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1594,6 +1931,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyService;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1603,6 +1941,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B39815E29DAC92090500336F /* Pods-SpotifyService.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1700,6 +2039,48 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4B714AAE24A4FE19006EB6D5 /* XCRemoteSwiftPackageReference "CombineExt" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:CombineCommunity/CombineExt.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+		4B714AC424A4FE37006EB6D5 /* XCRemoteSwiftPackageReference "FetchImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:kean/FetchImage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4B714AAF24A4FE19006EB6D5 /* CombineExt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B714AAE24A4FE19006EB6D5 /* XCRemoteSwiftPackageReference "CombineExt" */;
+			productName = CombineExt;
+		};
+		4B714AC524A4FE37006EB6D5 /* FetchImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B714AC424A4FE37006EB6D5 /* XCRemoteSwiftPackageReference "FetchImage" */;
+			productName = FetchImage;
+		};
+		4B714B7524A4FFAF006EB6D5 /* FetchImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B714AC424A4FE37006EB6D5 /* XCRemoteSwiftPackageReference "FetchImage" */;
+			productName = FetchImage;
+		};
+		4B714B8024A50006006EB6D5 /* CombineExt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B714AAE24A4FE19006EB6D5 /* XCRemoteSwiftPackageReference "CombineExt" */;
+			productName = CombineExt;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4B7149D924A4FC90006EB6D5 /* Project object */;
 }

@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  VergeStoreDemoSwiftUI
 //
-//  Created by muukii on 2020/06/26.
-//  Copyright © 2020 muukii. All rights reserved.
+//  Created by muukii on 2019/12/08.
+//  Copyright © 2019 muukii. All rights reserved.
 //
 
 import UIKit
@@ -11,10 +11,9 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     // Override point for customization after application launch.
+    
     return true
   }
 

@@ -2,20 +2,30 @@
 //  ContentView.swift
 //  VergeStoreDemoSwiftUI
 //
-//  Created by muukii on 2020/06/26.
-//  Copyright © 2020 muukii. All rights reserved.
+//  Created by muukii on 2019/12/08.
+//  Copyright © 2019 muukii. All rights reserved.
 //
 
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        Text("Hello, World!")
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+  
+  var session: Session
+  
+  var body: some View {
+    TabView {
+      AllPostsView(session: session)
+        .tabItem {
+          Text("All Post")
+      }
+      UserListView(session: session)
+        .tabItem {
+          Text("Users")
+      }
+      DualDisplayView(session: session)
+        .tabItem {
+          Text("Dual")
+      }
+    }    
+  }
 }

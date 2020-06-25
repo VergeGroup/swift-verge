@@ -2,8 +2,8 @@
 //  SceneDelegate.swift
 //  VergeStoreDemoSwiftUI
 //
-//  Created by muukii on 2020/06/26.
-//  Copyright © 2020 muukii. All rights reserved.
+//  Created by muukii on 2019/12/08.
+//  Copyright © 2019 muukii. All rights reserved.
 //
 
 import UIKit
@@ -20,7 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
     // Create the SwiftUI view that provides the window contents.
-    let contentView = ContentView()
+    let session = Session()
+    let contentView = ContentView(session: session)
 
     // Use a UIHostingController as window root view controller.
     if let windowScene = scene as? UIWindowScene {

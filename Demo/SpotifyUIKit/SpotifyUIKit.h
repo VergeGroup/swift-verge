@@ -2,7 +2,7 @@
 //  SpotifyUIKit.h
 //  SpotifyUIKit
 //
-//  Created by muukii on 2020/06/26.
+//  Created by muukii on 2020/05/31.
 //  Copyright © 2020 muukii. All rights reserved.
 //
 

@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/muukii/develop/src/github.com/muukii/Cycler/Verge.xcodeproj">
+      location = "self:">
    </FileRef>
 </Workspace>
