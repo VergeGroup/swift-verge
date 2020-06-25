@@ -2,12 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Verge.xcodeproj">
+      location = "group:Demo.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:/Users/muukii/.ghq/github.com/muukii/Verge/worktree/space1/Tests/All.xctestplan">
    </FileRef>
 </Workspace>

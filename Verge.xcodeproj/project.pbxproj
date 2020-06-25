@@ -13,8 +13,6 @@
 		4B13BC7024575F1E00F0BC0F /* DerivedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B13BC6F24575F1E00F0BC0F /* DerivedTests.swift */; };
 		4B13BC72245764BB00F0BC0F /* Derived+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B13BC71245764BB00F0BC0F /* Derived+Rx.swift */; };
 		4B17439323C766D70074C457 /* VergeRx.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B17439123C766D70074C457 /* VergeRx.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4B17439623C766D80074C457 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; };
-		4B17439723C766D80074C457 /* VergeRx.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B17439B23C766FB0074C457 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4B17439C23C766FB0074C457 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
 		4B17439D23C766FB0074C457 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
@@ -24,30 +22,12 @@
 		4B1743B323C767D90074C457 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; };
 		4B186CBD2461474E00A0611F /* ReflectingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B186CBC2461474E00A0611F /* ReflectingTests.swift */; };
 		4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */; };
-		4B1C011623D34A6B00BE9B24 /* SessionRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011523D34A6B00BE9B24 /* SessionRootView.swift */; };
-		4B1C011823D34A9F00BE9B24 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C011723D34A9F00BE9B24 /* SafariView.swift */; };
 		4B1F19C1243A82BC00CED46B /* StateType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B68394F237062F7002FFC5A /* StateType.swift */; };
 		4B1F19C2243A82BC00CED46B /* Changes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBFF45D24389D3D005BA03C /* Changes.swift */; };
 		4B1F19C4243A88A000CED46B /* ComputedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1F19C3243A88A000CED46B /* ComputedTests.swift */; };
 		4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050F623D5C841000A2779 /* StoreLogger.swift */; };
 		4B2050F923D5C85B000A2779 /* MutationTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050F823D5C85B000A2779 /* MutationTrace.swift */; };
 		4B264EF823BD13BC001BD9A0 /* DatabaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */; };
-		4B2AE0B824856EB10086A42C /* Entities.Me.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0B724856EB10086A42C /* Entities.Me.swift */; };
-		4B2AE0C0248571B20086A42C /* SpotifyServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0BF248571B20086A42C /* SpotifyServiceTests.swift */; };
-		4B2AE0C2248571B20086A42C /* SpotifyService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB64CBC248380EF0017699A /* SpotifyService.framework */; };
-		4B2AE0CA248573A30086A42C /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0C9248573A30086A42C /* Logger.swift */; };
-		4B2AE0CC248587EB0086A42C /* IndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0CB248587EB0086A42C /* IndicatorView.swift */; };
-		4B2AE0CE248590620086A42C /* LoggedInBackendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0CD248590620086A42C /* LoggedInBackendState.swift */; };
-		4B2AE0D02485907C0086A42C /* LoggedOutBackendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0CF2485907C0086A42C /* LoggedOutBackendState.swift */; };
-		4B2AE0D22485909E0086A42C /* BackendState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D12485909E0086A42C /* BackendState.swift */; };
-		4B2AE0D4248590C80086A42C /* LoggedInBackendStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D3248590C80086A42C /* LoggedInBackendStack.swift */; };
-		4B2AE0D6248590E60086A42C /* LoggedOutBackendStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D5248590E60086A42C /* LoggedOutBackendStack.swift */; };
-		4B2AE0D82485913B0086A42C /* MoyaProvider+Combin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D72485913B0086A42C /* MoyaProvider+Combin.swift */; };
-		4B2AE0DA2485915D0086A42C /* Publisher+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0D92485915D0086A42C /* Publisher+.swift */; };
-		4B2AE0DD2485A2460086A42C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0DB2485A2410086A42C /* SettingsView.swift */; };
-		4B2AE0E02485A3240086A42C /* SettingsViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0DE2485A27E0086A42C /* SettingsViewComponents.swift */; };
-		4B2AE0E52485A45B0086A42C /* FetchImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4B2AE0E42485A45B0086A42C /* FetchImage */; };
-		4B2AE0E72485A4860086A42C /* NetworkImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2AE0E62485A4860086A42C /* NetworkImageView.swift */; };
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
 		4B3834DD2482330C008A0B47 /* UseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834DC2482330C008A0B47 /* UseState.swift */; };
 		4B3834DF248235AD008A0B47 /* _VergeObservableObjectBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834DE248235AD008A0B47 /* _VergeObservableObjectBase.swift */; };
@@ -59,30 +39,19 @@
 		4B4171D224540846009FD729 /* DemoState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B95BE59244F10F200124F6B /* DemoState.swift */; };
 		4B427419236F269C00C302C8 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B427418236F269C00C302C8 /* Store.swift */; };
 		4B475BB6239AB954008A03E1 /* VergeORM.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B475BB4239AB954008A03E1 /* VergeORM.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4B475BB9239AB954008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
-		4B475BBA239AB954008A03E1 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B475BC0239AB983008A03E1 /* DatabaseBatchUpdatesContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BBE239AB97F008A03E1 /* DatabaseBatchUpdatesContext.swift */; };
 		4B475BC8239ADE1C008A03E1 /* VergeORMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */; };
 		4B475BD0239ADEB4008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
 		4B4AB16C244DEEE3005E7283 /* ReproduceDeadlockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */; };
 		4B4AB16E244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */; };
-		4B5140002483E3FE00463CE6 /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B513FFF2483E3FE00463CE6 /* Entities.swift */; };
-		4B5140022483E41A00463CE6 /* Entities.Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5140012483E41A00463CE6 /* Entities.Image.swift */; };
-		4B5140042483E51100463CE6 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5140032483E51100463CE6 /* Util.swift */; };
-		4B5140062483E5D800463CE6 /* Entities.Artist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5140052483E5D800463CE6 /* Entities.Artist.swift */; };
-		4B5140092483F01400463CE6 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 4B5140082483F01400463CE6 /* CombineExt */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
-		4B5869202485BD2000CE4407 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B58691F2485BD2000CE4407 /* Util.swift */; };
-		4B5E84A324618D1C009A0CA8 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
-		4B5E84A424618D1C009A0CA8 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B5E84AD24618D39009A0CA8 /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */; };
 		4B5E84AF24618D82009A0CA8 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
 		4B5E84BC2461901E009A0CA8 /* VergeObjcBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5E84BB24619006009A0CA8 /* VergeObjcBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B5E84BD24619046009A0CA8 /* AtomicBridges.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5E84AC24618D39009A0CA8 /* AtomicBridges.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B65F8EF1FB4C0DC00A90A67 /* VergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */; };
-		4B65F8FA1FB4C75800A90A67 /* CycleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8F91FB4C75800A90A67 /* CycleViewModel.swift */; };
 		4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B68394623705ACD002FFC5A /* VergeStoreTests.swift */; };
 		4B68394923705ACE002FFC5A /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B6B77A9243F9E5500E0C0EA /* Comparer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8EB4F823C034A900035B2A /* Comparer.swift */; };
@@ -93,12 +62,9 @@
 		4B6F6F3924521F1E00B6CC3A /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CC23CC36E8001A1D5D /* Fragment.swift */; };
 		4B6F6F3A24521F1E00B6CC3A /* NonAtomicVersionCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */; };
 		4B6F6F3B24521F2B00B6CC3A /* CounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CE23CC3949001A1D5D /* CounterTests.swift */; };
-		4B71A469248C089C009B3918 /* Realm+Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71A468248C089C009B3918 /* Realm+Util.swift */; };
 		4B71CEEE23B14394004520CE /* ActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71CEED23B14394004520CE /* ActivityTests.swift */; };
 		4B73F08924041811006910E6 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B73F08824041811006910E6 /* Log.swift */; };
 		4B786324233912AB009B9C1B /* VergeStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B786322233912AB009B9C1B /* VergeStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4B786327233912AB009B9C1B /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
-		4B786328233912AB009B9C1B /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B7A71D024874A8900A116F7 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A71CF24874A8900A116F7 /* PerformanceTests.swift */; };
 		4B7A71D22487532D00A116F7 /* _COWFragmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A71D12487532D00A116F7 /* _COWFragmentTests.swift */; };
 		4B8035FB244CB96B0028BD32 /* MigrationFromClassicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8035FA244CB96B0028BD32 /* MigrationFromClassicTests.swift */; };
@@ -109,88 +75,25 @@
 		4B80B74923F953F9000BCFB2 /* GroupByKeyIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B80B74823F953F9000BCFB2 /* GroupByKeyIndex.swift */; };
 		4B86A48B1F969AD6002D54FE /* Verge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B86A4891F969AD6002D54FE /* Verge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B86A4921F969BF3002D54FE /* Verge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4911F969BF3002D54FE /* Verge.swift */; };
-		4B86A49A1F969C7D002D54FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4991F969C7D002D54FE /* AppDelegate.swift */; };
-		4B86A49C1F969C7D002D54FE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A49B1F969C7D002D54FE /* ViewController.swift */; };
-		4B86A49F1F969C7D002D54FE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A49D1F969C7D002D54FE /* Main.storyboard */; };
-		4B86A4A11F969C7D002D54FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A01F969C7D002D54FE /* Assets.xcassets */; };
-		4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B86A4A21F969C7D002D54FE /* LaunchScreen.storyboard */; };
 		4B86D824244A24B5008D3040 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D823244A24B5008D3040 /* Extensions.swift */; };
 		4B86D826244A2A1D008D3040 /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D825244A2A1D008D3040 /* Sample.swift */; };
-		4B884914248CC06B00762CAA /* BackendStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B884913248CC06B00762CAA /* BackendStackManager.swift */; };
-		4B884916248CC3DE00762CAA /* AppContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B884915248CC3DE00762CAA /* AppContainerView.swift */; };
 		4B8F5AB7246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */; };
 		4B8F5ABB24616416005F68B6 /* VergeConcurrency+AtomicReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */; };
 		4B91B3782440B9C4005082D7 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
 		4B91B3792440B9C4005082D7 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B93C875247A523500372BC4 /* SyntaxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B93C874247A523500372BC4 /* SyntaxTests.swift */; };
-		4B94913C239C25C600370067 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
-		4B94913D239C25C600370067 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B949141239C25CA00370067 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
-		4B949142239C25CA00370067 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B94914F239C264D00370067 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B949146239C264D00370067 /* Assets.xcassets */; };
-		4B949150239C264D00370067 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B949148239C264D00370067 /* Preview Assets.xcassets */; };
-		4B949151239C264D00370067 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B949149239C264D00370067 /* LaunchScreen.storyboard */; };
-		4B949152239C264D00370067 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B94914B239C264D00370067 /* AppDelegate.swift */; };
-		4B949153239C264D00370067 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B94914C239C264D00370067 /* ContentView.swift */; };
-		4B949155239C264D00370067 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B94914E239C264D00370067 /* SceneDelegate.swift */; };
-		4B949157239C26C100370067 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B949156239C26C100370067 /* Session.swift */; };
-		4B94915F239CF1CF00370067 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B94915E239CF1CF00370067 /* UserListView.swift */; };
-		4B956D18211483E7003AA189 /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */; };
-		4B956D19211483E7003AA189 /* VergeClassic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B95BE5A244F10F200124F6B /* DemoState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B95BE59244F10F200124F6B /* DemoState.swift */; };
 		4B99D69323AF6C4300E26127 /* ProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B99D69223AF6C4300E26127 /* ProtocolTests.swift */; };
-		4B9AF03E2487FB16001BAAFC /* DualDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF03D2487FB16001BAAFC /* DualDisplayView.swift */; };
 		4B9AF04824880145001BAAFC /* VergeSwiftUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B9AF04624880145001BAAFC /* VergeSwiftUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
-		4B9CC71E249E70360045CCF8 /* RefreshTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9CC71D249E70360045CCF8 /* RefreshTokenProvider.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4BA3E1A523C359F40095629B /* Signpost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA3E1A423C359F40095629B /* Signpost.swift */; };
 		4BA5914F23DF5146007F614C /* FunctionBuilders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA5914E23DF5146007F614C /* FunctionBuilders.swift */; };
 		4BA5915123DF536F007F614C /* FunctionBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA5915023DF536F007F614C /* FunctionBuilderTests.swift */; };
-		4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAD4FDC1FC80B0100C841FA /* Logger.swift */; };
 		4BAE9FEA21DFA75A003DDF3D /* Verge+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */; };
 		4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */; };
 		4BAF902F23A92B69004D6356 /* MiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */; };
 		4BB1F98C2465ACB900AF5F0C /* TargetQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */; };
-		4BB4F7E223D329E30039C897 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F7E123D329E30039C897 /* AppDelegate.swift */; };
-		4BB4F7E423D329E30039C897 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F7E323D329E30039C897 /* SceneDelegate.swift */; };
-		4BB4F7E623D329E30039C897 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F7E523D329E30039C897 /* ContentView.swift */; };
-		4BB4F7E823D329E40039C897 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BB4F7E723D329E40039C897 /* Assets.xcassets */; };
-		4BB4F7EB23D329E40039C897 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BB4F7EA23D329E40039C897 /* Preview Assets.xcassets */; };
-		4BB4F7EE23D329E40039C897 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BB4F7EC23D329E40039C897 /* LaunchScreen.storyboard */; };
-		4BB4F7F323D32A2C0039C897 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
-		4BB4F7F423D32A2C0039C897 /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4BB4F7F723D32A2C0039C897 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
-		4BB4F7F823D32A2C0039C897 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4BB4F7FB23D32A2C0039C897 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
-		4BB4F7FC23D32A2C0039C897 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4BB4F80E23D33C0C0039C897 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F80D23D33C0C0039C897 /* Session.swift */; };
-		4BB64CC0248380EF0017699A /* SpotifyService.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BB64CBE248380EF0017699A /* SpotifyService.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4BB64CC3248380EF0017699A /* SpotifyService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB64CBC248380EF0017699A /* SpotifyService.framework */; };
-		4BB64CC4248380EF0017699A /* SpotifyService.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB64CBC248380EF0017699A /* SpotifyService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4BB64CC9248381450017699A /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; platformFilter = ios; };
-		4BB64CCD248381450017699A /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
-		4BB64CD1248381450017699A /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; platformFilter = ios; };
-		4BB64CD5248381450017699A /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; platformFilter = ios; };
-		4BB64CDA248381EC0017699A /* Secret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F80023D32AB70039C897 /* Secret.swift */; };
-		4BB64CDB248381EC0017699A /* StackContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9622D923D439A9004F8088 /* StackContainer.swift */; };
-		4BB64CDC248381EC0017699A /* LoggedInService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F80F23D33F970039C897 /* LoggedInService.swift */; };
-		4BB64CDD248381EC0017699A /* LoggedOutService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9622D723D4381A004F8088 /* LoggedOutService.swift */; };
-		4BB64CDE248381EC0017699A /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F80223D32DBD0039C897 /* Auth.swift */; };
-		4BB64CDF248381EC0017699A /* APIRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4F80723D3372E0039C897 /* APIRequests.swift */; };
-		4BB64CE0248381F40017699A /* AuthResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB451D123D446C00034CA58 /* AuthResponse.swift */; };
-		4BB64CE22483834B0017699A /* BackendStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB64CE12483834B0017699A /* BackendStore.swift */; };
-		4BB64CE424838E2C0017699A /* LoggedOutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB64CE324838E2C0017699A /* LoggedOutView.swift */; };
-		4BB64CE624838E400017699A /* import.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB64CE524838E400017699A /* import.swift */; };
-		4BB64CE824838EC20017699A /* LoggedInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB64CE724838EC20017699A /* LoggedInView.swift */; };
-		4BB64CED24838F330017699A /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB64CEC24838F330017699A /* RootTabView.swift */; };
-		4BB64CEF24838F7A0017699A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB64CEE24838F7A0017699A /* HomeView.swift */; };
-		4BB64CF124838F800017699A /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB64CF024838F7F0017699A /* SearchView.swift */; };
-		4BB64CF324838F860017699A /* YourLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB64CF224838F860017699A /* YourLibraryView.swift */; };
-		4BB64CFD248391550017699A /* SpotifyUIKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BB64CFB248391550017699A /* SpotifyUIKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4BB64D00248391550017699A /* SpotifyUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB64CF9248391550017699A /* SpotifyUIKit.framework */; };
-		4BB64D01248391560017699A /* SpotifyUIKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB64CF9248391550017699A /* SpotifyUIKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4BB64D072483916F0017699A /* SampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB64D062483916F0017699A /* SampleView.swift */; };
 		4BC35667249BD70B0096B15B /* Indexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC35666249BD70B0096B15B /* Indexed.swift */; };
 		4BC6EFAF23A8BF7800EFD688 /* OrderedIDIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFAE23A8BF7800EFD688 /* OrderedIDIndex.swift */; };
 		4BC6EFB123A8BFAF00EFD688 /* GroupByEntityIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB023A8BFAF00EFD688 /* GroupByEntityIndex.swift */; };
@@ -204,38 +107,13 @@
 		4BCC0847245626F300ECAB8A /* Comparer+ORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */; };
 		4BCE3039246AAD6800D35557 /* Scan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE3038246AAD6800D35557 /* Scan.swift */; };
 		4BCE88B6245B1B8A006E20C3 /* ActivityTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */; };
-		4BD068AD248C138000E05687 /* RealmObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD068AC248C138000E05687 /* RealmObjects.swift */; };
-		4BD068AE248C13B300E05687 /* RealmObjects.Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71A46A248C09C7009B3918 /* RealmObjects.Session.swift */; };
 		4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD260A4245C7F680052B4AC /* Derived+Assign.swift */; };
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
 		4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD79C0324477F430073A48B /* VergeConcurrency.swift */; };
 		4BDB78222447934A00675D03 /* StoreWrapperType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB78212447934A00675D03 /* StoreWrapperType.swift */; };
 		4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */; };
-		4BDBDF7723CE0C4200EEA112 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7623CE0C4200EEA112 /* AppDelegate.swift */; };
-		4BDBDF7B23CE0C4200EEA112 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7A23CE0C4200EEA112 /* ViewController.swift */; };
-		4BDBDF7E23CE0C4200EEA112 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7C23CE0C4200EEA112 /* Main.storyboard */; };
-		4BDBDF8023CE0C4400EEA112 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BDBDF7F23CE0C4400EEA112 /* Assets.xcassets */; };
-		4BDBDF8323CE0C4400EEA112 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BDBDF8123CE0C4400EEA112 /* LaunchScreen.storyboard */; };
-		4BDBDF8923CE0C7800EEA112 /* Sources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDBDF8823CE0C7800EEA112 /* Sources.swift */; };
-		4BDBDF9023CE0C8E00EEA112 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
-		4BDBDF9123CE0C8E00EEA112 /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4BDBDF9423CE0C8E00EEA112 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; };
-		4BDBDF9523CE0C8E00EEA112 /* VergeRx.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4BDBDF9823CE0C8E00EEA112 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
-		4BDBDF9923CE0C8E00EEA112 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BDBDFA423CE0DD100EEA112 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA323CE0DD100EEA112 /* RxCocoa */; };
 		4BDBDFA623CE0DD100EEA112 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA523CE0DD100EEA112 /* RxSwift */; };
-		4BDCA8F524868AF70024126A /* Entities.Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8F424868AF70024126A /* Entities.Playlist.swift */; };
-		4BDCA8F724868BB50024126A /* Entities.User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8F624868BB50024126A /* Entities.User.swift */; };
-		4BDCA8FA2486A4090024126A /* UserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8F92486A4090024126A /* UserDetailView.swift */; };
-		4BDCA8FC2486A4A00024126A /* AllPostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8FB2486A4A00024126A /* AllPostsView.swift */; };
-		4BDCA8FE2486A6970024126A /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8FD2486A6970024126A /* PostView.swift */; };
-		4BDCA9002486A8630024126A /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA8FF2486A8630024126A /* Entities.swift */; };
-		4BDCA9022486AFBC0024126A /* PostDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDCA9012486AFBC0024126A /* PostDetailView.swift */; };
-		4BDCA9032486B0D60024126A /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
-		4BDCA9042486B0D60024126A /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4BDCA9072486B0F60024126A /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
-		4BDCA9082486B0F60024126A /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BE33C6924875CD800F3F2C6 /* _COWFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE33C6824875CD800F3F2C6 /* _COWFragment.swift */; };
 		4BE9455423AD1B180060F977 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */; };
@@ -245,26 +123,13 @@
 		4BF76681244E1B5300A5EA10 /* Derived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF76680244E1B5300A5EA10 /* Derived.swift */; };
 		4BF76684244E242A00A5EA10 /* DerivedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF76682244E242500A5EA10 /* DerivedTests.swift */; };
 		4BFA22A023A63B56008D7BCB /* VergeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BFA229E23A63B56008D7BCB /* VergeCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4BFA22A323A63B56008D7BCB /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
-		4BFA22A423A63B56008D7BCB /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BFA22A823A63B83008D7BCB /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4BFA22AD23A63BB9008D7BCB /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */; };
 		4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B42740C236F1D2D00C302C8 /* Storage.swift */; };
-		4C309BD4F308564F99ED30A5 /* Pods_Demo_VergeStoreDemoSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ADE43B152D7AD2696345A261 /* Pods_Demo_VergeStoreDemoSwiftUI.framework */; };
-		9787B2568318F51EC2C5B2F0 /* Pods_SpotifyService_SpotifyDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E02D61CF182FC7EA896B557C /* Pods_SpotifyService_SpotifyDemo.framework */; };
-		99C64148068872872ACEB817 /* Pods_Demo_VergeStoreDemoUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F351754BE49BE9A03E11763 /* Pods_Demo_VergeStoreDemoUIKit.framework */; };
-		B6D2A295D283D02D610259EF /* Pods_SpotifyService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E685888769D164935D33897 /* Pods_SpotifyService.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		4B17439423C766D70074C457 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B17438E23C766D70074C457;
-			remoteInfo = VergeRx;
-		};
 		4B1743AD23C767670074C457 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -279,13 +144,6 @@
 			remoteGlobalIDString = 4B17438E23C766D70074C457;
 			remoteInfo = VergeRx;
 		};
-		4B2AE0C3248571B20086A42C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BB64CBB248380EF0017699A;
-			remoteInfo = SpotifyService;
-		};
 		4B3DC07123A66840008A4627 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -293,26 +151,12 @@
 			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
 			remoteInfo = VergeCore;
 		};
-		4B475BB7239AB954008A03E1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B475BB1239AB954008A03E1;
-			remoteInfo = VergeNormalizer;
-		};
 		4B475BCB239ADE1C008A03E1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
-		};
-		4B5E84A124618D1C009A0CA8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B5E849B24618D1C009A0CA8;
-			remoteInfo = VergeObjcBridge;
 		};
 		4B5E84B124618D82009A0CA8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -329,13 +173,6 @@
 			remoteInfo = CycleViewModel;
 		};
 		4B68394A23705ACE002FFC5A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
-			remoteInfo = VergeStore;
-		};
-		4B786325233912AB009B9C1B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
 			proxyType = 1;
@@ -377,138 +214,12 @@
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
 		};
-		4B94913E239C25C600370067 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
-			remoteInfo = VergeStore;
-		};
-		4B949143239C25CA00370067 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B475BB1239AB954008A03E1;
-			remoteInfo = VergeORM;
-		};
-		4B956D1A211483E7003AA189 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B86A4851F969AD5002D54FE;
-			remoteInfo = "Verge-iOS";
-		};
-		4BB4F7F523D32A2C0039C897 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
-			remoteInfo = VergeCore;
-		};
-		4BB4F7F923D32A2C0039C897 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B475BB1239AB954008A03E1;
-			remoteInfo = VergeORM;
-		};
-		4BB4F7FD23D32A2C0039C897 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
-			remoteInfo = VergeStore;
-		};
-		4BB64CC1248380EF0017699A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BB64CBB248380EF0017699A;
-			remoteInfo = SpotifyService;
-		};
-		4BB64CCB248381450017699A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
-			remoteInfo = VergeCore;
-		};
-		4BB64CCF248381450017699A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B5E849B24618D1C009A0CA8;
-			remoteInfo = VergeObjcBridge;
-		};
-		4BB64CD3248381450017699A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B475BB1239AB954008A03E1;
-			remoteInfo = VergeORM;
-		};
-		4BB64CD7248381450017699A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
-			remoteInfo = VergeStore;
-		};
-		4BB64CFE248391550017699A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BB64CF8248391550017699A;
-			remoteInfo = SpotifyUIKit;
-		};
-		4BDBDF9223CE0C8E00EEA112 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
-			remoteInfo = VergeCore;
-		};
-		4BDBDF9623CE0C8E00EEA112 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B17438E23C766D70074C457;
-			remoteInfo = VergeRx;
-		};
-		4BDBDF9A23CE0C8E00EEA112 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
-			remoteInfo = VergeStore;
-		};
-		4BDCA9052486B0D60024126A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
-			remoteInfo = VergeCore;
-		};
-		4BDCA9092486B0F60024126A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B5E849B24618D1C009A0CA8;
-			remoteInfo = VergeObjcBridge;
-		};
 		4BE9455523AD1B180060F977 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
 			remoteInfo = VergeCore;
-		};
-		4BFA22A123A63B56008D7BCB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
-			remoteInfo = VergeSelector;
 		};
 		4BFA22AF23A63BB9008D7BCB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -531,73 +242,9 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4B949140239C25C600370067 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				4B94913D239C25C600370067 /* VergeStore.framework in Embed Frameworks */,
-				4BDCA9082486B0F60024126A /* VergeObjcBridge.framework in Embed Frameworks */,
-				4B949142239C25CA00370067 /* VergeORM.framework in Embed Frameworks */,
-				4BDCA9042486B0D60024126A /* VergeCore.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B956D1C211483E7003AA189 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				4B786328233912AB009B9C1B /* VergeStore.framework in Embed Frameworks */,
-				4B956D19211483E7003AA189 /* VergeClassic.framework in Embed Frameworks */,
-				4BFA22A423A63B56008D7BCB /* VergeCore.framework in Embed Frameworks */,
-				4B17439723C766D80074C457 /* VergeRx.framework in Embed Frameworks */,
-				4B475BBA239AB954008A03E1 /* VergeORM.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BB4F7FF23D32A2C0039C897 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				4BB64D01248391560017699A /* SpotifyUIKit.framework in Embed Frameworks */,
-				4BB64CC4248380EF0017699A /* SpotifyService.framework in Embed Frameworks */,
-				4BB4F7F423D32A2C0039C897 /* VergeCore.framework in Embed Frameworks */,
-				4B5E84A424618D1C009A0CA8 /* VergeObjcBridge.framework in Embed Frameworks */,
-				4BB4F7F823D32A2C0039C897 /* VergeORM.framework in Embed Frameworks */,
-				4BB4F7FC23D32A2C0039C897 /* VergeStore.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BDBDF9C23CE0C8F00EEA112 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				4BDBDF9523CE0C8E00EEA112 /* VergeRx.framework in Embed Frameworks */,
-				4BDBDF9123CE0C8E00EEA112 /* VergeCore.framework in Embed Frameworks */,
-				4BDBDF9923CE0C8E00EEA112 /* VergeStore.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1E685888769D164935D33897 /* Pods_SpotifyService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpotifyService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		1EDE2A03AD390233DBB6ED18 /* Pods-SpotifyDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyDemo.debug.xcconfig"; path = "Target Support Files/Pods-SpotifyDemo/Pods-SpotifyDemo.debug.xcconfig"; sourceTree = "<group>"; };
-		2FA2244BF41C2E8969E30BCF /* Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig"; sourceTree = "<group>"; };
-		3818992221C3563A15F64564 /* Pods-Demo-VergeStoreDemoSwiftUI.benchmark.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoSwiftUI.benchmark.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI.benchmark.xcconfig"; sourceTree = "<group>"; };
-		3F07A8480C2ABFC93877F196 /* Pods-SpotifyService-SpotifyDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService-SpotifyDemo.debug.xcconfig"; path = "Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo.debug.xcconfig"; sourceTree = "<group>"; };
-		3F351754BE49BE9A03E11763 /* Pods_Demo_VergeStoreDemoUIKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Demo_VergeStoreDemoUIKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B07360123AA35F800866430 /* HashIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashIndex.swift; sourceTree = "<group>"; };
 		4B0AFD6C2388643400AABA90 /* DefaultStoreLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultStoreLogger.swift; sourceTree = "<group>"; };
 		4B0DFF2A245C6670002CDFE1 /* ChangedOperatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangedOperatorTests.swift; sourceTree = "<group>"; };
@@ -618,7 +265,6 @@
 		4B2050F823D5C85B000A2779 /* MutationTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationTrace.swift; sourceTree = "<group>"; };
 		4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseError.swift; sourceTree = "<group>"; };
 		4B2AE0B724856EB10086A42C /* Entities.Me.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.Me.swift; sourceTree = "<group>"; };
-		4B2AE0BD248571B20086A42C /* SpotifyServiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpotifyServiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B2AE0BF248571B20086A42C /* SpotifyServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyServiceTests.swift; sourceTree = "<group>"; };
 		4B2AE0C1248571B20086A42C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B2AE0C9248573A30086A42C /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -697,7 +343,6 @@
 		4B86A4891F969AD6002D54FE /* Verge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Verge.h; sourceTree = "<group>"; };
 		4B86A48A1F969AD6002D54FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B86A4911F969BF3002D54FE /* Verge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Verge.swift; sourceTree = "<group>"; };
-		4B86A4971F969C7D002D54FE /* Verge-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Verge-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B86A4991F969C7D002D54FE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B86A49B1F969C7D002D54FE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4B86A49E1F969C7D002D54FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -714,7 +359,6 @@
 		4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VergeConcurrency+AtomicReference.swift"; sourceTree = "<group>"; };
 		4B93C874247A523500372BC4 /* SyntaxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyntaxTests.swift; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B949146239C264D00370067 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B949148239C264D00370067 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4B94914A239C264D00370067 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -744,7 +388,6 @@
 		4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddlewareTests.swift; sourceTree = "<group>"; };
 		4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetQueue.swift; sourceTree = "<group>"; };
 		4BB451D123D446C00034CA58 /* AuthResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthResponse.swift; sourceTree = "<group>"; };
-		4BB4F7DF23D329E20039C897 /* SpotifyDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpotifyDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BB4F7E123D329E30039C897 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BB4F7E323D329E30039C897 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		4BB4F7E523D329E30039C897 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -757,7 +400,6 @@
 		4BB4F80723D3372E0039C897 /* APIRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequests.swift; sourceTree = "<group>"; };
 		4BB4F80D23D33C0C0039C897 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		4BB4F80F23D33F970039C897 /* LoggedInService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedInService.swift; sourceTree = "<group>"; };
-		4BB64CBC248380EF0017699A /* SpotifyService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpotifyService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BB64CBE248380EF0017699A /* SpotifyService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpotifyService.h; sourceTree = "<group>"; };
 		4BB64CBF248380EF0017699A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BB64CE12483834B0017699A /* BackendStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendStore.swift; sourceTree = "<group>"; };
@@ -768,7 +410,6 @@
 		4BB64CEE24838F7A0017699A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		4BB64CF024838F7F0017699A /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		4BB64CF224838F860017699A /* YourLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourLibraryView.swift; sourceTree = "<group>"; };
-		4BB64CF9248391550017699A /* SpotifyUIKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpotifyUIKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BB64CFB248391550017699A /* SpotifyUIKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpotifyUIKit.h; sourceTree = "<group>"; };
 		4BB64CFC248391550017699A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BB64D062483916F0017699A /* SampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleView.swift; sourceTree = "<group>"; };
@@ -792,7 +433,6 @@
 		4BD79C0324477F430073A48B /* VergeConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeConcurrency.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		4BDB78212447934A00675D03 /* StoreWrapperType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreWrapperType.swift; sourceTree = "<group>"; };
-		4BDBDF7423CE0C4200EEA112 /* VergeStoreDemoUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BDBDF7623CE0C4200EEA112 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BDBDF7A23CE0C4200EEA112 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4BDBDF7D23CE0C4200EEA112 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -823,19 +463,6 @@
 		4BFA229C23A63B55008D7BCB /* VergeCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BFA229E23A63B56008D7BCB /* VergeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeCore.h; sourceTree = "<group>"; };
 		4BFA229F23A63B56008D7BCB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7410B82F88103FD469D0B71F /* Pods-SpotifyService.benchmark.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService.benchmark.xcconfig"; path = "Target Support Files/Pods-SpotifyService/Pods-SpotifyService.benchmark.xcconfig"; sourceTree = "<group>"; };
-		77694289585134958D9399AC /* Pods-SpotifyDemo.benchmark.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyDemo.benchmark.xcconfig"; path = "Target Support Files/Pods-SpotifyDemo/Pods-SpotifyDemo.benchmark.xcconfig"; sourceTree = "<group>"; };
-		9314E206A3E411192948A0F5 /* Pods-SpotifyService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService.debug.xcconfig"; path = "Target Support Files/Pods-SpotifyService/Pods-SpotifyService.debug.xcconfig"; sourceTree = "<group>"; };
-		A79AB3AE59941BF051A678BF /* Pods-SpotifyService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService.release.xcconfig"; path = "Target Support Files/Pods-SpotifyService/Pods-SpotifyService.release.xcconfig"; sourceTree = "<group>"; };
-		A9301C4F77924D396B2BF9C6 /* Pods-SpotifyService-SpotifyDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService-SpotifyDemo.release.xcconfig"; path = "Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo.release.xcconfig"; sourceTree = "<group>"; };
-		ADE43B152D7AD2696345A261 /* Pods_Demo_VergeStoreDemoSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Demo_VergeStoreDemoSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD668DC952DD9547224506FC /* Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig"; sourceTree = "<group>"; };
-		C50125436B38343085FC1BFA /* Pods-SpotifyDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyDemo.release.xcconfig"; path = "Target Support Files/Pods-SpotifyDemo/Pods-SpotifyDemo.release.xcconfig"; sourceTree = "<group>"; };
-		D71A0B9E3DBB34BD7302C9A4 /* Pods-SpotifyService-SpotifyDemo.benchmark.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService-SpotifyDemo.benchmark.xcconfig"; path = "Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo.benchmark.xcconfig"; sourceTree = "<group>"; };
-		E02D61CF182FC7EA896B557C /* Pods_SpotifyService_SpotifyDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpotifyService_SpotifyDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E9091CCC1298ACC3224EEB48 /* Pods-Demo-VergeStoreDemoUIKit.benchmark.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoUIKit.benchmark.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit.benchmark.xcconfig"; sourceTree = "<group>"; };
-		F8088580235167190CBF9EAC /* Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig"; sourceTree = "<group>"; };
-		FAE87FF1E76E4BA1A72B0223 /* Pods-Demo-VergeStoreDemoUIKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoUIKit.release.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -857,14 +484,6 @@
 			files = (
 				4B8035FC244CB9900028BD32 /* VergeClassic.framework in Frameworks */,
 				4B1743AC23C767670074C457 /* VergeRx.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B2AE0BA248571B20086A42C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B2AE0C2248571B20086A42C /* SpotifyService.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -925,80 +544,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4B86A4941F969C7D002D54FE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B956D18211483E7003AA189 /* VergeClassic.framework in Frameworks */,
-				4B786327233912AB009B9C1B /* VergeStore.framework in Frameworks */,
-				4BFA22A323A63B56008D7BCB /* VergeCore.framework in Frameworks */,
-				4B17439623C766D80074C457 /* VergeRx.framework in Frameworks */,
-				4B475BB9239AB954008A03E1 /* VergeORM.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B949125239C257500370067 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B94913C239C25C600370067 /* VergeStore.framework in Frameworks */,
-				4BDCA9032486B0D60024126A /* VergeCore.framework in Frameworks */,
-				4B949141239C25CA00370067 /* VergeORM.framework in Frameworks */,
-				4BDCA9072486B0F60024126A /* VergeObjcBridge.framework in Frameworks */,
-				4C309BD4F308564F99ED30A5 /* Pods_Demo_VergeStoreDemoSwiftUI.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		4B9AF04124880145001BAAFC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BB4F7DC23D329E20039C897 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4BB4F7F323D32A2C0039C897 /* VergeCore.framework in Frameworks */,
-				4BB4F7F723D32A2C0039C897 /* VergeORM.framework in Frameworks */,
-				4BB4F7FB23D32A2C0039C897 /* VergeStore.framework in Frameworks */,
-				4BB64CC3248380EF0017699A /* SpotifyService.framework in Frameworks */,
-				4B5E84A324618D1C009A0CA8 /* VergeObjcBridge.framework in Frameworks */,
-				4BB64D00248391550017699A /* SpotifyUIKit.framework in Frameworks */,
-				9787B2568318F51EC2C5B2F0 /* Pods_SpotifyService_SpotifyDemo.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BB64CB9248380EF0017699A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4BB64CD1248381450017699A /* VergeORM.framework in Frameworks */,
-				4BB64CC9248381450017699A /* VergeCore.framework in Frameworks */,
-				4BB64CD5248381450017699A /* VergeStore.framework in Frameworks */,
-				4BB64CCD248381450017699A /* VergeObjcBridge.framework in Frameworks */,
-				4B5140092483F01400463CE6 /* CombineExt in Frameworks */,
-				B6D2A295D283D02D610259EF /* Pods_SpotifyService.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BB64CF6248391550017699A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B2AE0E52485A45B0086A42C /* FetchImage in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BDBDF7123CE0C4200EEA112 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4BDBDF9023CE0C8E00EEA112 /* VergeCore.framework in Frameworks */,
-				4BDBDF9823CE0C8E00EEA112 /* VergeStore.framework in Frameworks */,
-				4BDBDF9423CE0C8E00EEA112 /* VergeRx.framework in Frameworks */,
-				99C64148068872872ACEB817 /* Pods_Demo_VergeStoreDemoUIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1024,21 +573,6 @@
 		2A539E3FF4267844D858E039 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2FA2244BF41C2E8969E30BCF /* Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig */,
-				BD668DC952DD9547224506FC /* Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig */,
-				F8088580235167190CBF9EAC /* Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig */,
-				FAE87FF1E76E4BA1A72B0223 /* Pods-Demo-VergeStoreDemoUIKit.release.xcconfig */,
-				1EDE2A03AD390233DBB6ED18 /* Pods-SpotifyDemo.debug.xcconfig */,
-				C50125436B38343085FC1BFA /* Pods-SpotifyDemo.release.xcconfig */,
-				3818992221C3563A15F64564 /* Pods-Demo-VergeStoreDemoSwiftUI.benchmark.xcconfig */,
-				E9091CCC1298ACC3224EEB48 /* Pods-Demo-VergeStoreDemoUIKit.benchmark.xcconfig */,
-				77694289585134958D9399AC /* Pods-SpotifyDemo.benchmark.xcconfig */,
-				9314E206A3E411192948A0F5 /* Pods-SpotifyService.debug.xcconfig */,
-				7410B82F88103FD469D0B71F /* Pods-SpotifyService.benchmark.xcconfig */,
-				A79AB3AE59941BF051A678BF /* Pods-SpotifyService.release.xcconfig */,
-				3F07A8480C2ABFC93877F196 /* Pods-SpotifyService-SpotifyDemo.debug.xcconfig */,
-				D71A0B9E3DBB34BD7302C9A4 /* Pods-SpotifyService-SpotifyDemo.benchmark.xcconfig */,
-				A9301C4F77924D396B2BF9C6 /* Pods-SpotifyService-SpotifyDemo.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1251,23 +785,16 @@
 			isa = PBXGroup;
 			children = (
 				4B86A4861F969AD5002D54FE /* VergeClassic.framework */,
-				4B86A4971F969C7D002D54FE /* Verge-Demo.app */,
 				4B65F8EC1FB4C0DC00A90A67 /* VergeTests.xctest */,
 				4B786320233912AB009B9C1B /* VergeStore.framework */,
 				4B68394423705ACD002FFC5A /* VergeStoreTests.xctest */,
 				4B475BB2239AB954008A03E1 /* VergeORM.framework */,
 				4B475BC5239ADE1C008A03E1 /* VergeORMTests.xctest */,
-				4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */,
 				4BFA229C23A63B55008D7BCB /* VergeCore.framework */,
 				4BE9454F23AD1B180060F977 /* VergeCoreTests.xctest */,
 				4B17438F23C766D70074C457 /* VergeRx.framework */,
 				4B1743A723C767670074C457 /* VergeRxTests.xctest */,
-				4BDBDF7423CE0C4200EEA112 /* VergeStoreDemoUIKit.app */,
-				4BB4F7DF23D329E20039C897 /* SpotifyDemo.app */,
 				4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */,
-				4BB64CBC248380EF0017699A /* SpotifyService.framework */,
-				4BB64CF9248391550017699A /* SpotifyUIKit.framework */,
-				4B2AE0BD248571B20086A42C /* SpotifyServiceTests.xctest */,
 				4B9AF04424880145001BAAFC /* VergeSwiftUI.framework */,
 			);
 			name = Products;
@@ -1306,10 +833,6 @@
 			children = (
 				4BD85F2C2331213800FD04E9 /* SwiftUI.framework */,
 				4B93EC7323307637002BB30B /* SwiftUI.framework */,
-				ADE43B152D7AD2696345A261 /* Pods_Demo_VergeStoreDemoSwiftUI.framework */,
-				3F351754BE49BE9A03E11763 /* Pods_Demo_VergeStoreDemoUIKit.framework */,
-				1E685888769D164935D33897 /* Pods_SpotifyService.framework */,
-				E02D61CF182FC7EA896B557C /* Pods_SpotifyService_SpotifyDemo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1619,22 +1142,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4BB64CB7248380EF0017699A /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4BB64CC0248380EF0017699A /* SpotifyService.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BB64CF4248391550017699A /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4BB64CFD248391550017699A /* SpotifyUIKit.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		4BFA229723A63B55008D7BCB /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1687,24 +1194,6 @@
 			name = VergeRxTests;
 			productName = VergeRxTests;
 			productReference = 4B1743A723C767670074C457 /* VergeRxTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		4B2AE0BC248571B20086A42C /* SpotifyServiceTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4B2AE0C5248571B20086A42C /* Build configuration list for PBXNativeTarget "SpotifyServiceTests" */;
-			buildPhases = (
-				4B2AE0B9248571B20086A42C /* Sources */,
-				4B2AE0BA248571B20086A42C /* Frameworks */,
-				4B2AE0BB248571B20086A42C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4B2AE0C4248571B20086A42C /* PBXTargetDependency */,
-			);
-			name = SpotifyServiceTests;
-			productName = SpotifyServiceTests;
-			productReference = 4B2AE0BD248571B20086A42C /* SpotifyServiceTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		4B475BB1239AB954008A03E1 /* VergeORM */ = {
@@ -1839,53 +1328,6 @@
 			productReference = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		4B86A4961F969C7D002D54FE /* Verge-Demo */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4B86A4A61F969C7D002D54FE /* Build configuration list for PBXNativeTarget "Verge-Demo" */;
-			buildPhases = (
-				4B86A4931F969C7D002D54FE /* Sources */,
-				4B86A4941F969C7D002D54FE /* Frameworks */,
-				4B86A4951F969C7D002D54FE /* Resources */,
-				4B956D1C211483E7003AA189 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4B956D1B211483E7003AA189 /* PBXTargetDependency */,
-				4B786326233912AB009B9C1B /* PBXTargetDependency */,
-				4B475BB8239AB954008A03E1 /* PBXTargetDependency */,
-				4BFA22A223A63B56008D7BCB /* PBXTargetDependency */,
-				4B17439523C766D70074C457 /* PBXTargetDependency */,
-			);
-			name = "Verge-Demo";
-			productName = "CycleViewModel-Demo";
-			productReference = 4B86A4971F969C7D002D54FE /* Verge-Demo.app */;
-			productType = "com.apple.product-type.application";
-		};
-		4B949127239C257500370067 /* VergeStoreDemoSwiftUI */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4B949139239C257700370067 /* Build configuration list for PBXNativeTarget "VergeStoreDemoSwiftUI" */;
-			buildPhases = (
-				CB63A2962E84F96F01E50788 /* [CP] Check Pods Manifest.lock */,
-				4B949124239C257500370067 /* Sources */,
-				4B949125239C257500370067 /* Frameworks */,
-				4B949126239C257500370067 /* Resources */,
-				4B949140239C25C600370067 /* Embed Frameworks */,
-				EC1A328CAA60BE1DE5FE3C51 /* [CP] Embed Pods Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4B94913F239C25C600370067 /* PBXTargetDependency */,
-				4B949144239C25CA00370067 /* PBXTargetDependency */,
-				4BDCA9062486B0D60024126A /* PBXTargetDependency */,
-				4BDCA90A2486B0F60024126A /* PBXTargetDependency */,
-			);
-			name = VergeStoreDemoSwiftUI;
-			productName = VergeStoreDemoSwiftUI;
-			productReference = 4B949128239C257500370067 /* VergeStoreDemoSwiftUI.app */;
-			productType = "com.apple.product-type.application";
-		};
 		4B9AF04324880145001BAAFC /* VergeSwiftUI */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B9AF04924880145001BAAFC /* Build configuration list for PBXNativeTarget "VergeSwiftUI" */;
@@ -1903,104 +1345,6 @@
 			productName = VergeSwiftUI;
 			productReference = 4B9AF04424880145001BAAFC /* VergeSwiftUI.framework */;
 			productType = "com.apple.product-type.framework";
-		};
-		4BB4F7DE23D329E20039C897 /* SpotifyDemo */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4BB4F7F023D329E40039C897 /* Build configuration list for PBXNativeTarget "SpotifyDemo" */;
-			buildPhases = (
-				EDA16A4D57532C28001E5F1A /* [CP] Check Pods Manifest.lock */,
-				4BB4F7DB23D329E20039C897 /* Sources */,
-				4BB4F7DC23D329E20039C897 /* Frameworks */,
-				4BB4F7DD23D329E20039C897 /* Resources */,
-				4BB4F7FF23D32A2C0039C897 /* Embed Frameworks */,
-				9D7EBF1C6790520C3179A831 /* [CP] Embed Pods Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4BB4F7F623D32A2C0039C897 /* PBXTargetDependency */,
-				4BB4F7FA23D32A2C0039C897 /* PBXTargetDependency */,
-				4BB4F7FE23D32A2C0039C897 /* PBXTargetDependency */,
-				4B5E84A224618D1C009A0CA8 /* PBXTargetDependency */,
-				4BB64CC2248380EF0017699A /* PBXTargetDependency */,
-				4BB64CFF248391550017699A /* PBXTargetDependency */,
-			);
-			name = SpotifyDemo;
-			packageProductDependencies = (
-			);
-			productName = SpotifyDemo;
-			productReference = 4BB4F7DF23D329E20039C897 /* SpotifyDemo.app */;
-			productType = "com.apple.product-type.application";
-		};
-		4BB64CBB248380EF0017699A /* SpotifyService */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4BB64CC8248380EF0017699A /* Build configuration list for PBXNativeTarget "SpotifyService" */;
-			buildPhases = (
-				527894BB3D15C35E617BBE5A /* [CP] Check Pods Manifest.lock */,
-				4BB64CB7248380EF0017699A /* Headers */,
-				4BB64CB8248380EF0017699A /* Sources */,
-				4BB64CB9248380EF0017699A /* Frameworks */,
-				4BB64CBA248380EF0017699A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4BB64CCC248381450017699A /* PBXTargetDependency */,
-				4BB64CD0248381450017699A /* PBXTargetDependency */,
-				4BB64CD4248381450017699A /* PBXTargetDependency */,
-				4BB64CD8248381450017699A /* PBXTargetDependency */,
-			);
-			name = SpotifyService;
-			packageProductDependencies = (
-				4B5140082483F01400463CE6 /* CombineExt */,
-			);
-			productName = SpotifyService;
-			productReference = 4BB64CBC248380EF0017699A /* SpotifyService.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		4BB64CF8248391550017699A /* SpotifyUIKit */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4BB64D02248391560017699A /* Build configuration list for PBXNativeTarget "SpotifyUIKit" */;
-			buildPhases = (
-				4BB64CF4248391550017699A /* Headers */,
-				4BB64CF5248391550017699A /* Sources */,
-				4BB64CF6248391550017699A /* Frameworks */,
-				4BB64CF7248391550017699A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = SpotifyUIKit;
-			packageProductDependencies = (
-				4B2AE0E42485A45B0086A42C /* FetchImage */,
-			);
-			productName = SpotifyUIKit;
-			productReference = 4BB64CF9248391550017699A /* SpotifyUIKit.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		4BDBDF7323CE0C4200EEA112 /* VergeStoreDemoUIKit */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4BDBDF8523CE0C4400EEA112 /* Build configuration list for PBXNativeTarget "VergeStoreDemoUIKit" */;
-			buildPhases = (
-				7052C4935DC846C63AA7CDD7 /* [CP] Check Pods Manifest.lock */,
-				4BDBDF7023CE0C4200EEA112 /* Sources */,
-				4BDBDF7123CE0C4200EEA112 /* Frameworks */,
-				4BDBDF7223CE0C4200EEA112 /* Resources */,
-				4BDBDF9C23CE0C8F00EEA112 /* Embed Frameworks */,
-				F1EC7A053C69BE4B497F1909 /* [CP] Embed Pods Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4BDBDF9323CE0C8E00EEA112 /* PBXTargetDependency */,
-				4BDBDF9723CE0C8E00EEA112 /* PBXTargetDependency */,
-				4BDBDF9B23CE0C8E00EEA112 /* PBXTargetDependency */,
-			);
-			name = VergeStoreDemoUIKit;
-			productName = VergeStoreDemoUIKit;
-			productReference = 4BDBDF7423CE0C4200EEA112 /* VergeStoreDemoUIKit.app */;
-			productType = "com.apple.product-type.application";
 		};
 		4BE9454E23AD1B180060F977 /* VergeCoreTests */ = {
 			isa = PBXNativeTarget;
@@ -2055,9 +1399,6 @@
 					4B1743A623C767670074C457 = {
 						CreatedOnToolsVersion = 11.3;
 					};
-					4B2AE0BC248571B20086A42C = {
-						CreatedOnToolsVersion = 11.5;
-					};
 					4B475BB1239AB954008A03E1 = {
 						CreatedOnToolsVersion = 11.2.1;
 					};
@@ -2085,28 +1426,8 @@
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
-					4B86A4961F969C7D002D54FE = {
-						CreatedOnToolsVersion = 9.0;
-						ProvisioningStyle = Automatic;
-					};
-					4B949127239C257500370067 = {
-						CreatedOnToolsVersion = 11.2.1;
-					};
 					4B9AF04324880145001BAAFC = {
 						CreatedOnToolsVersion = 11.5;
-					};
-					4BB4F7DE23D329E20039C897 = {
-						CreatedOnToolsVersion = 11.3;
-					};
-					4BB64CBB248380EF0017699A = {
-						CreatedOnToolsVersion = 11.5;
-					};
-					4BB64CF8248391550017699A = {
-						CreatedOnToolsVersion = 11.5;
-						LastSwiftMigration = 1150;
-					};
-					4BDBDF7323CE0C4200EEA112 = {
-						CreatedOnToolsVersion = 11.3;
 					};
 					4BE9454E23AD1B180060F977 = {
 						CreatedOnToolsVersion = 11.3;
@@ -2128,8 +1449,6 @@
 			mainGroup = 4B86A47C1F969AD5002D54FE;
 			packageReferences = (
 				4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */,
-				4B5140072483F01400463CE6 /* XCRemoteSwiftPackageReference "CombineExt" */,
-				4B2AE0E12485A4360086A42C /* XCRemoteSwiftPackageReference "FetchImage" */,
 			);
 			productRefGroup = 4B86A4871F969AD5002D54FE /* Products */;
 			projectDirPath = "";
@@ -2142,18 +1461,11 @@
 				4B86A4851F969AD5002D54FE /* VergeClassic */,
 				4B9AF04324880145001BAAFC /* VergeSwiftUI */,
 				4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */,
-				4BB4F7DE23D329E20039C897 /* SpotifyDemo */,
-				4BB64CF8248391550017699A /* SpotifyUIKit */,
-				4BB64CBB248380EF0017699A /* SpotifyService */,
-				4B86A4961F969C7D002D54FE /* Verge-Demo */,
-				4B949127239C257500370067 /* VergeStoreDemoSwiftUI */,
-				4BDBDF7323CE0C4200EEA112 /* VergeStoreDemoUIKit */,
 				4B65F8EB1FB4C0DC00A90A67 /* VergeTests */,
 				4BE9454E23AD1B180060F977 /* VergeCoreTests */,
 				4B68394323705ACD002FFC5A /* VergeStoreTests */,
 				4B475BC4239ADE1C008A03E1 /* VergeORMTests */,
 				4B1743A623C767670074C457 /* VergeRxTests */,
-				4B2AE0BC248571B20086A42C /* SpotifyServiceTests */,
 			);
 		};
 /* End PBXProject section */
@@ -2167,13 +1479,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4B1743A523C767670074C457 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B2AE0BB248571B20086A42C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2229,64 +1534,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4B86A4951F969C7D002D54FE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B86A4A41F969C7D002D54FE /* LaunchScreen.storyboard in Resources */,
-				4B86A4A11F969C7D002D54FE /* Assets.xcassets in Resources */,
-				4B86A49F1F969C7D002D54FE /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B949126239C257500370067 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B949151239C264D00370067 /* LaunchScreen.storyboard in Resources */,
-				4B949150239C264D00370067 /* Preview Assets.xcassets in Resources */,
-				4B94914F239C264D00370067 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		4B9AF04224880145001BAAFC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BB4F7DD23D329E20039C897 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4BB4F7EE23D329E40039C897 /* LaunchScreen.storyboard in Resources */,
-				4BB4F7EB23D329E40039C897 /* Preview Assets.xcassets in Resources */,
-				4BB4F7E823D329E40039C897 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BB64CBA248380EF0017699A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BB64CF7248391550017699A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BDBDF7223CE0C4200EEA112 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4BDBDF8323CE0C4400EEA112 /* LaunchScreen.storyboard in Resources */,
-				4BDBDF8023CE0C4400EEA112 /* Assets.xcassets in Resources */,
-				4BDBDF7E23CE0C4200EEA112 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2305,148 +1556,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		527894BB3D15C35E617BBE5A /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SpotifyService-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		7052C4935DC846C63AA7CDD7 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Demo-VergeStoreDemoUIKit-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9D7EBF1C6790520C3179A831 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CB63A2962E84F96F01E50788 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Demo-VergeStoreDemoSwiftUI-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EC1A328CAA60BE1DE5FE3C51 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EDA16A4D57532C28001E5F1A /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SpotifyService-SpotifyDemo-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F1EC7A053C69BE4B497F1909 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4B17438B23C766D70074C457 /* Sources */ = {
@@ -2471,14 +1580,6 @@
 				4B8035FB244CB96B0028BD32 /* MigrationFromClassicTests.swift in Sources */,
 				4B4AB16C244DEEE3005E7283 /* ReproduceDeadlockTests.swift in Sources */,
 				4B0DFF2B245C6670002CDFE1 /* ChangedOperatorTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B2AE0B9248571B20086A42C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B2AE0C0248571B20086A42C /* SpotifyServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2603,118 +1704,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4B86A4931F969C7D002D54FE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B65F8FA1FB4C75800A90A67 /* CycleViewModel.swift in Sources */,
-				4B86A49C1F969C7D002D54FE /* ViewController.swift in Sources */,
-				4B86A49A1F969C7D002D54FE /* AppDelegate.swift in Sources */,
-				4BAD4FDD1FC80B0100C841FA /* Logger.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B949124239C257500370067 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B949157239C26C100370067 /* Session.swift in Sources */,
-				4BDCA9022486AFBC0024126A /* PostDetailView.swift in Sources */,
-				4B94915F239CF1CF00370067 /* UserListView.swift in Sources */,
-				4BDCA8FE2486A6970024126A /* PostView.swift in Sources */,
-				4B949153239C264D00370067 /* ContentView.swift in Sources */,
-				4B9AF03E2487FB16001BAAFC /* DualDisplayView.swift in Sources */,
-				4BDCA8FC2486A4A00024126A /* AllPostsView.swift in Sources */,
-				4BDCA8FA2486A4090024126A /* UserDetailView.swift in Sources */,
-				4BDCA9002486A8630024126A /* Entities.swift in Sources */,
-				4B949152239C264D00370067 /* AppDelegate.swift in Sources */,
-				4B949155239C264D00370067 /* SceneDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		4B9AF04024880145001BAAFC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BB4F7DB23D329E20039C897 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B884916248CC3DE00762CAA /* AppContainerView.swift in Sources */,
-				4BB4F7E223D329E30039C897 /* AppDelegate.swift in Sources */,
-				4BB4F7E423D329E30039C897 /* SceneDelegate.swift in Sources */,
-				4B1C011823D34A9F00BE9B24 /* SafariView.swift in Sources */,
-				4BB64CE424838E2C0017699A /* LoggedOutView.swift in Sources */,
-				4B2AE0CC248587EB0086A42C /* IndicatorView.swift in Sources */,
-				4BB64CE624838E400017699A /* import.swift in Sources */,
-				4B5869202485BD2000CE4407 /* Util.swift in Sources */,
-				4BB64CE824838EC20017699A /* LoggedInView.swift in Sources */,
-				4BB4F7E623D329E30039C897 /* ContentView.swift in Sources */,
-				4B1C011623D34A6B00BE9B24 /* SessionRootView.swift in Sources */,
-				4B2AE0DD2485A2460086A42C /* SettingsView.swift in Sources */,
-				4BB64CF124838F800017699A /* SearchView.swift in Sources */,
-				4BB64CED24838F330017699A /* RootTabView.swift in Sources */,
-				4BB64CEF24838F7A0017699A /* HomeView.swift in Sources */,
-				4BB64CF324838F860017699A /* YourLibraryView.swift in Sources */,
-				4BB4F80E23D33C0C0039C897 /* Session.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BB64CB8248380EF0017699A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B5140042483E51100463CE6 /* Util.swift in Sources */,
-				4BB64CDE248381EC0017699A /* Auth.swift in Sources */,
-				4BDCA8F724868BB50024126A /* Entities.User.swift in Sources */,
-				4B2AE0B824856EB10086A42C /* Entities.Me.swift in Sources */,
-				4BD068AD248C138000E05687 /* RealmObjects.swift in Sources */,
-				4BB64CDD248381EC0017699A /* LoggedOutService.swift in Sources */,
-				4B2AE0D4248590C80086A42C /* LoggedInBackendStack.swift in Sources */,
-				4BB64CE22483834B0017699A /* BackendStore.swift in Sources */,
-				4B5140022483E41A00463CE6 /* Entities.Image.swift in Sources */,
-				4B2AE0CE248590620086A42C /* LoggedInBackendState.swift in Sources */,
-				4B2AE0D6248590E60086A42C /* LoggedOutBackendStack.swift in Sources */,
-				4BB64CDB248381EC0017699A /* StackContainer.swift in Sources */,
-				4B9CC71E249E70360045CCF8 /* RefreshTokenProvider.swift in Sources */,
-				4BD068AE248C13B300E05687 /* RealmObjects.Session.swift in Sources */,
-				4B2AE0D22485909E0086A42C /* BackendState.swift in Sources */,
-				4B5140062483E5D800463CE6 /* Entities.Artist.swift in Sources */,
-				4B2AE0D02485907C0086A42C /* LoggedOutBackendState.swift in Sources */,
-				4BDCA8F524868AF70024126A /* Entities.Playlist.swift in Sources */,
-				4BB64CDA248381EC0017699A /* Secret.swift in Sources */,
-				4B2AE0DA2485915D0086A42C /* Publisher+.swift in Sources */,
-				4BB64CE0248381F40017699A /* AuthResponse.swift in Sources */,
-				4B5140002483E3FE00463CE6 /* Entities.swift in Sources */,
-				4B884914248CC06B00762CAA /* BackendStackManager.swift in Sources */,
-				4B2AE0D82485913B0086A42C /* MoyaProvider+Combin.swift in Sources */,
-				4B2AE0CA248573A30086A42C /* Logger.swift in Sources */,
-				4B71A469248C089C009B3918 /* Realm+Util.swift in Sources */,
-				4BB64CDF248381EC0017699A /* APIRequests.swift in Sources */,
-				4BB64CDC248381EC0017699A /* LoggedInService.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BB64CF5248391550017699A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4BB64D072483916F0017699A /* SampleView.swift in Sources */,
-				4B2AE0E72485A4860086A42C /* NetworkImageView.swift in Sources */,
-				4B2AE0E02485A3240086A42C /* SettingsViewComponents.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BDBDF7023CE0C4200EEA112 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4BDBDF8923CE0C7800EEA112 /* Sources.swift in Sources */,
-				4BDBDF7B23CE0C4200EEA112 /* ViewController.swift in Sources */,
-				4BDBDF7723CE0C4200EEA112 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2746,11 +1739,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		4B17439523C766D70074C457 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B17438E23C766D70074C457 /* VergeRx */;
-			targetProxy = 4B17439423C766D70074C457 /* PBXContainerItemProxy */;
-		};
 		4B1743AE23C767670074C457 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4B17438E23C766D70074C457 /* VergeRx */;
@@ -2761,30 +1749,15 @@
 			target = 4B17438E23C766D70074C457 /* VergeRx */;
 			targetProxy = 4B1743B523C767D90074C457 /* PBXContainerItemProxy */;
 		};
-		4B2AE0C4248571B20086A42C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4BB64CBB248380EF0017699A /* SpotifyService */;
-			targetProxy = 4B2AE0C3248571B20086A42C /* PBXContainerItemProxy */;
-		};
 		4B3DC07223A66840008A4627 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
 			targetProxy = 4B3DC07123A66840008A4627 /* PBXContainerItemProxy */;
 		};
-		4B475BB8239AB954008A03E1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B475BB1239AB954008A03E1 /* VergeORM */;
-			targetProxy = 4B475BB7239AB954008A03E1 /* PBXContainerItemProxy */;
-		};
 		4B475BCC239ADE1C008A03E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4B78631F233912AB009B9C1B /* VergeStore */;
 			targetProxy = 4B475BCB239ADE1C008A03E1 /* PBXContainerItemProxy */;
-		};
-		4B5E84A224618D1C009A0CA8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */;
-			targetProxy = 4B5E84A124618D1C009A0CA8 /* PBXContainerItemProxy */;
 		};
 		4B5E84B224618D82009A0CA8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2800,11 +1773,6 @@
 			isa = PBXTargetDependency;
 			target = 4B78631F233912AB009B9C1B /* VergeStore */;
 			targetProxy = 4B68394A23705ACE002FFC5A /* PBXContainerItemProxy */;
-		};
-		4B786326233912AB009B9C1B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B78631F233912AB009B9C1B /* VergeStore */;
-			targetProxy = 4B786325233912AB009B9C1B /* PBXContainerItemProxy */;
 		};
 		4B7FBDA123ECB58400C2D8E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2831,103 +1799,10 @@
 			target = 4B78631F233912AB009B9C1B /* VergeStore */;
 			targetProxy = 4B91B37A2440B9C4005082D7 /* PBXContainerItemProxy */;
 		};
-		4B94913F239C25C600370067 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B78631F233912AB009B9C1B /* VergeStore */;
-			targetProxy = 4B94913E239C25C600370067 /* PBXContainerItemProxy */;
-		};
-		4B949144239C25CA00370067 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B475BB1239AB954008A03E1 /* VergeORM */;
-			targetProxy = 4B949143239C25CA00370067 /* PBXContainerItemProxy */;
-		};
-		4B956D1B211483E7003AA189 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B86A4851F969AD5002D54FE /* VergeClassic */;
-			targetProxy = 4B956D1A211483E7003AA189 /* PBXContainerItemProxy */;
-		};
-		4BB4F7F623D32A2C0039C897 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
-			targetProxy = 4BB4F7F523D32A2C0039C897 /* PBXContainerItemProxy */;
-		};
-		4BB4F7FA23D32A2C0039C897 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B475BB1239AB954008A03E1 /* VergeORM */;
-			targetProxy = 4BB4F7F923D32A2C0039C897 /* PBXContainerItemProxy */;
-		};
-		4BB4F7FE23D32A2C0039C897 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B78631F233912AB009B9C1B /* VergeStore */;
-			targetProxy = 4BB4F7FD23D32A2C0039C897 /* PBXContainerItemProxy */;
-		};
-		4BB64CC2248380EF0017699A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4BB64CBB248380EF0017699A /* SpotifyService */;
-			targetProxy = 4BB64CC1248380EF0017699A /* PBXContainerItemProxy */;
-		};
-		4BB64CCC248381450017699A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
-			targetProxy = 4BB64CCB248381450017699A /* PBXContainerItemProxy */;
-		};
-		4BB64CD0248381450017699A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */;
-			targetProxy = 4BB64CCF248381450017699A /* PBXContainerItemProxy */;
-		};
-		4BB64CD4248381450017699A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = 4B475BB1239AB954008A03E1 /* VergeORM */;
-			targetProxy = 4BB64CD3248381450017699A /* PBXContainerItemProxy */;
-		};
-		4BB64CD8248381450017699A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = 4B78631F233912AB009B9C1B /* VergeStore */;
-			targetProxy = 4BB64CD7248381450017699A /* PBXContainerItemProxy */;
-		};
-		4BB64CFF248391550017699A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4BB64CF8248391550017699A /* SpotifyUIKit */;
-			targetProxy = 4BB64CFE248391550017699A /* PBXContainerItemProxy */;
-		};
-		4BDBDF9323CE0C8E00EEA112 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
-			targetProxy = 4BDBDF9223CE0C8E00EEA112 /* PBXContainerItemProxy */;
-		};
-		4BDBDF9723CE0C8E00EEA112 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B17438E23C766D70074C457 /* VergeRx */;
-			targetProxy = 4BDBDF9623CE0C8E00EEA112 /* PBXContainerItemProxy */;
-		};
-		4BDBDF9B23CE0C8E00EEA112 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B78631F233912AB009B9C1B /* VergeStore */;
-			targetProxy = 4BDBDF9A23CE0C8E00EEA112 /* PBXContainerItemProxy */;
-		};
-		4BDCA9062486B0D60024126A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
-			targetProxy = 4BDCA9052486B0D60024126A /* PBXContainerItemProxy */;
-		};
-		4BDCA90A2486B0F60024126A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */;
-			targetProxy = 4BDCA9092486B0F60024126A /* PBXContainerItemProxy */;
-		};
 		4BE9455623AD1B180060F977 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
 			targetProxy = 4BE9455523AD1B180060F977 /* PBXContainerItemProxy */;
-		};
-		4BFA22A223A63B56008D7BCB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
-			targetProxy = 4BFA22A123A63B56008D7BCB /* PBXContainerItemProxy */;
 		};
 		4BFA22B023A63BB9008D7BCB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3097,70 +1972,6 @@
 				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeRxTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		4B2AE0C6248571B20086A42C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = SpotifyServiceTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyServiceTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		4B2AE0C7248571B20086A42C /* Benchmark */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = SpotifyServiceTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyServiceTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Benchmark;
-		};
-		4B2AE0C8248571B20086A42C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = SpotifyServiceTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyServiceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -3639,102 +2450,6 @@
 			};
 			name = Benchmark;
 		};
-		4B67673323D8973800D0C076 /* Benchmark */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D71A0B9E3DBB34BD7302C9A4 /* Pods-SpotifyService-SpotifyDemo.benchmark.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Sources/SpotifyDemo/Preview Content\"";
-				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Sources/SpotifyDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "me.muukii.verge-spotify";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Benchmark;
-		};
-		4B67673423D8973800D0C076 /* Benchmark */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = "Sources/Verge-Demo/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Benchmark;
-		};
-		4B67673523D8973800D0C076 /* Benchmark */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3818992221C3563A15F64564 /* Pods-Demo-VergeStoreDemoSwiftUI.benchmark.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Sources/VergeStoreDemoSwiftUI/Preview Content\"";
-				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
-				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Sources/VergeStoreDemoSwiftUI/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeStoreDemoSwiftUI;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Benchmark;
-		};
-		4B67673623D8973800D0C076 /* Benchmark */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = E9091CCC1298ACC3224EEB48 /* Pods-Demo-VergeStoreDemoUIKit.benchmark.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = Sources/VergeStoreDemoUIKit/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeStoreDemoUIKit;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Benchmark;
-		};
 		4B67673723D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4135,99 +2850,6 @@
 			};
 			name = Release;
 		};
-		4B86A4A71F969C7D002D54FE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = "Sources/Verge-Demo/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		4B86A4A81F969C7D002D54FE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = "Sources/Verge-Demo/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		4B94913A239C257700370067 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2FA2244BF41C2E8969E30BCF /* Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Sources/VergeStoreDemoSwiftUI/Preview Content\"";
-				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
-				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Sources/VergeStoreDemoSwiftUI/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeStoreDemoSwiftUI;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		4B94913B239C257700370067 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BD668DC952DD9547224506FC /* Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Sources/VergeStoreDemoSwiftUI/Preview Content\"";
-				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
-				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Sources/VergeStoreDemoSwiftUI/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeStoreDemoSwiftUI;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		4B9AF04A24880145001BAAFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4305,286 +2927,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		4BB4F7F123D329E40039C897 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3F07A8480C2ABFC93877F196 /* Pods-SpotifyService-SpotifyDemo.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Sources/SpotifyDemo/Preview Content\"";
-				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Sources/SpotifyDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "me.muukii.verge-spotify";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		4BB4F7F223D329E40039C897 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A9301C4F77924D396B2BF9C6 /* Pods-SpotifyService-SpotifyDemo.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Sources/SpotifyDemo/Preview Content\"";
-				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Sources/SpotifyDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "me.muukii.verge-spotify";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		4BB64CC5248380EF0017699A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9314E206A3E411192948A0F5 /* Pods-SpotifyService.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/SpotifyService/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyService;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		4BB64CC6248380EF0017699A /* Benchmark */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7410B82F88103FD469D0B71F /* Pods-SpotifyService.benchmark.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/SpotifyService/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyService;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Benchmark;
-		};
-		4BB64CC7248380EF0017699A /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A79AB3AE59941BF051A678BF /* Pods-SpotifyService.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/SpotifyService/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyService;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		4BB64D03248391560017699A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Sources/SpotifyUIKit/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyUIKit;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		4BB64D04248391560017699A /* Benchmark */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Sources/SpotifyUIKit/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyUIKit;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Benchmark;
-		};
-		4BB64D05248391560017699A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Sources/SpotifyUIKit/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.SpotifyUIKit;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		4BDBDF8623CE0C4400EEA112 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = F8088580235167190CBF9EAC /* Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = Sources/VergeStoreDemoUIKit/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeStoreDemoUIKit;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		4BDBDF8723CE0C4400EEA112 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = FAE87FF1E76E4BA1A72B0223 /* Pods-Demo-VergeStoreDemoUIKit.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = Sources/VergeStoreDemoUIKit/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeStoreDemoUIKit;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -4732,16 +3074,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4B2AE0C5248571B20086A42C /* Build configuration list for PBXNativeTarget "SpotifyServiceTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4B2AE0C6248571B20086A42C /* Debug */,
-				4B2AE0C7248571B20086A42C /* Benchmark */,
-				4B2AE0C8248571B20086A42C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		4B475BBD239AB954008A03E1 /* Build configuration list for PBXNativeTarget "VergeORM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -4822,72 +3154,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4B86A4A61F969C7D002D54FE /* Build configuration list for PBXNativeTarget "Verge-Demo" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4B86A4A71F969C7D002D54FE /* Debug */,
-				4B67673423D8973800D0C076 /* Benchmark */,
-				4B86A4A81F969C7D002D54FE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4B949139239C257700370067 /* Build configuration list for PBXNativeTarget "VergeStoreDemoSwiftUI" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4B94913A239C257700370067 /* Debug */,
-				4B67673523D8973800D0C076 /* Benchmark */,
-				4B94913B239C257700370067 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		4B9AF04924880145001BAAFC /* Build configuration list for PBXNativeTarget "VergeSwiftUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4B9AF04A24880145001BAAFC /* Debug */,
 				4B9AF04B24880145001BAAFC /* Benchmark */,
 				4B9AF04C24880145001BAAFC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4BB4F7F023D329E40039C897 /* Build configuration list for PBXNativeTarget "SpotifyDemo" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4BB4F7F123D329E40039C897 /* Debug */,
-				4B67673323D8973800D0C076 /* Benchmark */,
-				4BB4F7F223D329E40039C897 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4BB64CC8248380EF0017699A /* Build configuration list for PBXNativeTarget "SpotifyService" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4BB64CC5248380EF0017699A /* Debug */,
-				4BB64CC6248380EF0017699A /* Benchmark */,
-				4BB64CC7248380EF0017699A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4BB64D02248391560017699A /* Build configuration list for PBXNativeTarget "SpotifyUIKit" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4BB64D03248391560017699A /* Debug */,
-				4BB64D04248391560017699A /* Benchmark */,
-				4BB64D05248391560017699A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4BDBDF8523CE0C4400EEA112 /* Build configuration list for PBXNativeTarget "VergeStoreDemoUIKit" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4BDBDF8623CE0C4400EEA112 /* Debug */,
-				4B67673623D8973800D0C076 /* Benchmark */,
-				4BDBDF8723CE0C4400EEA112 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -4915,22 +3187,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		4B2AE0E12485A4360086A42C /* XCRemoteSwiftPackageReference "FetchImage" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:kean/FetchImage.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.1;
-			};
-		};
-		4B5140072483F01400463CE6 /* XCRemoteSwiftPackageReference "CombineExt" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:CombineCommunity/CombineExt.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.0;
-			};
-		};
 		4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:ReactiveX/RxSwift.git";
@@ -4942,16 +3198,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4B2AE0E42485A45B0086A42C /* FetchImage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4B2AE0E12485A4360086A42C /* XCRemoteSwiftPackageReference "FetchImage" */;
-			productName = FetchImage;
-		};
-		4B5140082483F01400463CE6 /* CombineExt */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4B5140072483F01400463CE6 /* XCRemoteSwiftPackageReference "CombineExt" */;
-			productName = CombineExt;
-		};
 		4BDBDFA323CE0DD100EEA112 /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4B7F385323895B50000B9ACF /* XCRemoteSwiftPackageReference "RxSwift" */;
