@@ -27,14 +27,16 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
   public let scope: WritableKeyPath<State, Scope>
   
   public let store: Store<State, Activity>
+
+  private var sinkCancellable: VergeAnyCancellable?
   
-  public var state: Scope {
-    return store.primitiveState[keyPath: scope]
+  public var state: Changes<Scope> {
+    store.state.map { $0[keyPath: scope] }
   }
   
   /// Returns current state from target store
-  public var rootState: State {
-    return store.primitiveState
+  public var rootState: Changes<State> {
+    return store.state
   }
    
   private var logger: StoreLogger? {
@@ -50,6 +52,18 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
       
     let log = DidCreateDispatcherLog(store: targetStore, dispatcher: self)    
     logger?.didCreateDispatcher(log: log, sender: self)
+
+    sinkCancellable = store.sinkState { [weak self] state in
+      self?.receive(state: state.map { $0[keyPath: scope] })
+    }
+
+  }
+
+  /**
+   Handles a updated state
+   */
+  open func receive(state: Changes<Scope>) {
+
   }
      
   deinit {

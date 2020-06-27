@@ -106,6 +106,8 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   let derivedCache2 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
   
   public private(set) var logger: StoreLogger?
+
+  private var sinkCancellable: VergeAnyCancellable? = nil
     
   /// An initializer
   /// - Parameters:
@@ -115,10 +117,25 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     initialState: State,
     logger: StoreLogger?
   ) {
+
     self._backingStorage = .init(.init(old: nil, new: initialState))
-    self.logger = logger    
+    self.logger = logger
+
+    super.init()
+
+    sinkCancellable = sinkState { [weak self] state in
+      self?.receive(state: state)
+    }
+
   }
-  
+
+  /**
+   Handles a updated state
+   */
+  open func receive(state: Changes<State>) {
+
+  }
+
   @inline(__always)
   func _receive<Result>(
     mutation: (inout State) throws -> Result,
