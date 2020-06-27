@@ -321,7 +321,13 @@ public final class Changes<Value>: ChangesType, Equatable {
   }
   
   public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
-    Changes<U>(
+
+    let signpost = VergeSignpostTransaction("Changes.map")
+    defer {
+      signpost.end()
+    }
+
+    return Changes<U>(
       previous: try previous.map { try $0.map(transform) },
       innerCurrent: try innerCurrent.map(transform),
       version: version
