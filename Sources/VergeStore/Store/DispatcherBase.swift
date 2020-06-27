@@ -49,12 +49,12 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
     self.scope = scope
       
     let log = DidCreateDispatcherLog(store: targetStore, dispatcher: self)    
-    logger?.didCreateDispatcher(log: log)
+    logger?.didCreateDispatcher(log: log, sender: self)
   }
      
   deinit {
     let log = DidDestroyDispatcherLog(store: store, dispatcher: self)
-    logger?.didDestroyDispatcher(log: log)
+    logger?.didDestroyDispatcher(log: log, sender: self)
   }
     
 }
