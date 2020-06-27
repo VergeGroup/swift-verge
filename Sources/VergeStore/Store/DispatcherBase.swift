@@ -51,7 +51,7 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
     self.scope = scope
       
     let log = DidCreateDispatcherLog(store: targetStore, dispatcher: self)    
-    logger?.didCreateDispatcher(log: log)
+    logger?.didCreateDispatcher(log: log, sender: self)
 
     sinkCancellable = store.sinkState { [weak self] state in
       self?.receive(state: state.map { $0[keyPath: scope] })
@@ -68,7 +68,7 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
      
   deinit {
     let log = DidDestroyDispatcherLog(store: store, dispatcher: self)
-    logger?.didDestroyDispatcher(log: log)
+    logger?.didDestroyDispatcher(log: log, sender: self)
   }
     
 }
