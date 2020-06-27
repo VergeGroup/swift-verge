@@ -91,7 +91,7 @@ public final class DefaultStoreLogger: StoreLogger {
   public let activityLog = OSLog(subsystem: "VergeStore", category: "Activity")
 
   public let dispatcherCreationLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Creation")
-  public let dispatcherDestructionLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Descruction")
+  public let dispatcherDestructionLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Destruction")
   
   let queue = DispatchQueue(label: "logger")
   
@@ -110,28 +110,28 @@ public final class DefaultStoreLogger: StoreLogger {
     return encoder
   }()
     
-  public func didCommit(log: CommitLog) {
+  public func didCommit(log: CommitLog, sender: AnyObject) {
     queue.async {
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
       os_log("%@", log: self.commitLog, type: .default, string)
     }
   }
   
-  public func didSendActivity(log: ActivityLog) {
+  public func didSendActivity(log: ActivityLog, sender: AnyObject) {
     queue.async {
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
       os_log("%@", log: self.activityLog, type: .default, string)
     }
   }
    
-  public func didCreateDispatcher(log: DidCreateDispatcherLog) {
+  public func didCreateDispatcher(log: DidCreateDispatcherLog, sender: AnyObject) {
     queue.async {
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
       os_log("%@", log: self.dispatcherCreationLog, type: .default, string)
     }
   }
   
-  public func didDestroyDispatcher(log: DidDestroyDispatcherLog) {
+  public func didDestroyDispatcher(log: DidDestroyDispatcherLog, sender: AnyObject) {
     queue.async {
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
       os_log("%@", log: self.dispatcherDestructionLog, type: .default, string)

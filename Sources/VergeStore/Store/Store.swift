@@ -142,7 +142,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     }
        
     let log = CommitLog(store: self, trace: trace, time: elapsed)
-    logger?.didCommit(log: log)
+    logger?.didCommit(log: log, sender: self)
     return returnValue
   }
  
@@ -155,7 +155,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     _activityEmitter.accept(activity)
     
     let log = ActivityLog(store: self, trace: trace)
-    logger?.didSendActivity(log: log)
+    logger?.didSendActivity(log: log, sender: self)
   }
   
   func setNotificationFilter(_ filter: @escaping (Changes<State>) -> Bool) {
