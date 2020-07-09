@@ -118,7 +118,30 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     logger: StoreLogger?
   ) {
 
-    self._backingStorage = .init(.init(old: nil, new: initialState))
+    self._backingStorage = .init(
+      .init(old: nil, new: initialState),
+      recursiveLock: NSRecursiveLock()
+    )
+    self.logger = logger
+
+    super.init()
+
+    sinkCancellable = sinkState { [weak self] state in
+      self?.receive(state: state)
+    }
+
+  }
+
+  public init<RecursiveLock: _VergeRecursiveLockType>(
+    initialState: State,
+    backingStorageRecursiveLock: RecursiveLock,
+    logger: StoreLogger?
+  ) {
+
+    self._backingStorage = .init(
+      .init(old: nil, new: initialState),
+      recursiveLock: backingStorageRecursiveLock
+    )
     self.logger = logger
 
     super.init()
