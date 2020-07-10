@@ -21,6 +21,66 @@
 
 import Foundation
 
+public protocol _VergeRecursiveLockType {
+  func lock()
+  func unlock()
+
+  init()
+}
+
+extension _VergeRecursiveLockType {
+
+  func asAny() -> VergeAnyRecursiveLock {
+    .init(lock: lock, unlock: unlock)
+  }
+}
+
+extension _VergeRecursiveLockType where Self == VergeAnyRecursiveLock {
+
+  func asAny() -> VergeAnyRecursiveLock {
+    self
+  }
+
+}
+
+extension NSRecursiveLock: _VergeRecursiveLockType {
+
+}
+
+public struct VergeNoLock: _VergeRecursiveLockType {
+
+  public func lock() {}
+
+  public func unlock() {}
+
+  public init() {}
+}
+
+public struct VergeAnyRecursiveLock: _VergeRecursiveLockType {
+
+  let _lock: () -> Void
+  let _unlock: () -> Void
+
+  public init() {
+    _lock = {}
+    _unlock = {}
+  }
+
+  init(lock: @escaping () -> Void, unlock: @escaping () -> Void) {
+    self._lock = lock
+    self._unlock = unlock
+  }
+
+  public func lock() {
+    _lock()
+  }
+
+  public func unlock() {
+    _unlock()
+  }
+
+}
+
 open class ReadonlyStorage<Value>: CustomReflectable {
     
   private let willUpdateEmitter = EventEmitter<Void>()
@@ -41,11 +101,24 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   
   fileprivate var nonatomicValue: Value
   
-  private let _lock = NSRecursiveLock()
+  private let _lock: VergeAnyRecursiveLock
   
   fileprivate let upstreams: [AnyObject]
+
+  public convenience init(
+    _ value: Value,
+    upstreams: [AnyObject] = []
+  ) {
+    self.init(value, recursiveLock: NSRecursiveLock(), upstreams: upstreams)
+  }
   
-  public init(_ value: Value, upstreams: [AnyObject] = []) {
+  public init<RecursiveLock: _VergeRecursiveLockType>(
+    _ value: Value,
+    recursiveLock: RecursiveLock,
+    upstreams: [AnyObject] = []
+  ) {
+
+    self._lock = recursiveLock.asAny()
     self.nonatomicValue = value
     self.upstreams = upstreams
     
@@ -172,7 +245,11 @@ extension ReadonlyStorage {
   ) -> ReadonlyStorage<U> {
     
     let initialValue = transform(value)
-    let newStorage = Storage<U>.init(initialValue, upstreams: [self])
+    let newStorage = Storage<U>.init(
+      initialValue,
+      recursiveLock: _lock,
+      upstreams: [self]
+    )
     
     let token = addDidUpdate { [weak newStorage] (newValue) in
       guard !filter(newValue) else {
@@ -201,7 +278,7 @@ fileprivate var _willChangeAssociated: Void?
 fileprivate var _didChangeAssociated: Void?
 
 @available(iOS 13.0, macOS 10.15, *)
-extension Storage: ObservableObject {
+extension ReadonlyStorage: ObservableObject {
   
   public var objectWillChange: ObservableObjectPublisher {
     if let associated = objc_getAssociatedObject(self, &_willChangeAssociated) as? ObservableObjectPublisher {
