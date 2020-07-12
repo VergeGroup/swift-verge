@@ -130,7 +130,7 @@ extension MemoizeMap where Input : ChangesType {
   /// - Parameter map:
   /// - Returns:
   @_disfavoredOverload
-  public static func map(_ map: @escaping (Changes<Input.Value>) -> Fragment<Output>) -> MemoizeMap<Input, Output> {
+  public static func map(_ map: @escaping (Changes<Input.Value>) -> Edge<Output>) -> MemoizeMap<Input, Output> {
             
     return .init(
       makeInitial: {
@@ -156,7 +156,7 @@ extension MemoizeMap where Input : ChangesType {
   /// - Complexity: ✅ Active Memoization with Fragment's version
   /// - Parameter map:
   /// - Returns:
-  public static func map(_ keyPath: KeyPath<Changes<Input.Value>, Fragment<Output>>) -> MemoizeMap<Input, Output> {
+  public static func map(_ keyPath: KeyPath<Changes<Input.Value>, Edge<Output>>) -> MemoizeMap<Input, Output> {
         
     var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
     

@@ -21,7 +21,13 @@
 
 import Foundation
 
-public protocol FragmentType : Equatable {
+@available(*, deprecated, renamed: "EdgeType")
+public typealias FragmentType = EdgeType
+
+@available(*, deprecated, renamed: "Edge")
+public typealias Fragment = Edge
+
+public protocol EdgeType : Equatable {
   associatedtype State
   var version: UInt64 { get }
 }
@@ -41,12 +47,12 @@ public protocol FragmentType : Equatable {
  Memoization can use that version if it should pass new input.
 
  To activate this feature, you can check this method.
- `MemoizeMap.map(_ map: @escaping (Changes<Input.Value>) -> Fragment<Output>) -> MemoizeMap<Input, Output>`
+ `MemoizeMap.map(_ map: @escaping (Changes<Input.Value>) -> Edge<Output>) -> MemoizeMap<Input, Output>`
  */
 @propertyWrapper
-public struct Fragment<State>: FragmentType {
+public struct Edge<State>: EdgeType {
 
-  public static func == (lhs: Fragment<State>, rhs: Fragment<State>) -> Bool {
+  public static func == (lhs: Edge<State>, rhs: Edge<State>) -> Bool {
     lhs.version == rhs.version
   }
 
@@ -57,32 +63,103 @@ public struct Fragment<State>: FragmentType {
   }
 
   private(set) public var counter: NonAtomicVersionCounter = .init()
+  private let middleware: Middleware?
 
-  public init(wrappedValue: State) {
-    self.wrappedValue = wrappedValue
+  public init(wrappedValue: State, middleware: Middleware? = nil) {
+    self._wrappedValue = wrappedValue
+    self.middleware = middleware
   }
 
   public var wrappedValue: State {
+    get {
+      _wrappedValue
+    }
+    set {
+      if let middleware = middleware {
+        var mutable = newValue
+        middleware._onSet(&mutable)
+        _wrappedValue = mutable
+      } else {
+        _wrappedValue = newValue
+      }
+    }
+  }
+
+  private var _wrappedValue: State {
     didSet {
       counter.markAsUpdated()
     }
   }
 
-  public var projectedValue: Fragment<State> {
+  public var projectedValue: Edge<State> {
     self
   }
 
 }
 
-extension Fragment where State : Equatable {
-  public static func == (lhs: Fragment<State>, rhs: Fragment<State>) -> Bool {
+extension Edge where State : Equatable {
+  public static func == (lhs: Edge<State>, rhs: Edge<State>) -> Bool {
     lhs.version == rhs.version || lhs.wrappedValue == rhs.wrappedValue
   }
 }
 
-extension Comparer where Input : FragmentType {
+extension Comparer where Input : EdgeType {
 
   public static func versionEquals() -> Comparer<Input> {
     Comparer<Input>.init { $0.version == $1.version }
   }
+}
+
+extension Edge {
+
+  /**
+   A handler that can modify a new state.
+
+   ```swift
+   @Edge(middleware: .assert { $0 > 0 }) var count: Int = 0
+   ```
+   */
+  public struct Middleware {
+
+    let _onSet: (inout State) -> Void
+
+    public init(
+      onSet: @escaping (inout State) -> Void
+    ) {
+      self._onSet = onSet
+    }
+
+    public init<C: Collection>(
+      _ middlewares: C
+    ) where C.Element == Middleware {
+
+      self._onSet = { state in
+        middlewares.forEach {
+          $0._onSet(&state)
+        }
+      }
+
+    }
+
+    /// Raises an Swift.assertionFailure when its new value does not fit the condition.
+    /// - Parameter condition:
+    /// - Returns: A Middleware instance
+    public static func assert(_ condition: @escaping (State) -> Bool) -> Self {
+      #if DEBUG
+      return .init(onSet: { state in
+        Swift.assert(condition(state), "[Verge] \(Edge<State>.self) raised a failure in the assertion. \(state)")
+      })
+      #else
+      return empty()
+      #endif
+    }
+
+    /// Returns a Middleware instance that does nothing.
+    /// - Returns: A Middleware instance
+    public static func empty() -> Self {
+      return .init(onSet: { _ in })
+    }
+
+  }
+
 }

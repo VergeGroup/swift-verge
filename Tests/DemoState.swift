@@ -23,9 +23,9 @@ struct DemoState: ExtendedStateType, Equatable {
   var count: Int = 0
   var items: [Int] = []
 
-  @Fragment var dictionary: [String : LargeRecord] = [:]
+  @Edge var dictionary: [String : LargeRecord] = [:]
 
-  @Fragment var nonEquatable: NonEquatable = .init()
+  @Edge var nonEquatable: NonEquatable = .init()
   
   struct Extended: ExtendedType {
     

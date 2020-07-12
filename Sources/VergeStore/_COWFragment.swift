@@ -39,7 +39,7 @@ import Foundation
  `MemoizeMap.map(_ map: @escaping (Changes<Input.Value>) -> Fragment<Output>) -> MemoizeMap<Input, Output>`
  */
 @propertyWrapper
-public struct _COWFragment<State>: FragmentType {
+public struct _COWFragment<State>: EdgeType {
 
   private final class Storage {
 
