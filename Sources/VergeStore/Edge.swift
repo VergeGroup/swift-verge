@@ -41,7 +41,7 @@ public protocol EdgeType : Equatable {
  To get this done, it's not always we need to support Equatable.
  It's easier to detect the difference than detect equals.
 
- Fragment is a wrapper structure and manages version number inside.
+ Edge is a wrapper structure and manages version number inside.
  It increments the version number each wrapped value updated.
 
  Memoization can use that version if it should pass new input.
@@ -116,7 +116,7 @@ extension Edge {
    A handler that can modify a new state.
 
    ```swift
-   @Edge(middleware: .assert { $0 > 0 }) var count: Int = 0
+   @Edge(middleware: .assert { $0 >= 0 }) var count: Int = 0
    ```
    */
   public struct Middleware {
