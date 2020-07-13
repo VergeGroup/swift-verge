@@ -4,9 +4,9 @@ title: Utilities
 sidebar_label: Utilities
 ---
 
-## `Fragment<State>`
+## `Edge<State>`
 
-### Fragment helps compare if state was updated without Equatable
+### Edge helps compare if state was updated without Equatable
 
 ‌In a single state tree, comparing for reducing the number of updates would be most important for keep performance. However, implementing Equatable is not easy basically. Instead, adding a like flag that indicates updated itself, it would be easy
 
@@ -14,11 +14,11 @@ sidebar_label: Utilities
 
 Actually, we need to get to flag that means **different**, it no need to be **equal**.
 
-### Fragment does embed state with versioning
+### Edge does embed state with versioning
 
-`Fragment` manages the version of itself, the version will increment each modification. however, it can't get how exactly modified from the modification. and Fragment returns equality by comparing their version.
-That is the reason why Fragment may return boolean that false negative.
-If Fragment returns equality false, it may be actually equals.
+`Edge` manages the version of itself, the version will increment each modification. however, it can't get how exactly modified from the modification. and Edge returns equality by comparing their version.
+That is the reason why Edge may return boolean that false positive.
+If Edge returns equality false, it may be actually equals.
 
 ```swift
 struct YourState {
@@ -27,10 +27,10 @@ struct YourState {
 
 struct AppState: Equatable {
 
-  @Fragment var yourState YourState = .init()
+  @Edge var yourState YourState = .init()
 }
 
-> Since `Fragment` enables `Equatable` in yourState, AppState can be Equatable with synthesizing.
+> Since `Edge` enables `Equatable` in yourState, AppState can be Equatable with synthesizing.
 
 appState.yourState.name
 
