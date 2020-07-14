@@ -39,6 +39,31 @@ appState.yourState.name
 appState.$yourState.version
 ```
 
+### Edge can validate the value and modify to be correctly
+
+Edge supports a concept of middleware that catch a new value and modifiable.  
+Please check `Edge.Middleware` to see more detail.
+
+```swift
+let middleware = Edge<Value>.Middleware.init(onSet: { value in /* do something */ })
+```
+
+To set it up, we can declare as followings:
+
+```swift
+@Edge(middleware: .assert { $0 >= 0 }) var count = 0
+```
+
+It can be combined from multiple middleware.
+
+```swift
+@Edge(middleware: .init([
+  .assert { $0 >= 0 },
+  .init { value in /* performs something */ },
+]))
+var count = 0
+```
+
 ## assign - assignee
 
 In specific cases, it needs to projects value from others into the Store.
