@@ -66,8 +66,17 @@ public struct Edge<State>: EdgeType {
   private let middleware: Middleware?
 
   public init(wrappedValue: State, middleware: Middleware? = nil) {
-    self._wrappedValue = wrappedValue
+
     self.middleware = middleware
+
+    if let middleware = middleware {
+      var mutable = wrappedValue
+      middleware._onSet(&mutable)
+      _wrappedValue = mutable
+    } else {
+      _wrappedValue = wrappedValue
+    }
+
   }
 
   public var wrappedValue: State {
@@ -123,12 +132,16 @@ extension Edge {
 
     let _onSet: (inout State) -> Void
 
+    /// Initialize a instance that performs multiple middlewares from start index
+    /// - Parameter onSet: It can access a new value and modify to validate something.
     public init(
       onSet: @escaping (inout State) -> Void
     ) {
       self._onSet = onSet
     }
 
+    /// Initialize a instance that performs multiple middlewares from start index
+    /// - Parameter middlewares:
     public init<C: Collection>(
       _ middlewares: C
     ) where C.Element == Middleware {
@@ -144,10 +157,11 @@ extension Edge {
     /// Raises an Swift.assertionFailure when its new value does not fit the condition.
     /// - Parameter condition:
     /// - Returns: A Middleware instance
-    public static func assert(_ condition: @escaping (State) -> Bool) -> Self {
+    public static func assert(_ condition: @escaping (State) -> Bool, _ failureReason: String? = nil) -> Self {
       #if DEBUG
       return .init(onSet: { state in
-        Swift.assert(condition(state), "[Verge] \(Edge<State>.self) raised a failure in the assertion. \(state)")
+        let message = failureReason ?? "[Verge] \(Edge<State>.self) raised a failure in the assertion. \(state)"
+        Swift.assert(condition(state), message)
       })
       #else
       return empty()
@@ -158,6 +172,14 @@ extension Edge {
     /// - Returns: A Middleware instance
     public static func empty() -> Self {
       return .init(onSet: { _ in })
+    }
+
+    /// Returns a Middleware that perform a closure
+    /// It won't mutate the value
+    ///
+    /// - Returns: A Middleware instance
+    public static func `do`(_ perform: @escaping (State) -> Void) -> Self {
+      return .init(onSet: { perform($0) })
     }
 
   }
