@@ -29,9 +29,14 @@ struct AppState: Equatable {
 
   @Edge var yourState YourState = .init()
 }
+```
 
-> Since `Edge` enables `Equatable` in yourState, AppState can be Equatable with synthesizing.
+:::tip
+Since `Edge` enables the state to be `Equatable`, a root state can be Equatable with synthesizing.  
+If you're struggling with supporting Equatable, try to use `Edge` with that.
+:::
 
+```
 appState.yourState.name
 
 // get unique value that indicates updated to compare with previous value.
