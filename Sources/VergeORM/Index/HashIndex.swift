@@ -29,7 +29,7 @@ public struct HashIndex<Schema: EntitySchemaType, HashKey: Hashable, Entity: Ent
   public init() {
   }
   
-  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityName) {
+  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityTableIdentifier) {
     
     if Entity.entityName == entityName {
       

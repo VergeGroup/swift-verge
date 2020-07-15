@@ -134,6 +134,29 @@
 				</dict>
 			</dict>
 		</dict>
+		<key>ReflectingTests</key>
+		<dict>
+			<key>testGettingTypeName_string_reflecting()</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.022315</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Local Baseline</string>
+				</dict>
+			</dict>
+			<key>testObjectIdentifier_string_reflecting()</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.018628</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Local Baseline</string>
+				</dict>
+			</dict>
+		</dict>
 		<key>SetIndexTests</key>
 		<dict>
 			<key>testCompactMap()</key>
