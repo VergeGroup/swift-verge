@@ -25,6 +25,8 @@ import Foundation
 import VergeCore
 #endif
 
+fileprivate let changesDeallocationQueue = DispatchQueue.init(label: "org.VergeGroup.deallocQueue", qos: .background)
+
 public protocol ChangesType: AnyObject {
   
   associatedtype Value
@@ -144,8 +146,14 @@ public final class Changes<Value>: ChangesType, Equatable {
   
   deinit {
     vergeSignpostEvent("Changes.deinit", label: "\(type(of: self))")
+
+    let innerCurrentRef = Unmanaged.passRetained(innerCurrent)
+
+    changesDeallocationQueue.asyncAfter(deadline: .now() + .nanoseconds(1)) {
+      innerCurrentRef.release()
+    }
   }
-  
+
   @inline(__always)
   private func cloneWithDropsPrevious() -> Changes<Value> {
     return .init(
@@ -165,7 +173,7 @@ public final class Changes<Value>: ChangesType, Equatable {
   public func droppedPrevious() -> Changes<Value> {
     cloneWithDropsPrevious()
   }
-  
+
   @inlinable
   public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
     _read {
@@ -368,7 +376,7 @@ extension Changes: CustomReflectable {
 
 extension Changes {
   
-  private struct InnerCurrent {
+  private final class InnerCurrent {
     
     let value: Value
     
@@ -385,6 +393,10 @@ extension Changes {
     ) {
       self.value = value
       self.cachedComputedValueStorage = cachedComputedValueStorage
+    }
+
+    deinit {
+
     }
     
     public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerCurrent {
