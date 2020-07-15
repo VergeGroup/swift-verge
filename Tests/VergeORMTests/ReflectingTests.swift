@@ -53,4 +53,13 @@ class ReflectingTests: XCTestCase {
       }
     }
   }
+
+  func testObjectIdentifier_string_reflecting() {
+
+    measure {
+      for _ in 0..<10000 {
+        _ = ObjectIdentifier(A.B.A.self)
+      }
+    }
+  }
 }

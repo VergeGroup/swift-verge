@@ -34,7 +34,7 @@ public struct SetIndex<Schema: EntitySchemaType, Entity: EntityType>: IndexType,
   public init() {
   }
   
-  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityName) {
+  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityTableIdentifier) {
     
     if Entity.entityName == entityName, !removing.isEmpty {
       backing.subtract(removing)

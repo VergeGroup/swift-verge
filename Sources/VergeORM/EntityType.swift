@@ -42,7 +42,7 @@ public protocol EntityType {
   
   associatedtype EntityIDRawType: Hashable, CustomStringConvertible
 
-  static var entityName: EntityName { get }
+  static var entityName: EntityTableIdentifier { get }
 
   var entityID: EntityID { get }
 
@@ -62,8 +62,8 @@ extension EntityType {
   /// - Warning:
   ///   Taking the name in runtime, it's not fast.
   ///   To be faster, override this property each your entities.
-  public static var entityName: EntityName {
-    .init(String(reflecting: self))
+  public static var entityName: EntityTableIdentifier {
+    .init(Self.self)
   }
     
   @available(*, deprecated, renamed: "EntityID")
@@ -76,7 +76,8 @@ extension EntityType {
 
 }
 
-public struct EntityName: Hashable {
+public struct EntityTableIdentifier: Hashable {
+
   public let name: String
 
   public init(_ rawName: String) {

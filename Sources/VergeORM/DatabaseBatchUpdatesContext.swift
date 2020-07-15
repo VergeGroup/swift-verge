@@ -27,7 +27,7 @@ import VergeCore
 
 protocol EntityModifierType: AnyObject {
   
-  var entityName: EntityName { get }
+  var entityName: EntityTableIdentifier { get }
   var _insertsOrUpdates: EntityTableType { get }
   var _deletes: Set<AnyHashable> { get }
 }
@@ -177,8 +177,8 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
 
 public struct DatabaseEntityUpdatesResult<Schema: EntitySchemaType>: Equatable {
   
-  let updated: [EntityName : Set<AnyHashable>]
-  let deleted: [EntityName : Set<AnyHashable>]
+  let updated: [EntityTableIdentifier : Set<AnyHashable>]
+  let deleted: [EntityTableIdentifier : Set<AnyHashable>]
   
   public func wasUpdated<E: EntityType>(_ id: E.EntityID) -> Bool {
     guard let set = updated[E.entityName] else { return false }
@@ -204,7 +204,7 @@ public struct DatabaseEntityUpdatesResult<Schema: EntitySchemaType>: Equatable {
 public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
   
   private let current: EntityTablesStorage<Schema>
-  var editing: [EntityName : EntityModifierType] = [:]
+  var editing: [EntityTableIdentifier : EntityModifierType] = [:]
     
   init(current: EntityTablesStorage<Schema>) {
     self.current = current
@@ -229,8 +229,8 @@ public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
   
   func makeResult() -> DatabaseEntityUpdatesResult<Schema> {
     
-    var updated: [EntityName : Set<AnyHashable>] = [:]
-    var deleted: [EntityName : Set<AnyHashable>] = [:]
+    var updated: [EntityTableIdentifier : Set<AnyHashable>] = [:]
+    var deleted: [EntityTableIdentifier : Set<AnyHashable>] = [:]
     
     for (entityName, rawEntityData) in editing {
                   

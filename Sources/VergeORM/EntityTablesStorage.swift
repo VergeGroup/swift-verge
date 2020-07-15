@@ -28,7 +28,7 @@ import VergeStore
 protocol EntityTableType {
   typealias RawTable = EntityRawTable
   var rawTable: RawTable { get }
-  var entityName: EntityName { get }
+  var entityName: EntityTableIdentifier { get }
 }
 
 struct EntityRawTable: Equatable {
@@ -65,7 +65,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     public let entity: Entity        
   }
   
-  let entityName: EntityName = Entity.entityName
+  let entityName: EntityTableIdentifier = Entity.entityName
   
   public var updatedMarker: NonAtomicVersionCounter {
     _read { yield rawTable.updatedMarker }
@@ -205,13 +205,13 @@ extension EntityTable where Entity : Equatable {
 @dynamicMemberLookup
 public struct EntityTablesStorage<Schema: EntitySchemaType> {
   
-  private(set) var entityTableStorage: [EntityName : EntityTableType.RawTable]
+  private(set) var entityTableStorage: [EntityTableIdentifier : EntityTableType.RawTable]
       
   public init() {
     self.entityTableStorage = [:]
   }
   
-  private init(entityTableStorage: [EntityName : EntityTableType.RawTable]) {
+  private init(entityTableStorage: [EntityTableIdentifier : EntityTableType.RawTable]) {
     self.entityTableStorage = entityTableStorage
   }
   
@@ -228,7 +228,7 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
   }
   
   @inline(__always)
-  mutating func apply(edits: [EntityName : EntityModifierType]) {    
+  mutating func apply(edits: [EntityTableIdentifier : EntityModifierType]) {    
     edits.forEach { _, value in
       apply(modifier: value)
     }
@@ -264,7 +264,7 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
   }
   
   @inline(__always)
-  private mutating func _subtract(ids: Set<AnyHashable>, entityName: EntityName) {
+  private mutating func _subtract(ids: Set<AnyHashable>, entityName: EntityTableIdentifier) {
    
     guard entityTableStorage.keys.contains(entityName) else {
       return

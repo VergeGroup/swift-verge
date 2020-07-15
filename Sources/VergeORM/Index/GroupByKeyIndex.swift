@@ -53,7 +53,7 @@ public struct GroupByKeyIndex<
   /// - Parameters:
   ///   - removing: a set of entity id that will be removed from store
   ///   - entityName: the entity name of removing
-  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityName) {
+  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityTableIdentifier) {
     
     if GroupedEntity.entityName == entityName {
       backing.keys.forEach { key in
