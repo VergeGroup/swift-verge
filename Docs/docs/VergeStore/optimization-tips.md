@@ -18,9 +18,14 @@ sidebar_label: Optimization Tips
 
 ## 🏎 Performance monitoring
 
-Verge supports `os_sign_post`
-We can check the performance from Xcode Instruments.
-Please enables signpost profiling.
+Verge supports `os_sign_post`  
+We can check the performance from Xcode Instruments.  
+Please add signpost profiling panel in Instruments and enable the flag in your code.
+
+```swift
+// this flag is global variable
+_verge_signpost_enabled = true
+```
 
 ![CleanShot 2020-05-31 at 14 22 16@2x](https://user-images.githubusercontent.com/1888355/83345130-80152c00-a34a-11ea-925a-6c6a609be102.png)
 
