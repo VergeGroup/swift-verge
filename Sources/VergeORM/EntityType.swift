@@ -41,9 +41,11 @@ public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConve
 public protocol EntityType {
   
   associatedtype EntityIDRawType: Hashable, CustomStringConvertible
-   
+
+  static var entityName: EntityName { get }
+
   var entityID: EntityID { get }
-  
+
   #if COCOAPODS
   typealias EntityTableKey = Verge.EntityTableKey<Self>
   #else
@@ -54,6 +56,15 @@ public protocol EntityType {
 extension EntityType {
     
   public typealias EntityID = EntityIdentifier<Self>
+
+  /// Returns EntityName from reflection
+  ///
+  /// - Warning:
+  ///   Taking the name in runtime, it's not fast.
+  ///   To be faster, override this property each your entities.
+  public static var entityName: EntityName {
+    .init(String(reflecting: self))
+  }
     
   @available(*, deprecated, renamed: "EntityID")
   public typealias ID = EntityID
@@ -62,16 +73,17 @@ extension EntityType {
   public var id: EntityID {
     _read { yield entityID }
   }
+
 }
 
 public struct EntityName: Hashable {
   public let name: String
-}
 
-extension EntityType {
-     
-  public static var entityName: EntityName {
-    .init(name: String(reflecting: self))
+  public init(_ rawName: String) {
+    self.name = rawName
   }
-  
+
+  public init<T>(_ type: T.Type) {
+    self.name = _typeName(T.self)
+  }
 }
