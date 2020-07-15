@@ -57,6 +57,11 @@ extension EntityType {
     
   public typealias EntityID = EntityIdentifier<Self>
 
+  /// Returns EntityName from reflection
+  ///
+  /// - Warning:
+  ///   Taking the name in runtime, it's not fast.
+  ///   To be faster, override this property each your entities.
   public static var entityName: EntityName {
     .init(String(reflecting: self))
   }
