@@ -342,7 +342,7 @@ public final class Changes<Value>: ChangesType, Equatable {
     )
   }
   
-  public func makeNextChanges(with nextNewValue: Value, deallocQueue: DispatchQueue? = nil) -> Changes<Value> {
+  public func makeNextChanges(with nextNewValue: Value) -> Changes<Value> {
     
     let previous = cloneWithDropsPrevious()
     let nextVersion = previous.version &+ 1
