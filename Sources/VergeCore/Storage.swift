@@ -30,7 +30,7 @@ public protocol _VergeRecursiveLockType {
 
 extension _VergeRecursiveLockType {
 
-  func asAny() -> VergeAnyRecursiveLock {
+  public func asAny() -> VergeAnyRecursiveLock {
     .init(lock: lock, unlock: unlock)
   }
 }

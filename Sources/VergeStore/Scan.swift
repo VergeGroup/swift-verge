@@ -45,3 +45,12 @@ public final class Scan<Element, Accumulate> {
   }
 
 }
+
+extension Scan {
+
+  /// A Scan instance that increments itself integer value each event received
+  public static func counter() -> Scan<Element, Int> {
+    .init(seed: 0, accumulator: { n, _ in n += 1 })
+  }
+
+}

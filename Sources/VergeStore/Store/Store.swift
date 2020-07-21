@@ -111,37 +111,20 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     
   /// An initializer
   /// - Parameters:
-  ///   - initialState:
+  ///   - initialState: A state instance that will be modified by the first commit.
+  ///   - backingStorageRecursiveLock: A lock instance for mutual exclusion.
   ///   - logger: You can also use `DefaultLogger.shared`.
   public init(
     initialState: State,
-    logger: StoreLogger?
+    backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
+    logger: StoreLogger? = nil
   ) {
 
     self._backingStorage = .init(
       .init(old: nil, new: initialState),
-      recursiveLock: NSRecursiveLock()
+      recursiveLock: backingStorageRecursiveLock ?? NSRecursiveLock().asAny()
     )
-    self.logger = logger
 
-    super.init()
-
-    sinkCancellable = sinkState { [weak self] state in
-      self?.receive(state: state)
-    }
-
-  }
-
-  public init<RecursiveLock: _VergeRecursiveLockType>(
-    initialState: State,
-    backingStorageRecursiveLock: RecursiveLock,
-    logger: StoreLogger?
-  ) {
-
-    self._backingStorage = .init(
-      .init(old: nil, new: initialState),
-      recursiveLock: backingStorageRecursiveLock
-    )
     self.logger = logger
 
     super.init()
