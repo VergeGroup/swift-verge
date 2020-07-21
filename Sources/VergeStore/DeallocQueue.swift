@@ -41,7 +41,7 @@ final class DeallocQueue {
     lock.unlock()
 
     if isFirstEntry {
-      queue.asyncAfter(deadline: .now() + .nanoseconds(1)) {
+      queue.asyncAfter(deadline: .now() + 0.1) {
         self.drain()
       }
     }
