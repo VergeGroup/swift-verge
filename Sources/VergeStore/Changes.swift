@@ -25,7 +25,7 @@ import Foundation
 import VergeCore
 #endif
 
-fileprivate let changesDeallocationQueue = DispatchQueue.init(label: "org.VergeGroup.deallocQueue", qos: .background)
+fileprivate let changesDeallocationQueue = DeallocQueue()
 
 public protocol ChangesType: AnyObject {
   
@@ -147,11 +147,7 @@ public final class Changes<Value>: ChangesType, Equatable {
   deinit {
     vergeSignpostEvent("Changes.deinit", label: "\(type(of: self))")
 
-    let innerCurrentRef = Unmanaged.passRetained(innerCurrent)
-
-    changesDeallocationQueue.asyncAfter(deadline: .now() + .nanoseconds(1)) {
-      innerCurrentRef.release()
-    }
+    changesDeallocationQueue.releaseObjectInBackground(object: innerCurrent)
   }
 
   @inline(__always)
