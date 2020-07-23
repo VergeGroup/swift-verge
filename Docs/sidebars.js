@@ -1,13 +1,14 @@
 module.exports = {
-  docs: [{
+  docs: [
+    {
       type: 'category',
       label: 'Verge',
       collapsed: false,
       items: [
-        "installation",
-        "motivation",
-        "Overview",
-        "demo",
+        'installation',
+        'motivation',
+        'Overview',
+        'demo',
       ]
     },
     {
@@ -15,27 +16,34 @@ module.exports = {
       label: 'VergeStore',
       collapsed: false,
       items: [
-        "VergeStore/BasicUsage",
-        "VergeStore/advanced-usage",
+        'VergeStore/BasicUsage',
+        'VergeStore/advanced-usage',
         {
           type: 'category',
           label: 'Docs',
           collapsed: false,
           items: [
-            "VergeStore/store",
-            "VergeStore/mutation",
-            "VergeStore/state",
-            "VergeStore/changes",
-            "VergeStore/extended-computed-property",
-            "VergeStore/derived",
-            "VergeStore/dispatcher",
-            "VergeStore/logging",
-            "VergeStore/utilities",
-            "VergeStore/optimization-tips",
+            'VergeStore/store',
+            'VergeStore/mutation',
+            'VergeStore/state',
+            'VergeStore/changes',
+            'VergeStore/extended-computed-property',
+            'VergeStore/derived',
+            'VergeStore/dispatcher',
+            'VergeStore/logging',
+            'VergeStore/utilities',
+            'VergeStore/optimization-tips',
           ],
 
         },
-        "VergeStore/migrate-from-classic",
+        {
+          type: 'category',
+          label: 'Use-cases',
+          collapsed: false,
+          items: ['VergeStore/use-cases/using-with-collection-view'],
+
+        },
+        'VergeStore/migrate-from-classic',
       ]
     },
     {
@@ -43,16 +51,16 @@ module.exports = {
       label: 'VergeORM',
       collapsed: false,
       items: [
-        "VergeORM/Overview",
+        'VergeORM/Overview',
         {
           type: 'category',
           label: 'Docs',
           collapsed: false,
           items: [
-            "VergeORM/index-table",
-            "VergeORM/middleware",
-            "VergeORM/making-derived",
-            "VergeORM/tips",
+            'VergeORM/index-table',
+            'VergeORM/middleware',
+            'VergeORM/making-derived',
+            'VergeORM/tips',
           ],
 
         },
