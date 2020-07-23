@@ -22,7 +22,7 @@ Verge automatically tune-up as possible and shows us what makes performance badl
 
 ```swift
 struct MyState {
-  var text: String = ""
+  var name: String = ""
 }
 
 enum MyActivity {
@@ -72,7 +72,7 @@ class ViewController: UIViewController {
 
   func updateUI(by state: Changes<MyStore.State>) {
 
-    changes.ifChanged(\.name) { (name) in
+    state.ifChanged(\.name) { (name) in
       nameLabel.text = name
     }
 
