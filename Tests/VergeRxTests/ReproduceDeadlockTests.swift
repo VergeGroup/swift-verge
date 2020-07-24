@@ -19,9 +19,7 @@ class ReproduceDeadlockTests: XCTestCase {
     struct State {
       var count = 0
     }
-    
-    enum Activity {}
-    
+        
     let store = DefaultStore.init(initialState: .init(), logger: nil)
     
   }
