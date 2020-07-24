@@ -87,6 +87,7 @@
 		4B99D69323AF6C4300E26127 /* ProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B99D69223AF6C4300E26127 /* ProtocolTests.swift */; };
 		4B9AF04824880145001BAAFC /* VergeSwiftUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B9AF04624880145001BAAFC /* VergeSwiftUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
+		4B9DD6B724CAE8560062FB7A /* CachedMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9DD6B624CAE8560062FB7A /* CachedMap.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
 		4BA3E1A523C359F40095629B /* Signpost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA3E1A423C359F40095629B /* Signpost.swift */; };
 		4BA5914F23DF5146007F614C /* FunctionBuilders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA5914E23DF5146007F614C /* FunctionBuilders.swift */; };
@@ -334,6 +335,7 @@
 		4B9AF04624880145001BAAFC /* VergeSwiftUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeSwiftUI.h; sourceTree = "<group>"; };
 		4B9AF04724880145001BAAFC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherType.swift; sourceTree = "<group>"; };
+		4B9DD6B624CAE8560062FB7A /* CachedMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedMap.swift; sourceTree = "<group>"; };
 		4B9F57D422DDF951009705D1 /* Emitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		4BA3E1A423C359F40095629B /* Signpost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signpost.swift; sourceTree = "<group>"; };
 		4BA5914E23DF5146007F614C /* FunctionBuilders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionBuilders.swift; sourceTree = "<group>"; };
@@ -785,6 +787,7 @@
 				4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */,
 				4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */,
 				4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */,
+				4B9DD6B624CAE8560062FB7A /* CachedMap.swift */,
 			);
 			path = VergeCore;
 			sourceTree = "<group>";
@@ -1432,6 +1435,7 @@
 				4B4AB16E244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift in Sources */,
 				4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */,
 				4B8F5ABB24616416005F68B6 /* VergeConcurrency+AtomicReference.swift in Sources */,
+				4B9DD6B724CAE8560062FB7A /* CachedMap.swift in Sources */,
 				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
