@@ -27,7 +27,7 @@ import Foundation
  Especially, it would be helpful to migrate from Verge classic.
  
  ```
- class MyViewModel: StoreWrapperType {
+ final class MyViewModel: StoreComponentType {
  
    // Current restriction, you need put the typealias as Scope points to State.
    typealias Scope = State
@@ -35,12 +35,13 @@ import Foundation
    struct State {
      ...
    }
-   
+
+   // If you don't need Activity, you can remove it.
    enum Activity {
      ...
    }
    
-   let store: Store<State, Activity>
+   let store: DefaultStore
  
    init() {
      self.store = .init(initialState: .init(), logger: nil)
@@ -49,7 +50,7 @@ import Foundation
  }
  ``` 
  */
-public protocol StoreWrapperType: StoreType, DispatcherType {
+public protocol StoreComponentType: StoreType, DispatcherType {
   
   associatedtype State = WrappedStore.State
   associatedtype Activity = WrappedStore.Activity
@@ -58,18 +59,21 @@ public protocol StoreWrapperType: StoreType, DispatcherType {
   var store: WrappedStore { get }
 }
 
-extension StoreWrapperType {
+/// It would be deprecated in the future.
+public typealias StoreWrapperType = StoreComponentType
+
+extension StoreComponentType {
   public typealias DefaultStore = Store<State, Activity>
 }
 
-extension StoreWrapperType where State == WrappedStore.State, Activity == WrappedStore.Activity {
+extension StoreComponentType where State == WrappedStore.State, Activity == WrappedStore.Activity {
   @inline(__always)
   public func asStore() -> Store<State, Activity> {
     store.asStore()
   }
 }
 
-extension StoreWrapperType {
+extension StoreComponentType {
     
   public var state: Changes<WrappedStore.State> {
     store.asStore().state
@@ -170,7 +174,7 @@ extension StoreWrapperType {
 import Combine
 
 @available(iOS 13, macOS 10.15, *)
-extension StoreWrapperType where State == WrappedStore.State, Activity == WrappedStore.Activity {
+extension StoreComponentType where State == WrappedStore.State, Activity == WrappedStore.Activity {
   
   public func statePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
     store.asStore().statePublisher(startsFromInitial: startsFromInitial)
