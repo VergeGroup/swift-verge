@@ -64,19 +64,32 @@ struct MyView: View {
 ```swift
 class ViewController: UIViewController {
 
-  ...
-
   let store: MyStore
 
-  ...
+  var cancellable: VergeAnyCancellable?
 
-  func updateUI(by state: Changes<MyStore.State>) {
+  init(store: MyStore) {
+    ...
+
+    self.cancellable = store.sinkState { [weak self] state in
+      self?.update(state: state)
+    }
+
+  }
+
+  private func update(state: Changes<MyStore.State>) {
 
     state.ifChanged(\.name) { (name) in
       nameLabel.text = name
     }
 
+    state.ifChanged(\.age) { (age) in
+      ageLabel.text = age.description
+    }
+
+    ...
   }
+
 }
 ```
 
