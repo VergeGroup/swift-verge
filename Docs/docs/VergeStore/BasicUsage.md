@@ -20,7 +20,7 @@ To understand smoothly about Verge, we need to figure the following domains out.
 
 - A type of state-tree that describes the data our feature needs.
 
-### Activity
+### Activity (Optional)
 
 - A type that describes an activity that happens during performs the action.
 - This instance won't be stored in anywhere. It would help us to perform something by event-driven.
@@ -196,19 +196,19 @@ class ViewController: UIViewController {
   init(store: MyStore) {
     ...
 
-    self.cancellable = store.sinkChanges { [weak self] changes in
-      self?.update(changes: changes)
+    self.cancellable = store.sinkState { [weak self] state in
+      self?.update(state: state)
     }
 
   }
 
-  private func update(changes: Changes<MyStore.State>) {
+  private func update(state: Changes<MyStore.State>) {
 
-    changes.ifChanged(\.name) { (name) in
+    state.ifChanged(\.name) { (name) in
       nameLabel.text = name
     }
 
-    changes.ifChanged(\.age) { (age) in
+    state.ifChanged(\.age) { (age) in
       ageLabel.text = age.description
     }
 

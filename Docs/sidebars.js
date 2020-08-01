@@ -1,6 +1,5 @@
 module.exports = {
-  docs: [
-    {
+  docs: [{
       type: 'category',
       label: 'Verge',
       collapsed: false,
@@ -38,9 +37,13 @@ module.exports = {
         },
         {
           type: 'category',
-          label: 'Use-cases',
+          label: 'Use in UIKit',
           collapsed: false,
-          items: ['VergeStore/use-cases/using-with-collection-view'],
+          items: [
+            'VergeStore/UIKit/using-in-uikit',
+            'VergeStore/UIKit/viewmodel-in-uikit',
+            'VergeStore/UIKit/using-with-collection-view'
+          ],
 
         },
         'VergeStore/migrate-from-classic',
