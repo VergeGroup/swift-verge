@@ -501,5 +501,34 @@ final class VergeStoreTests: XCTestCase {
     XCTAssertEqual(store1.state.version, 0)
 
   }
+
+  func testRecursiveCommit() {
+
+    let store1 = DemoStore()
+
+    let exp = expectation(description: "11")
+
+    let cancellable = store1.sinkState { [weak store1] state in
+
+      state.ifChanged(\.count) { value in
+        if value == 10 {
+          store1?.commit {
+            $0.count = 11
+          }
+        }
+        if value == 11 {
+          exp.fulfill()
+        }
+      }
+    }
+
+    store1.commit {
+      $0.count = 10
+    }
+
+    wait(for: [exp], timeout: 1)
+    withExtendedLifetime(cancellable) {}
+
+  }
   
 }
