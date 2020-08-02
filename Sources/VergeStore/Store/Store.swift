@@ -214,30 +214,36 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   ) -> VergeAnyCancellable {
     
     if let execute = queue?.executor() {
-      
-      if !dropsFirst {
-        let value = _backingStorage.value.droppedPrevious()
-        execute {
-          receive(value)
-        }
-      }
-      
+
+      /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
       let cancellable = _backingStorage.addDidUpdate { newValue in
         execute {
           receive(newValue)
         }
       }
-      
+
+      if !dropsFirst {
+        let value = _backingStorage.value.droppedPrevious()
+        execute {
+          /// this closure might contains some mutations.
+          ///  It depends outside usages.
+          receive(value)
+        }
+      }
+
       return .init(cancellable)
       
     } else {
 
-      if !dropsFirst {
-        receive(_backingStorage.value.droppedPrevious())
-      }
-      
+      /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
       let cancellable = _backingStorage.addDidUpdate { newValue in
         receive(newValue)
+      }
+
+      if !dropsFirst {
+        /// this closure might contains some mutations.
+        ///  It depends outside usages.
+        receive(_backingStorage.value.droppedPrevious())
       }
       
       return .init(cancellable)
