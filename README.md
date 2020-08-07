@@ -27,7 +27,7 @@
 ## Requirements
 
 * Swift 5.2 +
-* iOS 10 +
+* @available(iOS 10, macOS 10.13, tvOS 10, watchOS 3)
 * UIKit and SwiftUI
 
 ## Verge
