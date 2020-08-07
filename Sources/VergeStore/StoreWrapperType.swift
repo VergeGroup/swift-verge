@@ -173,7 +173,7 @@ extension StoreComponentType {
 
 import Combine
 
-@available(iOS 13, macOS 10.15, *)
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 extension StoreComponentType where State == WrappedStore.State, Activity == WrappedStore.Activity {
   
   public func statePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {

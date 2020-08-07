@@ -61,7 +61,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
   #if canImport(Combine)
   /// A Publisher to compatible SwiftUI
-  @available(iOS 13.0, macOS 10.15, *)
+  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
   public final override var objectWillChange: ObservableObjectPublisher {
     _backingStorage.objectWillChange
   }

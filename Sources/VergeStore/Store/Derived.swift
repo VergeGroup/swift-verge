@@ -61,7 +61,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   }
 
   #if canImport(Combine)
-  @available(iOS 13.0, macOS 10.15, *)
+  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
   public final override var objectWillChange: ObservableObjectPublisher {
     innerStore.objectWillChange
   }

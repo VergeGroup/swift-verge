@@ -26,7 +26,7 @@ import Foundation
 import Foundation
 import Combine
 
-@available(iOS 13.0, macOS 10.15, *)
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 extension Store {
 
   /// A publisher that repeatedly emits the changes when state updated
@@ -68,7 +68,7 @@ extension Store {
 
 }
 
-@available(iOS 13.0, macOS 10.15, *)
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 extension DispatcherBase: ObservableObject {
 
 }
