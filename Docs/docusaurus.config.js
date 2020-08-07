@@ -14,7 +14,7 @@ module.exports = {
       backgroundColor: '#fafbfc',  // Defaults to `#fff`.
       textColor: '#091E42',        // Defaults to `#000`.
     },
-    defaultDarkMode: true,
+    colorMode: {defaultMode: 'dark'},
     image: 'img/ogimage2.png',
     googleAnalytics: {
       trackingID: 'UA-163893115-1',
@@ -29,7 +29,7 @@ module.exports = {
         alt: 'Verge Logo',
         src: 'img/sidebar-logo@2x.png',
       },
-      links: [
+      items: [
         {
           to: 'docs/',
           activeBasePath: 'docs',
