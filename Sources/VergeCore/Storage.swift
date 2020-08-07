@@ -277,7 +277,7 @@ import Combine
 fileprivate var _willChangeAssociated: Void?
 fileprivate var _didChangeAssociated: Void?
 
-@available(iOS 13.0, macOS 10.15, *)
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 extension ReadonlyStorage: ObservableObject {
   
   public var objectWillChange: ObservableObjectPublisher {

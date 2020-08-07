@@ -164,7 +164,7 @@ import Combine
 extension CancellableType {
     
   /// Interop with Combine
-  @available(iOS 13, macOS 10.15, *)
+  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
   public func store(in set: inout Set<AnyCancellable>) {
     set.insert(AnyCancellable.init {
       self.cancel()
@@ -248,7 +248,7 @@ import Combine
 
 extension EventEmitter {
   
-  @available(iOS 13, macOS 10.15, *)
+  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
   public struct Publisher: Combine.Publisher {
            
     public typealias Output = Event
@@ -270,7 +270,7 @@ extension EventEmitter {
     
   }
   
-  @available(iOS 13, macOS 10.15, *)
+  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
   public struct Subscription: Combine.Subscription {
         
     public let combineIdentifier: CombineIdentifier = .init()
@@ -303,7 +303,7 @@ extension EventEmitter {
 
 extension EventEmitter {
   
-  @available(iOS 13, macOS 10.15, *)
+  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
   public var publisher: Publisher {
     if let publisher = __publisher as? Publisher {
       return publisher

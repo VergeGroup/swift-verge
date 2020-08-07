@@ -102,7 +102,7 @@ public final class DefaultStoreLogger: StoreLogger {
   private static let encoder: JSONEncoder = {
     let encoder = JSONEncoder()
     encoder.dateEncodingStrategy = .iso8601
-    if #available(iOS 11.0, macOS 10.13, *) {
+    if #available(iOS 11.0, macOS 10.13, tvOS 11, watchOS 4, *) {
       encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     } else {
       encoder.outputFormatting = [.prettyPrinted]

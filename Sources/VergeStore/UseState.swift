@@ -32,7 +32,7 @@ import Combine
  - TODO:
    - Setting memoization and dropping duplicated output value
  */
-@available(iOS 13.0, macOS 10.15, *)
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 public struct UseState<Value, Content: View>: View {
 
   @ObservedObject private var observableObject: _VergeObservableObjectBase
@@ -57,7 +57,7 @@ public struct UseState<Value, Content: View>: View {
 
 }
 
-@available(iOS 13.0, macOS 10.15, *)
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 extension UseState {
 
   /// Initialize from `Store`
