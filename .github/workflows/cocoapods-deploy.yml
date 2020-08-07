@@ -1,8 +1,9 @@
 name: cocoapods-deploy
 
-on:
-  push:
-    tags: v*
+on: 
+  push: 
+    tags: 
+      - '*'
 
 jobs:
   build:
