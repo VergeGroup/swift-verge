@@ -1,0 +1,21 @@
+name: cocoapods-deploy
+
+on:
+  push:
+    tags: v*
+
+jobs:
+  build:
+    runs-on: macOS-latest
+    steps:
+    - name: Force xcode 11.6
+      run: sudo xcode-select -switch /Applications/Xcode_11.6.app
+    - uses: actions/checkout@v2
+    - name: webfactory/ssh-agent
+      uses: webfactory/ssh-agent@v0.1.1
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Deploy
+      env:
+        COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+      run: pod trunk push Verge.podspec
