@@ -1,7 +1,7 @@
 ---
 id: activity
-title: ⚡️ Activity - a volatile event from an action
-sidebar_label: ⚡️ Activity
+title: Activity - a volatile event from an action
+sidebar_label: Activity
 ---
 
 ## What activity does
@@ -17,7 +17,7 @@ We think it's not so special concept. SwiftUI supports these use cases as well t
 func onReceive<P>(_ publisher: P, perform action: @escaping (P.Output) -> Void) -> some View where P : Publisher, P.Failure == Never
 ```
 
-[Apple's SwiftUI Ref](<[https://developer.apple.com/documentation/swiftui/view/3365935-onreceive](https://developer.apple.com/documentation/swiftui/view/3365935-onreceive)>)
+[Apple's SwiftUI Ref](https://developer.apple.com/documentation/swiftui/view/3365935-onreceive)
 
 ## Sends Activity
 

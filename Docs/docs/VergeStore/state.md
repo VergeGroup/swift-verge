@@ -59,4 +59,4 @@ This provies us to get more stuff that **increases performance** and productivit
 
 **If you put the data that has relation-ship or complicated structure into state tree, it would be needed normalization to keep performance. Please check VergeORM module**
 
-[About more Normalization and why we need to do this](<[https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/)>)
+[About more Normalization and why we need to do this](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape/)

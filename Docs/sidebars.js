@@ -29,6 +29,7 @@ module.exports = {
             'VergeStore/extended-computed-property',
             'VergeStore/derived',
             'VergeStore/dispatcher',
+            'VergeStore/activity',
             'VergeStore/logging',
             'VergeStore/utilities',
             'VergeStore/optimization-tips',
