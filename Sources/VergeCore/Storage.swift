@@ -86,11 +86,19 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   private let willUpdateEmitter = EventEmitter<Void>()
   private let didUpdateEmitter = EventEmitter<Value>()
   private let deinitEmitter = EventEmitter<Void>()
-    
+
+  /// Returns a current value with thread-safety.
+  ///
+  /// It causes locking and unlocking with a bit cost.
+  /// It may cause blocking if any other is doing mutation or reading.
   public final var wrappedValue: Value {
     return value
   }
-  
+
+  /// Returns a current value with thread-safety.
+  ///
+  /// It causes locking and unlocking with a bit cost.
+  /// It may cause blocking if any other is doing mutation or reading.
   public final var value: Value {
     _lock.lock()
     defer {

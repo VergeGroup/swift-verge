@@ -72,10 +72,17 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   public var store: Store<State, Activity> { self }
       
   /// A current state.
+  ///
+  /// It causes locking and unlocking with a bit cost.
+  /// It may cause blocking if any other is doing mutation or reading.
   public var primitiveState: State {
     _backingStorage.value.primitive
   }
-  
+
+  /// Returns a current state with thread-safety.
+  ///
+  /// It causes locking and unlocking with a bit cost.
+  /// It may cause blocking if any other is doing mutation or reading.
   public var state: Changes<State> {
     _backingStorage.value
   }

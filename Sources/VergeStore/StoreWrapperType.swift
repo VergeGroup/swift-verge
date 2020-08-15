@@ -74,7 +74,11 @@ extension StoreComponentType where State == WrappedStore.State, Activity == Wrap
 }
 
 extension StoreComponentType {
-    
+
+  /// Returns a current state with thread-safety.
+  ///
+  /// It causes locking and unlocking with a bit cost.
+  /// It may cause blocking if any other is doing mutation or reading.
   public var state: Changes<WrappedStore.State> {
     store.asStore().state
   }
