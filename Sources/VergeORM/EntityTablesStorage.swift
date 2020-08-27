@@ -53,6 +53,12 @@ struct EntityRawTable: Equatable {
     
 }
 
+public struct NoSchema: EntitySchemaType {
+  public init() {
+
+  }
+}
+
 /// A wrapper of raw table
 public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityTableType {
     

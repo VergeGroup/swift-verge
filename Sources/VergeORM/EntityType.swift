@@ -34,6 +34,9 @@ public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConve
   }
 }
 
+/// A structure that store entities with normalizing.
+public typealias StandaloneEntityTable<Entity: EntityType> = EntityTable<NoSchema, Entity>
+
 /// A protocol describes object is an Entity.
 ///
 /// EntityType has VergeTypedIdentifiable.
