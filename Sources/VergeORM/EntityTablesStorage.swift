@@ -84,7 +84,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   internal var rawTable: RawTable = .init()
     
-  init() {
+  public init() {
   }
   
   init(rawTable: RawTable) {
