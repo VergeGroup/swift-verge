@@ -150,12 +150,12 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   }
    
   @discardableResult
-  mutating func updateIfExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) rethrows -> Entity? {
+  public mutating func updateIfExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) rethrows -> Entity? {
     try? updateExists(id: id, update: update)
   }
   
   @discardableResult
-  mutating func insert(_ entity: Entity) -> InsertionResult {
+  public mutating func insert(_ entity: Entity) -> InsertionResult {
     let t = VergeSignpostTransaction("ORM.EntityTable.insertOne", label: "EntityType:\(Entity.entityName.name)")
     defer {
       t.end()
@@ -167,7 +167,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   }
   
   @discardableResult
-  mutating func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
+  public mutating func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
     let t = VergeSignpostTransaction("ORM.EntityTable.insertSequence", label: "EntityType:\(Entity.entityName.name)")
     defer {
       t.end()
@@ -183,13 +183,13 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     return results
   }
   
-  mutating func remove(_ id: Entity.EntityID) {
+  public mutating func remove(_ id: Entity.EntityID) {
     rawTable.updateEntity { (entities) -> Void in
       entities.removeValue(forKey: id)
     }
   }
   
-  mutating func removeAll() {
+  public mutating func removeAll() {
     rawTable.updateEntity { (entities) in
       entities.removeAll(keepingCapacity: false)
     }
@@ -207,6 +207,9 @@ extension EntityTable where Entity : Equatable {
     (lhs.rawTable) == (rhs.rawTable)
   }
 }
+
+/// A structure that store entities with normalizing.
+public typealias StandaloneEntityTable<Entity: EntityType> = EntityTable<NoSchema, Entity>
 
 @dynamicMemberLookup
 public struct EntityTablesStorage<Schema: EntitySchemaType> {
