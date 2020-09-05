@@ -41,6 +41,7 @@ extension EntityType {
   
 }
 
+/// A value that wraps an entity and results of fetching.
 @dynamicMemberLookup
 public struct EntityWrapper<Entity: EntityType> {
   
@@ -66,18 +67,28 @@ extension EntityWrapper: Hashable where Entity: Hashable {
   
 }
 
+/// A value that wraps an entity and results of fetching.
 @dynamicMemberLookup
 public struct NonNullEntityWrapper<Entity: EntityType> {
-  
+
+  /// An entity value
   public private(set) var wrapped: Entity
+
+  /// An identifier
   public let id: Entity.EntityID
-  
-  public let isUsingFallback: Bool
-  
-  public init(entity: Entity, isUsingFallback: Bool) {
+
+  @available(*, deprecated, renamed: "isFallBack")
+  public var isUsingFallback: Bool {
+    isFallBack
+  }
+
+  /// A boolean value that indicates whether the wrapped entity is last value and has been removed from source store.
+  public let isFallBack: Bool
+
+  public init(entity: Entity, isFallBack: Bool) {
     self.id = entity.entityID
     self.wrapped = entity
-    self.isUsingFallback = isUsingFallback
+    self.isFallBack = isFallBack
   }
   
   public subscript<Property>(dynamicMember keyPath: KeyPath<Entity, Property>) -> Property {
@@ -95,9 +106,10 @@ extension NonNullEntityWrapper: Hashable where Entity: Hashable {
 }
 
 extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding {
-  
+
+  /// Returns a MemoizeMap value that optimized for looking entity up from the database.
   @inline(__always)
-  fileprivate static func makeEntityQuery<Entity: EntityType>(entityID: Entity.EntityID) -> MemoizeMap<Input, EntityWrapper<Entity>> {
+  fileprivate static func _makeEntityQuery<Entity: EntityType>(entityID: Entity.EntityID) -> MemoizeMap<Input, EntityWrapper<Entity>> {
     
     let path = Input.Value.getterToDatabase
     
@@ -134,9 +146,9 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
   
 }
 
-fileprivate final class _GetterCache {
+fileprivate final class _DerivedObjectCache {
   
-  private let cache = NSCache<NSString, AnyObject>()
+  private let _cache = NSCache<NSString, AnyObject>()
   
   @inline(__always)
   private func key<E: EntityType>(entityID: E.EntityID) -> NSString {
@@ -144,11 +156,11 @@ fileprivate final class _GetterCache {
   }
   
   func get<E: EntityType>(entityID: E.EntityID) -> E.Derived? {
-    cache.object(forKey: key(entityID: entityID)) as? E.Derived
+    _cache.object(forKey: key(entityID: entityID)) as? E.Derived
   }
   
   func set<E: EntityType>(_ getter: E.Derived, entityID: E.EntityID) {
-    cache.setObject(getter, forKey: key(entityID: entityID))
+    _cache.setObject(getter, forKey: key(entityID: entityID))
   }
   
 }
@@ -159,17 +171,15 @@ fileprivate var _valueContainerAssociated: Void?
 
 extension StoreType where State : DatabaseEmbedding {
   
-  private var cache: _GetterCache {
-        
-    objc_sync_enter(self); defer { objc_sync_exit(self) }
-    
-    if let associated = objc_getAssociatedObject(self, &_valueContainerAssociated) as? _GetterCache {
+  private var _nonatomic_derivedObjectCache: _DerivedObjectCache {
+
+    if let associated = objc_getAssociatedObject(self, &_valueContainerAssociated) as? _DerivedObjectCache {
       
       return associated
       
     } else {
       
-      let associated = _GetterCache()
+      let associated = _DerivedObjectCache()
       objc_setAssociatedObject(self, &_valueContainerAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
       return associated
     }
@@ -199,13 +209,14 @@ extension StoreType where State : DatabaseEmbedding {
     
     let underlyingDerived: Derived<EntityWrapper<Entity>>
     
-    if let cached = cache.get(entityID: entityID) {
+    if let cached = _nonatomic_derivedObjectCache.get(entityID: entityID) {
       underlyingDerived = cached
     } else {
+      /// creates a new underlying derived object
       underlyingDerived = derived(
-        .makeEntityQuery(entityID: entityID)
+        ._makeEntityQuery(entityID: entityID)
       )
-      cache.set(underlyingDerived, entityID: entityID)
+      _nonatomic_derivedObjectCache.set(underlyingDerived, entityID: entityID)
     }
         
     let d = underlyingDerived.chain(
@@ -226,12 +237,12 @@ extension StoreType where State : DatabaseEmbedding {
 extension StoreType where State : DatabaseEmbedding {
   
   @inline(__always)
-  public func derivedNonNull<Entity: EntityType>(
+  fileprivate func _primary_derivedNonNull<Entity: EntityType>(
     from entity: Entity,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) -> Entity.NonNullDerived {
     
-    let lastValue = VergeConcurrency.RecursiveLockAtomic<Entity>.init(entity)
+    let fallingBackValue = VergeConcurrency.RecursiveLockAtomic<Entity>.init(entity)
     
     #if DEBUG
     let checker = VergeConcurrency.SynchronizationTracker()
@@ -243,12 +254,33 @@ extension StoreType where State : DatabaseEmbedding {
         checker.register(); defer { checker.unregister() }
         #endif
         if let wrapped = $0.root.wrapped {
-          lastValue.swap(wrapped)
-          return .init(entity: wrapped, isUsingFallback: false)
+          fallingBackValue.swap(wrapped)
+          return .init(entity: wrapped, isFallBack: false)
         }
-        return .init(entity: lastValue.value, isUsingFallback: true)
+        return .init(entity: fallingBackValue.value, isFallBack: true)
       }))
     
+  }
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
+  /// - Parameters:
+  ///   - entity:
+  ///   - dropsOutput:
+  /// - Returns: A derived object
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType>(
+    from entity: Entity,
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
+  ) -> Entity.NonNullDerived {
+
+    _primary_derivedNonNull(from: entity, dropsOutput: dropsOutput)
   }
   
 }
@@ -278,7 +310,21 @@ public struct DerivedResult<Entity: EntityType, Derived: AnyObject> {
 }
 
 extension StoreType where State : DatabaseEmbedding {
-  
+
+  /**
+   Returns Derived object that projects fetched Entity object by the entity identifier.
+
+   The Derived object is constructed from multiple Derived.
+   Underlying-Derived: Fetch the entity from id
+   DropsOutput-Derived: Drops the duplicated object
+
+   Underlying-Derived would be cached by the id.
+   If the cached object found, it will be used to construct Derived with DropsOutput-Derived.
+
+   - Parameters:
+   - entityID: an identifier of the entity
+   - dropsOutput: Used for Derived. the condition to drop duplicated object.
+   */
   @inline(__always)
   public func derived<Entity: EntityType & Equatable>(
     from entityID: Entity.EntityID
@@ -286,7 +332,15 @@ extension StoreType where State : DatabaseEmbedding {
     
     derived(from: entityID, dropsOutput: ==)
   }
-    
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entityID: Entity.EntityID,
@@ -299,26 +353,49 @@ extension StoreType where State : DatabaseEmbedding {
       throw VergeORMError.notFoundEntityFromDatabase
     }
    
-    return derivedNonNull(from: initalValue, dropsOutput: dropsOutput)
+    return _primary_derivedNonNull(from: initalValue, dropsOutput: dropsOutput)
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entityID: Entity.EntityID
   ) throws -> Entity.NonNullDerived {
     try derivedNonNull(from: entityID, dropsOutput: ==)
   }
-  
- 
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entity: Entity
   ) -> Entity.NonNullDerived {
-    derivedNonNull(from: entity, dropsOutput: ==)
+    _primary_derivedNonNull(from: entity, dropsOutput: ==)
   }
   
   public typealias NonNullDerivedResult<Entity: EntityType> = DerivedResult<Entity, Entity.NonNullDerived>
-    
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entityIDs: S,
@@ -332,14 +409,30 @@ extension StoreType where State : DatabaseEmbedding {
       }
     }
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from entityIDs: S
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity.EntityID {
     derivedNonNull(from: entityIDs, dropsOutput: ==)
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entityIDs: Set<Entity.EntityID>,
@@ -347,31 +440,63 @@ extension StoreType where State : DatabaseEmbedding {
   ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: AnySequence.init(entityIDs.makeIterator), dropsOutput: dropsOutput)
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entityIDs: Set<Entity.EntityID>
   ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: entityIDs, dropsOutput: ==)
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entities: S,
     dropsOutput: @escaping (S.Element?, S.Element?) -> Bool = { _, _ in false }
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
     entities.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
-      r.append(derived: derivedNonNull(from: e, dropsOutput: dropsOutput), id: e.entityID)
+      r.append(derived: _primary_derivedNonNull(from: e, dropsOutput: dropsOutput), id: e.entityID)
     }
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from entities: S
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
     derivedNonNull(from: entities, dropsOutput: ==)
   }
-    
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entities: Set<Entity>,
@@ -379,29 +504,61 @@ extension StoreType where State : DatabaseEmbedding {
   ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: AnySequence.init(entities.makeIterator))
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entities: Set<Entity>
   ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: entities, dropsOutput: ==)
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from insertionResult: EntityTable<State.Database.Schema, Entity>.InsertionResult,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) -> Entity.NonNullDerived {
-    derivedNonNull(from: insertionResult.entity, dropsOutput: dropsOutput)
+    _primary_derivedNonNull(from: insertionResult.entity, dropsOutput: dropsOutput)
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from insertionResult: EntityTable<State.Database.Schema, Entity>.InsertionResult
   ) -> Entity.NonNullDerived {
     derivedNonNull(from: insertionResult, dropsOutput: ==)
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from insertionResults: S,
@@ -409,7 +566,15 @@ extension StoreType where State : DatabaseEmbedding {
   ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
     derivedNonNull(from: insertionResults.map { $0.entity })
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from insertionResults: S
@@ -421,7 +586,15 @@ extension StoreType where State : DatabaseEmbedding {
 }
 
 extension StoreType where State : DatabaseEmbedding {
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<E0: EntityType & Equatable, E1: EntityType & Equatable>(
     from e0ID: E0.EntityID,
@@ -433,7 +606,15 @@ extension StoreType where State : DatabaseEmbedding {
       try derivedNonNull(from: e1ID)
     )
   }
-  
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
   @inline(__always)
   public func derivedNonNull<E0: EntityType & Equatable, E1: EntityType & Equatable, E2: EntityType & Equatable>(
     from e0ID: E0.EntityID,
