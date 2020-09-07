@@ -23,13 +23,14 @@
  Dispatcher allows us to update the state of the Store from away the store and to manage dependencies to create Mutation.
  */
 open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
-      
+
+  /// A writable key path to shortly read and modify the state
   public let scope: WritableKeyPath<State, Scope>
-  
+
+  /// A target store which Dispatcher uses.
   public let store: Store<State, Activity>
 
-  private var sinkCancellable: VergeAnyCancellable?
-  
+  /// A state that cut out from root-state with the scope key path.
   public var state: Changes<Scope> {
     store.state.map { $0[keyPath: scope] }
   }
@@ -38,6 +39,8 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
   public var rootState: Changes<State> {
     return store.state
   }
+
+  private var sinkCancellable: VergeAnyCancellable?
    
   private var logger: StoreLogger? {
     store.logger
