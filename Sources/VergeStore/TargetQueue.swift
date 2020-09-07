@@ -23,39 +23,69 @@ import Foundation
 
 /// Describes queue to dispatch event
 /// Currently light-weight impl
-public enum TargetQueue {
-  
-  /// Use main queue, dispatches if needed (If it's already on main-queue, it won't)
-  case main
-  /// Use specified queue, always dispatches
-  case specific(DispatchQueue)
+public struct TargetQueue {
+
+  /// An identifier to be used cache internally.
+  public let identifier: String
+
+  private let dispatch: (@escaping () -> Void) -> Void
+
+  public init(
+    identifier: String,
+    dispatch: @escaping (@escaping () -> Void) -> Void
+  ) {
+    self.identifier = identifier
+    self.dispatch = dispatch
+  }
+
+  func executor() -> (@escaping () -> Void) -> Void {
+    dispatch
+  }
+}
+
+fileprivate enum TargetQueue_StaticMember {
+
+  static let main: TargetQueue = .init(identifier: "main") { workItem in
+    if Thread.isMainThread {
+      workItem()
+    } else {
+      DispatchQueue.main.async(execute: workItem)
+    }
+  }
+
+  static let asyncMain: TargetQueue = .init(identifier: "async-main") { workItem in
+    DispatchQueue.main.async(execute: workItem)
+  }
+
+  static let serialBackgroundDispatchQueue: DispatchQueue = .init(label: "org.verge.background", qos: .default, attributes: [], autoreleaseFrequency: .workItem, target: nil)
+
+  static let serialBackground: TargetQueue = .init(identifier: "asyncSerialBackground") { workItem in
+    serialBackgroundDispatchQueue.async(execute: workItem)
+  }
+
 }
 
 extension TargetQueue {
-  
-  var identifier: String {
-    switch self {
-    case .main: return "main"
-    case .specific(let q): return "background-\(ObjectIdentifier(q))"
+
+  /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
+  public static var main: TargetQueue {
+    TargetQueue_StaticMember.main
+  }
+
+  /// It dispatches to main-queue asynchronously always.
+  public static var asyncMain: TargetQueue {
+    TargetQueue_StaticMember.asyncMain
+  }
+
+  /// Use specified queue, always dispatches
+  public static func specific(_ targetQueue: DispatchQueue) -> TargetQueue {
+    return .init(identifier: "queue-\(ObjectIdentifier(targetQueue))") { workItem in
+      targetQueue.async(execute: workItem)
     }
   }
-  
-  func executor() -> (@escaping () -> Void) -> Void {
-    
-    switch self {
-    case .main:
-      return { block in
-        if Thread.isMainThread {
-          block()
-        } else {
-          DispatchQueue.main.async(execute: block)
-        }
-      }
-    case .specific(let queue):
-      return { block in
-        queue.async(execute: block)
-      }
-    }
-    
+
+  /// It dispatches to the serial background queue asynchronously.
+  public static var asyncSerialBackground: TargetQueue {
+    TargetQueue_StaticMember.serialBackground
   }
 }
