@@ -537,7 +537,8 @@ public final class BindingDerived<State>: Derived<State> {
 }
 
 extension StoreType {
-  
+
+  /// Creates an instance of Derived
   private func _makeDerived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
     queue: TargetQueue? = nil
@@ -558,7 +559,10 @@ extension StoreType {
     return derived
   }
   
-  /// Returns Dervived object with making
+  /// Returns a Dervived object with making
+  ///
+  /// The returned instance might be a cached object which might be already subscribed by others.
+  /// Which means it helps to be better performance in creating the same derived objects.
   ///
   /// - Complexity: 💡 It's better to set `dropsOutput` predicate.
   /// - Parameter
@@ -595,7 +599,10 @@ extension StoreType {
        
   }
     
-  /// Returns Dervived object with making
+  /// Returns a Dervived object with making
+  ///
+  /// The returned instance might be a cached object which might be already subscribed by others.
+  /// Which means it helps to be better performance in creating the same derived objects.
   ///
   /// - Complexity: ✅ Drops duplicated the output with Equatable comparison.
   ///
