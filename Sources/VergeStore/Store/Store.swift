@@ -29,6 +29,7 @@ import Foundation
 import Combine
 #endif
 
+/// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
 public protocol StoreType: AnyObject {
   associatedtype State
   associatedtype Activity = Never
@@ -43,15 +44,19 @@ public typealias NoActivityStoreBase<State: StateType> = Store<State, Never>
 @available(*, deprecated, renamed: "Store")
 public typealias StoreBase<State, Activity> = Store<State, Activity>
 
-/// A base object to create store.
+/// An object that retains a latest state value and receives mutations that modify itself state.
+/// Those updates would be shared all of the subscribers these are sink(s), Derived(s)
+///
 /// You may create subclass of VergeDefaultStore
 /// ```
-/// final class MyStore: StoreBase<MyState> {
+/// final class MyStore: Store<MyState> {
 ///   init() {
 ///     super.init(initialState: .init(), logger: nil)
 ///   }
 /// }
 /// ```
+/// You may use also `StoreWrapperType` to define State and Activity as inner types.
+///
 open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable, StoreType, DispatcherType {
 
   public typealias Scope = State
