@@ -69,7 +69,7 @@ extension DispatcherType {
     send("", activity, file, function, line)
   }
         
-  /// Run Mutation that created inline
+  /// Commits a mutation that modifies the state of the store.
   ///
   /// Throwable
   public func commit<Result>(
@@ -88,14 +88,15 @@ extension DispatcherType {
     )
     
     return try store.asStore()._receive(
+      trace: trace,
       mutation: { state in
         try mutation(&state[keyPath: scope])
-    },
-      trace: trace
+      }
     )
   }
       
-  /// Run Mutation that created inline
+  /// Commits a mutation that modifies the state of the store.
+  /// a mutation closure will get a state that shaped with scope key path.
   ///
   /// Throwable
   public func commit<Result, NewScope>(
@@ -115,17 +116,83 @@ extension DispatcherType {
     )
     
     return try store.asStore()._receive(
+      trace: trace,
       mutation: { state in
         try mutation(&state[keyPath: scope])
+      }
+    )
+
+  }
+
+  /// Commits a mutation that modifies the state of the store.
+  ///
+  /// Throwable
+  public func asyncCommit<ReturnType>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: @escaping (inout Scope) throws -> ReturnType,
+    completion: @escaping (Result<ReturnType, Error>) -> Void
+  ) {
+
+    let trace = MutationTrace(
+      name: name,
+      file: file.description,
+      function: function.description,
+      line: line
+    )
+
+    store.asStore()._async_receive(
+      mutation: { state -> ReturnType in
+        try mutation(&state[keyPath: scope])
     },
-      trace: trace
+      trace: trace,
+      completion: completion
+    )
+
+  }
+
+  /// Commits a mutation that modifies the state of the store.
+  /// a mutation closure will get a state that shaped with scope key path.
+  ///
+  /// Throwable
+  public func asyncCommit<Result, NewScope>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    scope: WritableKeyPath<WrappedStore.State, NewScope>,
+    mutation: (inout NewScope) throws -> Result
+  ) rethrows -> Result {
+
+    let trace = MutationTrace(
+      name: name,
+      file: file.description,
+      function: function.description,
+      line: line
+    )
+
+    return try store.asStore()._receive(
+      trace: trace,
+      mutation: { state in
+        try mutation(&state[keyPath: scope])
+      }
     )
   }
-  
+
+  /// Creates a new dispatcher that focuses on a new scope.
+  ///
+  /// - Parameter newScope:
+  /// - Returns:
   public func detached<NewScope>(from newScope: WritableKeyPath<WrappedStore.State, NewScope>) -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
     .init(targetStore: store.asStore(), scope: newScope)
   }
-  
+
+  /// Creates a new dispatcher that focuses on a new scope.
+  ///
+  /// - Parameter newScope:
+  /// - Returns:
   public func detached<NewScope>(by appendingScope: WritableKeyPath<Scope, NewScope>) -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
     .init(targetStore: store.asStore(), scope: self.scope.appending(path: appendingScope))
   }

@@ -41,9 +41,13 @@ public struct TargetQueue {
   func executor() -> (@escaping () -> Void) -> Void {
     dispatch
   }
+
+  func execute(_ item: @escaping () -> Void) {
+    dispatch(item)
+  }
 }
 
-fileprivate enum TargetQueue_StaticMember {
+enum TargetQueue_StaticMember {
 
   static let main: TargetQueue = .init(identifier: "main") { workItem in
     if Thread.isMainThread {
@@ -88,4 +92,5 @@ extension TargetQueue {
   public static var asyncSerialBackground: TargetQueue {
     TargetQueue_StaticMember.serialBackground
   }
+
 }

@@ -114,6 +114,16 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   
   public private(set) var logger: StoreLogger?
 
+  private let backgroundWritingQueueKey = DispatchSpecificKey<Void>()
+
+  private let backgroundWritingQueue = DispatchQueue(
+    label: "org.verge.background.commit",
+    qos: .default,
+    attributes: [],
+    autoreleaseFrequency: .workItem,
+    target: nil
+  )
+
   private var sinkCancellable: VergeAnyCancellable? = nil
     
   /// An initializer
@@ -140,6 +150,8 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
       self?.receive(state: state)
     }
 
+    backgroundWritingQueue.setSpecific(key: backgroundWritingQueueKey, value: ())
+
   }
 
   /**
@@ -150,30 +162,61 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   }
 
   @inline(__always)
+  func _async_receive<ReturnType>(
+    mutation: @escaping (inout State) throws -> ReturnType,
+    trace: MutationTrace,
+    completion: @escaping (Result<ReturnType, Error>) -> Void
+  ) {
+
+    backgroundWritingQueue.async { [weak self] in
+      guard let self = self else {
+        return
+      }
+
+      do {
+        let result = try self._receive(trace: trace, mutation: mutation)
+        completion(.success(result))
+      } catch {
+        completion(.failure(error))
+      }
+    }
+
+  }
+
+  @inline(__always)
   func _receive<Result>(
-    mutation: (inout State) throws -> Result,
-    trace: MutationTrace
+    trace: MutationTrace,
+    mutation: (inout State) throws -> Result
   ) rethrows -> Result {
-                
-    let signpost = VergeSignpostTransaction("Store.commit")
-    defer {
-      signpost.end()
+
+    func work() throws -> Result {
+      let signpost = VergeSignpostTransaction("Store.commit")
+      defer {
+        signpost.end()
+      }
+
+      var elapsed: CFTimeInterval = 0
+
+      let returnValue = try _backingStorage.update { (state) -> Result in
+        let startedTime = CFAbsoluteTimeGetCurrent()
+        var current = state.primitive
+        let r = try mutation(&current)
+        state = state.makeNextChanges(with: current)
+        elapsed = CFAbsoluteTimeGetCurrent() - startedTime
+        return r
+      }
+
+      let log = CommitLog(store: self, trace: trace, time: elapsed)
+      logger?.didCommit(log: log, sender: self)
+      return returnValue
     }
-    
-    var elapsed: CFTimeInterval = 0
-    
-    let returnValue = try _backingStorage.update { (state) -> Result in
-      let startedTime = CFAbsoluteTimeGetCurrent()
-      var current = state.primitive
-      let r = try mutation(&current)
-      state = state.makeNextChanges(with: current)
-      elapsed = CFAbsoluteTimeGetCurrent() - startedTime
-      return r
+
+    if DispatchQueue.getSpecific(key: backgroundWritingQueueKey) == nil {
+      return try backgroundWritingQueue.sync(execute: work)
+    } else {
+      return try work()
     }
-       
-    let log = CommitLog(store: self, trace: trace, time: elapsed)
-    logger?.didCommit(log: log, sender: self)
-    return returnValue
+
   }
  
   @inline(__always)
