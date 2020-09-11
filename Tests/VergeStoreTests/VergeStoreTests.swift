@@ -259,7 +259,7 @@ final class VergeStoreTests: XCTestCase {
     var subscriptions = Set<VergeAnyCancellable>()
     var count = 0
     
-    store.sinkState { (changes) in
+    store.sinkState(queue: .passthrough) { (changes) in
       count += 1
     }
     .store(in: &subscriptions)

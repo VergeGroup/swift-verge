@@ -106,7 +106,7 @@ final class DerivedTests: XCTestCase {
     expectation.expectedFulfillmentCount = 1
     expectation.assertForOverFulfill = true
     
-    let subscription = baseSlice.sinkValue(dropsFirst: true) { (changes) in
+    let subscription = baseSlice.sinkValue(dropsFirst: true, queue: .passthrough) { (changes) in
       expectation.fulfill()
     }
 

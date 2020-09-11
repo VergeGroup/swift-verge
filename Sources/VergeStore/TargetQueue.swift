@@ -45,6 +45,10 @@ public struct TargetQueue {
 
 fileprivate enum TargetQueue_StaticMember {
 
+  static let passthrough: TargetQueue = .init(identifier: "passthrough") { workItem in
+    workItem()
+  }
+
   static let main: TargetQueue = .init(identifier: "main") { workItem in
     if Thread.isMainThread {
       workItem()
@@ -66,6 +70,11 @@ fileprivate enum TargetQueue_StaticMember {
 }
 
 extension TargetQueue {
+
+  /// It never dispatches.
+  public static var passthrough: TargetQueue {
+    TargetQueue_StaticMember.passthrough
+  }
 
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
   public static var main: TargetQueue {
