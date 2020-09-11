@@ -145,7 +145,7 @@ extension DispatcherType {
 
     store.asStore()._async_receive(
       mutation: { state -> ReturnType in
-        try mutation(&state[keyPath: scope])
+        try mutation(&state[keyPath: self.scope])
     },
       trace: trace,
       completion: completion

@@ -76,7 +76,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   /// It causes locking and unlocking with a bit cost.
   /// It may cause blocking if any other is doing mutation or reading.
   public var primitiveState: State {
-    _backingStorage.value.primitive
+    state.primitive
   }
 
   /// Returns a current state with thread-safety.
@@ -84,13 +84,15 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   /// It causes locking and unlocking with a bit cost.
   /// It may cause blocking if any other is doing mutation or reading.
   public var state: Changes<State> {
-    _backingStorage.value
+    backgroundWritingQueue.sync {
+      _backingStorage.value
+    }
   }
   
   /// A current changes state.
   @available(*, deprecated, renamed: "state")
   public var changes: Changes<State> {
-    _backingStorage.value
+    state
   }
   
   public var __backingStorage: UnsafeMutableRawPointer {    
@@ -117,9 +119,9 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   private let backgroundWritingQueueKey = DispatchSpecificKey<Void>()
 
   private let backgroundWritingQueue = DispatchQueue(
-    label: "org.verge.background.commit",
+    label: "org.verge.store.background",
     qos: .default,
-    attributes: [],
+    attributes: [.concurrent],
     autoreleaseFrequency: .workItem,
     target: nil
   )
@@ -146,7 +148,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
     super.init()
 
-    sinkCancellable = sinkState { [weak self] state in
+    sinkCancellable = sinkState(queue: .asyncSerialBackground) { [weak self] state in
       self?.receive(state: state)
     }
 
@@ -168,7 +170,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     completion: @escaping (Result<ReturnType, Error>) -> Void
   ) {
 
-    backgroundWritingQueue.async { [weak self] in
+    backgroundWritingQueue.async(flags: .barrier) { [weak self] in
       guard let self = self else {
         return
       }
@@ -212,7 +214,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     }
 
     if DispatchQueue.getSpecific(key: backgroundWritingQueueKey) == nil {
-      return try backgroundWritingQueue.sync(execute: work)
+      return try backgroundWritingQueue.sync(flags: .barrier, execute: work)
     } else {
       return try work()
     }
