@@ -541,7 +541,7 @@ extension StoreType {
   /// Creates an instance of Derived
   private func _makeDerived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
-    queue: TargetQueue? = nil
+    queue: TargetQueue?
   ) -> Derived<NewState> {
     
     vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
@@ -572,7 +572,7 @@ extension StoreType {
   public func derived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
-    queue: TargetQueue? = nil
+    queue: TargetQueue? = .asyncSerialBackground
   ) -> Derived<NewState> {
         
     let derived = asStore().derivedCache2.withValue { cache -> Derived<NewState> in
@@ -610,7 +610,7 @@ extension StoreType {
   /// - Returns: Derived object that cached depends on the specified parameters
   public func derived<NewState: Equatable>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
-    queue: TargetQueue? = nil
+    queue: TargetQueue? = .asyncSerialBackground
   ) -> Derived<NewState> {
     
     return asStore().derivedCache1.withValue { cache in
@@ -662,7 +662,11 @@ extension StoreType {
     },
       initialUpstreamState: asStore().state,
       subscribeUpstreamState: { callback in
-        asStore().sinkState(dropsFirst: true, queue: nil, receive: callback)
+        asStore().sinkState(
+          dropsFirst: true,
+          queue: .asyncSerialBackground,
+          receive: callback
+        )
     }, retainsUpstream: nil)
     
     derived.setDropsOutput(dropsOutput)
