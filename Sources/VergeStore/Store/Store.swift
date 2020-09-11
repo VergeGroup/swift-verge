@@ -186,38 +186,46 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   }
 
   @inline(__always)
+  func _synchronized_receive<Result>(
+    trace: MutationTrace,
+    mutation: (inout State) throws -> Result
+  ) rethrows -> Result {
+
+    if DispatchQueue.getSpecific(key: backgroundWritingQueueKey) == nil {
+      return try backgroundWritingQueue.sync(flags: .barrier) {
+        try _receive(trace: trace, mutation: mutation)
+      }
+    } else {
+      return try _receive(trace: trace, mutation: mutation)
+    }
+
+  }
+
+  @inline(__always)
   func _receive<Result>(
     trace: MutationTrace,
     mutation: (inout State) throws -> Result
   ) rethrows -> Result {
 
-    func work() throws -> Result {
-      let signpost = VergeSignpostTransaction("Store.commit")
-      defer {
-        signpost.end()
-      }
-
-      var elapsed: CFTimeInterval = 0
-
-      let returnValue = try _backingStorage.update { (state) -> Result in
-        let startedTime = CFAbsoluteTimeGetCurrent()
-        var current = state.primitive
-        let r = try mutation(&current)
-        state = state.makeNextChanges(with: current)
-        elapsed = CFAbsoluteTimeGetCurrent() - startedTime
-        return r
-      }
-
-      let log = CommitLog(store: self, trace: trace, time: elapsed)
-      logger?.didCommit(log: log, sender: self)
-      return returnValue
+    let signpost = VergeSignpostTransaction("Store.commit")
+    defer {
+      signpost.end()
     }
 
-    if DispatchQueue.getSpecific(key: backgroundWritingQueueKey) == nil {
-      return try backgroundWritingQueue.sync(flags: .barrier, execute: work)
-    } else {
-      return try work()
+    var elapsed: CFTimeInterval = 0
+
+    let returnValue = try _backingStorage.update { (state) -> Result in
+      let startedTime = CFAbsoluteTimeGetCurrent()
+      var current = state.primitive
+      let r = try mutation(&current)
+      state = state.makeNextChanges(with: current)
+      elapsed = CFAbsoluteTimeGetCurrent() - startedTime
+      return r
     }
+
+    let log = CommitLog(store: self, trace: trace, time: elapsed)
+    logger?.didCommit(log: log, sender: self)
+    return returnValue
 
   }
  
