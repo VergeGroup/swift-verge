@@ -158,7 +158,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
       assertionFailure("\(self) has already applied removeDuplicates")
       return self
     }
-    let chained = _makeChain(.init(dropInput: predicate, map: { $0.root }))
+    let chained = _makeChain(.init(dropInput: predicate, map: { $0.root }), queue: .passthrough)
     chained.attributes.insert(.dropsDuplicatedOutput)
     return chained
   }
@@ -207,7 +207,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
 
   fileprivate func _makeChain<NewState>(
     _ map: MemoizeMap<Changes<Value>, NewState>,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueue
   ) -> Derived<NewState> {
     
     vergeSignpostEvent("Derived.chain.new", label: "\(type(of: Value.self)) -> \(type(of: NewState.self))")
@@ -247,7 +247,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   public func chain<NewState>(
     _ map: MemoizeMap<Changes<Value>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueue = .asyncSerialBackground
     ) -> Derived<NewState> {
         
     let derived = chainCahce2.withValue { cache -> Derived<NewState> in
@@ -282,7 +282,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   /// - Returns: Derived object that cached depends on the specified parameters
   public func chain<NewState: Equatable>(
     _ map: MemoizeMap<Changes<Value>, NewState>,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueue = .asyncSerialBackground
   ) -> Derived<NewState> {
     
     return chainCahce1.withValue { cache in
@@ -364,7 +364,7 @@ extension Derived where Value == Any {
   ///   - s0:
   ///   - s1:
   /// - Returns:
-  public static func combined<S0, S1>(_ s0: Derived<S0>, _ s1: Derived<S1>) -> Derived<(S0, S1)> {
+  public static func combined<S0, S1>(_ s0: Derived<S0>, _ s1: Derived<S1>, queue: TargetQueue = .asyncSerialBackground) -> Derived<(S0, S1)> {
     
     typealias Shape = (S0, S1)
     
@@ -378,14 +378,14 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
                 
-        let _s0 = s0.sinkValue(dropsFirst: true, queue: .passthrough) { (s0) in
+        let _s0 = s0.sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             value.0 = s0.primitive
             callback(value)
           }
         }
         
-        let _s1 = s1.sinkValue(dropsFirst: true, queue: .passthrough) { (s1) in
+        let _s1 = s1.sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
             value.1 = s1.primitive
             callback(value)
@@ -412,7 +412,7 @@ extension Derived where Value == Any {
   ///   - s1:
   ///   - s2:
   /// - Returns:
-  public static func combined<S0, S1, S2>(_ s0: Derived<S0>, _ s1: Derived<S1>, _ s2: Derived<S2>) -> Derived<(S0, S1, S2)> {
+  public static func combined<S0, S1, S2>(_ s0: Derived<S0>, _ s1: Derived<S1>, _ s2: Derived<S2>, queue: TargetQueue = .asyncSerialBackground) -> Derived<(S0, S1, S2)> {
     
     typealias Shape = (S0, S1, S2)
     
@@ -426,21 +426,21 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
         
-        let _s0 = s0.sinkValue(dropsFirst: true, queue: .passthrough) { (s0) in
+        let _s0 = s0.sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             value.0 = s0.primitive
             callback(value)
           }
         }
         
-        let _s1 = s1.sinkValue(dropsFirst: true, queue: .passthrough) { (s1) in
+        let _s1 = s1.sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
             value.1 = s1.primitive
             callback(value)
           }
         }
         
-        let _s2 = s2.sinkValue(dropsFirst: true, queue: .passthrough) { (s2) in
+        let _s2 = s2.sinkValue(dropsFirst: true, queue: queue) { (s2) in
           buffer.modify { value in
             value.2 = s2.primitive
             callback(value)
@@ -535,7 +535,7 @@ extension StoreType {
   public func derived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueue = .asyncSerialBackground
   ) -> Derived<NewState> {
         
     let derived = asStore().derivedCache2.withValue { cache -> Derived<NewState> in
@@ -573,7 +573,7 @@ extension StoreType {
   /// - Returns: Derived object that cached depends on the specified parameters
   public func derived<NewState: Equatable>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueue = .asyncSerialBackground
   ) -> Derived<NewState> {
     
     return asStore().derivedCache1.withValue { cache in
@@ -613,7 +613,8 @@ extension StoreType {
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
     dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
-    set: @escaping (inout State, NewState) -> Void
+    set: @escaping (inout State, NewState) -> Void,
+    queue: TargetQueue = .asyncSerialBackground
   ) -> BindingDerived<NewState> {
     
     let derived = BindingDerived<NewState>.init(
@@ -627,7 +628,7 @@ extension StoreType {
       subscribeUpstreamState: { callback in
         asStore().sinkState(
           dropsFirst: true,
-          queue: .passthrough,
+          queue: queue,
           receive: callback
         )
     }, retainsUpstream: nil)
@@ -651,7 +652,8 @@ extension StoreType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
-    set: @escaping (inout State, NewState) -> Void
+    set: @escaping (inout State, NewState) -> Void,
+    queue: TargetQueue = .asyncSerialBackground
   ) -> BindingDerived<NewState> {
     
     binding(
@@ -661,7 +663,8 @@ extension StoreType {
       line,
       get: get,
       dropsOutput: { $0.asChanges().noChanges(\.root) },
-      set: set
+      set: set,
+      queue: queue
     )
   }
   
