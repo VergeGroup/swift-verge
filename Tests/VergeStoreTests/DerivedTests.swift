@@ -17,7 +17,7 @@ final class DerivedTests: XCTestCase {
   
   func testSlice() {
                 
-    let slice = wrapper.derived(.map { $0.count })
+    let slice = wrapper.derived(.map { $0.count }, queue: .passthrough)
 
     XCTAssertEqual(slice.primitiveValue, 0)
     XCTAssertEqual(slice.value.root, 0)
@@ -50,7 +50,11 @@ final class DerivedTests: XCTestCase {
 
   func testSlice2() {
 
-    let slice = wrapper.derived(.map { $0.count }, dropsOutput: { $0.noChanges(\.root) })
+    let slice = wrapper.derived(
+      .map { $0.count },
+      dropsOutput: { $0.noChanges(\.root) },
+      queue: .passthrough
+    )
 
     XCTAssertEqual(slice.primitiveValue, 0)
     XCTAssertEqual(slice.value.root, 0)
@@ -99,14 +103,14 @@ final class DerivedTests: XCTestCase {
   
   func testRetain() {
     
-    var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count })
+    var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count }, queue: .passthrough)
     weak var weakBaseSlice = baseSlice
     
     let expectation = XCTestExpectation(description: "receive changes")
     expectation.expectedFulfillmentCount = 1
     expectation.assertForOverFulfill = true
     
-    let subscription = baseSlice.sinkValue(dropsFirst: true) { (changes) in
+    let subscription = baseSlice.sinkValue(dropsFirst: true, queue: .passthrough) { (changes) in
       expectation.fulfill()
     }
 
@@ -130,11 +134,11 @@ final class DerivedTests: XCTestCase {
   
   func testSliceChain() {
     
-    var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count })
+    var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count }, queue: .passthrough)
     
     weak var weakBaseSlice = baseSlice
             
-    var slice: Derived<Int>! = baseSlice.chain(.map { $0.root })
+    var slice: Derived<Int>! = baseSlice.chain(.map { $0.root }, queue: .passthrough)
     
     baseSlice = nil
     
@@ -176,8 +180,8 @@ final class DerivedTests: XCTestCase {
   /// combine 2 stored
   func testCombine2() {
     
-    let s0 = wrapper.derived(.map { $0.count })
-    let s1 = wrapper.derived(.map { $0.name })
+    let s0 = wrapper.derived(.map { $0.count }, queue: .passthrough)
+    let s1 = wrapper.derived(.map { $0.name }, queue: .passthrough)
     
     let updateCount = expectation(description: "updatecount")
     updateCount.assertForOverFulfill = true
@@ -191,7 +195,7 @@ final class DerivedTests: XCTestCase {
     update1.assertForOverFulfill = true
     update1.expectedFulfillmentCount = 2
     
-    let d = Derived.combined(s0, s1)
+    let d = Derived.combined(s0, s1, queue: .passthrough)
     
     XCTAssert(d.primitiveValue == (0, ""))
         
@@ -228,8 +232,8 @@ final class DerivedTests: XCTestCase {
   /// combine 1 Stored and 1 Computed
   func testCombine2computed() {
     
-    let s0 = wrapper.derived(.map { $0.count })
-    let s1 = wrapper.derived(.map { $0.computed.nameCount })
+    let s0 = wrapper.derived(.map { $0.count }, queue: .passthrough)
+    let s1 = wrapper.derived(.map { $0.computed.nameCount }, queue: .passthrough)
     
     let updateCount = expectation(description: "updatecount")
     updateCount.assertForOverFulfill = true
@@ -243,7 +247,7 @@ final class DerivedTests: XCTestCase {
     update1.assertForOverFulfill = true
     update1.expectedFulfillmentCount = 2
     
-    let d = Derived.combined(s0, s1)
+    let d = Derived.combined(s0, s1, queue: .passthrough)
     
     XCTAssert(d.primitiveValue == (0, 0))
     

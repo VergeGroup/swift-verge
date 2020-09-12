@@ -158,7 +158,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
       assertionFailure("\(self) has already applied removeDuplicates")
       return self
     }
-    let chained = _makeChain(.init(dropInput: predicate, map: { $0.root }))
+    let chained = _makeChain(.init(dropInput: predicate, map: { $0.root }), queue: .passthrough)
     chained.attributes.insert(.dropsDuplicatedOutput)
     return chained
   }
@@ -173,7 +173,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkValue(
     dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
+    queue: TargetQueue = .asyncMain,
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     
@@ -199,39 +199,15 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   public func sinkValue<Accumulate>(
     scan: Scan<Changes<Value>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
+    queue: TargetQueue = .asyncMain,
     receive: @escaping (Changes<Value>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     innerStore.sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
-    
-  /// Subscribe the state changes
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkValue")
-  public func sinkChanges(
-    dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
-    receive: @escaping (Changes<Value>) -> Void
-  ) -> VergeAnyCancellable {    
-    sinkValue(dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-    
-  /// Subscribe the state changes
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkValue")
-  public func subscribeChanges(
-    dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
-    receive: @escaping (Changes<Value>) -> Void
-  ) -> VergeAnyCancellable {
-    sinkChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
+
   fileprivate func _makeChain<NewState>(
     _ map: MemoizeMap<Changes<Value>, NewState>,
-    queue: TargetQueue? = nil
+    queue: TargetQueue
   ) -> Derived<NewState> {
     
     vergeSignpostEvent("Derived.chain.new", label: "\(type(of: Value.self)) -> \(type(of: NewState.self))")
@@ -271,12 +247,12 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   public func chain<NewState>(
     _ map: MemoizeMap<Changes<Value>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
-    queue: TargetQueue? = nil
+    queue: TargetQueue = .asyncSerialBackground
     ) -> Derived<NewState> {
         
     let derived = chainCahce2.withValue { cache -> Derived<NewState> in
       
-      let identifier = "\(map.identifier)\(String(describing: queue?.identifier))" as NSString
+      let identifier = "\(map.identifier)\(String(describing: queue.identifier))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeChain(map, queue: queue)
@@ -306,12 +282,12 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   /// - Returns: Derived object that cached depends on the specified parameters
   public func chain<NewState: Equatable>(
     _ map: MemoizeMap<Changes<Value>, NewState>,
-    queue: TargetQueue? = nil
+    queue: TargetQueue = .asyncSerialBackground
   ) -> Derived<NewState> {
     
     return chainCahce1.withValue { cache in
       
-      let identifier = "\(map.identifier)\(String(describing: queue?.identifier))" as NSString
+      let identifier = "\(map.identifier)\(String(describing: queue.identifier))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeChain(map, queue: queue).removeDuplicates(by: { !$0.hasChanges })
@@ -366,7 +342,7 @@ extension Derived where Value : Equatable {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkChangedPrimitiveValue(
     dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
+    queue: TargetQueue = .asyncMain,
     receive: @escaping (Value) -> Void
   ) -> VergeAnyCancellable {
     sinkValue(dropsFirst: dropsFirst, queue: queue) { (changes) in
@@ -375,20 +351,7 @@ extension Derived where Value : Equatable {
       }
     }
   }
-  
-  /// Subscribe the state changes
-  ///
-  /// Receives a value only changed
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkChangedPrimitiveValue")
-  public func sinkChangedValue(
-    dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
-    receive: @escaping (Value) -> Void
-  ) -> VergeAnyCancellable {
-    sinkChangedPrimitiveValue(dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
+
 }
 
 extension Derived where Value == Any {
@@ -401,7 +364,7 @@ extension Derived where Value == Any {
   ///   - s0:
   ///   - s1:
   /// - Returns:
-  public static func combined<S0, S1>(_ s0: Derived<S0>, _ s1: Derived<S1>) -> Derived<(S0, S1)> {
+  public static func combined<S0, S1>(_ s0: Derived<S0>, _ s1: Derived<S1>, queue: TargetQueue = .asyncSerialBackground) -> Derived<(S0, S1)> {
     
     typealias Shape = (S0, S1)
     
@@ -415,14 +378,14 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
                 
-        let _s0 = s0.sinkValue(dropsFirst: true, queue: nil) { (s0) in
+        let _s0 = s0.sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             value.0 = s0.primitive
             callback(value)
           }
         }
         
-        let _s1 = s1.sinkValue(dropsFirst: true, queue: nil) { (s1) in
+        let _s1 = s1.sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
             value.1 = s1.primitive
             callback(value)
@@ -449,7 +412,7 @@ extension Derived where Value == Any {
   ///   - s1:
   ///   - s2:
   /// - Returns:
-  public static func combined<S0, S1, S2>(_ s0: Derived<S0>, _ s1: Derived<S1>, _ s2: Derived<S2>) -> Derived<(S0, S1, S2)> {
+  public static func combined<S0, S1, S2>(_ s0: Derived<S0>, _ s1: Derived<S1>, _ s2: Derived<S2>, queue: TargetQueue = .asyncSerialBackground) -> Derived<(S0, S1, S2)> {
     
     typealias Shape = (S0, S1, S2)
     
@@ -463,21 +426,21 @@ extension Derived where Value == Any {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
         
-        let _s0 = s0.sinkValue(dropsFirst: true, queue: nil) { (s0) in
+        let _s0 = s0.sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             value.0 = s0.primitive
             callback(value)
           }
         }
         
-        let _s1 = s1.sinkValue(dropsFirst: true, queue: nil) { (s1) in
+        let _s1 = s1.sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
             value.1 = s1.primitive
             callback(value)
           }
         }
         
-        let _s2 = s2.sinkValue(dropsFirst: true, queue: nil) { (s2) in
+        let _s2 = s2.sinkValue(dropsFirst: true, queue: queue) { (s2) in
           buffer.modify { value in
             value.2 = s2.primitive
             callback(value)
@@ -541,7 +504,7 @@ extension StoreType {
   /// Creates an instance of Derived
   private func _makeDerived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
-    queue: TargetQueue? = nil
+    queue: TargetQueue
   ) -> Derived<NewState> {
     
     vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
@@ -572,12 +535,12 @@ extension StoreType {
   public func derived<NewState>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
-    queue: TargetQueue? = nil
+    queue: TargetQueue = .asyncSerialBackground
   ) -> Derived<NewState> {
         
     let derived = asStore().derivedCache2.withValue { cache -> Derived<NewState> in
       
-      let identifier = "\(memoizeMap.identifier)\(String(describing: queue?.identifier))" as NSString
+      let identifier = "\(memoizeMap.identifier)\(String(describing: queue.identifier))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeDerived(memoizeMap, queue: queue)
@@ -610,12 +573,12 @@ extension StoreType {
   /// - Returns: Derived object that cached depends on the specified parameters
   public func derived<NewState: Equatable>(
     _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
-    queue: TargetQueue? = nil
+    queue: TargetQueue = .asyncSerialBackground
   ) -> Derived<NewState> {
     
     return asStore().derivedCache1.withValue { cache in
       
-      let identifier = "\(memoizeMap.identifier)\(String(describing: queue?.identifier))" as NSString
+      let identifier = "\(memoizeMap.identifier)\(String(describing: queue.identifier))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeDerived(memoizeMap, queue: queue)
@@ -650,7 +613,8 @@ extension StoreType {
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
     dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
-    set: @escaping (inout State, NewState) -> Void
+    set: @escaping (inout State, NewState) -> Void,
+    queue: TargetQueue = .asyncSerialBackground
   ) -> BindingDerived<NewState> {
     
     let derived = BindingDerived<NewState>.init(
@@ -662,7 +626,11 @@ extension StoreType {
     },
       initialUpstreamState: asStore().state,
       subscribeUpstreamState: { callback in
-        asStore().sinkState(dropsFirst: true, queue: nil, receive: callback)
+        asStore().sinkState(
+          dropsFirst: true,
+          queue: queue,
+          receive: callback
+        )
     }, retainsUpstream: nil)
     
     derived.setDropsOutput(dropsOutput)
@@ -684,7 +652,8 @@ extension StoreType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
-    set: @escaping (inout State, NewState) -> Void
+    set: @escaping (inout State, NewState) -> Void,
+    queue: TargetQueue = .asyncSerialBackground
   ) -> BindingDerived<NewState> {
     
     binding(
@@ -694,7 +663,8 @@ extension StoreType {
       line,
       get: get,
       dropsOutput: { $0.asChanges().noChanges(\.root) },
-      set: set
+      set: set,
+      queue: queue
     )
   }
   

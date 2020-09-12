@@ -21,7 +21,7 @@ class DerivedTests: XCTestCase {
     
     let id = Book.EntityID.init("some")
     
-    let nullableSelector = storage.derived(from: id)
+    let nullableSelector = storage.derived(from: id, queue: .passthrough)
     
     XCTAssertNil(nullableSelector.primitiveValue.wrapped)
     
@@ -52,7 +52,8 @@ class DerivedTests: XCTestCase {
       }
       
       let selector = storage.derivedNonNull(
-        from: book
+        from: book,
+        queue: .passthrough
       )
       
       XCTAssertNotNil(nullableSelector.primitiveValue.wrapped)
@@ -112,7 +113,7 @@ class DerivedTests: XCTestCase {
         }
       }
             
-      let selector = storage.derivedNonNull(from: result)
+      let selector = storage.derivedNonNull(from: result, queue: .passthrough)
       
       XCTAssertEqual(selector.primitiveValue.rawID, "some")
       XCTAssertEqual(selector.primitiveValue.name, "")
@@ -165,7 +166,7 @@ class DerivedTests: XCTestCase {
     
     var updatedCount = 0
     
-    let authorGetter = storage.derivedNonNull(from: result)
+    let authorGetter = storage.derivedNonNull(from: result, queue: .passthrough)
     
     authorGetter.valuePublisher()
       .dropFirst(1).sink { _ in
@@ -250,7 +251,7 @@ class DerivedTests: XCTestCase {
     let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
     measure {
-      let _ = storage.derived(from: Author.EntityID("Hoo"))
+      let _ = storage.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
     }
     
   }
@@ -259,10 +260,10 @@ class DerivedTests: XCTestCase {
     
     let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
-    let _ = storage.derived(from: Author.EntityID("Hoo"))
+    let _ = storage.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
     
     measure {
-      let _ = storage.derived(from: Author.EntityID("Hoo"))
+      let _ = storage.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
     }
     
   }
