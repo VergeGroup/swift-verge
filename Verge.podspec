@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Verge"
-  s.version      = "7.8.4"
+  s.version      = "8.0.0-beta.1"
   s.summary      = "Verge is a state management tools"
   s.description  = <<-DESC
   Verge is a state management tools (Store, ViewModel, ORM, Reactive) on iOS App (UIKit / SwiftUI)
