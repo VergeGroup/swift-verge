@@ -125,7 +125,7 @@ public final class Changes<Value>: ChangesType, Equatable {
     new: Value
   ) {
     self.init(
-      previous: nil,
+      previous: old.map { .init(old: nil, new: $0) },
       innerCurrent: .init(value: new),
       version: 0
     )
