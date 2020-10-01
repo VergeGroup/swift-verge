@@ -20,17 +20,18 @@
 // THE SOFTWARE.
 
 import Foundation
+import VergeCore
 
 /// Describes queue to dispatch event
 /// Currently light-weight impl
-public struct TargetQueue {
+public final class TargetQueue {
 
   /// An identifier to be used cache internally.
   public let identifier: String
 
   private let dispatch: (@escaping () -> Void) -> Void
 
-  public init(
+  fileprivate init(
     identifier: String,
     dispatch: @escaping (@escaping () -> Void) -> Void
   ) {
@@ -49,14 +50,6 @@ fileprivate enum TargetQueue_StaticMember {
     workItem()
   }
 
-  static let main: TargetQueue = .init(identifier: "main") { workItem in
-    if Thread.isMainThread {
-      workItem()
-    } else {
-      DispatchQueue.main.async(execute: workItem)
-    }
-  }
-
   static let asyncMain: TargetQueue = .init(identifier: "async-main") { workItem in
     DispatchQueue.main.async(execute: workItem)
   }
@@ -69,6 +62,19 @@ fileprivate enum TargetQueue_StaticMember {
 
 }
 
+extension DispatchQueue {
+  private static var token: DispatchSpecificKey<()> = {
+    let key = DispatchSpecificKey<()>()
+    DispatchQueue.main.setSpecific(key: key, value: ())
+    return key
+  }()
+
+  static var isMain: Bool {
+    return DispatchQueue.getSpecific(key: token) != nil
+  }
+}
+
+
 extension TargetQueue {
 
   /// It never dispatches.
@@ -77,8 +83,24 @@ extension TargetQueue {
   }
 
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
-  public static var main: TargetQueue {
-    TargetQueue_StaticMember.main
+  public static func main() -> TargetQueue {
+
+    let numberEnqueued = VergeConcurrency.AtomicInt(initialValue: 0)
+
+    return .init(identifier: "main-\(UUID().uuidString)") { workItem in
+
+      let previousNumberEnqueued = numberEnqueued.getAndIncrement()
+
+      if DispatchQueue.isMain && previousNumberEnqueued == 0 {
+        workItem()
+        numberEnqueued.decrementAndGet()
+      } else {
+        DispatchQueue.main.async {
+          workItem()
+          numberEnqueued.decrementAndGet()
+        }
+      }
+    }
   }
 
   /// It dispatches to main-queue asynchronously always.
