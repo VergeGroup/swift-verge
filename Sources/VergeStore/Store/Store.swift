@@ -210,22 +210,22 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   public func asStore() -> Store<State, Activity> {
     self
   }
-  
+
   /// Subscribe the state changes
   ///
   /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
   ///
   /// - Parameters:
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
+  ///   - scheduler: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: TargetQueue = .asyncMain,
+    scheduler: Scheduler = .asyncMain,
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
-    
-    let execute = queue.executor()
+
+    let execute = scheduler.executor()
 
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
     let cancellable = _backingStorage.addDidUpdate { newValue in
@@ -254,38 +254,23 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   /// - Parameters:
   ///   - scan: Accumulates a specified type of value over receiving updates.
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
+  ///   - scheduler: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkState<Accumulate>(
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue = .asyncMain,
+    scheduler: Scheduler = .asyncMain,
     receive: @escaping (Changes<State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
 
-    sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+    sinkState(
+      dropsFirst: dropsFirst,
+      scheduler: scheduler
+    ) { (changes) in
 
       let accumulate = scan.accumulate(changes)
       receive(changes, accumulate)
     }
-
-  }
-
-  /// Subscribe the activity
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkActivity(
-    queue: TargetQueue = .asyncMain,
-    receive: @escaping (Activity) -> Void
-  ) -> VergeAnyCancellable {
-    
-    let execute = queue.executor()
-    let cancellable = _activityEmitter.add { (activity) in
-      execute {
-        receive(activity)
-      }
-    }
-    return .init(cancellable)
 
   }
 

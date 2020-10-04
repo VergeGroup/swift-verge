@@ -27,19 +27,14 @@ import VergeCore
 
 /// Describes queue to dispatch event
 /// Currently light-weight impl
-public final class TargetQueue {
-
-  /// An identifier to be used cache internally.
-  public let identifier: String
+public final class Scheduler {
 
   private let dispatch: (@escaping () -> Void) -> Void
 
   fileprivate init(
-    identifier: String,
-    dispatch: @escaping (@escaping () -> Void) -> Void
+    schedule: @escaping (@escaping () -> Void) -> Void
   ) {
-    self.identifier = identifier
-    self.dispatch = dispatch
+    self.dispatch = schedule
   }
 
   func executor() -> (@escaping () -> Void) -> Void {
@@ -49,19 +44,7 @@ public final class TargetQueue {
 
 fileprivate enum TargetQueue_StaticMember {
 
-  static let passthrough: TargetQueue = .init(identifier: "passthrough") { workItem in
-    workItem()
-  }
-
-  static let asyncMain: TargetQueue = .init(identifier: "async-main") { workItem in
-    DispatchQueue.main.async(execute: workItem)
-  }
-
   static let serialBackgroundDispatchQueue: DispatchQueue = .init(label: "org.verge.background", qos: .default, attributes: [], autoreleaseFrequency: .workItem, target: nil)
-
-  static let serialBackground: TargetQueue = .init(identifier: "asyncSerialBackground") { workItem in
-    serialBackgroundDispatchQueue.async(execute: workItem)
-  }
 
 }
 
@@ -78,19 +61,24 @@ extension DispatchQueue {
 }
 
 
-extension TargetQueue {
+extension Scheduler {
 
   /// It never dispatches.
-  public static var passthrough: TargetQueue {
-    TargetQueue_StaticMember.passthrough
+  public static let passthrough: Scheduler = .init { workItem in
+    workItem()
+  }
+
+  /// It dispatches to main-queue asynchronously always.
+  public static let asyncMain: Scheduler = .init { workItem in
+    DispatchQueue.main.async(execute: workItem)
   }
 
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
-  public static func main() -> TargetQueue {
+  public static func main() -> Scheduler {
 
     let numberEnqueued = VergeConcurrency.AtomicInt(initialValue: 0)
 
-    return .init(identifier: "main-\(UUID().uuidString)") { workItem in
+    return .init { workItem in
 
       let previousNumberEnqueued = numberEnqueued.getAndIncrement()
 
@@ -106,20 +94,15 @@ extension TargetQueue {
     }
   }
 
-  /// It dispatches to main-queue asynchronously always.
-  public static var asyncMain: TargetQueue {
-    TargetQueue_StaticMember.asyncMain
-  }
-
   /// Use specified queue, always dispatches
-  public static func specific(_ targetQueue: DispatchQueue) -> TargetQueue {
-    return .init(identifier: "queue-\(ObjectIdentifier(targetQueue))") { workItem in
+  public static func specific(_ targetQueue: DispatchQueue) -> Scheduler {
+    return .init { workItem in
       targetQueue.async(execute: workItem)
     }
   }
 
   /// It dispatches to the serial background queue asynchronously.
-  public static var asyncSerialBackground: TargetQueue {
-    TargetQueue_StaticMember.serialBackground
+  public static var asyncSerialBackground: Scheduler = .init { workItem in
+    TargetQueue_StaticMember.serialBackgroundDispatchQueue.async(execute: workItem)
   }
 }
