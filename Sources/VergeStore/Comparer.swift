@@ -22,6 +22,8 @@
 import Foundation
 import os.log
 
+/// A component that compares an input value.
+/// It can be combined with other comparers.
 public struct Comparer<Input> {
   
   public static var alwaysFalse: Self {
@@ -29,7 +31,10 @@ public struct Comparer<Input> {
   }
   
   private let _equals: (Input, Input) -> Bool
-       
+
+  /// Creates an instance
+  ///
+  /// - Parameter equals: Return true if two inputs are equal.
   public init(
     _ equals: @escaping (Input, Input) -> Bool
   ) {
@@ -85,19 +90,12 @@ public struct Comparer<Input> {
   public func equals(_ lhs: Input, _ rhs: Input) -> Bool {
     _equals(lhs, rhs)
   }
-  
+
+  /// Returns an curried closure
   public func curried() -> (_ lhs: Input, _ rhs: Input) -> Bool {
     _equals
   }
-  
-  public func handleResult(_ handler: @escaping (Input, Input, Bool) -> Void) -> Self {
-    Self.init { [_equals, handler] in
-      let result = _equals($0, $1)
-      handler($0, $1, result)
-      return result
-    }
-  }
-  
+
 }
 
 extension Comparer where Input : Equatable {  

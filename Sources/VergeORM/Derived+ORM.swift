@@ -113,17 +113,23 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
     
     let path = Input.Value.getterToDatabase
     
-    let comparer = Comparer<Input.Value.Database>(or: [
+    let hasChangesComparer = Comparer<Input.Value.Database>(or: [
+
+      /** Step 1 */
       Comparer<Input.Value.Database>.databaseNoUpdates(),
+
+      /** Step 2 */
       Comparer<Input.Value.Database>.tableNoUpdates(Entity.self),
+
+      /** Step 3 */
       Comparer<Input.Value.Database>.changesNoContains(entityID),
     ])
       
-    return .init(
+    return MemoizeMap<Input, EntityWrapper<Entity>>(
       makeInitial: { changes in
-        .init(
+        EntityWrapper<Entity>(
           id: entityID,
-          entity: path(changes.primitive).entities.table(Entity.self).find(by: entityID)
+          entity: path(changes.primitive).entities.table(Entity.self).find(by: entityID) /** Queries an entity */
         )
     },
       update: { changes in
@@ -132,15 +138,16 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
           { (composing) -> Input.Value.Database in
             let db = path(composing.root)
             return db
-        }, comparer.curried()
+        }, hasChangesComparer.curried()
         )
         
         guard hasChanges else {
           return .noChanages
         }
-        
+
+        /** Queries an entity */
         let entity = path(changes.primitive).entities.table(Entity.self).find(by: entityID)
-        return .updated(.init(id: entityID, entity: entity))
+        return .updated(EntityWrapper<Entity>(id: entityID, entity: entity))
     })
   }
   

@@ -25,23 +25,33 @@ import VergeStore
 #endif
 
 extension Comparer where Input : DatabaseType {
-  
+
+  /// Returns true if Database has no changes.
+  ///
+  /// - Complexity: O(1)
   public static func databaseNoUpdates() -> Self {
     return .init { pre, new in
       (pre._backingStorage.entityUpdatedMarker, pre._backingStorage.indexUpdatedMarker) == (new._backingStorage.entityUpdatedMarker, new._backingStorage.indexUpdatedMarker)
     }
   }
-  
+
+  /// Returns true if the table of the entity in database has no changes.
+  ///
+  /// - Complexity: O(1)
   public static func tableNoUpdates<E: EntityType>(_ entityType: E.Type) -> Self {
     Comparer.init(selector: {
       $0._backingStorage.entityBackingStorage.table(E.self).updatedMarker      
     })
   }
-  
+
+  /// Returns true if the entity has no changes.
+  ///
+  /// - Complexity: O(1)
   public static func entityNoUpdates<E: EntityType & Equatable>(_ entityID: E.EntityID) -> Self {
     return .init(selector: { $0.entities.table(E.self).find(by: entityID) })
   }
-  
+
+  /// Returns true if the updates result does not contain the entity.
   public static func changesNoContains<E: EntityType>(_ entityID: E.EntityID) -> Self {
     return .init { _, new in
       guard let result = new._backingStorage.lastUpdatesResult else {
