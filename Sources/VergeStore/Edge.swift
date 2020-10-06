@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2020 Hiroshi Kimura(Muukii) <muuki.app@gmail.com>
+// Copyright (c) 2020 Hiroshi Kimura(Muukii) <muukii.app@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,6 +56,7 @@ public struct Edge<State>: EdgeType {
     lhs.version == rhs.version
   }
 
+  /// A number value that indicates how many times State was updated.
   public var version: UInt64 {
     _read {
       yield counter.version
@@ -79,6 +80,7 @@ public struct Edge<State>: EdgeType {
 
   }
 
+  /// A value that wrapped with Edge.
   public var wrappedValue: State {
     get {
       _wrappedValue

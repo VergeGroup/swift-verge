@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2020 Hiroshi Kimura(Muukii) <muuki.app@gmail.com>
+// Copyright (c) 2020 Hiroshi Kimura(Muukii) <muukii.app@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@
 
 import Foundation
 
-/// A container manages raw value to describe mark as updated.
+/// A container that manages raw value to describe mark as updated.
 public struct NonAtomicVersionCounter: Hashable {
   
   private(set) public var version: UInt64 = 0
