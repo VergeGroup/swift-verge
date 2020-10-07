@@ -20,7 +20,16 @@ class VergeORMTests: XCTestCase {
   override func tearDown() {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
-  
+
+  func testBasicUsage() {
+
+    let db = RootState.Database()
+
+    XCTAssertEqual(db.entities.book.allEntities().count, 0)
+    XCTAssertEqual(db.entities.book, db.entities.table(Book.self))
+
+  }
+
   func testCommit() {
     
     var state = RootState()
