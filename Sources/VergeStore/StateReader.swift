@@ -26,7 +26,7 @@ import Foundation
 import SwiftUI
 import Combine
 
-@available(*, deprecated, renamed: "StateReader")
+@available(*, deprecated, message: "Please use StateReader instead.")
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 public typealias UseState<Value, Content: View> = _StateReaderContent<Value, Content>
 
@@ -81,7 +81,7 @@ public struct _StateReaderContent<Value, Content: View>: View {
 
   @ObservedObject private var observableObject: _VergeObservableObjectBase
 
-  private var content: (Changes<Value>) -> Content
+  private let content: (Changes<Value>) -> Content
   private let updateValue: () -> Changes<Value>
 
   fileprivate init(
@@ -146,7 +146,7 @@ extension StateReader {
   ///
   /// - Complexity: 💡 It depends on how Derived does memoization.
   /// - Parameters:
-  ///   - store:
+  ///   - derived:
   ///   - content:
   public init<Derived: DerivedType>(
     _ derived: Derived
@@ -227,11 +227,11 @@ extension UseState {
 
   }
 
-  /// Initialize from `Store`
+  /// Creates an instance  from `Derived`
   ///
   /// - Complexity: 💡 It depends on how Derived does memoization.
   /// - Parameters:
-  ///   - store:
+  ///   - derived:
   ///   - content:
   public init<Derived: DerivedType>(
     _ derived: Derived,
