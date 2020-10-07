@@ -48,8 +48,6 @@ public protocol DerivedType {
  */
 public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
 
-  public typealias State = Value
-
   public enum Attribute: Hashable {
     case dropsDuplicatedOutput
   }
