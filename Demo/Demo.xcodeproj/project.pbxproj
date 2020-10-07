@@ -8,6 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		13BD6D0FA0ABF698AFCCA4D8 /* Pods_Demo_VergeStoreDemoSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 823BB27FFFB6D98FF641E929 /* Pods_Demo_VergeStoreDemoSwiftUI.framework */; };
+		4B19FCAD252E33A0003A628D /* StateReaderDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B19FCAC252E33A0003A628D /* StateReaderDemoApp.swift */; };
+		4B19FCAF252E33A0003A628D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B19FCAE252E33A0003A628D /* ContentView.swift */; };
+		4B19FCB1252E33A1003A628D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B19FCB0252E33A1003A628D /* Assets.xcassets */; };
+		4B19FCB4252E33A1003A628D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B19FCB3252E33A1003A628D /* Preview Assets.xcassets */; };
+		4B19FCC9252E33D5003A628D /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; };
+		4B19FCCA252E33D5003A628D /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B19FCCB252E33D5003A628D /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; };
+		4B19FCCC252E33D5003A628D /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B7149E724A4FC90006EB6D5 /* Demo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B7149E524A4FC90006EB6D5 /* Demo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B714A9524A4FD51006EB6D5 /* SpotifyUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */; };
 		4B714A9624A4FD51006EB6D5 /* SpotifyUIKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -238,6 +246,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		4B19FCCD252E33D5003A628D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4B19FCCC252E33D5003A628D /* VergeStore.framework in Embed Frameworks */,
+				4B19FCCA252E33D5003A628D /* VergeCore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B714A9A24A4FD51006EB6D5 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -301,6 +321,12 @@
 		183B8CD63E3A820A537C2EC1 /* Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig"; sourceTree = "<group>"; };
 		1FD3E331DC830854E203EE9C /* Pods_SpotifyService_SpotifyDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpotifyService_SpotifyDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3114F85E3DB9175EF2B569F8 /* Pods_SpotifyService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpotifyService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B19FCAA252E33A0003A628D /* StateReaderDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StateReaderDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B19FCAC252E33A0003A628D /* StateReaderDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateReaderDemoApp.swift; sourceTree = "<group>"; };
+		4B19FCAE252E33A0003A628D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4B19FCB0252E33A1003A628D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B19FCB3252E33A1003A628D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4B19FCB5252E33A1003A628D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B7149E224A4FC90006EB6D5 /* Demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B7149E524A4FC90006EB6D5 /* Demo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Demo.h; sourceTree = "<group>"; };
 		4B7149E624A4FC90006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -409,6 +435,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4B19FCA7252E33A0003A628D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B19FCCB252E33D5003A628D /* VergeStore.framework in Frameworks */,
+				4B19FCC9252E33D5003A628D /* VergeCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B7149DF24A4FC90006EB6D5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -490,6 +525,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B19FCAB252E33A0003A628D /* StateReaderDemo */ = {
+			isa = PBXGroup;
+			children = (
+				4B19FCAC252E33A0003A628D /* StateReaderDemoApp.swift */,
+				4B19FCAE252E33A0003A628D /* ContentView.swift */,
+				4B19FCB0252E33A1003A628D /* Assets.xcassets */,
+				4B19FCB5252E33A1003A628D /* Info.plist */,
+				4B19FCB2252E33A1003A628D /* Preview Content */,
+			);
+			path = StateReaderDemo;
+			sourceTree = "<group>";
+		};
+		4B19FCB2252E33A1003A628D /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4B19FCB3252E33A1003A628D /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 		4B7149D824A4FC90006EB6D5 = {
 			isa = PBXGroup;
 			children = (
@@ -501,6 +556,7 @@
 				4B714A7624A4FD2C006EB6D5 /* VergeStoreDemoUIKit */,
 				4B714A8F24A4FD51006EB6D5 /* SpotifyUIKit */,
 				4B714AA124A4FD61006EB6D5 /* SpotifyService */,
+				4B19FCAB252E33A0003A628D /* StateReaderDemo */,
 				4B7149E324A4FC90006EB6D5 /* Products */,
 				AD6DE38C48444B06D801C3C3 /* Pods */,
 				D8C547534028A8A2BD8F9069 /* Frameworks */,
@@ -517,6 +573,7 @@
 				4B714A7524A4FD2C006EB6D5 /* VergeStoreDemoUIKit.app */,
 				4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */,
 				4B714AA024A4FD61006EB6D5 /* SpotifyService.framework */,
+				4B19FCAA252E33A0003A628D /* StateReaderDemo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -829,6 +886,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		4B19FCA9252E33A0003A628D /* StateReaderDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B19FCC4252E33A1003A628D /* Build configuration list for PBXNativeTarget "StateReaderDemo" */;
+			buildPhases = (
+				4B19FCA6252E33A0003A628D /* Sources */,
+				4B19FCA7252E33A0003A628D /* Frameworks */,
+				4B19FCA8252E33A0003A628D /* Resources */,
+				4B19FCCD252E33D5003A628D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StateReaderDemo;
+			productName = StateReaderDemo;
+			productReference = 4B19FCAA252E33A0003A628D /* StateReaderDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
 		4B7149E124A4FC90006EB6D5 /* Demo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B7149EA24A4FC90006EB6D5 /* Build configuration list for PBXNativeTarget "Demo" */;
@@ -980,10 +1055,13 @@
 		4B7149D924A4FC90006EB6D5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1150;
+				LastSwiftUpdateCheck = 1200;
 				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = muukii;
 				TargetAttributes = {
+					4B19FCA9252E33A0003A628D = {
+						CreatedOnToolsVersion = 12.0;
+					};
 					4B7149E124A4FC90006EB6D5 = {
 						CreatedOnToolsVersion = 11.5;
 					};
@@ -1043,6 +1121,7 @@
 				4B714A7424A4FD2C006EB6D5 /* VergeStoreDemoUIKit */,
 				4B714A8D24A4FD51006EB6D5 /* SpotifyUIKit */,
 				4B714A9F24A4FD61006EB6D5 /* SpotifyService */,
+				4B19FCA9252E33A0003A628D /* StateReaderDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -1135,6 +1214,15 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4B19FCA8252E33A0003A628D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B19FCB4252E33A1003A628D /* Preview Assets.xcassets in Resources */,
+				4B19FCB1252E33A1003A628D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B7149E024A4FC90006EB6D5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1341,6 +1429,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4B19FCA6252E33A0003A628D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B19FCAF252E33A0003A628D /* ContentView.swift in Sources */,
+				4B19FCAD252E33A0003A628D /* StateReaderDemoApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B7149DE24A4FC90006EB6D5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1523,6 +1620,50 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4B19FCB6252E33A1003A628D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"StateReaderDemo/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = StateReaderDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.VergeGroup.StateReaderDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B19FCB7252E33A1003A628D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"StateReaderDemo/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = StateReaderDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.VergeGroup.StateReaderDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		4B7149E824A4FC90006EB6D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1966,6 +2107,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4B19FCC4252E33A1003A628D /* Build configuration list for PBXNativeTarget "StateReaderDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B19FCB6252E33A1003A628D /* Debug */,
+				4B19FCB7252E33A1003A628D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4B7149DC24A4FC90006EB6D5 /* Build configuration list for PBXProject "Demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
