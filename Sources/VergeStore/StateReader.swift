@@ -26,6 +26,10 @@ import Foundation
 import SwiftUI
 import Combine
 
+@available(*, deprecated, renamed: "StateReader")
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
+public typealias UseState<Value, Content: View> = StateReader<Value, Content>
+
 /**
  A view that injects a state from `Store` or `Derived`.
  `content: @escaping (StateProvider) -> Content` will continue updates each `Store` or `Derived` updating
@@ -33,7 +37,7 @@ import Combine
    - Setting memoization and dropping duplicated output value
  */
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-public struct UseState<Value, Content: View>: View {
+public struct StateReader<Value, Content: View>: View {
 
   @ObservedObject private var observableObject: _VergeObservableObjectBase
 
@@ -58,7 +62,7 @@ public struct UseState<Value, Content: View>: View {
 }
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-extension UseState {
+extension StateReader {
 
   /// Initialize from `Store`
   ///
