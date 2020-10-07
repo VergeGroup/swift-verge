@@ -30,6 +30,20 @@ import Combine
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 public typealias UseState<Value, Content: View> = StateReader<Value, Content>
 
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
+fileprivate final class _Subject: ObservableObject {
+
+  let objectWillChange: ObservableObjectPublisher = .init()
+
+  init() {
+
+  }
+
+  func notify() {
+    objectWillChange.send()
+  }
+}
+
 /**
  A view that injects a state from `Store` or `Derived`.
  `content: @escaping (StateProvider) -> Content` will continue updates each `Store` or `Derived` updating
@@ -39,7 +53,7 @@ public typealias UseState<Value, Content: View> = StateReader<Value, Content>
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 public struct StateReader<Value, Content: View>: View {
 
-  @ObservedObject private var observableObject: _VergeObservableObjectBase
+  @ObservedObject private var subject = _Subject()
 
   private let content: (Changes<Value>) -> Content
   private let updateValue: () -> Changes<Value>
