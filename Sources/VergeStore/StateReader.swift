@@ -91,10 +91,6 @@ public struct _StateReaderContent<Value, Content: View>: View {
     self.content = content
     self.updateValue = updateValue
 
-    updateTrigger.objectWillChange.sink {
-      print("update")
-    }
-    .store(in: &bag)
   }
 
   public var body: some View {
@@ -103,9 +99,6 @@ public struct _StateReaderContent<Value, Content: View>: View {
   }
 
 }
-
-@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-var bag = Set<AnyCancellable>()
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 extension StateReader {
