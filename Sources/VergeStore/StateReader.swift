@@ -31,8 +31,10 @@ import Combine
 public typealias UseState<Value, Content: View> = _StateReaderContent<Value, Content>
 
 /**
- A view that injects a state from `Store` or `Derived`.
- `content: @escaping (StateProvider) -> Content` will continue updates each `Store` or `Derived` updating
+ A descriptor view that indicates what reads state value from Store/Derived.
+ 
+ It doesn't have content-view still.
+ Make sure it owning content-view with calling `.content()`.
  */
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 public struct StateReader<Value>: View {
