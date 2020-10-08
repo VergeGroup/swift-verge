@@ -26,18 +26,58 @@ import Foundation
 import SwiftUI
 import Combine
 
-@available(*, deprecated, renamed: "StateReader")
+@available(*, deprecated, message: "Please use StateReader instead.")
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-public typealias UseState<Value, Content: View> = StateReader<Value, Content>
+public typealias UseState<Value, Content: View> = _StateReaderContent<Value, Content>
 
 /**
- A view that injects a state from `Store` or `Derived`.
- `content: @escaping (StateProvider) -> Content` will continue updates each `Store` or `Derived` updating
- - TODO:
-   - Setting memoization and dropping duplicated output value
+ A descriptor view that indicates what reads state value from Store/Derived.
+ 
+ It doesn't have content-view still.
+ Make sure it owning content-view with calling `.content()`.
  */
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-public struct StateReader<Value, Content: View>: View {
+public struct StateReader<Value>: View {
+
+  private let observableObject: _VergeObservableObjectBase
+  private let updateValue: () -> Changes<Value>
+
+  fileprivate init(
+    updateTrigger: _VergeObservableObjectBase,
+    updateValue: @escaping () -> Changes<Value>
+  ) {
+    self.observableObject = updateTrigger
+    self.updateValue = updateValue
+  }
+
+  public var body: EmptyView {
+    assertionFailure("""
+      Warning: StateReader still does not have a content-view.
+      Please add a content by `.content()`.
+
+      This issue comes from current auto-completion function doesn't work well.
+      Probably, it's might be fixed with better syntax.
+      """)
+    return EmptyView()
+  }
+
+  /**
+   Makes itself having content.
+
+   This syntax and approach are related to the lacking of current Xcode's auto-completion. (Xcode12)
+   */
+  public func content<NewContent: View>(_ makeContent: @escaping (Changes<Value>) -> NewContent) -> _StateReaderContent<Value, NewContent> {
+    return .init(updateTrigger: observableObject, updateValue: updateValue, content: makeContent)
+  }
+
+  @available(*, deprecated, message: "You're returning a value which is not a type of `SwiftUI.View`.")
+  public func content(_ makeContent: @escaping (Changes<Value>) -> Never) -> Never {
+    fatalError()
+  }
+}
+
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
+public struct _StateReaderContent<Value, Content: View>: View {
 
   @ObservedObject private var observableObject: _VergeObservableObjectBase
 
@@ -52,6 +92,7 @@ public struct StateReader<Value, Content: View>: View {
     self.observableObject = updateTrigger
     self.content = content
     self.updateValue = updateValue
+
   }
 
   public var body: some View {
@@ -64,40 +105,100 @@ public struct StateReader<Value, Content: View>: View {
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 extension StateReader {
 
-  /// Initialize from `Store`
+  /// inner init
+  private init<Derived: DerivedType>(
+    derived: Derived
+  ) where Value == Derived.Value {
+
+    let concrete = derived.asDerived()
+
+    self.init(
+      updateTrigger: concrete,
+      updateValue: {
+        concrete.value
+      }
+    )
+
+  }
+
+  /// Creates an instance from `Store`
   ///
-  /// - Complexity: Depends on the map parameter
+  /// - Complexity: ⚠️ No memoization, content closure runs every time according to the store's updates.
   /// - Parameters:
   ///   - store:
   ///   - content:
   public init<Store: StoreType>(
-    _ store: Store,
-    _ map: MemoizeMap<Changes<Store.State>, Value>,
-    @ViewBuilder content: @escaping (Changes<Value>) -> Content
-  ) {
-
-    var current: Changes<Value>?
+    _ store: Store
+  ) where Value == Store.State {
 
     let store = store.asStore()
 
     self.init(
       updateTrigger: store,
       updateValue: {
-        if let _current = current {
-          switch map.makeResult(store.state) {
-          case .noChanages:
-            return _current
-          case .updated(let value):
-            let next = _current.makeNextChanges(with: value)
-            current = next
-            return next
-          }
-        } else {
-          let first = Changes<Value>(old: nil, new: map.makeInitial(store.state))
-          current = first
-          return first
-        }
-    },
+        store.state
+      }
+    )
+
+  }
+
+  /// Creates an instance  from `Derived`
+  ///
+  /// - Complexity: 💡 It depends on how Derived does memoization.
+  /// - Parameters:
+  ///   - derived:
+  ///   - content:
+  public init<Derived: DerivedType>(
+    _ derived: Derived
+  ) where Value == Derived.Value {
+
+    self.init(derived: derived)
+
+  }
+
+  /// Initialize from `Store`
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
+  /// - Parameters:
+  ///   - store:
+  ///   - content:
+  public init<Store: StoreType>(
+    _ store: Store
+  ) where Value == Store.State, Value : Equatable {
+    self.init(store.derived(.map(\.root)))
+  }
+
+  /// Initialize from `Store`
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
+  /// - Parameters:
+  ///   - store:
+  ///   - content:
+  public init<Derived: DerivedType>(
+    _ derived: Derived
+  ) where Value == Derived.Value, Value : Equatable {
+    assert(derived.asDerived().attributes.contains(.dropsDuplicatedOutput) == true)
+    self.init(derived: derived)
+  }
+
+}
+
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
+extension UseState {
+
+  /// inner init
+  private init<Derived: DerivedType>(
+    derived: Derived,
+    @ViewBuilder content: @escaping (Changes<Derived.Value>) -> Content
+  ) where Value == Derived.Value {
+
+    let concrete = derived.asDerived()
+
+    self.init(
+      updateTrigger: concrete,
+      updateValue: {
+        concrete.value
+      },
       content: content
     )
 
@@ -105,15 +206,39 @@ extension StateReader {
 
   /// Initialize from `Store`
   ///
-  /// - Complexity: ⚠️ No memoization
+  /// - Complexity: ⚠️ No memoization, content closure runs every time according to the store's updates.
   /// - Parameters:
   ///   - store:
   ///   - content:
   public init<Store: StoreType>(
-    _ store: Store,
-    @ViewBuilder content: @escaping (Changes<Value>) -> Content
+    store: Store,
+    @ViewBuilder content: @escaping (Changes<Store.State>) -> Content
   ) where Value == Store.State {
-    self.init(store, .map(\.root), content: content)
+
+    let store = store.asStore()
+
+    self.init(
+      updateTrigger: store,
+      updateValue: {
+        store.state
+      },
+      content: content
+    )
+
+  }
+
+  /// Creates an instance  from `Derived`
+  ///
+  /// - Complexity: 💡 It depends on how Derived does memoization.
+  /// - Parameters:
+  ///   - derived:
+  ///   - content:
+  public init<Derived: DerivedType>(
+    _ derived: Derived,
+    @ViewBuilder content: @escaping (Changes<Derived.Value>) -> Content
+  ) where Value == Derived.Value {
+
+    self.init(derived: derived, content: content)
   }
 
   /// Initialize from `Store`
@@ -126,49 +251,23 @@ extension StateReader {
     _ store: Store,
     @ViewBuilder content: @escaping (Changes<Value>) -> Content
   ) where Value == Store.State, Value : Equatable {
-    self.init(store, .map(\.root), content: content)
+    self.init(store.derived(.map(\.root)), content: content)
   }
 
-  /// Initialize from `Derived`
-  ///
-  /// - Complexity: Depends on the map parameter
-  /// - Parameters:
-  ///   - derived:
-  ///   - content:
-  public init<Derived: DerivedType>(
-    _ derived: Derived,
-    _ map: MemoizeMap<Changes<Derived.Value>, Value>,
-    @ViewBuilder content: @escaping (Changes<Value>) -> Content
-  ) {
-    self.init(derived.asDerived().innerStore, map, content: content)
-  }
-
-  /// Initialize from `Derived`
-  ///
-  /// - Complexity: ⚠️ No memoization
-  /// - Parameters:
-  ///   - derived:
-  ///   - content:
-  public init<Derived: DerivedType>(
-    _ derived: Derived,
-    @ViewBuilder content: @escaping (Changes<Value>) -> Content
-  ) where Value == Derived.Value {
-    self.init(derived, .map(\.root), content: content)
-  }
-
-  /// Initialize from `Derived`
+  /// Initialize from `Store`
   ///
   /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameters:
-  ///   - derived:
+  ///   - store:
   ///   - content:
   public init<Derived: DerivedType>(
     _ derived: Derived,
     @ViewBuilder content: @escaping (Changes<Value>) -> Content
   ) where Value == Derived.Value, Value : Equatable {
-    self.init(derived, .map(\.root), content: content)
-  }
+    assert(derived.asDerived().attributes.contains(.dropsDuplicatedOutput) == true)
+    self.init(derived: derived, content: content)
 
+  }
 
 }
 

@@ -31,7 +31,7 @@ import Combine
 
 public protocol DerivedType {
   associatedtype Value
-  
+
   func asDerived() -> Derived<Value>
 }
 
@@ -141,7 +141,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   }
 
   deinit {
-    
+
   }
   
   // MARK: - Functions
