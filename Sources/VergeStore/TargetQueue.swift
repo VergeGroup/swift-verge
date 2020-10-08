@@ -21,71 +21,97 @@
 
 import Foundation
 
+#if !COCOAPODS
+import VergeCore
+#endif
+
 /// Describes queue to dispatch event
 /// Currently light-weight impl
-public struct TargetQueue {
+public final class TargetQueue {
 
-  /// An identifier to be used cache internally.
-  public let identifier: String
+  private let schedule: (@escaping () -> Void) -> Void
 
-  private let dispatch: (@escaping () -> Void) -> Void
-
-  public init(
-    identifier: String,
-    dispatch: @escaping (@escaping () -> Void) -> Void
+  fileprivate init(
+    schedule: @escaping (@escaping () -> Void) -> Void
   ) {
-    self.identifier = identifier
-    self.dispatch = dispatch
+    self.schedule = schedule
   }
 
   func executor() -> (@escaping () -> Void) -> Void {
-    dispatch
+    schedule
   }
 }
 
-fileprivate enum TargetQueue_StaticMember {
+fileprivate enum StaticMember {
 
-  static let main: TargetQueue = .init(identifier: "main") { workItem in
-    if Thread.isMainThread {
-      workItem()
-    } else {
-      DispatchQueue.main.async(execute: workItem)
-    }
-  }
-
-  static let asyncMain: TargetQueue = .init(identifier: "async-main") { workItem in
-    DispatchQueue.main.async(execute: workItem)
-  }
-
-  static let serialBackgroundDispatchQueue: DispatchQueue = .init(label: "org.verge.background", qos: .default, attributes: [], autoreleaseFrequency: .workItem, target: nil)
-
-  static let serialBackground: TargetQueue = .init(identifier: "asyncSerialBackground") { workItem in
-    serialBackgroundDispatchQueue.async(execute: workItem)
-  }
+  static let serialBackgroundDispatchQueue: DispatchQueue = .init(
+    label: "org.verge.background",
+    qos: .default,
+    attributes: [],
+    autoreleaseFrequency: .workItem,
+    target: nil
+  )
 
 }
+
+extension DispatchQueue {
+  private static var token: DispatchSpecificKey<()> = {
+    let key = DispatchSpecificKey<()>()
+    DispatchQueue.main.setSpecific(key: key, value: ())
+    return key
+  }()
+
+  static var isMain: Bool {
+    return DispatchQueue.getSpecific(key: token) != nil
+  }
+}
+
 
 extension TargetQueue {
 
-  /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
-  public static var main: TargetQueue {
-    TargetQueue_StaticMember.main
+  /// It never dispatches.
+  public static let passthrough: TargetQueue = .init { workItem in
+    workItem()
   }
 
   /// It dispatches to main-queue asynchronously always.
-  public static var asyncMain: TargetQueue {
-    TargetQueue_StaticMember.asyncMain
+  public static let asyncMain: TargetQueue = .init { workItem in
+    DispatchQueue.main.async(execute: workItem)
+  }
+
+  /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
+  public static let main: TargetQueue = mainIsolated()
+
+  public static func mainIsolated() -> TargetQueue {
+    let numberEnqueued = VergeConcurrency.AtomicInt(initialValue: 0)
+
+    return .init { workItem in
+
+      let previousNumberEnqueued = numberEnqueued.getAndIncrement()
+
+      if DispatchQueue.isMain && previousNumberEnqueued == 0 {
+        workItem()
+        numberEnqueued.decrementAndGet()
+      } else {
+        DispatchQueue.main.async {
+          workItem()
+          numberEnqueued.decrementAndGet()
+        }
+      }
+    }
   }
 
   /// Use specified queue, always dispatches
   public static func specific(_ targetQueue: DispatchQueue) -> TargetQueue {
-    return .init(identifier: "queue-\(ObjectIdentifier(targetQueue))") { workItem in
+    return .init { workItem in
       targetQueue.async(execute: workItem)
     }
   }
 
   /// It dispatches to the serial background queue asynchronously.
-  public static var asyncSerialBackground: TargetQueue {
-    TargetQueue_StaticMember.serialBackground
+  public static var asyncSerialBackground: TargetQueue = .init { workItem in
+    StaticMember.serialBackgroundDispatchQueue.async(execute: workItem)
   }
 }
+
+

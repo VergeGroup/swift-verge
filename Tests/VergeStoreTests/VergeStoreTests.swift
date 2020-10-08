@@ -259,7 +259,7 @@ final class VergeStoreTests: XCTestCase {
     var subscriptions = Set<VergeAnyCancellable>()
     var count = 0
     
-    store.sinkState { (changes) in
+    store.sinkState(queue: .passthrough) { (changes) in
       count += 1
     }
     .store(in: &subscriptions)
@@ -366,7 +366,7 @@ final class VergeStoreTests: XCTestCase {
     let store2 = DemoStore()
     
     let sub = store1
-      .derived(.map(\.count))
+      .derived(.map(\.count), queue: .passthrough)
       .assign(to: \.count, on: store2)
     
     store1.commit {
@@ -391,7 +391,7 @@ final class VergeStoreTests: XCTestCase {
     let store2 = DemoStore()
     
     let sub = store1
-      .derived(.map(\.count))
+      .derived(.map(\.count), queue: .passthrough)
       .assign(to: store2.assignee(\.count))
     
     store1.commit {
@@ -426,7 +426,7 @@ final class VergeStoreTests: XCTestCase {
       init(sourceStore: DemoStore) {
         
         let d = sourceStore
-          .derived(.map(\.count))
+          .derived(.map(\.count), queue: .passthrough)
         
         self.store = .init(initialState: .init(source: d.value), logger: nil)
         

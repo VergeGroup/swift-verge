@@ -102,7 +102,7 @@ extension StoreComponentType {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
+    queue: TargetQueue = .main,
     receive: @escaping (Changes<WrappedStore.State>) -> Void
   ) -> VergeAnyCancellable {
     store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -120,57 +120,22 @@ extension StoreComponentType {
   public func sinkState<Accumulate>(
     scan: Scan<Changes<WrappedStore.State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
+    queue: TargetQueue = .main,
     receive: @escaping (Changes<WrappedStore.State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     store.asStore().sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
-  /// Subscribe the state changes
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkState")
-  public func sinkChanges(
-    dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
-    receive: @escaping (Changes<WrappedStore.State>) -> Void
-  ) -> VergeAnyCancellable {
-    store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
-  /// Subscribe the state changes
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkState")
-  public func subscribeChanges(
-    dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
-    receive: @escaping (Changes<WrappedStore.State>) -> Void
-  ) -> VergeAnyCancellable {
-    store.asStore().sinkChanges(dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkActivity(
-    queue: TargetQueue? = nil,
+    queue: TargetQueue = .main,
     receive: @escaping (WrappedStore.Activity) -> Void
   ) -> VergeAnyCancellable  {
     store.asStore().sinkActivity(queue: queue, receive: receive)
   }
-  
-  /// Subscribe the activity
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkActivity")
-  public func subscribeActivity(
-    queue: TargetQueue? = nil,
-    receive: @escaping (WrappedStore.Activity) -> Void
-  ) -> VergeAnyCancellable  {
-    store.asStore().sinkActivity(queue: queue, receive: receive)
-  }
-      
+ 
 }
 
 #if canImport(Combine)

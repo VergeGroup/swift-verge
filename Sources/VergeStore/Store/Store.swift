@@ -221,46 +221,30 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
+    queue: TargetQueue = .main,
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
     
-    if let execute = queue?.executor() {
+    let execute = queue.executor()
 
-      /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
-      let cancellable = _backingStorage.addDidUpdate { newValue in
-        execute {
-          receive(newValue)
-        }
-      }
-
-      if !dropsFirst {
-        let value = _backingStorage.value.droppedPrevious()
-        execute {
-          /// this closure might contains some mutations.
-          ///  It depends outside usages.
-          receive(value)
-        }
-      }
-
-      return .init(cancellable)
-      
-    } else {
-
-      /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
-      let cancellable = _backingStorage.addDidUpdate { newValue in
+    /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
+    let cancellable = _backingStorage.addDidUpdate { newValue in
+      execute {
         receive(newValue)
       }
+    }
 
-      if !dropsFirst {
+    if !dropsFirst {
+      let value = _backingStorage.value.droppedPrevious()
+      execute {
         /// this closure might contains some mutations.
         ///  It depends outside usages.
-        receive(_backingStorage.value.droppedPrevious())
+        receive(value)
       }
-      
-      return .init(cancellable)
     }
-    
+
+    return .init(cancellable)
+
   }
 
   /// Subscribe the state changes
@@ -275,7 +259,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   public func sinkState<Accumulate>(
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
+    queue: TargetQueue = .main,
     receive: @escaping (Changes<State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
 
@@ -287,65 +271,22 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
   }
 
-  /// Subscribe the state changes
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkState")
-  public func sinkChanges(
-    dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
-    receive: @escaping (Changes<State>) -> Void
-  ) -> VergeAnyCancellable {
-    sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
-  /// Subscribe the state changes
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkState")
-  public func subscribeChanges(
-    dropsFirst: Bool = false,
-    queue: TargetQueue? = nil,
-    receive: @escaping (Changes<State>) -> Void
-  ) -> VergeAnyCancellable {
-    sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkActivity(
-    queue: TargetQueue? = nil,
+    queue: TargetQueue = .main,
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
     
-    if let execute = queue?.executor() {
-      let cancellable = _activityEmitter.add { (activity) in
-        execute {
-          receive(activity)
-        }
-      }
-      return .init(cancellable)
-    } else {
-      //      let lock = NSRecursiveLock()
-      let cancellable = _activityEmitter.add { activity in
-        //        lock.lock(); defer { lock.unlock() }
+    let execute = queue.executor()
+    let cancellable = _activityEmitter.add { (activity) in
+      execute {
         receive(activity)
       }
-      return .init(cancellable)
     }
-    
+    return .init(cancellable)
+
   }
-  
-  /// Subscribe the activity
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkActivity")
-  public func subscribeActivity(
-    queue: TargetQueue? = nil,
-    receive: @escaping (Activity) -> Void
-  ) -> VergeAnyCancellable {
-    sinkActivity(queue: queue, receive: receive)
-  }
-             
+
 }
