@@ -80,8 +80,9 @@ extension TargetQueue {
   }
 
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
-  public static func main() -> TargetQueue {
+  public static let main: TargetQueue = mainIsolated()
 
+  public static func mainIsolated() -> TargetQueue {
     let numberEnqueued = VergeConcurrency.AtomicInt(initialValue: 0)
 
     return .init { workItem in
