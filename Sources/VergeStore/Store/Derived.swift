@@ -252,7 +252,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
         
     let derived = chainCahce2.withValue { cache -> Derived<NewState> in
       
-      let identifier = "\(map.identifier)\(String(describing: queue.identifier))" as NSString
+      let identifier = "\(map.identifier)\(ObjectIdentifier(queue))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeChain(map, queue: queue)
@@ -287,7 +287,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
     
     return chainCahce1.withValue { cache in
       
-      let identifier = "\(map.identifier)\(String(describing: queue.identifier))" as NSString
+      let identifier = "\(map.identifier)\(ObjectIdentifier(queue))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeChain(map, queue: queue).removeDuplicates(by: { !$0.hasChanges })
@@ -540,7 +540,7 @@ extension StoreType {
         
     let derived = asStore().derivedCache2.withValue { cache -> Derived<NewState> in
       
-      let identifier = "\(memoizeMap.identifier)\(String(describing: queue.identifier))" as NSString
+      let identifier = "\(memoizeMap.identifier)\(ObjectIdentifier(queue))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeDerived(memoizeMap, queue: queue)
@@ -578,7 +578,7 @@ extension StoreType {
     
     return asStore().derivedCache1.withValue { cache in
       
-      let identifier = "\(memoizeMap.identifier)\(String(describing: queue.identifier))" as NSString
+      let identifier = "\(memoizeMap.identifier)\(ObjectIdentifier(queue))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeDerived(memoizeMap, queue: queue)
