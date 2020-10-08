@@ -28,10 +28,12 @@ import Combine
 open class _VergeObservableObjectBase {
 
   #if canImport(Combine)
+
   @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
   public var objectWillChange: ObservableObjectPublisher {
     fatalError("Must be override")
   }
+
   #endif
 
 }
