@@ -308,7 +308,7 @@ final class DerivedCacheTests: XCTestCase {
     )
     
     XCTAssert(
-      store1.derived(.map(\.count), queue: .main) !==
+      store1.derived(.map(\.count), queue: .main) ===
         store1.derived(.map(\.count), queue: .main)
     )
 
