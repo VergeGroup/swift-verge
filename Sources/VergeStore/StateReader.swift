@@ -66,7 +66,7 @@ public struct StateReader<Value>: View {
 
    This syntax and approach are related to the lacking of current Xcode's auto-completion. (Xcode12)
    */
-  public func content<NewContent: View>(_ makeContent: @escaping (Changes<Value>) -> NewContent) -> _StateReaderContent<Value, NewContent> {
+  public func content<NewContent: View>(@ViewBuilder _ makeContent: @escaping (Changes<Value>) -> NewContent) -> _StateReaderContent<Value, NewContent> {
     return .init(updateTrigger: observableObject, updateValue: updateValue, content: makeContent)
   }
 
