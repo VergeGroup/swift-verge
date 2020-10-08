@@ -210,7 +210,7 @@ extension StoreType where State : DatabaseEmbedding {
   public func derived<Entity: EntityType>(
     from entityID: Entity.EntityID,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> Entity.Derived {
     
     objc_sync_enter(self); defer { objc_sync_exit(self) }
@@ -251,7 +251,7 @@ extension StoreType where State : DatabaseEmbedding {
   fileprivate func _primary_derivedNonNull<Entity: EntityType>(
     from entity: Entity,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> Entity.NonNullDerived {
     
     let fallingBackValue = VergeConcurrency.RecursiveLockAtomic<Entity>.init(entity)
@@ -293,7 +293,7 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType>(
     from entity: Entity,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> Entity.NonNullDerived {
 
     _primary_derivedNonNull(from: entity, dropsOutput: dropsOutput, queue: queue)
@@ -344,7 +344,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derived<Entity: EntityType & Equatable>(
     from entityID: Entity.EntityID,
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> Entity.Derived {
     
     derived(from: entityID, dropsOutput: ==, queue: queue)
@@ -362,7 +362,7 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType>(
     from entityID: Entity.EntityID,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) throws -> Entity.NonNullDerived {
     
     let path = State.getterToDatabase
@@ -385,7 +385,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entityID: Entity.EntityID,
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) throws -> Entity.NonNullDerived {
     try derivedNonNull(from: entityID, dropsOutput: ==, queue: queue)
   }
@@ -401,7 +401,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entity: Entity,
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> Entity.NonNullDerived {
     _primary_derivedNonNull(from: entity, dropsOutput: ==, queue: queue)
   }
@@ -420,7 +420,7 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entityIDs: S,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity.EntityID {
     entityIDs.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
       do {
@@ -442,7 +442,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from entityIDs: S,
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity.EntityID {
     derivedNonNull(from: entityIDs, dropsOutput: ==, queue: queue)
   }
@@ -459,7 +459,7 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType>(
     from entityIDs: Set<Entity.EntityID>,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: AnySequence.init(entityIDs.makeIterator), dropsOutput: dropsOutput, queue: queue)
   }
@@ -475,7 +475,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entityIDs: Set<Entity.EntityID>,
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: entityIDs, dropsOutput: ==, queue: queue)
   }
@@ -492,7 +492,7 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entities: S,
     dropsOutput: @escaping (S.Element?, S.Element?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
     entities.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
       r.append(derived: _primary_derivedNonNull(from: e, dropsOutput: dropsOutput, queue: queue), id: e.entityID)
@@ -510,7 +510,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from entities: S,
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
     derivedNonNull(from: entities, dropsOutput: ==, queue: queue)
   }
@@ -527,7 +527,7 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType>(
     from entities: Set<Entity>,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: AnySequence.init(entities.makeIterator), queue: queue)
   }
@@ -543,7 +543,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from entities: Set<Entity>,
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: entities, dropsOutput: ==, queue: queue)
   }
@@ -560,7 +560,7 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType>(
     from insertionResult: EntityTable<State.Database.Schema, Entity>.InsertionResult,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> Entity.NonNullDerived {
     _primary_derivedNonNull(from: insertionResult.entity, dropsOutput: dropsOutput, queue: queue)
   }
@@ -576,7 +576,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable>(
     from insertionResult: EntityTable<State.Database.Schema, Entity>.InsertionResult,
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> Entity.NonNullDerived {
     derivedNonNull(from: insertionResult, dropsOutput: ==, queue: queue)
   }
@@ -593,7 +593,7 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from insertionResults: S,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
     derivedNonNull(from: insertionResults.map { $0.entity }, queue: queue)
   }
@@ -609,7 +609,7 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
     from insertionResults: S,
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
     
     derivedNonNull(from: insertionResults, dropsOutput: ==, queue: queue)
@@ -631,7 +631,7 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<E0: EntityType & Equatable, E1: EntityType & Equatable>(
     from e0ID: E0.EntityID,
     _ e1ID: E1.EntityID,
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) throws -> Derived<(NonNullEntityWrapper<E0>, NonNullEntityWrapper<E1>)> {
     
     Derived.combined(
@@ -654,7 +654,7 @@ extension StoreType where State : DatabaseEmbedding {
     from e0ID: E0.EntityID,
     _ e1ID: E1.EntityID,
     _ e2ID: E2.EntityID,
-    queue: TargetQueue = .asyncSerialBackground
+    queue: TargetQueue = .passthrough
   ) throws -> Derived<(NonNullEntityWrapper<E0>, NonNullEntityWrapper<E1>, NonNullEntityWrapper<E2>)> {
     
     Derived.combined(
