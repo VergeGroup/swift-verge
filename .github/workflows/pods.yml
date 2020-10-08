@@ -16,4 +16,4 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Lint Cocoapods
-        run: pod lib lint
+        run: pod lib lint --allow-warnings
