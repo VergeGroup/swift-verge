@@ -71,7 +71,7 @@ public struct StateReader<Value>: View {
   }
 
   @available(*, deprecated, message: "You're returning a value which is not a type of `SwiftUI.View`.")
-  public func content(_ makeContent: @escaping (Changes<Value>) -> Never) -> Never {
+  public func content(@ViewBuilder _ makeContent: @escaping (Changes<Value>) -> Never) -> Never {
     fatalError()
   }
 }
