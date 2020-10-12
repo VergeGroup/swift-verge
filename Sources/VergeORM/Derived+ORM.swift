@@ -670,14 +670,50 @@ extension StoreType where State : DatabaseEmbedding {
 
 extension StoreType where State : DatabaseEmbedding {
 
-  // TODO: Type-safe Target Entity
-  public func derivedQueriedEntities<Entity: EntityType>(
+  public func derivedQueriedDerivedEntities<Entity: EntityType>(
     update: @escaping (IndexesPropertyAdapter<State.Database>) -> AnyCollection<Entity.EntityID>,
     queue: TargetQueue = .passthrough
-  ) -> Derived<AnyCollection<Entity>> {
+  ) -> Derived<AnyCollection<Entity.Derived>> {
+    
+    let path = State.getterToDatabase
+    
+    let hasChangesComparer = Comparer<State.Database>(or: [
 
-    derived(._collection(update: update), queue: queue)
+      /** Step 1 */
+      Comparer<State.Database>.databaseNoUpdates(),
 
+      /** Step 2 */
+      Comparer<State.Database>.tableNoUpdates(Entity.self),
+
+      /** And more we need */
+    ])
+
+    let memoizeMap = MemoizeMap<Changes<State>, AnyCollection<Entity.Derived>>(
+      makeInitial: { (state: Changes<State>) in
+        
+        let db = path(state.primitive)
+        let ids = update(db.indexes)
+        
+        let derivedIDs = ids.map {
+          self.derived(from: $0)
+        }
+        
+        return AnyCollection(derivedIDs)
+      },
+      update: { state in
+        
+        let db = path(state.primitive)
+        let ids = update(db.indexes)
+        
+        let derivedIDs = ids.map {
+          self.derived(from: $0)
+        }
+        
+        return .updated(AnyCollection(derivedIDs))
+      }
+    )
+    
+    return derived(memoizeMap)
   }
 
 }
