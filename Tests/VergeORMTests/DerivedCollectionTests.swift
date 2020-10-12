@@ -28,7 +28,8 @@ class DerivedCollectionTests: XCTestCase {
     }
 
     let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
-      return AnyCollection(index.allAuthros.prefix(3))
+      // FIXME: This line causes stack overflow without Array()
+      return AnyCollection(Array(index.allAuthros).prefix(3))
     })
 
     XCTAssertEqual(d.value.map { $0.entityID.raw }, ["0", "1", "2"])
