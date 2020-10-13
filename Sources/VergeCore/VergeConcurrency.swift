@@ -24,28 +24,22 @@ import Foundation
 public enum VergeConcurrency {
   
   public final class UnfairLock {
-    private let _lock: os_unfair_lock_t
+    private let _lock: NSRecursiveLock
     
     public init() {
-      _lock = .allocate(capacity: 1)
-      _lock.initialize(to: os_unfair_lock())
+      _lock = .init()
     }
     
     public func lock() {
-      os_unfair_lock_lock(_lock)
+      _lock.lock()
     }
     
     public func unlock() {
-      os_unfair_lock_unlock(_lock)
+      _lock.unlock()
     }
     
     public func `try`() -> Bool {
-      return os_unfair_lock_trylock(_lock)
-    }
-    
-    deinit {
-      _lock.deinitialize(count: 1)
-      _lock.deallocate()
+      return _lock.try()
     }
   }
   
