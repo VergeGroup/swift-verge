@@ -22,7 +22,8 @@ class DerivedCollectionTests: XCTestCase {
         let authors = (0..<10).map { i in
           Author(rawID: "\(i)")
         }
-        context.author.insert(authors)
+        let result = context.author.insert(authors)
+        context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
       }
     }
 
@@ -45,7 +46,8 @@ class DerivedCollectionTests: XCTestCase {
         let authors = (0..<10).map { i in
           Author(rawID: "\(i)")
         }
-        context.author.insert(authors)
+        let result = context.author.insert(authors)
+        context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
       }
     }
     
@@ -59,8 +61,11 @@ class DerivedCollectionTests: XCTestCase {
     store.commit {
       $0.db.performBatchUpdates { context in
         context.author.deleteAll()
+        context.indexes.allAuthros.removeAll()
+        
         let author = Author(rawID: "\(10)")
-        context.author.insert(author)
+        let result = context.author.insert(author)
+        context.indexes.allAuthros.append(result.entityID)
       }
     }
     
@@ -68,15 +73,15 @@ class DerivedCollectionTests: XCTestCase {
   }
   
   func testInsideChange() {
-    
     let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
-
+    
     store.commit {
       $0.db.performBatchUpdates { context in
         let authors = (0..<10).map { i in
           Author(rawID: "\(i)")
         }
-        context.author.insert(authors)
+        let result = context.author.insert(authors)
+        context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
       }
     }
     
@@ -87,7 +92,7 @@ class DerivedCollectionTests: XCTestCase {
     
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
     
-    store.commit {
+    let _ = store.commit {
       $0.db.performBatchUpdates { context in
         context.author.updateIfExists(id: .init("\(1)")) { author in
           author.name = "\(1)"
@@ -95,6 +100,7 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
     
-    XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["10"])
+    XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
+    XCTAssertEqual(d.value.map { $0.value.name }, ["1"])
   }
 }
