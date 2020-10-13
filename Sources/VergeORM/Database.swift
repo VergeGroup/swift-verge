@@ -26,13 +26,22 @@ import VergeStore
 #endif
 
 public struct EntityTableKey<S: EntityType> {
-  
-  public init() {}
+
+  private let sourceInfo: String
+
+  public init(file: StaticString = #file, line: UInt = #line, column: UInt = #column) {
+    self.sourceInfo = "\(file)|\(line)|\(column)"
+  }
+
 }
 
 public struct IndexKey<Index: IndexType> {
-  
-  public init() {}
+
+  private let sourceInfo: String
+
+  public init(file: StaticString = #file, line: UInt = #line, column: UInt = #column) {
+    self.sourceInfo = "\(file)|\(line)|\(column)"
+  }
 }
 
 public protocol IndexesType {
