@@ -670,7 +670,7 @@ extension StoreType where State : DatabaseEmbedding {
 
 extension StoreType where State : DatabaseEmbedding {
 
-  public func derivedQueriedDerivedEntities<Entity: EntityType>(
+  public func derivedQueriedEntities<Entity: EntityType>(
     update: @escaping (IndexesPropertyAdapter<State.Database>) -> AnyCollection<Entity.EntityID>,
     queue: TargetQueue = .passthrough
   ) -> Derived<AnyCollection<Entity.Derived>> {

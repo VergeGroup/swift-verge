@@ -32,7 +32,7 @@ class DerivedCollectionTests: XCTestCase {
       return AnyCollection(Array(index.allAuthros).prefix(3))
     })
 
-    XCTAssertEqual(d.value.map { $0.entityID.raw }, ["0", "1", "2"])
+    XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["0", "1", "2"])
 
   }
   
