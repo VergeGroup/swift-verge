@@ -676,6 +676,7 @@ extension StoreType where State : DatabaseEmbedding {
   ) -> Derived<AnyCollection<Entity.Derived>> {
     
     let path = State.getterToDatabase
+    let storage = CachedMapStorage<Entity.EntityID, Derived<EntityWrapper<Entity>>>.init(keySelector: \.raw)
     
     let hasChangesComparer = Comparer<State.Database>(or: [
 
@@ -694,22 +695,24 @@ extension StoreType where State : DatabaseEmbedding {
         let db = path(state.primitive)
         let ids = update(db.indexes)
         
-        let derivedIDs = ids.map {
+        let result = ids.cachedConcurrentMap(using: storage) {
           self.derived(from: $0)
         }
+        .elements
         
-        return AnyCollection(derivedIDs)
+        return AnyCollection(result)
       },
       update: { state in
         
         let db = path(state.primitive)
         let ids = update(db.indexes)
         
-        let derivedIDs = ids.map {
+        let result = ids.cachedConcurrentMap(using: storage) {
           self.derived(from: $0)
         }
+        .elements
         
-        return .updated(AnyCollection(derivedIDs))
+        return .updated(AnyCollection(result))
       }
     )
     
