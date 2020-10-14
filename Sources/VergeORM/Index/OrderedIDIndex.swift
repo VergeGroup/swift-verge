@@ -60,6 +60,10 @@ extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplac
       backing[position] = newValue as AnyHashable
     }
   }
+
+  public subscript(bounds: Range<Int>) -> ArraySlice<Entity.EntityID> {
+    ArraySlice<Entity.EntityID>(AnySequence(backing[bounds].lazy.map { $0 as! Entity.EntityID }))
+  }
   
   public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
     backing.removeAll(keepingCapacity: keepCapacity)
@@ -72,5 +76,5 @@ extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplac
   public var endIndex: Int {
     backing.endIndex
   }
-  
+
 }

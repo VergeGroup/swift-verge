@@ -29,7 +29,7 @@ class DerivedCollectionTests: XCTestCase {
 
     let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       // FIXME: This line causes stack overflow without Array()
-      return AnyCollection(Array(index.allAuthros).prefix(3))
+      return AnyCollection(index.allAuthros.prefix(3))
     })
 
     // FIXME: this fails, since the middleware doesn't care the order
@@ -53,7 +53,7 @@ class DerivedCollectionTests: XCTestCase {
     
     let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       // FIXME: This line causes stack overflow without Array()
-      return AnyCollection(Array(index.allAuthros).filter { $0.raw.first == "1" })
+      return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
     })
     
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
@@ -87,7 +87,7 @@ class DerivedCollectionTests: XCTestCase {
     
     let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       // FIXME: This line causes stack overflow without Array()
-      return AnyCollection(Array(index.allAuthros).filter { $0.raw.first == "1" })
+      return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
     })
     
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
