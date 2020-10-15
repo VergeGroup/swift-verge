@@ -144,6 +144,15 @@ class DerivedCollectionTests: XCTestCase {
     let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     var updateCount = 0
 
+    let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
+      return AnyCollection(index.allAuthros.filter { _ in return true })
+    })
+
+    d.sinkValue { _ in
+      updateCount += 1
+    }
+    .store(in: &subscriptions)
+
     store.commit {
       $0.db.performBatchUpdates { context in
         let authors = (0..<10).map { i in
@@ -154,21 +163,10 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
 
-    let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
-      return AnyCollection(index.allAuthros.filter { _ in return true })
-    })
-    
-    d.valuePublisher().dropFirst(1).sink { _ in
-      updateCount += 1
-    }
-    .store(in: &subscriptions)
-    
-    let _ = store.commit {
-      $0.db.performBatchUpdates { context in
-        
-      }
+    store.commit {
+      $0.other.count += 1
     }
     
-    XCTAssertEqual(updateCount, 0)
+    XCTAssertEqual(updateCount, 1)
   }
 }
