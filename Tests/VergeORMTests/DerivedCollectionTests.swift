@@ -100,4 +100,40 @@ class DerivedCollectionTests: XCTestCase {
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
     XCTAssertEqual(d.value.map { $0.value.name }, ["1"])
   }
+  
+  
+  func testInnerDerivedCache() {
+    let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
+
+    store.commit {
+      $0.db.performBatchUpdates { context in
+        let authors = (0..<10).map { i in
+          Author(rawID: "\(i)")
+        }
+        let result = context.author.insert(authors)
+        context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
+      }
+    }
+
+    let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
+      return AnyCollection(index.allAuthros.filter { _ in return true })
+    })
+    
+    let tmp = d.value.primitive
+    
+    let _ = store.commit {
+      $0.db.performBatchUpdates { context in
+        context.indexes.allAuthros.removeAll()
+        let authors = (0..<10).map { i in
+          Author(rawID: "\(i)")
+        }
+        let result = context.author.insert(authors)
+        context.indexes.allAuthros.append(contentsOf: result.map { $0.entityID} )
+      }
+    }
+    
+    for i in 0 ..< 10 {
+       XCTAssert(d.value[AnyIndex(i)] === tmp[AnyIndex(i)])
+    }
+  }
 }
