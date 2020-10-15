@@ -135,7 +135,7 @@ class DerivedCollectionTests: XCTestCase {
     }
     
     for i in 0 ..< 10 {
-       XCTAssert(d.value[AnyIndex(i)] === tmp[AnyIndex(i)])
+       XCTAssert(d.value[i] === tmp[i])
     }
   }
   
