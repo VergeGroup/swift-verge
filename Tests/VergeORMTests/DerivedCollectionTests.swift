@@ -29,7 +29,7 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
     
-    let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
+    let d = store._derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       return AnyCollection(index.allAuthros.prefix(3))
     })
 
@@ -52,7 +52,7 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
 
-    let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
+    let d = store._derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
     })
 
@@ -85,7 +85,7 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
 
-    let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
+    let d = store._derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
     })
 
@@ -117,7 +117,7 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
 
-    let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
+    let d = store._derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       return AnyCollection(index.allAuthros.filter { _ in return true })
     })
     
@@ -144,7 +144,7 @@ class DerivedCollectionTests: XCTestCase {
     let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     var updateCount = 0
 
-    let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
+    let d = store._derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       return AnyCollection(index.allAuthros.filter { _ in return true })
     })
 

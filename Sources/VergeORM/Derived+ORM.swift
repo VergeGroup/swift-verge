@@ -670,10 +670,18 @@ extension StoreType where State : DatabaseEmbedding {
 
 extension StoreType where State : DatabaseEmbedding {
 
-  public func derivedQueriedEntities<Entity: EntityType>(
+//  public func derivedQueriedEntities<Entity: EntityType>(
+//    map: MemoizeMap<Changes<IndexesPropertyAdapter<State.Database>>, AnyCollection<Entity.EntityID>>,
+//    queue: TargetQueue = .passthrough
+//  ) -> Derived<[Entity.Derived]> {
+//
+//  }
+
+  /// Experimental
+  public func _derivedQueriedEntities<Entity: EntityType>(
     update: @escaping (IndexesPropertyAdapter<State.Database>) -> AnyCollection<Entity.EntityID>,
     queue: TargetQueue = .passthrough
-  ) -> Derived<AnyCollection<Entity.Derived>> {
+  ) -> Derived<[Entity.Derived]> {
     
     let path = State.getterToDatabase
     let storage: CachedMapStorage<Entity.EntityID, Derived<EntityWrapper<Entity>>> = .init(keySelector: \.raw)
@@ -689,7 +697,7 @@ extension StoreType where State : DatabaseEmbedding {
       /** And more we need */
     ])
 
-    let memoizeMap = MemoizeMap<Changes<State>, AnyCollection<Entity.Derived>>(
+    let memoizeMap = MemoizeMap<Changes<State>, [Entity.Derived]>(
       makeInitial: { (state: Changes<State>) in
         
         let db = path(state.primitive)
@@ -699,25 +707,33 @@ extension StoreType where State : DatabaseEmbedding {
           self.derived(from: $0)
         }
         
-        return AnyCollection(result)
+        return result
       },
       update: { state in
 
-        let _result = state.asChanges().ifChanged({ path($0.root) }, noChangesComparer.curried()) { db -> MemoizeMap<Changes<State>, AnyCollection<Entity.Derived>>.Result in
+        let changes = state.asChanges()
 
-          let ids = update(db.indexes)
+        guard changes.hasChanges({ path($0.primitive) }, noChangesComparer.curried()) else {
+          return .noChanages
+        }
+
+        let _derivedArray = changes.takeIfChanged({ state -> [Entity.Derived] in
+
+          let ids = update(path(state.primitive).indexes)
+
           let result = ids.cachedMap(using: storage) {
             self.derived(from: $0)
           }
 
-          return .updated(AnyCollection(result))
-        }
+          return result
 
-        guard let result = _result else {
+        }, ==)
+
+        guard let derivedArray = _derivedArray else {
           return .noChanages
         }
 
-        return result
+        return .updated(derivedArray)
 
       }
     )
