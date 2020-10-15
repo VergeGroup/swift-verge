@@ -112,10 +112,10 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   let _activityEmitter: EventEmitter<Activity> = .init()
     
   /// Cache for derived object each method. Don't share it with between methods.
-  let derivedCache1 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
+  let derivedCache1 = VergeConcurrency.RecursiveLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
   
   /// Cache for derived object each method. Don't share it with between methods.
-  let derivedCache2 = VergeConcurrency.UnfairLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
+  let derivedCache2 = VergeConcurrency.RecursiveLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
   
   public private(set) var logger: StoreLogger?
 
