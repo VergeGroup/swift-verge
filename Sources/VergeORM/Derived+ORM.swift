@@ -706,6 +706,15 @@ extension StoreType where State : DatabaseEmbedding {
         let db = path(state.primitive)
         let ids = update(db.indexes)
         
+        let hasChanges = state.asChanges().hasChanges({ composing  in
+          let db = path(composing.root)
+          return db
+        }, hasChangesComparer.curried())
+        
+        guard hasChanges else {
+          return .noChanages
+        }
+
         let result = ids.cachedMap(using: storage) {
           self.derived(from: $0)
         }

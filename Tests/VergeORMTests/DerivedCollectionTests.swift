@@ -12,6 +12,8 @@ import Combine
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 class DerivedCollectionTests: XCTestCase {
+  
+  private var subscriptions = Set<AnyCancellable>()
 
   func testBasic() {
 
@@ -135,5 +137,38 @@ class DerivedCollectionTests: XCTestCase {
     for i in 0 ..< 10 {
        XCTAssert(d.value[AnyIndex(i)] === tmp[AnyIndex(i)])
     }
+  }
+  
+  func testSinkStateCount() {
+    
+    let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
+    var updateCount = 0
+
+    store.commit {
+      $0.db.performBatchUpdates { context in
+        let authors = (0..<10).map { i in
+          Author(rawID: "\(i)")
+        }
+        let result = context.author.insert(authors)
+        context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
+      }
+    }
+
+    let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
+      return AnyCollection(index.allAuthros.filter { _ in return true })
+    })
+    
+    d.valuePublisher().dropFirst(1).sink { _ in
+      updateCount += 1
+    }
+    .store(in: &subscriptions)
+    
+    let _ = store.commit {
+      $0.db.performBatchUpdates { context in
+        
+      }
+    }
+    
+    XCTAssertEqual(updateCount, 0)
   }
 }
