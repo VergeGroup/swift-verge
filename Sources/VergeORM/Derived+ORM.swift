@@ -678,7 +678,7 @@ extension StoreType where State : DatabaseEmbedding {
     let path = State.getterToDatabase
     let storage: CachedMapStorage<Entity.EntityID, Derived<EntityWrapper<Entity>>> = .init(keySelector: \.raw)
     
-    let hasChangesComparer = Comparer<State.Database>(or: [
+    let noChangesComparer = Comparer<State.Database>(or: [
 
       /** Step 1 */
       Comparer<State.Database>.databaseNoUpdates(),
@@ -702,77 +702,29 @@ extension StoreType where State : DatabaseEmbedding {
         return AnyCollection(result)
       },
       update: { state in
-        
-        let db = path(state.primitive)
-        let ids = update(db.indexes)
-        
-        let hasChanges = state.asChanges().hasChanges({ composing  in
-          let db = path(composing.root)
-          return db
-        }, hasChangesComparer.curried())
-        
-        guard hasChanges else {
+
+        let _result = state.asChanges().ifChanged({ path($0.root) }, noChangesComparer.curried()) { db -> MemoizeMap<Changes<State>, AnyCollection<Entity.Derived>>.Result in
+
+          let ids = update(db.indexes)
+          let result = ids.cachedMap(using: storage) {
+            self.derived(from: $0)
+          }
+
+          return .updated(AnyCollection(result))
+        }
+
+        guard let result = _result else {
           return .noChanages
         }
 
-        let result = ids.cachedMap(using: storage) {
-          self.derived(from: $0)
-        }
-        
-        return .updated(AnyCollection(result))
+        return result
+
       }
     )
     
     let d = derived(memoizeMap)
     d.associate(storage)
     return d
-  }
-
-}
-
-extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding {
-
-  /**
-   TODO: Sort
-   */
-  fileprivate static func _collection<Entity: EntityType>(
-    update: @escaping (IndexesPropertyAdapter<Input.Value.Database>) -> AnyCollection<Entity.EntityID>
-  ) -> MemoizeMap<Input, AnyCollection<Entity>> {
-
-    let path = Input.Value.getterToDatabase
-
-    let hasChangesComparer = Comparer<Input.Value.Database>(or: [
-
-      /** Step 1 */
-      Comparer<Input.Value.Database>.databaseNoUpdates(),
-
-      /** Step 2 */
-      Comparer<Input.Value.Database>.tableNoUpdates(Entity.self),
-
-      /** And more we need */
-    ])
-
-    return MemoizeMap<Input, AnyCollection<Entity>>(
-      makeInitial: { (state: Input) in
-
-        let db = path(state.asChanges().primitive)
-        let ids = update(db.indexes)
-
-        return AnyCollection(db.entities.table(Entity.self).find(in: ids))
-
-      },
-      update: { state in
-
-        // TODO:
-
-        let db = path(state.asChanges().primitive)
-        let ids = update(db.indexes)
-
-        return .updated(AnyCollection(db.entities.table(Entity.self).find(in: ids)))
-
-      }
-    )
-
   }
 
 }

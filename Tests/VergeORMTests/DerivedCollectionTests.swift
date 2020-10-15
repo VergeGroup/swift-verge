@@ -167,6 +167,6 @@ class DerivedCollectionTests: XCTestCase {
       $0.other.count += 1
     }
     
-    XCTAssertEqual(updateCount, 1)
+    XCTAssertEqual(updateCount, 2)
   }
 }
