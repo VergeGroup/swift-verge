@@ -681,7 +681,7 @@ extension StoreType where State : DatabaseEmbedding {
     let noChangesComparer = Comparer<State.Database>(or: [
 
       /** Step 1 */
-      Comparer<State.Database>.databaseNoUpdates(),
+      Comparer<State.Database>.indexNoUpdates(),
 
       /** Step 2 */
       Comparer<State.Database>.tableNoUpdates(Entity.self),
