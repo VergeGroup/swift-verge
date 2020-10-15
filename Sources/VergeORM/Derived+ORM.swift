@@ -678,6 +678,7 @@ extension StoreType where State : DatabaseEmbedding {
 //  }
 
   /// Experimental
+  /// TODO: More performant
   public func _derivedQueriedEntities<Entity: EntityType>(
     update: @escaping (IndexesPropertyAdapter<State.Database>) -> AnyCollection<Entity.EntityID>,
     queue: TargetQueue = .passthrough
@@ -702,7 +703,8 @@ extension StoreType where State : DatabaseEmbedding {
         
         let db = path(state.primitive)
         let ids = update(db.indexes)
-        
+
+        // TODO: O(n)
         let result = ids.cachedMap(using: storage) {
           self.derived(from: $0)
         }
@@ -721,6 +723,7 @@ extension StoreType where State : DatabaseEmbedding {
 
           let ids = update(path(state.primitive).indexes)
 
+          // TODO: O(n)
           let result = ids.cachedMap(using: storage) {
             self.derived(from: $0)
           }
