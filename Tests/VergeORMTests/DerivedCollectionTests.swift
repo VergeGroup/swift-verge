@@ -16,7 +16,6 @@ class DerivedCollectionTests: XCTestCase {
   func testBasic() {
 
     let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
-    let storage: CachedMapStorage<Author.EntityID, Derived<EntityWrapper<Author>>> = .init(keySelector: \.raw)
 
     store.commit {
       $0.db.performBatchUpdates { context in
@@ -30,7 +29,7 @@ class DerivedCollectionTests: XCTestCase {
     
     let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       return AnyCollection(index.allAuthros.prefix(3))
-    }, using: storage)
+    })
 
     // FIXME: this fails, since the middleware doesn't care the order
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["0", "1", "2"])
@@ -40,7 +39,6 @@ class DerivedCollectionTests: XCTestCase {
   func testOutsideChange() {
 
     let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
-    let storage: CachedMapStorage<Author.EntityID, Derived<EntityWrapper<Author>>> = .init(keySelector: \.raw)
 
     store.commit {
       $0.db.performBatchUpdates { context in
@@ -54,7 +52,7 @@ class DerivedCollectionTests: XCTestCase {
 
     let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
-    }, using: storage)
+    })
 
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
 
@@ -74,7 +72,6 @@ class DerivedCollectionTests: XCTestCase {
 
   func testInsideChange() {
     let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
-    let storage: CachedMapStorage<Author.EntityID, Derived<EntityWrapper<Author>>> = .init(keySelector: \.raw)
 
     store.commit {
       $0.db.performBatchUpdates { context in
@@ -88,7 +85,7 @@ class DerivedCollectionTests: XCTestCase {
 
     let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
-    }, using: storage)
+    })
 
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
 

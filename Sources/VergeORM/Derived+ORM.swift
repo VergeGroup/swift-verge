@@ -672,11 +672,11 @@ extension StoreType where State : DatabaseEmbedding {
 
   public func derivedQueriedEntities<Entity: EntityType>(
     update: @escaping (IndexesPropertyAdapter<State.Database>) -> AnyCollection<Entity.EntityID>,
-    using storage: CachedMapStorage<Entity.EntityID, Derived<EntityWrapper<Entity>>>,
     queue: TargetQueue = .passthrough
   ) -> Derived<AnyCollection<Entity.Derived>> {
     
     let path = State.getterToDatabase
+    let storage: CachedMapStorage<Entity.EntityID, Derived<EntityWrapper<Entity>>> = .init(keySelector: \.raw)
     
     let hasChangesComparer = Comparer<State.Database>(or: [
 
@@ -695,10 +695,9 @@ extension StoreType where State : DatabaseEmbedding {
         let db = path(state.primitive)
         let ids = update(db.indexes)
         
-        let result = ids.cachedConcurrentMap(using: storage) {
+        let result = ids.cachedMap(using: storage) {
           self.derived(from: $0)
         }
-        .elements
         
         return AnyCollection(result)
       },
@@ -707,16 +706,17 @@ extension StoreType where State : DatabaseEmbedding {
         let db = path(state.primitive)
         let ids = update(db.indexes)
         
-        let result = ids.cachedConcurrentMap(using: storage) {
+        let result = ids.cachedMap(using: storage) {
           self.derived(from: $0)
         }
-        .elements
         
         return .updated(AnyCollection(result))
       }
     )
     
-    return derived(memoizeMap)
+    let d = derived(memoizeMap)
+    d.associate(storage)
+    return d
   }
 
 }
