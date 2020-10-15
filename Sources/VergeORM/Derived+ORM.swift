@@ -113,7 +113,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
     
     let path = Input.Value.getterToDatabase
     
-    let hasChangesComparer = Comparer<Input.Value.Database>(or: [
+    let noChangesComparer = Comparer<Input.Value.Database>(or: [
 
       /** Step 1 */
       Comparer<Input.Value.Database>.databaseNoUpdates(),
@@ -126,19 +126,19 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
     ])
       
     return MemoizeMap<Input, EntityWrapper<Entity>>(
-      makeInitial: { changes in
+      makeInitial: { state in
         EntityWrapper<Entity>(
           id: entityID,
-          entity: path(changes.primitive).entities.table(Entity.self).find(by: entityID) /** Queries an entity */
+          entity: path(state.primitive).entities.table(Entity.self).find(by: entityID) /** Queries an entity */
         )
     },
-      update: { changes in
+      update: { state in
                 
-        let hasChanges = changes.asChanges().hasChanges(
+        let hasChanges = state.asChanges().hasChanges(
           { (composing) -> Input.Value.Database in
             let db = path(composing.root)
             return db
-        }, hasChangesComparer.curried()
+        }, noChangesComparer.curried()
         )
         
         guard hasChanges else {
@@ -146,7 +146,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
         }
 
         /** Queries an entity */
-        let entity = path(changes.primitive).entities.table(Entity.self).find(by: entityID)
+        let entity = path(state.primitive).entities.table(Entity.self).find(by: entityID)
         return .updated(EntityWrapper<Entity>(id: entityID, entity: entity))
     })
   }
@@ -664,4 +664,86 @@ extension StoreType where State : DatabaseEmbedding {
       queue: queue
     )
   }
+}
+
+// MARK: - Collection
+
+extension StoreType where State : DatabaseEmbedding {
+
+//  public func derivedQueriedEntities<Entity: EntityType>(
+//    map: MemoizeMap<Changes<IndexesPropertyAdapter<State.Database>>, AnyCollection<Entity.EntityID>>,
+//    queue: TargetQueue = .passthrough
+//  ) -> Derived<[Entity.Derived]> {
+//
+//  }
+
+  /// Experimental
+  /// TODO: More performant
+  public func _derivedQueriedEntities<Entity: EntityType>(
+    update: @escaping (IndexesPropertyAdapter<State.Database>) -> AnyCollection<Entity.EntityID>,
+    queue: TargetQueue = .passthrough
+  ) -> Derived<[Entity.Derived]> {
+    
+    let path = State.getterToDatabase
+    let storage: CachedMapStorage<Entity.EntityID, Derived<EntityWrapper<Entity>>> = .init(keySelector: \.raw)
+    
+    let noChangesComparer = Comparer<State.Database>(or: [
+
+      /** Step 1 */
+      Comparer<State.Database>.indexNoUpdates(),
+
+      /** Step 2 */
+      Comparer<State.Database>.tableNoUpdates(Entity.self),
+
+      /** And more we need */
+    ])
+
+    let memoizeMap = MemoizeMap<Changes<State>, [Entity.Derived]>(
+      makeInitial: { (state: Changes<State>) in
+        
+        let db = path(state.primitive)
+        let ids = update(db.indexes)
+
+        // TODO: O(n)
+        let result = ids.cachedMap(using: storage) {
+          self.derived(from: $0)
+        }
+        
+        return result
+      },
+      update: { state in
+
+        let changes = state.asChanges()
+
+        guard changes.hasChanges({ path($0.primitive) }, noChangesComparer.curried()) else {
+          return .noChanages
+        }
+
+        let _derivedArray = changes.takeIfChanged({ state -> [Entity.Derived] in
+
+          let ids = update(path(state.primitive).indexes)
+
+          // TODO: O(n)
+          let result = ids.cachedMap(using: storage) {
+            self.derived(from: $0)
+          }
+
+          return result
+
+        }, ==)
+
+        guard let derivedArray = _derivedArray else {
+          return .noChanages
+        }
+
+        return .updated(derivedArray)
+
+      }
+    )
+    
+    let d = derived(memoizeMap)
+    d.associate(storage)
+    return d
+  }
+
 }

@@ -93,6 +93,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   
   private let subscription: VergeAnyCancellable
   private let retainsUpstream: Any?
+  private var associatedObjects: ContiguousArray<AnyObject> = .init()
 
   public private(set) var attributes: Set<Attribute> = .init()
   
@@ -148,6 +149,10 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   
   public func asDerived() -> Derived<Value> {
     self
+  }
+  
+  public func associate(_ object: AnyObject) {
+    self.associatedObjects.append(object)
   }
 
   /// Returns new Derived object that provides only changed value

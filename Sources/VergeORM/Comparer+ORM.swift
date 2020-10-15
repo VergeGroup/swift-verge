@@ -34,6 +34,12 @@ extension Comparer where Input : DatabaseType {
       (pre._backingStorage.entityUpdatedMarker, pre._backingStorage.indexUpdatedMarker) == (new._backingStorage.entityUpdatedMarker, new._backingStorage.indexUpdatedMarker)
     }
   }
+  
+  public static func indexNoUpdates() -> Self {
+    return .init { pre, new in
+      pre._backingStorage.indexUpdatedMarker == new._backingStorage.indexUpdatedMarker
+    }
+  }
 
   /// Returns true if the table of the entity in database has no changes.
   ///

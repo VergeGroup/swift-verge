@@ -95,6 +95,7 @@
 		4BA3E1A523C359F40095629B /* Signpost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA3E1A423C359F40095629B /* Signpost.swift */; };
 		4BA5914F23DF5146007F614C /* FunctionBuilders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA5914E23DF5146007F614C /* FunctionBuilders.swift */; };
 		4BA5915123DF536F007F614C /* FunctionBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA5915023DF536F007F614C /* FunctionBuilderTests.swift */; };
+		4BAE98A5253060EB00B71182 /* DerivedCollectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE98A4253060EB00B71182 /* DerivedCollectionTests.swift */; };
 		4BAE9FEA21DFA75A003DDF3D /* Verge+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */; };
 		4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */; };
 		4BAF902F23A92B69004D6356 /* MiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */; };
@@ -346,6 +347,7 @@
 		4BA3E1A423C359F40095629B /* Signpost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signpost.swift; sourceTree = "<group>"; };
 		4BA5914E23DF5146007F614C /* FunctionBuilders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionBuilders.swift; sourceTree = "<group>"; };
 		4BA5915023DF536F007F614C /* FunctionBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionBuilderTests.swift; sourceTree = "<group>"; };
+		4BAE98A4253060EB00B71182 /* DerivedCollectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedCollectionTests.swift; sourceTree = "<group>"; };
 		4BAE9FE921DFA75A003DDF3D /* Verge+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Verge+Extension.swift"; sourceTree = "<group>"; };
 		4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddlewareTests.swift; sourceTree = "<group>"; };
@@ -556,6 +558,7 @@
 			children = (
 				4BC6EFB423A8C99900EFD688 /* State.swift */,
 				4B13BC6F24575F1E00F0BC0F /* DerivedTests.swift */,
+				4BAE98A4253060EB00B71182 /* DerivedCollectionTests.swift */,
 				4B6BF62923AD7B55001E5361 /* CollectionPerformance.swift */,
 				4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */,
 				4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */,
@@ -1313,6 +1316,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B99D69323AF6C4300E26127 /* ProtocolTests.swift in Sources */,
+				4BAE98A5253060EB00B71182 /* DerivedCollectionTests.swift in Sources */,
 				4B475BC8239ADE1C008A03E1 /* VergeORMTests.swift in Sources */,
 				4BF21F302458C1860045B5C2 /* UtilTests.swift in Sources */,
 				4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */,
@@ -1635,11 +1639,11 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9T4USX98DB;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1670,11 +1674,11 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9T4USX98DB;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1703,6 +1707,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				DEVELOPMENT_TEAM = 9T4USX98DB;
 				INFOPLIST_FILE = Tests/VergeORMTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1722,6 +1727,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				DEVELOPMENT_TEAM = 9T4USX98DB;
 				INFOPLIST_FILE = Tests/VergeORMTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2025,11 +2031,11 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9T4USX98DB;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2144,6 +2150,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				DEVELOPMENT_TEAM = 9T4USX98DB;
 				INFOPLIST_FILE = Tests/VergeORMTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
