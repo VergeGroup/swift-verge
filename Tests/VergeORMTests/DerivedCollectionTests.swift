@@ -16,6 +16,7 @@ class DerivedCollectionTests: XCTestCase {
   func testBasic() {
 
     let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
+    let storage: CachedMapStorage<Author.EntityID, Derived<EntityWrapper<Author>>> = .init(keySelector: \.raw)
 
     store.commit {
       $0.db.performBatchUpdates { context in
@@ -26,19 +27,20 @@ class DerivedCollectionTests: XCTestCase {
         context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
       }
     }
-
+    
     let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       return AnyCollection(index.allAuthros.prefix(3))
-    })
+    }, using: storage)
 
     // FIXME: this fails, since the middleware doesn't care the order
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["0", "1", "2"])
 
   }
-  
+
   func testOutsideChange() {
-    
+
     let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
+    let storage: CachedMapStorage<Author.EntityID, Derived<EntityWrapper<Author>>> = .init(keySelector: \.raw)
 
     store.commit {
       $0.db.performBatchUpdates { context in
@@ -49,30 +51,31 @@ class DerivedCollectionTests: XCTestCase {
         context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
       }
     }
-    
+
     let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
-    })
-    
+    }, using: storage)
+
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
-    
+
     store.commit {
       $0.db.performBatchUpdates { context in
         context.author.deleteAll()
         context.indexes.allAuthros.removeAll()
-        
+
         let author = Author(rawID: "\(10)")
         let result = context.author.insert(author)
         context.indexes.allAuthros.append(result.entityID)
       }
     }
-    
+
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["10"])
   }
-  
+
   func testInsideChange() {
     let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
-    
+    let storage: CachedMapStorage<Author.EntityID, Derived<EntityWrapper<Author>>> = .init(keySelector: \.raw)
+
     store.commit {
       $0.db.performBatchUpdates { context in
         let authors = (0..<10).map { i in
@@ -82,13 +85,13 @@ class DerivedCollectionTests: XCTestCase {
         context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
       }
     }
-    
+
     let d = store.derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
       return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
-    })
-    
+    }, using: storage)
+
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
-    
+
     let _ = store.commit {
       $0.db.performBatchUpdates { context in
         context.author.updateIfExists(id: .init("\(1)")) { author in
@@ -96,7 +99,7 @@ class DerivedCollectionTests: XCTestCase {
         }
       }
     }
-    
+
     XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
     XCTAssertEqual(d.value.map { $0.value.name }, ["1"])
   }

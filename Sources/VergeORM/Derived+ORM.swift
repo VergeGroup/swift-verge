@@ -672,11 +672,11 @@ extension StoreType where State : DatabaseEmbedding {
 
   public func derivedQueriedEntities<Entity: EntityType>(
     update: @escaping (IndexesPropertyAdapter<State.Database>) -> AnyCollection<Entity.EntityID>,
+    using storage: CachedMapStorage<Entity.EntityID, Derived<EntityWrapper<Entity>>>,
     queue: TargetQueue = .passthrough
   ) -> Derived<AnyCollection<Entity.Derived>> {
     
     let path = State.getterToDatabase
-    let storage = CachedMapStorage<Entity.EntityID, Derived<EntityWrapper<Entity>>>.init(keySelector: \.raw)
     
     let hasChangesComparer = Comparer<State.Database>(or: [
 
