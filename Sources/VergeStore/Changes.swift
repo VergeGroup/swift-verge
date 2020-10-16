@@ -82,6 +82,8 @@ public protocol ChangesType: AnyObject {
 @dynamicMemberLookup
 public final class Changes<Value>: ChangesType, Equatable {
 
+  public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
+
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
     lhs === rhs
   }
@@ -176,8 +178,6 @@ public final class Changes<Value>: ChangesType, Equatable {
       yield primitive[keyPath: keyPath]
     }
   }
-  
-  public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
 
   public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
 
@@ -192,7 +192,7 @@ public final class Changes<Value>: ChangesType, Equatable {
       version: version
     )
   }
-  
+
   public func makeNextChanges(with nextNewValue: Value) -> Changes<Value> {
     
     let previous = cloneWithDropsPrevious()
@@ -209,6 +209,7 @@ public final class Changes<Value>: ChangesType, Equatable {
 // MARK: - Primitive methods
 extension Changes {
 
+  /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed>(
     _ compose: (Changes) throws -> Composed,
@@ -237,6 +238,14 @@ extension Changes {
 
   }
 
+  /// Performs closure if the composed value changed
+  ///
+  /// - Parameters:
+  ///   - compose: A closure that projects a composed value from self. that executes with both of value(new and old).
+  ///   - comparer: A closure that checks if the composed values are different between current and old.
+  ///   - perform: A closure that executes any operation if composed value changed.
+  ///
+  /// - Returns: An instance that returned from the perform closure if performed.
   @inline(__always)
   public func ifChanged<Composed, Result>(
     _ compose: (Changes) -> Composed,
@@ -257,6 +266,23 @@ extension Changes {
 // MARK: - Convenience methods
 
 extension Changes {
+
+  /// Takes a composed value if it's changed from old value.
+  @inline(__always)
+  public func takeIfChanged<Composed: Equatable>(
+    _ compose: (Changes) throws -> Composed
+  ) rethrows -> Composed? {
+    try takeIfChanged(compose, ==)
+  }
+
+  /// Takes a composed value if it's changed from old value.
+  @inline(__always)
+  public func takeIfChanged<T>(
+    _ keyPath: ChangesKeyPath<T>,
+    _ compare: (T, T) throws -> Bool
+  ) rethrows -> T? {
+    try takeIfChanged({ $0[keyPath: keyPath] }, compare)
+  }
 
   /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
   @inline(__always)
@@ -345,6 +371,29 @@ extension Changes {
     _ perform: ((T0, T1, T2)) throws -> Result
   ) rethrows -> Result? {
     try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) }, ==, perform)
+  }
+
+  @inline(__always)
+  public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, T3: Equatable, Result>(
+    _ keyPath0: ChangesKeyPath<T0>,
+    _ keyPath1: ChangesKeyPath<T1>,
+    _ keyPath2: ChangesKeyPath<T2>,
+    _ keyPath3: ChangesKeyPath<T3>,
+    _ perform: ((T0, T1, T2, T3)) throws -> Result
+  ) rethrows -> Result? {
+    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2], $0[keyPath: keyPath3]) }, ==, perform)
+  }
+
+  @inline(__always)
+  public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, T3: Equatable, T4: Equatable, Result>(
+    _ keyPath0: ChangesKeyPath<T0>,
+    _ keyPath1: ChangesKeyPath<T1>,
+    _ keyPath2: ChangesKeyPath<T2>,
+    _ keyPath3: ChangesKeyPath<T3>,
+    _ keyPath4: ChangesKeyPath<T4>,
+    _ perform: ((T0, T1, T2, T3, T4)) throws -> Result
+  ) rethrows -> Result? {
+    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2], $0[keyPath: keyPath3], $0[keyPath: keyPath4]) }, ==, perform)
   }
 }
 
