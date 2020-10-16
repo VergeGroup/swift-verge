@@ -21,7 +21,7 @@
 
 import Foundation
 
-final class DeallocQueue {
+final class BackgroundDeallocationQueue {
 
   private let queue = DispatchQueue.init(label: "org.VergeGroup.deallocQueue", qos: .background)
 
