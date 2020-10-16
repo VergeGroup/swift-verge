@@ -25,7 +25,7 @@ import Foundation
 import VergeCore
 #endif
 
-fileprivate let changesDeallocationQueue = DeallocQueue()
+fileprivate let changesDeallocationQueue = BackgroundDeallocationQueue()
 
 public protocol ChangesType: AnyObject {
   
