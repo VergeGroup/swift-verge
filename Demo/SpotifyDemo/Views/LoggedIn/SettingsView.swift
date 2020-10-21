@@ -10,7 +10,7 @@ struct SettingsView: View {
   let stack: LoggedInStack
 
   var body: some View {
-    UseState(stack.derivedState, .map(\.computed.me)) { me in
+    StateReader(stack.derivedState, .map(\.computed.me)) { me in
       ScrollView {
         SettingsViewComponent.profileCell(name: me.displayName, image: me.images.first)
         Button(action: {

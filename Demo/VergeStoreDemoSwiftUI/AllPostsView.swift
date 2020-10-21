@@ -12,7 +12,7 @@ struct AllPostsView: View, Equatable {
   }
 
   var body: some View {
-    UseState(session.store) { _ in
+    StateReader(session.store) { _ in
       NavigationView {
         List {
           ForEach(self.posts.lazy.reversed()) { post in      

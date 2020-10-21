@@ -13,7 +13,7 @@ struct UserListView: View {
   var body: some View {
     
     NavigationView {
-      UseState(users) { state in
+      StateReader(users) { state in
         List {
           ForEach(state) { user in
             NavigationLink(destination: UserDetailView(session: self.session, user: user)) {

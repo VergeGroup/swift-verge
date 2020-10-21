@@ -37,7 +37,7 @@ struct UserDetailView: View, Equatable {
       }) {
         Text("Submit")
       }
-      UseState(session.store) { (store) in
+      StateReader(session.store) { (store) in
         List {
           ForEach(self.posts) { post in
             PostView(session: self.session, post: post)

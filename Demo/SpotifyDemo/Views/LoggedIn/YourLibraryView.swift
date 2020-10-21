@@ -21,7 +21,7 @@ struct MePlaylistView: View {
 
   var body: some View {
 
-    UseState(
+    StateReader(
 
       stack.derivedState,
 

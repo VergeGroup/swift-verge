@@ -157,10 +157,10 @@ func incrementCount() {
 
 ### Use the store in SwiftUI
 
-To bind the state with `View`, it uses `UseState`.  
+To bind the state with `View`, it uses `StateReader`.  
 Since `Store` is also compatible with `ObservableObject`, we can declare `@ObservedObject` or `@EnviromentObject`.
 
-`UseState` provides several options to reduce no changes updates.  
+`StateReader` provides several options to reduce no changes updates.  
 Please check it out from Xcode.
 
 ```swift
@@ -169,7 +169,7 @@ struct MyView: View {
   let store: MyStore
 
   var body: some View {
-    UseState { state in
+    StateReader(store).content { state in
       Text(state.name)
     }
     .onReceive(session.store.activityPublisher) { (activity) in

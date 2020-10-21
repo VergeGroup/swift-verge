@@ -8,7 +8,7 @@ sidebar_label: Store
   - A reference type object
   - Manages the state object that contains the application state
   - Receives **Mutation** to update the state with thread-safety
-  - Compatible with SwiftUI's observableObject and `UseState`
+  - Compatible with SwiftUI's observableObject and `StateReader`
 
 ## Define a Store
 

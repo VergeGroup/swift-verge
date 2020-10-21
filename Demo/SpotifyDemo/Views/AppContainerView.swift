@@ -61,7 +61,7 @@ struct AppContainerView: View {
   var body: some View {
     #if DEBUG
     return Group {
-      UseState(viewModel.store) { state in
+      StateReader(viewModel.store) { state in
         if state.primitive.current != nil {
           // FIXME: Avoid to create Session here.
           if state.isRunning {

@@ -33,10 +33,10 @@ _verge_signpost_enabled = true
 
 > WIP
 
-To integrate SwiftUI, we can use `UseState` struct or `@ObservedObject` property wrapper.
-UseState never doing memory allocations.
+To integrate SwiftUI, we can use `StateReader` struct or `@ObservedObject` property wrapper.
+StateReader never doing memory allocations.
 
-Either way is fine, but UseState enables injecting the state into a specific location of the view hierarchy.
+Either way is fine, but StateReader enables injecting the state into a specific location of the view hierarchy.
 Using @ObservedObject updates the whole of view by state updated.
 
 Injects Store
@@ -48,7 +48,7 @@ struct MyView: View {
 
   var body: some View {
     NavigationView {
-      UseState(store) { (state: Changes<MyState>) in
+      StateReader(store).content{ (state: Changes<MyState>) in
         ...
       }
     }
@@ -77,7 +77,7 @@ struct MyView: View {
   let users: Derived<[Entity.User]>
 
   var body: some View {
-    UseState(users) { (users: Changes<[Entity.User]>) in
+    StateReader(users) { (users: Changes<[Entity.User]>) in
       ...
     }
   }

@@ -14,7 +14,7 @@ Derived's functions are:
 - Emit the updated data with updating Store
 - Supports subscribe the data
 - Supports Memoization
-- Compatible with SwiftUI's observableObject and `UseState`
+- Compatible with SwiftUI's observableObject and `StateReader`
 
 ## Overview
 

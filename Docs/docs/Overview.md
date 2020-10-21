@@ -47,7 +47,7 @@ struct MyView: View {
   let store: MyStore
 
   var body: some View {
-    UseState(store) { state in
+    StateReader(store).content { state in
       Text(state.name)
       Button(action: {
         self.store.myAction()
