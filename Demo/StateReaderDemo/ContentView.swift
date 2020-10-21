@@ -30,7 +30,7 @@ var bag = Set<AnyCancellable>()
 
 struct ContentView: View {
 
- @StateObject var viewModel = ViewModel()
+  @StateObject var viewModel = ViewModel()
 
   init() {
 
