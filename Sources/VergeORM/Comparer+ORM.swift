@@ -50,6 +50,13 @@ extension Comparer where Input : DatabaseType {
     })
   }
 
+  /// Returns true if the table of the entity in database has no changes.
+  ///
+  /// - Complexity: O(1)
+  public static func tableNoUpdates<E: EntityType>(_ keyPath: KeyPath<Input.Schema, EntityTableKey<E>>) -> Self {
+    tableNoUpdates(E.self)
+  }
+
   /// Returns true if the entity has no changes.
   ///
   /// - Complexity: O(1)
