@@ -25,7 +25,7 @@ import Foundation
 import VergeStore
 #endif
 
-public struct EntityTableKey<S: EntityType> {
+public struct EntityTableKey<S: EntityType>: Hashable {
 
   private let sourceInfo: String
 
@@ -35,7 +35,7 @@ public struct EntityTableKey<S: EntityType> {
 
 }
 
-public struct IndexKey<Index: IndexType> {
+public struct IndexKey<Index: IndexType>: Hashable {
 
   private let sourceInfo: String
 
@@ -58,9 +58,15 @@ public protocol MiddlewareType {
   func performAfterUpdates(context: DatabaseBatchUpdatesContext<Database>)
 }
 
-public struct AnyMiddleware<Database: DatabaseType>: MiddlewareType {
-  
+public struct AnyMiddleware<Database: DatabaseType>: MiddlewareType, Equatable {
+
+  public static func == (lhs: AnyMiddleware<Database>, rhs: AnyMiddleware<Database>) -> Bool {
+    lhs.id == rhs.id
+  }
+
   private let _performAfterUpdates: (DatabaseBatchUpdatesContext<Database>) -> ()
+
+  private let id = UUID()
   
   public init<Base: MiddlewareType>(_ base: Base) where Base.Database == Database {
     self._performAfterUpdates = base.performAfterUpdates
