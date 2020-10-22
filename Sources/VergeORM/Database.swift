@@ -99,8 +99,7 @@ public struct AnyMiddleware<Database: DatabaseType>: MiddlewareType {
 }
  ```
  */
-
-public protocol DatabaseType: DatabaseEmbedding where Database == Self {
+public protocol DatabaseType: Equatable, DatabaseEmbedding where Database == Self {
     
   associatedtype Schema: EntitySchemaType
   associatedtype Indexes: IndexesType
