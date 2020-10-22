@@ -84,11 +84,11 @@ public struct GroupByEntityIndex<
   /// - Parameters:
   ///   - removing: a set of entity id that will be removed from store
   ///   - entityName: the entity name of removing
-  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityTableIdentifier) {
+  public mutating func _apply(removing: Set<AnyEntityIdentifier>, entityName: EntityTableIdentifier) {
     
     if GroupEntity.entityName == entityName {
       removing.forEach {
-        backing.removeValue(forKey: $0 as! GroupEntity.EntityID)
+        backing.removeValue(forKey: GroupEntity.EntityID($0))
       }
     }
     

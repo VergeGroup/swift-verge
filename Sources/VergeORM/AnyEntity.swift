@@ -25,14 +25,14 @@ struct AnyEntity : Hashable {
     makeHash(&hasher)
   }
       
-  private let identifier: AnyHashable
+  private let identifier: AnyEntityIdentifier
   
   private let makeHash: (inout Hasher) -> Void
     
   init<Base: EntityType>(_ base: Base) {
     self.makeHash = base.entityID.hash
     self.base = base
-    self.identifier = base.entityID
+    self.identifier = base.entityID.any
   }
   
 }

@@ -24,12 +24,12 @@ import Foundation
 public struct HashIndex<Schema: EntitySchemaType, HashKey: Hashable, Entity: EntityType>: IndexType, Equatable {
   
   // FIXME: To be faster filter, use BTree
-  private var backing: [HashKey : AnyHashable] = [:]
+  private var backing: [HashKey : AnyEntityIdentifier] = [:]
   
   public init() {
   }
   
-  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityTableIdentifier) {
+  public mutating func _apply(removing: Set<AnyEntityIdentifier>, entityName: EntityTableIdentifier) {
     
     if Entity.entityName == entityName {
       
@@ -49,10 +49,10 @@ public struct HashIndex<Schema: EntitySchemaType, HashKey: Hashable, Entity: Ent
     
   public subscript(key: HashKey) -> Entity.EntityID? {
     get {
-      backing[key] as? Entity.EntityID
+      backing[key].map(Entity.EntityID.init)
     }
     set {
-      backing[key] = newValue as AnyHashable
+      backing[key] = newValue?.any
     }
   }
   

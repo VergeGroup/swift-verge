@@ -29,12 +29,12 @@ public struct SetIndex<Schema: EntitySchemaType, Entity: EntityType>: IndexType,
   // FIXME: To be faster filter, use BTree
   // To reduce cost of casting, use AnyHashable in _apply
   // If use [Entity.EntityID], .contains() will be expensive.
-  @usableFromInline var backing: Set<AnyHashable> = .init()
+  @usableFromInline var backing: Set<AnyEntityIdentifier> = .init()
   
   public init() {
   }
   
-  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityTableIdentifier) {
+  public mutating func _apply(removing: Set<AnyEntityIdentifier>, entityName: EntityTableIdentifier) {
     
     if Entity.entityName == entityName, !removing.isEmpty {
       backing.subtract(removing)
@@ -48,39 +48,40 @@ extension SetIndex {
   
   @inlinable public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element] {
     try backing.sorted(by: {
-      try areInIncreasingOrder($0 as! Element, $1 as! Element)
-    }) as! [Element]
+      try areInIncreasingOrder(Element($0), Element($1))
+    }).map(Element.init)
   }
   
   @inlinable public func map<T>(_ transform: (Element) throws -> T) rethrows -> [T] {
     try backing.map {
-      try transform($0 as! Element)
+      try transform(.init($0))
     }
   }
   
   @inlinable public func compactMap<ElementOfResult>(_ transform: (Element) throws -> ElementOfResult?) rethrows -> [ElementOfResult] {
     try backing.compactMap {
-      try transform($0 as! Element)
+      try transform(.init($0))
     }
   }
   
-  @inlinable public mutating func insert(_ newMember: Element) -> (inserted: Bool, memberAfterInsert: Element) {
-    backing.insert(newMember)
+  public mutating func insert(_ newMember: Element) -> (inserted: Bool, memberAfterInsert: Element) {
+    let result = backing.insert(newMember.any)
+    return (result.inserted, Element(result.memberAfterInsert))
   }
   
-  @inlinable public mutating func remove(_ member: Element) -> Element? {
-    backing.remove(member)
+  public mutating func remove(_ member: Element) -> Element? {
+    backing.remove(member.any).map(Element.init)
   }
   
-  @inlinable public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
+  public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
     backing.removeAll(keepingCapacity: keepCapacity)
   }
   
-  @inlinable public mutating func subtract(_ other: Set<Element>) {
-    backing.subtract(other)
+  public mutating func subtract(_ other: Set<Element>) {
+    backing.subtract(other.map { $0.any })
   }
   
-  @inlinable public mutating func formUnion<S>(_ other: S) where Element == S.Element, S : Sequence {
-    backing.formUnion(Set(other) as Set<AnyHashable>)
+  public mutating func formUnion<S>(_ other: S) where Element == S.Element, S : Sequence {
+    backing.formUnion(Set(other).map(\.any))
   }
 }

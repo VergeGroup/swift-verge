@@ -29,7 +29,7 @@ protocol EntityModifierType: AnyObject {
   
   var entityName: EntityTableIdentifier { get }
   var _insertsOrUpdates: EntityTableType { get }
-  var _deletes: Set<AnyHashable> { get }
+  var _deletes: Set<AnyEntityIdentifier> { get }
 }
 
 /// For performBatchUpdates
@@ -45,7 +45,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
     insertsOrUpdates
   }
   
-  var _deletes: Set<AnyHashable> {
+  var _deletes: Set<AnyEntityIdentifier> {
     deletes
   }
     
@@ -60,7 +60,7 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
     
   /// A set of entity ids that entity will be deleted after batchUpdates finished.
   /// The current entities will be deleted with this identifiers.
-  public var deletes: Set<Entity.EntityID> = .init()
+  private var deletes: Set<AnyEntityIdentifier> = .init()
   
   init(current: EntityTable<Schema, Entity>) {
     self.current = current
@@ -117,30 +117,30 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   /// Set deletes entity with entity object
   /// - Parameter entity:
   public func delete(_ entity: Entity) {
-    deletes.insert(entity.entityID)
+    deletes.insert(entity.entityID.any)
   }
     
   /// Set deletes entity with identifier
   /// - Parameter entityID:
   public func delete(_ entityID: Entity.EntityID) {
-    deletes.insert(entityID)
+    deletes.insert(entityID.any)
   }
   
   /// Set deletes entities with passed entities.
   /// - Parameter entities:
   public func delete<S: Sequence>(_ entities: S) where S.Element == Entity {
-    deletes.formUnion(entities.lazy.map { $0.entityID })
+    deletes.formUnion(entities.lazy.map { $0.entityID.any })
   }
     
   /// Set deletes entities with passed sequence of entity's identifier.
   /// - Parameter entityIDs:
   public func delete<S: Sequence>(_ entityIDs: S) where S.Element == Entity.EntityID {
-    deletes.formUnion(entityIDs)
+    deletes.formUnion(entityIDs.map(\.any))
   }
     
   /// Set deletes all entities
   public func deleteAll() {
-    deletes.formUnion(current.allIDs())
+    deletes.formUnion(current.allIDs().map(\.any))
   }
   
   /// Update existing entity. it throws if does not exsist.
@@ -177,17 +177,17 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
 
 public struct DatabaseEntityUpdatesResult<Schema: EntitySchemaType>: Equatable {
   
-  let updated: [EntityTableIdentifier : Set<AnyHashable>]
-  let deleted: [EntityTableIdentifier : Set<AnyHashable>]
+  let updated: [EntityTableIdentifier : Set<AnyEntityIdentifier>]
+  let deleted: [EntityTableIdentifier : Set<AnyEntityIdentifier>]
   
   public func wasUpdated<E: EntityType>(_ id: E.EntityID) -> Bool {
     guard let set = updated[E.entityName] else { return false }
-    return set.contains(id)
+    return set.contains(id.any)
   }
   
   public func wasDeleted<E: EntityType>(_ id: E.EntityID) -> Bool {
     guard let set = deleted[E.entityName] else { return false }
-    return set.contains(id)
+    return set.contains(id.any)
   }
   
   public func containsEntityUpdated<E: EntityType>(_ entityType: E.Type) -> Bool {
@@ -229,8 +229,8 @@ public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
   
   func makeResult() -> DatabaseEntityUpdatesResult<Schema> {
     
-    var updated: [EntityTableIdentifier : Set<AnyHashable>] = [:]
-    var deleted: [EntityTableIdentifier : Set<AnyHashable>] = [:]
+    var updated: [EntityTableIdentifier : Set<AnyEntityIdentifier>] = [:]
+    var deleted: [EntityTableIdentifier : Set<AnyEntityIdentifier>] = [:]
     
     for (entityName, rawEntityData) in editing {
                   
