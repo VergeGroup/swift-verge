@@ -38,8 +38,8 @@ struct EntityRawTable: Equatable {
     guard lhs.entities == rhs.entities else { return false }
     return true
   }
-  
-  typealias RawTable = [AnyHashable : AnyEntity]
+
+  typealias RawTable = [AnyEntityIdentifier : AnyEntity]
   
   private(set) var updatedMarker = NonAtomicVersionCounter()
 
@@ -95,7 +95,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   ///
   /// - TODO: It's expensive
   public func allIDs() -> Set<Entity.EntityID> {
-    .init(rawTable.entities.keys.map { $0 as! Entity.EntityID })
+    .init(rawTable.entities.keys.map { Entity.EntityID.init($0) })
   }
   
   /// Returns all entity that stored.
@@ -110,7 +110,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     defer {
       t.end()
     }
-    return rawTable.entities[id]?.base as? Entity
+    return rawTable.entities[id.any]?.base as? Entity
   }
     
   /// Find entities by set of ids.
@@ -124,7 +124,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
       t.end()
     }
     return ids.reduce(into: [Entity]()) { (buf, id) in
-      guard let entity = rawTable.entities[id] else { return }
+      guard let entity = rawTable.entities[id.any] else { return }
       buf.append(entity.base as! Entity)
     }
   }
@@ -133,12 +133,12 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   @inline(__always)
   public mutating func updateExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) throws -> Entity {
     
-    guard rawTable.entities.keys.contains(id) else {
+    guard rawTable.entities.keys.contains(id.any) else {
       throw BatchUpdatesError.storedEntityNotFound
     }
     
     let e = try rawTable.updateEntity { (entities) -> Entity in
-      return try withUnsafeMutablePointer(to: &entities[id]!) { (pointer) -> Entity in
+      return try withUnsafeMutablePointer(to: &entities[id.any]!) { (pointer) -> Entity in
         var entity = pointer.pointee.base as! Entity
         try update(&entity)
         pointer.pointee.base = entity as Any
@@ -161,7 +161,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
       t.end()
     }
     rawTable.updateEntity { (entities) in
-      entities[entity.entityID] = .init(entity)
+      entities[entity.entityID.any] = .init(entity)
     }
     return .init(entity: entity)
   }
@@ -175,7 +175,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     
     let results = addingEntities.map { entity -> InsertionResult in
       rawTable.updateEntity { (entities) in
-        entities[entity.entityID] = .init(entity)
+        entities[entity.entityID.any] = .init(entity)
       }
       return .init(entity: entity)
     }
@@ -185,7 +185,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   
   public mutating func remove(_ id: Entity.EntityID) {
     rawTable.updateEntity { (entities) -> Void in
-      entities.removeValue(forKey: id)
+      entities.removeValue(forKey: id.any)
     }
   }
   
@@ -273,7 +273,7 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
   }
   
   @inline(__always)
-  private mutating func _subtract(ids: Set<AnyHashable>, entityName: EntityTableIdentifier) {
+  private mutating func _subtract(ids: Set<AnyEntityIdentifier>, entityName: EntityTableIdentifier) {
    
     guard entityTableStorage.keys.contains(entityName) else {
       return

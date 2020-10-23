@@ -55,7 +55,7 @@ class OrderedIDIndexTests: XCTestCase {
     
     state.db.performBatchUpdates { (context) -> Void in
       
-      context.book.deletes.insert(.init("some"))
+      context.book.delete(.init("some"))
     }
     
     XCTAssertEqual(
@@ -74,7 +74,7 @@ class OrderedIDIndexTests: XCTestCase {
     
     state.db.performBatchUpdates { (context) -> Void in
       
-      context.author.deletes.insert(.init("author.1"))
+      context.author.delete(.init("author.1"))
     }
     
     XCTAssertEqual(

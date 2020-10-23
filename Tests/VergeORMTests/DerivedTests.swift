@@ -83,7 +83,7 @@ class DerivedTests: XCTestCase {
         storage.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
-            context.book.deletes.insert(id)
+            context.book.delete(id)
             
           }
         }
@@ -139,7 +139,7 @@ class DerivedTests: XCTestCase {
         storage.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
-            context.book.deletes.insert(.init("some"))
+            context.book.delete(.init("some"))
             
           }
         }

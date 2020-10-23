@@ -27,12 +27,12 @@ public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: Inde
   // FIXME: To be faster filter, use BTree
   // To reduce cost of casting, use AnyHashable in _apply
   // If use [Entity.EntityID], .contains() will be expensive.
-  private var backing: [AnyHashable] = []
+  private var backing: [AnyEntityIdentifier] = []
   
   public init() {
   }
   
-  public mutating func _apply(removing: Set<AnyHashable>, entityName: EntityTableIdentifier) {
+  public mutating func _apply(removing: Set<AnyEntityIdentifier>, entityName: EntityTableIdentifier) {
     
     if Entity.entityName == entityName, !removing.isEmpty {
       backing.removeAll { removing.contains($0) }
@@ -49,20 +49,20 @@ extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplac
   public typealias SubSequence = ArraySlice<Entity.EntityID>
   
   public mutating func append(_ newElement: __owned Entity.EntityID) {
-    backing.append(newElement)
+    backing.append(newElement.any)
   }
   
   public subscript(position: Int) -> Entity.EntityID {
     get {
-      backing[position] as! Entity.EntityID
+      .init(backing[position])
     }
     set {
-      backing[position] = newValue as AnyHashable
+      backing[position] = newValue.any
     }
   }
 
   public subscript(bounds: Range<Int>) -> ArraySlice<Entity.EntityID> {
-    ArraySlice<Entity.EntityID>(AnySequence(backing[bounds].lazy.map { $0 as! Entity.EntityID }))
+    ArraySlice<Entity.EntityID>(AnySequence(backing[bounds].lazy.map { Entity.EntityID($0) }))
   }
   
   public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {

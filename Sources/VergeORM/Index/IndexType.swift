@@ -25,11 +25,11 @@ import Foundation
 fileprivate struct IndexWrapper<Schema: EntitySchemaType> {
   
   var base: Any
-  private let _apply: (Any, _ removing: Set<AnyHashable>, _ entityName: EntityTableIdentifier) -> Any
+  private let _apply: (Any, _ removing: Set<AnyEntityIdentifier>, _ entityName: EntityTableIdentifier) -> Any
   
   init<I: IndexType>(
     base: I,
-    apply: @escaping (I, _ removing: Set<AnyHashable>, _ entityName: EntityTableIdentifier) -> I
+    apply: @escaping (I, _ removing: Set<AnyEntityIdentifier>, _ entityName: EntityTableIdentifier) -> I
   ) {
     
     self.base = base
@@ -38,7 +38,7 @@ fileprivate struct IndexWrapper<Schema: EntitySchemaType> {
     }
   }
   
-  mutating func apply(removing: Set<AnyHashable>, entityName: EntityTableIdentifier) {
+  mutating func apply(removing: Set<AnyEntityIdentifier>, entityName: EntityTableIdentifier) {
     self.base = _apply(base, removing, entityName)
   }
 }
@@ -72,7 +72,7 @@ extension IndexesStorage {
   }
   
   @inline(__always)
-  private mutating func apply(removing: Set<AnyHashable>, entityName: EntityTableIdentifier) {
+  private mutating func apply(removing: Set<AnyEntityIdentifier>, entityName: EntityTableIdentifier) {
     backing.keys.forEach { key in
       backing[key]?.apply(removing: removing, entityName: entityName)
     }
@@ -107,7 +107,7 @@ public protocol IndexType {
   ///   - entityName: the entity name of removing
   ///
   /// You can do this `removing.first as? YourEntity.EntityID`
-  mutating func _apply(removing: Set<AnyHashable>, entityName: EntityTableIdentifier)
+  mutating func _apply(removing: Set<AnyEntityIdentifier>, entityName: EntityTableIdentifier)
 }
 
 extension IndexType {
@@ -115,7 +115,7 @@ extension IndexType {
   fileprivate func wrapped() -> IndexWrapper<Schema> {
     return .init(
       base: self,
-      apply: { (base: Self, removing: Set<AnyHashable>, entityName: EntityTableIdentifier) in
+      apply: { (base: Self, removing: Set<AnyEntityIdentifier>, entityName: EntityTableIdentifier) in
         var b = base
         b._apply(removing: removing, entityName: entityName)
         return b

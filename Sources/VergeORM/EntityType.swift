@@ -21,12 +21,55 @@
 
 import Foundation
 
+public struct AnyEntityIdentifier: Hashable, ExpressibleByStringLiteral {
+  
+  public typealias StringLiteralType = String
+
+  #if false
+  public let value: String
+  #else
+  public let value: AnyHashable
+  public init(_ value: AnyHashable) {
+    self.value = value
+  }
+  #endif
+
+  public init(stringLiteral string: String) {
+    self.value = string
+  }
+
+  public init(_ string: String) {
+    self.value = string
+  }
+
+}
+
 public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConvertible {
-  
+
+  #if false
+
+  #else
+
+  let any: AnyEntityIdentifier
+
   public let raw: Entity.EntityIDRawType
-  
+
   public init(_ raw: Entity.EntityIDRawType) {
     self.raw = raw
+    self.any = .init(raw)
+  }
+
+  #endif
+
+//  public let raw: AnyEntityIdentifier
+//
+//  public init(_ raw: String) {
+//    self.raw = .init(raw)
+//  }
+
+  public init(_ raw: AnyEntityIdentifier) {
+    self.any = raw
+    self.raw = raw.value as! Entity.EntityIDRawType
   }
   
   public var description: String {
@@ -39,7 +82,7 @@ public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConve
 /// EntityType has VergeTypedIdentifiable.
 /// You might use IdentifiableEntityType instead, if you create SwiftUI app.
 public protocol EntityType {
-  
+
   associatedtype EntityIDRawType: Hashable, CustomStringConvertible
 
   static var entityName: EntityTableIdentifier { get }

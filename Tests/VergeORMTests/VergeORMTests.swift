@@ -96,7 +96,7 @@ class VergeORMTests: XCTestCase {
     print(state.db.indexes.allBooks)
     
     state.db.performBatchUpdates { (context) -> Void in
-      context.book.deletes.insert(Book.EntityID.init("some"))
+      context.book.delete(Book.EntityID.init("some"))
     }
     
     XCTAssertEqual(state.db.entities.book.count, 0)
