@@ -130,7 +130,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
         break
       case .updated(let newState):
         store?.commit {
-          $0 = newState
+          $0.replace(with: newState)
         }
       }
     }
@@ -618,7 +618,7 @@ extension StoreType {
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
     dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
-    set: @escaping (inout State, NewState) -> Void,
+    set: @escaping (Inout<State>, NewState) -> Void,
     queue: TargetQueue = .passthrough
   ) -> BindingDerived<NewState> {
     
@@ -626,7 +626,7 @@ extension StoreType {
       get: get,
       set: { [weak self] state in
         self?.asStore().commit(name, file, function, line) {
-          set(&$0, state)
+          set($0, state)
         }
     },
       initialUpstreamState: asStore().state,
@@ -657,7 +657,7 @@ extension StoreType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
-    set: @escaping (inout State, NewState) -> Void,
+    set: @escaping (Inout<State>, NewState) -> Void,
     queue: TargetQueue = .passthrough
   ) -> BindingDerived<NewState> {
     

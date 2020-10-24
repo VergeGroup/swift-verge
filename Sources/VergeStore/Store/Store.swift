@@ -156,7 +156,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
   @inline(__always)
   func _receive<Result>(
-    mutation: (inout State) throws -> Result,
+    mutation: (Inout<State>) throws -> Result,
     trace: MutationTrace
   ) rethrows -> Result {
                 
@@ -170,7 +170,9 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     let returnValue = try _backingStorage.update { (state) -> Result in
       let startedTime = CFAbsoluteTimeGetCurrent()
       var current = state.primitive
-      let r = try mutation(&current)
+      let box = Inout<State>.init(pointer: &current) {}
+      #warning("TODO: skip mutation if there is no changes")
+      let r = try mutation(box)
       state = state.makeNextChanges(with: current)
       elapsed = CFAbsoluteTimeGetCurrent() - startedTime
       return r

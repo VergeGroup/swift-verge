@@ -77,7 +77,7 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout Scope) throws -> Result
+    mutation: (Inout<Scope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -89,8 +89,8 @@ extension DispatcherType {
     
     return try store.asStore()._receive(
       mutation: { state in
-        try mutation(&state[keyPath: scope])
-    },
+        try mutation(state.map(keyPath: scope))
+      },
       trace: trace
     )
   }
@@ -104,7 +104,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<WrappedStore.State, NewScope>,
-    mutation: (inout NewScope) throws -> Result
+    mutation: (Inout<NewScope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -116,8 +116,36 @@ extension DispatcherType {
     
     return try store.asStore()._receive(
       mutation: { state in
-        try mutation(&state[keyPath: scope])
+        try mutation(state.map(keyPath: scope))
     },
+      trace: trace
+    )
+  }
+
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func commit<Result, NewScope>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    scope: WritableKeyPath<WrappedStore.State, NewScope?>,
+    mutation: (Inout<NewScope>?) throws -> Result
+  ) rethrows -> Result {
+
+    let trace = MutationTrace(
+      name: name,
+      file: file.description,
+      function: function.description,
+      line: line
+    )
+
+    return try store.asStore()._receive(
+      mutation: { state in
+        try mutation(state.map(keyPath: scope))
+      },
       trace: trace
     )
   }
@@ -137,7 +165,7 @@ extension DispatcherType {
  */
 public struct BatchCommitContext<State, Scope> {
 
-  typealias Mutation = (MutationTrace, (inout State) -> Void)
+  typealias Mutation = (MutationTrace, (Inout<State>) -> Void)
 
   private(set) var mutations: [Mutation] = []
 
@@ -201,6 +229,7 @@ extension DispatcherType {
    From calling this method a transaction starts, register mutation into `BatchUpdate` instance.
    If it has no mutations, batch updating won't be executed.
    */
+  @available(*, deprecated, message: "Commit supports")
   public func batchCommit(_ perform: (_ context: inout BatchCommitContext<WrappedStore.State, Scope>) -> Void) {
 
     var context = BatchCommitContext<WrappedStore.State, Scope>(scope: scope)
@@ -213,7 +242,7 @@ extension DispatcherType {
 
     commit("BatchUpdating", scope: \.self) { (state) -> Void in
       for mutation in context.mutations {
-        mutation.1(&state)
+        mutation.1(state)
       }
     }
 

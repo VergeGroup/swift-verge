@@ -82,8 +82,8 @@ final class VergeStoreTests: XCTestCase {
     
     func setMyName() {
       commit {
-        try? $0.updateTryPresent(target: \.optionalNested) {
-          $0.myName = "Muuk"
+        if $0.optionalNested != nil {
+          $0.optionalNested?.myName = "Muuk"
         }
       }
     }
@@ -112,7 +112,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.NestedState> = _detached.state
       
       _detached.commit { state in
-        let _: State.NestedState = state
+        let _: Inout<State.NestedState> = state
         
       }
         
@@ -121,7 +121,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.OptionalNestedState?> = optionalNestedTarget.state
           
       optionalNestedTarget.commit { state in
-        let _: State.OptionalNestedState? = state
+        let _: Inout<State.OptionalNestedState?> = state
       }
                       
     }
@@ -139,11 +139,11 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.TreeA> = state
       
       commit { state in
-        let _: State.TreeA = state
+        let _: Inout<State.TreeA> = state
       }
       
       commit(scope: \.treeB) { state in
-        let _: State.TreeB = state
+        let _: Inout<State.TreeB> = state
       }
       
       let treeB = detached(from: \.treeB)
@@ -151,7 +151,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.TreeB> = treeB.state
                          
       treeB.commit { state in
-        let _: State.TreeB = state
+        let _: Inout<State.TreeB> = state
       }
          
     }
