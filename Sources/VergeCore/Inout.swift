@@ -22,17 +22,17 @@
 import Foundation
 
 @dynamicMemberLookup
-public final class Inout<State> {
+public final class Inout<Wrapped> {
 
   public private(set) var hasModified = false
 
-  private let pointer: UnsafeMutablePointer<State>
+  private let pointer: UnsafeMutablePointer<Wrapped>
 
-  public init(pointer: UnsafeMutablePointer<State>, onModified: @escaping () -> Void) {
+  public init(pointer: UnsafeMutablePointer<Wrapped>, onModified: @escaping () -> Void) {
     self.pointer = pointer
   }
 
-  public subscript<T> (dynamicMember keyPath: WritableKeyPath<State, T>) -> T {
+  public subscript<T> (dynamicMember keyPath: WritableKeyPath<Wrapped, T>) -> T {
     get {
       pointer.pointee[keyPath: keyPath]
     }
@@ -42,7 +42,7 @@ public final class Inout<State> {
     }
   }
 
-  public subscript<T> (dynamicMember keyPath: WritableKeyPath<State, T?>) -> T? {
+  public subscript<T> (dynamicMember keyPath: WritableKeyPath<Wrapped, T?>) -> T? {
     get {
       pointer.pointee[keyPath: keyPath]
     }
@@ -52,15 +52,15 @@ public final class Inout<State> {
     }
   }
 
-  public subscript<T> (dynamicMember keyPath: KeyPath<State, T>) -> T {
+  public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T>) -> T {
     return pointer.pointee[keyPath: keyPath]
   }
 
-  public subscript<T> (dynamicMember keyPath: KeyPath<State, T?>) -> T? {
+  public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T?>) -> T? {
     return pointer.pointee[keyPath: keyPath]
   }
 
-  public subscript<T> (keyPath keyPath: WritableKeyPath<State, T>) -> T {
+  public subscript<T> (keyPath keyPath: WritableKeyPath<Wrapped, T>) -> T {
     get {
       pointer.pointee[keyPath: keyPath]
     }
@@ -70,7 +70,7 @@ public final class Inout<State> {
     }
   }
 
-  public subscript<T> (keyPath keyPath: WritableKeyPath<State, T?>) -> T? {
+  public subscript<T> (keyPath keyPath: WritableKeyPath<Wrapped, T?>) -> T? {
     get {
       pointer.pointee[keyPath: keyPath]
     }
@@ -80,15 +80,21 @@ public final class Inout<State> {
     }
   }
 
-  public subscript<T> (keyPath keyPath: KeyPath<State, T>) -> T {
+  public subscript<T> (keyPath keyPath: KeyPath<Wrapped, T>) -> T {
     return pointer.pointee[keyPath: keyPath]
   }
 
-  public subscript<T> (keyPath keyPath: KeyPath<State, T?>) -> T? {
+  public subscript<T> (keyPath keyPath: KeyPath<Wrapped, T?>) -> T? {
     return pointer.pointee[keyPath: keyPath]
   }
 
-  public func replace(with newValue: State) {
+  /**
+   Replace the wrapped value with a new value.
+
+   We can't overload `=` operator.
+   https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html
+   */
+  public func replace(with newValue: Wrapped) {
     markAsModified()
     pointer.pointee = newValue
   }
@@ -97,7 +103,7 @@ public final class Inout<State> {
     hasModified = true
   }
 
-  public func map<U>(keyPath: WritableKeyPath<State, U>) -> Inout<U> {
+  public func map<U>(keyPath: WritableKeyPath<Wrapped, U>) -> Inout<U> {
     return withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
       Inout<U>.init(pointer: pointer) {
         self.markAsModified()
@@ -105,7 +111,7 @@ public final class Inout<State> {
     }
   }
 
-  public func map<U>(keyPath: WritableKeyPath<State, U?>) -> Inout<U>? {
+  public func map<U>(keyPath: WritableKeyPath<Wrapped, U?>) -> Inout<U>? {
 
     guard pointer.pointee[keyPath: keyPath] != nil else {
       return nil
