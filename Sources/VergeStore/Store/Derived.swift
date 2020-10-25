@@ -618,7 +618,7 @@ extension StoreType {
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
     dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
-    set: @escaping (inout UnsafeInoutReference<State>, NewState) -> Void,
+    set: @escaping (UnsafeInoutReference<State>, NewState) -> Void,
     queue: TargetQueue = .passthrough
   ) -> BindingDerived<NewState> {
     
@@ -626,7 +626,7 @@ extension StoreType {
       get: get,
       set: { [weak self] state in
         self?.asStore().commit(name, file, function, line) {
-          set(&$0, state)
+          set($0, state)
         }
     },
       initialUpstreamState: asStore().state,
@@ -657,7 +657,7 @@ extension StoreType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
-    set: @escaping (inout UnsafeInoutReference<State>, NewState) -> Void,
+    set: @escaping (UnsafeInoutReference<State>, NewState) -> Void,
     queue: TargetQueue = .passthrough
   ) -> BindingDerived<NewState> {
     

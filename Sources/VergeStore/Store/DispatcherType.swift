@@ -77,7 +77,7 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout UnsafeInoutReference<Scope>) throws -> Result
+    mutation: (UnsafeInoutReference<Scope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -89,8 +89,7 @@ extension DispatcherType {
     
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        var proxy = state.map(keyPath: scope)
-        return try mutation(&proxy)
+        return try mutation(state.map(keyPath: scope))
       },
       trace: trace
     )
@@ -105,7 +104,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<WrappedStore.State, NewScope>,
-    mutation: (inout UnsafeInoutReference<NewScope>) throws -> Result
+    mutation: (UnsafeInoutReference<NewScope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -117,8 +116,7 @@ extension DispatcherType {
     
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        var proxy = state.map(keyPath: scope)
-        return try mutation(&proxy)
+        return try mutation(state.map(keyPath: scope))
     },
       trace: trace
     )
@@ -134,7 +132,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<WrappedStore.State, NewScope?>,
-    mutation: (inout UnsafeInoutReference<NewScope>?) throws -> Result
+    mutation: (UnsafeInoutReference<NewScope>?) throws -> Result
   ) rethrows -> Result {
 
     let trace = MutationTrace(
@@ -146,8 +144,7 @@ extension DispatcherType {
 
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        var proxy = state.map(keyPath: scope)
-        return try mutation(&proxy)
+        return try mutation(state.map(keyPath: scope))
       },
       trace: trace
     )
