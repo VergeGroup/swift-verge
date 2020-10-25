@@ -89,7 +89,9 @@ extension DispatcherType {
     
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        return try mutation(state.map(keyPath: scope))
+        try state.map(keyPath: scope) { (ref) -> Result in
+          try mutation(ref)
+        }
       },
       trace: trace
     )
@@ -116,7 +118,9 @@ extension DispatcherType {
     
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        return try mutation(state.map(keyPath: scope))
+        try state.map(keyPath: scope) { (ref) -> Result in
+          try mutation(ref)
+        }
     },
       trace: trace
     )
@@ -144,7 +148,9 @@ extension DispatcherType {
 
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        return try mutation(state.map(keyPath: scope))
+        try state.map(keyPath: scope) { (ref) -> Result in
+          try mutation(ref)
+        }
       },
       trace: trace
     )

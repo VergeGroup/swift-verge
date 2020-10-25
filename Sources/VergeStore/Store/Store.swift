@@ -179,10 +179,12 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
       }
 
       var current = state.primitive
-      let reference = UnsafeInoutReference<State>.init(&current) {}
-
-      #warning("TODO: skip mutation if there is no changes")
-      let result = try mutation(reference)
+      let result = try withUnsafeMutablePointer(to: &current) { (pointer) -> Result in
+        let reference = UnsafeInoutReference<State>.init(pointer) {}
+        #warning("TODO: skip mutation if there is no changes")
+        let result = try mutation(reference)
+        return result
+      }
 
 //      guard reference.hasModified else {
 //        return result
