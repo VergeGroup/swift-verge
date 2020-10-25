@@ -189,7 +189,37 @@ final class VergeStoreTests: XCTestCase {
   override func tearDown() {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
-    
+
+  func testCommit() {
+
+    let store = DemoStore()
+
+    store.commit {
+      $0.count = 100
+    }
+
+    XCTAssertEqual(store.state.count, 100)
+
+    store.commit {
+      $0.inner.name = "mmm"
+    }
+
+    XCTAssertEqual(store.state.inner.name, "mmm")
+
+    let exp = expectation(description: "async")
+
+    DispatchQueue.global().async {
+      store.commit {
+        $0.inner.name = "xxx"
+      }
+      XCTAssertEqual(store.state.inner.name, "xxx")
+      exp.fulfill()
+    }
+
+    wait(for: [exp], timeout: 1)
+
+  }
+
   func testDispatch() {
     
     dispatcher.resetCount()
@@ -450,7 +480,7 @@ final class VergeStoreTests: XCTestCase {
     }
     
     XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.source.root)
-    
+
   }
 
   func testScan() {

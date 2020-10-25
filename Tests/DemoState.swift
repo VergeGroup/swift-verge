@@ -13,10 +13,15 @@ import VergeStore
 struct NonEquatable {}
 
 struct DemoState: ExtendedStateType, Equatable {
+
+  struct Inner: Equatable {
+    var name: String = ""
+  }
   
   var name: String = ""
   var count: Int = 0
   var items: [Int] = []
+  var inner: Inner = .init()
 
   @Edge var nonEquatable: NonEquatable = .init()
   
