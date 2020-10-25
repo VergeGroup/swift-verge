@@ -351,7 +351,9 @@ final class VergeStoreTests: XCTestCase {
       
       XCTAssertEqual(store.state.hasChanges(\.count), true)
       
-      store.commit { _ in }
+      store.commit {
+        $0.count = $0.count
+      }
       
       XCTAssertEqual(store.state.hasChanges(\.count), false)
       

@@ -28,7 +28,7 @@ public final class UnsafeInoutReference<Wrapped> {
 
   private let pointer: UnsafeMutablePointer<Wrapped>
 
-  public init(_ pointer: UnsafeMutablePointer<Wrapped>, onModified: @escaping () -> Void) {
+  public init(_ pointer: UnsafeMutablePointer<Wrapped>) {
     self.pointer = pointer
   }
 
@@ -105,8 +105,9 @@ public final class UnsafeInoutReference<Wrapped> {
 
   public func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U>, perform: (UnsafeInoutReference<U>) throws -> Result) rethrows -> Result {
     try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
-      let ref = UnsafeInoutReference<U>.init(pointer) {
-        self.markAsModified()
+      let ref = UnsafeInoutReference<U>.init(pointer)
+      defer {
+        self.hasModified = ref.hasModified
       }
       return try perform(ref)
     }
@@ -119,8 +120,9 @@ public final class UnsafeInoutReference<Wrapped> {
     }
 
     return try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]!) { (pointer) in
-      let ref = UnsafeInoutReference<U>.init(pointer) {
-        self.markAsModified()
+      let ref = UnsafeInoutReference<U>.init(pointer)
+      defer {
+        self.hasModified = ref.hasModified
       }
       return try perform(ref)
     }

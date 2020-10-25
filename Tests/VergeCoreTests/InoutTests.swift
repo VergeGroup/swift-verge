@@ -114,7 +114,7 @@ final class InoutTests: XCTestCase {
       copied = true
     })
 
-    let proxy = UnsafeInoutReference.init(&value, onModified: {})
+    let proxy = UnsafeInoutReference.init(&value)
 
     proxy.wrappedValue = 1
 

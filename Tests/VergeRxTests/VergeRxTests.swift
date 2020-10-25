@@ -20,7 +20,7 @@ class VergeRxTests: XCTestCase {
       
       XCTAssertEqual(store.state.hasChanges(\.count), true)
       
-      store.commit { _ in }
+      store.commit { $0.markAsModified() }
       
       XCTAssertEqual(store.state.hasChanges(\.count), false)
       

@@ -342,7 +342,9 @@ class Computed2Tests: XCTestCase {
     let store = MyStore()
     
     _ = store.state.num_0
-    store.commit { _ in }
+    store.commit {
+      $0.markAsModified()
+    }
 
     let changes = store.state
                   
