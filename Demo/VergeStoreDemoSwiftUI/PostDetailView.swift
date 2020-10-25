@@ -20,7 +20,7 @@ struct PostDetailView: View {
       }) {
         Text("Add comment")
       }
-      StateReader(session.store) { _ in
+      StateReader(session.store).content { _ in
         List(self.comments) { comment in
           commentView(comment: comment)
         }

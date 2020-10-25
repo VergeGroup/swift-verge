@@ -11,7 +11,7 @@ struct LoggedOutView: View {
   @State private var isConnecting = false
 
   var body: some View {
-    StateReader(stack.derivedState) { derived in
+    StateReader(stack.derivedState).content { derived in
       ProcessingOverlay(isProcessing: derived.isLoginProcessing) {
         VStack {
           Text("Hello, World!")

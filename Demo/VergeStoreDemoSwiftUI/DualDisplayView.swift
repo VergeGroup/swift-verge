@@ -34,7 +34,7 @@ struct _AllPostsView: View {
 
   var body: some View {
     // TODO: filter
-    StateReader(session.store) { _ in
+    StateReader(session.store).content { _ in
       NavigationView {
         List {
           ForEach(self.posts.lazy.reversed()) { post in
