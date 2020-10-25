@@ -184,9 +184,9 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
       #warning("TODO: skip mutation if there is no changes")
       let result = try mutation(reference)
 
-      guard reference.hasModified else {
-        return result
-      }
+//      guard reference.hasModified else {
+//        return result
+//      }
 
       state = state.makeNextChanges(with: current)
 
