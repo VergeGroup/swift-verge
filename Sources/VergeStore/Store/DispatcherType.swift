@@ -77,7 +77,7 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (UnsafeInoutReference<Scope>) throws -> Result
+    mutation: (inout UnsafeInoutReference<Scope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -89,8 +89,8 @@ extension DispatcherType {
     
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        try state.map(keyPath: scope) { (ref) -> Result in
-          try mutation(ref)
+        try state.map(keyPath: scope) { (ref: inout UnsafeInoutReference<Scope>) -> Result in
+          return try mutation(&ref)
         }
       },
       trace: trace
@@ -106,7 +106,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<WrappedStore.State, NewScope>,
-    mutation: (UnsafeInoutReference<NewScope>) throws -> Result
+    mutation: (inout UnsafeInoutReference<NewScope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -118,8 +118,8 @@ extension DispatcherType {
     
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        try state.map(keyPath: scope) { (ref) -> Result in
-          try mutation(ref)
+        try state.map(keyPath: scope) { (ref: inout UnsafeInoutReference<NewScope>) -> Result in
+          return try mutation(&ref)
         }
     },
       trace: trace
@@ -136,7 +136,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<WrappedStore.State, NewScope?>,
-    mutation: (UnsafeInoutReference<NewScope>?) throws -> Result
+    mutation: (inout UnsafeInoutReference<NewScope>?) throws -> Result
   ) rethrows -> Result {
 
     let trace = MutationTrace(
@@ -148,8 +148,8 @@ extension DispatcherType {
 
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        try state.map(keyPath: scope) { (ref) -> Result in
-          try mutation(ref)
+        try state.map(keyPath: scope) { (ref: inout UnsafeInoutReference<NewScope>?) -> Result in
+          return try mutation(&ref)
         }
       },
       trace: trace
@@ -171,7 +171,7 @@ extension DispatcherType {
  */
 public struct BatchCommitContext<State, Scope> {
 
-  typealias Mutation = (MutationTrace, (UnsafeInoutReference<State>) -> Void)
+  typealias Mutation = (MutationTrace, (inout UnsafeInoutReference<State>) -> Void)
 
   private(set) var mutations: [Mutation] = []
 
@@ -248,7 +248,7 @@ extension DispatcherType {
 
     commit("BatchUpdating", scope: \.self) { (state) -> Void in
       for mutation in context.mutations {
-        mutation.1(state)
+        mutation.1(&state)
       }
     }
 

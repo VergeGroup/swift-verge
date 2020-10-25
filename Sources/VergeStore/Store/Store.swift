@@ -160,7 +160,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
   func _receive<Result>(
-    mutation: (UnsafeInoutReference<State>) throws -> Result,
+    mutation: (inout UnsafeInoutReference<State>) throws -> Result,
     trace: MutationTrace
   ) rethrows -> Result {
                 
@@ -182,9 +182,9 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
       let result = try withUnsafeMutablePointer(to: &current) { (pointer) -> Result in
 
-        let reference = UnsafeInoutReference<State>.init(pointer)
+        var reference = UnsafeInoutReference<State>.init(pointer)
 
-        let result = try mutation(reference)
+        let result = try mutation(&reference)
 
         // "TODO: skip mutation if there is no changes"
         guard reference.hasModified else {
