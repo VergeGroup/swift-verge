@@ -33,59 +33,67 @@ public final class UnsafeInoutReference<Wrapped> {
   }
 
   public subscript<T> (dynamicMember keyPath: WritableKeyPath<Wrapped, T>) -> T {
-    get {
-      pointer.pointee[keyPath: keyPath]
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
     }
-    set {
+    _modify {
       hasModified = true
-      pointer.pointee[keyPath: keyPath] = newValue
+      yield &pointer.pointee[keyPath: keyPath]
     }
   }
 
   public subscript<T> (dynamicMember keyPath: WritableKeyPath<Wrapped, T?>) -> T? {
-    get {
-      pointer.pointee[keyPath: keyPath]
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
     }
-    set {
-      markAsModified()
-      pointer.pointee[keyPath: keyPath] = newValue
+    _modify {
+      hasModified = true
+      yield &pointer.pointee[keyPath: keyPath]
     }
   }
 
   public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T>) -> T {
-    return pointer.pointee[keyPath: keyPath]
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
+    }
   }
 
   public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T?>) -> T? {
-    return pointer.pointee[keyPath: keyPath]
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
+    }
   }
 
   public subscript<T> (keyPath keyPath: WritableKeyPath<Wrapped, T>) -> T {
-    get {
-      pointer.pointee[keyPath: keyPath]
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
     }
-    set {
-      markAsModified()
-      pointer.pointee[keyPath: keyPath] = newValue
+    _modify {
+      hasModified = true
+      yield &pointer.pointee[keyPath: keyPath]
     }
   }
 
   public subscript<T> (keyPath keyPath: WritableKeyPath<Wrapped, T?>) -> T? {
-    get {
-      pointer.pointee[keyPath: keyPath]
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
     }
-    set {
-      markAsModified()
-      pointer.pointee[keyPath: keyPath] = newValue
+    _modify {
+      hasModified = true
+      yield &pointer.pointee[keyPath: keyPath]
     }
   }
 
   public subscript<T> (keyPath keyPath: KeyPath<Wrapped, T>) -> T {
-    return pointer.pointee[keyPath: keyPath]
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
+    }
   }
 
   public subscript<T> (keyPath keyPath: KeyPath<Wrapped, T?>) -> T? {
-    return pointer.pointee[keyPath: keyPath]
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
+    }
   }
 
   /**
