@@ -226,7 +226,7 @@ final class VergeStoreTests: XCTestCase {
 
     var count = 0
 
-    let subs = store.sinkState { (_) in
+    let subs = store.sinkState(queue: .passthrough) { (_) in
       count += 1
     }
 
@@ -267,6 +267,7 @@ final class VergeStoreTests: XCTestCase {
     XCTAssertEqual(count, 3)
 
     withExtendedLifetime(subs, {})
+    
   }
 
   func testDispatch() {
@@ -343,14 +344,14 @@ final class VergeStoreTests: XCTestCase {
     }
     .store(in: &subscriptions)
         
-    store.commit { _ in
-      
+    store.commit {
+      $0.markAsModified()
     }
     
     subscriptions = .init()
 
-    store.commit { _ in
-      
+    store.commit {
+      $0.markAsModified()
     }
     
     XCTAssertEqual(count, 2)
