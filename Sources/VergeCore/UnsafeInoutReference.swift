@@ -22,13 +22,13 @@
 import Foundation
 
 @dynamicMemberLookup
-public final class Inout<Wrapped> {
+public final class UnsafeInoutReference<Wrapped> {
 
   public private(set) var hasModified = false
 
   private let pointer: UnsafeMutablePointer<Wrapped>
 
-  public init(pointer: UnsafeMutablePointer<Wrapped>, onModified: @escaping () -> Void) {
+  public init(_ pointer: UnsafeMutablePointer<Wrapped>, onModified: @escaping () -> Void) {
     self.pointer = pointer
   }
 
@@ -103,22 +103,22 @@ public final class Inout<Wrapped> {
     hasModified = true
   }
 
-  public func map<U>(keyPath: WritableKeyPath<Wrapped, U>) -> Inout<U> {
+  public func map<U>(keyPath: WritableKeyPath<Wrapped, U>) -> UnsafeInoutReference<U> {
     return withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
-      Inout<U>.init(pointer: pointer) {
+      UnsafeInoutReference<U>.init(pointer) {
         self.markAsModified()
       }
     }
   }
 
-  public func map<U>(keyPath: WritableKeyPath<Wrapped, U?>) -> Inout<U>? {
+  public func map<U>(keyPath: WritableKeyPath<Wrapped, U?>) -> UnsafeInoutReference<U>? {
 
     guard pointer.pointee[keyPath: keyPath] != nil else {
       return nil
     }
 
     return withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]!) { (pointer) in
-      Inout<U>.init(pointer: pointer) {
+      UnsafeInoutReference<U>.init(pointer) {
         self.markAsModified()
       }
     }

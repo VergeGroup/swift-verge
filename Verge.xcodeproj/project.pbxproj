@@ -49,8 +49,11 @@
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
-		4B5D3B2D2544B95100B4DFBE /* Inout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B2C2544B95100B4DFBE /* Inout.swift */; };
+		4B5D3B2D2544B95100B4DFBE /* UnsafeInoutReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B2C2544B95100B4DFBE /* UnsafeInoutReference.swift */; };
 		4B5D3B3A2544BCBB00B4DFBE /* InoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B392544BCBB00B4DFBE /* InoutTests.swift */; };
+		4B5D3B472545679200B4DFBE /* UnsafeReadReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B462545679200B4DFBE /* UnsafeReadReference.swift */; };
+		4B5D3B6B254568D300B4DFBE /* ReadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B53254568B400B4DFBE /* ReadTests.swift */; };
+		4B5D3B77254568F300B4DFBE /* DemoState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B95BE59244F10F200124F6B /* DemoState.swift */; };
 		4B5E84AD24618D39009A0CA8 /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */; };
 		4B5E84AF24618D82009A0CA8 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
 		4B5E84BC2461901E009A0CA8 /* VergeObjcBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5E84BB24619006009A0CA8 /* VergeObjcBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -295,8 +298,10 @@
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
 		4B57FD1923A29DAD00E41D06 /* EntityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityType.swift; sourceTree = "<group>"; };
-		4B5D3B2C2544B95100B4DFBE /* Inout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inout.swift; sourceTree = "<group>"; };
+		4B5D3B2C2544B95100B4DFBE /* UnsafeInoutReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsafeInoutReference.swift; sourceTree = "<group>"; };
 		4B5D3B392544BCBB00B4DFBE /* InoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InoutTests.swift; sourceTree = "<group>"; };
+		4B5D3B462545679200B4DFBE /* UnsafeReadReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsafeReadReference.swift; sourceTree = "<group>"; };
+		4B5D3B53254568B400B4DFBE /* ReadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadTests.swift; sourceTree = "<group>"; };
 		4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeObjcBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B5E849F24618D1C009A0CA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AtomicBridges.m; sourceTree = "<group>"; };
@@ -764,6 +769,7 @@
 				4B39AE5423C5DC84005F7BC8 /* CopyPerformance.swift */,
 				4B9DD6B824CB6B0C0062FB7A /* CachedMapTests.swift */,
 				4B5D3B392544BCBB00B4DFBE /* InoutTests.swift */,
+				4B5D3B53254568B400B4DFBE /* ReadTests.swift */,
 			);
 			path = VergeCoreTests;
 			sourceTree = "<group>";
@@ -797,7 +803,8 @@
 				4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */,
 				4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */,
 				4B9DD6B624CAE8560062FB7A /* CachedMap.swift */,
-				4B5D3B2C2544B95100B4DFBE /* Inout.swift */,
+				4B5D3B2C2544B95100B4DFBE /* UnsafeInoutReference.swift */,
+				4B5D3B462545679200B4DFBE /* UnsafeReadReference.swift */,
 			);
 			path = VergeCore;
 			sourceTree = "<group>";
@@ -1433,6 +1440,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B39AE5623C5DC8D005F7BC8 /* CopyPerformance.swift in Sources */,
+				4B5D3B6B254568D300B4DFBE /* ReadTests.swift in Sources */,
+				4B5D3B77254568F300B4DFBE /* DemoState.swift in Sources */,
 				4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */,
 				4B5D3B3A2544BCBB00B4DFBE /* InoutTests.swift in Sources */,
 			);
@@ -1443,7 +1452,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B73F08924041811006910E6 /* Log.swift in Sources */,
-				4B5D3B2D2544B95100B4DFBE /* Inout.swift in Sources */,
+				4B5D3B472545679200B4DFBE /* UnsafeReadReference.swift in Sources */,
+				4B5D3B2D2544B95100B4DFBE /* UnsafeInoutReference.swift in Sources */,
 				4BC35667249BD70B0096B15B /* Indexed.swift in Sources */,
 				4BA3E1A523C359F40095629B /* Signpost.swift in Sources */,
 				4B8F5AB7246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift in Sources */,

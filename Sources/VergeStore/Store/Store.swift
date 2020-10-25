@@ -154,9 +154,13 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
   }
 
+  /// Receives mutation
+  ///
+  /// - Parameters:
+  ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
   func _receive<Result>(
-    mutation: (Inout<State>) throws -> Result,
+    mutation: (inout UnsafeInoutReference<State>) throws -> Result,
     trace: MutationTrace
   ) rethrows -> Result {
                 
@@ -170,9 +174,9 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     let returnValue = try _backingStorage.update { (state) -> Result in
       let startedTime = CFAbsoluteTimeGetCurrent()
       var current = state.primitive
-      let box = Inout<State>.init(pointer: &current) {}
+      var box = UnsafeInoutReference<State>.init(&current) {}
       #warning("TODO: skip mutation if there is no changes")
-      let r = try mutation(box)
+      let r = try mutation(&box)
       state = state.makeNextChanges(with: current)
       elapsed = CFAbsoluteTimeGetCurrent() - startedTime
       return r

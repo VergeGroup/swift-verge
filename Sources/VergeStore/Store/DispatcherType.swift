@@ -77,7 +77,7 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (Inout<Scope>) throws -> Result
+    mutation: (inout UnsafeInoutReference<Scope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -88,8 +88,9 @@ extension DispatcherType {
     )
     
     return try store.asStore()._receive(
-      mutation: { state in
-        try mutation(state.map(keyPath: scope))
+      mutation: { state -> Result in
+        var proxy = state.map(keyPath: scope)
+        return try mutation(&proxy)
       },
       trace: trace
     )
@@ -104,7 +105,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<WrappedStore.State, NewScope>,
-    mutation: (Inout<NewScope>) throws -> Result
+    mutation: (inout UnsafeInoutReference<NewScope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -115,8 +116,9 @@ extension DispatcherType {
     )
     
     return try store.asStore()._receive(
-      mutation: { state in
-        try mutation(state.map(keyPath: scope))
+      mutation: { state -> Result in
+        var proxy = state.map(keyPath: scope)
+        return try mutation(&proxy)
     },
       trace: trace
     )
@@ -132,7 +134,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<WrappedStore.State, NewScope?>,
-    mutation: (Inout<NewScope>?) throws -> Result
+    mutation: (inout UnsafeInoutReference<NewScope>?) throws -> Result
   ) rethrows -> Result {
 
     let trace = MutationTrace(
@@ -143,8 +145,9 @@ extension DispatcherType {
     )
 
     return try store.asStore()._receive(
-      mutation: { state in
-        try mutation(state.map(keyPath: scope))
+      mutation: { state -> Result in
+        var proxy = state.map(keyPath: scope)
+        return try mutation(&proxy)
       },
       trace: trace
     )
@@ -165,7 +168,7 @@ extension DispatcherType {
  */
 public struct BatchCommitContext<State, Scope> {
 
-  typealias Mutation = (MutationTrace, (Inout<State>) -> Void)
+  typealias Mutation = (MutationTrace, (UnsafeInoutReference<State>) -> Void)
 
   private(set) var mutations: [Mutation] = []
 

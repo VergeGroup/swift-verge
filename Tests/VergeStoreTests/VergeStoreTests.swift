@@ -112,7 +112,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.NestedState> = _detached.state
       
       _detached.commit { state in
-        let _: Inout<State.NestedState> = state
+        let _: UnsafeInoutReference<State.NestedState> = state
         
       }
         
@@ -121,7 +121,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.OptionalNestedState?> = optionalNestedTarget.state
           
       optionalNestedTarget.commit { state in
-        let _: Inout<State.OptionalNestedState?> = state
+        let _: UnsafeInoutReference<State.OptionalNestedState?> = state
       }
                       
     }
@@ -139,11 +139,11 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.TreeA> = state
       
       commit { state in
-        let _: Inout<State.TreeA> = state
+        let _: UnsafeInoutReference<State.TreeA> = state
       }
       
       commit(scope: \.treeB) { state in
-        let _: Inout<State.TreeB> = state
+        let _: UnsafeInoutReference<State.TreeB> = state
       }
       
       let treeB = detached(from: \.treeB)
@@ -151,7 +151,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.TreeB> = treeB.state
                          
       treeB.commit { state in
-        let _: Inout<State.TreeB> = state
+        let _: UnsafeInoutReference<State.TreeB> = state
       }
          
     }
