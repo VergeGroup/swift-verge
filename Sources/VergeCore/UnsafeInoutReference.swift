@@ -21,6 +21,7 @@
 
 import Foundation
 
+/// Do not retain on anywhere.
 @dynamicMemberLookup
 public final class UnsafeInoutReference<Wrapped> {
 
@@ -37,7 +38,7 @@ public final class UnsafeInoutReference<Wrapped> {
       yield pointer.pointee[keyPath: keyPath]
     }
     _modify {
-      hasModified = true
+      markAsModified()
       yield &pointer.pointee[keyPath: keyPath]
     }
   }
@@ -47,7 +48,7 @@ public final class UnsafeInoutReference<Wrapped> {
       yield pointer.pointee[keyPath: keyPath]
     }
     _modify {
-      hasModified = true
+      markAsModified()
       yield &pointer.pointee[keyPath: keyPath]
     }
   }
@@ -69,7 +70,7 @@ public final class UnsafeInoutReference<Wrapped> {
       yield pointer.pointee[keyPath: keyPath]
     }
     _modify {
-      hasModified = true
+      markAsModified()
       yield &pointer.pointee[keyPath: keyPath]
     }
   }
@@ -79,7 +80,7 @@ public final class UnsafeInoutReference<Wrapped> {
       yield pointer.pointee[keyPath: keyPath]
     }
     _modify {
-      hasModified = true
+      markAsModified()
       yield &pointer.pointee[keyPath: keyPath]
     }
   }
