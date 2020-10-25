@@ -8,11 +8,9 @@
 
 import Foundation
 
-import VergeStore
-
 struct NonEquatable {}
 
-struct DemoState: ExtendedStateType, Equatable {
+struct DemoState: Equatable {
 
   struct Inner: Equatable {
     var name: String = ""
@@ -24,11 +22,19 @@ struct DemoState: ExtendedStateType, Equatable {
   var inner: Inner = .init()
 
   @Edge var nonEquatable: NonEquatable = .init()
-  
+
+}
+
+#if canImport(VergeStore)
+
+import VergeStore
+
+extension DemoState: ExtendedStateType {
+
   struct Extended: ExtendedType {
-    
+
     static let instance = Extended()
-    
+
     let nameCount = Field.Computed<Int> {
       $0.name.count
     }
@@ -37,24 +43,26 @@ struct DemoState: ExtendedStateType, Equatable {
     }
 
   }
-  
+
 }
 
 final class DemoStore: VergeStore.Store<DemoState, Never> {
-  
+
   init() {
     super.init(initialState: .init(), logger: nil)
   }
-  
+
   func increment() {
     commit {
       $0.count += 1
     }
   }
-  
+
   func empty() {
     commit { _ in
     }
   }
 
 }
+
+#endif
