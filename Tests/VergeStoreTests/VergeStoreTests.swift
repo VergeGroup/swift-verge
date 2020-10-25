@@ -220,6 +220,55 @@ final class VergeStoreTests: XCTestCase {
 
   }
 
+  func testEmptyCommit() {
+
+    let store = DemoStore()
+
+    var count = 0
+
+    let subs = store.sinkState { (_) in
+      count += 1
+    }
+
+    XCTAssertEqual(store.state.version, 0)
+
+    store.commit {
+      $0.count = 100
+    }
+
+    XCTAssertEqual(store.state.version, 1)
+
+    store.commit { _ in
+
+    }
+
+    // no changes
+    XCTAssertEqual(store.state.version, 1)
+
+    store.commit {
+      // explict marking
+      $0.markAsModified()
+    }
+
+    // many times calling empty commits
+    for _ in 0..<3 {
+      store.commit { _ in }
+    }
+
+    // no affects from read a value
+    store.commit {
+      if $0.count > 100 {
+        $0.count = 0
+        XCTFail()
+      }
+    }
+
+    XCTAssertEqual(store.state.version, 2)
+    XCTAssertEqual(count, 3)
+
+    withExtendedLifetime(subs, {})
+  }
+
   func testDispatch() {
     
     dispatcher.resetCount()

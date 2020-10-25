@@ -197,6 +197,48 @@ open class ReadonlyStorage<Value>: CustomReflectable {
 open class Storage<Value>: ReadonlyStorage<Value> {
   
   private var notificationFilter: (Value) -> Bool = { _ in true }
+
+  public enum UpdateResult {
+    case updated
+    case nothingUpdates
+  }
+
+  @inline(__always)
+  public final func _update(_ update: (inout Value) throws -> UpdateResult) rethrows {
+
+    let signpost = VergeSignpostTransaction("Storage.update")
+    defer {
+      signpost.end()
+    }
+
+    lock()
+    do {
+
+      let previousValue = nonatomicValue
+
+      let result = try update(&nonatomicValue)
+
+      switch result {
+      case .nothingUpdates:
+        unlock()
+      case .updated:
+        let afterValue = nonatomicValue
+        unlock()
+
+        if notificationFilter(previousValue) {
+          notifyWillUpdate(value: previousValue)
+        }
+        // TODO: cause cracking the order of event
+        if notificationFilter(afterValue) {
+          notifyDidUpdate(value: afterValue)
+        }
+      }
+
+    } catch {
+      unlock()
+      throw error
+    }
+  }
   
   @discardableResult
   @inline(__always)

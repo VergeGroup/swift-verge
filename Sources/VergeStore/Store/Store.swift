@@ -170,8 +170,10 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     }
     
     var elapsed: CFTimeInterval = 0
-    
-    let returnValue = try _backingStorage.update { (state) -> Result in
+
+    var valueFromMutation: Result!
+
+    try _backingStorage._update { (state) -> Storage<Changes<State>>.UpdateResult in
 
       let startedTime = CFAbsoluteTimeGetCurrent()
       defer {
@@ -180,29 +182,30 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
       var current = state.primitive
 
-      let result = try withUnsafeMutablePointer(to: &current) { (pointer) -> Result in
+      let updateResult = try withUnsafeMutablePointer(to: &current) { (pointer) -> Storage<Changes<State>>.UpdateResult in
 
         var reference = UnsafeInoutReference<State>.init(pointer)
 
         let result = try mutation(&reference)
+        valueFromMutation = result
 
-        // "TODO: skip mutation if there is no changes"
         guard reference.hasModified else {
-          return result
+          // No emits update event
+          return .nothingUpdates
         }
 
         state = state.makeNextChanges(with: pointer.pointee)
 
-        return result
+        return .updated
       }
 
-      return result
+      return updateResult
 
     }
        
     let log = CommitLog(store: self, trace: trace, time: elapsed)
     logger?.didCommit(log: log, sender: self)
-    return returnValue
+    return valueFromMutation
   }
  
   @inline(__always)
