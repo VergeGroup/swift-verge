@@ -12,6 +12,19 @@ import XCTest
 
 import VergeCore
 
+fileprivate struct DemoState: Equatable {
+
+  struct Inner: Equatable {
+    var name: String = ""
+  }
+
+  var name: String = ""
+  var count: Int = 0
+  var items: [Int] = []
+  var inner: Inner = .init()
+
+}
+
 struct _COWFragment<State> {
 
   private final class Storage {

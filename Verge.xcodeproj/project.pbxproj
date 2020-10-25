@@ -51,7 +51,6 @@
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
 		4B5D3B2D2544B95100B4DFBE /* UnsafeInoutReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B2C2544B95100B4DFBE /* UnsafeInoutReference.swift */; };
 		4B5D3B3A2544BCBB00B4DFBE /* InoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B392544BCBB00B4DFBE /* InoutTests.swift */; };
-		4B5D3B77254568F300B4DFBE /* DemoState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B95BE59244F10F200124F6B /* DemoState.swift */; };
 		4B5E84AD24618D39009A0CA8 /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */; };
 		4B5E84AF24618D82009A0CA8 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
 		4B5E84BC2461901E009A0CA8 /* VergeObjcBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5E84BB24619006009A0CA8 /* VergeObjcBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1438,7 +1437,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B39AE5623C5DC8D005F7BC8 /* CopyPerformance.swift in Sources */,
-				4B5D3B77254568F300B4DFBE /* DemoState.swift in Sources */,
 				4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */,
 				4B5D3B3A2544BCBB00B4DFBE /* InoutTests.swift in Sources */,
 			);
