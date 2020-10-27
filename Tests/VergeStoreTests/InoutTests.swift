@@ -10,22 +10,9 @@ import Foundation
 
 import XCTest
 
-import VergeCore
+@testable import VergeStore
 
-fileprivate struct DemoState: Equatable {
-
-  struct Inner: Equatable {
-    var name: String = ""
-  }
-
-  var name: String = ""
-  var count: Int = 0
-  var items: [Int] = []
-  var inner: Inner = .init()
-
-}
-
-struct _COWFragment<State> {
+fileprivate struct _COWBox<State> {
 
   private final class Storage {
 
@@ -74,7 +61,7 @@ final class InoutTests: XCTestCase {
 
     var copied = false
 
-    var value = _COWFragment<Int>.init(wrappedValue: 0, onCopied: {
+    var value = _COWBox<Int>.init(wrappedValue: 0, onCopied: {
       copied = true
     })
 
@@ -97,11 +84,11 @@ final class InoutTests: XCTestCase {
 
     var copied = false
 
-    var value = _COWFragment<Int>.init(wrappedValue: 0, onCopied: {
+    var value = _COWBox<Int>.init(wrappedValue: 0, onCopied: {
       copied = true
     })
 
-    func modify(_ v: _COWFragment<Int>) -> _COWFragment<Int> {
+    func modify(_ v: _COWBox<Int>) -> _COWBox<Int> {
       var new = v
       new.wrappedValue = 0
       return new
@@ -123,15 +110,18 @@ final class InoutTests: XCTestCase {
 
     var copied = false
 
-    var value = _COWFragment<Int>.init(wrappedValue: 0, onCopied: {
+    var value = _COWBox<Int>.init(wrappedValue: 0, onCopied: {
       copied = true
     })
 
-    let proxy = UnsafeInoutReference.init(&value)
+    withUnsafeMutablePointer(to: &value) { (pointer) -> Void in
+      let proxy = InoutRef.init(pointer)
 
-    proxy.wrappedValue = 1
+      proxy.wrappedValue = 1
 
-    XCTAssertEqual(copied, false)
+      XCTAssertEqual(copied, false)
+    }
+
     XCTAssertEqual(value.wrappedValue, 1)
 
   }

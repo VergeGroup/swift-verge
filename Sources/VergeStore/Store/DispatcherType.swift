@@ -77,7 +77,7 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout UnsafeInoutReference<Scope>) throws -> Result
+    mutation: (inout InoutRef<Scope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -89,7 +89,7 @@ extension DispatcherType {
     
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        try state.map(keyPath: scope) { (ref: inout UnsafeInoutReference<Scope>) -> Result in
+        try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
           return try mutation(&ref)
         }
       },
@@ -106,7 +106,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<WrappedStore.State, NewScope>,
-    mutation: (inout UnsafeInoutReference<NewScope>) throws -> Result
+    mutation: (inout InoutRef<NewScope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -118,7 +118,7 @@ extension DispatcherType {
     
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        try state.map(keyPath: scope) { (ref: inout UnsafeInoutReference<NewScope>) -> Result in
+        try state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>) -> Result in
           return try mutation(&ref)
         }
     },
@@ -136,7 +136,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<WrappedStore.State, NewScope?>,
-    mutation: (inout UnsafeInoutReference<NewScope>?) throws -> Result
+    mutation: (inout InoutRef<NewScope>?) throws -> Result
   ) rethrows -> Result {
 
     let trace = MutationTrace(
@@ -148,7 +148,7 @@ extension DispatcherType {
 
     return try store.asStore()._receive(
       mutation: { state -> Result in
-        try state.map(keyPath: scope) { (ref: inout UnsafeInoutReference<NewScope>?) -> Result in
+        try state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>?) -> Result in
           return try mutation(&ref)
         }
       },

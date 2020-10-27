@@ -618,7 +618,7 @@ extension StoreType {
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
     dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
-    set: @escaping (inout UnsafeInoutReference<State>, NewState) -> Void,
+    set: @escaping (inout InoutRef<State>, NewState) -> Void,
     queue: TargetQueue = .passthrough
   ) -> BindingDerived<NewState> {
     
@@ -657,7 +657,7 @@ extension StoreType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     get: MemoizeMap<Changes<State>, NewState>,
-    set: @escaping (inout UnsafeInoutReference<State>, NewState) -> Void,
+    set: @escaping (inout InoutRef<State>, NewState) -> Void,
     queue: TargetQueue = .passthrough
   ) -> BindingDerived<NewState> {
     

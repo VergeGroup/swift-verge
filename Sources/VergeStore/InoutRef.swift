@@ -23,13 +23,13 @@ import Foundation
 
 /// Do not retain on anywhere.
 @dynamicMemberLookup
-public final class UnsafeInoutReference<Wrapped> {
+public final class InoutRef<Wrapped> {
 
-  public private(set) var hasModified = false
+  private(set) var hasModified = false
 
   private let pointer: UnsafeMutablePointer<Wrapped>
 
-  public init(_ pointer: UnsafeMutablePointer<Wrapped>) {
+  init(_ pointer: UnsafeMutablePointer<Wrapped>) {
     self.pointer = pointer
   }
 
@@ -97,6 +97,10 @@ public final class UnsafeInoutReference<Wrapped> {
     }
   }
 
+  public func markAsModified() {
+    hasModified = true
+  }
+
   /**
    Replace the wrapped value with a new value.
 
@@ -108,13 +112,14 @@ public final class UnsafeInoutReference<Wrapped> {
     pointer.pointee = newValue
   }
 
-  public func markAsModified() {
-    hasModified = true
+  /// Modify the wrapped value with native accessing (without KeyPath + DynamicMemberLookup)
+  public func modify(_ perform: (inout Wrapped) throws -> Void) rethrows {
+    try perform(&pointer.pointee)
   }
 
-  public func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U>, perform: (inout UnsafeInoutReference<U>) throws -> Result) rethrows -> Result {
+  func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result {
     try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
-      var ref = UnsafeInoutReference<U>.init(pointer)
+      var ref = InoutRef<U>.init(pointer)
       defer {
         self.hasModified = ref.hasModified
       }
@@ -122,15 +127,15 @@ public final class UnsafeInoutReference<Wrapped> {
     }
   }
 
-  public func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U?>, perform: (inout UnsafeInoutReference<U>?) throws -> Result) rethrows -> Result {
+  func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U?>, perform: (inout InoutRef<U>?) throws -> Result) rethrows -> Result {
 
     guard pointer.pointee[keyPath: keyPath] != nil else {
-      var _nil: UnsafeInoutReference<U>? = .none
+      var _nil: InoutRef<U>? = .none
       return try perform(&_nil)
     }
 
     return try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]!) { (pointer) in
-      var ref: UnsafeInoutReference<U>? = UnsafeInoutReference<U>.init(pointer)
+      var ref: InoutRef<U>? = InoutRef<U>.init(pointer)
       defer {
         self.hasModified = ref!.hasModified
       }

@@ -26,7 +26,7 @@ import Foundation
  */
 public struct BatchCommitContext<State, Scope> {
 
-  typealias Mutation = (MutationTrace, (inout UnsafeInoutReference<State>) -> Void)
+  typealias Mutation = (MutationTrace, (inout InoutRef<State>) -> Void)
 
   private(set) var mutations: [Mutation] = []
 
@@ -42,7 +42,7 @@ public struct BatchCommitContext<State, Scope> {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: @escaping (inout UnsafeInoutReference<Scope>) -> Void
+    mutation: @escaping (inout InoutRef<Scope>) -> Void
   ) {
 
     let trace = MutationTrace(
@@ -67,7 +67,7 @@ public struct BatchCommitContext<State, Scope> {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<State, NewScope>,
-    mutation: @escaping (inout UnsafeInoutReference<NewScope>) -> Void
+    mutation: @escaping (inout InoutRef<NewScope>) -> Void
   ) {
 
     let trace = MutationTrace(
@@ -78,7 +78,7 @@ public struct BatchCommitContext<State, Scope> {
     )
 
     mutations.append((trace, { state in
-      state.map(keyPath: scope) { (ref: inout UnsafeInoutReference<NewScope>) -> Void in
+      state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>) -> Void in
         mutation(&ref)
       }
     }))
@@ -92,7 +92,7 @@ public struct BatchCommitContext<State, Scope> {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<State, NewScope?>,
-    mutation: @escaping (inout UnsafeInoutReference<NewScope>?) -> Void
+    mutation: @escaping (inout InoutRef<NewScope>?) -> Void
   ) {
 
     let trace = MutationTrace(
@@ -103,7 +103,7 @@ public struct BatchCommitContext<State, Scope> {
     )
 
     mutations.append((trace, { state in
-      state.map(keyPath: scope) { (ref: inout UnsafeInoutReference<NewScope>?) -> Void in
+      state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>?) -> Void in
         mutation(&ref)
       }
     }))
