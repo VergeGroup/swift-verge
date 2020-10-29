@@ -80,16 +80,29 @@ extension ObservableType {
     
   /// Make Changes sequense from current sequence
   /// - Returns:
-  public func changes(initial: Changes<Element>? = nil) -> Observable<Changes<Element>> {
+  public func changes(
+    initial: Changes<Element>? = nil,
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line
+  ) -> Observable<Changes<Element>> {
+
+    let trace = MutationTrace(
+      name: name,
+      file: file,
+      function: function,
+      line: line
+    )
     
-    scan(into: initial, accumulator: { (pre, element) in
+    return scan(into: initial, accumulator: { (pre, element) in
       if pre == nil {
         pre = Changes<Element>.init(old: nil, new: element)
       } else {
-        pre = pre!.makeNextChanges(with: element)
+        pre = pre!.makeNextChanges(with: element, from: trace)
       }
     })
-      .map { $0! }
+    .map { $0! }
 
   }
   

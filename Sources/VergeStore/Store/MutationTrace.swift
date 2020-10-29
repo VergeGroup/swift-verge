@@ -23,12 +23,24 @@ import Foundation
 
 /// A trace that indicates the mutation where comes from.
 public struct MutationTrace: Encodable {
-    
+
   public let createdAt: Date = .init()
   public let name: String
   public let file: StaticString
   public let function: StaticString
   public let line: UInt
+
+  public init(
+    name: String,
+    file: StaticString,
+    function: StaticString,
+    line: UInt
+  ) {
+    self.name = name
+    self.file = file
+    self.function = function
+    self.line = line
+  }
 
 }
 
