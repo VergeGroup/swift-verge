@@ -14,17 +14,6 @@ import XCTest
  */
 class PerformanceTests: XCTestCase {
 
-  func testMutationOnAnotherPropertyWithHugeDictionary() {
-
-    let store = DemoStore()
-    store.setDictionaryLargeItems()
-
-    measure {
-      store.increment()
-    }
-
-  }
-
   func testMutationOnAnotherProperty() {
 
     let store = DemoStore()
@@ -35,14 +24,4 @@ class PerformanceTests: XCTestCase {
 
   }
 
-  func testInsertItemToLargeItems() {
-
-    let store = DemoStore()
-    store.setDictionaryLargeItems()
-
-    measure {
-      store.insertDictionaryLargeItems()
-    }
-
-  }
 }

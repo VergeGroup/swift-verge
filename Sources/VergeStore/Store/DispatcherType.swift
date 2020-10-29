@@ -77,7 +77,7 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout Scope) throws -> Result
+    mutation: (inout InoutRef<Scope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -88,9 +88,11 @@ extension DispatcherType {
     )
     
     return try store.asStore()._receive(
-      mutation: { state in
-        try mutation(&state[keyPath: scope])
-    },
+      mutation: { state -> Result in
+        try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
+          return try mutation(&ref)
+        }
+      },
       trace: trace
     )
   }
@@ -104,7 +106,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     scope: WritableKeyPath<WrappedStore.State, NewScope>,
-    mutation: (inout NewScope) throws -> Result
+    mutation: (inout InoutRef<NewScope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -115,9 +117,41 @@ extension DispatcherType {
     )
     
     return try store.asStore()._receive(
-      mutation: { state in
-        try mutation(&state[keyPath: scope])
+      mutation: { state -> Result in
+        try state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>) -> Result in
+          return try mutation(&ref)
+        }
     },
+      trace: trace
+    )
+  }
+
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func commit<Result, NewScope>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    scope: WritableKeyPath<WrappedStore.State, NewScope?>,
+    mutation: (inout InoutRef<NewScope>?) throws -> Result
+  ) rethrows -> Result {
+
+    let trace = MutationTrace(
+      name: name,
+      file: file.description,
+      function: function.description,
+      line: line
+    )
+
+    return try store.asStore()._receive(
+      mutation: { state -> Result in
+        try state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>?) -> Result in
+          return try mutation(&ref)
+        }
+      },
       trace: trace
     )
   }
@@ -130,93 +164,4 @@ extension DispatcherType {
     .init(targetStore: store.asStore(), scope: self.scope.appending(path: appendingScope))
   }
     
-}
-
-/**
- A context to batch multiple mutations
- */
-public struct BatchCommitContext<State, Scope> {
-
-  typealias Mutation = (MutationTrace, (inout State) -> Void)
-
-  private(set) var mutations: [Mutation] = []
-
-  let scope: WritableKeyPath<State, Scope>
-
-  init(scope: WritableKeyPath<State, Scope>) {
-    self.scope = scope
-  }
-
-  /// Registers Mutation that created inline
-  public mutating func commit(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    mutation: @escaping (inout Scope) -> Void
-  ) {
-
-    let trace = MutationTrace(
-      name: name,
-      file: file.description,
-      function: function.description,
-      line: line
-    )
-
-    mutations.append((trace, { [scope] state in
-      mutation(&state[keyPath: scope])
-    }))
-
-  }
-
-  /// Registers Mutation that created inline
-  public mutating func commit<NewScope>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    scope: WritableKeyPath<State, NewScope>,
-    mutation: @escaping (inout NewScope) -> Void
-  ) {
-
-    let trace = MutationTrace(
-      name: name,
-      file: file.description,
-      function: function.description,
-      line: line
-    )
-
-    mutations.append((trace, { state in
-      mutation(&state[keyPath: scope])
-    }))
-
-  }
-
-}
-
-extension DispatcherType {
-
-  /**
-   Performs multiple commits at once.
-   From calling this method a transaction starts, register mutation into `BatchUpdate` instance.
-   If it has no mutations, batch updating won't be executed.
-   */
-  public func batchCommit(_ perform: (_ context: inout BatchCommitContext<WrappedStore.State, Scope>) -> Void) {
-
-    var context = BatchCommitContext<WrappedStore.State, Scope>(scope: scope)
-
-    perform(&context)
-
-    guard !context.mutations.isEmpty else {
-      return
-    }
-
-    commit("BatchUpdating", scope: \.self) { (state) -> Void in
-      for mutation in context.mutations {
-        mutation.1(&state)
-      }
-    }
-
-  }
-
 }

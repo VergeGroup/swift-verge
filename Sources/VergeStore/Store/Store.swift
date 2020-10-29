@@ -154,9 +154,13 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
   }
 
+  /// Receives mutation
+  ///
+  /// - Parameters:
+  ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
   func _receive<Result>(
-    mutation: (inout State) throws -> Result,
+    mutation: (inout InoutRef<State>) throws -> Result,
     trace: MutationTrace
   ) rethrows -> Result {
                 
@@ -166,19 +170,42 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     }
     
     var elapsed: CFTimeInterval = 0
-    
-    let returnValue = try _backingStorage.update { (state) -> Result in
+
+    var valueFromMutation: Result!
+
+    try _backingStorage._update { (state) -> Storage<Changes<State>>.UpdateResult in
+
       let startedTime = CFAbsoluteTimeGetCurrent()
+      defer {
+        elapsed = CFAbsoluteTimeGetCurrent() - startedTime
+      }
+
       var current = state.primitive
-      let r = try mutation(&current)
-      state = state.makeNextChanges(with: current)
-      elapsed = CFAbsoluteTimeGetCurrent() - startedTime
-      return r
+
+      let updateResult = try withUnsafeMutablePointer(to: &current) { (pointer) -> Storage<Changes<State>>.UpdateResult in
+
+        var reference = InoutRef<State>.init(pointer)
+
+        let result = try mutation(&reference)
+        valueFromMutation = result
+
+        guard reference.hasModified else {
+          // No emits update event
+          return .nothingUpdates
+        }
+
+        state = state.makeNextChanges(with: pointer.pointee)
+
+        return .updated
+      }
+
+      return updateResult
+
     }
        
     let log = CommitLog(store: self, trace: trace, time: elapsed)
     logger?.didCommit(log: log, sender: self)
-    return returnValue
+    return valueFromMutation
   }
  
   @inline(__always)

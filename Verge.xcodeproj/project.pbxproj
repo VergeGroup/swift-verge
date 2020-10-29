@@ -86,6 +86,7 @@
 		4B91B3792440B9C4005082D7 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B93C875247A523500372BC4 /* SyntaxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B93C874247A523500372BC4 /* SyntaxTests.swift */; };
 		4B95BE5A244F10F200124F6B /* DemoState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B95BE59244F10F200124F6B /* DemoState.swift */; };
+		4B98257A254589960040B377 /* BatchCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B982579254589960040B377 /* BatchCommit.swift */; };
 		4B99D69323AF6C4300E26127 /* ProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B99D69223AF6C4300E26127 /* ProtocolTests.swift */; };
 		4B9AF04824880145001BAAFC /* VergeSwiftUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B9AF04624880145001BAAFC /* VergeSwiftUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
@@ -133,6 +134,8 @@
 		4BFA22AD23A63BB9008D7BCB /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */; };
 		4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B42740C236F1D2D00C302C8 /* Storage.swift */; };
+		4BFF9A792548577500692696 /* InoutRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B2C2544B95100B4DFBE /* InoutRef.swift */; };
+		4BFF9A85254857AC00692696 /* InoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B392544BCBB00B4DFBE /* InoutTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -293,6 +296,8 @@
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
 		4B57FD1923A29DAD00E41D06 /* EntityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityType.swift; sourceTree = "<group>"; };
+		4B5D3B2C2544B95100B4DFBE /* InoutRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InoutRef.swift; sourceTree = "<group>"; };
+		4B5D3B392544BCBB00B4DFBE /* InoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InoutTests.swift; sourceTree = "<group>"; };
 		4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeObjcBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B5E849F24618D1C009A0CA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AtomicBridges.m; sourceTree = "<group>"; };
@@ -336,6 +341,7 @@
 		4B93C874247A523500372BC4 /* SyntaxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyntaxTests.swift; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4B95BE59244F10F200124F6B /* DemoState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoState.swift; sourceTree = "<group>"; };
+		4B982579254589960040B377 /* BatchCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchCommit.swift; sourceTree = "<group>"; };
 		4B99D69223AF6C4300E26127 /* ProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolTests.swift; sourceTree = "<group>"; };
 		4B9AF04424880145001BAAFC /* VergeSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B9AF04624880145001BAAFC /* VergeSwiftUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeSwiftUI.h; sourceTree = "<group>"; };
@@ -607,6 +613,7 @@
 		4B68394523705ACD002FFC5A /* VergeStoreTests */ = {
 			isa = PBXGroup;
 			children = (
+				4B5D3B392544BCBB00B4DFBE /* InoutTests.swift */,
 				4BF470CE23CC3949001A1D5D /* CounterTests.swift */,
 				4B86D825244A2A1D008D3040 /* Sample.swift */,
 				4B68394623705ACD002FFC5A /* VergeStoreTests.swift */,
@@ -645,6 +652,8 @@
 				4BCE3038246AAD6800D35557 /* Scan.swift */,
 				4B3834DC2482330C008A0B47 /* StateReader.swift */,
 				4B37735224C78F260058A887 /* BackgroundDeallocationQueue.swift */,
+				4B982579254589960040B377 /* BatchCommit.swift */,
+				4B5D3B2C2544B95100B4DFBE /* InoutRef.swift */,
 			);
 			path = VergeStore;
 			sourceTree = "<group>";
@@ -1361,6 +1370,7 @@
 				4B6B77AE243FA6B300E0C0EA /* FilterTests.swift in Sources */,
 				4B44F093252E209600BC0495 /* StateReaderTests.swift in Sources */,
 				4B86D826244A2A1D008D3040 /* Sample.swift in Sources */,
+				4BFF9A85254857AC00692696 /* InoutTests.swift in Sources */,
 				4B1F19C4243A88A000CED46B /* ComputedTests.swift in Sources */,
 				4B71CEEE23B14394004520CE /* ActivityTests.swift in Sources */,
 				4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */,
@@ -1382,9 +1392,11 @@
 				4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */,
 				4BCBCA8D2381CC2B00F33B15 /* DetachedDispatcher.swift in Sources */,
 				4B3834DF248235AD008A0B47 /* _VergeObservableObjectBase.swift in Sources */,
+				4BFF9A792548577500692696 /* InoutRef.swift in Sources */,
 				4BCE3039246AAD6800D35557 /* Scan.swift in Sources */,
 				4B1F19C2243A82BC00CED46B /* Changes.swift in Sources */,
 				4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */,
+				4B98257A254589960040B377 /* BatchCommit.swift in Sources */,
 				4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */,
 				4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */,
 				4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */,

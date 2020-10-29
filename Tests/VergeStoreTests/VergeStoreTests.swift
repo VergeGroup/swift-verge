@@ -82,8 +82,8 @@ final class VergeStoreTests: XCTestCase {
     
     func setMyName() {
       commit {
-        try? $0.updateTryPresent(target: \.optionalNested) {
-          $0.myName = "Muuk"
+        if $0.optionalNested != nil {
+          $0.optionalNested?.myName = "Muuk"
         }
       }
     }
@@ -112,7 +112,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.NestedState> = _detached.state
       
       _detached.commit { state in
-        let _: State.NestedState = state
+        let _: InoutRef<State.NestedState> = state
         
       }
         
@@ -121,7 +121,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.OptionalNestedState?> = optionalNestedTarget.state
           
       optionalNestedTarget.commit { state in
-        let _: State.OptionalNestedState? = state
+        let _: InoutRef<State.OptionalNestedState?> = state
       }
                       
     }
@@ -139,11 +139,11 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.TreeA> = state
       
       commit { state in
-        let _: State.TreeA = state
+        let _: InoutRef<State.TreeA> = state
       }
       
       commit(scope: \.treeB) { state in
-        let _: State.TreeB = state
+        let _: InoutRef<State.TreeB> = state
       }
       
       let treeB = detached(from: \.treeB)
@@ -151,7 +151,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.TreeB> = treeB.state
                          
       treeB.commit { state in
-        let _: State.TreeB = state
+        let _: InoutRef<State.TreeB> = state
       }
          
     }
@@ -189,7 +189,87 @@ final class VergeStoreTests: XCTestCase {
   override func tearDown() {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
+
+  func testCommit() {
+
+    let store = DemoStore()
+
+    store.commit {
+      $0.count = 100
+    }
+
+    XCTAssertEqual(store.state.count, 100)
+
+    store.commit {
+      $0.inner.name = "mmm"
+    }
+
+    XCTAssertEqual(store.state.inner.name, "mmm")
+
+    let exp = expectation(description: "async")
+
+    DispatchQueue.global().async {
+      store.commit {
+        $0.inner.name = "xxx"
+      }
+      XCTAssertEqual(store.state.inner.name, "xxx")
+      exp.fulfill()
+    }
+
+    wait(for: [exp], timeout: 1)
+
+  }
+
+  func testEmptyCommit() {
+
+    let store = DemoStore()
+
+    var count = 0
+
+    let subs = store.sinkState(queue: .passthrough) { (_) in
+      count += 1
+    }
+
+    XCTAssertEqual(store.state.version, 0)
+
+    store.commit {
+      $0.count = 100
+    }
+
+    XCTAssertEqual(store.state.version, 1)
+
+    store.commit { _ in
+
+    }
+
+    // no changes
+    XCTAssertEqual(store.state.version, 1)
+
+    store.commit {
+      // explict marking
+      $0.markAsModified()
+    }
+
+    // many times calling empty commits
+    for _ in 0..<3 {
+      store.commit { _ in }
+    }
+
+    // no affects from read a value
+    store.commit {
+      if $0.count > 100 {
+        $0.count = 0
+        XCTFail()
+      }
+    }
+
+    XCTAssertEqual(store.state.version, 2)
+    XCTAssertEqual(count, 3)
+
+    withExtendedLifetime(subs, {})
     
+  }
+
   func testDispatch() {
     
     dispatcher.resetCount()
@@ -264,14 +344,14 @@ final class VergeStoreTests: XCTestCase {
     }
     .store(in: &subscriptions)
         
-    store.commit { _ in
-      
+    store.commit {
+      $0.markAsModified()
     }
     
     subscriptions = .init()
 
-    store.commit { _ in
-      
+    store.commit {
+      $0.markAsModified()
     }
     
     XCTAssertEqual(count, 2)
@@ -321,7 +401,9 @@ final class VergeStoreTests: XCTestCase {
       
       XCTAssertEqual(store.state.hasChanges(\.count), true)
       
-      store.commit { _ in }
+      store.commit {
+        $0.count = $0.count
+      }
       
       XCTAssertEqual(store.state.hasChanges(\.count), false)
       
@@ -450,7 +532,7 @@ final class VergeStoreTests: XCTestCase {
     }
     
     XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.source.root)
-    
+
   }
 
   func testScan() {
