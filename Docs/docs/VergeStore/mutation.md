@@ -24,7 +24,7 @@ struct MyState {
 class MyStore: Store<MyState, Never> {
 
   func addNewTodo(title: String) {
-    commit { (state: inout MyState) in
+    commit { (state: inout InoutRef<MyState>) in
       state.todos.append(Todo(title: title, hasCompleted: false))
     }
   }
