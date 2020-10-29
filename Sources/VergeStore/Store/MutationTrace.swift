@@ -26,8 +26,16 @@ public struct MutationTrace: Encodable {
     
   public let createdAt: Date = .init()
   public let name: String
-  public let file: String
-  public let function: String
+  public let file: StaticString
+  public let function: StaticString
   public let line: UInt
 
+}
+
+extension StaticString: Encodable {
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.singleValueContainer()
+    try container.encode(description)
+  }
 }

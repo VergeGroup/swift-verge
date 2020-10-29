@@ -119,6 +119,8 @@ public final class Changes<Value>: ChangesType, Equatable {
   ///
   /// - Important: a returns value won't change against pointer-personality
   public var root: Value { _read { yield innerCurrent.value } }
+
+  public let mutation: MutationTrace?
   
   // MARK: - Initializers
     
@@ -129,19 +131,22 @@ public final class Changes<Value>: ChangesType, Equatable {
     self.init(
       previous: old.map { .init(old: nil, new: $0) },
       innerCurrent: .init(value: new),
-      version: 0
+      version: 0,
+      mutation: nil
     )
   }
   
   private init(
     previous: Changes<Value>?,
     innerCurrent: InnerCurrent,
-    version: UInt64
+    version: UInt64,
+    mutation: MutationTrace?
   ) {
     
     self.previous = previous
     self.innerCurrent = innerCurrent
     self.version = version
+    self.mutation = mutation
     
     vergeSignpostEvent("Changes.init", label: "\(type(of: self))")
   }
@@ -157,7 +162,8 @@ public final class Changes<Value>: ChangesType, Equatable {
     return .init(
       previous: nil,
       innerCurrent: innerCurrent,
-      version: version
+      version: version,
+      mutation: mutation
     )
   }
   
@@ -189,18 +195,20 @@ public final class Changes<Value>: ChangesType, Equatable {
     return Changes<U>(
       previous: try previous.map { try $0.map(transform) },
       innerCurrent: try innerCurrent.map(transform),
-      version: version
+      version: version,
+      mutation: mutation
     )
   }
 
-  public func makeNextChanges(with nextNewValue: Value) -> Changes<Value> {
+  public func makeNextChanges(with nextNewValue: Value, from mutation: MutationTrace) -> Changes<Value> {
     
     let previous = cloneWithDropsPrevious()
     let nextVersion = previous.version &+ 1
     return Changes<Value>.init(
       previous: previous,
       innerCurrent: .init(value: nextNewValue),
-      version: nextVersion
+      version: nextVersion,
+      mutation: mutation
     )
   }
   
