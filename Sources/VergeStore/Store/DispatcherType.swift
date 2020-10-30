@@ -82,8 +82,8 @@ extension DispatcherType {
     
     let trace = MutationTrace(
       name: name,
-      file: file.description,
-      function: function.description,
+      file: file,
+      function: function,
       line: line
     )
     
@@ -111,8 +111,8 @@ extension DispatcherType {
     
     let trace = MutationTrace(
       name: name,
-      file: file.description,
-      function: function.description,
+      file: file,
+      function: function,
       line: line
     )
     
@@ -141,8 +141,8 @@ extension DispatcherType {
 
     let trace = MutationTrace(
       name: name,
-      file: file.description,
-      function: function.description,
+      file: file,
+      function: function,
       line: line
     )
 

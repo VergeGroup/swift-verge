@@ -47,8 +47,8 @@ public struct BatchCommitContext<State, Scope> {
 
     let trace = MutationTrace(
       name: name,
-      file: file.description,
-      function: function.description,
+      file: file,
+      function: function,
       line: line
     )
 
@@ -72,8 +72,8 @@ public struct BatchCommitContext<State, Scope> {
 
     let trace = MutationTrace(
       name: name,
-      file: file.description,
-      function: function.description,
+      file: file,
+      function: function,
       line: line
     )
 
@@ -97,8 +97,8 @@ public struct BatchCommitContext<State, Scope> {
 
     let trace = MutationTrace(
       name: name,
-      file: file.description,
-      function: function.description,
+      file: file,
+      function: function,
       line: line
     )
 

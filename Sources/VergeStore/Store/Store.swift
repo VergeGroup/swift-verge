@@ -194,7 +194,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
           return .nothingUpdates
         }
 
-        state = state.makeNextChanges(with: pointer.pointee)
+        state = state.makeNextChanges(with: pointer.pointee, from: trace)
 
         return .updated
       }
