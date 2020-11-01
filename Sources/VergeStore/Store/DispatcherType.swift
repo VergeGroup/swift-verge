@@ -96,6 +96,32 @@ extension DispatcherType {
       trace: trace
     )
   }
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func commit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout InoutRef<Scope>) throws -> Result
+  ) rethrows -> Result where Scope == WrappedStore.State {
+
+    let trace = MutationTrace(
+      name: name,
+      file: file,
+      function: function,
+      line: line
+    )
+
+    return try store.asStore()._receive(
+      mutation: { state -> Result in
+        try mutation(&state)
+      },
+      trace: trace
+    )
+  }
       
   /// Run Mutation that created inline
   ///
