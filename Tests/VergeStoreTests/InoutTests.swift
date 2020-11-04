@@ -126,5 +126,94 @@ final class InoutTests: XCTestCase {
 
   }
 
+  func testModification_NoModified() {
+
+    var value = DemoState()
+
+    let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
+      let proxy = InoutRef.init(pointer)
+      return proxy.modification
+    }
+
+    switch modification {
+    case .indeterminate?:
+      XCTFail()
+    case .determinate?:
+      XCTFail()
+    case .none:
+      break
+    }
+
+  }
+
+  func testModification() {
+
+    var value = DemoState()
+
+    let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
+      let proxy = InoutRef.init(pointer)
+      proxy.count += 1
+      return proxy.modification
+    }
+
+    switch modification {
+    case .indeterminate?:
+      XCTFail()
+    case .determinate(let keyPaths)?:
+      XCTAssert(keyPaths.contains(\DemoState.count))
+    case .none:
+      XCTFail()
+    }
+
+  }
+
+  func testModification_Map() {
+
+    var value = DemoState()
+
+    let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
+      let proxy = InoutRef.init(pointer)
+      proxy.count += 1
+      proxy.map(keyPath: \.inner) { (inner) in
+        inner.name = UUID().uuidString
+      }
+      return proxy.modification
+    }
+
+    switch modification {
+    case .indeterminate?:
+      XCTFail()
+    case .determinate(let keyPaths)?:
+      XCTAssert(keyPaths.contains(\DemoState.count))
+      XCTAssert(keyPaths.contains(\DemoState.inner.name))
+    case .none:
+      XCTFail()
+    }
+
+  }
+
+  func testModification_indeterminate_modify() {
+
+    var value = DemoState()
+
+    let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
+      let proxy = InoutRef.init(pointer)
+      proxy.modify {
+        $0.count += 1
+      }
+      return proxy.modification
+    }
+
+    switch modification {
+    case .indeterminate?:
+      break
+    case .determinate?:
+      XCTFail()
+    case .none:
+      XCTFail()
+    }
+
+  }
+
 }
 
