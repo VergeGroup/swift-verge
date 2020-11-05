@@ -42,7 +42,6 @@ extension EntityType {
 }
 
 /// A value that wraps an entity and results of fetching.
-@dynamicMemberLookup
 public struct EntityWrapper<Entity: EntityType> {
   
   public private(set) var wrapped: Entity?
@@ -51,10 +50,6 @@ public struct EntityWrapper<Entity: EntityType> {
   public init(id: Entity.EntityID, entity: Entity?) {
     self.id = id
     self.wrapped = entity
-  }
-
-  public subscript<Property>(dynamicMember keyPath: KeyPath<Entity, Property>) -> Property? {
-    wrapped?[keyPath: keyPath]
   }
   
 }

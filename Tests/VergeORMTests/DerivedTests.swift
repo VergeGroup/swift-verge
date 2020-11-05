@@ -74,7 +74,7 @@ class DerivedTests: XCTestCase {
         }
                 
         XCTAssertEqual(selector.primitiveValue.name, "Hey")
-        XCTAssertEqual(nullableSelector.primitiveValue.name!, "Hey")
+        XCTAssertEqual(nullableSelector.primitiveValue.wrapped!.name, "Hey")
         
       }
       

@@ -34,7 +34,7 @@ class DerivedCollectionTests: XCTestCase {
     })
 
     // FIXME: this fails, since the middleware doesn't care the order
-    XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["0", "1", "2"])
+    XCTAssertEqual(d.value.map { $0.value.wrapped?.entityID.raw }, ["0", "1", "2"])
 
   }
 
@@ -56,7 +56,7 @@ class DerivedCollectionTests: XCTestCase {
       return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
     })
 
-    XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
+    XCTAssertEqual(d.value.map { $0.value.wrapped?.entityID.raw }, ["1"])
 
     store.commit {
       $0.db.performBatchUpdates { context in
@@ -69,7 +69,7 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
 
-    XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["10"])
+    XCTAssertEqual(d.value.map { $0.value.wrapped?.entityID.raw }, ["10"])
   }
 
   func testInsideChange() {
@@ -89,7 +89,7 @@ class DerivedCollectionTests: XCTestCase {
       return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
     })
 
-    XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
+    XCTAssertEqual(d.value.map { $0.value.wrapped?.entityID.raw }, ["1"])
 
     let _ = store.commit {
       $0.db.performBatchUpdates { context in
@@ -99,8 +99,8 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
 
-    XCTAssertEqual(d.value.map { $0.value.entityID?.raw }, ["1"])
-    XCTAssertEqual(d.value.map { $0.value.name }, ["1"])
+    XCTAssertEqual(d.value.map { $0.value.wrapped?.entityID.raw }, ["1"])
+    XCTAssertEqual(d.value.map { $0.value.wrapped?.name }, ["1"])
   }
   
   
