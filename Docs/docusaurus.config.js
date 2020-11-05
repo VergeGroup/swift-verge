@@ -10,7 +10,7 @@ module.exports = {
     announcementBar: {
       id: 'support_us',  // Any value that will identify this message.
       content:
-          '⭐️ Verge 7 is ready to use on SwiftUI.  If you like this, give it a star on <a href="https://github.com/VergeGroup/Verge">GitHub</a>! ⭐️',
+          '⭐️ Verge 8 now released.  If you like this, give it a star on <a href="https://github.com/VergeGroup/Verge">GitHub</a>! ⭐️',
       backgroundColor: '#fafbfc',  // Defaults to `#fff`.
       textColor: '#091E42',        // Defaults to `#000`.
     },
