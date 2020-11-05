@@ -73,7 +73,6 @@ module.exports = {
         docs: {
           // It is recommended to set document id as docs home page (`docs/`
           // path).
-          homePageId: 'Overview',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/VergeGroup/Verge/docs',
         },

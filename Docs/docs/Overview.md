@@ -2,6 +2,7 @@
 id: Overview
 title: Overview
 sidebar_label: Overview
+slug: /
 ---
 
 ## Verge supports small start and scaling up
