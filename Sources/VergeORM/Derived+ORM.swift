@@ -612,65 +612,9 @@ extension StoreType where State : DatabaseEmbedding {
      
 }
 
-extension StoreType where State : DatabaseEmbedding {
-
-  /// Returns a derived object that provides a concrete entity according to the updating source state
-  /// It uses the last value if the entity has been removed source.
-  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
-  ///
-  /// If you call this method in many time, it's not so big issue.
-  /// Because, the backing derived-object to construct itself would be cached.
-  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
-  ///
-  @inline(__always)
-  public func derivedNonNull<E0: EntityType & Equatable, E1: EntityType & Equatable>(
-    from e0ID: E0.EntityID,
-    _ e1ID: E1.EntityID,
-    queue: TargetQueue = .passthrough
-  ) throws -> Derived<(NonNullEntityWrapper<E0>, NonNullEntityWrapper<E1>)> {
-    
-    Derived.combined(
-      try derivedNonNull(from: e0ID, queue: queue),
-      try derivedNonNull(from: e1ID, queue: queue),
-      queue: queue
-    )
-  }
-
-  /// Returns a derived object that provides a concrete entity according to the updating source state
-  /// It uses the last value if the entity has been removed source.
-  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
-  ///
-  /// If you call this method in many time, it's not so big issue.
-  /// Because, the backing derived-object to construct itself would be cached.
-  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
-  ///
-  @inline(__always)
-  public func derivedNonNull<E0: EntityType & Equatable, E1: EntityType & Equatable, E2: EntityType & Equatable>(
-    from e0ID: E0.EntityID,
-    _ e1ID: E1.EntityID,
-    _ e2ID: E2.EntityID,
-    queue: TargetQueue = .passthrough
-  ) throws -> Derived<(NonNullEntityWrapper<E0>, NonNullEntityWrapper<E1>, NonNullEntityWrapper<E2>)> {
-    
-    Derived.combined(
-      try derivedNonNull(from: e0ID, queue: queue),
-      try derivedNonNull(from: e1ID, queue: queue),
-      try derivedNonNull(from: e2ID, queue: queue),
-      queue: queue
-    )
-  }
-}
-
 // MARK: - Collection
 
 extension StoreType where State : DatabaseEmbedding {
-
-//  public func derivedQueriedEntities<Entity: EntityType>(
-//    map: MemoizeMap<Changes<IndexesPropertyAdapter<State.Database>>, AnyCollection<Entity.EntityID>>,
-//    queue: TargetQueue = .passthrough
-//  ) -> Derived<[Entity.Derived]> {
-//
-//  }
 
   /// Experimental
   /// TODO: More performant
