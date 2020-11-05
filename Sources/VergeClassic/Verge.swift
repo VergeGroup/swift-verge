@@ -56,6 +56,11 @@ public protocol VergeType : AnyVergeType {
   var state: Storage<State> { get }
 }
 
+extension VergeType {
+  @available(*, deprecated, message: "For Migration")
+  public typealias DefaultStore = Storage<State>
+}
+
 private var _associated: Void?
 
 extension VergeType {
