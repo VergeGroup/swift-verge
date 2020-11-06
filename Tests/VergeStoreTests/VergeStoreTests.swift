@@ -441,32 +441,7 @@ final class VergeStoreTests: XCTestCase {
       
     }
   }
-  
-  func testAssin() {
-    
-    let store1 = DemoStore()
-    let store2 = DemoStore()
-    
-    let sub = store1
-      .derived(.map(\.count), queue: .passthrough)
-      .assign(to: \.count, on: store2)
-    
-    store1.commit {
-      $0.count += 1
-    }
-    
-    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.count)
-    
-    store1.commit {
-      $0.count += 1
-    }
-    
-    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.count)
-    
-    withExtendedLifetime(sub, {})
-    
-  }
-  
+
   func testAsignee() {
     
     let store1 = DemoStore()

@@ -23,70 +23,7 @@ extension Derived {
   
   /**
    Assigns a derived's value to a property of a store.
-   
-   - Attention: Store won't be retained.
-   */
-  public func assign<Store: StoreType & DispatcherType>(
-    to keyPath: WritableKeyPath<Store.State, Value>,
-    on store: Store,
-    dropsOutput: @escaping (Changes<Value>) -> Bool = { _ in false }
-  ) -> VergeAnyCancellable where Store.State == Store.Scope {
-    assign(to: store.asStore().assignee(keyPath, dropsOutput: dropsOutput))
-  }
-  
-  /**
-   Assigns a derived's value to a property of an object.
-   
-   - Attention: Store won't be retained.
-   */
-  public func assign<Object: AnyObject>(
-    to keyPath: ReferenceWritableKeyPath<Object, Value>,
-    on object: Object,
-    dropsOutput: @escaping (Changes<Value>) -> Bool = { _ in false }
-  ) -> VergeAnyCancellable {
-    sinkValue { [weak object] c in
-      guard !dropsOutput(c) else { return }
-      object?[keyPath: keyPath] = c.primitive
-    }
-  }
-    
-}
 
-extension Derived where Value : Equatable {
-  
-  /**
-   Assigns a derived's value to a property of a store.
-   
-   - Attention: Store won't be retained.
-   - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
-   */
-  public func assign<Store: StoreType & DispatcherType>(
-    to keyPath: WritableKeyPath<Store.State, Value>,
-    on store: Store
-  ) -> VergeAnyCancellable where Store.State == Store.Scope {
-    assign(to: store.asStore().assignee(keyPath, dropsOutput: { !$0.hasChanges }))
-  }
-  
-  /**
-   Assigns a derived's value to a property of an object.
-   
-   - Attention: Store won't be retained.
-   */
-  public func assign<Object: AnyObject>(
-    to keyPath: ReferenceWritableKeyPath<Object, Value>,
-    on object: Object
-  ) -> VergeAnyCancellable {
-    assign(to: keyPath, on: object, dropsOutput: { !$0.hasChanges })
-  }
-  
-}
-
-extension Derived {
-  
-  /**
-   Assigns a derived's value to a property of a store.
-   
-   - Attention: Store won't be retained.
    - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
    */
   public func assign(
@@ -100,171 +37,18 @@ extension Derived {
 }
 
 extension StoreType {
-  
+
   /**
-   Returns an asignee function to asign
-   
-   ```
-   let store1 = Store()
-   let store2 = Store()
-   
-   store1
-     .derived(.map(\.count))
-     .assign(to: store2.assignee(\.count))
-   ```
+   Assigns a Store's state to a property of a store.
+
+   - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
    */
-  public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value>,
-    dropsOutput: @escaping (Changes<Value>) -> Bool = { _ in false }
-  ) -> (Changes<Value>) -> Void {
-    return { [weak self] value in
-      guard !dropsOutput(value) else { return }
-      self?.asStore().commit {
-        $0[keyPath: keyPath] = value.primitive
-      }
+  public func assign(
+    to binder: @escaping (Changes<State>) -> Void
+  ) -> VergeAnyCancellable {
+    asStore().sinkState(queue: .passthrough) { c in
+      binder(c)
     }
-  }
-
-  /**
-   Returns an asignee function to asign
-
-   ```
-   let store1 = Store()
-   let store2 = Store()
-
-   store1
-   .derived(.map(\.count))
-   .assign(to: store2.assignee(\.count))
-   ```
-   */
-  public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value?>,
-    dropsOutput: @escaping (Changes<Value?>) -> Bool = { _ in false }
-  ) -> (Changes<Value?>) -> Void {
-    return { [weak self] value in
-      guard !dropsOutput(value) else { return }
-      self?.asStore().commit {
-        $0[keyPath: keyPath] = value.primitive
-      }
-    }
-  }
-
-  /**
-   Returns an asignee function to asign
-
-   ```
-   let store1 = Store()
-   let store2 = Store()
-
-   store1
-   .derived(.map(\.count))
-   .assign(to: store2.assignee(\.count))
-   ```
-   */
-  public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value?>,
-    dropsOutput: @escaping (Changes<Value?>) -> Bool = { _ in false }
-  ) -> (Changes<Value>) -> Void {
-    return { [weak self] value in
-      let changes = value.map { Optional.some($0) }
-      guard !dropsOutput(changes) else { return }
-      self?.asStore().commit {
-        $0[keyPath: keyPath] = .some(value.primitive)
-      }
-    }
-  }
-  
-  /**
-   Assignee to asign Changes object directly.
-   */
-  public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value>
-  ) -> (Value) -> Void {
-    return { [weak self] value in
-      self?.asStore().commit {
-        $0[keyPath: keyPath] = value
-      }
-    }
-  }
-
-  /**
-   Assignee to asign Changes object directly.
-   */
-  public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value?>
-  ) -> (Value?) -> Void {
-    return { [weak self] value in
-      self?.asStore().commit {
-        $0[keyPath: keyPath] = value
-      }
-    }
-  }
-
-  /**
-   Assignee to asign Changes object directly.
-   */
-  public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value?>
-  ) -> (Value) -> Void {
-    return { [weak self] value in
-      self?.asStore().commit {
-        $0[keyPath: keyPath] = .some(value)
-      }
-    }
-  }
-  
-  /**
-   Returns an asignee function to asign
-   
-   ```
-   let store1 = Store()
-   let store2 = Store()
-   
-   store1
-     .derived(.map(\.count))
-     .assign(to: store2.assignee(\.count))
-   ```
-   */
-  public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<State, Value>
-  ) -> (Changes<Value>) -> Void {
-    assignee(keyPath, dropsOutput: { !$0.hasChanges })
-  }
-
-  /**
-   Returns an asignee function to asign
-
-   ```
-   let store1 = Store()
-   let store2 = Store()
-
-   store1
-   .derived(.map(\.count))
-   .assign(to: store2.assignee(\.count))
-   ```
-   */
-  public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<State, Value?>
-  ) -> (Changes<Value?>) -> Void {
-    assignee(keyPath, dropsOutput: { !$0.hasChanges })
-  }
-
-  /**
-   Returns an asignee function to asign
-
-   ```
-   let store1 = Store()
-   let store2 = Store()
-
-   store1
-   .derived(.map(\.count))
-   .assign(to: store2.assignee(\.count))
-   ```
-   */
-  public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<State, Value?>
-  ) -> (Changes<Value>) -> Void {
-    assignee(keyPath, dropsOutput: { !$0.hasChanges })
   }
 
 }
