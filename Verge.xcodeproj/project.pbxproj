@@ -48,6 +48,7 @@
 		4B4AB16C244DEEE3005E7283 /* ReproduceDeadlockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */; };
 		4B4AB16E244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
+		4B56AE3F2554EB1B001BA029 /* StoreType+Assignee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B56AE3E2554EB1B001BA029 /* StoreType+Assignee.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
 		4B5E84AD24618D39009A0CA8 /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */; };
@@ -296,6 +297,7 @@
 		4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VergeConcurrency+SynchronizationTracker.swift"; sourceTree = "<group>"; };
 		4B4C80342462D47E00AD1DB4 /* Verge.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Verge.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Storage+Rx.swift"; sourceTree = "<group>"; };
+		4B56AE3E2554EB1B001BA029 /* StoreType+Assignee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoreType+Assignee.swift"; sourceTree = "<group>"; };
 		4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTablesStorage.swift; sourceTree = "<group>"; };
 		4B57FD1923A29DAD00E41D06 /* EntityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityType.swift; sourceTree = "<group>"; };
 		4B5D3B2C2544B95100B4DFBE /* InoutRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InoutRef.swift; sourceTree = "<group>"; };
@@ -736,6 +738,7 @@
 				4BF76680244E1B5300A5EA10 /* Derived.swift */,
 				4B3834E2248237A4008A0B47 /* Derived+Combine.swift */,
 				4BD260A4245C7F680052B4AC /* Derived+Assign.swift */,
+				4B56AE3E2554EB1B001BA029 /* StoreType+Assignee.swift */,
 				4B2050F823D5C85B000A2779 /* MutationTrace.swift */,
 				4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */,
 				4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */,
@@ -1396,6 +1399,7 @@
 				4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */,
 				4BCBCA8D2381CC2B00F33B15 /* DetachedDispatcher.swift in Sources */,
 				4B3834DF248235AD008A0B47 /* _VergeObservableObjectBase.swift in Sources */,
+				4B56AE3F2554EB1B001BA029 /* StoreType+Assignee.swift in Sources */,
 				4BFF9A792548577500692696 /* InoutRef.swift in Sources */,
 				4BCE3039246AAD6800D35557 /* Scan.swift in Sources */,
 				4B1F19C2243A82BC00CED46B /* Changes.swift in Sources */,
