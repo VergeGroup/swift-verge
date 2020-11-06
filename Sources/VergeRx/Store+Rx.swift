@@ -328,3 +328,58 @@ extension ReadonlyStorage {
 
 }
 
+extension Reactive where Base : StoreType {
+
+  public func commitBinder<S>(
+    scheduler: ImmediateSchedulerType = MainScheduler(),
+    mutate: @escaping (inout InoutRef<Base.State>, S) -> Void
+  ) -> Binder<S> {
+
+    return Binder<S>(base, scheduler: scheduler) { t, e in
+      t.asStore().commit { s in
+        mutate(&s, e)
+      }
+    }
+    
+  }
+
+  public func commitBinder<S>(
+    scheduler: ImmediateSchedulerType = MainScheduler(),
+    mutate: @escaping (inout InoutRef<Base.State>, S?) -> Void
+  ) -> Binder<S?> {
+
+    return Binder<S?>(base, scheduler: scheduler) { t, e in
+      t.asStore().commit { s in
+        mutate(&s, e)
+      }
+    }
+
+  }
+
+  public func commitBinder<S>(
+    scheduler: ImmediateSchedulerType = MainScheduler(),
+    target: WritableKeyPath<Base.State, S>
+  ) -> Binder<S> {
+
+    return Binder<S>(base, scheduler: scheduler) { t, e in
+      t.asStore().commit { s in
+        s[keyPath: target] = e
+      }
+    }
+
+  }
+
+  public func commitBinder<S>(
+    scheduler: ImmediateSchedulerType = MainScheduler(),
+    target: WritableKeyPath<Base.State, S?>
+  ) -> Binder<S?> {
+
+    return Binder<S?>(base, scheduler: scheduler) { t, e in
+      t.asStore().commit { s in
+        s[keyPath: target] = e
+      }
+    }
+
+  }
+}
+
