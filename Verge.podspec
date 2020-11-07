@@ -49,9 +49,9 @@ Pod::Spec.new do |s|
   s.subspec 'Rx' do |ss|
     ss.dependency 'Verge/ORM'
     ss.dependency 'Verge/Store'
-    ss.dependency 'RxSwift', '~> 5'
-    ss.dependency 'RxCocoa', '~> 5'   
-    ss.dependency 'RxRelay', '~> 5'
+    ss.dependency 'RxSwift', '~> 5.1'
+    ss.dependency 'RxCocoa', '~> 5.1'   
+    ss.dependency 'RxRelay', '~> 5.1'
     ss.source_files = 'Sources/VergeRx/**/*.swift'    
   end
 
