@@ -215,5 +215,26 @@ final class InoutTests: XCTestCase {
 
   }
 
+  func testModification_modifying_wrapped_directly() {
+
+    var value = DemoState()
+
+    let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
+      let proxy = InoutRef.init(pointer)
+      proxy.wrapped.updateFromItself()
+      return proxy.modification
+    }
+
+    switch modification {
+    case .indeterminate?:
+      break
+    case .determinate?:
+      XCTFail()
+    case .none:
+      XCTFail()
+    }
+
+  }
+
 }
 
