@@ -23,6 +23,10 @@ struct DemoState: Equatable {
 
   @Edge var nonEquatable: NonEquatable = .init()
 
+  mutating func updateFromItself() {
+    count += 1
+  }
+
 }
 
 #if canImport(VergeStore)

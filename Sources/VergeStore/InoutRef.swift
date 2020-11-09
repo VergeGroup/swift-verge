@@ -55,18 +55,26 @@ public final class InoutRef<Wrapped> {
 
   private let pointer: UnsafeMutablePointer<Wrapped>
 
+  /// A wrapped value
+  /// You may use this property to call the mutating method which `Wrapped` has.
   public var wrapped: Wrapped {
     _read {
       yield pointer.pointee
     }
     _modify {
-      wasModifiedIndeterminate = true
+      markAsModified()
       yield &pointer.pointee
     }
   }
 
   // MARK: - Initializers
 
+  /**
+   Creates an instance
+
+   You should take care of using the pointer of value.
+   Using always `withUnsafeMutablePointer` to pass it, otherwise Swift might crash with Memory error.
+   */
   public init(_ pointer: UnsafeMutablePointer<Wrapped>) {
     self.pointer = pointer
   }
@@ -142,6 +150,8 @@ public final class InoutRef<Wrapped> {
     hasModified = true
   }
 
+  /// Marks as modified
+  /// `modification` property becomes to `.indeterminate`.
   public func markAsModified() {
     hasModified = true
     wasModifiedIndeterminate = true
