@@ -25,7 +25,7 @@ Verge automatically tune-up as possible and shows us what makes performance badl
 /// it's also okay to name as ___ViewModel.
 final class MyStore: StoreComponentType {
 
-  struct MyState {
+  struct State {
     var name: String = ""
     var count: Int = 0
   }
