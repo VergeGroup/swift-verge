@@ -22,19 +22,25 @@ Verge automatically tune-up as possible and shows us what makes performance badl
 ## At a glance
 
 ```swift
-struct MyState {
-  var name: String = ""
-}
+/// it's also okay to name as ___ViewModel.
+final class MyStore: StoreComponentType {
 
-enum MyActivity {
-  case somethingHappen
-}
+  struct MyState {
+    var name: String = ""
+    var count: Int = 0
+  }
 
-class MyStore: Store<MyState, MyActivity> {
+  let store: DefaultStore = .init(initialState: .init())
 
   func myAction() {
     commit {
       $0.name = "Hello, Verge"
+    }
+  }
+
+  func increment() {
+    commit {
+      $0.count += 1
     }
   }
 }
@@ -67,10 +73,13 @@ class ViewController: UIViewController {
 
   let store: MyStore
 
+  ...
+
   var cancellable: VergeAnyCancellable?
 
   init(store: MyStore) {
-    ...
+
+    self.store = MyStore
 
     self.cancellable = store.sinkState { [weak self] state in
       self?.update(state: state)
@@ -84,8 +93,8 @@ class ViewController: UIViewController {
       nameLabel.text = name
     }
 
-    state.ifChanged(\.age) { (age) in
-      ageLabel.text = age.description
+    state.ifChanged(\.count) { (age) in
+      countLabel.text = age.description
     }
 
     ...
