@@ -69,7 +69,7 @@ struct MyView: View {
 ### UIKit
 
 ```swift
-class ViewController: UIViewController {
+final class MyViewController: UIViewController {
 
   let store: MyStore
 
