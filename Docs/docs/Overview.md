@@ -21,9 +21,10 @@ Verge automatically tune-up as possible and shows us what makes performance badl
 
 ## At a glance
 
+A way to create a ViewModel
+
 ```swift
-/// it's also okay to name as ___ViewModel.
-final class MyStore: StoreComponentType {
+final class MyViewModel: StoreComponentType {
 
   struct State {
     var name: String = ""
@@ -46,12 +47,36 @@ final class MyStore: StoreComponentType {
 }
 ```
 
+A way to create a customized store
+
+```swift
+struct MyState {
+  var name: String = ""
+  var count: Int = 0
+}
+
+final class MyStore: Store<MyState, Never> {
+
+  func myAction() {
+    commit {
+      $0.name = "Hello, Verge"
+    }
+  }
+
+  func increment() {
+    commit {
+      $0.count += 1
+    }
+  }
+}
+```
+
 ### SwiftUI
 
 ```swift
 struct MyView: View {
 
-  let store: MyStore
+  let store: MyViewModel
 
   var body: some View {
     StateReader(store).content { state in
@@ -71,17 +96,17 @@ struct MyView: View {
 ```swift
 final class MyViewController: UIViewController {
 
-  let store: MyStore
+  let viewModel: MyViewModel
 
   ...
 
   var cancellable: VergeAnyCancellable?
 
-  init(store: MyStore) {
+  init(viewModel: MyViewModel) {
 
-    self.store = MyStore
+    self.viewModel = viewModel
 
-    self.cancellable = store.sinkState { [weak self] state in
+    self.cancellable = viewModel.sinkState { [weak self] state in
       self?.update(state: state)
     }
 
