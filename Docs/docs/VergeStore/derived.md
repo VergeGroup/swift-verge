@@ -82,7 +82,7 @@ This supports getting the value ad-hoc or subscribing the value updating.
 Derived allows us to take the latest value at the time.
 
 ```swift
-let value: Int = derived.value
+let value: Changes<Int> = derived.value
 ```
 
 ## Subscribe the latest value Derived provides
