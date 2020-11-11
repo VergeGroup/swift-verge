@@ -121,7 +121,8 @@ public final class Changes<Value>: ChangesType, Equatable {
   public var root: Value { _read { yield innerCurrent.value } }
 
   public let mutation: MutationTrace?
-  
+  public let modification: InoutRef<Value>.Modification?
+
   // MARK: - Initializers
     
   public convenience init(
@@ -132,7 +133,8 @@ public final class Changes<Value>: ChangesType, Equatable {
       previous: old.map { .init(old: nil, new: $0) },
       innerCurrent: .init(value: new),
       version: 0,
-      mutation: nil
+      mutation: nil,
+      modification: nil
     )
   }
   
@@ -140,13 +142,15 @@ public final class Changes<Value>: ChangesType, Equatable {
     previous: Changes<Value>?,
     innerCurrent: InnerCurrent,
     version: UInt64,
-    mutation: MutationTrace?
+    mutation: MutationTrace?,
+    modification: InoutRef<Value>.Modification?
   ) {
     
     self.previous = previous
     self.innerCurrent = innerCurrent
     self.version = version
     self.mutation = mutation
+    self.modification = modification
     
     vergeSignpostEvent("Changes.init", label: "\(type(of: self))")
   }
@@ -163,7 +167,8 @@ public final class Changes<Value>: ChangesType, Equatable {
       previous: nil,
       innerCurrent: innerCurrent,
       version: version,
-      mutation: mutation
+      mutation: mutation,
+      modification: nil
     )
   }
   
@@ -185,6 +190,9 @@ public final class Changes<Value>: ChangesType, Equatable {
     }
   }
 
+  /// Returns a new instance that projects value by transform closure.
+  /// 
+  /// - Warning: modification would be dropped.
   public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
 
     let signpost = VergeSignpostTransaction("Changes.map")
@@ -196,11 +204,16 @@ public final class Changes<Value>: ChangesType, Equatable {
       previous: try previous.map { try $0.map(transform) },
       innerCurrent: try innerCurrent.map(transform),
       version: version,
-      mutation: mutation
+      mutation: mutation,
+      modification: nil
     )
   }
 
-  public func makeNextChanges(with nextNewValue: Value, from mutation: MutationTrace) -> Changes<Value> {
+  public func makeNextChanges(
+    with nextNewValue: Value,
+    from mutation: MutationTrace,
+    modification: InoutRef<Value>.Modification
+  ) -> Changes<Value> {
     
     let previous = cloneWithDropsPrevious()
     let nextVersion = previous.version &+ 1
@@ -208,7 +221,8 @@ public final class Changes<Value>: ChangesType, Equatable {
       previous: previous,
       innerCurrent: .init(value: nextNewValue),
       version: nextVersion,
-      mutation: mutation
+      mutation: mutation,
+      modification: modification
     )
   }
   

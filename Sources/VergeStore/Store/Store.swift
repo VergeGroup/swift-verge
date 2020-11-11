@@ -173,6 +173,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
     var valueFromMutation: Result!
 
+    /** a ciritical session */
     try _backingStorage._update { (state) -> Storage<Changes<State>>.UpdateResult in
 
       let startedTime = CFAbsoluteTimeGetCurrent()
@@ -194,7 +195,11 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
           return .nothingUpdates
         }
 
-        state = state.makeNextChanges(with: pointer.pointee, from: trace)
+        state = state.makeNextChanges(
+          with: pointer.pointee,
+          from: trace,
+          modification: reference.modification ?? .indeterminate
+        )
 
         return .updated
       }
