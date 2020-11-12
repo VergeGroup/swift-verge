@@ -141,6 +141,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
       return try withUnsafeMutablePointer(to: &entities[id.any]!) { (pointer) -> Entity in
         var entity = pointer.pointee.base as! Entity
         try update(&entity)
+        precondition(entity.entityID == id, "EntityID was modified")
         pointer.pointee.base = entity as Any
         return entity
       }

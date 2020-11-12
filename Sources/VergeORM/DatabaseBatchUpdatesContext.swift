@@ -147,13 +147,16 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   @discardableResult
   @inline(__always)
   public func updateExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) throws -> Entity {
-    
+
+    /// Updates from context
     if insertsOrUpdates.find(by: id) != nil {
       return try insertsOrUpdates.updateExists(id: id, update: update)
     }
-    
+
+    /// Updates from current
     if var target = current.find(by: id) {
       try update(&target)
+      precondition(target.entityID == id, "EntityID was modified")
       insertsOrUpdates.insert(target)
       return target
     }
