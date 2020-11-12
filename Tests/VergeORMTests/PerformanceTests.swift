@@ -34,14 +34,14 @@ class PerformanceTests: XCTestCase {
       let authors = (0..<10000).map { i in
         Author(rawID: "author.\(i)")
       }
-      context.author.insert(authors)
+      context.entities.author.insert(authors)
     }
     
     measure {
       state.db.performBatchUpdates { context in
-        var author = context.author.current.find(by: .init("author.100"))!
+        var author = context.entities.author.current.find(by: .init("author.100"))!
         author.name = "mmm"
-        context.author.insert(author)
+        context.entities.author.insert(author)
       }
     }
     
@@ -54,12 +54,12 @@ class PerformanceTests: XCTestCase {
       let authors = (0..<10000).map { i in
         Author(rawID: "author.\(i)")
       }
-      context.author.insert(authors)
+      context.entities.author.insert(authors)
     }
     
     measure {
       state.db.performBatchUpdates { context -> Void in
-        context.author.updateIfExists(id: .init("author.100")) { (author) in
+        context.entities.author.updateIfExists(id: .init("author.100")) { (author) in
           author.name = "mmm"
         }
       }
@@ -73,7 +73,7 @@ class PerformanceTests: XCTestCase {
       state.db.performBatchUpdates { (context) in
 
         let authors = (0..<10000).map { i in Author(rawID: "author.\(i)") }
-        context.author.insert(authors)
+        context.entities.author.insert(authors)
 
       }
     }
@@ -87,7 +87,7 @@ class PerformanceTests: XCTestCase {
         
         for i in 0..<3000 {
           let author = Author(rawID: "author.\(i)")
-          context.author.insert(author)
+          context.entities.author.insert(author)
         }
         
       }
@@ -104,7 +104,7 @@ class PerformanceTests: XCTestCase {
           Author(rawID: "author.\(i)")
         }
         
-        context.author.insert(authors)
+        context.entities.author.insert(authors)
         
       }
     }
@@ -120,7 +120,7 @@ class PerformanceTests: XCTestCase {
           Author(rawID: "author.\(i)")
         }
         
-        context.author.insert(authors)
+        context.entities.author.insert(authors)
         
       }
     }
@@ -136,7 +136,7 @@ class PerformanceTests: XCTestCase {
           Author(rawID: "author.\(i)")
         }
         
-        context.author.insert(authors)
+        context.entities.author.insert(authors)
         
       }
     }
@@ -150,7 +150,7 @@ class PerformanceTests: XCTestCase {
         Author(rawID: "author.\(i)")
       }
       
-      context.author.insert(authors)
+      context.entities.author.insert(authors)
     }
     
     measure {
@@ -160,7 +160,7 @@ class PerformanceTests: XCTestCase {
           Author(rawID: "author.\(i)")
         }
         
-        context.author.insert(authors)
+        context.entities.author.insert(authors)
         
       }
     }
@@ -175,7 +175,7 @@ class PerformanceTests: XCTestCase {
           
           for i in 0..<1000 {
             let author = Author(rawID: "author.\(l)-\(i)")
-            context.author.insert(author)
+            context.entities.author.insert(author)
           }
           
         }
@@ -190,7 +190,7 @@ class PerformanceTests: XCTestCase {
       for i in 0..<10 {
         state.db.performBatchUpdates { (context) in
           let author = Author(rawID: "author.\(i)")
-          context.author.insert(author)
+          context.entities.author.insert(author)
         }
         
       }
@@ -206,7 +206,7 @@ class FindPerformanceTests: XCTestCase {
   override func setUp() {
     state.db.performBatchUpdates { (context) -> Void in
       
-      context.author.insert((0..<10000).map { i in
+      context.entities.author.insert((0..<10000).map { i in
         Author(rawID: "author.\(i)")
       })
             
@@ -244,7 +244,7 @@ class ModifyPerformanceTests: XCTestCase {
   override func setUp() {
     state.db.performBatchUpdates { (context) -> Void in
       
-      context.author.insert((0..<10000).map { i in
+      context.entities.author.insert((0..<10000).map { i in
         Author(rawID: "author.\(i)")
       })
       

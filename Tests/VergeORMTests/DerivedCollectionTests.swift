@@ -24,7 +24,7 @@ class DerivedCollectionTests: XCTestCase {
         let authors = (0..<10).map { i in
           Author(rawID: "\(i)")
         }
-        let result = context.author.insert(authors)
+        let result = context.entities.author.insert(authors)
         context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
       }
     }
@@ -47,7 +47,7 @@ class DerivedCollectionTests: XCTestCase {
         let authors = (0..<10).map { i in
           Author(rawID: "\(i)")
         }
-        let result = context.author.insert(authors)
+        let result = context.entities.author.insert(authors)
         context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
       }
     }
@@ -60,11 +60,11 @@ class DerivedCollectionTests: XCTestCase {
 
     store.commit {
       $0.db.performBatchUpdates { context in
-        context.author.deleteAll()
+        context.entities.author.deleteAll()
         context.indexes.allAuthros.removeAll()
 
         let author = Author(rawID: "\(10)")
-        let result = context.author.insert(author)
+        let result = context.entities.author.insert(author)
         context.indexes.allAuthros.append(result.entityID)
       }
     }
@@ -80,7 +80,7 @@ class DerivedCollectionTests: XCTestCase {
         let authors = (0..<10).map { i in
           Author(rawID: "\(i)")
         }
-        let result = context.author.insert(authors)
+        let result = context.entities.author.insert(authors)
         context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
       }
     }
@@ -93,7 +93,7 @@ class DerivedCollectionTests: XCTestCase {
 
     let _ = store.commit {
       $0.db.performBatchUpdates { context in
-        context.author.updateIfExists(id: .init("\(1)")) { author in
+        context.entities.author.updateIfExists(id: .init("\(1)")) { author in
           author.name = "\(1)"
         }
       }
@@ -112,7 +112,7 @@ class DerivedCollectionTests: XCTestCase {
         let authors = (0..<10).map { i in
           Author(rawID: "\(i)")
         }
-        let result = context.author.insert(authors)
+        let result = context.entities.author.insert(authors)
         context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
       }
     }
@@ -129,7 +129,7 @@ class DerivedCollectionTests: XCTestCase {
         let authors = (0..<10).map { i in
           Author(rawID: "\(i)")
         }
-        let result = context.author.insert(authors)
+        let result = context.entities.author.insert(authors)
         context.indexes.allAuthros.append(contentsOf: result.map { $0.entityID} )
       }
     }
@@ -158,7 +158,7 @@ class DerivedCollectionTests: XCTestCase {
         let authors = (0..<10).map { i in
           Author(rawID: "\(i)")
         }
-        let result = context.author.insert(authors)
+        let result = context.entities.author.insert(authors)
         context.indexes.allAuthros.append(contentsOf: result.map(\.entityID))
       }
     }

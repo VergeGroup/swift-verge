@@ -28,7 +28,7 @@ class MultithreadingTests: XCTestCase {
             let authors = (0..<1000).map { i in
               Author(rawID: "author.\(i)")
             }
-            context.author.insert(authors)
+            context.entities.author.insert(authors)
           }
         }
       }
