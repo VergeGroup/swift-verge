@@ -42,7 +42,7 @@ class DerivedTests: XCTestCase {
         let createdBook = state.db.performBatchUpdates { (context) -> Book in
           
           let book = Book(rawID: id.raw, authorID: Author.anonymous.entityID)
-          context.book.insert(book)
+          context.entities.book.insert(book)
           context.indexes.allBooks.append(book.entityID)
           
           return book
@@ -66,9 +66,9 @@ class DerivedTests: XCTestCase {
         storage.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
-            var book = context.book.current.find(by: id)!
+            var book = context.entities.book.current.find(by: id)!
             book.name = "Hey"
-            context.book.insert(book)
+            context.entities.book.insert(book)
             
           }
         }
@@ -83,7 +83,7 @@ class DerivedTests: XCTestCase {
         storage.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
-            context.book.delete(id)
+            context.entities.book.delete(id)
             
           }
         }
@@ -106,7 +106,7 @@ class DerivedTests: XCTestCase {
         state.db.performBatchUpdates { (context) -> EntityTable<RootState.Database.Schema, Book>.InsertionResult in
           
           let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
-          let r = context.book.insert(book)
+          let r = context.entities.book.insert(book)
           context.indexes.allBooks.append(book.entityID)
           
           return r
@@ -123,9 +123,9 @@ class DerivedTests: XCTestCase {
         storage.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
-            var book = context.book.current.find(by: .init("some"))!
+            var book = context.entities.book.current.find(by: .init("some"))!
             book.name = "Hey"
-            context.book.insert(book)
+            context.entities.book.insert(book)
             
           }
         }
@@ -139,7 +139,7 @@ class DerivedTests: XCTestCase {
         storage.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
-            context.book.delete(.init("some"))
+            context.entities.book.delete(.init("some"))
             
           }
         }
@@ -159,7 +159,7 @@ class DerivedTests: XCTestCase {
       state.db.performBatchUpdates { (context) -> EntityTable<RootState.Database.Schema, Author>.InsertionResult in
         
         let author = Author(rawID: "muukii", name: "muukii")
-        let r = context.author.insert(author)
+        let r = context.entities.author.insert(author)
         return r
       }
     }
@@ -180,7 +180,7 @@ class DerivedTests: XCTestCase {
       
       _ = storage.commit { state in
         state.db.performBatchUpdates { (context) in
-          context.author.updateIfExists(id: .init("muukii")) { (author) in
+          context.entities.author.updateIfExists(id: .init("muukii")) { (author) in
             author.name = "Hiroshi"
           }
         }
@@ -196,7 +196,7 @@ class DerivedTests: XCTestCase {
       
       _ = storage.commit { state in
         state.db.performBatchUpdates { (context) in
-          context.author.updateIfExists(id: .init("muukii")) { (author) in
+          context.entities.author.updateIfExists(id: .init("muukii")) { (author) in
             author.name = "Hiroshi"
           }
         }
@@ -224,7 +224,7 @@ class DerivedTests: XCTestCase {
       
       _ = storage.commit { state in
         state.db.performBatchUpdates { (context) in
-          context.book.insert(Book(rawID: "Verge", authorID: .init("muukii")))
+          context.entities.book.insert(Book(rawID: "Verge", authorID: .init("muukii")))
         }
       }
       
@@ -236,7 +236,7 @@ class DerivedTests: XCTestCase {
       
       _ = storage.commit { state in
         state.db.performBatchUpdates { (context) in
-          context.author.insert(.init(rawID: "John", name: "John"))
+          context.entities.author.insert(.init(rawID: "John", name: "John"))
         }
       }
       return

@@ -37,7 +37,7 @@ class VergeORMTests: XCTestCase {
     let context = state.db.beginBatchUpdates()
     
     let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
-    context.book.insert(book)
+    context.entities.book.insert(book)
     
     state.db.commitBatchUpdates(context: context)
     
@@ -55,7 +55,7 @@ class VergeORMTests: XCTestCase {
     state.db.performBatchUpdates { (context) in
       
       let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
-      context.book.insert(book)
+      context.entities.book.insert(book)
     }
     
     let a = state.db.entities.book
@@ -72,7 +72,7 @@ class VergeORMTests: XCTestCase {
     state.db.performBatchUpdates { (context) in
       
       let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
-      context.book.insert(book)
+      context.entities.book.insert(book)
     }
     
     XCTAssertEqual(state.db.entities.book.count, 1)
@@ -86,7 +86,7 @@ class VergeORMTests: XCTestCase {
     state.db.performBatchUpdates { (context) in
       
       let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
-      context.book.insert(book)
+      context.entities.book.insert(book)
       context.indexes.allBooks.append(book.entityID)
     }
         
@@ -96,7 +96,7 @@ class VergeORMTests: XCTestCase {
     print(state.db.indexes.allBooks)
     
     state.db.performBatchUpdates { (context) -> Void in
-      context.book.delete(Book.EntityID.init("some"))
+      context.entities.book.delete(Book.EntityID.init("some"))
     }
     
     XCTAssertEqual(state.db.entities.book.count, 0)
@@ -113,20 +113,20 @@ class VergeORMTests: XCTestCase {
     state.db.performBatchUpdates { (context) in
       
       let book = Book(rawID: id.raw, authorID: Author.anonymous.entityID)
-      context.book.insert(book)
+      context.entities.book.insert(book)
     }
     
     XCTAssertNotNil(state.db.entities.book.find(by: id))
     
     state.db.performBatchUpdates { (context) in
             
-      guard var book = context.book.current.find(by: id) else {
+      guard var book = context.entities.book.current.find(by: id) else {
         XCTFail()
         return
       }
       book.name = "hello"
       
-      context.book.insert(book)
+      context.entities.book.insert(book)
     }
     
     XCTAssertNotNil(state.db.entities.book.find(by: id))
@@ -140,23 +140,23 @@ class VergeORMTests: XCTestCase {
     
     state.db.performBatchUpdates { (context) -> Void in
       
-      context.author.insert(Author(rawID: "muukii", name: "muukii"))
+      context.entities.author.insert(Author(rawID: "muukii", name: "muukii"))
           
     }
     
     state.db.performBatchUpdates { context in
       
-      context.author.updateIfExists(id: .init("muukii")) { (author) in
+      context.entities.author.updateIfExists(id: .init("muukii")) { (author) in
         XCTAssertEqual(author.name, "muukii")
         author.name = "Hiroshi"
       }
       
-      context.author.updateIfExists(id: .init("muukii")) { (author) in
+      context.entities.author.updateIfExists(id: .init("muukii")) { (author) in
         XCTAssertEqual(author.name, "Hiroshi")
         author.name = "Kimura"
       }
       
-      context.author.updateIfExists(id: .init("muukii")) { (author) in
+      context.entities.author.updateIfExists(id: .init("muukii")) { (author) in
         XCTAssertEqual(author.name, "Kimura")
       }
       
@@ -170,29 +170,29 @@ class VergeORMTests: XCTestCase {
     
     state.db.performBatchUpdates { (context) -> Void in
       
-      context.author.insert(Author(rawID: "muukii", name: "muukii"))
+      context.entities.author.insert(Author(rawID: "muukii", name: "muukii"))
       
     }
     
     state.db.performBatchUpdates { context in
       
-      XCTAssertEqual(context.author.all().first?.name, "muukii")
+      XCTAssertEqual(context.entities.author.all().first?.name, "muukii")
       
-      context.author.updateIfExists(id: .init("muukii")) { (author) in
+      context.entities.author.updateIfExists(id: .init("muukii")) { (author) in
         XCTAssertEqual(author.name, "muukii")
         author.name = "Hiroshi"
       }
             
-      XCTAssertEqual(context.author.all().first?.name, "Hiroshi")
+      XCTAssertEqual(context.entities.author.all().first?.name, "Hiroshi")
       
-      context.author.updateIfExists(id: .init("muukii")) { (author) in
+      context.entities.author.updateIfExists(id: .init("muukii")) { (author) in
         XCTAssertEqual(author.name, "Hiroshi")
         author.name = "Kimura"
       }
       
-      XCTAssertEqual(context.author.all().first?.name, "Kimura")
+      XCTAssertEqual(context.entities.author.all().first?.name, "Kimura")
       
-      context.author.updateIfExists(id: .init("muukii")) { (author) in
+      context.entities.author.updateIfExists(id: .init("muukii")) { (author) in
         XCTAssertEqual(author.name, "Kimura")
       }
       
@@ -216,8 +216,8 @@ class VergeORMTests: XCTestCase {
         
         let a = Author(rawID: "\(i)", name: "\(i)")
         
-        context.author.insert(a)
-        context.book.insert(Book(rawID: "\(i)", authorID: a.entityID))
+        context.entities.author.insert(a)
+        context.entities.book.insert(Book(rawID: "\(i)", authorID: a.entityID))
         
       }
             

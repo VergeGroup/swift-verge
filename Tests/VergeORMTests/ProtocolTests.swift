@@ -35,7 +35,7 @@ class ProtocolTests: XCTest {
     
     var db = Database()
     db.performBatchUpdates { (c) -> Void in
-      c.author.insert(Author(rawID: "author.0"))
+      c.entities.author.insert(Author(rawID: "author.0"))
     }
     
     func access<DB: DatabaseType>(db: DB) -> Int where DB.Schema : Partial {

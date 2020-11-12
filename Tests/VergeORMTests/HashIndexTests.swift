@@ -44,7 +44,7 @@ class GroupByIndexTests: XCTestCase {
         let authors = (0..<1000).map { i in
           Author(rawID: "author.\(i)")
         }
-        c.author.insert(authors)
+        c.entities.author.insert(authors)
       }
           
     }

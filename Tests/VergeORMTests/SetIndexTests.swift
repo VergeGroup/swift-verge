@@ -34,7 +34,7 @@ class SetIndexTests: XCTestCase {
       let authors = (0..<10000).map { i in
         Author(rawID: "author.\(i)")
       }
-      c.author.insert(authors)
+      c.entities.author.insert(authors)
       c.indexes.allBooks.formUnion(authors.map { $0.entityID })
     }
     return db

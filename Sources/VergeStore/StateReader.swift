@@ -184,7 +184,7 @@ extension StateReader {
 }
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-extension UseState {
+extension _StateReaderContent {
 
   /// inner init
   private init<Derived: DerivedType>(

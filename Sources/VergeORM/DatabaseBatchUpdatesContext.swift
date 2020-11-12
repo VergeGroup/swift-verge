@@ -205,29 +205,51 @@ public struct DatabaseEntityUpdatesResult<Schema: EntitySchemaType>: Equatable {
 
 @dynamicMemberLookup
 public class DatabaseEntityBatchUpdatesContext<Schema: EntitySchemaType> {
+
+  @dynamicMemberLookup
+  public struct EntityProxy {
+
+    let base: DatabaseEntityBatchUpdatesContext<Schema>
+
+    public func table<E: EntityType>(_ entityType: E.Type) -> EntityModifier<Schema, E> {
+      guard let rawTable = base.editing[E.entityName] else {
+        let modifier = EntityModifier<Schema, E>(current: base.entityStorage.table(E.self))
+        base.editing[E.entityName] = modifier
+        return modifier
+      }
+      return rawTable as! EntityModifier<Schema, E>
+    }
+
+    public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityModifier<Schema, U> {
+      table(U.self)
+    }
+
+  }
   
-  private let current: EntityTablesStorage<Schema>
+  private let entityStorage: EntityTablesStorage<Schema>
+
+  public var entities: EntityProxy {
+    return .init(base: self)
+  }
+
   var editing: [EntityTableIdentifier : EntityModifierType] = [:]
     
   init(current: EntityTablesStorage<Schema>) {
-    self.current = current
+    self.entityStorage = current
   }
   
   public func abort() throws -> Never {
     throw BatchUpdatesError.aborted
   }
-  
+
+  @available(*, deprecated, message: "Use .entities.table")
   public func table<E: EntityType>(_ entityType: E.Type) -> EntityModifier<Schema, E> {
-    guard let rawTable = editing[E.entityName] else {
-      let modifier = EntityModifier<Schema, E>(current: current.table(E.self))
-      editing[E.entityName] = modifier
-      return modifier
-    }
-    return rawTable as! EntityModifier<Schema, E>
+    entities.table(entityType)
   }
-  
+
+  @available(*, deprecated, message: "Use .entities.<YOUR_ENTITY>")
   public subscript <U: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<U>>) -> EntityModifier<Schema, U> {
-    table(U.self)
+    entities.table(U.self)
   }
   
   func makeResult() -> DatabaseEntityUpdatesResult<Schema> {
