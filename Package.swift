@@ -13,14 +13,17 @@ let package = Package(
     .library(name: "VergeCore", targets: ["VergeCore"]),
     .library(name: "VergeStore", targets: ["VergeStore"]),
     .library(name: "VergeORM", targets: ["VergeORM"]),
+    .library(name: "VergeRx", targets: ["VergeRx"]),
   ],
   dependencies: [
+    .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "5.1.1")
   ],
   targets: [
     .target(name: "VergeObjcBridge", dependencies: []),
     .target(name: "VergeCore", dependencies: ["VergeObjcBridge"]),
     .target(name: "VergeStore", dependencies: ["VergeCore", "VergeObjcBridge"]),
     .target(name: "VergeORM", dependencies: ["VergeCore", "VergeStore", "VergeObjcBridge"]),
+    .target(name: "VergeRx", dependencies: ["VergeCore", "VergeStore", "VergeObjcBridge", "RxSwift", "RxCocoa"]),
   ],
   swiftLanguageVersions: [.v5]
 )
