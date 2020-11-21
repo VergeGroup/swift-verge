@@ -112,6 +112,24 @@ extension TargetQueue {
   public static var asyncSerialBackground: TargetQueue = .init { workItem in
     StaticMember.serialBackgroundDispatchQueue.async(execute: workItem)
   }
+
+  /// Enqueue first item on current-thread(synchronously).
+  /// From then, using specified queue.
+  public static func startsFromCurrentThread(and queue: TargetQueue) -> TargetQueue {
+
+    let numberEnqueued = VergeConcurrency.AtomicReference.init(initialValue: false)
+
+    return .init { workItem in
+
+      let isFirst = numberEnqueued.compareAndSet(expect: false, newValue: true)
+
+      if isFirst {
+        workItem()
+      } else {
+        queue.schedule(workItem)
+      }
+    }
+  }
 }
 
 
