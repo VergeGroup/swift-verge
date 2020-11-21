@@ -12,7 +12,7 @@ jobs:
           xcode-version: '12.1'
       - uses: actions/checkout@v2
       - name: webfactory/ssh-agent
-        uses: webfactory/ssh-agent@v0.1.1
+        uses: webfactory/ssh-agent@v0.4.1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Lint Cocoapods
