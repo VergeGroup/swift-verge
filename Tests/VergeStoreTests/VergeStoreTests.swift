@@ -612,5 +612,40 @@ final class VergeStoreTests: XCTestCase {
     withExtendedLifetime(cancellable) {}
 
   }
+
+  func testTargetQueue() {
+
+    let store1 = DemoStore()
+
+    let exp = expectation(description: "11")
+    var count = 0
+
+    DispatchQueue.global().async {
+
+      let cancellable = store1.sinkState(queue: .startsFromCurrentThread(andUse: .mainIsolated())) { state in
+
+        defer {
+          count += 1
+        }
+
+        if count == 0 {
+          XCTAssertEqual(Thread.isMainThread, false)
+        } else {
+          XCTAssertEqual(Thread.isMainThread, true)
+          exp.fulfill()
+        }
+
+      }
+
+      store1.commit {
+        $0.count = 10
+      }
+
+      withExtendedLifetime(cancellable) {}
+    }
+
+    wait(for: [exp], timeout: 1)
+
+  }
   
 }

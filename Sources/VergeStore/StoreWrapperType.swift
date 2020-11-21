@@ -102,7 +102,7 @@ extension StoreComponentType {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: TargetQueue = .main,
+    queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Changes<WrappedStore.State>) -> Void
   ) -> VergeAnyCancellable {
     store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -120,7 +120,7 @@ extension StoreComponentType {
   public func sinkState<Accumulate>(
     scan: Scan<Changes<WrappedStore.State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue = .main,
+    queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Changes<WrappedStore.State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     store.asStore().sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -130,7 +130,7 @@ extension StoreComponentType {
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkActivity(
-    queue: TargetQueue = .main,
+    queue: TargetQueue = .mainIsolated(),
     receive: @escaping (WrappedStore.Activity) -> Void
   ) -> VergeAnyCancellable  {
     store.asStore().sinkActivity(queue: queue, receive: receive)
