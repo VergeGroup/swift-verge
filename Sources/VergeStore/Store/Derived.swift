@@ -178,7 +178,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkValue(
     dropsFirst: Bool = false,
-    queue: TargetQueue = .main,
+    queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     
@@ -204,7 +204,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   public func sinkValue<Accumulate>(
     scan: Scan<Changes<Value>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue = .main,
+    queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Changes<Value>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     innerStore.sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)

@@ -253,7 +253,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: TargetQueue = .main,
+    queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
     
@@ -291,7 +291,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   public func sinkState<Accumulate>(
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue = .main,
+    queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Changes<State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
 
@@ -307,7 +307,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkActivity(
-    queue: TargetQueue = .main,
+    queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
     
