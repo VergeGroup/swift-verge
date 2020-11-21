@@ -115,7 +115,7 @@ extension TargetQueue {
 
   /// Enqueue first item on current-thread(synchronously).
   /// From then, using specified queue.
-  public static func startsFromCurrentThread(and queue: TargetQueue) -> TargetQueue {
+  public static func startsFromCurrentThread(andUse queue: TargetQueue) -> TargetQueue {
 
     let numberEnqueued = VergeConcurrency.AtomicReference.init(initialValue: false)
 

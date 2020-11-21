@@ -622,7 +622,7 @@ final class VergeStoreTests: XCTestCase {
 
     DispatchQueue.global().async {
 
-      let cancellable = store1.sinkState(queue: .startsFromCurrentThread(and: .main)) { state in
+      let cancellable = store1.sinkState(queue: .startsFromCurrentThread(andUse: .mainIsolated())) { state in
 
         defer {
           count += 1
