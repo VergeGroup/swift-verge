@@ -37,10 +37,10 @@ public protocol ChangesType: AnyObject {
 }
 
 /**
- 
- An object that contains 2 instances (old, new)
- Use-case is to know how it did change.
- 
+ An immutable data object to achieve followings:
+ - To know a property has been modified. (It contains 2 instances (old, new))
+ - To avoid copying cost with wrapping reference type - So, you can embed this object on the other state.
+
  ```
  struct MyState {
    var name: String
@@ -90,8 +90,8 @@ public final class Changes<Value>: ChangesType, Equatable {
 
   // MARK: - Stored Properties
 
-  let previous: Changes<Value>?
-  private let innerCurrent: InnerCurrent
+  public let previous: Changes<Value>?
+  private let innerBox: InnerBox
   private(set) public var version: UInt64
   
   // MARK: - Computed Properties
@@ -112,13 +112,13 @@ public final class Changes<Value>: ChangesType, Equatable {
   /// We can't access `.computed` from this.
   ///
   /// - Important: a returns value won't change against pointer-personality
-  public var primitive: Value { _read { yield innerCurrent.value } }
+  public var primitive: Value { _read { yield innerBox.value } }
 
   /// Returns a value as primitive
   /// We can't access `.computed` from this.
   ///
   /// - Important: a returns value won't change against pointer-personality
-  public var root: Value { _read { yield innerCurrent.value } }
+  public var root: Value { _read { yield innerBox.value } }
 
   public let mutation: MutationTrace?
   public let modification: InoutRef<Value>.Modification?
@@ -131,7 +131,7 @@ public final class Changes<Value>: ChangesType, Equatable {
   ) {
     self.init(
       previous: old.map { .init(old: nil, new: $0) },
-      innerCurrent: .init(value: new),
+      innerBox: .init(value: new),
       version: 0,
       mutation: nil,
       modification: nil
@@ -140,14 +140,14 @@ public final class Changes<Value>: ChangesType, Equatable {
   
   private init(
     previous: Changes<Value>?,
-    innerCurrent: InnerCurrent,
+    innerBox: InnerBox,
     version: UInt64,
     mutation: MutationTrace?,
     modification: InoutRef<Value>.Modification?
   ) {
     
     self.previous = previous
-    self.innerCurrent = innerCurrent
+    self.innerBox = innerBox
     self.version = version
     self.mutation = mutation
     self.modification = modification
@@ -158,14 +158,14 @@ public final class Changes<Value>: ChangesType, Equatable {
   deinit {
     vergeSignpostEvent("Changes.deinit", label: "\(type(of: self))")
 
-    changesDeallocationQueue.releaseObjectInBackground(object: innerCurrent)
+    changesDeallocationQueue.releaseObjectInBackground(object: innerBox)
   }
 
   @inline(__always)
   private func cloneWithDropsPrevious() -> Changes<Value> {
     return .init(
       previous: nil,
-      innerCurrent: innerCurrent,
+      innerBox: innerBox,
       version: version,
       mutation: mutation,
       modification: nil
@@ -202,7 +202,7 @@ public final class Changes<Value>: ChangesType, Equatable {
 
     return Changes<U>(
       previous: try previous.map { try $0.map(transform) },
-      innerCurrent: try innerCurrent.map(transform),
+      innerBox: try innerBox.map(transform),
       version: version,
       mutation: mutation,
       modification: nil
@@ -219,7 +219,7 @@ public final class Changes<Value>: ChangesType, Equatable {
     let nextVersion = previous.version &+ 1
     return Changes<Value>.init(
       previous: previous,
-      innerCurrent: .init(value: nextNewValue),
+      innerBox: .init(value: nextNewValue),
       version: nextVersion,
       mutation: mutation,
       modification: modification
@@ -450,7 +450,9 @@ extension Changes: CustomReflectable {
       children: [
         "version" : version,
         "previous": previous as Any,
-        "primitive" : primitive
+        "primitive" : primitive,
+        "mutation" : mutation,
+        "modification" : modification,
       ],
       displayStyle: .struct,
       ancestorRepresentation: .generated
@@ -463,7 +465,7 @@ extension Changes: CustomReflectable {
 
 extension Changes {
   
-  private final class InnerCurrent {
+  private final class InnerBox {
     
     let value: Value
     
@@ -486,7 +488,7 @@ extension Changes {
 
     }
     
-    public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerCurrent {
+    public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerBox {
       return .init(value: try transform(value), cachedComputedValueStorage: cachedComputedValueStorage)
     }
   }
@@ -523,19 +525,42 @@ extension Changes where Value : ExtendedStateType {
     components._onRead()
     
     // TODO: tune-up concurrency performance
-            
-    return innerCurrent.cachedComputedValueStorage.modify { cache -> Output in
+
+    /**
+     Start locking inner-box's caching container to calculate a computed value and stores as a cache.
+     */
+    return innerBox.cachedComputedValueStorage.modify { cache -> Output in
       
       if let computed = cache[keyPath] as? Output {
+        /**
+         Which means, previously accessed this property, then we can return the cached value.
+         */
         components._onHitCache()
-        // if cached, take value withoud shared lock
         return computed
       }
+
+      /**
+       We couldn't find a cached value, then continue to next step.
+       */
       
       if let previous = previous {
+
+        /**
+         Itself has the previous instance, we start locking in that instance.
+         */
         
-        return previous.innerCurrent.cachedComputedValueStorage.modify { previousCache -> Output in
+        return previous.innerBox.cachedComputedValueStorage.modify { previousCache -> Output in
+
+          /**
+           - Warnings: DO NOT MODIFY PreviousCache.
+           */
+
           if let previousCachedValue = previousCache[keyPath] as? Output {
+
+            /**
+             We found a cached value from the previous instance.
+             Now we check if that value is reusable.
+             */
             
             components._onHitPreviousCache()
             
@@ -555,6 +580,11 @@ extension Changes where Value : ExtendedStateType {
               return newValue
             }
           } else {
+
+            /**
+             We don't have a cached value even from the previous instance.
+             We need to create a new value from scratch.
+             */
             
             components._onTransform()
             
@@ -566,6 +596,11 @@ extension Changes where Value : ExtendedStateType {
         }
         
       } else {
+
+        /**
+         We don't have previous instance.
+         We need to create a new value from scratch.
+         */
         
         components._onTransform()
         
