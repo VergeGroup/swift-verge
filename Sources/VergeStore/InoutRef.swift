@@ -27,7 +27,7 @@ public final class InoutRef<Wrapped> {
 
   // MARK: - Nested types
 
-  public enum Modification {
+  public enum Modification: Hashable {
     case determinate(keyPaths: Set<PartialKeyPath<Wrapped>>)
     case indeterminate
   }
