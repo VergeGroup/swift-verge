@@ -16,39 +16,36 @@ class ViewController: UIViewController {
     
   @IBOutlet weak var label: UILabel!
   
-  private let disposeBag = DisposeBag()
+  private var cancellables = Set<VergeAnyCancellable>()
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
-    viewModel.rx.activitySignal
-      .emit(onNext: { [weak self] activity in
-        
-        guard let self = self else { return }
-        
-        switch activity {
-        case .somethingHappen:
-          
-          let alert = UIAlertController(title: "Something happen", message: nil, preferredStyle: .alert)
-          alert.addAction(.init(title: "Dismiss", style: .default, handler: nil))
-          
-          self.present(alert, animated: true, completion: nil)
-          
-        }
-        
-      })
-      .disposed(by: disposeBag)
-    
-    viewModel.rx.stateObservable()
-      .observeOn(MainScheduler.instance)
-      .bind { [weak self] (changes) in
-        self?.update(changes: changes)
+
+    viewModel.sinkActivity { [weak self] activity in
+
+      guard let self = self else { return }
+
+      switch activity {
+      case .somethingHappen:
+
+        let alert = UIAlertController(title: "Something happen", message: nil, preferredStyle: .alert)
+        alert.addAction(.init(title: "Dismiss", style: .default, handler: nil))
+
+        self.present(alert, animated: true, completion: nil)
+
+      }
+
     }
-    .disposed(by: disposeBag)
-    
+    .store(in: &cancellables)
+
+    viewModel.sinkState { [weak self] state in
+      self?.update(changes: state)
+    }
+    .store(in: &cancellables)
+
   }
   
-  private func update(changes: Changes<ViewModelState>) {
+  private func update(changes: Changes<ViewModel.State>) {
     changes.ifChanged(\.displayNumber) { (number) in
       label.text = number
     }
@@ -60,49 +57,48 @@ class ViewController: UIViewController {
 }
 
 import VergeStore
-import VergeRx
 
-struct ViewModelState: StateType {
-  
-  var displayNumber: String {
-    count.description
+final class ViewModel: StoreComponentType {
+
+  struct State: Equatable {
+
+    var displayNumber: String {
+      count.description
+    }
+
+    var count: Int = 0
   }
-  
-  var count: Int = 0
-}
 
-enum ViewModelActivity {
-  case somethingHappen
-}
-
-final class ViewModel: ViewModelBase<ViewModelState, ViewModelActivity> {
+  enum Activity {
+    case somethingHappen
+  }
   
   let rootStore: RootStore
   
   private let disposeBag = DisposeBag()
+  private var cancellables = Set<VergeAnyCancellable>()
+
+  let store = DefaultStore(initialState: .init())
   
   init(parent: RootStore) {
     self.rootStore = parent
-    super.init(initialState: .init(), logger: nil)
-    
-    parent.rx.stateObservable()
-      .bind { [weak self] state in
-        self?.commit {
-          $0.count = state.count
-        }
+
+    parent.sinkState { [weak self] state in
+      self?.commit {
+        $0.count = state.count
+      }
     }
-    .disposed(by: disposeBag)
-    
-    parent.rx.activitySignal
-      .emit(onNext: { [weak self] activity in
-        guard let self = self else { return }
-        switch activity {
-        case .bomb:
-          self.send(.somethingHappen)
-        }
-      })
-      .disposed(by: disposeBag)
-    
+    .store(in: &cancellables)
+
+    parent.sinkActivity { [weak self] activity in
+      guard let self = self else { return }
+      switch activity {
+      case .bomb:
+        self.send(.somethingHappen)
+      }
+    }
+    .store(in: &cancellables)
+
   }
       
   func increment() {
