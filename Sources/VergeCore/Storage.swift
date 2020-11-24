@@ -167,12 +167,6 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   public final func addDeinit(subscriber: @escaping () -> Void) -> EventEmitterCancellable {
     deinitEmitter.add(subscriber)
   }
-  
-  public final func remove(_ token: EventEmitterCancellable) {
-    didUpdateEmitter.remove(token)
-    willUpdateEmitter.remove(token)
-    deinitEmitter.remove(token)
-  }
     
   @inline(__always)
   fileprivate func notifyWillUpdate(value: Value) {
@@ -310,8 +304,8 @@ extension ReadonlyStorage {
       }
     }
     
-    newStorage.addDeinit { [weak self] in
-      self?.remove(token)
+    newStorage.addDeinit {
+      token.cancel()
     }
     
     return newStorage
