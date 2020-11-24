@@ -180,16 +180,13 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
     dropsFirst: Bool = false,
     queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Changes<Value>) -> Void
-  ) -> VergeAnyCancellable {
-    
+  ) -> VergeAnyCancellable {    
     innerStore.sinkState(
       dropsFirst: dropsFirst,
-      queue: queue
-    ) { (changes) in
-      withExtendedLifetime(self) {}
-      receive(changes)
-    }
-    .asAutoCancellable()
+      queue: queue,
+      receive: receive
+    )
+    .associate(self)
   }
 
   /// Subscribe the state changes
@@ -207,7 +204,13 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
     queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Changes<Value>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
-    innerStore.sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+    innerStore.sinkState(
+      scan: scan,
+      dropsFirst: dropsFirst,
+      queue: queue,
+      receive: receive
+    )
+    .associate(self)
   }
 
   fileprivate func _makeChain<NewState>(
