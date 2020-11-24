@@ -43,67 +43,100 @@ import os
 /// }
 /// ```
 public final class VergeAnyCancellable: Hashable, CancellableType {
-  
+
   private let lock = VergeConcurrency.UnfairLock()
-  
+
   private var wasCancelled = false
 
   public static func == (lhs: VergeAnyCancellable, rhs: VergeAnyCancellable) -> Bool {
     lhs === rhs
   }
-  
+
   public func hash(into hasher: inout Hasher) {
     ObjectIdentifier(self).hash(into: &hasher)
   }
-  
-  private var actions: ContiguousArray<() -> Void> = .init()
-  
+
+  private var actions: ContiguousArray<() -> Void>? = .init()
+
   public init(onDeinit: @escaping () -> Void) {
     self.actions = [onDeinit]
   }
-  
+
   public convenience init<C>(_ cancellable: C) where C : CancellableType {
     self.init {
       cancellable.cancel()
     }
   }
-  
+
   public convenience init(_ cancellable: CancellableType) {
     self.init {
       cancellable.cancel()
     }
   }
-  
-  public func insert(_ cancellable: CancellableType) {
-    actions.append {
-      cancellable.cancel()
-    }
-  }
-  
-  public func insert(onDeinit: @escaping () -> Void) {
-    actions.append(onDeinit)
-  }
-    
-  deinit {
-    cancel()
-  }
-  
-  public func cancel() {
-    
+
+  public func associate(_ object: AnyObject) -> VergeAnyCancellable {
+
     lock.lock()
     defer {
       lock.unlock()
     }
-    
-    guard !wasCancelled else { return }
-    wasCancelled = true
-    
-    actions.forEach {
-      $0()
+
+    assert(!wasCancelled)
+
+    actions?.append {
+      withExtendedLifetime(object) {}
+    }
+
+    return self
+  }
+
+  public func insert(_ cancellable: CancellableType) {
+
+    lock.lock()
+    defer {
+      lock.unlock()
+    }
+
+    assert(!wasCancelled)
+
+    actions?.append {
+      cancellable.cancel()
     }
   }
-  
-  
+
+  public func insert(onDeinit: @escaping () -> Void) {
+
+    lock.lock()
+    defer {
+      lock.unlock()
+    }
+
+    assert(!wasCancelled)
+    actions?.append(onDeinit)
+  }
+
+  deinit {
+    cancel()
+  }
+
+  public func cancel() {
+
+    lock.lock()
+    defer {
+      lock.unlock()
+    }
+
+    guard !wasCancelled else { return }
+    wasCancelled = true
+
+    actions?.forEach {
+      $0()
+    }
+
+    actions = nil
+
+  }
+
 }
 
 /// An object to cancel subscription
