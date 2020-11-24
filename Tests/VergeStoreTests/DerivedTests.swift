@@ -12,36 +12,36 @@ import XCTest
 import VergeStore
 
 final class DerivedTests: XCTestCase {
-   
-  let wrapper = DemoStore()
-  
+
   func testSlice() {
+
+    let localStore = DemoStore()
                 
-    let slice = wrapper.derived(.map { $0.count }, queue: .passthrough)
+    let slice = localStore.derived(.map { $0.count }, queue: .passthrough)
 
     XCTAssertEqual(slice.primitiveValue, 0)
     XCTAssertEqual(slice.value.root, 0)
     XCTAssertEqual(slice.value.hasChanges(\.root), true)
     
-    wrapper.increment()
+    localStore.increment()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.root, 1)
     XCTAssertEqual(slice.value.hasChanges(\.root), true)
       
-    wrapper.empty()
+    localStore.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
     XCTAssertEqual(slice.value.hasChanges(\.root), true)
 
-    wrapper.empty()
+    localStore.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
     XCTAssertEqual(slice.value.hasChanges(\.root), true)
 
-    wrapper.increment()
+    localStore.increment()
 
     XCTAssertEqual(slice.primitiveValue, 2)
     XCTAssertEqual(slice.value.version, 2)
@@ -49,6 +49,8 @@ final class DerivedTests: XCTestCase {
   }
 
   func testSlice2() {
+
+    let wrapper = DemoStore()
 
     let slice = wrapper.derived(
       .map { $0.count },
@@ -85,9 +87,9 @@ final class DerivedTests: XCTestCase {
     XCTAssertEqual(slice.value.hasChanges(\.root), true)
   }
 
-
-  
   func testBinding() {
+
+    let wrapper = DemoStore()
     
     let slice = wrapper.binding(
       get: .map { $0.count },
@@ -102,6 +104,8 @@ final class DerivedTests: XCTestCase {
   }
   
   func testRetain() {
+
+    let wrapper = DemoStore()
     
     var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count }, queue: .passthrough)
     weak var weakBaseSlice = baseSlice
@@ -133,6 +137,8 @@ final class DerivedTests: XCTestCase {
   }
   
   func testSliceChain() {
+
+    let wrapper = DemoStore()
     
     var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count }, queue: .passthrough)
     
@@ -179,6 +185,8 @@ final class DerivedTests: XCTestCase {
     
   /// combine 2 stored
   func testCombine2() {
+
+    let wrapper = DemoStore()
     
     let s0 = wrapper.derived(.map { $0.count }, queue: .passthrough)
     let s1 = wrapper.derived(.map { $0.name }, queue: .passthrough)
@@ -231,6 +239,8 @@ final class DerivedTests: XCTestCase {
     
   /// combine 1 Stored and 1 Computed
   func testCombine2computed() {
+
+    let wrapper = DemoStore()
     
     let s0 = wrapper.derived(.map { $0.count }, queue: .passthrough)
     let s1 = wrapper.derived(.map { $0.computed.nameCount }, queue: .passthrough)
