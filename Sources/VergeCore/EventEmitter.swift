@@ -229,7 +229,7 @@ public final class EventEmitterCancellable: Hashable, CancellableType {
   }
 }
 
-public protocol EventEmitterType: AnyObject {
+protocol EventEmitterType: AnyObject {
   func remove(_ token: EventEmitterCancellable)
 }
 
@@ -268,7 +268,7 @@ public final class EventEmitter<Event>: EventEmitterType {
     return token
   }
   
-  public func remove(_ token: EventEmitterCancellable) {
+  func remove(_ token: EventEmitterCancellable) {
     lock.lock()
     subscribers.removeValue(forKey: token)
     lock.unlock()
