@@ -10,7 +10,7 @@ import UIKit
 
 import RxSwift
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
   
   let viewModel = CompositionRoot.demo.viewModel
     

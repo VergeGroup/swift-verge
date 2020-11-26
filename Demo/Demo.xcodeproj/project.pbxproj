@@ -139,6 +139,7 @@
 		4B714BD124A500BC006EB6D5 /* VergeRx.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B714BD224A500BC006EB6D5 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; };
 		4B714BD324A500BC006EB6D5 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B88BFD9256F55AF00823FA5 /* DemoCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B88BFD8256F55AF00823FA5 /* DemoCollectionViewController.swift */; };
 		9557558F01303402FCDDE2A7 /* Pods_Demo_VergeStoreDemoUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA16EEB0DF281CD9411B8A6E /* Pods_Demo_VergeStoreDemoUIKit.framework */; };
 		C35D763A6BC06F1C9BC9DF9E /* Pods_SpotifyService_SpotifyDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD3E331DC830854E203EE9C /* Pods_SpotifyService_SpotifyDemo.framework */; };
 		ED954F9E013950B84ADD7C4C /* Pods_SpotifyService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3114F85E3DB9175EF2B569F8 /* Pods_SpotifyService.framework */; };
@@ -423,6 +424,7 @@
 		4B714BAA24A50070006EB6D5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B714BAB24A50070006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B714BAC24A50070006EB6D5 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		4B88BFD8256F55AF00823FA5 /* DemoCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCollectionViewController.swift; sourceTree = "<group>"; };
 		79AE80BD9C633D16F47512FB /* Pods-Demo-VergeStoreDemoUIKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoUIKit.release.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit.release.xcconfig"; sourceTree = "<group>"; };
 		7CC20B4761208C7A47226CB1 /* Pods-SpotifyService-SpotifyDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService-SpotifyDemo.debug.xcconfig"; path = "Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		823BB27FFFB6D98FF641E929 /* Pods_Demo_VergeStoreDemoSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Demo_VergeStoreDemoSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -670,6 +672,7 @@
 				4B714BAA24A50070006EB6D5 /* Info.plist */,
 				4B714BA824A50070006EB6D5 /* Sources.swift */,
 				4B714BAC24A50070006EB6D5 /* ViewController.swift */,
+				4B88BFD8256F55AF00823FA5 /* DemoCollectionViewController.swift */,
 			);
 			path = VergeStoreDemoUIKit;
 			sourceTree = "<group>";
@@ -1503,6 +1506,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B714BB324A50070006EB6D5 /* ViewController.swift in Sources */,
+				4B88BFD9256F55AF00823FA5 /* DemoCollectionViewController.swift in Sources */,
 				4B714BB224A50070006EB6D5 /* AppDelegate.swift in Sources */,
 				4B714BAF24A50070006EB6D5 /* Sources.swift in Sources */,
 			);
