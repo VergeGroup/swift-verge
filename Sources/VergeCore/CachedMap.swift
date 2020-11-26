@@ -45,7 +45,7 @@ public final class CachedMapStorage<Source, Target> {
 
   struct Artifact {
     let source: Source
-    let value: Target
+    var value: Target
   }
 
   private let generateKey: (Source) -> AnyHashable
@@ -54,7 +54,6 @@ public final class CachedMapStorage<Source, Target> {
   private var innerStorage: [AnyHashable : Artifact] = [:]
 
   private let outerLock = NSLock()
-  private let innerLock = NSLock()
 
   /// Creates an instance
   ///
@@ -79,7 +78,11 @@ public final class CachedMapStorage<Source, Target> {
     innerStorage = [:]
   }
 
-  public func map<C: Collection>(from collection: C, makeNew: (C.Element) throws -> Target) rethrows -> [Target] where C.Element == Source {
+  public func map<C: Collection>(
+    from collection: C,
+    makeNew: (C.Element) throws -> Target,
+    update: (C.Element, inout Target) -> Void
+  ) rethrows -> [Target] where C.Element == Source {
 
     outerLock.lock()
     defer {
@@ -90,7 +93,8 @@ public final class CachedMapStorage<Source, Target> {
       try collection.map { (element) -> Target in
         let key = generateKey(element)
         if let cached = innerStorage[key], !updateCondition(cached.source, element) {
-          return cached.value
+          update(element, &innerStorage[key]!.value)
+          return innerStorage[key]!.value
         }
         let newObject = try makeNew(element)
         innerStorage[key] = Artifact(source: element, value: newObject)
@@ -173,8 +177,12 @@ extension Collection {
 
    - Author: Verge
    */
-  public func cachedMap<U>(using storage: CachedMapStorage<Self.Element, U>, makeNew: (Self.Element) throws -> U) rethrows -> [U] {
-    return try storage.map(from: self, makeNew: makeNew)
+  public func cachedMap<U>(
+    using storage: CachedMapStorage<Self.Element, U>,
+    makeNew: (Self.Element) throws -> U,
+    update: (Self.Element, inout U) -> Void = { _, _ in }
+  ) rethrows -> [U] {
+    return try storage.map(from: self, makeNew: makeNew, update: update)
   }
 
   /**
