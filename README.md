@@ -118,6 +118,12 @@ Twitterからだと早く回答できます⛱
 
 [Twitter](https://twitter.com/muukii_app)
 
+## Demo applications
+
+This repo has several demo applications in Demo directory.
+And we're looking for your demo applications to list it here!
+Please tell us from Issue!
+
 ## Author
 
 [🇯🇵 Muukii (Hiroshi Kimura)](https://github.com/muukii)
