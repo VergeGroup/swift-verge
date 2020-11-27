@@ -110,6 +110,9 @@ final class DemoCollectionViewModel: StoreComponentType, Equatable {
 
       let items = generateDummy()
 
+      /**
+       We should prevent re-create cell model each data-model.       
+       */
       let result = items.cachedMap(using: self.cacheStorage, makeNew: { (post) in
         DemoCollectionCellModel(post: post)
       },
