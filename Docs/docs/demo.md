@@ -22,7 +22,10 @@ It contains the following implementations around state-management:
 An iOS App that built by SwiftUI.  
 You can run the app from `VergeStoreDemoSwiftUI`.
 
-## Simple UIKit example
+## UIKit example
 
 An iOS App that built by UIKit.  
 You can runt the app from `VergeStoreDemoUIKit`
+
+- Simple counter demo.
+- Handling state changes in Cell (UICollectionView).

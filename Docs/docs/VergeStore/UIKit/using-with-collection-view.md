@@ -4,6 +4,8 @@ title: Using with Collection View in UIKit
 sidebar_label: With Collection View in UIKit
 ---
 
+You can also check the demo app implementations from `VergeStoreDemoUIKit`.
+
 :::info
 This article is under work in progress.
 :::
@@ -75,7 +77,7 @@ final class PostListCell: UICollectionViewCell {
 
     cancellable?.cancel()
 
-    cancellable = cellModel.sinkState(queue: .main) { [weak self] state in
+    cancellable = cellModel.sinkState { [weak self] state in
       guard let self = self else { return }
 
       state.ifChanged(\.title) { value in
@@ -93,7 +95,7 @@ final class PostListCell: UICollectionViewCell {
 ```
 
 ```swift
-final class PostListViewModel: StoreWrapperType {
+final class PostListViewModel: StoreComponentType {
 
   struct State: Equatable {
     @Edge var displayItems: [PostCellModel] = []
@@ -116,7 +118,7 @@ final class PostListViewModel: StoreWrapperType {
 ```
 
 ```swift
-final class PostCellModel: Equatable, StoreWrapperType {
+final class PostCellModel: Equatable, StoreComponentType {
 
   static func == (lhs: PostCellModel, rhs: PostCellModel) -> Bool {
     // The object that contains independent states should be compared by pointer personality.
