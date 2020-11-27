@@ -461,6 +461,8 @@
 		4B04C4C62570863300731802 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				4B37735224C78F260058A887 /* BackgroundDeallocationQueue.swift */,
+				4B5D3B2C2544B95100B4DFBE /* InoutRef.swift */,
 				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
 				4B73F08824041811006910E6 /* Log.swift */,
 				4BA3E1A423C359F40095629B /* Signpost.swift */,
@@ -473,6 +475,33 @@
 				4B9DD6B624CAE8560062FB7A /* CachedMap.swift */,
 			);
 			path = Library;
+			sourceTree = "<group>";
+		};
+		4B04C59625708A5E00731802 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				4BF470CC23CC36E8001A1D5D /* Edge.swift */,
+				4B982579254589960040B377 /* BatchCommit.swift */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
+		4B04C59725708A8700731802 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				4B3834DC2482330C008A0B47 /* StateReader.swift */,
+			);
+			path = SwiftUI;
+			sourceTree = "<group>";
+		};
+		4B04C59825708A9700731802 /* Derived */ = {
+			isa = PBXGroup;
+			children = (
+				4BF76680244E1B5300A5EA10 /* Derived.swift */,
+				4B3834E2248237A4008A0B47 /* Derived+Combine.swift */,
+				4BD260A4245C7F680052B4AC /* Derived+Assign.swift */,
+			);
+			path = Derived;
 			sourceTree = "<group>";
 		};
 		4B07360323AB2E0300866430 /* Index */ = {
@@ -613,27 +642,14 @@
 		4B786321233912AB009B9C1B /* Verge */ = {
 			isa = PBXGroup;
 			children = (
-				4B04C4C62570863300731802 /* Library */,
 				4B786322233912AB009B9C1B /* VergeStore.h */,
 				4B786323233912AB009B9C1B /* Info.plist */,
-				4B68394F237062F7002FFC5A /* StateType.swift */,
-				4BBFF45D24389D3D005BA03C /* Changes.swift */,
-				4B6B77AA243FA3EB00E0C0EA /* _StateTypeContainer.swift */,
-				4B3834DE248235AD008A0B47 /* _VergeObservableObjectBase.swift */,
-				4B91B37E2440C0D8005082D7 /* Store */,
+				4B04C59825708A9700731802 /* Derived */,
+				4B04C4C62570863300731802 /* Library */,
 				4B91B37F2440C0F3005082D7 /* Logger */,
-				4B8EB4F823C034A900035B2A /* Comparer.swift */,
-				4BDB78212447934A00675D03 /* StoreWrapperType.swift */,
-				4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */,
-				4BF470CC23CC36E8001A1D5D /* Edge.swift */,
-				4BE33C6824875CD800F3F2C6 /* _COWFragment.swift */,
-				4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */,
-				4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */,
-				4BCE3038246AAD6800D35557 /* Scan.swift */,
-				4B3834DC2482330C008A0B47 /* StateReader.swift */,
-				4B37735224C78F260058A887 /* BackgroundDeallocationQueue.swift */,
-				4B982579254589960040B377 /* BatchCommit.swift */,
-				4B5D3B2C2544B95100B4DFBE /* InoutRef.swift */,
+				4B91B37E2440C0D8005082D7 /* Store */,
+				4B04C59725708A8700731802 /* SwiftUI */,
+				4B04C59625708A5E00731802 /* Utility */,
 			);
 			path = Verge;
 			sourceTree = "<group>";
@@ -642,8 +658,8 @@
 			isa = PBXGroup;
 			children = (
 				4B786321233912AB009B9C1B /* Verge */,
-				4B5E84A924618D39009A0CA8 /* VergeObjcBridge */,
 				4B86A4881F969AD5002D54FE /* VergeClassic */,
+				4B5E84A924618D39009A0CA8 /* VergeObjcBridge */,
 				4B475BB3239AB954008A03E1 /* VergeORM */,
 				4B17439023C766D70074C457 /* VergeRx */,
 				4B9AF04524880145001BAAFC /* VergeSwiftUI */,
@@ -707,9 +723,6 @@
 			children = (
 				4B427418236F269C00C302C8 /* Store.swift */,
 				4B3834E024823722008A0B47 /* Store+Combine.swift */,
-				4BF76680244E1B5300A5EA10 /* Derived.swift */,
-				4B3834E2248237A4008A0B47 /* Derived+Combine.swift */,
-				4BD260A4245C7F680052B4AC /* Derived+Assign.swift */,
 				4B56AE3E2554EB1B001BA029 /* StoreType+Assignee.swift */,
 				4B2050F823D5C85B000A2779 /* MutationTrace.swift */,
 				4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */,
@@ -717,6 +730,17 @@
 				4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */,
 				4BCBCA8C2381CC2B00F33B15 /* DetachedDispatcher.swift */,
 				4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */,
+				4B68394F237062F7002FFC5A /* StateType.swift */,
+				4BBFF45D24389D3D005BA03C /* Changes.swift */,
+				4B6B77AA243FA3EB00E0C0EA /* _StateTypeContainer.swift */,
+				4B3834DE248235AD008A0B47 /* _VergeObservableObjectBase.swift */,
+				4B8EB4F823C034A900035B2A /* Comparer.swift */,
+				4BCE3038246AAD6800D35557 /* Scan.swift */,
+				4BDB78212447934A00675D03 /* StoreWrapperType.swift */,
+				4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */,
+				4BE33C6824875CD800F3F2C6 /* _COWFragment.swift */,
+				4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */,
+				4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
