@@ -8,7 +8,7 @@
 
 import Foundation
 
-import VergeStore
+import Verge
 
 enum SyntaxTests {
 

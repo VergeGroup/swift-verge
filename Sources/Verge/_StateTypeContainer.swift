@@ -22,7 +22,6 @@
 import Foundation
 
 #if !COCOAPODS
-import VergeCore
 #endif
 
 public enum _StateTypeContainer<State: ExtendedStateType> {

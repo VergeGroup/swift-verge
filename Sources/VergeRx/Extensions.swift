@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 
 #if !COCOAPODS
-import VergeStore
+import Verge
 #endif
 
 import RxSwift

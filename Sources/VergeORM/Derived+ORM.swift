@@ -22,7 +22,7 @@
 import Foundation
 
 #if !COCOAPODS
-import VergeStore
+import Verge
 #endif
 
 public enum VergeORMError: Swift.Error {
@@ -35,8 +35,8 @@ extension EntityType {
   public typealias Derived = Verge.Derived<EntityWrapper<Self>>
   public typealias NonNullDerived = Verge.Derived<NonNullEntityWrapper<Self>>
   #else
-  public typealias Derived = VergeStore.Derived<EntityWrapper<Self>>
-  public typealias NonNullDerived = VergeStore.Derived<NonNullEntityWrapper<Self>>
+  public typealias Derived = Verge.Derived<EntityWrapper<Self>>
+  public typealias NonNullDerived = Verge.Derived<NonNullEntityWrapper<Self>>
   #endif
   
 }

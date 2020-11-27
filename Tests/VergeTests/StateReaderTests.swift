@@ -10,7 +10,7 @@ import Foundation
 
 import SwiftUI
 import XCTest
-import VergeStore
+import Verge
 
 /** Not working */
 @available(iOS 13, *)

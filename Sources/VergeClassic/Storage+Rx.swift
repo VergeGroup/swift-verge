@@ -5,7 +5,7 @@ import RxSwift
 import RxCocoa
 
 #if !COCOAPODS
-import VergeCore
+import Verge
 import VergeRx
 #endif
 

@@ -2,7 +2,7 @@
 import Foundation
 
 import XCTest
-@testable import VergeStore
+@testable import Verge
 
 /**
  Store's state contains a huge dictionary.

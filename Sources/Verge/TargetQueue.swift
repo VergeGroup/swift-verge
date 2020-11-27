@@ -22,7 +22,6 @@
 import Foundation
 
 #if !COCOAPODS
-import VergeCore
 #endif
 
 /// Describes queue to dispatch event

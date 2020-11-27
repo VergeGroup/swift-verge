@@ -9,7 +9,7 @@
 import Foundation
 
 import XCTest
-@testable import VergeStore
+@testable import Verge
 
 fileprivate var rootTransformCounter: Int = 0
 fileprivate var nestedCounter: Int = 0

@@ -21,10 +21,6 @@
 
 import Foundation
 
-#if !COCOAPODS
-@_exported import VergeCore
-#endif
-
 #if canImport(Combine)
 import Combine
 #endif

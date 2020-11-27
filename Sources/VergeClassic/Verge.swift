@@ -3,7 +3,7 @@ import Foundation
 import ObjectiveC
 
 #if !COCOAPODS
-import VergeCore
+import Verge
 #endif
 
 @_exported import RxSwift

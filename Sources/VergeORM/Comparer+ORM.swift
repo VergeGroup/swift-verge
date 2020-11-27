@@ -21,7 +21,7 @@
 
 
 #if !COCOAPODS
-import VergeStore
+import Verge
 #endif
 
 extension Comparer where Input : DatabaseType {

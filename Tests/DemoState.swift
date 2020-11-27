@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Verge
 
 struct NonEquatable {}
 
@@ -29,9 +30,9 @@ struct DemoState: Equatable {
 
 }
 
-#if canImport(VergeStore)
+#if canImport(Verge)
 
-import VergeStore
+import Verge
 
 extension DemoState: ExtendedStateType {
 
@@ -50,7 +51,7 @@ extension DemoState: ExtendedStateType {
 
 }
 
-final class DemoStore: VergeStore.Store<DemoState, Never> {
+final class DemoStore: Verge.Store<DemoState, Never> {
 
   init() {
     super.init(initialState: .init(), logger: nil)

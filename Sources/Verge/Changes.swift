@@ -22,7 +22,6 @@
 import Foundation
 
 #if !COCOAPODS
-import VergeCore
 #endif
 
 fileprivate let changesDeallocationQueue = BackgroundDeallocationQueue()

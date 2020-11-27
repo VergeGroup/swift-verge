@@ -9,7 +9,7 @@
 import Foundation
 
 import XCTest
-import VergeStore
+import Verge
 
 #if canImport(Combine)
 
@@ -26,7 +26,7 @@ class ActivityTests: XCTestCase {
     case didSendMessage
   }
   
-  final class Store: VergeStore.Store<State, Activity> {
+  final class Store: Verge.Store<State, Activity> {
         
     init() {
       super.init(initialState: .init(), logger: DefaultStoreLogger.shared)

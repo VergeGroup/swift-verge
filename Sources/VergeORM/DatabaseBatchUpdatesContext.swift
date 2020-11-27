@@ -22,7 +22,7 @@
 import Foundation
 
 #if !COCOAPODS
-import VergeCore
+import Verge
 #endif
 
 protocol EntityModifierType: AnyObject {

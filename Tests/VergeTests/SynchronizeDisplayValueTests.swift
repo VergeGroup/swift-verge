@@ -10,4 +10,4 @@ import Foundation
 
 import XCTest
 
-import VergeStore
+import Verge

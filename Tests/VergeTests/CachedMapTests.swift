@@ -9,8 +9,7 @@
 import Foundation
 
 import XCTest
-
-import VergeCore
+import Verge
 
 final class CachedMapTests: XCTestCase {
 

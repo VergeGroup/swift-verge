@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import VergeCore
+import Verge
 
 #if canImport(Combine)
 import Combine

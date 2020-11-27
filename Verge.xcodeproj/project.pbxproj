@@ -7,15 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B04C4FC257086D900731802 /* EventEmitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */; };
+		4B04C4FD257086D900731802 /* CopyPerformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B39AE5423C5DC84005F7BC8 /* CopyPerformance.swift */; };
+		4B04C55D2570875200731802 /* Signpost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA3E1A423C359F40095629B /* Signpost.swift */; };
+		4B04C55E2570875200731802 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B42740C236F1D2D00C302C8 /* Storage.swift */; };
+		4B04C55F2570875200731802 /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */; };
+		4B04C5602570875200731802 /* VergeConcurrency+AtomicInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */; };
+		4B04C5612570875200731802 /* VergeConcurrency+AtomicReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */; };
+		4B04C5622570875200731802 /* VergeConcurrency+SynchronizationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */; };
+		4B04C5632570875200731802 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B73F08824041811006910E6 /* Log.swift */; };
+		4B04C5642570875200731802 /* VergeConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD79C0324477F430073A48B /* VergeConcurrency.swift */; };
+		4B04C5652570875200731802 /* CachedMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9DD6B624CAE8560062FB7A /* CachedMap.swift */; };
+		4B04C5662570875200731802 /* Indexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC35666249BD70B0096B15B /* Indexed.swift */; };
+		4B04C5702570876800731802 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
+		4B04C5712570876800731802 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B07360223AA35F900866430 /* HashIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B07360123AA35F800866430 /* HashIndex.swift */; };
 		4B0AFD6D2388643400AABA90 /* DefaultStoreLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0AFD6C2388643400AABA90 /* DefaultStoreLogger.swift */; };
 		4B0DFF2B245C6670002CDFE1 /* ChangedOperatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0DFF2A245C6670002CDFE1 /* ChangedOperatorTests.swift */; };
 		4B13BC7024575F1E00F0BC0F /* DerivedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B13BC6F24575F1E00F0BC0F /* DerivedTests.swift */; };
 		4B13BC72245764BB00F0BC0F /* Derived+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B13BC71245764BB00F0BC0F /* Derived+Rx.swift */; };
 		4B17439323C766D70074C457 /* VergeRx.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B17439123C766D70074C457 /* VergeRx.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4B17439B23C766FB0074C457 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4B17439C23C766FB0074C457 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
-		4B17439D23C766FB0074C457 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
+		4B17439D23C766FB0074C457 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* Verge.framework */; };
 		4B1743A123C7671C0074C457 /* Store+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7F385123895B24000B9ACF /* Store+Rx.swift */; };
 		4B1743AA23C767670074C457 /* VergeRxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1743A923C767670074C457 /* VergeRxTests.swift */; };
 		4B1743AC23C767670074C457 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; };
@@ -34,8 +47,6 @@
 		4B3834DF248235AD008A0B47 /* _VergeObservableObjectBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834DE248235AD008A0B47 /* _VergeObservableObjectBase.swift */; };
 		4B3834E124823722008A0B47 /* Store+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834E024823722008A0B47 /* Store+Combine.swift */; };
 		4B3834E3248237A4008A0B47 /* Derived+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834E2248237A4008A0B47 /* Derived+Combine.swift */; };
-		4B39AE5623C5DC8D005F7BC8 /* CopyPerformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B39AE5423C5DC84005F7BC8 /* CopyPerformance.swift */; };
-		4B3DC06F23A66840008A4627 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
 		4B4011BD23C779D400C582BC /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4011BC23C779D400C582BC /* State.swift */; };
 		4B4171D224540846009FD729 /* DemoState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B95BE59244F10F200124F6B /* DemoState.swift */; };
 		4B427419236F269C00C302C8 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B427418236F269C00C302C8 /* Store.swift */; };
@@ -46,18 +57,16 @@
 		4B475BD0239ADEB4008A03E1 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
 		4B49D3512552E6B60049F0F2 /* Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B49D3502552E6B60049F0F2 /* Deprecated.swift */; };
 		4B4AB16C244DEEE3005E7283 /* ReproduceDeadlockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */; };
-		4B4AB16E244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */; };
 		4B54E27B1FE36A11001736D2 /* Storage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B54E27A1FE36A11001736D2 /* Storage+Rx.swift */; };
 		4B56AE3F2554EB1B001BA029 /* StoreType+Assignee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B56AE3E2554EB1B001BA029 /* StoreType+Assignee.swift */; };
 		4B57FD1623A29CAA00E41D06 /* EntityTablesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1523A29CAA00E41D06 /* EntityTablesStorage.swift */; };
 		4B57FD1A23A29DAD00E41D06 /* EntityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B57FD1923A29DAD00E41D06 /* EntityType.swift */; };
 		4B5E84AD24618D39009A0CA8 /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */; };
-		4B5E84AF24618D82009A0CA8 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */; };
 		4B5E84BC2461901E009A0CA8 /* VergeObjcBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5E84BB24619006009A0CA8 /* VergeObjcBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B5E84BD24619046009A0CA8 /* AtomicBridges.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5E84AC24618D39009A0CA8 /* AtomicBridges.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B65F8EF1FB4C0DC00A90A67 /* VergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */; };
 		4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B68394623705ACD002FFC5A /* VergeStoreTests.swift */; };
-		4B68394923705ACE002FFC5A /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
+		4B68394923705ACE002FFC5A /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* Verge.framework */; };
 		4B6B77A9243F9E5500E0C0EA /* Comparer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8EB4F823C034A900035B2A /* Comparer.swift */; };
 		4B6B77AB243FA3EC00E0C0EA /* _StateTypeContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B77AA243FA3EB00E0C0EA /* _StateTypeContainer.swift */; };
 		4B6B77AE243FA6B300E0C0EA /* FilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B89538423CCE3B1002F95C8 /* FilterTests.swift */; };
@@ -67,7 +76,6 @@
 		4B6F6F3A24521F1E00B6CC3A /* NonAtomicVersionCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */; };
 		4B6F6F3B24521F2B00B6CC3A /* CounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CE23CC3949001A1D5D /* CounterTests.swift */; };
 		4B71CEEE23B14394004520CE /* ActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71CEED23B14394004520CE /* ActivityTests.swift */; };
-		4B73F08924041811006910E6 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B73F08824041811006910E6 /* Log.swift */; };
 		4B779B522535A03100EE708B /* KeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B779B512535A03100EE708B /* KeyPathTests.swift */; };
 		4B786324233912AB009B9C1B /* VergeStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B786322233912AB009B9C1B /* VergeStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B7A71D024874A8900A116F7 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A71CF24874A8900A116F7 /* PerformanceTests.swift */; };
@@ -82,20 +90,16 @@
 		4B86A4921F969BF3002D54FE /* Verge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86A4911F969BF3002D54FE /* Verge.swift */; };
 		4B86D824244A24B5008D3040 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D823244A24B5008D3040 /* Extensions.swift */; };
 		4B86D826244A2A1D008D3040 /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B86D825244A2A1D008D3040 /* Sample.swift */; };
-		4B8F5AB7246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */; };
-		4B8F5ABB24616416005F68B6 /* VergeConcurrency+AtomicReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */; };
-		4B91B3782440B9C4005082D7 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; };
-		4B91B3792440B9C4005082D7 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B91B3782440B9C4005082D7 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* Verge.framework */; };
+		4B91B3792440B9C4005082D7 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B93C875247A523500372BC4 /* SyntaxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B93C874247A523500372BC4 /* SyntaxTests.swift */; };
 		4B95BE5A244F10F200124F6B /* DemoState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B95BE59244F10F200124F6B /* DemoState.swift */; };
 		4B98257A254589960040B377 /* BatchCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B982579254589960040B377 /* BatchCommit.swift */; };
 		4B99D69323AF6C4300E26127 /* ProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B99D69223AF6C4300E26127 /* ProtocolTests.swift */; };
 		4B9AF04824880145001BAAFC /* VergeSwiftUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B9AF04624880145001BAAFC /* VergeSwiftUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B9AF5B323957DBF007B78D1 /* DispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */; };
-		4B9DD6B724CAE8560062FB7A /* CachedMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9DD6B624CAE8560062FB7A /* CachedMap.swift */; };
 		4B9DD6B924CB6B0C0062FB7A /* CachedMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9DD6B824CB6B0C0062FB7A /* CachedMapTests.swift */; };
 		4B9F57D522DDF951009705D1 /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9F57D422DDF951009705D1 /* Emitter.swift */; };
-		4BA3E1A523C359F40095629B /* Signpost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA3E1A423C359F40095629B /* Signpost.swift */; };
 		4BA5914F23DF5146007F614C /* FunctionBuilders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA5914E23DF5146007F614C /* FunctionBuilders.swift */; };
 		4BA5915123DF536F007F614C /* FunctionBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA5915023DF536F007F614C /* FunctionBuilderTests.swift */; };
 		4BAE98A5253060EB00B71182 /* DerivedCollectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAE98A4253060EB00B71182 /* DerivedCollectionTests.swift */; };
@@ -103,7 +107,6 @@
 		4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */; };
 		4BAF902F23A92B69004D6356 /* MiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */; };
 		4BB1F98C2465ACB900AF5F0C /* TargetQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */; };
-		4BC35667249BD70B0096B15B /* Indexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC35666249BD70B0096B15B /* Indexed.swift */; };
 		4BC6EFAF23A8BF7800EFD688 /* OrderedIDIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFAE23A8BF7800EFD688 /* OrderedIDIndex.swift */; };
 		4BC6EFB123A8BFAF00EFD688 /* GroupByEntityIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB023A8BFAF00EFD688 /* GroupByEntityIndex.swift */; };
 		4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */; };
@@ -118,29 +121,28 @@
 		4BCE88B6245B1B8A006E20C3 /* ActivityTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */; };
 		4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD260A4245C7F680052B4AC /* Derived+Assign.swift */; };
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
-		4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD79C0324477F430073A48B /* VergeConcurrency.swift */; };
 		4BDB78222447934A00675D03 /* StoreWrapperType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB78212447934A00675D03 /* StoreWrapperType.swift */; };
 		4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */; };
 		4BDBDFA423CE0DD100EEA112 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA323CE0DD100EEA112 /* RxCocoa */; };
 		4BDBDFA623CE0DD100EEA112 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA523CE0DD100EEA112 /* RxSwift */; };
 		4BE33C6924875CD800F3F2C6 /* _COWFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE33C6824875CD800F3F2C6 /* _COWFragment.swift */; };
-		4BE9455423AD1B180060F977 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
-		4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */; };
 		4BF21F302458C1860045B5C2 /* UtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF21F2F2458C1860045B5C2 /* UtilTests.swift */; };
 		4BF2BCCE238A658400F70CDA /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */; };
 		4BF3C2EC242093AC006B1726 /* MultithreadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF3C2EA24209324006B1726 /* MultithreadingTests.swift */; };
 		4BF76681244E1B5300A5EA10 /* Derived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF76680244E1B5300A5EA10 /* Derived.swift */; };
 		4BF76684244E242A00A5EA10 /* DerivedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF76682244E242500A5EA10 /* DerivedTests.swift */; };
-		4BFA22A023A63B56008D7BCB /* VergeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BFA229E23A63B56008D7BCB /* VergeCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4BFA22A823A63B83008D7BCB /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
-		4BFA22AD23A63BB9008D7BCB /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */; };
-		4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */; };
-		4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B42740C236F1D2D00C302C8 /* Storage.swift */; };
 		4BFF9A792548577500692696 /* InoutRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B2C2544B95100B4DFBE /* InoutRef.swift */; };
 		4BFF9A85254857AC00692696 /* InoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B392544BCBB00B4DFBE /* InoutTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4B04C5722570876800731802 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B5E849B24618D1C009A0CA8;
+			remoteInfo = VergeObjcBridge;
+		};
 		4B1743AD23C767670074C457 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -155,26 +157,12 @@
 			remoteGlobalIDString = 4B17438E23C766D70074C457;
 			remoteInfo = VergeRx;
 		};
-		4B3DC07123A66840008A4627 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
-			remoteInfo = VergeCore;
-		};
 		4B475BCB239ADE1C008A03E1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
-		};
-		4B5E84B124618D82009A0CA8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B5E849B24618D1C009A0CA8;
-			remoteInfo = VergeObjcBridge;
 		};
 		4B65F8F21FB4C0DC00A90A67 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -189,13 +177,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
-		};
-		4B7FBDA023ECB58400C2D8E6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
-			remoteInfo = VergeCore;
 		};
 		4B7FBDA223ECB58E00C2D8E6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -225,30 +206,27 @@
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
 		};
-		4BE9455523AD1B180060F977 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
-			remoteInfo = VergeCore;
-		};
-		4BFA22AF23A63BB9008D7BCB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4BFA229B23A63B55008D7BCB;
-			remoteInfo = VergeSelector;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		4B04C5742570876800731802 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4B04C5712570876800731802 /* VergeObjcBridge.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B91B37C2440B9C4005082D7 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4B91B3792440B9C4005082D7 /* VergeStore.framework in Embed Frameworks */,
+				4B91B3792440B9C4005082D7 /* Verge.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -307,10 +285,10 @@
 		4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AtomicBridges.m; sourceTree = "<group>"; };
 		4B5E84AC24618D39009A0CA8 /* AtomicBridges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicBridges.h; sourceTree = "<group>"; };
 		4B5E84BB24619006009A0CA8 /* VergeObjcBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeObjcBridge.h; sourceTree = "<group>"; };
-		4B65F8EC1FB4C0DC00A90A67 /* VergeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B65F8EC1FB4C0DC00A90A67 /* VergeClassicTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeClassicTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeTests.swift; sourceTree = "<group>"; };
 		4B65F8F01FB4C0DC00A90A67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B68394423705ACD002FFC5A /* VergeStoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeStoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B68394423705ACD002FFC5A /* VergeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B68394623705ACD002FFC5A /* VergeStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeStoreTests.swift; sourceTree = "<group>"; };
 		4B68394823705ACE002FFC5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B68394F237062F7002FFC5A /* StateType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateType.swift; sourceTree = "<group>"; };
@@ -320,7 +298,7 @@
 		4B71CEED23B14394004520CE /* ActivityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTests.swift; sourceTree = "<group>"; };
 		4B73F08824041811006910E6 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		4B779B512535A03100EE708B /* KeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPathTests.swift; sourceTree = "<group>"; };
-		4B786320233912AB009B9C1B /* VergeStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B786320233912AB009B9C1B /* Verge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Verge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B786322233912AB009B9C1B /* VergeStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeStore.h; sourceTree = "<group>"; };
 		4B786323233912AB009B9C1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B7A71CF24874A8900A116F7 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
@@ -382,8 +360,6 @@
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		4BDB78212447934A00675D03 /* StoreWrapperType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreWrapperType.swift; sourceTree = "<group>"; };
 		4BE33C6824875CD800F3F2C6 /* _COWFragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _COWFragment.swift; sourceTree = "<group>"; };
-		4BE9454F23AD1B180060F977 /* VergeCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		4BE9455323AD1B180060F977 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitterTests.swift; sourceTree = "<group>"; };
 		4BF21F2F2458C1860045B5C2 /* UtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilTests.swift; sourceTree = "<group>"; };
 		4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelBase.swift; sourceTree = "<group>"; };
@@ -394,9 +370,6 @@
 		4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonAtomicVersionCounter.swift; sourceTree = "<group>"; };
 		4BF76680244E1B5300A5EA10 /* Derived.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Derived.swift; sourceTree = "<group>"; };
 		4BF76682244E242500A5EA10 /* DerivedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedTests.swift; sourceTree = "<group>"; };
-		4BFA229C23A63B55008D7BCB /* VergeCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		4BFA229E23A63B56008D7BCB /* VergeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeCore.h; sourceTree = "<group>"; };
-		4BFA229F23A63B56008D7BCB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -404,11 +377,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B17439B23C766FB0074C457 /* VergeCore.framework in Frameworks */,
 				4B17439C23C766FB0074C457 /* VergeORM.framework in Frameworks */,
 				4BDBDFA623CE0DD100EEA112 /* RxSwift in Frameworks */,
 				4BDBDFA423CE0DD100EEA112 /* RxCocoa in Frameworks */,
-				4B17439D23C766FB0074C457 /* VergeStore.framework in Frameworks */,
+				4B17439D23C766FB0074C457 /* Verge.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,8 +397,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B91B3782440B9C4005082D7 /* VergeStore.framework in Frameworks */,
-				4BFA22A823A63B83008D7BCB /* VergeCore.framework in Frameworks */,
+				4B91B3782440B9C4005082D7 /* Verge.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,7 +428,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B68394923705ACE002FFC5A /* VergeStore.framework in Frameworks */,
+				4B68394923705ACE002FFC5A /* Verge.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -465,7 +436,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BFA22AD23A63BB9008D7BCB /* VergeCore.framework in Frameworks */,
+				4B04C5702570876800731802 /* VergeObjcBridge.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -473,7 +444,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B3DC06F23A66840008A4627 /* VergeCore.framework in Frameworks */,
 				4B1743B323C767D90074C457 /* VergeRx.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -485,25 +455,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4BE9454C23AD1B180060F977 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4BE9455423AD1B180060F977 /* VergeCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BFA229923A63B55008D7BCB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B5E84AF24618D82009A0CA8 /* VergeObjcBridge.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B04C4C62570863300731802 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
+				4B73F08824041811006910E6 /* Log.swift */,
+				4BA3E1A423C359F40095629B /* Signpost.swift */,
+				4B42740C236F1D2D00C302C8 /* Storage.swift */,
+				4BD79C0324477F430073A48B /* VergeConcurrency.swift */,
+				4BC35666249BD70B0096B15B /* Indexed.swift */,
+				4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */,
+				4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */,
+				4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */,
+				4B9DD6B624CAE8560062FB7A /* CachedMap.swift */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
 		4B07360323AB2E0300866430 /* Index */ = {
 			isa = PBXGroup;
 			children = (
@@ -606,18 +577,21 @@
 			path = include;
 			sourceTree = "<group>";
 		};
-		4B65F8ED1FB4C0DC00A90A67 /* VergeTests */ = {
+		4B65F8ED1FB4C0DC00A90A67 /* VergeClassicTests */ = {
 			isa = PBXGroup;
 			children = (
 				4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */,
 				4B65F8F01FB4C0DC00A90A67 /* Info.plist */,
 			);
-			path = VergeTests;
+			path = VergeClassicTests;
 			sourceTree = "<group>";
 		};
-		4B68394523705ACD002FFC5A /* VergeStoreTests */ = {
+		4B68394523705ACD002FFC5A /* VergeTests */ = {
 			isa = PBXGroup;
 			children = (
+				4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */,
+				4B39AE5423C5DC84005F7BC8 /* CopyPerformance.swift */,
+				4B9DD6B824CB6B0C0062FB7A /* CachedMapTests.swift */,
 				4B5D3B392544BCBB00B4DFBE /* InoutTests.swift */,
 				4BF470CE23CC3949001A1D5D /* CounterTests.swift */,
 				4B86D825244A2A1D008D3040 /* Sample.swift */,
@@ -633,12 +607,13 @@
 				4B7A71D12487532D00A116F7 /* _COWFragmentTests.swift */,
 				4B44F092252E209600BC0495 /* StateReaderTests.swift */,
 			);
-			path = VergeStoreTests;
+			path = VergeTests;
 			sourceTree = "<group>";
 		};
-		4B786321233912AB009B9C1B /* VergeStore */ = {
+		4B786321233912AB009B9C1B /* Verge */ = {
 			isa = PBXGroup;
 			children = (
+				4B04C4C62570863300731802 /* Library */,
 				4B786322233912AB009B9C1B /* VergeStore.h */,
 				4B786323233912AB009B9C1B /* Info.plist */,
 				4B68394F237062F7002FFC5A /* StateType.swift */,
@@ -660,16 +635,15 @@
 				4B982579254589960040B377 /* BatchCommit.swift */,
 				4B5D3B2C2544B95100B4DFBE /* InoutRef.swift */,
 			);
-			path = VergeStore;
+			path = Verge;
 			sourceTree = "<group>";
 		};
 		4B84F3B02388066F00D8BC75 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				4B786321233912AB009B9C1B /* Verge */,
 				4B5E84A924618D39009A0CA8 /* VergeObjcBridge */,
 				4B86A4881F969AD5002D54FE /* VergeClassic */,
-				4B786321233912AB009B9C1B /* VergeStore */,
-				4BFA229D23A63B56008D7BCB /* VergeCore */,
 				4B475BB3239AB954008A03E1 /* VergeORM */,
 				4B17439023C766D70074C457 /* VergeRx */,
 				4B9AF04524880145001BAAFC /* VergeSwiftUI */,
@@ -693,13 +667,11 @@
 			isa = PBXGroup;
 			children = (
 				4B86A4861F969AD5002D54FE /* VergeClassic.framework */,
-				4B65F8EC1FB4C0DC00A90A67 /* VergeTests.xctest */,
-				4B786320233912AB009B9C1B /* VergeStore.framework */,
-				4B68394423705ACD002FFC5A /* VergeStoreTests.xctest */,
+				4B65F8EC1FB4C0DC00A90A67 /* VergeClassicTests.xctest */,
+				4B786320233912AB009B9C1B /* Verge.framework */,
+				4B68394423705ACD002FFC5A /* VergeTests.xctest */,
 				4B475BB2239AB954008A03E1 /* VergeORM.framework */,
 				4B475BC5239ADE1C008A03E1 /* VergeORMTests.xctest */,
-				4BFA229C23A63B55008D7BCB /* VergeCore.framework */,
-				4BE9454F23AD1B180060F977 /* VergeCoreTests.xctest */,
 				4B17438F23C766D70074C457 /* VergeRx.framework */,
 				4B1743A723C767670074C457 /* VergeRxTests.xctest */,
 				4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */,
@@ -767,48 +739,17 @@
 			path = VergeSwiftUI;
 			sourceTree = "<group>";
 		};
-		4BE9455023AD1B180060F977 /* VergeCoreTests */ = {
-			isa = PBXGroup;
-			children = (
-				4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */,
-				4BE9455323AD1B180060F977 /* Info.plist */,
-				4B39AE5423C5DC84005F7BC8 /* CopyPerformance.swift */,
-				4B9DD6B824CB6B0C0062FB7A /* CachedMapTests.swift */,
-			);
-			path = VergeCoreTests;
-			sourceTree = "<group>";
-		};
 		4BF2BCCD238A653000F70CDA /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				4B95BE59244F10F200124F6B /* DemoState.swift */,
 				4B2F001D2459DC4A0034DA40 /* All.xctestplan */,
-				4BE9455023AD1B180060F977 /* VergeCoreTests */,
 				4B475BC6239ADE1C008A03E1 /* VergeORMTests */,
 				4B1743A823C767670074C457 /* VergeRxTests */,
-				4B68394523705ACD002FFC5A /* VergeStoreTests */,
-				4B65F8ED1FB4C0DC00A90A67 /* VergeTests */,
+				4B68394523705ACD002FFC5A /* VergeTests */,
+				4B65F8ED1FB4C0DC00A90A67 /* VergeClassicTests */,
 			);
 			path = Tests;
-			sourceTree = "<group>";
-		};
-		4BFA229D23A63B56008D7BCB /* VergeCore */ = {
-			isa = PBXGroup;
-			children = (
-				4BFA229E23A63B56008D7BCB /* VergeCore.h */,
-				4BFA229F23A63B56008D7BCB /* Info.plist */,
-				4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */,
-				4B73F08824041811006910E6 /* Log.swift */,
-				4BA3E1A423C359F40095629B /* Signpost.swift */,
-				4B42740C236F1D2D00C302C8 /* Storage.swift */,
-				4BD79C0324477F430073A48B /* VergeConcurrency.swift */,
-				4BC35666249BD70B0096B15B /* Indexed.swift */,
-				4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */,
-				4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */,
-				4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */,
-				4B9DD6B624CAE8560062FB7A /* CachedMap.swift */,
-			);
-			path = VergeCore;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -863,14 +804,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4BFA229723A63B55008D7BCB /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4BFA22A023A63B56008D7BCB /* VergeCore.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -888,7 +821,6 @@
 			dependencies = (
 				4B7FBDA523ECB59400C2D8E6 /* PBXTargetDependency */,
 				4B7FBDA323ECB58E00C2D8E6 /* PBXTargetDependency */,
-				4B7FBDA123ECB58400C2D8E6 /* PBXTargetDependency */,
 			);
 			name = VergeRx;
 			packageProductDependencies = (
@@ -974,9 +906,9 @@
 			productReference = 4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		4B65F8EB1FB4C0DC00A90A67 /* VergeTests */ = {
+		4B65F8EB1FB4C0DC00A90A67 /* VergeClassicTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4B65F8F41FB4C0DC00A90A67 /* Build configuration list for PBXNativeTarget "VergeTests" */;
+			buildConfigurationList = 4B65F8F41FB4C0DC00A90A67 /* Build configuration list for PBXNativeTarget "VergeClassicTests" */;
 			buildPhases = (
 				4B65F8E81FB4C0DC00A90A67 /* Sources */,
 				4B65F8E91FB4C0DC00A90A67 /* Frameworks */,
@@ -987,14 +919,14 @@
 			dependencies = (
 				4B65F8F31FB4C0DC00A90A67 /* PBXTargetDependency */,
 			);
-			name = VergeTests;
+			name = VergeClassicTests;
 			productName = CyclerTests;
-			productReference = 4B65F8EC1FB4C0DC00A90A67 /* VergeTests.xctest */;
+			productReference = 4B65F8EC1FB4C0DC00A90A67 /* VergeClassicTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		4B68394323705ACD002FFC5A /* VergeStoreTests */ = {
+		4B68394323705ACD002FFC5A /* VergeTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4B68394E23705ACE002FFC5A /* Build configuration list for PBXNativeTarget "VergeStoreTests" */;
+			buildConfigurationList = 4B68394E23705ACE002FFC5A /* Build configuration list for PBXNativeTarget "VergeTests" */;
 			buildPhases = (
 				4B68394023705ACD002FFC5A /* Sources */,
 				4B68394123705ACD002FFC5A /* Frameworks */,
@@ -1005,28 +937,29 @@
 			dependencies = (
 				4B68394B23705ACE002FFC5A /* PBXTargetDependency */,
 			);
-			name = VergeStoreTests;
+			name = VergeTests;
 			productName = VergeStoreTests;
-			productReference = 4B68394423705ACD002FFC5A /* VergeStoreTests.xctest */;
+			productReference = 4B68394423705ACD002FFC5A /* VergeTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		4B78631F233912AB009B9C1B /* VergeStore */ = {
+		4B78631F233912AB009B9C1B /* Verge */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4B78632B233912AB009B9C1B /* Build configuration list for PBXNativeTarget "VergeStore" */;
+			buildConfigurationList = 4B78632B233912AB009B9C1B /* Build configuration list for PBXNativeTarget "Verge" */;
 			buildPhases = (
 				4B78631B233912AB009B9C1B /* Headers */,
 				4B78631C233912AB009B9C1B /* Sources */,
 				4B78631D233912AB009B9C1B /* Frameworks */,
 				4B78631E233912AB009B9C1B /* Resources */,
+				4B04C5742570876800731802 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				4BFA22B023A63BB9008D7BCB /* PBXTargetDependency */,
+				4B04C5732570876800731802 /* PBXTargetDependency */,
 			);
-			name = VergeStore;
+			name = Verge;
 			productName = VergeStore;
-			productReference = 4B786320233912AB009B9C1B /* VergeStore.framework */;
+			productReference = 4B786320233912AB009B9C1B /* Verge.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		4B86A4851F969AD5002D54FE /* VergeClassic */ = {
@@ -1041,7 +974,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				4B3DC07223A66840008A4627 /* PBXTargetDependency */,
 				4B1743B623C767D90074C457 /* PBXTargetDependency */,
 			);
 			name = VergeClassic;
@@ -1065,43 +997,6 @@
 			name = VergeSwiftUI;
 			productName = VergeSwiftUI;
 			productReference = 4B9AF04424880145001BAAFC /* VergeSwiftUI.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		4BE9454E23AD1B180060F977 /* VergeCoreTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4BE9455723AD1B180060F977 /* Build configuration list for PBXNativeTarget "VergeCoreTests" */;
-			buildPhases = (
-				4BE9454B23AD1B180060F977 /* Sources */,
-				4BE9454C23AD1B180060F977 /* Frameworks */,
-				4BE9454D23AD1B180060F977 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4BE9455623AD1B180060F977 /* PBXTargetDependency */,
-			);
-			name = VergeCoreTests;
-			productName = VergeCoreTests;
-			productReference = 4BE9454F23AD1B180060F977 /* VergeCoreTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		4BFA229B23A63B55008D7BCB /* VergeCore */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4BFA22A723A63B56008D7BCB /* Build configuration list for PBXNativeTarget "VergeCore" */;
-			buildPhases = (
-				4BFA229723A63B55008D7BCB /* Headers */,
-				4BFA229823A63B55008D7BCB /* Sources */,
-				4BFA229923A63B55008D7BCB /* Frameworks */,
-				4BFA229A23A63B55008D7BCB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4B5E84B224618D82009A0CA8 /* PBXTargetDependency */,
-			);
-			name = VergeCore;
-			productName = VergeSelector;
-			productReference = 4BFA229C23A63B55008D7BCB /* VergeCore.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -1150,13 +1045,6 @@
 					4B9AF04324880145001BAAFC = {
 						CreatedOnToolsVersion = 11.5;
 					};
-					4BE9454E23AD1B180060F977 = {
-						CreatedOnToolsVersion = 11.3;
-					};
-					4BFA229B23A63B55008D7BCB = {
-						CreatedOnToolsVersion = 11.2.1;
-						LastSwiftMigration = 1140;
-					};
 				};
 			};
 			buildConfigurationList = 4B86A4801F969AD5002D54FE /* Build configuration list for PBXProject "Verge" */;
@@ -1175,16 +1063,14 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4BFA229B23A63B55008D7BCB /* VergeCore */,
 				4B17438E23C766D70074C457 /* VergeRx */,
-				4B78631F233912AB009B9C1B /* VergeStore */,
+				4B78631F233912AB009B9C1B /* Verge */,
 				4B475BB1239AB954008A03E1 /* VergeORM */,
 				4B86A4851F969AD5002D54FE /* VergeClassic */,
 				4B9AF04324880145001BAAFC /* VergeSwiftUI */,
 				4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */,
-				4B65F8EB1FB4C0DC00A90A67 /* VergeTests */,
-				4BE9454E23AD1B180060F977 /* VergeCoreTests */,
-				4B68394323705ACD002FFC5A /* VergeStoreTests */,
+				4B65F8EB1FB4C0DC00A90A67 /* VergeClassicTests */,
+				4B68394323705ACD002FFC5A /* VergeTests */,
 				4B475BC4239ADE1C008A03E1 /* VergeORMTests */,
 				4B1743A623C767670074C457 /* VergeRxTests */,
 			);
@@ -1256,20 +1142,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4B9AF04224880145001BAAFC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BE9454D23AD1B180060F977 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BFA229A23A63B55008D7BCB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1370,6 +1242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B95BE5A244F10F200124F6B /* DemoState.swift in Sources */,
+				4B04C4FC257086D900731802 /* EventEmitterTests.swift in Sources */,
 				4B9DD6B924CB6B0C0062FB7A /* CachedMapTests.swift in Sources */,
 				4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */,
 				4B93C875247A523500372BC4 /* SyntaxTests.swift in Sources */,
@@ -1382,6 +1255,7 @@
 				4B71CEEE23B14394004520CE /* ActivityTests.swift in Sources */,
 				4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */,
 				4B7A71D22487532D00A116F7 /* _COWFragmentTests.swift in Sources */,
+				4B04C4FD257086D900731802 /* CopyPerformance.swift in Sources */,
 				4BF76684244E242A00A5EA10 /* DerivedTests.swift in Sources */,
 				4B6F6F3B24521F2B00B6CC3A /* CounterTests.swift in Sources */,
 			);
@@ -1391,21 +1265,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B04C5632570875200731802 /* Log.swift in Sources */,
 				4B37735324C78F260058A887 /* BackgroundDeallocationQueue.swift in Sources */,
+				4B04C55D2570875200731802 /* Signpost.swift in Sources */,
 				4B427419236F269C00C302C8 /* Store.swift in Sources */,
 				4B3834DD2482330C008A0B47 /* StateReader.swift in Sources */,
 				4B6F6F3A24521F1E00B6CC3A /* NonAtomicVersionCounter.swift in Sources */,
 				4B6F6F3924521F1E00B6CC3A /* Edge.swift in Sources */,
+				4B04C5642570875200731802 /* VergeConcurrency.swift in Sources */,
 				4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */,
 				4BCBCA8D2381CC2B00F33B15 /* DetachedDispatcher.swift in Sources */,
 				4B3834DF248235AD008A0B47 /* _VergeObservableObjectBase.swift in Sources */,
+				4B04C5652570875200731802 /* CachedMap.swift in Sources */,
 				4B56AE3F2554EB1B001BA029 /* StoreType+Assignee.swift in Sources */,
 				4BFF9A792548577500692696 /* InoutRef.swift in Sources */,
 				4BCE3039246AAD6800D35557 /* Scan.swift in Sources */,
+				4B04C5612570875200731802 /* VergeConcurrency+AtomicReference.swift in Sources */,
 				4B1F19C2243A82BC00CED46B /* Changes.swift in Sources */,
+				4B04C5662570875200731802 /* Indexed.swift in Sources */,
 				4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */,
 				4B98257A254589960040B377 /* BatchCommit.swift in Sources */,
 				4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */,
+				4B04C5622570875200731802 /* VergeConcurrency+SynchronizationTracker.swift in Sources */,
 				4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */,
 				4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */,
 				4B6B77AB243FA3EC00E0C0EA /* _StateTypeContainer.swift in Sources */,
@@ -1414,11 +1295,14 @@
 				4BB1F98C2465ACB900AF5F0C /* TargetQueue.swift in Sources */,
 				4B3834E3248237A4008A0B47 /* Derived+Combine.swift in Sources */,
 				4BCE88B6245B1B8A006E20C3 /* ActivityTrace.swift in Sources */,
+				4B04C5602570875200731802 /* VergeConcurrency+AtomicInt.swift in Sources */,
 				4BDB78222447934A00675D03 /* StoreWrapperType.swift in Sources */,
+				4B04C55F2570875200731802 /* EventEmitter.swift in Sources */,
 				4B3834E124823722008A0B47 /* Store+Combine.swift in Sources */,
 				4B1F19C1243A82BC00CED46B /* StateType.swift in Sources */,
 				4B2050F923D5C85B000A2779 /* MutationTrace.swift in Sources */,
 				4B6B77A9243F9E5500E0C0EA /* Comparer.swift in Sources */,
+				4B04C55E2570875200731802 /* Storage.swift in Sources */,
 				4BF76681244E1B5300A5EA10 /* Derived.swift in Sources */,
 				4BE33C6924875CD800F3F2C6 /* _COWFragment.swift in Sources */,
 			);
@@ -1442,35 +1326,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4BE9454B23AD1B180060F977 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B39AE5623C5DC8D005F7BC8 /* CopyPerformance.swift in Sources */,
-				4BE9455B23AD1BBB0060F977 /* EventEmitterTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4BFA229823A63B55008D7BCB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B73F08924041811006910E6 /* Log.swift in Sources */,
-				4BC35667249BD70B0096B15B /* Indexed.swift in Sources */,
-				4BA3E1A523C359F40095629B /* Signpost.swift in Sources */,
-				4B8F5AB7246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift in Sources */,
-				4BFA22B323A63C38008D7BCB /* EventEmitter.swift in Sources */,
-				4B4AB16E244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift in Sources */,
-				4BD79C0424477F430073A48B /* VergeConcurrency.swift in Sources */,
-				4B8F5ABB24616416005F68B6 /* VergeConcurrency+AtomicReference.swift in Sources */,
-				4B9DD6B724CAE8560062FB7A /* CachedMap.swift in Sources */,
-				4BFA22BC23A642B3008D7BCB /* Storage.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4B04C5732570876800731802 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */;
+			targetProxy = 4B04C5722570876800731802 /* PBXContainerItemProxy */;
+		};
 		4B1743AE23C767670074C457 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4B17438E23C766D70074C457 /* VergeRx */;
@@ -1481,20 +1344,10 @@
 			target = 4B17438E23C766D70074C457 /* VergeRx */;
 			targetProxy = 4B1743B523C767D90074C457 /* PBXContainerItemProxy */;
 		};
-		4B3DC07223A66840008A4627 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
-			targetProxy = 4B3DC07123A66840008A4627 /* PBXContainerItemProxy */;
-		};
 		4B475BCC239ADE1C008A03E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B78631F233912AB009B9C1B /* VergeStore */;
+			target = 4B78631F233912AB009B9C1B /* Verge */;
 			targetProxy = 4B475BCB239ADE1C008A03E1 /* PBXContainerItemProxy */;
-		};
-		4B5E84B224618D82009A0CA8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */;
-			targetProxy = 4B5E84B124618D82009A0CA8 /* PBXContainerItemProxy */;
 		};
 		4B65F8F31FB4C0DC00A90A67 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1503,13 +1356,8 @@
 		};
 		4B68394B23705ACE002FFC5A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B78631F233912AB009B9C1B /* VergeStore */;
+			target = 4B78631F233912AB009B9C1B /* Verge */;
 			targetProxy = 4B68394A23705ACE002FFC5A /* PBXContainerItemProxy */;
-		};
-		4B7FBDA123ECB58400C2D8E6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
-			targetProxy = 4B7FBDA023ECB58400C2D8E6 /* PBXContainerItemProxy */;
 		};
 		4B7FBDA323ECB58E00C2D8E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1518,28 +1366,18 @@
 		};
 		4B7FBDA523ECB59400C2D8E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B78631F233912AB009B9C1B /* VergeStore */;
+			target = 4B78631F233912AB009B9C1B /* Verge */;
 			targetProxy = 4B7FBDA423ECB59400C2D8E6 /* PBXContainerItemProxy */;
 		};
 		4B91B3772440B9B9005082D7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B78631F233912AB009B9C1B /* VergeStore */;
+			target = 4B78631F233912AB009B9C1B /* Verge */;
 			targetProxy = 4B91B3762440B9B9005082D7 /* PBXContainerItemProxy */;
 		};
 		4B91B37B2440B9C4005082D7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B78631F233912AB009B9C1B /* VergeStore */;
+			target = 4B78631F233912AB009B9C1B /* Verge */;
 			targetProxy = 4B91B37A2440B9C4005082D7 /* PBXContainerItemProxy */;
-		};
-		4BE9455623AD1B180060F977 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
-			targetProxy = 4BE9455523AD1B180060F977 /* PBXContainerItemProxy */;
-		};
-		4BFA22B023A63BB9008D7BCB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4BFA229B23A63B55008D7BCB /* VergeCore */;
-			targetProxy = 4BFA22AF23A63BB9008D7BCB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1619,7 +1457,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = Tests/VergeRxTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1639,7 +1477,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = Tests/VergeRxTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1728,7 +1566,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEVELOPMENT_TEAM = 9T4USX98DB;
-				INFOPLIST_FILE = Tests/VergeORMTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1748,7 +1586,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEVELOPMENT_TEAM = 9T4USX98DB;
-				INFOPLIST_FILE = Tests/VergeORMTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1844,7 +1682,7 @@
 		4B65F8F51FB4C0DC00A90A67 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = Tests/VergeTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1859,7 +1697,7 @@
 		4B65F8F61FB4C0DC00A90A67 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = Tests/VergeTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1939,44 +1777,6 @@
 			};
 			name = Benchmark;
 		};
-		4B67672E23D8973800D0C076 /* Benchmark */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeCore/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					Combine,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeSelector;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Benchmark;
-		};
 		4B67672F23D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2027,7 +1827,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/Sources/VergeStore/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/Verge/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2119,7 +1919,7 @@
 		4B67673723D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = Tests/VergeTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2127,26 +1927,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Benchmark;
-		};
-		4B67673823D8973800D0C076 /* Benchmark */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = Tests/VergeCoreTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeCoreTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Benchmark;
@@ -2155,7 +1935,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = Tests/VergeStoreTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2175,7 +1955,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEVELOPMENT_TEAM = 9T4USX98DB;
-				INFOPLIST_FILE = Tests/VergeORMTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2194,7 +1974,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = Tests/VergeRxTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2214,7 +1994,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = Tests/VergeStoreTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2233,7 +2013,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = Tests/VergeStoreTests/Info.plist;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2261,7 +2041,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/Sources/VergeStore/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/Verge/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2298,7 +2078,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/Sources/VergeStore/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/Verge/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2592,119 +2372,6 @@
 			};
 			name = Release;
 		};
-		4BE9455823AD1B180060F977 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = Tests/VergeCoreTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeCoreTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		4BE9455923AD1B180060F977 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = Tests/VergeCoreTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeCoreTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		4BFA22A523A63B56008D7BCB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeCore/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					Combine,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeSelector;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		4BFA22A623A63B56008D7BCB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeCore/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					Combine,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = me.muukii.VergeSelector;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2758,7 +2425,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4B65F8F41FB4C0DC00A90A67 /* Build configuration list for PBXNativeTarget "VergeTests" */ = {
+		4B65F8F41FB4C0DC00A90A67 /* Build configuration list for PBXNativeTarget "VergeClassicTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4B65F8F51FB4C0DC00A90A67 /* Debug */,
@@ -2768,7 +2435,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4B68394E23705ACE002FFC5A /* Build configuration list for PBXNativeTarget "VergeStoreTests" */ = {
+		4B68394E23705ACE002FFC5A /* Build configuration list for PBXNativeTarget "VergeTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4B68394C23705ACE002FFC5A /* Debug */,
@@ -2778,7 +2445,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4B78632B233912AB009B9C1B /* Build configuration list for PBXNativeTarget "VergeStore" */ = {
+		4B78632B233912AB009B9C1B /* Build configuration list for PBXNativeTarget "Verge" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4B786329233912AB009B9C1B /* Debug */,
@@ -2814,26 +2481,6 @@
 				4B9AF04A24880145001BAAFC /* Debug */,
 				4B9AF04B24880145001BAAFC /* Benchmark */,
 				4B9AF04C24880145001BAAFC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4BE9455723AD1B180060F977 /* Build configuration list for PBXNativeTarget "VergeCoreTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4BE9455823AD1B180060F977 /* Debug */,
-				4B67673823D8973800D0C076 /* Benchmark */,
-				4BE9455923AD1B180060F977 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4BFA22A723A63B56008D7BCB /* Build configuration list for PBXNativeTarget "VergeCore" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4BFA22A523A63B56008D7BCB /* Debug */,
-				4B67672E23D8973800D0C076 /* Benchmark */,
-				4BFA22A623A63B56008D7BCB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
