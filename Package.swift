@@ -10,8 +10,7 @@ let package = Package(
     .watchOS(.v3)
   ],
   products: [
-    .library(name: "VergeCore", targets: ["VergeCore"]),
-    .library(name: "VergeStore", targets: ["VergeStore"]),
+    .library(name: "Verge", targets: ["Verge"]),
     .library(name: "VergeORM", targets: ["VergeORM"]),
     .library(name: "VergeRx", targets: ["VergeRx"]),
   ],
@@ -20,10 +19,9 @@ let package = Package(
   ],
   targets: [
     .target(name: "VergeObjcBridge", dependencies: []),
-    .target(name: "VergeCore", dependencies: ["VergeObjcBridge"]),
-    .target(name: "VergeStore", dependencies: ["VergeCore", "VergeObjcBridge"]),
-    .target(name: "VergeORM", dependencies: ["VergeCore", "VergeStore", "VergeObjcBridge"]),
-    .target(name: "VergeRx", dependencies: ["VergeCore", "VergeStore", "VergeObjcBridge", "RxSwift", "RxCocoa"]),
+    .target(name: "Verge", dependencies: ["VergeObjcBridge"]),
+    .target(name: "VergeORM", dependencies: ["Verge", "VergeObjcBridge"]),
+    .target(name: "VergeRx", dependencies: ["Verge", "VergeObjcBridge", "RxSwift", "RxCocoa"]),
   ],
   swiftLanguageVersions: [.v5]
 )
