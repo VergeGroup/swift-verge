@@ -8,13 +8,13 @@ module.exports = {
   projectName: 'Verge',
   themeConfig: {
     announcementBar: {
-      id: 'support_us',  // Any value that will identify this message.
+      id: 'support_us', // Any value that will identify this message.
       content:
-          '⭐️ Verge 8 now released.  If you like this, give it a star on <a href="https://github.com/VergeGroup/Verge">GitHub</a>! ⭐️',
-      backgroundColor: '#fafbfc',  // Defaults to `#fff`.
-      textColor: '#091E42',        // Defaults to `#000`.
+        '⭐️ Verge 8 now released.  If you like this, give it a star on <a href="https://github.com/VergeGroup/Verge">GitHub</a>! ⭐️',
+      backgroundColor: '#fafbfc', // Defaults to `#fff`.
+      textColor: '#091E42', // Defaults to `#000`.
     },
-    colorMode: {defaultMode: 'dark'},
+    colorMode: { defaultMode: 'dark' },
     image: 'img/ogimage2.png',
     googleAnalytics: {
       trackingID: 'UA-163893115-1',
@@ -37,8 +37,8 @@ module.exports = {
           position: 'left',
         },
         {
-          to: 'docs/VergeStore/BasicUsage',
-          activeBasePath: 'docs/VergeStore/BasicUsage',
+          to: 'docs/store/BasicUsage',
+          activeBasePath: 'docs/store/BasicUsage',
           label: 'Basic usage',
           position: 'left',
         },
@@ -62,8 +62,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${
-          new Date().getFullYear()} VergeGroup. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} VergeGroup. Built with Docusaurus.`,
     },
   },
   presets: [
