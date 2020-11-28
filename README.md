@@ -19,7 +19,7 @@
   </p>
 
 <p align="center">
-<img alt="swift5.2" src="https://img.shields.io/badge/swift-5.2-ED523F.svg?style=flat"/>
+<img alt="swift5.3" src="https://img.shields.io/badge/swift-5.3-ED523F.svg?style=flat"/>
 <img alt="Tests" src="https://github.com/muukii/Verge/workflows/Tests/badge.svg"/>
 <img alt="cocoapods" src="https://img.shields.io/cocoapods/v/Verge" />
 </p>
