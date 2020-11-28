@@ -1,7 +1,7 @@
 ---
 id: extended-computed-property
 title: Extended Computed property on the State - Memoization
-sidebar_label: Memoization
+sidebar_label: Extending State - Memoization
 ---
 
 ## Overview
