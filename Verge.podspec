@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
     ss.dependency "RxCocoa", "~> 5"
     ss.dependency "RxRelay", "~> 5"
     ss.source_files = "Sources/VergeClassic/**/*.swift"
-    ss.dependency "Verge/Core"
+    ss.dependency "Verge/Store"
     ss.dependency "Verge/Rx"
   end
 
