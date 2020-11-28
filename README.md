@@ -77,7 +77,7 @@ This concept would help us to describe something that is not easy to describe as
 
 ### CocoaPods
 
-**VergeStore**
+**Verge** (core module)
 
 ```ruby
 pod 'Verge/Store'
