@@ -4,13 +4,68 @@ title: Store - a storage of the state
 sidebar_label: Store
 ---
 
-- Store is
-  - A reference type object
-  - Manages the state object that contains the application state
+- Store:
+  - Should be a reference type object,
+  - To share the state they manage to multiple subscribers.
   - Receives **Mutation** to update the state with thread-safety
-  - Compatible with SwiftUI's observableObject and `StateReader`
+  - Compatible with SwiftUI's observableObject and we can use `StateReader` to read the state partially.
 
-## Define a Store
+## Ways to creating a store
+
+Verge provides 2 ways to create a store.
+
+1. Declare a class that conforms with `StoreComponentType` - It's a protocol that indicates the class wraps a store inside and behaves like a store.
+2. Subclassing from `Store` - a most basic way, but we need to define State and Activity outside
+
+:::tip
+Now, we recommend using No.1 in order to manage the source code with better portability.
+:::
+
+## Declare a class that conforms with `StoreComponentType`
+
+```swift
+final class MyStore: StoreComponentType {
+
+  struct State: StateType {
+    var count: Int = 0
+  }
+
+  /// This means wrapping store inside. (Probably it should be renamed as like `innerStore` or `wrappedStore`)
+  /// `DefaultStore` is a typealias that declared by `StoreComponentType`.
+  /// You can use any class that inherited from `Store` for your use-cases.
+  let store: DefaultStore
+
+  init() {
+
+    self.store = .init(initialState: .init())
+
+  }
+
+}
+```
+
+### Add a Mutation
+
+```swift
+extension MyStore {
+
+  func increment() {
+    commit {
+      $0.count += 0
+    }
+  }
+
+}
+```
+
+### Commit the mutation
+
+```swift
+let store = MyStore()
+store.increment()
+```
+
+## Subclassing from `Store`
 
 ```swift
 struct State: StateType {
@@ -21,7 +76,7 @@ enum Activity {
   case happen
 }
 
-final class MyStore: Store<State, Activity> {
+final class MyStore: Store<State, Never> {
 
   init() {
     super.init(
@@ -33,10 +88,10 @@ final class MyStore: Store<State, Activity> {
 }
 ```
 
-## Add a Mutation
+### Add a Mutation
 
 ```swift
-final class MyStore: Store<State, Activity> {
+extension MyStore {
 
   func increment() {
     commit {
@@ -47,7 +102,7 @@ final class MyStore: Store<State, Activity> {
 }
 ```
 
-## Commit the mutation
+### Commit the mutation
 
 ```swift
 let store = MyStore()

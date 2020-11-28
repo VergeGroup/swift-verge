@@ -24,12 +24,12 @@ module.exports = {
           items: [
             'VergeStore/store',          
             'VergeStore/state',
+            'VergeStore/activity',
             'VergeStore/extended-computed-property',
             'VergeStore/mutation',
             'VergeStore/changes',
             'VergeStore/derived',
             'VergeStore/dispatcher',
-            'VergeStore/activity',
             'VergeStore/logging',
             'VergeStore/utilities',
             'VergeStore/optimization-tips',
