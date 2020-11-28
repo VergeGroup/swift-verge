@@ -1,56 +1,62 @@
 module.exports = {
-  docs: [{
+  docs: [
+    {
       type: 'category',
       label: 'Introduction',
       collapsed: false,
-      items: [    
+      items: [
         'motivation',
-        'Overview',
+        'store/Overview',
         'demo',
         'installation',
         'store/BasicUsage',
         'store/advanced-usage',
-      ]
+      ],
     },
     {
       type: 'category',
-      label: 'Core concepts',
+      label: 'Store',
       collapsed: false,
       items: [
-        'store/core/store',          
-        'store/core/state',
-        'store/core/activity',
-        'store/core/extended-computed-property',
-        'store/core/mutation',
-        'store/core/changes',
-        'store/core/derived',
-        'store/core/dispatcher'  
+        'store/Overview',
+        {
+          type: 'category',
+          label: 'Core concepts',
+          collapsed: false,
+          items: [
+            'store/core/store',
+            'store/core/state',
+            'store/core/activity',
+            'store/core/extended-computed-property',
+            'store/core/mutation',
+            'store/core/changes',
+            'store/core/derived',
+            'store/core/dispatcher',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Use in UIKit',
+          collapsed: false,
+          items: [
+            'store/uikit/using-in-uikit',
+            'store/uikit/viewmodel-in-uikit',
+            'store/uikit/using-with-collection-view',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Techniques',
+          collapsed: false,
+          items: [
+            'store/core/logging',
+            'store/techniques/optimization-tips',
+            'store/techniques/utilities',
+          ],
+        },
+        'store/migrate-from-classic',
       ],
-
     },
-    {
-      type: 'category',
-      label: 'Use in UIKit',
-      collapsed: false,
-      items: [
-        'store/uikit/using-in-uikit',
-        'store/uikit/viewmodel-in-uikit',
-        'store/uikit/using-with-collection-view'
-      ],
-
-    },
-    {
-      type: 'category',
-      label: 'Techniques',
-      collapsed: false,
-      items: [
-        'store/core/logging',
-        'store/techniques/optimization-tips',
-        'store/techniques/utilities'
-      ],
-
-    },
-    'store/migrate-from-classic',
     {
       type: 'category',
       label: 'ORM',
@@ -68,7 +74,7 @@ module.exports = {
             'orm/tips',
           ],
         },
-      ]
-    }
-  ]
+      ],
+    },
+  ],
 };
