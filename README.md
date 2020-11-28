@@ -6,7 +6,7 @@
 
 <h1 align="center">Verge</h1>
 <p align="center">
-<sub>A faster and scalable flux library for iOS App - SwiftUI / UIKit</sub><br/>
+<sub>A faster and scalable state-management library for iOS App - SwiftUI / UIKit</sub><br/>
 <br/>
 <sub>Fully documented and used in production at <a hrfef="https://eure.jp/"><b>Eureka, Inc.</b></a></sub><br/>
 <sub>⭐️ If you like and interested in this, give it a star on this repo! We'd like to know developer's needs. ⭐️</sub>
