@@ -37,7 +37,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec "Store" do |ss|
-    ss.source_files = "Sources/VergeStore/**/*.swift"
+    ss.source_files = "Sources/Verge/**/*.swift"
     ss.dependency "Verge/ObjcBridge"
   end
 
