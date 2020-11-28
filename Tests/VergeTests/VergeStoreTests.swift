@@ -8,7 +8,7 @@
 
 import XCTest
 
-import VergeStore
+import Verge
 
 import Combine
 
@@ -49,7 +49,7 @@ final class VergeStoreTests: XCTestCase {
     
   }
   
-  final class Store: VergeStore.Store<State, Never> {
+  final class Store: Verge.Store<State, Never> {
     
     init() {
       super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
@@ -362,7 +362,7 @@ final class VergeStoreTests: XCTestCase {
     
     // Currently, it's collapsed because Storage emits event without locking.
     
-    let store = VergeStore.Store<DemoState, Never>(initialState: .init(), logger: nil)
+    let store = Verge.Store<DemoState, Never>(initialState: .init(), logger: nil)
     
     let exp = expectation(description: "")
     let counter = expectation(description: "update count")

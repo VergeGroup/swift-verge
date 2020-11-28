@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 
 import VergeRx
-import VergeStore
+import Verge
 import VergeORM
 
 class ChangedOperatorTests: XCTestCase {

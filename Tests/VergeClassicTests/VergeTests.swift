@@ -9,8 +9,8 @@
 import XCTest
 
 import RxSwift
-import VergeCore
 @testable import VergeClassic
+import Verge
 
 class VergeTests: XCTestCase {
 

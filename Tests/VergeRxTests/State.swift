@@ -9,7 +9,7 @@
 import Foundation
 
 import VergeORM
-import VergeStore
+import Verge
 
 struct Book: EntityType, Equatable {
   

@@ -38,6 +38,7 @@ import RxSwift
   
 }
 
+@available(*, deprecated)
 public final class SubscriptionGroup: Disposable {
   
   private let disposable: Disposable

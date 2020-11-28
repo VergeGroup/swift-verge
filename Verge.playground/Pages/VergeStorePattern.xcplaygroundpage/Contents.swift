@@ -3,7 +3,7 @@
 import Foundation
 
 import UIKit
-import VergeStore
+import Verge
 
 struct State {
   var name: String = ""

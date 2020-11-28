@@ -22,7 +22,6 @@
 import Foundation
 
 #if !COCOAPODS
-import VergeCore
 #endif
 
 fileprivate let counter = VergeConcurrency.AtomicInt(initialValue: 0)

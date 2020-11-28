@@ -8,7 +8,7 @@
 
 import Foundation
 
-import VergeStore
+import Verge
 import VergeORM
 
 struct Book: EntityType, Hashable {

@@ -1,63 +1,57 @@
 Pod::Spec.new do |s|
-  s.name         = "Verge"
-  s.version      = "8.1.0"
-  s.summary      = "Verge is a state management tools"
-  s.description  = <<-DESC
+  s.name = "Verge"
+  s.version = "8.2.0"
+  s.summary = "Verge is a state management tools"
+  s.description = <<-DESC
   Verge is a state management tools (Store, ViewModel, ORM, Reactive) on iOS App (UIKit / SwiftUI)
                    DESC
-  s.license      = "MIT"
-  s.author             = { "Muukii" => "muukii.app@gmail.com  " }
-  s.social_media_url   = "http://twitter.com/muukii_app"
+  s.license = "MIT"
+  s.author = { "Muukii" => "muukii.app@gmail.com  " }
+  s.social_media_url = "http://twitter.com/muukii_app"
 
-  s.ios.deployment_target = '10.0'
-  s.osx.deployment_target = '10.13'
-  s.tvos.deployment_target = '10.0'
-  s.watchos.deployment_target = '3.0'
+  s.ios.deployment_target = "10.0"
+  s.osx.deployment_target = "10.13"
+  s.tvos.deployment_target = "10.0"
+  s.watchos.deployment_target = "3.0"
 
-  s.source       = { :git => "https://github.com/muukii/Verge.git", :tag => s.version }
-  s.homepage     = "https://github.com/muukii/Verge"
-  
-  s.swift_version = '5.2'
+  s.source = { :git => "https://github.com/muukii/Verge.git", :tag => s.version }
+  s.homepage = "https://github.com/muukii/Verge"
 
-  s.default_subspec = 'Store'
+  s.swift_version = "5.3"
 
-  s.weak_frameworks = ['Combine', 'SwiftUI']
+  s.default_subspec = "Store"
 
-  s.subspec 'Classic' do |ss|
-    ss.dependency 'RxSwift', '~> 5'
-    ss.dependency 'RxCocoa', '~> 5'   
-    ss.dependency 'RxRelay', '~> 5'
-    ss.source_files = 'Sources/VergeClassic/**/*.swift'    
-    ss.dependency 'Verge/Core'
-    ss.dependency 'Verge/Rx'
+  s.weak_frameworks = ["Combine", "SwiftUI"]
+
+  s.subspec "Classic" do |ss|
+    ss.dependency "RxSwift", "~> 5"
+    ss.dependency "RxCocoa", "~> 5"
+    ss.dependency "RxRelay", "~> 5"
+    ss.source_files = "Sources/VergeClassic/**/*.swift"
+    ss.dependency "Verge/Store"
+    ss.dependency "Verge/Rx"
   end
 
-   s.subspec 'ObjcBridge' do |ss|
-    ss.source_files = 'Sources/VergeObjcBridge/**/*.{h,m}'    
-   end
-
-  s.subspec 'Core' do |ss|
-    ss.source_files = 'Sources/VergeCore/**/*.{swift,h,m}'    
-    ss.dependency 'Verge/ObjcBridge'
+  s.subspec "ObjcBridge" do |ss|
+    ss.source_files = "Sources/VergeObjcBridge/**/*.{h,m}"
   end
 
-  s.subspec 'Store' do |ss|
-    ss.source_files = 'Sources/VergeStore/**/*.swift'    
-    ss.dependency 'Verge/Core'
+  s.subspec "Store" do |ss|
+    ss.source_files = "Sources/Verge/**/*.swift"
+    ss.dependency "Verge/ObjcBridge"
   end
 
-  s.subspec 'Rx' do |ss|
-    ss.dependency 'Verge/ORM'
-    ss.dependency 'Verge/Store'
-    ss.dependency 'RxSwift', '~> 5.1'
-    ss.dependency 'RxCocoa', '~> 5.1'   
-    ss.dependency 'RxRelay', '~> 5.1'
-    ss.source_files = 'Sources/VergeRx/**/*.swift'    
+  s.subspec "Rx" do |ss|
+    ss.dependency "Verge/ORM"
+    ss.dependency "Verge/Store"
+    ss.dependency "RxSwift", "~> 5.1"
+    ss.dependency "RxCocoa", "~> 5.1"
+    ss.dependency "RxRelay", "~> 5.1"
+    ss.source_files = "Sources/VergeRx/**/*.swift"
   end
 
-  s.subspec 'ORM' do |ss|
-    ss.source_files = 'Sources/VergeORM/**/*.swift'    
-    ss.dependency 'Verge/Store'   
+  s.subspec "ORM" do |ss|
+    ss.source_files = "Sources/VergeORM/**/*.swift"
+    ss.dependency "Verge/Store"
   end
-
 end

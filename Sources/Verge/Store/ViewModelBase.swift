@@ -19,15 +19,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import Foundation
 
-#import <Foundation/Foundation.h>
+#if !COCOAPODS
+#endif
 
-//! Project version number for VergeSelector.
-FOUNDATION_EXPORT double VergeSelectorVersionNumber;
-
-//! Project version string for VergeSelector.
-FOUNDATION_EXPORT const unsigned char VergeSelectorVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <VergeSelector/PublicHeader.h>
-
-
+public typealias ViewModelBase<State: StateType, Activity> = Store<State, Activity>

@@ -8,7 +8,6 @@
 
 import XCTest
 
-import VergeCore
 import VergeORM
 
 class VergeORMTests: XCTestCase {

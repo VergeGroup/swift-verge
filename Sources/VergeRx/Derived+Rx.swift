@@ -1,8 +1,7 @@
 import Foundation
 
 #if !COCOAPODS
-import VergeStore
-import VergeCore
+import Verge
 #endif
 
 import RxSwift

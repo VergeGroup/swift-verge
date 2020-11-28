@@ -22,7 +22,7 @@
 import Foundation
 
 #if !COCOAPODS
-import VergeStore
+import Verge
 #endif
 
 public struct EntityTableKey<S: EntityType>: Hashable {

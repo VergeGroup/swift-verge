@@ -3,7 +3,7 @@ import Foundation
 
 import XCTest
 
-import VergeStore
+import Verge
 import VergeORM
 
 #if canImport(Combine)

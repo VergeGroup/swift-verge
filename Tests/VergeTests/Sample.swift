@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-import VergeStore
+import Verge
 
 enum Sample {
   

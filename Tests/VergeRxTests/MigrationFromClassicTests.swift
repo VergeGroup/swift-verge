@@ -8,9 +8,8 @@
 
 import Foundation
 
-import VergeStore
+import Verge
 import VergeRx
-import VergeCore
 import VergeClassic
 
 import Combine

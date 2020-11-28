@@ -10,7 +10,7 @@ import Foundation
 
 import XCTest
 
-import VergeStore
+import Verge
 import VergeORM
 
 class MultithreadingTests: XCTestCase {

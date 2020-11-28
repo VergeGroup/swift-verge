@@ -42,8 +42,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4B65F8EB1FB4C0DC00A90A67"
-               BuildableName = "VergeTests.xctest"
-               BlueprintName = "VergeTests"
+               BuildableName = "VergeClassicTests.xctest"
+               BlueprintName = "VergeClassicTests"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </TestableReference>
