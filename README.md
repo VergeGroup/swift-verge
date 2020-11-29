@@ -30,7 +30,7 @@
 * @available(iOS 10, macOS 10.13, tvOS 10, watchOS 3)
 * UIKit and SwiftUI
 
-## Verge
+## Verge uses 'store-pattern'
 
 Verge is a performant store-pattern based state management library for iOS.
 
@@ -38,13 +38,57 @@ Please see the website: https://vergegroup.github.io/Verge/
 
 [And the article about store-pattern](https://medium.com/eureka-engineering/verge-start-store-pattern-state-management-before-beginning-flux-in-uikit-ios-app-development-6c74d4413829)
 
-### Motivation
+## What store-pattern is
 
-#### Verge focuses use-cases in the real-world
+The word 'store-pattern' is used on ![Vue.js documentation](https://vuejs.org/v2/guide/state-management.html#Simple-State-Management-from-Scratch) that about how we manage the state between multiple components.
+
+## What differences between Flux library are
+
+'store-pattern' is the core-concept of Flux.
+Flux works with the multiple restricted rules top of the 'store-pattern'.
+
+![store-pattern](https://user-images.githubusercontent.com/1888355/100537431-07951680-326c-11eb-93bd-4b9246fbeb96.png)
+
+This means we can start using like Flux without using Action, Muation payload values.  
+
+```swift
+// ✌️ no needs to use.
+enum Action {
+  case increment
+  case decrement
+}
+```
+
+This declarations might be quite big cost of implementation in order to start to use Flux.  
+Verge does not have this rules, so we can do like this when we update the state.
+
+```swift
+// 🤞 just like this
+extension MyStore {
+  func increment() {
+    commit { 
+      $0.count += 1
+    }
+  }
+}
+
+let store: MyStore
+store.increment()
+```
+
+It can be easy start.  
+Of cource, we can create the layer to manage strict action and mutation payload on top of the Verge primitive layer.  
+Because 'store-pattern' is core-concept of Flux.
+
+--
+
+## Motivation
+
+### Verge focuses use-cases in the real-world
 
 Recently, we could say the unidirectional data flow is a popular architecture such as flux.
 
-#### Does flux architecture have a good performance?
+### Does store-pattern(flux) architecture have a good performance?
 
 It depends.
 The performance will be the worst depends on how it is used.
@@ -55,7 +99,7 @@ To keep performance, we need to tune it up with several approaches.
 Considering the performance takes time from the beginning.  
 it will make us be annoying to use flux architecture.
 
-#### Verge is designed for use from small and supports to scale.
+### Verge is designed for use from small and supports to scale.
 
 Setting Verge up quickly, and tune-up when we need it.
 
@@ -66,7 +110,7 @@ For example, Verge provides these stuff to tune performance up.
 - Derived (Similar to [facebookexperimental/Recoil](https://github.com/facebookexperimental/Recoil)'s Selector)
 - ORM
 
-#### Supports volatile events
+### Supports volatile events
 
 We use an event as `Activity` that won't be stored in the state.  
 This concept would help us to describe something that is not easy to describe as a state in the client application.
