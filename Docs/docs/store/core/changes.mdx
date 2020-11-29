@@ -117,3 +117,49 @@ let changes: Changes<State>
 
 let firstTimeChanges: Changes<State> = changes.droppedPrevious()
 ```
+
+## Changes has the information how it modified
+
+### Mutation trace
+
+`Changes` has the info where modify happened.
+
+```swift
+let changes: Changes<State>
+
+let mutation: MutationTrace? = changes.mutation
+```
+
+```swift title="MutationTrace"
+public struct MutationTrace : Encodable {
+
+  public let createdAt: Date
+
+  public let name: String
+
+  public let file: StaticString
+
+  public let function: StaticString
+
+  public let line: UInt
+}
+```
+
+### Modification
+
+`Changes` also has the info on what property changed.
+
+```swift
+let changes: Changes<State>
+
+let modification: InoutRef<State>.Modification? = changes.modification
+```
+
+```swift title="Modification"
+extension InoutRef<Wrapped> {
+  public enum Modification: Hashable {
+    case determinate(keyPaths: Set<PartialKeyPath<Wrapped>>)
+    case indeterminate
+  }
+}
+```
