@@ -40,7 +40,7 @@ Please see the website: https://vergegroup.github.io/Verge/
 
 ## What store-pattern is
 
-The word 'store-pattern' is used on ![Vue.js documentation](https://vuejs.org/v2/guide/state-management.html#Simple-State-Management-from-Scratch) that about how we manage the state between multiple components.
+The word 'store-pattern' is used on [Vue.js documentation](https://vuejs.org/v2/guide/state-management.html#Simple-State-Management-from-Scratch) that about how we manage the state between multiple components.
 
 ## What differences between Flux library are
 
