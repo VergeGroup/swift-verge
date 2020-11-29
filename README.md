@@ -30,7 +30,7 @@
 * @available(iOS 10, macOS 10.13, tvOS 10, watchOS 3)
 * UIKit and SwiftUI
 
-## Verge uses 'store-pattern'
+## Verge is NOT Flux, it's store-pattern.
 
 Verge is a performant store-pattern based state management library for iOS.
 
