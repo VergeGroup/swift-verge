@@ -24,6 +24,12 @@
 <img alt="cocoapods" src="https://img.shields.io/cocoapods/v/Verge" />
 </p>
 
+<p align="center">
+  <a href="https://spectrum.chat/verge-swift">
+    <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg" />
+  </a>
+</p>
+
 ## Requirements
 
 * Swift 5.2 +
