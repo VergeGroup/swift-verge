@@ -29,6 +29,7 @@ public typealias Fragment = Edge
 
 public protocol EdgeType : Equatable {
   associatedtype State
+  var wrappedValue: State { get }
   var version: UInt64 { get }
 }
 

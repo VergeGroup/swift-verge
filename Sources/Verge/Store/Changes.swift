@@ -31,6 +31,8 @@ public protocol ChangesType: AnyObject {
   associatedtype Value
   var previousPrimitive: Value? { get }
   var primitive: Value { get }
+
+  var previous: Self? { get }
   
   func asChanges() -> Changes<Value>
 }
