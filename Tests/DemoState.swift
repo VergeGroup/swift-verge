@@ -9,20 +9,27 @@
 import Foundation
 import Verge
 
-struct NonEquatable {}
+struct NonEquatable {
+  let id = UUID()
+}
+struct OnEquatable: Equatable {
+  let id = UUID()
+}
 
 struct DemoState: Equatable {
 
   struct Inner: Equatable {
     var name: String = ""
   }
-  
+
   var name: String = ""
   var count: Int = 0
   var items: [Int] = []
   var inner: Inner = .init()
 
   @Edge var nonEquatable: NonEquatable = .init()
+
+  @Edge var onEquatable: OnEquatable = .init()
 
   mutating func updateFromItself() {
     count += 1

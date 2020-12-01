@@ -33,8 +33,12 @@ fileprivate let counter = VergeConcurrency.AtomicInt(initialValue: 0)
 /// A pipeline object to make derived data from the source store.
 /// It supports Memoization
 ///
-public struct MemoizeMap<Input, Output> {
-       
+public struct MemoizeMap<Input, Output>: Equatable {
+
+  public static func == (lhs: MemoizeMap<Input, Output>, rhs: MemoizeMap<Input, Output>) -> Bool {
+    lhs.identifier == rhs.identifier
+  }
+
   public enum Result {
     case updated(Output)
     case noChanages
@@ -128,26 +132,36 @@ extension MemoizeMap where Input : ChangesType {
   /// - Complexity: ✅ Active Memoization with Fragment's version
   /// - Parameter map:
   /// - Returns:
-  @_disfavoredOverload
-  public static func map(_ map: @escaping (Changes<Input.Value>) -> Edge<Output>) -> MemoizeMap<Input, Output> {
-            
+  @available(*, renamed: "map(edge:)")
+  public static func map<_Edge: EdgeType>(_ map: @escaping (Input) -> _Edge) -> MemoizeMap<Input, _Edge.State> where Output == _Edge.State {
+    .map(edge: map)
+  }
+
+  /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
+  ///
+  /// - Complexity: ✅ Active Memoization with Fragment's version
+  /// - Parameter map:
+  /// - Returns:
+  public static func map<_Edge: EdgeType>(edge map: @escaping (Input) -> _Edge) -> MemoizeMap<Input, _Edge.State> where Output == _Edge.State {
+
     return .init(
       makeInitial: {
-        
-        map($0.asChanges()).wrappedValue
-        
-    }, update: { changes in
-      
-      // avoid copying body state
-      // returns only version
-      let versionUpdated = changes.asChanges().hasChanges({ map($0).version }, ==)
-      
-      guard versionUpdated else {
-        return .noChanages
-      }
-      
-      return .updated(map(changes.asChanges()).wrappedValue)
-    })
+
+        map($0).wrappedValue
+
+      }, update: { changes in
+
+        guard let previous = changes.previous else {
+          return .updated(map(changes).wrappedValue)
+        }
+
+        guard map(changes).version != map(previous).version else {
+          return .noChanages
+        }
+
+        return .updated(map(changes).wrappedValue)
+
+      })
   }
   
   /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
@@ -155,16 +169,26 @@ extension MemoizeMap where Input : ChangesType {
   /// - Complexity: ✅ Active Memoization with Fragment's version
   /// - Parameter map:
   /// - Returns:
-  public static func map(_ keyPath: KeyPath<Changes<Input.Value>, Edge<Output>>) -> MemoizeMap<Input, Output> {
-        
+  @available(*, renamed: "map(edge:)")
+  public static func map<_Edge: EdgeType>(_ keyPath: KeyPath<Input, _Edge>) -> MemoizeMap<Input, _Edge.State> where Output == _Edge.State {
+    .map(edge: keyPath)
+  }
+
+  /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
+  ///
+  /// - Complexity: ✅ Active Memoization with Fragment's version
+  /// - Parameter map:
+  /// - Returns:
+  public static func map<_Edge: EdgeType>(edge keyPath: KeyPath<Input, _Edge>) -> MemoizeMap<Input, _Edge.State> where Output == _Edge.State {
+
     var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
-    
+
     Static.modify(
       on: Static.cache1,
       for: &instance,
       key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
     )
-    
+
     return instance
   }
     
@@ -174,8 +198,7 @@ extension MemoizeMap where Input : ChangesType {
   ///
   /// - Parameter map:
   /// - Returns:
-  @_disfavoredOverload
-  public static func map(_ map: @escaping (Input) -> Output) -> Self {
+  public static func map(_ map: @escaping (Input) -> Output) -> MemoizeMap<Input, Output> {
     .init(map: map)
   }
   
@@ -185,7 +208,7 @@ extension MemoizeMap where Input : ChangesType {
   ///
   /// - Parameter map:
   /// - Returns:
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self {
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> MemoizeMap<Input, Output> {
     
     var instance = map({ $0[keyPath: keyPath] })
     
@@ -211,7 +234,7 @@ extension MemoizeMap where Input : ChangesType {
     derive: @escaping (Changes<Input.Value>) -> Derived,
     dropsDerived: @escaping (Derived, Derived) -> Bool,
     compute: @escaping (Derived) -> Output
-  ) -> Self {
+  ) -> MemoizeMap<Input, Output> {
 
     .init(
       makeInitial: { input in
@@ -241,7 +264,7 @@ extension MemoizeMap where Input : ChangesType {
   public static func map<Derived: Equatable>(
     derive: @escaping (Changes<Input.Value>) -> Derived,
     compute: @escaping (Derived) -> Output
-  ) -> Self {
+  ) -> MemoizeMap<Input, Output> {
 
     self.map(derive: derive, dropsDerived: ==, compute: compute)
   }
@@ -282,8 +305,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   ///
   /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
-  @_disfavoredOverload
-  public static func map(_ map: @escaping (Input) -> Output) -> Self {
+  public static func map(_ map: @escaping (Input) -> Output) -> MemoizeMap<Input, Output> {
     .init(map: map)
   }
   
@@ -291,7 +313,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   ///
   /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self {
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> MemoizeMap<Input, Output> {
     var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
         
     Static.modify(
@@ -312,7 +334,6 @@ extension MemoizeMap {
   ///
   /// - Parameter map:
   /// - Returns:
-  @_disfavoredOverload
   public static func map(_ map: @escaping (Input) -> Output) -> Self {
     .init(dropInput: { _ in false }, map: map)
   }
