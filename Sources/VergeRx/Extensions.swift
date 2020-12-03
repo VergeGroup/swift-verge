@@ -36,3 +36,9 @@ extension CancellableType {
   }
   
 }
+
+extension VergeAnyCancellable: RxSwift.Disposable {
+  public func dispose() {
+    cancel()
+  }
+}
