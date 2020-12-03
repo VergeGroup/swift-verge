@@ -1,6 +1,6 @@
 
 import Foundation
-import VergeStore
+import Verge
 import Combine
 import CombineExt
 

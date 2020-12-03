@@ -1,7 +1,6 @@
 
 import SwiftUI
-import VergeStore
-import VergeCore
+import Verge
 
 struct AllPostsView: View, Equatable {
 

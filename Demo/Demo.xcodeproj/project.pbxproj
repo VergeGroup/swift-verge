@@ -12,10 +12,8 @@
 		4B19FCAF252E33A0003A628D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B19FCAE252E33A0003A628D /* ContentView.swift */; };
 		4B19FCB1252E33A1003A628D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B19FCB0252E33A1003A628D /* Assets.xcassets */; };
 		4B19FCB4252E33A1003A628D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B19FCB3252E33A1003A628D /* Preview Assets.xcassets */; };
-		4B19FCC9252E33D5003A628D /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; };
-		4B19FCCA252E33D5003A628D /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B19FCCB252E33D5003A628D /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; };
-		4B19FCCC252E33D5003A628D /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B19FCCB252E33D5003A628D /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; };
+		4B19FCCC252E33D5003A628D /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B7149E724A4FC90006EB6D5 /* Demo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B7149E524A4FC90006EB6D5 /* Demo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B714A9524A4FD51006EB6D5 /* SpotifyUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */; };
 		4B714A9624A4FD51006EB6D5 /* SpotifyUIKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -84,10 +82,9 @@
 		4B714B7324A4FF92006EB6D5 /* BackendStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5524A4FF91006EB6D5 /* BackendStackManager.swift */; };
 		4B714B7424A4FF92006EB6D5 /* RealmObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5624A4FF92006EB6D5 /* RealmObjects.swift */; };
 		4B714B7624A4FFAF006EB6D5 /* FetchImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714B7524A4FFAF006EB6D5 /* FetchImage */; };
-		4B714B7724A4FFE0006EB6D5 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; platformFilter = ios; };
 		4B714B7924A4FFE0006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
 		4B714B7B24A4FFE0006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; platformFilter = ios; };
-		4B714B7D24A4FFE0006EB6D5 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; platformFilter = ios; };
+		4B714B7D24A4FFE0006EB6D5 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; platformFilter = ios; };
 		4B714B8124A50006006EB6D5 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714B8024A50006006EB6D5 /* CombineExt */; };
 		4B714B9424A50065006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8224A50064006EB6D5 /* AppDelegate.swift */; };
 		4B714B9524A50065006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714B8424A50064006EB6D5 /* LaunchScreen.storyboard */; };
@@ -109,36 +106,28 @@
 		4B714BB024A50070006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714BA924A50070006EB6D5 /* Assets.xcassets */; };
 		4B714BB224A50070006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714BAB24A50070006EB6D5 /* AppDelegate.swift */; };
 		4B714BB324A50070006EB6D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714BAC24A50070006EB6D5 /* ViewController.swift */; };
-		4B714BB424A50094006EB6D5 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; };
-		4B714BB524A50094006EB6D5 /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B714BB624A50094006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
 		4B714BB724A50094006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B714BB824A50094006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; };
 		4B714BB924A50094006EB6D5 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BBA24A50094006EB6D5 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; };
-		4B714BBB24A50094006EB6D5 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BBA24A50094006EB6D5 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; };
+		4B714BBB24A50094006EB6D5 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B714BBC24A500A6006EB6D5 /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */; };
 		4B714BBD24A500A6006EB6D5 /* VergeClassic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BBE24A500A6006EB6D5 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; };
-		4B714BBF24A500A6006EB6D5 /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BC124A500B2006EB6D5 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; };
-		4B714BC224A500B2006EB6D5 /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B714BC324A500B2006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
 		4B714BC424A500B2006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B714BC524A500B2006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; };
 		4B714BC624A500B2006EB6D5 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BC724A500B2006EB6D5 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; };
-		4B714BC824A500B2006EB6D5 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BCA24A500BC006EB6D5 /* VergeCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; };
-		4B714BCB24A500BC006EB6D5 /* VergeCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BC724A500B2006EB6D5 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; };
+		4B714BC824A500B2006EB6D5 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B714BCC24A500BC006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
 		4B714BCD24A500BC006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B714BCE24A500BC006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; };
 		4B714BCF24A500BC006EB6D5 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B714BD024A500BC006EB6D5 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */; };
 		4B714BD124A500BC006EB6D5 /* VergeRx.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BD224A500BC006EB6D5 /* VergeStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; };
-		4B714BD324A500BC006EB6D5 /* VergeStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B714BD224A500BC006EB6D5 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; };
+		4B714BD324A500BC006EB6D5 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B88BFD9256F55AF00823FA5 /* DemoCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B88BFD8256F55AF00823FA5 /* DemoCollectionViewController.swift */; };
 		9557558F01303402FCDDE2A7 /* Pods_Demo_VergeStoreDemoUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA16EEB0DF281CD9411B8A6E /* Pods_Demo_VergeStoreDemoUIKit.framework */; };
 		C35D763A6BC06F1C9BC9DF9E /* Pods_SpotifyService_SpotifyDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD3E331DC830854E203EE9C /* Pods_SpotifyService_SpotifyDemo.framework */; };
@@ -146,13 +135,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		4B714A0324A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4BFA229C23A63B55008D7BCB;
-			remoteInfo = VergeCore;
-		};
 		4B714A0524A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
@@ -202,13 +184,6 @@
 			remoteGlobalIDString = 4B65F8EC1FB4C0DC00A90A67;
 			remoteInfo = VergeTests;
 		};
-		4B714A1F24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4BE9454F23AD1B180060F977;
-			remoteInfo = VergeCoreTests;
-		};
 		4B714A2124A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
@@ -253,8 +228,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4B19FCCC252E33D5003A628D /* VergeStore.framework in Embed Frameworks */,
-				4B19FCCA252E33D5003A628D /* VergeCore.framework in Embed Frameworks */,
+				4B19FCCC252E33D5003A628D /* Verge.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -267,10 +241,9 @@
 			files = (
 				4B714A9624A4FD51006EB6D5 /* SpotifyUIKit.framework in Embed Frameworks */,
 				4B714BB924A50094006EB6D5 /* VergeORM.framework in Embed Frameworks */,
-				4B714BBB24A50094006EB6D5 /* VergeStore.framework in Embed Frameworks */,
+				4B714BBB24A50094006EB6D5 /* Verge.framework in Embed Frameworks */,
 				4B714BB724A50094006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */,
 				4B714AA824A4FD61006EB6D5 /* SpotifyService.framework in Embed Frameworks */,
-				4B714BB524A50094006EB6D5 /* VergeCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -282,7 +255,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				4B714BBD24A500A6006EB6D5 /* VergeClassic.framework in Embed Frameworks */,
-				4B714BBF24A500A6006EB6D5 /* VergeCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -294,8 +266,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				4B714BC624A500B2006EB6D5 /* VergeORM.framework in Embed Frameworks */,
-				4B714BC224A500B2006EB6D5 /* VergeCore.framework in Embed Frameworks */,
-				4B714BC824A500B2006EB6D5 /* VergeStore.framework in Embed Frameworks */,
+				4B714BC824A500B2006EB6D5 /* Verge.framework in Embed Frameworks */,
 				4B714BC424A500B2006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -309,8 +280,7 @@
 			files = (
 				4B714BD124A500BC006EB6D5 /* VergeRx.framework in Embed Frameworks */,
 				4B714BCF24A500BC006EB6D5 /* VergeORM.framework in Embed Frameworks */,
-				4B714BD324A500BC006EB6D5 /* VergeStore.framework in Embed Frameworks */,
-				4B714BCB24A500BC006EB6D5 /* VergeCore.framework in Embed Frameworks */,
+				4B714BD324A500BC006EB6D5 /* Verge.framework in Embed Frameworks */,
 				4B714BCD24A500BC006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -441,8 +411,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B19FCCB252E33D5003A628D /* VergeStore.framework in Frameworks */,
-				4B19FCC9252E33D5003A628D /* VergeCore.framework in Frameworks */,
+				4B19FCCB252E33D5003A628D /* Verge.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -460,8 +429,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B714A9524A4FD51006EB6D5 /* SpotifyUIKit.framework in Frameworks */,
-				4B714BBA24A50094006EB6D5 /* VergeStore.framework in Frameworks */,
-				4B714BB424A50094006EB6D5 /* VergeCore.framework in Frameworks */,
+				4B714BBA24A50094006EB6D5 /* Verge.framework in Frameworks */,
 				4B714AA724A4FD61006EB6D5 /* SpotifyService.framework in Frameworks */,
 				4B714BB824A50094006EB6D5 /* VergeORM.framework in Frameworks */,
 				4B714BB624A50094006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
@@ -474,7 +442,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B714BBC24A500A6006EB6D5 /* VergeClassic.framework in Frameworks */,
-				4B714BBE24A500A6006EB6D5 /* VergeCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,9 +451,8 @@
 			files = (
 				4B714BC324A500B2006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
 				4B714BC524A500B2006EB6D5 /* VergeORM.framework in Frameworks */,
-				4B714BC724A500B2006EB6D5 /* VergeStore.framework in Frameworks */,
+				4B714BC724A500B2006EB6D5 /* Verge.framework in Frameworks */,
 				13BD6D0FA0ABF698AFCCA4D8 /* Pods_Demo_VergeStoreDemoSwiftUI.framework in Frameworks */,
-				4B714BC124A500B2006EB6D5 /* VergeCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,10 +462,9 @@
 			files = (
 				4B714BCC24A500BC006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
 				4B714BCE24A500BC006EB6D5 /* VergeORM.framework in Frameworks */,
-				4B714BD224A500BC006EB6D5 /* VergeStore.framework in Frameworks */,
+				4B714BD224A500BC006EB6D5 /* Verge.framework in Frameworks */,
 				9557558F01303402FCDDE2A7 /* Pods_Demo_VergeStoreDemoUIKit.framework in Frameworks */,
 				4B714BD024A500BC006EB6D5 /* VergeRx.framework in Frameworks */,
-				4B714BCA24A500BC006EB6D5 /* VergeCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -517,10 +482,9 @@
 			files = (
 				4B714B7924A4FFE0006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
 				4B714B7B24A4FFE0006EB6D5 /* VergeORM.framework in Frameworks */,
-				4B714B7D24A4FFE0006EB6D5 /* VergeStore.framework in Frameworks */,
+				4B714B7D24A4FFE0006EB6D5 /* Verge.framework in Frameworks */,
 				ED954F9E013950B84ADD7C4C /* Pods_SpotifyService.framework in Frameworks */,
 				4B714B8124A50006006EB6D5 /* CombineExt in Frameworks */,
-				4B714B7724A4FFE0006EB6D5 /* VergeCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -592,15 +556,13 @@
 		4B7149EE24A4FCAA006EB6D5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */,
 				4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */,
-				4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */,
+				4B714A0824A4FCAB006EB6D5 /* Verge.framework */,
 				4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */,
 				4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */,
 				4B714A0E24A4FCAB006EB6D5 /* VergeSwiftUI.framework */,
 				4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */,
 				4B714A1E24A4FCAB006EB6D5 /* VergeTests.xctest */,
-				4B714A2024A4FCAB006EB6D5 /* VergeCoreTests.xctest */,
 				4B714A2224A4FCAB006EB6D5 /* VergeStoreTests.xctest */,
 				4B714A2424A4FCAB006EB6D5 /* VergeORMTests.xctest */,
 				4B714A2624A4FCAB006EB6D5 /* VergeRxTests.xctest */,
@@ -1130,13 +1092,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		4B714A0424A4FCAB006EB6D5 /* VergeCore.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = VergeCore.framework;
-			remoteRef = 4B714A0324A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -1144,10 +1099,10 @@
 			remoteRef = 4B714A0524A4FCAB006EB6D5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		4B714A0824A4FCAB006EB6D5 /* VergeStore.framework */ = {
+		4B714A0824A4FCAB006EB6D5 /* Verge.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = VergeStore.framework;
+			path = Verge.framework;
 			remoteRef = 4B714A0724A4FCAB006EB6D5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1182,21 +1137,14 @@
 		4B714A1E24A4FCAB006EB6D5 /* VergeTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = VergeTests.xctest;
+			path = VergeClassicTests.xctest;
 			remoteRef = 4B714A1D24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A2024A4FCAB006EB6D5 /* VergeCoreTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = VergeCoreTests.xctest;
-			remoteRef = 4B714A1F24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		4B714A2224A4FCAB006EB6D5 /* VergeStoreTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = VergeStoreTests.xctest;
+			path = VergeTests.xctest;
 			remoteRef = 4B714A2124A4FCAB006EB6D5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

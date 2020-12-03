@@ -1,6 +1,6 @@
 
 import Foundation
-import VergeStore
+import Verge
 
 public struct BackendState {
 

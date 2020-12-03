@@ -10,8 +10,7 @@ import Foundation
 
 import Combine
 
-import VergeCore
-import VergeStore
+import Verge
 import VergeORM
 
 final class Session: Equatable {

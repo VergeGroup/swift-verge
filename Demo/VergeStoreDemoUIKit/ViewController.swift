@@ -56,7 +56,7 @@ final class ViewController: UIViewController {
   }
 }
 
-import VergeStore
+import Verge
 
 final class ViewModel: StoreComponentType {
 

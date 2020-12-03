@@ -3,7 +3,7 @@ import Foundation
 import SwiftUI
 import SpotifyUIKit
 import SpotifyService
-import VergeStore
+import Verge
 
 struct SettingsView: View {
 

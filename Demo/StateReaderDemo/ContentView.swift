@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import VergeStore
+import Verge
 
 final class ViewModel: StoreComponentType, ObservableObject {
 

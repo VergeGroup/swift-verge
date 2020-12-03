@@ -1,6 +1,6 @@
 
 import Foundation
-import VergeStore
+import Verge
 import VergeORM
 
 public struct Database: DatabaseType, Equatable {

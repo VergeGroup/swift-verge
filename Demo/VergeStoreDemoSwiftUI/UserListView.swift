@@ -1,6 +1,6 @@
 import Foundation
 import SwiftUI
-import VergeStore
+import Verge
 
 struct UserListView: View {
   

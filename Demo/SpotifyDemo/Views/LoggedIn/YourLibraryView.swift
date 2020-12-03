@@ -1,5 +1,5 @@
 import SwiftUI
-import VergeStore
+import Verge
 import SpotifyService
 import SpotifyUIKit
 

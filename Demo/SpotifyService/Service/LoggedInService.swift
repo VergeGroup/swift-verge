@@ -2,7 +2,7 @@ import Foundation
 
 import JAYSON
 import Moya
-import VergeStore
+import Verge
 import Combine
 import CombineExt
 import VergeORM

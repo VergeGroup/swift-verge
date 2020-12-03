@@ -1,7 +1,7 @@
 
 import Foundation
 
-import VergeStore
+import Verge
 import SwiftUI
 import SpotifyService
 

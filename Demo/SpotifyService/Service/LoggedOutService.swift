@@ -4,7 +4,7 @@ import Combine
 
 import JAYSON
 import Moya
-import VergeStore
+import Verge
 
 public final class LoggedOutService: BackendStore.ScopedDispatcher<LoggedOutBackendState> {
   

@@ -2,7 +2,7 @@
 import Foundation
 
 import SwiftUI
-import VergeStore
+import Verge
 
 struct DualDisplayView: View {
 

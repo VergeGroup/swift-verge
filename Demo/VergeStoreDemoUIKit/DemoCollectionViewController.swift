@@ -1,6 +1,6 @@
 
 import UIKit
-import VergeStore
+import Verge
 
 final class DemoCollectionViewController: UIViewController, UICollectionViewDelegateFlowLayout {
 

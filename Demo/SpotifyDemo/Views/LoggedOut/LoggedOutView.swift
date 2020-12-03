@@ -2,7 +2,7 @@
 import Foundation
 
 import SpotifyService
-import VergeStore
+import Verge
 import SwiftUI
 
 struct LoggedOutView: View {
