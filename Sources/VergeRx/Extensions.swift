@@ -25,18 +25,6 @@ import Verge
 
 import RxSwift
 
-extension CancellableType {
-  
-  public func disposed(by disposeBag: DisposeBag) {
-    
-    Disposables.create {
-      self.cancel()
-    }
-    .disposed(by: disposeBag)
-  }
-  
-}
-
 extension VergeAnyCancellable: RxSwift.Disposable {
   public func dispose() {
     cancel()
