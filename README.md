@@ -174,6 +174,13 @@ This repo has several demo applications in Demo directory.
 And we're looking for your demo applications to list it here!
 Please tell us from Issue!
 
+## Thanks
+
+- [Redux](https://redux.js.org/)
+- [Vuex](https://vuex.vuejs.org/)
+- [ReSwift](https://github.com/ReSwift/ReSwift)
+- [swift-composable-architecture](https://github.com/pointfreeco/swift-composable-architecture)
+
 ## Author
 
 [🇯🇵 Muukii (Hiroshi Kimura)](https://github.com/muukii)
