@@ -21,14 +21,21 @@
 
 import Foundation
 
-public protocol DispatcherType {
-    
+public protocol _DispatcherType {
+
   associatedtype WrappedStore: StoreType
   associatedtype Scope = WrappedStore.State
-    
+
   var store: WrappedStore { get }
   var scope: WritableKeyPath<WrappedStore.State, Scope> { get }
-  
+
+}
+
+/**
+ A protocol that indicates it can dispatch a mutation and an activity.
+ */
+public protocol DispatcherType: _DispatcherType {
+
 }
 
 extension DispatcherType where Scope == WrappedStore.State {

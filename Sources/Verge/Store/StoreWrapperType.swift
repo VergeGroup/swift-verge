@@ -21,6 +21,18 @@
 
 import Foundation
 
+/// Wrapping store only.
+/// Restricts mutating and emitting activity outside.
+/// Instead, do that through from self.store.
+public protocol RestrictedStoreComponentType: StoreType, _DispatcherType {
+
+  associatedtype State = WrappedStore.State
+  associatedtype Activity = WrappedStore.Activity
+
+  associatedtype Scope
+  var store: WrappedStore { get }
+}
+
 /**
  A protocol that wraps Store inside and provides the functions of DispatcherType
  
@@ -50,13 +62,12 @@ import Foundation
  }
  ``` 
  */
-public protocol StoreComponentType: StoreType, DispatcherType {
-  
-  associatedtype State = WrappedStore.State
-  associatedtype Activity = WrappedStore.Activity
-    
-  associatedtype Scope
-  var store: WrappedStore { get }
+public protocol StoreComponentType: RestrictedStoreComponentType, DispatcherType {
+
+}
+
+extension RestrictedStoreComponentType {
+
 }
 
 /// It would be deprecated in the future.
