@@ -24,16 +24,15 @@ import Foundation
 #if !COCOAPODS
 #endif
 
-fileprivate let changesDeallocationQueue = BackgroundDeallocationQueue()
+private let changesDeallocationQueue = BackgroundDeallocationQueue()
 
 public protocol ChangesType: AnyObject {
-  
   associatedtype Value
   var previousPrimitive: Value? { get }
   var primitive: Value { get }
 
   var previous: Self? { get }
-  
+
   func asChanges() -> Changes<Value>
 }
 
@@ -49,28 +48,28 @@ public protocol ChangesType: AnyObject {
    var height: String
  }
  ```
- 
+
  ```
  let changes: Changes<MyState>
  ```
- 
+
  It can be accessed with properties of MyState by dynamicMemberLookup
  ```
  changes.name
  ```
- 
+
  It would be helpful to update UI partially
  ```
  func updateUI(changes: Changes<MyState>) {
- 
+
    changes.ifChanged(\.name) { name in
    // update UI
    }
-   
+
    changes.ifChanged(\.age) { age in
    // update UI
    }
-   
+
    changes.ifChanged(\.height) { height in
    // update UI
    }
@@ -82,7 +81,6 @@ public protocol ChangesType: AnyObject {
  */
 @dynamicMemberLookup
 public final class Changes<Value>: ChangesType, Equatable {
-
   public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
 
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
@@ -93,13 +91,13 @@ public final class Changes<Value>: ChangesType, Equatable {
 
   public let previous: Changes<Value>?
   private let innerBox: InnerBox
-  private(set) public var version: UInt64
-  
+  public private(set) var version: UInt64
+
   // MARK: - Computed Properties
-    
+
   @available(*, deprecated, renamed: "previousPrimitive")
   public var old: Value? { previousPrimitive }
-  
+
   @available(*, deprecated, renamed: "primitive")
   public var current: Value { primitive }
 
@@ -125,7 +123,7 @@ public final class Changes<Value>: ChangesType, Equatable {
   public let modification: InoutRef<Value>.Modification?
 
   // MARK: - Initializers
-    
+
   public convenience init(
     old: Value?,
     new: Value
@@ -138,7 +136,7 @@ public final class Changes<Value>: ChangesType, Equatable {
       modification: nil
     )
   }
-  
+
   private init(
     previous: Changes<Value>?,
     innerBox: InnerBox,
@@ -146,16 +144,15 @@ public final class Changes<Value>: ChangesType, Equatable {
     mutation: MutationTrace?,
     modification: InoutRef<Value>.Modification?
   ) {
-    
     self.previous = previous
     self.innerBox = innerBox
     self.version = version
     self.mutation = mutation
     self.modification = modification
-    
+
     vergeSignpostEvent("Changes.init", label: "\(type(of: self))")
   }
-  
+
   deinit {
     vergeSignpostEvent("Changes.deinit", label: "\(type(of: self))")
 
@@ -172,12 +169,12 @@ public final class Changes<Value>: ChangesType, Equatable {
       modification: nil
     )
   }
-  
+
   @inlinable
   public func asChanges() -> Changes<Value> {
     self
   }
-  
+
   /// Returns a Changes object that dropped previous value.
   /// It returns always true in `ifChanged`
   public func droppedPrevious() -> Changes<Value> {
@@ -192,10 +189,9 @@ public final class Changes<Value>: ChangesType, Equatable {
   }
 
   /// Returns a new instance that projects value by transform closure.
-  /// 
+  ///
   /// - Warning: modification would be dropped.
   public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
-
     let signpost = VergeSignpostTransaction("Changes.map")
     defer {
       signpost.end()
@@ -215,7 +211,6 @@ public final class Changes<Value>: ChangesType, Equatable {
     from mutation: MutationTrace,
     modification: InoutRef<Value>.Modification
   ) -> Changes<Value> {
-    
     let previous = cloneWithDropsPrevious()
     let nextVersion = previous.version &+ 1
     return Changes<Value>.init(
@@ -226,19 +221,17 @@ public final class Changes<Value>: ChangesType, Equatable {
       modification: modification
     )
   }
-  
 }
 
 // MARK: - Primitive methods
-extension Changes {
 
+extension Changes {
   /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed>(
     _ compose: (Changes) throws -> Composed,
     _ compare: (Composed, Composed) throws -> Bool
   ) rethrows -> Composed? {
-
     let signpost = VergeSignpostTransaction("Changes.takeIfChanged(compose:comparer:)")
     defer {
       signpost.end()
@@ -258,7 +251,6 @@ extension Changes {
     }
 
     return composedFromCurrent
-
   }
 
   /// Performs closure if the composed value changed
@@ -275,21 +267,17 @@ extension Changes {
     _ comparer: (Composed, Composed) -> Bool,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
-
     guard let result = takeIfChanged(compose, comparer) else {
       return nil
     }
 
     return try perform(result)
-
   }
-
 }
 
 // MARK: - Convenience methods
 
 extension Changes {
-
   /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed: Equatable>(
@@ -359,7 +347,11 @@ extension Changes {
   }
 
   /// Do a closure if value specified by keyPath contains changes.
-  public func ifChanged<T, Result>(_ selector: ChangesKeyPath<T>, _ comparer: (T, T) -> Bool, _ perform: (T) throws -> Result) rethrows -> Result? {
+  public func ifChanged<T, Result>(
+    _ selector: ChangesKeyPath<T>,
+    _ comparer: (T, T) -> Bool,
+    _ perform: (T) throws -> Result
+  ) rethrows -> Result? {
     guard hasChanges(selector, comparer) else { return nil }
     return try perform(self[keyPath: selector])
   }
@@ -373,7 +365,10 @@ extension Changes {
 
   /// Do a closure if value specified by keyPath contains changes.
   @inline(__always)
-  public func ifChanged<T: Equatable, Result>(_ keyPath: ChangesKeyPath<T>, _ perform: (T) throws -> Result) rethrows -> Result? {
+  public func ifChanged<T: Equatable, Result>(
+    _ keyPath: ChangesKeyPath<T>,
+    _ perform: (T) throws -> Result
+  ) rethrows -> Result? {
     try ifChanged(keyPath, ==, perform)
   }
 
@@ -393,7 +388,11 @@ extension Changes {
     _ keyPath2: ChangesKeyPath<T2>,
     _ perform: ((T0, T1, T2)) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) }, ==, perform)
+    try ifChanged(
+      { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) },
+      ==,
+      perform
+    )
   }
 
   @inline(__always)
@@ -404,11 +403,28 @@ extension Changes {
     _ keyPath3: ChangesKeyPath<T3>,
     _ perform: ((T0, T1, T2, T3)) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2], $0[keyPath: keyPath3]) }, ==, perform)
+    try ifChanged(
+      {
+        (
+          $0[keyPath: keyPath0],
+          $0[keyPath: keyPath1],
+          $0[keyPath: keyPath2],
+          $0[keyPath: keyPath3]
+        ) },
+      ==,
+      perform
+    )
   }
 
   @inline(__always)
-  public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, T3: Equatable, T4: Equatable, Result>(
+  public func ifChanged<
+    T0: Equatable,
+    T1: Equatable,
+    T2: Equatable,
+    T3: Equatable,
+    T4: Equatable,
+    Result
+  >(
     _ keyPath0: ChangesKeyPath<T0>,
     _ keyPath1: ChangesKeyPath<T1>,
     _ keyPath2: ChangesKeyPath<T2>,
@@ -416,13 +432,23 @@ extension Changes {
     _ keyPath4: ChangesKeyPath<T4>,
     _ perform: ((T0, T1, T2, T3, T4)) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2], $0[keyPath: keyPath3], $0[keyPath: keyPath4]) }, ==, perform)
+    try ifChanged(
+      { (
+        $0[keyPath: keyPath0],
+        $0[keyPath: keyPath1],
+        $0[keyPath: keyPath2],
+        $0[keyPath: keyPath3],
+        $0[keyPath: keyPath4]
+      ) },
+      ==,
+      perform
+    )
   }
 }
 
 // MARK: - Deprecates
-extension Changes {
 
+extension Changes {
   @inline(__always)
   @available(*, deprecated, renamed: "ifChanged(_:_:_:)")
   public func ifChanged<Composed, Result>(
@@ -440,98 +466,95 @@ extension Changes {
   ) rethrows -> Result? {
     try ifChanged(compose, perform)
   }
-
 }
 
 extension Changes: CustomReflectable {
-  
   public var customMirror: Mirror {
-    Mirror.init(
+    Mirror(
       self,
       children: [
-        "version" : version,
+        "version": version,
         "previous": previous as Any,
-        "primitive" : primitive,
-        "mutation" : mutation,
-        "modification" : modification,
+        "primitive": primitive,
+        "mutation": mutation,
+        "modification": modification,
       ],
       displayStyle: .struct,
       ancestorRepresentation: .generated
     )
   }
-  
 }
 
 // MARK: - Nested Types
 
 extension Changes {
-  
   private final class InnerBox {
-    
     let value: Value
-    
-    let cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath : Any]>
-    
+
+    let cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath: Any]>
+
     init(value: Value) {
       self.value = value
-      self.cachedComputedValueStorage = .init([:])
+      cachedComputedValueStorage = .init([:])
     }
-    
+
     private init(
       value: Value,
-      cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath : Any]>
+      cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath: Any]>
     ) {
       self.value = value
       self.cachedComputedValueStorage = cachedComputedValueStorage
     }
 
-    deinit {
+    deinit {}
 
-    }
-    
     public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerBox {
-      return .init(value: try transform(value), cachedComputedValueStorage: cachedComputedValueStorage)
+      return .init(
+        value: try transform(value),
+        cachedComputedValueStorage: cachedComputedValueStorage
+      )
     }
   }
-  
 }
 
-extension Changes where Value : ExtendedStateType {
-  
+extension Changes where Value: ExtendedStateType {
   @dynamicMemberLookup
   public struct ComputedProxy {
     let source: Changes<Value>
-    
-    public subscript<Output>(dynamicMember keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>) -> Output {
+
+    public subscript<Output>(dynamicMember keyPath: KeyPath<
+      Value.Extended,
+      Value.Field.Computed<Output>
+    >) -> Output {
       take(with: keyPath)
     }
-    
+
     @inline(__always)
-    private func take<Output>(with keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>) -> Output {
+    private func take<Output>(with keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>)
+    -> Output {
       return source._synchronized_takeFromCacheOrCreate(keyPath: keyPath)
     }
   }
-  
+
   public var computed: ComputedProxy {
     .init(source: self)
   }
-        
+
   @inline(__always)
   private func _synchronized_takeFromCacheOrCreate<Output>(
     keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>
   ) -> Output {
-
     let components = Value.Extended.instance[keyPath: keyPath]
-    
+
     components._onRead()
-    
+
     // TODO: tune-up concurrency performance
 
     /**
      Start locking inner-box's caching container to calculate a computed value and stores as a cache.
      */
     return innerBox.cachedComputedValueStorage.modify { cache -> Output in
-      
+
       if let computed = cache[keyPath] as? Output {
         /**
          Which means, previously accessed this property, then we can return the cached value.
@@ -543,13 +566,12 @@ extension Changes where Value : ExtendedStateType {
       /**
        We couldn't find a cached value, then continue to next step.
        */
-      
-      if let previous = previous {
 
+      if let previous = previous {
         /**
          Itself has the previous instance, we start locking in that instance.
          */
-        
+
         return previous.innerBox.cachedComputedValueStorage.modify { previousCache -> Output in
 
           /**
@@ -557,85 +579,75 @@ extension Changes where Value : ExtendedStateType {
            */
 
           if let previousCachedValue = previousCache[keyPath] as? Output {
-
             /**
              We found a cached value from the previous instance.
              Now we check if that value is reusable.
              */
-            
+
             components._onHitPreviousCache()
-            
+
             switch components.memoizeMap.makeResult(self) {
             case .noChanages:
-              
+
               // No changes
               components._onHitPreFilter()
               cache[keyPath] = previousCachedValue
               return previousCachedValue
-              
-            case .updated(let newValue):
-              
+
+            case let .updated(newValue):
+
               // Update
               components._onTransform()
               cache[keyPath] = newValue
               return newValue
             }
           } else {
-
             /**
              We don't have a cached value even from the previous instance.
              We need to create a new value from scratch.
              */
-            
+
             components._onTransform()
-            
+
             let initialValue = components.memoizeMap.makeInitial(self)
             cache[keyPath] = initialValue
             return initialValue
-            
           }
         }
-        
-      } else {
 
+      } else {
         /**
          We don't have previous instance.
          We need to create a new value from scratch.
          */
-        
+
         components._onTransform()
-        
+
         let initialValue = components.memoizeMap.makeInitial(self)
-        cache[keyPath] = initialValue        
+        cache[keyPath] = initialValue
         return initialValue
       }
-      
     }
-                          
   }
-  
 }
 
-extension Changes where Value : Equatable {
-  
+extension Changes where Value: Equatable {
   public var hasChanges: Bool {
     previousPrimitive != primitive
   }
-  
+
   public func ifChanged(_ perform: (Value) throws -> Void) rethrows {
     try ifChanged(\.root, perform)
   }
 }
 
 extension Changes: Sequence where Value: Sequence {
-
   public __consuming func makeIterator() -> Value.Iterator {
     root.makeIterator()
   }
 
   public typealias Element = Value.Element
   public typealias Iterator = Value.Iterator
-
 }
 
 extension Changes: Collection where Value: Collection {
@@ -658,12 +670,11 @@ extension Changes: Collection where Value: Collection {
   }
 
   public typealias Index = Value.Index
-
 }
 
 extension Changes: BidirectionalCollection where Value: BidirectionalCollection {
   public func index(before i: Value.Index) -> Value.Index {
-     root.index(before: i)
+    root.index(before: i)
   }
 }
 
@@ -674,7 +685,6 @@ extension Changes: RandomAccessCollection where Value: RandomAccessCollection {
 }
 
 extension _StateTypeContainer {
-
   /**
    A declaration to add a computed-property into the state.
    It helps to add a property that does not need to be stored-property.
@@ -725,39 +735,38 @@ extension _StateTypeContainer {
    ```
    */
   public struct Computed<Output> {
-    
     public typealias Input = Changes<State>
-    
+
     @usableFromInline
     fileprivate(set) var _onRead: () -> Void = {}
-    
+
     @usableFromInline
     fileprivate(set) var _onHitCache: () -> Void = {}
-    
+
     @usableFromInline
     fileprivate(set) var _onHitPreviousCache: () -> Void = {}
-    
+
     @usableFromInline
     fileprivate(set) var _onHitPreFilter: () -> Void = {}
-    
+
     @usableFromInline
     fileprivate(set) var _onTransform: () -> Void = {}
-    
+
     @usableFromInline
     let memoizeMap: MemoizeMap<Input, Output>
-    
+
     @usableFromInline
     init(_ filterMap: MemoizeMap<Input, Output>) {
-      self.memoizeMap = filterMap
+      memoizeMap = filterMap
     }
-    
+
     public init(
       makeInitial: @escaping (Input) -> Output,
       update: @escaping (Input) -> MemoizeMap<Input, Output>.Result
     ) {
       self.init(MemoizeMap<Input, Output>.init(makeInitial: makeInitial, update: update))
     }
-        
+
     public init(_ compute: @escaping (Input) -> Output) {
       self.init(.map(compute))
     }
@@ -771,8 +780,8 @@ extension _StateTypeContainer {
     ///   - compute: A closure to compose a computed value from the derived value.
     public init<Derived: Equatable>(
       derive: @escaping (Input) -> Derived,
-      compute: @escaping (Derived) -> Output) {
-
+      compute: @escaping (Derived) -> Output
+    ) {
       self.init(derive: derive, dropsDerived: ==, compute: compute)
     }
 
@@ -790,8 +799,8 @@ extension _StateTypeContainer {
     public init<Derived>(
       derive: @escaping (Input) -> Derived,
       dropsDerived: @escaping (Derived, Derived) -> Bool,
-      compute: @escaping (Derived) -> Output) {
-
+      compute: @escaping (Derived) -> Output
+    ) {
       self.init(.map(derive: derive, dropsDerived: dropsDerived, compute: compute))
     }
 
@@ -805,10 +814,11 @@ extension _StateTypeContainer {
         $0.dropsInput(while: predicate)
       }
     }
-    
+
     @inlinable
     @inline(__always)
-    public func modified(_ modifier: (MemoizeMap<Input, Output>) -> MemoizeMap<Input, Output>) -> Self {
+    public func modified(_ modifier: (MemoizeMap<Input, Output>) -> MemoizeMap<Input, Output>)
+    -> Self {
       .init(modifier(memoizeMap))
     }
 
@@ -818,7 +828,6 @@ extension _StateTypeContainer {
     @inlinable
     @inline(__always)
     public func onRead(_ clsoure: @escaping () -> Void) -> Self {
-      
       var _self = self
       _self._onRead = clsoure
       return _self
@@ -830,7 +839,6 @@ extension _StateTypeContainer {
     @inlinable
     @inline(__always)
     public func onTransform(_ closure: @escaping () -> Void) -> Self {
-      
       var _self = self
       _self._onTransform = closure
       return _self
@@ -842,7 +850,6 @@ extension _StateTypeContainer {
     @inlinable
     @inline(__always)
     public func onHitPreFilter(_ closure: @escaping () -> Void) -> Self {
-      
       var _self = self
       _self._onHitPreFilter = closure
       return _self
@@ -854,7 +861,6 @@ extension _StateTypeContainer {
     @inlinable
     @inline(__always)
     public func onHitCache(_ closure: @escaping () -> Void) -> Self {
-      
       var _self = self
       _self._onHitCache = closure
       return _self
@@ -866,11 +872,9 @@ extension _StateTypeContainer {
     @inlinable
     @inline(__always)
     public func onHitPreviousCache(_ closure: @escaping () -> Void) -> Self {
-      
       var _self = self
       _self._onHitPreviousCache = closure
       return _self
     }
-    
   }
 }
