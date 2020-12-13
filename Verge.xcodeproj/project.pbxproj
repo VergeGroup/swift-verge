@@ -65,6 +65,7 @@
 		4B5E84AD24618D39009A0CA8 /* AtomicBridges.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */; };
 		4B5E84BC2461901E009A0CA8 /* VergeObjcBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5E84BB24619006009A0CA8 /* VergeObjcBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B5E84BD24619046009A0CA8 /* AtomicBridges.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5E84AC24618D39009A0CA8 /* AtomicBridges.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B654BF125869A3300F5AEA4 /* EdgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B654BF025869A3300F5AEA4 /* EdgeTests.swift */; };
 		4B65F8EF1FB4C0DC00A90A67 /* VergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */; };
 		4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B68394623705ACD002FFC5A /* VergeStoreTests.swift */; };
 		4B68394923705ACE002FFC5A /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* Verge.framework */; };
@@ -287,6 +288,7 @@
 		4B5E84AA24618D39009A0CA8 /* AtomicBridges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AtomicBridges.m; sourceTree = "<group>"; };
 		4B5E84AC24618D39009A0CA8 /* AtomicBridges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicBridges.h; sourceTree = "<group>"; };
 		4B5E84BB24619006009A0CA8 /* VergeObjcBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeObjcBridge.h; sourceTree = "<group>"; };
+		4B654BF025869A3300F5AEA4 /* EdgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeTests.swift; sourceTree = "<group>"; };
 		4B65F8EC1FB4C0DC00A90A67 /* VergeClassicTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeClassicTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeTests.swift; sourceTree = "<group>"; };
 		4B65F8F01FB4C0DC00A90A67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -638,6 +640,7 @@
 				4B7A71D12487532D00A116F7 /* _COWFragmentTests.swift */,
 				4B44F092252E209600BC0495 /* StateReaderTests.swift */,
 				4B2240A12576431E001BCB93 /* MemoizeMapTests.swift */,
+				4B654BF025869A3300F5AEA4 /* EdgeTests.swift */,
 			);
 			path = VergeTests;
 			sourceTree = "<group>";
@@ -1285,6 +1288,7 @@
 				4B7A71D22487532D00A116F7 /* _COWFragmentTests.swift in Sources */,
 				4B04C4FD257086D900731802 /* CopyPerformance.swift in Sources */,
 				4BF76684244E242A00A5EA10 /* DerivedTests.swift in Sources */,
+				4B654BF125869A3300F5AEA4 /* EdgeTests.swift in Sources */,
 				4B6F6F3B24521F2B00B6CC3A /* CounterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
