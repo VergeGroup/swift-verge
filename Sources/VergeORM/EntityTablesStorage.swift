@@ -81,6 +81,11 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
   public var count: Int {
     _read { yield rawTable.entities.count }
   }
+
+  /// A Boolean value that indicates whether the dictionary is empty.
+  public var isEmpty: Bool {
+    _read { yield rawTable.entities.isEmpty }
+  }
   
   internal var rawTable: RawTable = .init()
     
