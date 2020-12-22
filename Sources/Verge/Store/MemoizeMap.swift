@@ -241,7 +241,7 @@ extension MemoizeMap where Input : ChangesType {
         compute(derive(input.asChanges()))
     }) { input in
 
-      let result = input.asChanges().ifChanged(derive, dropsDerived) { (derived) in
+      let result = input.asChanges().ifChanged(derive, .init(dropsDerived)) { (derived) in
         compute(derived)
       }
 

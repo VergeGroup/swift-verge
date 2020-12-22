@@ -133,7 +133,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
           { (composing) -> Input.Value.Database in
             let db = path(composing.root)
             return db
-        }, noChangesComparer.curried()
+        }, noChangesComparer
         )
         
         guard hasChanges else {
@@ -226,7 +226,7 @@ extension StoreType where State : DatabaseEmbedding {
     let d = underlyingDerived.chain(
       .init(map: { $0.root }),
       dropsOutput: { changes in
-        changes.noChanges(\.root, {
+        changes.noChanges(\.root, .init {
           dropsOutput($0.wrapped, $1.wrapped)
         })
       },
@@ -654,7 +654,7 @@ extension StoreType where State : DatabaseEmbedding {
 
         let changes = state.asChanges()
 
-        guard changes.hasChanges({ path($0.primitive) }, noChangesComparer.curried()) else {
+        guard changes.hasChanges({ path($0.primitive) }, noChangesComparer) else {
           return .noChanages
         }
 
@@ -669,7 +669,7 @@ extension StoreType where State : DatabaseEmbedding {
 
           return result
 
-        }, ==)
+        }, .init(==))
 
         guard let derivedArray = _derivedArray else {
           return .noChanages

@@ -128,6 +128,7 @@
 		4BDBDFA423CE0DD100EEA112 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA323CE0DD100EEA112 /* RxCocoa */; };
 		4BDBDFA623CE0DD100EEA112 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4BDBDFA523CE0DD100EEA112 /* RxSwift */; };
 		4BE33C6924875CD800F3F2C6 /* _COWFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE33C6824875CD800F3F2C6 /* _COWFragment.swift */; };
+		4BEA328D2591B61A0009A2DF /* Changes+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEA328C2591B61A0009A2DF /* Changes+Deprecated.swift */; };
 		4BF21F302458C1860045B5C2 /* UtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF21F2F2458C1860045B5C2 /* UtilTests.swift */; };
 		4BF2BCCE238A658400F70CDA /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */; };
 		4BF3C2EC242093AC006B1726 /* MultithreadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF3C2EA24209324006B1726 /* MultithreadingTests.swift */; };
@@ -365,6 +366,7 @@
 		4BDB78212447934A00675D03 /* StoreWrapperType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreWrapperType.swift; sourceTree = "<group>"; };
 		4BE33C6824875CD800F3F2C6 /* _COWFragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _COWFragment.swift; sourceTree = "<group>"; };
 		4BE9455A23AD1BBB0060F977 /* EventEmitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitterTests.swift; sourceTree = "<group>"; };
+		4BEA328C2591B61A0009A2DF /* Changes+Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Changes+Deprecated.swift"; sourceTree = "<group>"; };
 		4BF21F2F2458C1860045B5C2 /* UtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilTests.swift; sourceTree = "<group>"; };
 		4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelBase.swift; sourceTree = "<group>"; };
 		4BF2BCD9238A7B6900F70CDA /* EventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitter.swift; sourceTree = "<group>"; };
@@ -738,6 +740,7 @@
 				4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */,
 				4B68394F237062F7002FFC5A /* StateType.swift */,
 				4BBFF45D24389D3D005BA03C /* Changes.swift */,
+				4BEA328C2591B61A0009A2DF /* Changes+Deprecated.swift */,
 				4B6B77AA243FA3EB00E0C0EA /* _StateTypeContainer.swift */,
 				4B3834DE248235AD008A0B47 /* _VergeObservableObjectBase.swift */,
 				4B8EB4F823C034A900035B2A /* Comparer.swift */,
@@ -1318,6 +1321,7 @@
 				4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */,
 				4B98257A254589960040B377 /* BatchCommit.swift in Sources */,
 				4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */,
+				4BEA328D2591B61A0009A2DF /* Changes+Deprecated.swift in Sources */,
 				4B04C5622570875200731802 /* VergeConcurrency+SynchronizationTracker.swift in Sources */,
 				4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */,
 				4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */,
