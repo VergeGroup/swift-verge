@@ -20,7 +20,7 @@ enum SyntaxTests {
 
     }
 
-    changes.ifChanged(\.nonEquatable, { _, _ in false }) { name in
+    changes.ifChanged(\.nonEquatable, .alwaysFalse) { name in
 
     }
 

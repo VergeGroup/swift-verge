@@ -264,7 +264,7 @@ class Computed2Tests: XCTestCase {
     
     var count = 0
         
-    store.state.ifChanged({ $0.computed.num_0 }, ==) { v in
+    store.state.ifChanged({ $0.computed.num_0 }, .init(==)) { v in
         count += 1
     }
     
@@ -272,7 +272,7 @@ class Computed2Tests: XCTestCase {
       $0.num_0 = 0
     }
     
-    store.state.ifChanged({ $0.computed.num_0 }, ==) { v in
+    store.state.ifChanged({ $0.computed.num_0 }, .init(==)) { v in
         count += 1
     }
     
@@ -295,7 +295,7 @@ class Computed2Tests: XCTestCase {
             $0.computed.num_0
           )
       },
-        ==) { _ in
+        .init(==)) { _ in
           perform()
       }
     }
