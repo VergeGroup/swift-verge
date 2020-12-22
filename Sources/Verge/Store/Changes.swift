@@ -226,6 +226,7 @@ public final class Changes<Value>: ChangesType, Equatable {
 // MARK: - Primitive methods
 
 extension Changes {
+  
   /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed>(
@@ -254,11 +255,11 @@ extension Changes {
     return composedFromCurrent
   }
 
-  /// Performs closure if the composed value changed
+  /// Performs a closure if the selected value changed from the previous one.
   ///
   /// - Parameters:
   ///   - compose: A closure that projects a composed value from self. that executes with both of value(new and old).
-  ///   - comparer: A closure that checks if the composed values are different between current and old.
+  ///   - comparer: A Comparer that checks if the composed values are different between current and old.
   ///   - perform: A closure that executes any operation if composed value changed.
   ///
   /// - Returns: An instance that returned from the perform closure if performed.
@@ -287,8 +288,9 @@ extension Changes {
     try takeIfChanged(compose, .usingEquatable)
   }
 
-
-  /// Do a closure if value specified by keyPath contains changes.
+  /**
+   Performs a closure if the selected value changed from the previous one.
+   */
   public func ifChanged<T, Result>(
     _ selector: ChangesKeyPath<T>,
     _ comparer: Comparer<T>,
@@ -300,6 +302,9 @@ extension Changes {
     return try perform(value)
   }
 
+  /**
+   Performs a closure if the selected value changed from the previous one.
+   */
   public func ifChanged<Composed: Equatable, Result>(
     _ compose: (Changes) -> Composed,
     _ perform: (Composed) throws -> Result
@@ -307,7 +312,9 @@ extension Changes {
     try ifChanged(compose, .usingEquatable, perform)
   }
 
-  /// Do a closure if value specified by keyPath contains changes.
+  /**
+   Performs a closure if the selected value changed from the previous one.
+   */
   @inline(__always)
   public func ifChanged<T: Equatable, Result>(
     _ keyPath: ChangesKeyPath<T>,
@@ -316,6 +323,10 @@ extension Changes {
     try ifChanged(keyPath, .usingEquatable, perform)
   }
 
+  /**
+   Performs a closure if the selected value changed from the previous one.
+   Selected multiple value would be packed as tuple.
+   */
   @inline(__always)
   public func ifChanged<T0: Equatable, T1: Equatable, Result>(
     _ keyPath0: ChangesKeyPath<T0>,
@@ -325,6 +336,10 @@ extension Changes {
     try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) }, .init(==), perform)
   }
 
+  /**
+   Performs a closure if the selected value changed from the previous one.
+   Selected multiple value would be packed as tuple.
+   */
   @inline(__always)
   public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, Result>(
     _ keyPath0: ChangesKeyPath<T0>,
@@ -339,6 +354,10 @@ extension Changes {
     )
   }
 
+  /**
+   Performs a closure if the selected value changed from the previous one.
+   Selected multiple value would be packed as tuple.
+   */
   @inline(__always)
   public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, T3: Equatable, Result>(
     _ keyPath0: ChangesKeyPath<T0>,
@@ -360,6 +379,10 @@ extension Changes {
     )
   }
 
+  /**
+   Performs a closure if the selected value changed from the previous one.
+   Selected multiple value would be packed as tuple.
+   */
   @inline(__always)
   public func ifChanged<
     T0: Equatable,
