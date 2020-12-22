@@ -230,7 +230,7 @@ extension Changes {
   @inline(__always)
   public func takeIfChanged<Composed>(
     _ compose: (Changes) throws -> Composed,
-    _ compare: (Composed, Composed) throws -> Bool
+    _ comparer: Comparer<Composed>
   ) rethrows -> Composed? {
     let signpost = VergeSignpostTransaction("Changes.takeIfChanged(compose:comparer:)")
     defer {
@@ -244,9 +244,10 @@ extension Changes {
     }
 
     let old = previousValue
+    let compare = comparer.curried()
 
     let composedFromCurrent = try compose(current)
-    guard try !compare(compose(old), composedFromCurrent) else {
+    guard !compare(try compose(old), composedFromCurrent) else {
       return nil
     }
 
@@ -264,7 +265,7 @@ extension Changes {
   @inline(__always)
   public func ifChanged<Composed, Result>(
     _ compose: (Changes) -> Composed,
-    _ comparer: (Composed, Composed) -> Bool,
+    _ comparer: Comparer<Composed>,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     guard let result = takeIfChanged(compose, comparer) else {
@@ -283,84 +284,27 @@ extension Changes {
   public func takeIfChanged<Composed: Equatable>(
     _ compose: (Changes) throws -> Composed
   ) rethrows -> Composed? {
-    try takeIfChanged(compose, ==)
+    try takeIfChanged(compose, .usingEquatable)
   }
 
-  /// Takes a composed value if it's changed from old value.
-  @inline(__always)
-  public func takeIfChanged<T>(
-    _ keyPath: ChangesKeyPath<T>,
-    _ compare: (T, T) throws -> Bool
-  ) rethrows -> T? {
-    try takeIfChanged({ $0[keyPath: keyPath] }, compare)
-  }
-
-  /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
-  @inline(__always)
-  public func noChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
-    !hasChanges(keyPath, ==)
-  }
-
-  /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
-  @inline(__always)
-  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ compare: (T, T) -> Bool) -> Bool {
-    !hasChanges(keyPath, compare)
-  }
-
-  /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
-  @inline(__always)
-  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: Comparer<T>) -> Bool {
-    !hasChanges(keyPath, comparer.equals)
-  }
-
-  /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
-  @inline(__always)
-  public func hasChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
-    hasChanges(keyPath, ==)
-  }
-
-  /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
-  @inline(__always)
-  public func hasChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: Comparer<T>) -> Bool {
-    hasChanges(keyPath, comparer.equals)
-  }
-
-  /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
-  @inline(__always)
-  public func hasChanges<T>(_ keyPath: ChangesKeyPath<T>, _ compare: (T, T) -> Bool) -> Bool {
-    hasChanges({ $0[keyPath: keyPath] }, compare)
-  }
-
-  @inline(__always)
-  public func hasChanges<Composed: Equatable>(
-    _ compose: (Changes) -> Composed
-  ) -> Bool {
-    hasChanges(compose, ==)
-  }
-
-  @inline(__always)
-  public func hasChanges<Composed>(
-    _ compose: (Changes) -> Composed,
-    _ compare: (Composed, Composed) -> Bool
-  ) -> Bool {
-    takeIfChanged(compose, compare) != nil
-  }
 
   /// Do a closure if value specified by keyPath contains changes.
   public func ifChanged<T, Result>(
     _ selector: ChangesKeyPath<T>,
-    _ comparer: (T, T) -> Bool,
+    _ comparer: Comparer<T>,
     _ perform: (T) throws -> Result
   ) rethrows -> Result? {
-    guard hasChanges(selector, comparer) else { return nil }
-    return try perform(self[keyPath: selector])
+    guard let value = takeIfChanged({ $0[keyPath: selector] }, comparer) else {
+      return nil
+    }
+    return try perform(value)
   }
 
   public func ifChanged<Composed: Equatable, Result>(
     _ compose: (Changes) -> Composed,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged(compose, ==, perform)
+    try ifChanged(compose, .usingEquatable, perform)
   }
 
   /// Do a closure if value specified by keyPath contains changes.
@@ -369,7 +313,7 @@ extension Changes {
     _ keyPath: ChangesKeyPath<T>,
     _ perform: (T) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged(keyPath, ==, perform)
+    try ifChanged(keyPath, .usingEquatable, perform)
   }
 
   @inline(__always)
@@ -378,7 +322,7 @@ extension Changes {
     _ keyPath1: ChangesKeyPath<T1>,
     _ perform: ((T0, T1)) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) }, ==, perform)
+    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) }, .init(==), perform)
   }
 
   @inline(__always)
@@ -390,7 +334,7 @@ extension Changes {
   ) rethrows -> Result? {
     try ifChanged(
       { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) },
-      ==,
+      .init(==),
       perform
     )
   }
@@ -411,7 +355,7 @@ extension Changes {
           $0[keyPath: keyPath2],
           $0[keyPath: keyPath3]
         ) },
-      ==,
+      .init(==),
       perform
     )
   }
@@ -440,31 +384,60 @@ extension Changes {
         $0[keyPath: keyPath3],
         $0[keyPath: keyPath4]
       ) },
-      ==,
+      .init(==),
       perform
     )
   }
 }
 
-// MARK: - Deprecates
+// MARK: - Has changes
 
 extension Changes {
+  /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   @inline(__always)
-  @available(*, deprecated, renamed: "ifChanged(_:_:_:)")
-  public func ifChanged<Composed, Result>(
-    compose: (Changes) -> Composed,
-    comparer: (Composed, Composed) -> Bool,
-    perform: (Composed) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(compose, comparer, perform)
+  public func hasChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
+    hasChanges(keyPath, .usingEquatable)
   }
 
-  @available(*, deprecated, renamed: "ifChanged(_:_:)")
-  public func ifChanged<Composed: Equatable, Result>(
-    compose: (Changes) -> Composed,
-    perform: (Composed) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(compose, perform)
+  /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
+  @inline(__always)
+  public func hasChanges<T>(
+    _ keyPath: ChangesKeyPath<T>,
+    _ comparer: Comparer<T>
+  ) -> Bool {
+    hasChanges({ $0[keyPath: keyPath] }, comparer)
+  }
+
+  @inline(__always)
+  public func hasChanges<Composed: Equatable>(
+    _ compose: (Changes) -> Composed
+  ) -> Bool {
+    hasChanges(compose, .usingEquatable)
+  }
+
+  @inline(__always)
+  public func hasChanges<Composed>(
+    _ compose: (Changes) -> Composed,
+    _ comparer: Comparer<Composed>
+  ) -> Bool {
+    takeIfChanged(compose, comparer) != nil
+  }
+
+}
+
+// MARK: - NoChanges
+
+extension Changes {
+  /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
+  @inline(__always)
+  public func noChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
+    !hasChanges(keyPath, .usingEquatable)
+  }
+
+  /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
+  @inline(__always)
+  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: Comparer<T>) -> Bool {
+    !hasChanges(keyPath, comparer)
   }
 }
 
@@ -476,8 +449,8 @@ extension Changes: CustomReflectable {
         "version": version,
         "previous": previous as Any,
         "primitive": primitive,
-        "mutation": mutation,
-        "modification": modification,
+        "mutation": mutation as Any,
+        "modification": modification as Any,
       ],
       displayStyle: .struct,
       ancestorRepresentation: .generated

@@ -102,6 +102,10 @@ extension Comparer where Input : Equatable {
   public init() {
     self.init(==)
   }
+
+  public static var usingEquatable: Self {
+    return .init(==)
+  }
 }
 
 extension Comparer {
