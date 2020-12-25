@@ -48,6 +48,71 @@ Please see the website: https://vergegroup.github.io/Verge/
 
 The word 'store-pattern' is used on [Vue.js documentation](https://vuejs.org/v2/guide/state-management.html#Simple-State-Management-from-Scratch) that about how we manage the state between multiple components.
 
+## Simple usage in UIKit
+
+Creating a view-model (meaning Store)
+
+```swift
+final class MyViewModel: StoreComponentType {
+
+  struct State {
+    var name: String = ""
+    var count: Int = 0
+  }
+
+  let store: DefaultStore = .init(initialState: .init())
+
+  func myAction() {
+    commit {
+      $0.name = "Hello, Verge"
+    }
+  }
+
+  func increment() {
+    commit {
+      $0.count += 1
+    }
+  }
+}
+```
+
+Binding with a view (or view controller)
+
+```swift
+final class MyViewController: UIViewController {
+
+  let viewModel: MyViewModel
+
+  ...
+
+  var cancellable: VergeAnyCancellable?
+
+  init(viewModel: MyViewModel) {
+
+    self.viewModel = viewModel
+
+    self.cancellable = viewModel.sinkState { [weak self] state in
+      self?.update(state: state)
+    }
+
+  }
+
+  private func update(state: Changes<MyStore.State>) {
+
+    state.ifChanged(\.name) { (name) in
+      nameLabel.text = name
+    }
+
+    state.ifChanged(\.count) { (age) in
+      countLabel.text = age.description
+    }
+
+    ...
+  }
+
+}
+```
+
 ## What differences between Flux library are
 
 'store-pattern' is the core-concept of Flux.
