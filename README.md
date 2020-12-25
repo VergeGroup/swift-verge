@@ -113,6 +113,8 @@ final class MyViewController: UIViewController {
 }
 ```
 
+[The details are here!](https://vergegroup.github.io/Verge/docs/)
+
 ## What differences between Flux library are
 
 'store-pattern' is the core-concept of Flux.
