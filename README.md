@@ -67,15 +67,23 @@ final class MyViewModel: StoreComponentType {
   // MARK: - ✅ These are actions as well as writing methods.
 
   func myAction() {
-    // ☄️ Mutating a state
+    // 💥 Mutating a state
     commit {
       $0.name = "Hello, Verge"
     }
   }
 
-  func increment() {
-    commit {
-      $0.count += 1
+  func incrementAsync() {
+    /**
+    💥 Asynchronously mutating.
+    Verge just provides thread-safety.
+    We should manage operations in the Action.
+    */
+    DispatchQueue.global().async {    
+      commit {
+        // We must finish here synchronously - here is a critical session.
+        $0.count += 1
+      }
     }
   }
 }
