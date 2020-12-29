@@ -6,7 +6,7 @@
 
 <h1 align="center">Verge</h1>
 <p align="center">
-<sub>A faster and scalable state-management library for iOS App - SwiftUI / UIKit</sub><br/>
+<sub>An effective state management library for iOS Application</sub><br/>
 <br/>
 <sub>Fully documented and used in production at <a hrfef="https://eure.jp/"><b>Eureka, Inc.</b></a></sub><br/>
 <sub>⭐️ If you like and interested in this, give it a star on this repo! We'd like to know developer's needs. ⭐️</sub>
@@ -32,9 +32,10 @@
 
 ## Requirements
 
-* Swift 5.2 +
+* Swift 5.3 +
 * @available(iOS 10, macOS 10.13, tvOS 10, watchOS 3)
-* UIKit and SwiftUI
+* UIKit
+* SwiftUI
 
 ## Verge is NOT Flux, it's store-pattern.
 
@@ -55,14 +56,19 @@ Creating a view-model (meaning Store)
 ```swift
 final class MyViewModel: StoreComponentType {
 
+  /// 💡 The state declaration can be aslo inner-type.
   struct State {
     var name: String = ""
     var count: Int = 0
   }
 
+  /// 💡 This is basically a template statement. You might have something type of `Store`.
   let store: DefaultStore = .init(initialState: .init())
 
+  // MARK: - ✅ These are actions as well as writing methods.
+
   func myAction() {
+    // ☄️ Mutating a state
     commit {
       $0.name = "Hello, Verge"
     }
@@ -91,19 +97,41 @@ final class MyViewController: UIViewController {
 
     self.viewModel = viewModel
 
-    self.cancellable = viewModel.sinkState { [weak self] state in
+    // ✅ Start subscribing the state.
+    self.cancellable = viewModel.sinkState { [weak self] (state: Changes<MyViewModel.State>) in
       self?.update(state: state)
     }
 
   }
 
-  private func update(state: Changes<MyStore.State>) {
+  /**
+  Actually we don't need to create such as this method, but here is for better clarity in this document.  
+  */
+  private func update(state: Changes<MyViewModel.State>) {
+    
+    /**
+    💡 `Changes` is a reference-type, but it's immutable.
+    And so can not subscribe.
+    
+    Why is it a reference-type? Because it's for reducing copying cost.
+    
+    It can detect difference with previous value with it contains a previous value.
+    Which is using `.ifChanged` or `.takeIfChanged`.
+    */
 
+    /// 🥤 An example that setting the value if the target value has updated.
     state.ifChanged(\.name) { (name) in
+      // ✅ `name` has changed! Update the text.
       nameLabel.text = name
     }
-
-    state.ifChanged(\.count) { (age) in
+    
+    /// 🥤 An example that composing as a tuple to behave like RxSwift's combine latest.
+    state.ifChanged({ ($0.name, $0.count) }, ==) { (name, count) in
+      /**
+      Receives every time the tuple differs from the previous one.
+      This means it changes when anyone in the tuple changed
+      */
+      nameLabel.text = name
       countLabel.text = age.description
     }
 
