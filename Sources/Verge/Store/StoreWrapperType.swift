@@ -108,6 +108,24 @@ extension StoreComponentType {
     store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - scan: Accumulates a specified type of value over receiving updates.
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkState<Accumulate>(
+    scan: Scan<Changes<WrappedStore.State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: TargetQueue = .mainIsolated(),
+    receive: @escaping (Changes<WrappedStore.State>, Accumulate) -> Void
+  ) -> VergeAnyCancellable {
+    store.asStore().sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+  
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.

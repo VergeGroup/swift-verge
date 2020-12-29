@@ -25,48 +25,8 @@ import Foundation
 import Combine
 #endif
 
-public protocol SinkProviding: AnyObject {
-
-  associatedtype State
-
-  func sinkState(
-  dropsFirst: Bool,
-  queue: TargetQueue,
-  receive: @escaping (Changes<State>) -> Void
-  ) -> VergeAnyCancellable
-
-}
-
-extension SinkProviding {
-
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - scan: Accumulates a specified type of value over receiving updates.
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkState<Accumulate>(
-    scan: Scan<Changes<State>, Accumulate>,
-    dropsFirst: Bool = false,
-    queue: TargetQueue = .mainIsolated(),
-    receive: @escaping (Changes<State>, Accumulate) -> Void
-  ) -> VergeAnyCancellable {
-
-    sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
-
-      let accumulate = scan.accumulate(changes)
-      receive(changes, accumulate)
-    }
-
-  }
-  
-}
-
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
-public protocol StoreType: SinkProviding {
+public protocol StoreType: AnyObject {
   associatedtype State
   associatedtype Activity = Never
   
@@ -298,6 +258,30 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     }
 
     return .init(cancellable)
+
+  }
+
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - scan: Accumulates a specified type of value over receiving updates.
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkState<Accumulate>(
+    scan: Scan<Changes<State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: TargetQueue = .mainIsolated(),
+    receive: @escaping (Changes<State>, Accumulate) -> Void
+  ) -> VergeAnyCancellable {
+
+    sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+
+      let accumulate = scan.accumulate(changes)
+      receive(changes, accumulate)
+    }
 
   }
 
