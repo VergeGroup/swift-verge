@@ -9,12 +9,11 @@
 <sub>An effective state management library for iOS Application</sub><br/>
 <br/>
 <sub>Fully documented and used in production at <a hrfef="https://eure.jp/"><b>Eureka, Inc.</b></a></sub><br/>
-<sub>⭐️ If you like and interested in this, give it a star on this repo! We'd like to know developer's needs. ⭐️</sub>
 </p>
 
 <p align="center">
  <a href="https://vergegroup.github.io/Verge/">
-   <b>Please see the website</b>
+   <b>📖 Docs</b>
   </a>
   </p>
 
