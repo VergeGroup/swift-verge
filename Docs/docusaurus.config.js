@@ -1,8 +1,8 @@
 module.exports = {
   title: 'Verge - Flux for SwiftUI / UIKit',
   tagline: 'A performant flux library for iOS App - SwiftUI / UIKit',
-  url: 'https://vergegroup.github.io/Verge',
-  baseUrl: '/',
+  url: 'https://vergegroup.github.io/',
+  baseUrl: '/Verge/',
   favicon: 'img/favicon.ico',
   organizationName: 'VergeGroup',
   projectName: 'Verge',
