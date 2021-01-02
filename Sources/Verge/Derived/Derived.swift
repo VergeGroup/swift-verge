@@ -35,6 +35,9 @@ public protocol DerivedType {
 /**
  A container object that provides the current value and changes from the source Store.
 
+ This object does not know what the value managed by.
+ In most cases, `Store` will be running underlying.
+
  Derived's functions are:
  - Computes the derived data from the state tree
  - Emit the updated data with updating Store
@@ -467,7 +470,10 @@ extension Derived where Value == Any {
 }
 
 /**
- A Derived object that can writable.
+ A Derived object that can set a value.
+ By setting value, it forwards that value underlying the state store that providing value.
+ This object does not know what the value managed by.
+ In most cases, `Store` will be running underlying.
  */
 @propertyWrapper
 public final class BindingDerived<State>: Derived<State> {
@@ -483,7 +489,7 @@ public final class BindingDerived<State>: Derived<State> {
       set(newValue)
     }
   }
-  
+
   public var wrappedValue: State {
     get { primitiveValue }
     set { primitiveValue = newValue }
@@ -493,6 +499,10 @@ public final class BindingDerived<State>: Derived<State> {
     self
   }
 
+  /// Registers a condition which drops outputs.
+  ///
+  /// You might use this method when you want to get to drop outputs in some situations as additional conditions.
+  /// For example, Even dropping by Equatable, it might need to be dropped by extra value status.
   ///
   /// - Parameter postFilter: Returns the objects are equals
   /// - Returns:

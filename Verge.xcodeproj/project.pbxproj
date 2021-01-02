@@ -110,6 +110,8 @@
 		4BAF902F23A92B69004D6356 /* MiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */; };
 		4BB1F98C2465ACB900AF5F0C /* TargetQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */; };
 		4BC4896625A06B0D00AC0365 /* StoreType+Derived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC4896525A06B0D00AC0365 /* StoreType+Derived.swift */; };
+		4BC4897825A06C3400AC0365 /* StoreType+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC4897725A06C3400AC0365 /* StoreType+SwiftUI.swift */; };
+		4BC4898225A072F400AC0365 /* StoreType+BindingDerived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC4898125A072F400AC0365 /* StoreType+BindingDerived.swift */; };
 		4BC6EFAF23A8BF7800EFD688 /* OrderedIDIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFAE23A8BF7800EFD688 /* OrderedIDIndex.swift */; };
 		4BC6EFB123A8BFAF00EFD688 /* GroupByEntityIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB023A8BFAF00EFD688 /* GroupByEntityIndex.swift */; };
 		4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */; };
@@ -349,6 +351,8 @@
 		4BBFF45D24389D3D005BA03C /* Changes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Changes.swift; sourceTree = "<group>"; };
 		4BC35666249BD70B0096B15B /* Indexed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Indexed.swift; sourceTree = "<group>"; };
 		4BC4896525A06B0D00AC0365 /* StoreType+Derived.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoreType+Derived.swift"; sourceTree = "<group>"; };
+		4BC4897725A06C3400AC0365 /* StoreType+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoreType+SwiftUI.swift"; sourceTree = "<group>"; };
+		4BC4898125A072F400AC0365 /* StoreType+BindingDerived.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoreType+BindingDerived.swift"; sourceTree = "<group>"; };
 		4BC6EFAE23A8BF7800EFD688 /* OrderedIDIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedIDIndex.swift; sourceTree = "<group>"; };
 		4BC6EFB023A8BFAF00EFD688 /* GroupByEntityIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupByEntityIndex.swift; sourceTree = "<group>"; };
 		4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedIDIndexTests.swift; sourceTree = "<group>"; };
@@ -735,6 +739,8 @@
 				4B3834E024823722008A0B47 /* Store+Combine.swift */,
 				4B56AE3E2554EB1B001BA029 /* StoreType+Assignee.swift */,
 				4BC4896525A06B0D00AC0365 /* StoreType+Derived.swift */,
+				4BC4898125A072F400AC0365 /* StoreType+BindingDerived.swift */,
+				4BC4897725A06C3400AC0365 /* StoreType+SwiftUI.swift */,
 				4B2050F823D5C85B000A2779 /* MutationTrace.swift */,
 				4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */,
 				4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */,
@@ -1326,6 +1332,7 @@
 				4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */,
 				4BEA328D2591B61A0009A2DF /* Changes+Deprecated.swift in Sources */,
 				4B04C5622570875200731802 /* VergeConcurrency+SynchronizationTracker.swift in Sources */,
+				4BC4897825A06C3400AC0365 /* StoreType+SwiftUI.swift in Sources */,
 				4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */,
 				4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */,
 				4B6B77AB243FA3EC00E0C0EA /* _StateTypeContainer.swift in Sources */,
@@ -1343,6 +1350,7 @@
 				4B6B77A9243F9E5500E0C0EA /* Comparer.swift in Sources */,
 				4B04C55E2570875200731802 /* Storage.swift in Sources */,
 				4BF76681244E1B5300A5EA10 /* Derived.swift in Sources */,
+				4BC4898225A072F400AC0365 /* StoreType+BindingDerived.swift in Sources */,
 				4BE33C6924875CD800F3F2C6 /* _COWFragment.swift in Sources */,
 				4BC4896625A06B0D00AC0365 /* StoreType+Derived.swift in Sources */,
 			);
