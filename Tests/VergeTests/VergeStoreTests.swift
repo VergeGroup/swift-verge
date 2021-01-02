@@ -491,36 +491,34 @@ final class VergeStoreTests: XCTestCase {
     withExtendedLifetime(sub, {})
     
   }
-  
-  func testAsignee2() {
-    
-    final class DemoStore2: StoreWrapperType {
-      
-      typealias Activity = Never
-      
-      struct State {
-        var source: Changes<Int>
-      }
-      
-      let store: DefaultStore
-      var sub: VergeAnyCancellable? = nil
-      
-      init(sourceStore: DemoStore) {
-        
-        let d = sourceStore
-          .derived(.map(\.count), queue: .passthrough)
-        
-        self.store = .init(initialState: .init(source: d.value), logger: nil)
-        
-        sub = d.assign(to: assignee(\.source))
-        
-      }
+
+  final class DemoStoreWrapper2: StoreWrapperType {
+
+    struct State {
+      var source: Changes<Int>
     }
 
-    
+    let store: DefaultStore
+    var sub: VergeAnyCancellable? = nil
+
+    init(sourceStore: DemoStore) {
+
+      let d = sourceStore
+        .derived(.map(\.count), queue: .passthrough)
+
+      self.store = .init(initialState: .init(source: d.value), logger: nil)
+
+      sub = d.assign(to: assignee(\.source))
+
+    }
+
+  }
+  
+  func testAsignee2() {
+
     let store1 = DemoStore()
-    let store2 = DemoStore2(sourceStore: store1)
-      
+    let store2 = DemoStoreWrapper2(sourceStore: store1)
+
     store1.commit {
       $0.count += 1
     }

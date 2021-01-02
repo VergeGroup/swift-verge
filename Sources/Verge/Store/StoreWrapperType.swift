@@ -125,7 +125,7 @@ extension StoreComponentType {
   ) -> VergeAnyCancellable {
     store.asStore().sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
-
+  
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.

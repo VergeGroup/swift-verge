@@ -21,24 +21,65 @@
 
 import Foundation
 
+// It would be renamed as StoreContextType
 public protocol DispatcherType {
-    
   associatedtype WrappedStore: StoreType
   associatedtype Scope = WrappedStore.State
-    
+
   var store: WrappedStore { get }
   var scope: WritableKeyPath<WrappedStore.State, Scope> { get }
-  
 }
 
 extension DispatcherType where Scope == WrappedStore.State {
-  
-   public var scope: WritableKeyPath<WrappedStore.State, WrappedStore.State> { \WrappedStore.State.self }
-  
+  public var scope: WritableKeyPath<WrappedStore.State, WrappedStore.State> {
+    \WrappedStore.State.self
+  }
 }
 
 extension DispatcherType {
-  
+  /**
+    Subscribe the state that scoped
+
+    First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+
+    - Parameters:
+      - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+      - queue: Specify a queue to receive changes object.
+    - Returns: A subscriber that performs the provided closure upon receiving values.
+   */
+  public func sinkState(
+    dropsFirst: Bool = false,
+    queue: TargetQueue = .mainIsolated(),
+    receive: @escaping (Changes<Scope>) -> Void
+  ) -> VergeAnyCancellable {
+    let _scope = scope
+
+    return store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue) { state in
+      receive(state.map { $0[keyPath: _scope] })
+    }
+  }
+
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - scan: Accumulates a specified type of value over receiving updates.
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkState<Accumulate>(
+    scan: Scan<Changes<Scope>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: TargetQueue = .mainIsolated(),
+    receive: @escaping (Changes<Scope>, Accumulate) -> Void
+  ) -> VergeAnyCancellable {
+    sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+      let accumulate = scan.accumulate(changes)
+      receive(changes, accumulate)
+    }
+  }
+
   /// Send activity
   /// - Parameter activity:
   public func send(
@@ -54,10 +95,10 @@ extension DispatcherType {
       function: function.description,
       line: line
     )
-    
+
     store.asStore()._send(activity: activity, trace: trace)
   }
-        
+
   /// Send activity
   /// - Parameter activity:
   public func send(
@@ -68,7 +109,7 @@ extension DispatcherType {
   ) {
     send("", activity, file, function, line)
   }
-        
+
   /// Run Mutation that created inline
   ///
   /// Throwable
@@ -79,18 +120,17 @@ extension DispatcherType {
     _ line: UInt = #line,
     mutation: (inout InoutRef<Scope>) throws -> Result
   ) rethrows -> Result {
-    
     let trace = MutationTrace(
       name: name,
       file: file,
       function: function,
       line: line
     )
-    
+
     return try store.asStore()._receive(
       mutation: { state -> Result in
         try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
-          return try mutation(&ref)
+          try mutation(&ref)
         }
       },
       trace: trace
@@ -107,7 +147,6 @@ extension DispatcherType {
     _ line: UInt = #line,
     mutation: (inout InoutRef<Scope>) throws -> Result
   ) rethrows -> Result where Scope == WrappedStore.State {
-
     let trace = MutationTrace(
       name: name,
       file: file,
@@ -122,7 +161,7 @@ extension DispatcherType {
       trace: trace
     )
   }
-      
+
   /// Run Mutation that created inline
   ///
   /// Throwable
@@ -134,24 +173,22 @@ extension DispatcherType {
     scope: WritableKeyPath<WrappedStore.State, NewScope>,
     mutation: (inout InoutRef<NewScope>) throws -> Result
   ) rethrows -> Result {
-    
     let trace = MutationTrace(
       name: name,
       file: file,
       function: function,
       line: line
     )
-    
+
     return try store.asStore()._receive(
       mutation: { state -> Result in
         try state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>) -> Result in
-          return try mutation(&ref)
+          try mutation(&ref)
         }
-    },
+      },
       trace: trace
     )
   }
-
 
   /// Run Mutation that created inline
   ///
@@ -164,7 +201,6 @@ extension DispatcherType {
     scope: WritableKeyPath<WrappedStore.State, NewScope?>,
     mutation: (inout InoutRef<NewScope>?) throws -> Result
   ) rethrows -> Result {
-
     let trace = MutationTrace(
       name: name,
       file: file,
@@ -175,19 +211,20 @@ extension DispatcherType {
     return try store.asStore()._receive(
       mutation: { state -> Result in
         try state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>?) -> Result in
-          return try mutation(&ref)
+          try mutation(&ref)
         }
       },
       trace: trace
     )
   }
-  
-  public func detached<NewScope>(from newScope: WritableKeyPath<WrappedStore.State, NewScope>) -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
+
+  public func detached<NewScope>(from newScope: WritableKeyPath<WrappedStore.State, NewScope>)
+  -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
     .init(targetStore: store.asStore(), scope: newScope)
   }
-  
-  public func detached<NewScope>(by appendingScope: WritableKeyPath<Scope, NewScope>) -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
-    .init(targetStore: store.asStore(), scope: self.scope.appending(path: appendingScope))
+
+  public func detached<NewScope>(by appendingScope: WritableKeyPath<Scope, NewScope>)
+  -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
+    .init(targetStore: store.asStore(), scope: scope.appending(path: appendingScope))
   }
-    
 }
