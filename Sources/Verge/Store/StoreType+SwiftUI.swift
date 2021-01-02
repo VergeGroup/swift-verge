@@ -21,7 +21,7 @@
 
 import Foundation
 
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && canImport(Combine)
 
 import SwiftUI
 
