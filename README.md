@@ -158,13 +158,15 @@ final class MyViewController: UIViewController {
 ```swift
 struct MyView: View {
 
-  let viewModel: MyViewModel
-  
+  let store: MyViewModel
+
   var body: some View {
-    StateReader(viewModel).content { state in
-      VStack {
-        Text(state.name)
-        Text(state.count.description)
+    StateReader(store).content { state in
+      Text(state.name)
+      Button(action: {
+        self.store.myAction()
+      }) {
+        Text("Action")
       }
     }
   }
