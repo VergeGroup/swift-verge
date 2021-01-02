@@ -155,6 +155,9 @@ final class MyViewController: UIViewController {
 
 - [ ] WIP Writing up
 
+## Supports Integrating with RxSwift
+
+
 ## What differences between Flux library are
 
 'store-pattern' is the core-concept of Flux.
