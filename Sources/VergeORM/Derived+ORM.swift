@@ -100,11 +100,11 @@ extension NonNullEntityWrapper: Hashable where Entity: Hashable {
   
 }
 
-extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding {
+extension Pipeline where Input : ChangesType, Input.Value : DatabaseEmbedding {
 
   /// Returns a MemoizeMap value that optimized for looking entity up from the database.
   @inline(__always)
-  fileprivate static func _makeEntityQuery<Entity: EntityType>(entityID: Entity.EntityID) -> MemoizeMap<Input, EntityWrapper<Entity>> {
+  fileprivate static func _makeEntityQuery<Entity: EntityType>(entityID: Entity.EntityID) -> Pipeline<Input, EntityWrapper<Entity>> {
     
     let path = Input.Value.getterToDatabase
     
@@ -120,7 +120,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
       Comparer<Input.Value.Database>.changesNoContains(entityID),
     ])
       
-    return MemoizeMap<Input, EntityWrapper<Entity>>(
+    return Pipeline<Input, EntityWrapper<Entity>>(
       makeInitial: { state in
         EntityWrapper<Entity>(
           id: entityID,
@@ -137,12 +137,12 @@ extension MemoizeMap where Input : ChangesType, Input.Value : DatabaseEmbedding 
         )
         
         guard hasChanges else {
-          return .noChanages
+          return .noUpdates
         }
 
         /** Queries an entity */
         let entity = path(state.primitive).entities.table(Entity.self).find(by: entityID)
-        return .updated(EntityWrapper<Entity>(id: entityID, entity: entity))
+        return .new(EntityWrapper<Entity>(id: entityID, entity: entity))
     })
   }
   
@@ -637,7 +637,7 @@ extension StoreType where State : DatabaseEmbedding {
       /** And more we need */
     ])
 
-    let memoizeMap = MemoizeMap<Changes<State>, [Entity.Derived]>(
+    let pipeline = Pipeline<Changes<State>, [Entity.Derived]>(
       makeInitial: { (state: Changes<State>) in
         
         let db = path(state.primitive)
@@ -655,7 +655,7 @@ extension StoreType where State : DatabaseEmbedding {
         let changes = state.asChanges()
 
         guard changes.hasChanges({ path($0.primitive) }, noChangesComparer) else {
-          return .noChanages
+          return .noUpdates
         }
 
         let _derivedArray = changes.takeIfChanged({ state -> [Entity.Derived] in
@@ -672,15 +672,15 @@ extension StoreType where State : DatabaseEmbedding {
         }, .init(==))
 
         guard let derivedArray = _derivedArray else {
-          return .noChanages
+          return .noUpdates
         }
 
-        return .updated(derivedArray)
+        return .new(derivedArray)
 
       }
     )
     
-    let d = derived(memoizeMap)
+    let d = derived(pipeline)
     d.associate(storage)
     return d
   }

@@ -25,13 +25,13 @@ extension StoreType {
 
   /// Creates an instance of Derived
   private func _makeDerived<NewState>(
-    _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
+    _ pipeline: Pipeline<Changes<State>, NewState>,
     queue: TargetQueue
   ) -> Derived<NewState> {
 
     vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
     let derived = Derived<NewState>(
-      get: memoizeMap,
+      get: pipeline,
       set: { _ in
 
       },
@@ -51,21 +51,21 @@ extension StoreType {
   ///
   /// - Complexity: 💡 It's better to set `dropsOutput` predicate.
   /// - Parameter
-  ///   - memoizeMap:
+  ///   - pipeline:
   ///   - dropsOutput: Predicate to drops object if found a duplicated output
   /// - Returns: Derived object that cached depends on the specified parameters
   public func derived<NewState>(
-    _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
+    _ pipeline: Pipeline<Changes<State>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
     queue: TargetQueue = .passthrough
   ) -> Derived<NewState> {
 
     let derived = asStore().derivedCache2.withValue { cache -> Derived<NewState> in
 
-      let identifier = "\(memoizeMap.identifier)\(ObjectIdentifier(queue))" as NSString
+      let identifier = "\(pipeline.identifier)\(ObjectIdentifier(queue))" as NSString
 
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
-        let instance = _makeDerived(memoizeMap, queue: queue)
+        let instance = _makeDerived(pipeline, queue: queue)
         cache.setObject(instance, forKey: identifier)
         return instance
       }
@@ -91,19 +91,19 @@ extension StoreType {
   ///
   /// - Complexity: ✅ Drops duplicated the output with Equatable comparison.
   ///
-  /// - Parameter memoizeMap:
+  /// - Parameter pipeline:
   /// - Returns: Derived object that cached depends on the specified parameters
   public func derived<NewState: Equatable>(
-    _ memoizeMap: MemoizeMap<Changes<State>, NewState>,
+    _ pipeline: Pipeline<Changes<State>, NewState>,
     queue: TargetQueue = .passthrough
   ) -> Derived<NewState> {
 
     return asStore().derivedCache1.withValue { cache in
 
-      let identifier = "\(memoizeMap.identifier)\(ObjectIdentifier(queue))" as NSString
+      let identifier = "\(pipeline.identifier)\(ObjectIdentifier(queue))" as NSString
 
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
-        let instance = _makeDerived(memoizeMap, queue: queue)
+        let instance = _makeDerived(pipeline, queue: queue)
           .removeDuplicates(by: {
             $0.asChanges().noChanges(\.root)
           })
