@@ -34,7 +34,7 @@
 		4B1743AC23C767670074C457 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; };
 		4B1743B323C767D90074C457 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B17438F23C766D70074C457 /* VergeRx.framework */; };
 		4B186CBD2461474E00A0611F /* ReflectingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B186CBC2461474E00A0611F /* ReflectingTests.swift */; };
-		4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */; };
+		4B1BE8E5244F28050077DB66 /* Pipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1BE8E4244F28050077DB66 /* Pipeline.swift */; };
 		4B1F19C1243A82BC00CED46B /* StateType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B68394F237062F7002FFC5A /* StateType.swift */; };
 		4B1F19C2243A82BC00CED46B /* Changes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBFF45D24389D3D005BA03C /* Changes.swift */; };
 		4B1F19C4243A88A000CED46B /* ComputedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1F19C3243A88A000CED46B /* ComputedTests.swift */; };
@@ -112,6 +112,7 @@
 		4BC4896625A06B0D00AC0365 /* StoreType+Derived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC4896525A06B0D00AC0365 /* StoreType+Derived.swift */; };
 		4BC4897825A06C3400AC0365 /* StoreType+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC4897725A06C3400AC0365 /* StoreType+SwiftUI.swift */; };
 		4BC4898225A072F400AC0365 /* StoreType+BindingDerived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC4898125A072F400AC0365 /* StoreType+BindingDerived.swift */; };
+		4BC489A425A07A9700AC0365 /* KeyPathIdentifierStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC489A325A07A9700AC0365 /* KeyPathIdentifierStoreTests.swift */; };
 		4BC6EFAF23A8BF7800EFD688 /* OrderedIDIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFAE23A8BF7800EFD688 /* OrderedIDIndex.swift */; };
 		4BC6EFB123A8BFAF00EFD688 /* GroupByEntityIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB023A8BFAF00EFD688 /* GroupByEntityIndex.swift */; };
 		4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */; };
@@ -252,7 +253,7 @@
 		4B1743A923C767670074C457 /* VergeRxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeRxTests.swift; sourceTree = "<group>"; };
 		4B1743AB23C767670074C457 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B186CBC2461474E00A0611F /* ReflectingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflectingTests.swift; sourceTree = "<group>"; };
-		4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoizeMap.swift; sourceTree = "<group>"; };
+		4B1BE8E4244F28050077DB66 /* Pipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pipeline.swift; sourceTree = "<group>"; };
 		4B1F19C3243A88A000CED46B /* ComputedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputedTests.swift; sourceTree = "<group>"; };
 		4B2050F623D5C841000A2779 /* StoreLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreLogger.swift; sourceTree = "<group>"; };
 		4B2050F823D5C85B000A2779 /* MutationTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationTrace.swift; sourceTree = "<group>"; };
@@ -353,6 +354,7 @@
 		4BC4896525A06B0D00AC0365 /* StoreType+Derived.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoreType+Derived.swift"; sourceTree = "<group>"; };
 		4BC4897725A06C3400AC0365 /* StoreType+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoreType+SwiftUI.swift"; sourceTree = "<group>"; };
 		4BC4898125A072F400AC0365 /* StoreType+BindingDerived.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoreType+BindingDerived.swift"; sourceTree = "<group>"; };
+		4BC489A325A07A9700AC0365 /* KeyPathIdentifierStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPathIdentifierStoreTests.swift; sourceTree = "<group>"; };
 		4BC6EFAE23A8BF7800EFD688 /* OrderedIDIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedIDIndex.swift; sourceTree = "<group>"; };
 		4BC6EFB023A8BFAF00EFD688 /* GroupByEntityIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupByEntityIndex.swift; sourceTree = "<group>"; };
 		4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedIDIndexTests.swift; sourceTree = "<group>"; };
@@ -649,6 +651,7 @@
 				4B44F092252E209600BC0495 /* StateReaderTests.swift */,
 				4B2240A12576431E001BCB93 /* MemoizeMapTests.swift */,
 				4B654BF025869A3300F5AEA4 /* EdgeTests.swift */,
+				4BC489A325A07A9700AC0365 /* KeyPathIdentifierStoreTests.swift */,
 			);
 			path = VergeTests;
 			sourceTree = "<group>";
@@ -755,7 +758,7 @@
 				4B8EB4F823C034A900035B2A /* Comparer.swift */,
 				4BCE3038246AAD6800D35557 /* Scan.swift */,
 				4BDB78212447934A00675D03 /* StoreWrapperType.swift */,
-				4B1BE8E4244F28050077DB66 /* MemoizeMap.swift */,
+				4B1BE8E4244F28050077DB66 /* Pipeline.swift */,
 				4BE33C6824875CD800F3F2C6 /* _COWFragment.swift */,
 				4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */,
 				4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */,
@@ -1286,6 +1289,7 @@
 				4B95BE5A244F10F200124F6B /* DemoState.swift in Sources */,
 				4B04C4FC257086D900731802 /* EventEmitterTests.swift in Sources */,
 				4B9DD6B924CB6B0C0062FB7A /* CachedMapTests.swift in Sources */,
+				4BC489A425A07A9700AC0365 /* KeyPathIdentifierStoreTests.swift in Sources */,
 				4B2240A22576431E001BCB93 /* MemoizeMapTests.swift in Sources */,
 				4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */,
 				4B93C875247A523500372BC4 /* SyntaxTests.swift in Sources */,
@@ -1317,7 +1321,7 @@
 				4B6F6F3A24521F1E00B6CC3A /* NonAtomicVersionCounter.swift in Sources */,
 				4B6F6F3924521F1E00B6CC3A /* Edge.swift in Sources */,
 				4B04C5642570875200731802 /* VergeConcurrency.swift in Sources */,
-				4B1BE8E5244F28050077DB66 /* MemoizeMap.swift in Sources */,
+				4B1BE8E5244F28050077DB66 /* Pipeline.swift in Sources */,
 				4BCBCA8D2381CC2B00F33B15 /* DetachedDispatcher.swift in Sources */,
 				4B3834DF248235AD008A0B47 /* _VergeObservableObjectBase.swift in Sources */,
 				4B04C5652570875200731802 /* CachedMap.swift in Sources */,

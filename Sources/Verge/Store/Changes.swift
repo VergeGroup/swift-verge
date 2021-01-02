@@ -582,15 +582,15 @@ extension Changes where Value: ExtendedStateType {
 
             components._onHitPreviousCache()
 
-            switch components.memoizeMap.makeResult(self) {
-            case .noChanages:
+            switch components.pipeline.makeResult(self) {
+            case .noUpdates:
 
               // No changes
               components._onHitPreFilter()
               cache[keyPath] = previousCachedValue
               return previousCachedValue
 
-            case let .updated(newValue):
+            case let .new(newValue):
 
               // Update
               components._onTransform()
@@ -605,7 +605,7 @@ extension Changes where Value: ExtendedStateType {
 
             components._onTransform()
 
-            let initialValue = components.memoizeMap.makeInitial(self)
+            let initialValue = components.pipeline.makeInitial(self)
             cache[keyPath] = initialValue
             return initialValue
           }
@@ -619,7 +619,7 @@ extension Changes where Value: ExtendedStateType {
 
         components._onTransform()
 
-        let initialValue = components.memoizeMap.makeInitial(self)
+        let initialValue = components.pipeline.makeInitial(self)
         cache[keyPath] = initialValue
         return initialValue
       }
@@ -749,18 +749,18 @@ extension _StateTypeContainer {
     fileprivate(set) var _onTransform: () -> Void = {}
 
     @usableFromInline
-    let memoizeMap: MemoizeMap<Input, Output>
+    let pipeline: Pipeline<Input, Output>
 
     @usableFromInline
-    init(_ filterMap: MemoizeMap<Input, Output>) {
-      memoizeMap = filterMap
+    init(_ pipeline: Pipeline<Input, Output>) {
+      self.pipeline = pipeline
     }
 
     public init(
       makeInitial: @escaping (Input) -> Output,
-      update: @escaping (Input) -> MemoizeMap<Input, Output>.Result
+      update: @escaping (Input) -> Pipeline<Input, Output>.ContinuousResult
     ) {
-      self.init(MemoizeMap<Input, Output>.init(makeInitial: makeInitial, update: update))
+      self.init(Pipeline<Input, Output>.init(makeInitial: makeInitial, update: update))
     }
 
     public init(_ compute: @escaping (Input) -> Output) {
@@ -813,9 +813,9 @@ extension _StateTypeContainer {
 
     @inlinable
     @inline(__always)
-    public func modified(_ modifier: (MemoizeMap<Input, Output>) -> MemoizeMap<Input, Output>)
+    public func modified(_ modifier: (Pipeline<Input, Output>) -> Pipeline<Input, Output>)
     -> Self {
-      .init(modifier(memoizeMap))
+      .init(modifier(pipeline))
     }
 
     /**

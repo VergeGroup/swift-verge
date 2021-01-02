@@ -37,7 +37,7 @@ extension StoreType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    get: MemoizeMap<Changes<State>, NewState>,
+    get: Pipeline<Changes<State>, NewState>,
     dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
     set: @escaping (inout InoutRef<State>, NewState) -> Void,
     queue: TargetQueue = .passthrough
@@ -77,7 +77,7 @@ extension StoreType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    get: MemoizeMap<Changes<State>, NewState>,
+    get: Pipeline<Changes<State>, NewState>,
     set: @escaping (inout InoutRef<State>, NewState) -> Void,
     queue: TargetQueue = .passthrough
   ) -> BindingDerived<NewState> where NewState : Equatable {

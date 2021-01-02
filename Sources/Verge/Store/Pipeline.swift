@@ -21,42 +21,53 @@
 
 import Foundation
 
-#if !COCOAPODS
-#endif
+@available(*, deprecated, renamed: "Pipeline")
+public typealias MemoizeMap<Input, Output> = Pipeline<Input, Output>
 
 fileprivate let counter = VergeConcurrency.AtomicInt(initialValue: 0)
 
 /**
- `MemoizeMap` manages to transform value from the state and keep performance that way of drops transform operations if the input value no changes.
+ A handler that how receives and provides value.
 
- */
-/// A pipeline object to make derived data from the source store.
-/// It supports Memoization
-///
-public struct MemoizeMap<Input, Output>: Equatable {
+ inputs value: Input -> Pipeline -> Pipeline.Result
+ inputs value initially: -> Pipeline -> Output
+*/
+public struct Pipeline<Input, Output>: Equatable {
 
-  public static func == (lhs: MemoizeMap<Input, Output>, rhs: MemoizeMap<Input, Output>) -> Bool {
+  public static func == (lhs: Pipeline<Input, Output>, rhs: Pipeline<Input, Output>) -> Bool {
     lhs.identifier == rhs.identifier
   }
 
-  public enum Result {
-    case updated(Output)
-    case noChanages
+  public enum ContinuousResult {
+    case new(Output)
+    case noUpdates
   }
-    
-  private let _makeInitial: (Input) -> Output
-  private var _dropInput: (Input) -> Bool
-  private var _update: (Input) -> Result
-  
+
+  // MARK: - Properties
+
+  /*
+   Properties should be `let` because to avoid mutating value with using the same identifier under the manager does not know that.
+   */
+
+  private let _makeOutput: (Input) -> Output
+  private let _makeContinousOutput: (Input) -> ContinuousResult
+  private let _dropInput: (Input) -> Bool
+  private let _onBackwarded: ((Output) -> Void)?
+
+  /**
+   An identifier to be used from Derived to use the same instance if Pipeline is same.   
+   */
   fileprivate(set) var identifier: Int = counter.getAndIncrement()
+
+  // MARK: - Initializers
     
   @_disfavoredOverload
   public init(
     makeInitial: @escaping (Input) -> Output,
-    update: @escaping (Input) -> Result
+    update: @escaping (Input) -> ContinuousResult
   ) {
     
-    self.init(makeInitial: makeInitial, dropInput: { _ in false }, update: update)
+    self.init(makeOutput: makeInitial, dropInput: { _ in false }, makeContinuousOutput: update)
   }
   
   public init(
@@ -64,43 +75,51 @@ public struct MemoizeMap<Input, Output>: Equatable {
   ) {
     self.init(dropInput: { _ in false }, map: map)
   }
-    
-  private init(
-    makeInitial: @escaping (Input) -> Output,
-    dropInput: @escaping (Input) -> Bool,
-    update: @escaping (Input) -> Result
-  ) {
-    
-    self._makeInitial = makeInitial
-    self._dropInput = dropInput
-    self._update = { input in
-      guard !dropInput(input) else {
-        return .noChanages
-      }
-      return update(input)
-    }
-  }
-    
+
   public init(
     dropInput: @escaping (Input) -> Bool,
     map: @escaping (Input) -> Output
   ) {
-    
+
     self.init(
-      makeInitial: map,
+      makeOutput: map,
       dropInput: dropInput,
-      update: { .updated(map($0)) }
+      makeContinuousOutput: { .new(map($0)) }
     )
   }
-  
-  public func makeResult(_ source: Input) -> Result {
-    _update(source)
+
+  /// The primitive initializer
+  private init(
+    makeOutput: @escaping (Input) -> Output,
+    dropInput: @escaping (Input) -> Bool,
+    makeContinuousOutput: @escaping (Input) -> ContinuousResult,
+    onBackwarded: ((Output) -> Void)? = nil
+  ) {
+
+    self._onBackwarded = onBackwarded
+    self._makeOutput = makeOutput
+    self._dropInput = dropInput
+    self._makeContinousOutput = { input in
+      guard !dropInput(input) else {
+        return .noUpdates
+      }
+      return makeContinuousOutput(input)
+    }
   }
-  
+
+  // MARK: - Functions
+
+
+  // TODO: Rename `makeContinuousOutput`
+  public func makeResult(_ source: Input) -> ContinuousResult {
+    _makeContinousOutput(source)
+  }
+
+  // TODO: Rename `makeOutput`
   public func makeInitial(_ source: Input) -> Output {
-    _makeInitial(source)
+    _makeOutput(source)
   }
-    
+
   /// Tune memoization logic up.
   ///
   /// - Parameter predicate: Return true, the coming input would be dropped.
@@ -109,7 +128,7 @@ public struct MemoizeMap<Input, Output>: Equatable {
     while predicate: @escaping (Input) -> Bool
   ) -> Self {
     Self.init(
-      makeInitial: _makeInitial,
+      makeOutput: _makeOutput,
       dropInput: { [_dropInput] input in
         guard !_dropInput(input) else {
           return true
@@ -119,13 +138,21 @@ public struct MemoizeMap<Input, Output>: Equatable {
         }
         return false
       },
-      update: _update
+      makeContinuousOutput: _makeContinousOutput
     )
+  }
+
+  func _backward(_ output: Output) {
+    guard let closure = _onBackwarded else {
+      assertionFailure("Unsupported backward output while not registered the `onBackward` closure.")
+      return
+    }
+    closure(output)
   }
    
 }
 
-extension MemoizeMap where Input : ChangesType {
+extension Pipeline where Input : ChangesType {
   
   /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
   ///
@@ -133,7 +160,7 @@ extension MemoizeMap where Input : ChangesType {
   /// - Parameter map:
   /// - Returns:
   @available(*, renamed: "map(edge:)")
-  public static func map<_Edge: EdgeType>(_ map: @escaping (Input) -> _Edge) -> MemoizeMap<Input, _Edge.State> where Output == _Edge.State {
+  public static func map<_Edge: EdgeType>(_ map: @escaping (Input) -> _Edge) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
     .map(edge: map)
   }
 
@@ -142,7 +169,7 @@ extension MemoizeMap where Input : ChangesType {
   /// - Complexity: ✅ Active Memoization with Fragment's version
   /// - Parameter map:
   /// - Returns:
-  public static func map<_Edge: EdgeType>(edge map: @escaping (Input) -> _Edge) -> MemoizeMap<Input, _Edge.State> where Output == _Edge.State {
+  public static func map<_Edge: EdgeType>(edge map: @escaping (Input) -> _Edge) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
 
     return .init(
       makeInitial: {
@@ -152,14 +179,14 @@ extension MemoizeMap where Input : ChangesType {
       }, update: { changes in
 
         guard let previous = changes.previous else {
-          return .updated(map(changes).wrappedValue)
+          return .new(map(changes).wrappedValue)
         }
 
         guard map(changes).version != map(previous).version else {
-          return .noChanages
+          return .noUpdates
         }
 
-        return .updated(map(changes).wrappedValue)
+        return .new(map(changes).wrappedValue)
 
       })
   }
@@ -170,7 +197,7 @@ extension MemoizeMap where Input : ChangesType {
   /// - Parameter map:
   /// - Returns:
   @available(*, renamed: "map(edge:)")
-  public static func map<_Edge: EdgeType>(_ keyPath: KeyPath<Input, _Edge>) -> MemoizeMap<Input, _Edge.State> where Output == _Edge.State {
+  public static func map<_Edge: EdgeType>(_ keyPath: KeyPath<Input, _Edge>) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
     .map(edge: keyPath)
   }
 
@@ -179,14 +206,14 @@ extension MemoizeMap where Input : ChangesType {
   /// - Complexity: ✅ Active Memoization with Fragment's version
   /// - Parameter map:
   /// - Returns:
-  public static func map<_Edge: EdgeType>(edge keyPath: KeyPath<Input, _Edge>) -> MemoizeMap<Input, _Edge.State> where Output == _Edge.State {
+  public static func map<_Edge: EdgeType>(edge keyPath: KeyPath<Input, _Edge>) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
 
-    var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
+    var instance = Pipeline.map({ $0[keyPath: keyPath] })
 
-    Static.modify(
+    Static.modifyIdentifier(
       on: Static.cache1,
       for: &instance,
-      key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+      keyPath: keyPath
     )
 
     return instance
@@ -198,7 +225,7 @@ extension MemoizeMap where Input : ChangesType {
   ///
   /// - Parameter map:
   /// - Returns:
-  public static func map(_ map: @escaping (Input) -> Output) -> MemoizeMap<Input, Output> {
+  public static func map(_ map: @escaping (Input) -> Output) -> Pipeline<Input, Output> {
     .init(map: map)
   }
   
@@ -208,14 +235,14 @@ extension MemoizeMap where Input : ChangesType {
   ///
   /// - Parameter map:
   /// - Returns:
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> MemoizeMap<Input, Output> {
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> {
     
     var instance = map({ $0[keyPath: keyPath] })
     
-    Static.modify(
+    Static.modifyIdentifier(
       on: Static.cache4,
       for: &instance,
-      key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+      keyPath: keyPath
     )
     
     return instance
@@ -234,7 +261,7 @@ extension MemoizeMap where Input : ChangesType {
     derive: @escaping (Changes<Input.Value>) -> Derived,
     dropsDerived: @escaping (Derived, Derived) -> Bool,
     compute: @escaping (Derived) -> Output
-  ) -> MemoizeMap<Input, Output> {
+  ) -> Pipeline<Input, Output> {
 
     .init(
       makeInitial: { input in
@@ -247,9 +274,9 @@ extension MemoizeMap where Input : ChangesType {
 
       switch result {
       case .none:
-        return .noChanages
+        return .noUpdates
       case .some(let wrapped):
-        return .updated(wrapped)
+        return .new(wrapped)
       }
     }
   }
@@ -264,24 +291,24 @@ extension MemoizeMap where Input : ChangesType {
   public static func map<Derived: Equatable>(
     derive: @escaping (Changes<Input.Value>) -> Derived,
     compute: @escaping (Derived) -> Output
-  ) -> MemoizeMap<Input, Output> {
+  ) -> Pipeline<Input, Output> {
 
     self.map(derive: derive, dropsDerived: ==, compute: compute)
   }
   
 }
 
-extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
+extension Pipeline where Input : ChangesType, Input.Value : Equatable {
   
   public init(
     makeInitial: @escaping (Input) -> Output,
-    update: @escaping (Input) -> Result
+    update: @escaping (Input) -> ContinuousResult
   ) {
     
     self.init(
-      makeInitial: { makeInitial($0) },
+      makeOutput: { makeInitial($0) },
       dropInput: { $0.asChanges().noChanges(\.root) },
-      update: { update($0) }
+      makeContinuousOutput: { update($0) }
     )
     
   }
@@ -295,9 +322,9 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   ) {
     
     self.init(
-      makeInitial: map,
+      makeOutput: map,
       dropInput: { $0.asChanges().noChanges(\.root) },
-      update: { .updated(map($0)) }
+      makeContinuousOutput: { .new(map($0)) }
     )
   }
   
@@ -305,7 +332,7 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   ///
   /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
-  public static func map(_ map: @escaping (Input) -> Output) -> MemoizeMap<Input, Output> {
+  public static func map(_ map: @escaping (Input) -> Output) -> Pipeline<Input, Output> {
     .init(map: map)
   }
   
@@ -313,20 +340,20 @@ extension MemoizeMap where Input : ChangesType, Input.Value : Equatable {
   ///
   /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> MemoizeMap<Input, Output> {
-    var instance = MemoizeMap.map({ $0[keyPath: keyPath] })
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> {
+    var instance = Pipeline.map({ $0[keyPath: keyPath] })
         
-    Static.modify(
+    Static.modifyIdentifier(
       on: Static.cache2,
       for: &instance,
-      key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+      keyPath: keyPath
     )
     
     return instance
   }
 }
 
-extension MemoizeMap {
+extension Pipeline {
 
   /// Projects a specified shape from Input.
   ///
@@ -348,10 +375,10 @@ extension MemoizeMap {
 
     var instance = map({ $0[keyPath: keyPath] })
 
-    Static.modify(
+    Static.modifyIdentifier(
       on: Static.cache3,
       for: &instance,
-      key: KeyPathIdentifierStore.getLocalIdentifier(keyPath)
+      keyPath: keyPath
     )
 
     return instance
@@ -380,6 +407,14 @@ enum KeyPathIdentifierStore {
   
 }
 
+extension AnyKeyPath {
+
+  fileprivate func _getIdentifier() -> Int {
+    KeyPathIdentifierStore.getLocalIdentifier(self)
+  }
+
+}
+
 fileprivate enum Static {
   
   static var cache1: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
@@ -387,20 +422,20 @@ fileprivate enum Static {
   static var cache3: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
   static var cache4: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
   
-  static func modify<I, O>(
+  static func modifyIdentifier<I, O>(
     on storage: VergeConcurrency.RecursiveLockAtomic<[String : Int]>,
-    for memoizeMap: inout MemoizeMap<I, O>,
-    key: Int
+    for pipeline: inout Pipeline<I, O>,
+    keyPath: AnyKeyPath
   ) {
     
     storage.modify { cache in
       
-      let combinedKey = "\(ObjectIdentifier(I.self))\(ObjectIdentifier(O.self))\(key)"
+      let combinedKey = "\(ObjectIdentifier(I.self))\(ObjectIdentifier(O.self))\(keyPath._getIdentifier())"
       
       if let id = cache[combinedKey] {
-        memoizeMap.identifier = id
+        pipeline.identifier = id
       } else {
-        cache[combinedKey] = memoizeMap.identifier
+        cache[combinedKey] = pipeline.identifier
       }
     }
   }

@@ -114,7 +114,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
   ///   - retainsUpstream: Any instances to retain in this instance.
   public init<UpstreamState>(
-    get: MemoizeMap<UpstreamState, Value>,
+    get: Pipeline<UpstreamState, Value>,
     set: ((Value) -> Void)?,
     initialUpstreamState: UpstreamState,
     subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
@@ -126,9 +126,9 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
     let s = subscribeUpstreamState { [weak store] value in
       let update = get.makeResult(value)
       switch update {
-      case .noChanages:
+      case .noUpdates:
         break
-      case .updated(let newState):
+      case .new(let newState):
         store?.commit {
           $0.replace(with: newState)
         }
@@ -214,7 +214,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   }
 
   fileprivate func _makeChain<NewState>(
-    _ map: MemoizeMap<Changes<Value>, NewState>,
+    _ map: Pipeline<Changes<Value>, NewState>,
     queue: TargetQueue
   ) -> Derived<NewState> {
     
@@ -225,8 +225,8 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
         map.makeInitial($0)
       }, update: {
         switch map.makeResult($0) {
-        case .noChanages: return .noChanages
-        case .updated(let s): return .updated(s)
+        case .noUpdates: return .noUpdates
+        case .new(let s): return .new(s)
         }
       }),
       set: { _ in },
@@ -253,7 +253,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   ///   - dropsOutput: a condition to drop a duplicated(no-changes) object. (Default: no drops)
   /// - Returns: Derived object that cached depends on the specified parameters
   public func chain<NewState>(
-    _ map: MemoizeMap<Changes<Value>, NewState>,
+    _ map: Pipeline<Changes<Value>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
     queue: TargetQueue = .passthrough
     ) -> Derived<NewState> {
@@ -289,7 +289,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   ///   - map:
   /// - Returns: Derived object that cached depends on the specified parameters
   public func chain<NewState: Equatable>(
-    _ map: MemoizeMap<Changes<Value>, NewState>,
+    _ map: Pipeline<Changes<Value>, NewState>,
     queue: TargetQueue = .passthrough
   ) -> Derived<NewState> {
     
@@ -381,7 +381,7 @@ extension Derived where Value == Any {
     let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
     return Derived<Shape>(
-      get: MemoizeMap<Shape, Shape>.init(map: { $0 }),
+      get: Pipeline<Shape, Shape>.init(map: { $0 }),
       set: { _, _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
@@ -429,7 +429,7 @@ extension Derived where Value == Any {
     let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
     return Derived<Shape>(
-      get: MemoizeMap<Shape, Shape>.init(map: { $0 }),
+      get: Pipeline<Shape, Shape>.init(map: { $0 }),
       set: { _, _, _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in

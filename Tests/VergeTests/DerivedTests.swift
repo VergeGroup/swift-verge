@@ -368,7 +368,7 @@ final class DerivedCacheTests: XCTestCase {
     
     XCTAssert(store1.derived(.map { $0.count }) !== store1.derived(.map { $0.count }))
    
-    let map = MemoizeMap<Changes<DemoState>, Int>.map { $0.count }
+    let map = Pipeline<Changes<DemoState>, Int>.map { $0.count }
     
     XCTAssert(store1.derived(map) === store1.derived(map))
 
