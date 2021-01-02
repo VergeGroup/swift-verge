@@ -24,9 +24,9 @@ Pod::Spec.new do |s|
   s.weak_frameworks = ["Combine", "SwiftUI"]
 
   s.subspec "Classic" do |ss|
-    ss.dependency "RxSwift", "~> 6"
-    ss.dependency "RxCocoa", "~> 6"
-    ss.dependency "RxRelay", "~> 6"
+    ss.dependency "RxSwift", ">= 6.0.0"
+    ss.dependency "RxCocoa", ">= 6.0.0"
+    ss.dependency "RxRelay", ">= 6.0.0"
     ss.source_files = "Sources/VergeClassic/**/*.swift"
     ss.dependency "Verge/Store"
     ss.dependency "Verge/Rx"
@@ -44,9 +44,9 @@ Pod::Spec.new do |s|
   s.subspec "Rx" do |ss|
     ss.dependency "Verge/ORM"
     ss.dependency "Verge/Store"
-    ss.dependency "RxSwift", "~> 5.1"
-    ss.dependency "RxCocoa", "~> 5.1"
-    ss.dependency "RxRelay", "~> 5.1"
+    ss.dependency "RxSwift", ">= 6.0.0"
+    ss.dependency "RxCocoa", ">= 6.0.0"
+    ss.dependency "RxRelay", ">= 6.0.0"
     ss.source_files = "Sources/VergeRx/**/*.swift"
   end
 
