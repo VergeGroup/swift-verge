@@ -49,7 +49,7 @@ Please see the website: https://vergegroup.github.io/Verge/
 
 The word 'store-pattern' is used on [Vue.js documentation](https://vuejs.org/v2/guide/state-management.html#Simple-State-Management-from-Scratch) that about how we manage the state between multiple components.
 
-## Simple usage in UIKit
+## Example in UIKit
 
 Creating a view-model (meaning Store)
 
@@ -150,6 +150,10 @@ final class MyViewController: UIViewController {
 ```
 
 [The details are here!](https://vergegroup.github.io/Verge/docs/)
+
+## Example in SwiftUI
+
+- [ ] WIP Writing up
 
 ## What differences between Flux library are
 
