@@ -175,7 +175,8 @@ struct MyView: View {
 
 ## Supports Integrating with RxSwift
 
-- [ ] WIP
+Verge supports to integrate with RxSwift that enables to create a stream of `State` and `Activity`.
+To activate it, install `VergeRx` module.
 
 ## What differences between Flux library are
 
