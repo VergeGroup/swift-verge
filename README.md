@@ -37,6 +37,16 @@
 * UIKit
 * SwiftUI
 
+## Projects which use Verge
+
+- [Pairs for JP](https://apps.apple.com/app/id583376064)
+- [Pairs for TW/KR](https://apps.apple.com/app/id825433065)
+- [Pairs Engage](https://apps.apple.com/app/id1456982763)
+- 👉 YOUR APP or PROJECT!
+
+**We're welcome to publish here your application which powered by Verge!**  
+Please Submit from Pull requests
+
 ## Verge is NOT Flux, it's store-pattern.
 
 Verge is a performant store-pattern based state management library for iOS.
