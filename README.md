@@ -37,6 +37,18 @@
 * UIKit
 * SwiftUI
 
+## Verge is not Flux, it's store-pattern and super powerful.
+
+Verge is a performant store-pattern based state management library for iOS.
+
+Please see the website: https://vergegroup.github.io/Verge/
+
+[And the article about store-pattern](https://medium.com/eureka-engineering/verge-start-store-pattern-state-management-before-beginning-flux-in-uikit-ios-app-development-6c74d4413829)
+
+### What store-pattern is
+
+The word 'store-pattern' is used on [Vue.js documentation](https://vuejs.org/v2/guide/state-management.html#Simple-State-Management-from-Scratch) that about how we manage the state between multiple components.
+
 ## Projects which use Verge
 
 - [Pairs for JP](https://apps.apple.com/app/id583376064)
@@ -46,18 +58,6 @@
 
 **We're welcome to publish here your application which powered by Verge!**  
 Please Submit from Pull requests
-
-## Verge is NOT Flux, it's store-pattern.
-
-Verge is a performant store-pattern based state management library for iOS.
-
-Please see the website: https://vergegroup.github.io/Verge/
-
-[And the article about store-pattern](https://medium.com/eureka-engineering/verge-start-store-pattern-state-management-before-beginning-flux-in-uikit-ios-app-development-6c74d4413829)
-
-## What store-pattern is
-
-The word 'store-pattern' is used on [Vue.js documentation](https://vuejs.org/v2/guide/state-management.html#Simple-State-Management-from-Scratch) that about how we manage the state between multiple components.
 
 ## Exmaple - UIKit / SwiftUI
 
