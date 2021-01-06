@@ -80,6 +80,33 @@ final class InoutTests: XCTestCase {
 
   }
 
+  func testRef() {
+
+    var state = DemoState()
+
+    withUnsafeMutablePointer(to: &state) { pointer in
+
+      let ref1 = InoutRef(pointer)
+      let ref2 = InoutRef(pointer)
+
+      XCTAssertEqual(ref1.count, ref2.count)
+
+      ref1.count = 100
+
+      XCTAssertEqual(ref1.count, 100)
+      XCTAssertEqual(ref1.count, ref2.count)
+
+      ref1.map(keyPath: \.inner) { i in
+        i.name = "Hi"
+      }
+
+      XCTAssertEqual(ref1.inner.name, "Hi")
+      XCTAssertEqual(ref1.inner.name, ref2.inner.name)
+
+    }
+
+  }
+
   func testOriginalBehavior2() {
 
     var copied = false
@@ -238,3 +265,20 @@ final class InoutTests: XCTestCase {
 
 }
 
+#if false
+final class ReadRefTests: XCTestCase {
+
+  func testRef() {
+
+    var state = DemoState()
+
+    withUnsafePointer(to: state) { (pointer) in
+      let ref = ReadRef(pointer)
+      state.count = 100
+      XCTAssertEqual(ref.count, state.count)
+    }
+
+  }
+
+}
+#endif

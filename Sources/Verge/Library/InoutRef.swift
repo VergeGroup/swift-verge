@@ -235,3 +235,81 @@ public final class InoutRef<Wrapped> {
   }
 
 }
+
+#if false
+/// Do not retain on anywhere.
+@dynamicMemberLookup
+public final class ReadRef<Wrapped> {
+
+  private let pointer: UnsafePointer<Wrapped>
+
+  /// A wrapped value
+  /// You may use this property to call the mutating method which `Wrapped` has.
+  public var wrapped: Wrapped {
+    _read {
+      yield pointer.pointee
+    }
+  }
+
+  // MARK: - Initializers
+
+  /**
+   Creates an instance
+
+   You should take care of using the pointer of value.
+   Using always `withUnsafeMutablePointer` to pass it, otherwise Swift might crash with Memory error.
+   */
+  public init(_ pointer: UnsafePointer<Wrapped>) {
+    self.pointer = pointer
+  }
+
+  // MARK: - Functions
+
+  public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T>) -> T {
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
+    }
+  }
+
+  public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T?>) -> T? {
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
+    }
+  }
+
+  public subscript<T> (keyPath keyPath: KeyPath<Wrapped, T>) -> T {
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
+    }
+  }
+
+  public subscript<T> (keyPath keyPath: KeyPath<Wrapped, T?>) -> T? {
+    _read {
+      yield pointer.pointee[keyPath: keyPath]
+    }
+  }
+
+  func map<U, Result>(keyPath: KeyPath<Wrapped, U>, perform: (inout ReadRef<U>) throws -> Result) rethrows -> Result {
+
+    try withUnsafePointer(to: pointer.pointee[keyPath: keyPath]) { (pointer) in
+      var ref = ReadRef<U>.init(pointer)
+      return try perform(&ref)
+    }
+  }
+
+  func map<U, Result>(keyPath: KeyPath<Wrapped, U?>, perform: (inout ReadRef<U>?) throws -> Result) rethrows -> Result {
+
+    guard pointer.pointee[keyPath: keyPath] != nil else {
+      var _nil: ReadRef<U>! = .none
+      return try perform(&_nil)
+    }
+
+    return try withUnsafePointer(to: pointer.pointee[keyPath: keyPath]!) { (pointer) in
+      var ref: ReadRef<U>! = ReadRef<U>.init(pointer)
+      return try perform(&ref)
+    }
+
+  }
+
+}
+#endif

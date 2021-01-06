@@ -272,7 +272,7 @@ class DerivedTests: XCTestCase {
 
     let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
 
-    _ = store.commit { state in
+    store.commit { state in
       state.db.performBatchUpdates { (context) in
         for i in 0..<10000 {
           context.entities.author.insert(.init(rawID: "\(i)", name: "John"))
