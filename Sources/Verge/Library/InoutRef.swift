@@ -27,9 +27,21 @@ public final class InoutRef<Wrapped> {
 
   // MARK: - Nested types
 
-  public enum Modification: Hashable {
+  public enum Modification: Hashable, CustomDebugStringConvertible {
     case determinate(keyPaths: Set<PartialKeyPath<Wrapped>>)
     case indeterminate
+
+    public var debugDescription: String {
+      switch self {
+      case .indeterminate:
+        return "indeterminate"
+      case .determinate(let keyPaths):
+        return "Modified:\n" + keyPaths.map {
+          "  \($0)"
+        }
+        .joined(separator: "\n")
+      }
+    }
   }
 
   // MARK: - Properties
