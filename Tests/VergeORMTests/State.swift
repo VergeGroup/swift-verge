@@ -70,6 +70,15 @@ struct RootState: StateType, DatabaseEmbedding {
   
   struct Other {
     var count: Int = 0
+    var collection: [Int] = []
+    var dictionary: [AnyHashable : Any] = [:]
+
+    mutating func makeAsHuge() {
+      collection = Array.init(repeating: 5, count: 50000)
+      for _ in 0..<50000 {
+        dictionary[UUID()] = 500
+      }
+    }
   }
   
   var db = Database()
