@@ -267,4 +267,24 @@ class DerivedTests: XCTestCase {
     }
     
   }
+
+  func testPerformanceCreationDerivedFromBigState() {
+
+    let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
+
+    _ = store.commit { state in
+      state.db.performBatchUpdates { (context) in
+        context.entities.author.insert(.init(rawID: "John", name: "John"))
+      }
+    }
+
+    store.commit {
+      $0.other.makeAsHuge()
+    }
+
+    measure {
+      _ = store.derived(from: Author.EntityID("John"))
+    }
+
+  }
 }
