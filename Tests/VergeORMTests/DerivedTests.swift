@@ -274,7 +274,9 @@ class DerivedTests: XCTestCase {
 
     _ = store.commit { state in
       state.db.performBatchUpdates { (context) in
-        context.entities.author.insert(.init(rawID: "John", name: "John"))
+        for i in 0..<10000 {
+          context.entities.author.insert(.init(rawID: "\(i)", name: "John"))
+        }
       }
     }
 
@@ -283,7 +285,9 @@ class DerivedTests: XCTestCase {
     }
 
     measure {
-      _ = store.derived(from: Author.EntityID("John"))
+      for i in 0..<10000 {
+        _ = store.derived(from: Author.EntityID("\(i)"))
+      }
     }
 
   }
