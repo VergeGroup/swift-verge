@@ -350,7 +350,7 @@ extension Derived where Value : Equatable {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkChangedPrimitiveValue(
     dropsFirst: Bool = false,
-    queue: TargetQueue = .asyncMain,
+    queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Value) -> Void
   ) -> VergeAnyCancellable {
     sinkValue(dropsFirst: dropsFirst, queue: queue) { (changes) in
