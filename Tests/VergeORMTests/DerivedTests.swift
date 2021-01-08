@@ -284,7 +284,10 @@ class DerivedTests: XCTestCase {
       $0.other.makeAsHuge()
     }
 
-    measure {
+    let option = XCTMeasureOptions()
+    option.iterationCount = 10
+
+    measure(metrics: [XCTClockMetric()], options: option) {
       for i in 0..<10000 {
         _ = store.derived(from: Author.EntityID("\(i)"))
       }

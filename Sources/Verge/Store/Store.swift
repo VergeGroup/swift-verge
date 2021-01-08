@@ -242,9 +242,16 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     let execute = queue.executor()
 
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
-    let cancellable = _backingStorage.addDidUpdate { newValue in
-      execute {
-        receive(newValue)
+    let cancellable = _backingStorage.sinkEvent { (event) in
+      switch event {
+      case .willUpdate:
+        break
+      case .didUpdate(let newValue):
+        execute {
+          receive(newValue)
+        }
+      case .willDeinit:
+        break
       }
     }
 
