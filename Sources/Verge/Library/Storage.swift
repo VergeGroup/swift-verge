@@ -249,6 +249,10 @@ open class Storage<Value>: ReadonlyStorage<Value> {
       throw error
     }
   }
+
+  public func read<Return>(_ perform: (Value) throws -> Return) rethrows -> Return {
+    try perform(value)
+  }
   
   @discardableResult
   @inline(__always)
