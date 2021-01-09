@@ -7,7 +7,7 @@
 
 <h1 align="center">Verge</h1>
 <p align="center">
-<h2 align="center">The effective state management architecture for iOS</h2><br/>
+<sub>📍The effective state management architecture for iOS📍</sub><br/>
 <br/>
 <sub>Fully documented and used in production at <a hrfef="https://eure.jp/"><b>Eureka, Inc.</b></a></sub><br/>
 </p>
