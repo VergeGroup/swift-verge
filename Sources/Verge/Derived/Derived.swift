@@ -96,7 +96,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   private let retainsUpstream: Any?
   private var associatedObjects: ContiguousArray<AnyObject> = .init()
 
-  public private(set) var attributes: Set<Attribute> = .init()
+  public internal(set) var attributes: Set<Attribute> = .init()
   
   // MARK: - Initializers
 
