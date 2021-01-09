@@ -50,6 +50,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
 
   public enum Attribute: Hashable {
     case dropsDuplicatedOutput
+    case cached
   }
 
   /// Returns Derived object that provides constant value.
@@ -129,6 +130,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
       case .noUpdates:
         break
       case .new(let newState):
+        // TODO: Take over state.modification & state.mutation
         store?.commit {
           $0.replace(with: newState)
         }
@@ -158,7 +160,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   /// Returns new Derived object that provides only changed value
   ///
   /// - Parameter predicate: Return true, removes value
-  public func removeDuplicates(by predicate: @escaping (Changes<Value>) -> Bool) -> Derived<Value> {
+  public func makeRemovingDuplicates(by predicate: @escaping (Changes<Value>) -> Bool) -> Derived<Value> {
     guard !attributes.contains(.dropsDuplicatedOutput) else {
       assertionFailure("\(self) has already applied removeDuplicates")
       return self
@@ -246,24 +248,29 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   }
     
   /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
-  /// 
+  ///
   /// - Parameters:
   ///   - queue: a queue to receive object
-  ///   - map:
+  ///   - pipeline:
   ///   - dropsOutput: a condition to drop a duplicated(no-changes) object. (Default: no drops)
   /// - Returns: Derived object that cached depends on the specified parameters
+  /// - Attention:
+  ///     As possible use the same pipeline instance and queue in order to enable caching.
+  ///     Returns the Derived that previously created with that combination.
+  ///
   public func chain<NewState>(
-    _ map: Pipeline<Changes<Value>, NewState>,
+    _ pipeline: Pipeline<Changes<Value>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
     queue: TargetQueue = .passthrough
     ) -> Derived<NewState> {
         
     let derived = chainCahce2.withValue { cache -> Derived<NewState> in
       
-      let identifier = "\(map.identifier)\(ObjectIdentifier(queue))" as NSString
+      let identifier = "\(pipeline.identifier)\(ObjectIdentifier(queue))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
-        let instance = _makeChain(map, queue: queue)
+        let instance = _makeChain(pipeline, queue: queue)
+        instance.attributes.insert(.cached)
         cache.setObject(instance, forKey: identifier)
         return instance
       }
@@ -273,7 +280,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
     }
     
     if let dropsOutput = dropsOutput {
-      return derived.removeDuplicates(by: dropsOutput)
+      return derived.makeRemovingDuplicates(by: dropsOutput)
     } else {
       return derived
     }
@@ -286,20 +293,25 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
   ///
   /// - Parameters:
   ///   - queue: a queue to receive object
-  ///   - map:
+  ///   - pipeline:
   /// - Returns: Derived object that cached depends on the specified parameters
+  /// - Attention:
+  ///     As possible use the same pipeline instance and queue in order to enable caching.
+  ///     Returns the Derived that previously created with that combination.
   public func chain<NewState: Equatable>(
-    _ map: Pipeline<Changes<Value>, NewState>,
+    _ pipeline: Pipeline<Changes<Value>, NewState>,
     queue: TargetQueue = .passthrough
   ) -> Derived<NewState> {
     
     return chainCahce1.withValue { cache in
       
-      let identifier = "\(map.identifier)\(ObjectIdentifier(queue))" as NSString
+      let identifier = "\(pipeline.identifier)\(ObjectIdentifier(queue))" as NSString
       
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
-        let instance = _makeChain(map, queue: queue).removeDuplicates(by: { !$0.hasChanges })
+        // TODO: Create a derived with removing-duplicates-predicate at once. to reduce allocation
+        let instance = _makeChain(pipeline, queue: queue).makeRemovingDuplicates(by: { !$0.hasChanges })
         cache.setObject(instance, forKey: identifier)
+        instance.attributes.insert(.cached)
         return instance
       }
       
