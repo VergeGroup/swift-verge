@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 
 import Foundation
+import os.log
 
 #if canImport(Combine)
 import Combine
@@ -113,6 +114,8 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   /// Cache for derived object each method. Don't share it with between methods.
   let derivedCache2 = VergeConcurrency.RecursiveLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
   
+  private let tracker = VergeConcurrency.SynchronizationTracker()
+  
   public private(set) var logger: StoreLogger?
     
   /// An initializer
@@ -154,10 +157,33 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     var elapsed: CFTimeInterval = 0
 
     var valueFromMutation: Result!
+    
+    #if DEBUG
+    let warnings = tracker.register()
+    if warnings.contains(.reentrancyAnomaly) {
+      os_log(
+        """
+⚠️ [Verge Error] Detected another commit recursively from the commit.
+This breaks the order of the states that receiving in the sink.
+
+You might be doing commit inside the sink at the same Store.
+In this case, Using dispatch solve this issue.
+
+Mutation: (%@)
+""",
+        log: VergeOSLogs.debugLog,
+        type: .error,
+        String(describing: trace)
+      )
+    }
+    defer {
+      tracker.unregister()
+    }
+    #endif
 
     /** a ciritical session */
     try _backingStorage._update { (state) -> Storage<Changes<State>>.UpdateResult in
-
+            
       let startedTime = CFAbsoluteTimeGetCurrent()
       defer {
         elapsed = CFAbsoluteTimeGetCurrent() - startedTime
@@ -240,9 +266,54 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   ) -> VergeAnyCancellable {
     
     let execute = queue.executor()
-
+    
+    #if DEBUG
+    let receivedWrapper = VergeConcurrency.UnfairLockAtomic<Changes<State>?>(nil)
+    #endif
+    
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
     let cancellable = _backingStorage.addDidUpdate { newValue in
+      
+      #if DEBUG
+      if let received = receivedWrapper.value {
+        if received.version <= newValue.version {
+          receivedWrapper.swap(newValue)
+        } else {
+          os_log(
+            """
+⚠️ [Verge Error] Received older version(%d) value rather than latest received version(%d).
+Probably another commit was dispatched inside sink synchrnously.
+This cause interuppting the order of states.
+
+To solve, make sure to commit with using DispatchQueue.
+
+Technically, If the store has 3 subscribers, and 1 subscriber commits when received a state.
+However, the store still delivering the state to the other 2 subscribers.
+The store process the new commit from 1 subscriber prioritized rather than delivering the other 2 subscribers.
+
+---
+
+Received older version (%d): (%@)
+
+Latest Version (%d): (%@)
+
+===
+""",
+            log: VergeOSLogs.debugLog,
+            type: .error,
+            newValue.version,
+            received.version,
+            newValue.version,
+            String(describing: newValue.mutation),
+            received.version,
+            String(describing: received.mutation)
+            )
+        }
+      } else {
+        receivedWrapper.value = newValue
+      }
+      #endif
+      
       execute {
         receive(newValue)
       }
@@ -250,6 +321,9 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
     if !dropsFirst {
       let value = _backingStorage.value.droppedPrevious()
+      #if DEBUG
+      receivedWrapper.swap(value)
+      #endif
       execute {
         /// this closure might contains some mutations.
         ///  It depends outside usages.
