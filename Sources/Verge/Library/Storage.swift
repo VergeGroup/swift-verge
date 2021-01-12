@@ -28,6 +28,7 @@ public protocol _VergeRecursiveLockType {
   init()
 }
 
+@discardableResult
 func withLocking<Lock: _VergeRecursiveLockType, Return>(_ lock: Lock, _ performCriticalSession: () -> Return) -> Return {
   lock.lock()
   defer {

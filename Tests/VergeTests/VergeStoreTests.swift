@@ -607,7 +607,7 @@ final class VergeStoreTests: XCTestCase {
       $0.count = 10
     }
 
-    wait(for: [exp], timeout: 1)
+    wait(for: [exp], timeout: 10)
     withExtendedLifetime(cancellable) {}
 
   }
