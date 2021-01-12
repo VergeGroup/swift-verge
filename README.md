@@ -8,8 +8,7 @@
 <h1 align="center">Verge</h1>
 <p align="center">
 <sub>📍The effective state management architecture for iOS📍</sub><br/>
-<br/>
-<sub>Fully documented and used in production at <a hrfef="https://eure.jp/"><b>Eureka, Inc.</b></a></sub><br/>
+<sub>_ Supports concurrent processing _</sub><br/>
 </p>
 
 <p align="center">
