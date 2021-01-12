@@ -36,6 +36,7 @@ extension VergeConcurrency {
          
     public init() {}
     
+    @discardableResult
     public func register() -> Set<Warning> {
             
       self._lock.lock(); defer { self._lock.unlock() }
