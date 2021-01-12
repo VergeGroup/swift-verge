@@ -82,10 +82,14 @@ public struct VergeAnyRecursiveLock: _VergeRecursiveLockType {
 }
 
 open class ReadonlyStorage<Value>: CustomReflectable {
-    
-  private let willUpdateEmitter = EventEmitter<Void>()
-  private let didUpdateEmitter = EventEmitter<Value>()
-  private let deinitEmitter = EventEmitter<Void>()
+
+  public enum Event {
+    case willUpdate
+    case didUpdate(Value)
+    case willDeinit
+  }
+
+  private let eventEmitter = EventEmitter<Event>()
 
   /// Returns a current value with thread-safety.
   ///
@@ -129,14 +133,24 @@ open class ReadonlyStorage<Value>: CustomReflectable {
     self._lock = recursiveLock.asAny()
     self.nonatomicValue = value
     self.upstreams = upstreams
-    
-    willUpdateEmitter.add {
-      vergeSignpostEvent("Storage.willUpdate")
+
+    if _verge_signpost_enabled {
+      eventEmitter.add { event in
+        switch event {
+        case .willUpdate:
+          vergeSignpostEvent("Storage.willUpdate")
+        case .didUpdate(_):
+          break
+        case .willDeinit:
+          break
+        }
+      }
     }
+
   }
   
   deinit {
-    deinitEmitter.accept(())
+    eventEmitter.accept(.willDeinit)
   }
   
   public func lock() {
@@ -146,36 +160,22 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   public func unlock() {
     _lock.unlock()
   }
-    
-  /// Register observer with closure.
-  /// Storage tells got a newValue.
-  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
+
   @discardableResult
-  public final func addWillUpdate(subscriber: @escaping () -> Void) -> EventEmitterCancellable {
-    willUpdateEmitter.add(subscriber)
-  }
-  
-  /// Register observer with closure.
-  /// Storage tells got a newValue.
-  /// - Returns: Token to stop subscribing. (Optional) You may need to retain somewhere. But subscription will be disposed when Storage was destructed.
-  @discardableResult
-  public final func addDidUpdate(subscriber: @escaping (Value) -> Void) -> EventEmitterCancellable {
-    didUpdateEmitter.add(subscriber)
-  }
-  
-  @discardableResult
-  public final func addDeinit(subscriber: @escaping () -> Void) -> EventEmitterCancellable {
-    deinitEmitter.add(subscriber)
+  public final func sinkEvent(subscriber: @escaping (Event) -> Void) -> EventEmitterCancellable {
+    eventEmitter.add { event in
+      subscriber(event)
+    }
   }
     
   @inline(__always)
   fileprivate func notifyWillUpdate(value: Value) {
-    willUpdateEmitter.accept(())
+    eventEmitter.accept(.willUpdate)
   }
   
   @inline(__always)
   fileprivate func notifyDidUpdate(value: Value) {
-    didUpdateEmitter.accept(value)
+    eventEmitter.accept(.didUpdate(value))
   }
   
   public var customMirror: Mirror {
@@ -294,20 +294,24 @@ extension ReadonlyStorage {
       recursiveLock: _lock,
       upstreams: [self]
     )
-    
-    let token = addDidUpdate { [weak newStorage] (newValue) in
-      guard !filter(newValue) else {
-        return
-      }
-      newStorage?.update {
-        $0 = transform(newValue)
+
+    var token: EventEmitterCancellable?
+    token = sinkEvent { [weak newStorage] (event) in
+      switch event {
+      case .willUpdate:
+        break
+      case .didUpdate(let newValue):
+        guard !filter(newValue) else {
+          return
+        }
+        newStorage?.update {
+          $0 = transform(newValue)
+        }
+      case .willDeinit:
+        token?.cancel()
       }
     }
-    
-    newStorage.addDeinit {
-      token.cancel()
-    }
-    
+
     return newStorage
   }
 }
@@ -325,19 +329,27 @@ fileprivate var _didChangeAssociated: Void?
 extension ReadonlyStorage: ObservableObject {
   
   public var objectWillChange: ObservableObjectPublisher {
+    assert(DispatchQueue.isMain)
     if let associated = objc_getAssociatedObject(self, &_willChangeAssociated) as? ObservableObjectPublisher {
       return associated
     } else {
       let associated = ObservableObjectPublisher()
       objc_setAssociatedObject(self, &_willChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
-      
-      addWillUpdate {
-        if Thread.isMainThread {
-          associated.send()
-        } else {
-          DispatchQueue.main.async {
+
+      sinkEvent { (event) in
+        switch event {
+        case .willUpdate:
+          if Thread.isMainThread {
             associated.send()
+          } else {
+            DispatchQueue.main.async {
+              associated.send()
+            }
           }
+        case .didUpdate:
+         break
+        case .willDeinit:
+          break
         }
       }
       
@@ -350,15 +362,27 @@ extension ReadonlyStorage: ObservableObject {
   }
   
   public var valuePublisher: AnyPublisher<Value, Never> {
+
+    objc_sync_enter(self)
+    defer {
+      objc_sync_exit(self)
+    }
     
     if let associated = objc_getAssociatedObject(self, &_didChangeAssociated) as? CurrentValueSubject<Value, Never> {
       return associated.eraseToAnyPublisher()
     } else {
       let associated = CurrentValueSubject<Value, Never>(value)
       objc_setAssociatedObject(self, &_didChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
-      
-      addDidUpdate { s in
-        associated.send(s)
+
+      sinkEvent { (event) in
+        switch event {
+        case .willUpdate:
+          break
+        case .didUpdate(let newValue):
+          associated.send(newValue)
+        case .willDeinit:
+          break
+        }
       }
       
       return associated.eraseToAnyPublisher()

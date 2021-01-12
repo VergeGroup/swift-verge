@@ -276,8 +276,11 @@ extension EventEmitter {
 extension ReadonlyStorage {
   
   private var subject: BehaviorSubject<Value> {
-    
-    lock(); defer { unlock() }
+
+    objc_sync_enter(self)
+    defer {
+      objc_sync_exit(self)
+    }
 
     if let associated = objc_getAssociatedObject(self, &storage_subject) as? BehaviorSubject<Value> {
 
@@ -289,17 +292,20 @@ extension ReadonlyStorage {
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
       
       let lock = NSRecursiveLock()
-      
-      addDeinit {
-        lock.lock(); defer { lock.unlock() }
-        associated.onCompleted()
+
+      sinkEvent { (event) in
+        switch event {
+        case .willUpdate:
+          break
+        case .didUpdate(let newValue):
+          lock.lock(); defer { lock.unlock() }
+          associated.onNext(newValue)
+        case .willDeinit:
+          lock.lock(); defer { lock.unlock() }
+          associated.onCompleted()
+        }
       }
-
-      addDidUpdate(subscriber: { (value) in
-        lock.lock(); defer { lock.unlock() }
-        associated.onNext(value)
-      })
-
+    
       return associated
     }
   }

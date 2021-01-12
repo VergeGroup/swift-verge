@@ -272,15 +272,18 @@ Mutation: (%@)
     #endif
     
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
-    let cancellable = _backingStorage.addDidUpdate { newValue in
-      
-      #if DEBUG
-      if let received = receivedWrapper.value {
-        if received.version <= newValue.version {
-          receivedWrapper.swap(newValue)
-        } else {
-          os_log(
-            """
+    let cancellable = _backingStorage.sinkEvent { (event) in
+      switch event {
+      case .willUpdate:
+        break
+      case .didUpdate(let newValue):
+        #if DEBUG
+        if let received = receivedWrapper.value {
+          if received.version <= newValue.version {
+            receivedWrapper.swap(newValue)
+          } else {
+            os_log(
+              """
 ⚠️ [Verge Error] Received older version(%d) value rather than latest received version(%d).
 Probably another commit was dispatched inside sink synchrnously.
 This cause interuppting the order of states.
@@ -299,23 +302,25 @@ Latest Version (%d): (%@)
 
 ===
 """,
-            log: VergeOSLogs.debugLog,
-            type: .error,
-            newValue.version,
-            received.version,
-            newValue.version,
-            String(describing: newValue.mutation),
-            received.version,
-            String(describing: received.mutation)
-            )
+              log: VergeOSLogs.debugLog,
+              type: .error,
+              newValue.version,
+              received.version,
+              newValue.version,
+              String(describing: newValue.mutation),
+              received.version,
+              String(describing: received.mutation)
+              )
+          }
+        } else {
+          receivedWrapper.value = newValue
         }
-      } else {
-        receivedWrapper.value = newValue
-      }
-      #endif
-      
-      execute {
-        receive(newValue)
+        #endif
+        execute {
+          receive(newValue)
+        }
+      case .willDeinit:
+        break
       }
     }
 
