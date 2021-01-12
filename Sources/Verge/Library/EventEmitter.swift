@@ -248,10 +248,10 @@ public final class EventEmitter<Event>: EventEmitterType {
   
   private let emittingLock = NSLock()
   
-  private var isRunning: Int = 0
+  private var isRunning: VergeConcurrency.RecursiveLockAtomic<Int> = .init(0)
   
   public init() {
-    
+
   }
       
   public func accept(_ event: Event) {
@@ -277,23 +277,24 @@ public final class EventEmitter<Event>: EventEmitterType {
   }
   
   private func drain() {
-    
+          
     assert({
-      let v = isRunning
+      let v = isRunning.value
       return v == 0 || v == 1
     }())
-    guard isRunning == 0 else {
+    guard isRunning.value == 0 else {
       return
     }
     
     queueLock.lock()
+        
     guard !eventQueue.isEmpty else {
       queueLock.unlock()
       return
     }
     
-    isRunning &+= 1
-    
+    isRunning.modify { $0 &+= 1 }
+        
     let scheduledEvents = eventQueue
     // TODO: Consider how better performance is.
     eventQueue.removeAll(keepingCapacity: true)
@@ -301,11 +302,11 @@ public final class EventEmitter<Event>: EventEmitterType {
     queueLock.unlock()
             
     let signpost = VergeSignpostTransaction("EventEmitter.emits")
-
+    
     withLocking(subscribersLock) {
       
       let targets = subscribers.values
-            
+      
       // Deliver events
       scheduledEvents.forEach { event in
         targets.forEach {
@@ -314,13 +315,12 @@ public final class EventEmitter<Event>: EventEmitterType {
         }
       }
       
-      isRunning &-= 1
-      assert(isRunning == 0)
-      
+      isRunning.modify { $0 &-= 1 }
+      assert(isRunning.value == 0)
     }
-    
+           
     signpost.end()
-        
+    
     drain()
     
   }
