@@ -646,4 +646,59 @@ final class VergeStoreTests: XCTestCase {
 
   }
   
+  func testEventOrder() {
+    
+    let store = DemoStore()
+    
+    var bag = Set<VergeAnyCancellable>()
+    
+    do {
+      var version: UInt64 = 0
+      store.sinkState(queue: .passthrough) { (s) in
+        if version > s.version {
+          XCTFail()
+        }
+        version = s.version
+        print("1", s.version)
+      }
+      .store(in: &bag)
+    }
+    
+    do {
+      var version: UInt64 = 0
+      store.sinkState(queue: .passthrough) { (s) in
+        if version > s.version {
+          XCTFail()
+        }
+        version = s.version
+        print("2", s.version)
+        store.commit {
+          if s.count == 1 {
+            $0.count += 1
+          }
+        }
+      }
+      .store(in: &bag)
+    }
+    
+    do {
+      var version: UInt64 = 0
+      store.sinkState(queue: .passthrough) { (s) in
+        if version > s.version {
+          XCTFail()
+        }
+        version = s.version
+        print("3", s.version)
+      }
+      .store(in: &bag)
+    }
+    
+    store.commit { (s) in
+      s.count += 1
+    }
+    
+    withExtendedLifetime(bag, {})
+    
+  }
+  
 }
