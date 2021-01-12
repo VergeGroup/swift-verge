@@ -24,30 +24,37 @@ import Foundation
 extension VergeConcurrency {
   /// imported RxSwift
   public final class SynchronizationTracker {
+    
+    public enum Warning: Hashable {
+      case reentrancyAnomaly
+      case synchronizationAnomaly
+    }
+    
     private let _lock = NSRecursiveLock()
     
     private var _threads = [UnsafeMutableRawPointer: Int]()
-    
-    private func synchronizationError(_ message: String) {
-      print(message)
-    }
-    
+         
     public init() {}
     
-    public func register() {
+    public func register() -> Set<Warning> {
+            
       self._lock.lock(); defer { self._lock.unlock() }
+      
+      var flags = Set<Warning>()
+      
       let pointer = Unmanaged.passUnretained(Thread.current).toOpaque()
       let count = (self._threads[pointer] ?? 0) + 1
       
       if count > 1 {
-        self.synchronizationError("Reentrancy anomaly was detected")
+        flags.insert(.reentrancyAnomaly)
       }
       
       self._threads[pointer] = count
       
       if self._threads.count > 1 {
-        self.synchronizationError("Synchronization anomaly was detected")
+        flags.insert(.synchronizationAnomaly)
       }
+      return flags
     }
     
     public func unregister() {

@@ -66,6 +66,7 @@ extension StoreType {
 
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeDerived(pipeline, queue: queue)
+        instance.attributes.insert(.cached)
         cache.setObject(instance, forKey: identifier)
         return instance
       }
@@ -77,7 +78,7 @@ extension StoreType {
     }
 
     if let dropsOutput = dropsOutput {
-      return derived.removeDuplicates(by: dropsOutput)
+      return derived.makeRemovingDuplicates(by: dropsOutput)
     } else {
       return derived
     }
@@ -104,9 +105,10 @@ extension StoreType {
 
       guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
         let instance = _makeDerived(pipeline, queue: queue)
-          .removeDuplicates(by: {
+          .makeRemovingDuplicates(by: {
             $0.asChanges().noChanges(\.root)
           })
+        instance.attributes.insert(.cached)
         cache.setObject(instance, forKey: identifier)
         return instance
       }
