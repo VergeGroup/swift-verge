@@ -348,6 +348,7 @@ final class VergeStoreTests: XCTestCase {
       $0.markAsModified()
     }
     
+    // stop subscribing
     subscriptions = .init()
 
     store.commit {
@@ -389,7 +390,7 @@ final class VergeStoreTests: XCTestCase {
     }
            
     wait(for: [exp, counter], timeout: 10)
-    XCTAssertEqual(Array((0...1000).map { $0 }), results.value)
+    XCTAssertEqual(Array((0...1000).map { $0 }), results.value, "\(Array((0...1000).map { $0 }).difference(from: results.value))")
     withExtendedLifetime(sub) {}
   }
   
