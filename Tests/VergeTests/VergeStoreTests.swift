@@ -653,16 +653,18 @@ final class VergeStoreTests: XCTestCase {
     
     var bag = Set<VergeAnyCancellable>()
     
-    do {
-      var version: UInt64 = 0
-      store.sinkState(queue: .passthrough) { (s) in
-        if version > s.version {
-          XCTFail()
+    for i in 0..<100 {
+      do {
+        var version: UInt64 = 0
+        store.sinkState(queue: .passthrough) { (s) in
+          if version > s.version {
+            XCTFail()
+          }
+          version = s.version
+          print("\(i)", s.version)
         }
-        version = s.version
-        print("1", s.version)
+        .store(in: &bag)
       }
-      .store(in: &bag)
     }
     
     do {
@@ -672,7 +674,7 @@ final class VergeStoreTests: XCTestCase {
           XCTFail()
         }
         version = s.version
-        print("2", s.version)
+        print("x", s.version)
         store.commit {
           if s.count == 1 {
             $0.count += 1
@@ -681,19 +683,7 @@ final class VergeStoreTests: XCTestCase {
       }
       .store(in: &bag)
     }
-    
-    do {
-      var version: UInt64 = 0
-      store.sinkState(queue: .passthrough) { (s) in
-        if version > s.version {
-          XCTFail()
-        }
-        version = s.version
-        print("3", s.version)
-      }
-      .store(in: &bag)
-    }
-    
+            
     store.commit { (s) in
       s.count += 1
     }
