@@ -278,11 +278,10 @@ public final class EventEmitter<Event>: EventEmitterType {
   
   private func drain() {
           
-    assert({
-      let v = isRunning.value
-      return v == 0 || v == 1
-    }())
-    guard isRunning.value == 0 else {
+    let _isRunning = isRunning.value
+    assert(_isRunning == 0 || _isRunning == 1, "\(_isRunning)")
+    
+    guard _isRunning == 0 else {
       return
     }
     
@@ -292,19 +291,30 @@ public final class EventEmitter<Event>: EventEmitterType {
       queueLock.unlock()
       return
     }
-    
-    isRunning.modify { $0 &+= 1 }
+     
+    let result: Bool = isRunning.modify {
+      guard $0 == 0 else {
+        return false
+      }
+      $0 &+= 1
+      return true
+    }
+   
+    guard result else {
+      queueLock.unlock()
+      return
+    }
         
     let scheduledEvents = eventQueue
     // TODO: Consider how better performance is.
     eventQueue.removeAll(keepingCapacity: true)
-    
-    queueLock.unlock()
-            
+                  
     let signpost = VergeSignpostTransaction("EventEmitter.emits")
     
+    queueLock.unlock()
+    
     withLocking(subscribersLock) {
-      
+                  
       let targets = subscribers.values
       
       // Deliver events
@@ -315,12 +325,14 @@ public final class EventEmitter<Event>: EventEmitterType {
         }
       }
       
-      isRunning.modify { $0 &-= 1 }
-      assert(isRunning.value == 0)
+      isRunning.modify {
+        $0 &-= 1
+        assert($0 == 0, "\(isRunning.value)")
+      }
     }
-           
+         
     signpost.end()
-    
+  
     drain()
     
   }

@@ -29,7 +29,7 @@ public protocol _VergeRecursiveLockType {
 }
 
 @discardableResult
-func withLocking<Lock: _VergeRecursiveLockType, Return>(_ lock: Lock, _ performCriticalSession: () -> Return) -> Return {
+func withLocking<Lock: NSLocking, Return>(_ lock: Lock, _ performCriticalSession: () -> Return) -> Return {
   lock.lock()
   defer {
     lock.unlock()
