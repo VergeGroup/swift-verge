@@ -14,20 +14,21 @@ import Verge
 import VergeORM
 
 class MultithreadingTests: XCTestCase {
-  
-  let store = Storage(RootState())
-      
+        
   func testUpdateFromThreads() {
+    
+    let store = Storage(RootState())
     
     let exp = expectation(description: "")
     
     let g = DispatchGroup()
     
-    for _ in 0..<20 {
-      
+    g.enter()
+    for _ in 0..<200 {
+            
       g.enter()
       DispatchQueue.global().async {
-        self.store.update { state in
+        store.update { state in
           state.db.performBatchUpdates { (context) in
             
             let authors = (0..<1000).map { i in
@@ -36,11 +37,14 @@ class MultithreadingTests: XCTestCase {
             context.entities.author.insert(authors)
           }
         }
+        print(store.value.db.entities.author.count)
         g.leave()
       }
     }
+    g.leave()
     
     g.notify(queue: .main) {
+      print(store.value.db.entities.author.count)
       exp.fulfill()
     }
     
@@ -51,9 +55,11 @@ class MultithreadingTests: XCTestCase {
   
   func testUpdateFromThreads2() {
     
+    let store = Storage(RootState())
+    
     measure {
       DispatchQueue.concurrentPerform(iterations: 1000) { (i) in
-        self.store.update { state in
+        store.update { state in
           state.other.count += 1
         }
       }
@@ -63,10 +69,24 @@ class MultithreadingTests: XCTestCase {
   
   func testUpdateFromThreads3() {
     
+    let store = Storage(RootState())
+    var count = 0
+    
+    store.sinkEvent { (s) in
+      if case .didUpdate = s {
+        count += 1
+      }
+    }
+    
     measure {
-      DispatchQueue.concurrentPerform(iterations: 1000) { (i) in
-        self.store.update { state in
+      /**
+       Checking if there is no conflicted processing.
+       Performance is worse because performing critical-session concurrently.
+       */
+      DispatchQueue.concurrentPerform(iterations: 200) { (i) in
+        store.update { state in
           state.db.performBatchUpdates { (context) in
+            
             let authors = (0..<40).map { i in
               Author(rawID: "author.\(i)")
             }
@@ -75,6 +95,8 @@ class MultithreadingTests: XCTestCase {
         }
       }
     }
+    
+    XCTAssertEqual(count, 200 * 10)
     
   }
 }

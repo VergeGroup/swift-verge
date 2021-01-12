@@ -280,18 +280,7 @@ public final class EventEmitter<Event>: EventEmitterType {
           
     let _isRunning = isRunning.value
     assert(_isRunning == 0 || _isRunning == 1, "\(_isRunning)")
-    
-    guard _isRunning == 0 else {
-      return
-    }
-    
-    queueLock.lock()
-        
-    guard !eventQueue.isEmpty else {
-      queueLock.unlock()
-      return
-    }
-     
+                 
     let result: Bool = isRunning.modify {
       guard $0 == 0 else {
         return false
@@ -301,18 +290,27 @@ public final class EventEmitter<Event>: EventEmitterType {
     }
    
     guard result else {
-      queueLock.unlock()
       return
     }
-        
-    let scheduledEvents = eventQueue
-    // TODO: Consider how better performance is.
-    eventQueue.removeAll(keepingCapacity: true)
-                  
+                       
+    let scheduledEvents: ContiguousArray<Event> = withLocking(queueLock) {
+      defer {
+        // TODO: Consider how better performance is.
+        eventQueue.removeAll(keepingCapacity: true)
+      }
+      return eventQueue
+    }
+            
+    guard !scheduledEvents.isEmpty else {
+      isRunning.modify {
+        $0 &-= 1
+        assert($0 == 0, "\(isRunning.value)")
+      }
+      return
+    }
+                          
     let signpost = VergeSignpostTransaction("EventEmitter.emits")
-    
-    queueLock.unlock()
-    
+        
     withLocking(subscribersLock) {
                   
       let targets = subscribers.values
