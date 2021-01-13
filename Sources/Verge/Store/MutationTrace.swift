@@ -29,17 +29,20 @@ public struct MutationTrace: Encodable {
   public let file: StaticString
   public let function: StaticString
   public let line: UInt
+  public let thread: String
 
   public init(
     name: String,
     file: StaticString,
     function: StaticString,
-    line: UInt
+    line: UInt,
+    thread: Thread = .current
   ) {
     self.name = name
     self.file = file
     self.function = function
     self.line = line
+    self.thread = thread.description
   }
 
 }
