@@ -272,7 +272,7 @@ Mutation: (%@)
     var latestStateWrapper: Changes<State>? = nil
         
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
-    let cancellable = _backingStorage.sinkEvent { [logger] (event) in
+    let cancellable = _backingStorage.sinkEvent { (event) in
       switch event {
       case .willUpdate:
         break
@@ -280,7 +280,7 @@ Mutation: (%@)
                 
         sanitizer: do {
           
-          if VergeFeatureControl.isSanitizerStateReceivingByCorrectOrder {
+          if RuntimeSanitizer.isSanitizerStateReceivingByCorrectOrder {
             
             sanitizerQueue.async {
               if let latestState = latestStateWrapper {
@@ -289,8 +289,8 @@ Mutation: (%@)
                   latestStateWrapper = receivedState
                 } else {
                   
-                  logger?.didFind(
-                    runtimeError: .sinkReceivedOlderVersionIncorrectly(
+                  RuntimeSanitizer.onDidFindRuntimeError(
+                    .sinkReceivedOlderVersionIncorrectly(
                       latestState: latestState,
                       receivedState: receivedState
                     )
@@ -349,7 +349,7 @@ Latest Version (%d): (%@)
     if !dropsFirst {
       let value = _backingStorage.value.droppedPrevious()
       
-      if VergeFeatureControl.isSanitizerStateReceivingByCorrectOrder {
+      if RuntimeSanitizer.isSanitizerStateReceivingByCorrectOrder {
         sanitizerQueue.async {
           latestStateWrapper = value
         }

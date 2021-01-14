@@ -30,11 +30,5 @@ public protocol StoreLogger {
   func didCreateDispatcher(log: DidCreateDispatcherLog, sender: AnyObject)
   func didDestroyDispatcher(log: DidDestroyDispatcherLog, sender: AnyObject)
   
-  func didFind(runtimeError: RuntimeError)
 }
 
-extension StoreLogger {
-  public func didFind(runtimeError: RuntimeError) {
-    
-  }
-}

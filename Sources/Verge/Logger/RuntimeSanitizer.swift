@@ -19,7 +19,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-public enum VergeFeatureControl {
+public enum RuntimeSanitizer {
   
   public static var isSanitizerStateReceivingByCorrectOrder: Bool = false
+  
+  public static var onDidFindRuntimeError: (RuntimeError) -> Void = { _ in }
 }
