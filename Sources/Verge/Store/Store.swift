@@ -38,6 +38,8 @@ public protocol StoreType: AnyObject {
 
 public typealias NoActivityStoreBase<State: StateType> = Store<State, Never>
 
+private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.sanitizer")
+
 @available(*, deprecated, renamed: "Store")
 public typealias StoreBase<State, Activity> = Store<State, Activity>
 
@@ -267,23 +269,35 @@ Mutation: (%@)
     
     let execute = queue.executor()
     
-    #if DEBUG
-    let receivedWrapper = VergeConcurrency.UnfairLockAtomic<Changes<State>?>(nil)
-    #endif
-    
+    var latestStateWrapper: Changes<State>? = nil
+        
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
-    let cancellable = _backingStorage.sinkEvent { (event) in
+    let cancellable = _backingStorage.sinkEvent { [logger] (event) in
       switch event {
       case .willUpdate:
         break
-      case .didUpdate(let newValue):
-        #if DEBUG
-        if let received = receivedWrapper.value {
-          if received.version <= newValue.version {
-            receivedWrapper.swap(newValue)
-          } else {
-            os_log(
-              """
+      case .didUpdate(let receivedState):
+                
+        sanitizer: do {
+          
+          if VergeFeatureControl.isSanitizerStateReceivingByCorrectOrder {
+            
+            sanitizerQueue.async {
+              if let latestState = latestStateWrapper {
+                if latestState.version <= receivedState.version {
+                  // it received newer version than previous version
+                  latestStateWrapper = receivedState
+                } else {
+                  
+                  logger?.didFind(
+                    runtimeError: .sinkReceivedOlderVersionIncorrectly(
+                      latestState: latestState,
+                      receivedState: receivedState
+                    )
+                  )
+                  
+                  os_log(
+                    """
 ⚠️ [Verge Error] Received older version(%d) value rather than latest received version(%d).
 Probably another commit was dispatched inside sink synchrnously.
 This cause interuppting the order of states.
@@ -302,23 +316,31 @@ Latest Version (%d): (%@)
 
 ===
 """,
-              log: VergeOSLogs.debugLog,
-              type: .error,
-              newValue.version,
-              received.version,
-              newValue.version,
-              String(describing: newValue.mutation),
-              received.version,
-              String(describing: received.mutation)
-              )
+                    log: VergeOSLogs.debugLog,
+                    type: .error,
+                    receivedState.version,
+                    latestState.version,
+                    receivedState.version,
+                    String(describing: receivedState.mutation),
+                    latestState.version,
+                    String(describing: latestState.mutation)
+                  )
+                }
+                
+              } else {
+                // first item
+                latestStateWrapper = receivedState
+              }
+            }
+                       
           }
-        } else {
-          receivedWrapper.value = newValue
+          
         }
-        #endif
+        
         execute {
-          receive(newValue)
+          receive(receivedState)
         }
+              
       case .willDeinit:
         break
       }
@@ -326,9 +348,13 @@ Latest Version (%d): (%@)
 
     if !dropsFirst {
       let value = _backingStorage.value.droppedPrevious()
-      #if DEBUG
-      receivedWrapper.swap(value)
-      #endif
+      
+      if VergeFeatureControl.isSanitizerStateReceivingByCorrectOrder {
+        sanitizerQueue.async {
+          latestStateWrapper = value
+        }
+      }
+
       execute {
         /// this closure might contains some mutations.
         ///  It depends outside usages.

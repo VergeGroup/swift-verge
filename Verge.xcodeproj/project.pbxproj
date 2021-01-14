@@ -136,6 +136,8 @@
 		4BF21F302458C1860045B5C2 /* UtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF21F2F2458C1860045B5C2 /* UtilTests.swift */; };
 		4BF2BCCE238A658400F70CDA /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B86A4861F969AD5002D54FE /* VergeClassic.framework */; };
 		4BF3C2EC242093AC006B1726 /* MultithreadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF3C2EA24209324006B1726 /* MultithreadingTests.swift */; };
+		4BF5E10425B0B56D00DB3624 /* RuntimeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF5E10325B0B56D00DB3624 /* RuntimeError.swift */; };
+		4BF5E10E25B0B70400DB3624 /* VergeFeatureControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF5E10D25B0B70400DB3624 /* VergeFeatureControls.swift */; };
 		4BF76681244E1B5300A5EA10 /* Derived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF76680244E1B5300A5EA10 /* Derived.swift */; };
 		4BF76684244E242A00A5EA10 /* DerivedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF76682244E242500A5EA10 /* DerivedTests.swift */; };
 		4BFF9A792548577500692696 /* InoutRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B2C2544B95100B4DFBE /* InoutRef.swift */; };
@@ -382,6 +384,8 @@
 		4BF470CC23CC36E8001A1D5D /* Edge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Edge.swift; sourceTree = "<group>"; };
 		4BF470CE23CC3949001A1D5D /* CounterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterTests.swift; sourceTree = "<group>"; };
 		4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonAtomicVersionCounter.swift; sourceTree = "<group>"; };
+		4BF5E10325B0B56D00DB3624 /* RuntimeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeError.swift; sourceTree = "<group>"; };
+		4BF5E10D25B0B70400DB3624 /* VergeFeatureControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeFeatureControls.swift; sourceTree = "<group>"; };
 		4BF76680244E1B5300A5EA10 /* Derived.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Derived.swift; sourceTree = "<group>"; };
 		4BF76682244E242500A5EA10 /* DerivedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -738,6 +742,7 @@
 		4B91B37E2440C0D8005082D7 /* Store */ = {
 			isa = PBXGroup;
 			children = (
+				4BF5E10D25B0B70400DB3624 /* VergeFeatureControls.swift */,
 				4B427418236F269C00C302C8 /* Store.swift */,
 				4B3834E024823722008A0B47 /* Store+Combine.swift */,
 				4B56AE3E2554EB1B001BA029 /* StoreType+Assignee.swift */,
@@ -771,6 +776,7 @@
 			children = (
 				4B2050F623D5C841000A2779 /* StoreLogger.swift */,
 				4B0AFD6C2388643400AABA90 /* DefaultStoreLogger.swift */,
+				4BF5E10325B0B56D00DB3624 /* RuntimeError.swift */,
 			);
 			path = Logger;
 			sourceTree = "<group>";
@@ -1313,6 +1319,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BF5E10E25B0B70400DB3624 /* VergeFeatureControls.swift in Sources */,
 				4B04C5632570875200731802 /* Log.swift in Sources */,
 				4B37735324C78F260058A887 /* BackgroundDeallocationQueue.swift in Sources */,
 				4B04C55D2570875200731802 /* Signpost.swift in Sources */,
@@ -1352,6 +1359,7 @@
 				4B1F19C1243A82BC00CED46B /* StateType.swift in Sources */,
 				4B2050F923D5C85B000A2779 /* MutationTrace.swift in Sources */,
 				4B6B77A9243F9E5500E0C0EA /* Comparer.swift in Sources */,
+				4BF5E10425B0B56D00DB3624 /* RuntimeError.swift in Sources */,
 				4B04C55E2570875200731802 /* Storage.swift in Sources */,
 				4BF76681244E1B5300A5EA10 /* Derived.swift in Sources */,
 				4BC4898225A072F400AC0365 /* StoreType+BindingDerived.swift in Sources */,
