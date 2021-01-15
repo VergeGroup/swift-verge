@@ -120,6 +120,8 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   
   let name: String
   
+  private var middlewares: [StoreMiddleware<State>] = []
+  
   public private(set) var logger: StoreLogger?
     
   /// An initializer
@@ -210,6 +212,10 @@ Mutation: (%@)
         guard reference.hasModified else {
           // No emits update event
           return .nothingUpdates
+        }
+        
+        self.middlewares.forEach { middleware in
+          middleware._mutate(state: &reference)
         }
 
         state = state.makeNextChanges(

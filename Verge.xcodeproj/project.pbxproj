@@ -42,6 +42,7 @@
 		4B2050F923D5C85B000A2779 /* MutationTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050F823D5C85B000A2779 /* MutationTrace.swift */; };
 		4B2240A22576431E001BCB93 /* MemoizeMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2240A12576431E001BCB93 /* MemoizeMapTests.swift */; };
 		4B264EF823BD13BC001BD9A0 /* DatabaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */; };
+		4B2EAA0F25B224270048C553 /* StoreMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */; };
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
 		4B37735324C78F260058A887 /* BackgroundDeallocationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B37735224C78F260058A887 /* BackgroundDeallocationQueue.swift */; };
 		4B3834DD2482330C008A0B47 /* StateReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834DC2482330C008A0B47 /* StateReader.swift */; };
@@ -261,6 +262,7 @@
 		4B2050F823D5C85B000A2779 /* MutationTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationTrace.swift; sourceTree = "<group>"; };
 		4B2240A12576431E001BCB93 /* MemoizeMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoizeMapTests.swift; sourceTree = "<group>"; };
 		4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseError.swift; sourceTree = "<group>"; };
+		4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreMiddleware.swift; sourceTree = "<group>"; };
 		4B2F001D2459DC4A0034DA40 /* All.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = All.xctestplan; path = /Users/muukii/.ghq/github.com/muukii/Verge/worktree/space1/Tests/All.xctestplan; sourceTree = "<absolute>"; };
 		4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizeDisplayValueTests.swift; sourceTree = "<group>"; };
 		4B37735224C78F260058A887 /* BackgroundDeallocationQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundDeallocationQueue.swift; sourceTree = "<group>"; };
@@ -743,6 +745,7 @@
 			isa = PBXGroup;
 			children = (
 				4B427418236F269C00C302C8 /* Store.swift */,
+				4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */,
 				4B3834E024823722008A0B47 /* Store+Combine.swift */,
 				4B56AE3E2554EB1B001BA029 /* StoreType+Assignee.swift */,
 				4BC4896525A06B0D00AC0365 /* StoreType+Derived.swift */,
@@ -1358,6 +1361,7 @@
 				4B3834E124823722008A0B47 /* Store+Combine.swift in Sources */,
 				4B1F19C1243A82BC00CED46B /* StateType.swift in Sources */,
 				4B2050F923D5C85B000A2779 /* MutationTrace.swift in Sources */,
+				4B2EAA0F25B224270048C553 /* StoreMiddleware.swift in Sources */,
 				4B6B77A9243F9E5500E0C0EA /* Comparer.swift in Sources */,
 				4BF5E10425B0B56D00DB3624 /* RuntimeError.swift in Sources */,
 				4B04C55E2570875200731802 /* Storage.swift in Sources */,
