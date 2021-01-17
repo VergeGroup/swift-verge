@@ -8,6 +8,7 @@
 <h1 align="center">Verge</h1>
 <p align="center">
 <sub>📍The effective state management architecture for iOS📍</sub><br/>
+<sub>_ An easier way to get unidirectional data flow _</sub><br/>
 <sub>_ Supports concurrent processing _</sub><br/>
 </p>
 
