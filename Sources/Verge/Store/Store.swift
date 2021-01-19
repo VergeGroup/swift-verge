@@ -149,6 +149,16 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     super.init()
        
   }
+  
+  /// Registers a middleware.
+  /// MIddleware can execute additional operations unified with mutations.
+  ///
+  public func add(middleware: StoreMiddleware<State>) {
+    // use lock
+    _backingStorage.update { _ in
+      middlewares.append(middleware)
+    }
+  }
 
   /// Receives mutation
   ///
@@ -215,7 +225,7 @@ Mutation: (%@)
         }
         
         self.middlewares.forEach { middleware in
-          middleware._mutate(state: &reference)
+          middleware.mutate(state: &reference, trace: trace)
         }
 
         state = state.makeNextChanges(

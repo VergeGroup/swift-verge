@@ -23,9 +23,25 @@ import Foundation
 
 open class StoreMiddleware<State> {
   
-  // TODO: Tantaive
-  open func _mutate(state: inout InoutRef<State>) {
+  open func mutate(state: inout InoutRef<State>, trace: MutationTrace) {
     
   }
   
+  public static func makeUnifiedMutation(_ mutate: @escaping (inout InoutRef<State>, _ trace: MutationTrace) -> Void) -> AnonymousStoreMiddleware<State> {
+    return .init(mutate: mutate)
+  }
+  
+}
+
+public final class AnonymousStoreMiddleware<State>: StoreMiddleware<State> {
+  
+  private let _mutate: (inout InoutRef<State>, _ trace: MutationTrace) -> Void
+  
+  public init(mutate: @escaping (inout InoutRef<State>, _ trace: MutationTrace) -> Void) {
+    self._mutate = mutate
+  }
+
+  public override func mutate(state: inout InoutRef<State>, trace: MutationTrace) {
+    _mutate(&state, trace)
+  }
 }
