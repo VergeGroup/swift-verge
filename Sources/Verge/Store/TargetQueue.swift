@@ -81,6 +81,8 @@ extension TargetQueue {
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
   public static let main: TargetQueue = mainIsolated()
 
+  /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
+  /// This create isolated queue against using `.main`.
   public static func mainIsolated() -> TargetQueue {
     let numberEnqueued = VergeConcurrency.AtomicInt(initialValue: 0)
 
