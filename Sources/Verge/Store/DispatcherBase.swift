@@ -44,20 +44,26 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
     store.logger
   }
   
+  let name: String
+  
   public init(
+    name: String? = nil,
     targetStore: Store<State, Activity>,
-    scope: WritableKeyPath<State, Scope>
+    scope: WritableKeyPath<State, Scope>,
+    _ file: StaticString = #file,
+    _ line: UInt = #line
   ) {
     self.store = targetStore
     self.scope = scope
+    self.name = name ?? "\(file):\(line)"
       
-    let log = DidCreateDispatcherLog(store: targetStore, dispatcher: self)    
+    let log = DidCreateDispatcherLog(storeName: targetStore.name, dispatcherName: self.name)
     logger?.didCreateDispatcher(log: log, sender: self)
 
   }
 
   deinit {
-    let log = DidDestroyDispatcherLog(store: store, dispatcher: self)
+    let log = DidDestroyDispatcherLog(storeName: store.name, dispatcherName: name)
     logger?.didDestroyDispatcher(log: log, sender: self)
   }
     
