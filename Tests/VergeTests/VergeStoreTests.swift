@@ -348,6 +348,7 @@ final class VergeStoreTests: XCTestCase {
       $0.markAsModified()
     }
     
+    // stop subscribing
     subscriptions = .init()
 
     store.commit {
@@ -389,7 +390,7 @@ final class VergeStoreTests: XCTestCase {
     }
            
     wait(for: [exp, counter], timeout: 10)
-    XCTAssertEqual(Array((0...1000).map { $0 }), results.value)
+    XCTAssertEqual(Array((0...1000).map { $0 }), results.value, "\(Array((0...1000).map { $0 }).difference(from: results.value))")
     withExtendedLifetime(sub) {}
   }
   
@@ -606,7 +607,7 @@ final class VergeStoreTests: XCTestCase {
       $0.count = 10
     }
 
-    wait(for: [exp], timeout: 1)
+    wait(for: [exp], timeout: 10)
     withExtendedLifetime(cancellable) {}
 
   }
@@ -644,6 +645,51 @@ final class VergeStoreTests: XCTestCase {
 
     wait(for: [exp], timeout: 1)
 
+  }
+  
+  func testEventOrder() {
+    
+    let store = DemoStore()
+    
+    var bag = Set<VergeAnyCancellable>()
+    
+    for i in 0..<100 {
+      do {
+        var version: UInt64 = 0
+        store.sinkState(queue: .passthrough) { (s) in
+          if version > s.version {
+            XCTFail()
+          }
+          version = s.version
+          print("\(i)", s.version)
+        }
+        .store(in: &bag)
+      }
+    }
+    
+    do {
+      var version: UInt64 = 0
+      store.sinkState(queue: .passthrough) { (s) in
+        if version > s.version {
+          XCTFail()
+        }
+        version = s.version
+        print("x", s.version)
+        store.commit {
+          if s.count == 1 {
+            $0.count += 1
+          }
+        }
+      }
+      .store(in: &bag)
+    }
+            
+    store.commit { (s) in
+      s.count += 1
+    }
+    
+    withExtendedLifetime(bag, {})
+    
   }
   
 }

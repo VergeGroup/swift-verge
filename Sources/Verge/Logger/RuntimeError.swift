@@ -19,16 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Foundation
-
-/// A protocol to register logger and get the event VergeStore emits.
-public protocol StoreLogger {
+public enum RuntimeError: Swift.Error {
   
-  func didCommit(log: CommitLog, sender: AnyObject)
-  func didSendActivity(log: ActivityLog, sender: AnyObject)
-
-  func didCreateDispatcher(log: DidCreateDispatcherLog, sender: AnyObject)
-  func didDestroyDispatcher(log: DidDestroyDispatcherLog, sender: AnyObject)
-  
+  case sinkReceivedOlderVersionIncorrectly(latestState: Any, receivedState: Any)
 }
-

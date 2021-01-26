@@ -197,11 +197,6 @@
                BlueprintName = "VergeRxTests"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "ReproduceDeadlockTests/testReproduceDeadlock()">
-               </Test>
-            </SkippedTests>
          </TestableReference>
          <TestableReference
             skipped = "NO">

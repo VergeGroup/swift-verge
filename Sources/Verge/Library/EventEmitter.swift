@@ -238,40 +238,101 @@ public final class EventEmitter<Event>: EventEmitterType {
   
   private var __publisher: Any?
   
-  private let lock = NSRecursiveLock()
+  private let subscribersLock = NSRecursiveLock()
   
   private var subscribers: [EventEmitterCancellable : (Event) -> Void] = [:]
   
+  private var eventQueue: ContiguousArray<Event> = .init()
+  
+  private let queueLock = NSRecursiveLock()
+  
+  private let emittingLock = NSLock()
+  
+  private var isRunning: VergeConcurrency.RecursiveLockAtomic<Int> = .init(0)
+  
   public init() {
-    
+
   }
       
   public func accept(_ event: Event) {
-    let targets: Dictionary<EventEmitterCancellable, (Event) -> Void>.Values
-    lock.lock()
-    targets = subscribers.values
-    lock.unlock()
-    let signpost = VergeSignpostTransaction("EventEmitter.emits")
-    targets.forEach {
-      signpost.event(name: "EventEmitter.oneEmit")
-      $0(event)
+    withLocking(queueLock) {
+      eventQueue.append(event)
     }
-    signpost.end()
+    drain()
   }
   
   @discardableResult
   public func add(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterCancellable {
     let token = EventEmitterCancellable(owner: self)
-    lock.lock()
-    subscribers[token] = eventReceiver
-    lock.unlock()
+    withLocking(subscribersLock) {
+      subscribers[token] = eventReceiver
+    }
     return token
   }
   
   func remove(_ token: EventEmitterCancellable) {
-    lock.lock()
-    subscribers.removeValue(forKey: token)
-    lock.unlock()
+    withLocking(subscribersLock) {
+      subscribers.removeValue(forKey: token)
+    }
+  }
+  
+  private func drain() {
+          
+    let _isRunning = isRunning.value
+    assert(_isRunning == 0 || _isRunning == 1, "\(_isRunning)")
+                 
+    let result: Bool = isRunning.modify {
+      guard $0 == 0 else {
+        return false
+      }
+      $0 &+= 1
+      return true
+    }
+   
+    guard result else {
+      return
+    }
+                       
+    let scheduledEvents: ContiguousArray<Event> = withLocking(queueLock) {
+      defer {
+        // TODO: Consider how better performance is.
+        eventQueue.removeAll(keepingCapacity: true)
+      }
+      return eventQueue
+    }
+            
+    guard !scheduledEvents.isEmpty else {
+      isRunning.modify {
+        $0 &-= 1
+        assert($0 == 0, "\(isRunning.value)")
+      }
+      return
+    }
+                          
+    let signpost = VergeSignpostTransaction("EventEmitter.emits")
+        
+    withLocking(subscribersLock) {
+                  
+      let targets = subscribers.values
+      
+      // Deliver events
+      scheduledEvents.forEach { event in
+        targets.forEach {
+          signpost.event(name: "EventEmitter.oneEmit")
+          $0(event)
+        }
+      }
+      
+      isRunning.modify {
+        $0 &-= 1
+        assert($0 == 0, "\(isRunning.value)")
+      }
+    }
+         
+    signpost.end()
+  
+    drain()
+    
   }
 }
 

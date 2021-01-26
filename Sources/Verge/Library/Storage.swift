@@ -28,6 +28,15 @@ public protocol _VergeRecursiveLockType {
   init()
 }
 
+@discardableResult
+func withLocking<Lock: NSLocking, Return>(_ lock: Lock, _ performCriticalSession: () -> Return) -> Return {
+  lock.lock()
+  defer {
+    lock.unlock()
+  }
+  return performCriticalSession()
+}
+
 extension _VergeRecursiveLockType {
 
   public func asAny() -> VergeAnyRecursiveLock {
