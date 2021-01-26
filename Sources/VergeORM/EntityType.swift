@@ -45,6 +45,14 @@ public struct AnyEntityIdentifier: Hashable, ExpressibleByStringLiteral {
 }
 
 public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConvertible {
+  
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.raw == rhs.raw
+  }
+  
+  public func hash(into hasher: inout Hasher) {
+    raw.hash(into: &hasher)
+  }
 
   #if false
 
