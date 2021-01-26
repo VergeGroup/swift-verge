@@ -70,7 +70,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     _backingStorage.objectWillChange
   }
   #endif
-  
+    
   public var scope: WritableKeyPath<State, State> = \State.self
   
   public var store: Store<State, Activity> { self }
@@ -118,6 +118,8 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   
   private let tracker = VergeConcurrency.SynchronizationTracker()
   
+  let name: String
+  
   public private(set) var logger: StoreLogger?
     
   /// An initializer
@@ -126,9 +128,12 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   ///   - backingStorageRecursiveLock: A lock instance for mutual exclusion.
   ///   - logger: You can also use `DefaultLogger.shared`.
   public init(
+    name: String? = nil,
     initialState: State,
     backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
-    logger: StoreLogger? = nil
+    logger: StoreLogger? = nil,
+    _ file: StaticString = #file,
+    _ line: UInt = #line
   ) {
 
     self._backingStorage = .init(
@@ -137,8 +142,10 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     )
 
     self.logger = logger
+    self.name = name ?? "\(file):\(line)"
 
     super.init()
+       
   }
 
   /// Receives mutation
@@ -218,7 +225,7 @@ Mutation: (%@)
 
     }
        
-    let log = CommitLog(store: self, trace: trace, time: elapsed)
+    let log = CommitLog(storeName: self.name, trace: trace, time: elapsed)
     logger?.didCommit(log: log, sender: self)
     return valueFromMutation
   }
@@ -231,7 +238,7 @@ Mutation: (%@)
     
     _activityEmitter.accept(activity)
     
-    let log = ActivityLog(store: self, trace: trace)
+    let log = ActivityLog(storeName: self.name, trace: trace)
     logger?.didSendActivity(log: log, sender: self)
   }
   

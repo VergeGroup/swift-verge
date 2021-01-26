@@ -31,8 +31,8 @@ public struct CommitLog: Encodable {
   public let store: String
 
   @inlinable
-  public init(store: AnyObject, trace: MutationTrace, time: CFTimeInterval) {
-    self.store = String(reflecting: store)
+  public init(storeName: String, trace: MutationTrace, time: CFTimeInterval) {
+    self.store = storeName
     self.tookMilliseconds = time * 1000
     self.trace = trace
   }
@@ -45,8 +45,8 @@ public struct ActivityLog: Encodable {
   public let store: String
   
   @inlinable
-  public init(store: AnyObject, trace: ActivityTrace) {
-    self.store = String(reflecting: store)
+  public init(storeName: String, trace: ActivityTrace) {
+    self.store = storeName
     self.trace = trace
   }
 }
@@ -58,9 +58,9 @@ public struct DidCreateDispatcherLog: Encodable {
   public let dispatcher: String
   
   @inlinable
-  public init(store: AnyObject, dispatcher: Any) {
-    self.store = String(reflecting: store)
-    self.dispatcher = String(reflecting: dispatcher)
+  public init(storeName: String, dispatcherName: String) {
+    self.store = storeName
+    self.dispatcher = dispatcherName
   }
   
 }
@@ -72,9 +72,9 @@ public struct DidDestroyDispatcherLog: Encodable {
   public let dispatcher: String
   
   @inlinable
-  public init(store: AnyObject, dispatcher: Any) {
-    self.store = String(reflecting: store)
-    self.dispatcher = String(reflecting: dispatcher)
+  public init(storeName: String, dispatcherName: String) {
+    self.store = storeName
+    self.dispatcher = dispatcherName
   }
   
 }
