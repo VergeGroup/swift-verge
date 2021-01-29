@@ -131,6 +131,8 @@ extension Pipeline where Input : ChangesType, Input.Value : DatabaseEmbedding {
                 
         let hasChanges = state.asChanges().hasChanges(
           { (composing) -> Input.Value.Database in
+            // TODO: causing copy in some-cases
+            // `initializeWithCopy`
             let db = path(composing.root)
             return db
         }, noChangesComparer
