@@ -49,6 +49,7 @@ module.exports = {
           label: 'Techniques',
           collapsed: false,
           items: [
+            'store/techniques/store-middleware',
             'store/core/logging',
             'store/techniques/optimization-tips',
             'store/techniques/utilities',

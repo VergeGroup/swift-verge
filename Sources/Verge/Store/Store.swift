@@ -120,6 +120,8 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   
   let name: String
   
+  private var middlewares: [StoreMiddleware<State>] = []
+  
   public private(set) var logger: StoreLogger?
     
   /// An initializer
@@ -146,6 +148,16 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
     super.init()
        
+  }
+  
+  /// Registers a middleware.
+  /// MIddleware can execute additional operations unified with mutations.
+  ///
+  public func add(middleware: StoreMiddleware<State>) {
+    // use lock
+    _backingStorage.update { _ in
+      middlewares.append(middleware)
+    }
   }
 
   /// Receives mutation
@@ -211,6 +223,10 @@ Mutation: (%@)
           // No emits update event
           return .nothingUpdates
         }
+        
+        self.middlewares.forEach { middleware in
+          middleware.mutate(state: &reference, trace: trace)
+        }
 
         state = state.makeNextChanges(
           with: pointer.pointee,
@@ -249,12 +265,15 @@ Mutation: (%@)
   public var customMirror: Mirror {
     return Mirror(
       self,
-      children: [
-      ],
-      displayStyle: .struct
+      children: KeyValuePairs.init(
+        dictionaryLiteral:
+          ("stateVersion", state.version),
+        ("middlewares", middlewares)
+      ),
+      displayStyle: .class
     )
   }
-
+  
   @inline(__always)
   public func asStore() -> Store<State, Activity> {
     self
