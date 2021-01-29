@@ -265,12 +265,15 @@ Mutation: (%@)
   public var customMirror: Mirror {
     return Mirror(
       self,
-      children: [
-      ],
-      displayStyle: .struct
+      children: KeyValuePairs.init(
+        dictionaryLiteral:
+          ("stateVersion", state.version),
+        ("middlewares", middlewares)
+      ),
+      displayStyle: .class
     )
   }
-
+  
   @inline(__always)
   public func asStore() -> Store<State, Activity> {
     self
