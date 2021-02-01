@@ -28,7 +28,7 @@ import Verge
 protocol EntityModifierType: AnyObject {
   
   var entityName: EntityTableIdentifier { get }
-  var _insertsOrUpdates: EntityTableType { get }
+  var _insertsOrUpdates: _EntityTableType { get }
   var _deletes: Set<AnyEntityIdentifier> { get }
 }
 
@@ -37,11 +37,11 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   
   public typealias InsertionResult = EntityTable<Schema, Entity>.InsertionResult
   
-  var _current: EntityTableType {
+  var _current: _EntityTableType {
     current
   }
   
-  var _insertsOrUpdates: EntityTableType {
+  var _insertsOrUpdates: _EntityTableType {
     insertsOrUpdates
   }
   
