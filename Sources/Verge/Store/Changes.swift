@@ -221,6 +221,11 @@ public final class Changes<Value>: ChangesType, Equatable {
       modification: modification
     )
   }
+  
+  public func _read(perform: (ReadRef<Value>) -> Void) {
+    innerBox._read(perform: perform)
+  }
+  
 }
 
 // MARK: - Primitive methods
@@ -485,7 +490,8 @@ extension Changes: CustomReflectable {
 
 extension Changes {
   private final class InnerBox {
-    let value: Value
+    
+    var value: Value
 
     let cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath: Any]>
 
@@ -504,12 +510,21 @@ extension Changes {
 
     deinit {}
 
-    public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerBox {
+    func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerBox {
       return .init(
         value: try transform(value),
         cachedComputedValueStorage: cachedComputedValueStorage
       )
     }
+    
+    @inline(__always)
+    func _read(perform: (ReadRef<Value>) -> Void) {
+      withUnsafePointer(to: &value) { (pointer) -> Void in
+        let ref = ReadRef<Value>.init(pointer)
+        perform(ref)
+      }
+    }
+    
   }
 }
 
