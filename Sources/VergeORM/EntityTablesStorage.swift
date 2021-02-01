@@ -25,15 +25,15 @@ import Foundation
 import Verge
 #endif
 
-protocol EntityTableType {
-  typealias RawTable = EntityRawTable
+protocol _EntityTableType {
+  typealias RawTable = _EntityRawTable
   var rawTable: RawTable { get }
   var entityName: EntityTableIdentifier { get }
 }
 
-struct EntityRawTable: Equatable {
+struct _EntityRawTable: Equatable {
   
-  static func == (lhs: EntityRawTable, rhs: EntityRawTable) -> Bool {
+  static func == (lhs: _EntityRawTable, rhs: _EntityRawTable) -> Bool {
     guard lhs.updatedMarker == rhs.updatedMarker else { return false }
     guard lhs.entities == rhs.entities else { return false }
     return true
@@ -53,14 +53,23 @@ struct EntityRawTable: Equatable {
     
 }
 
+public protocol EntityTableType {
+  
+  associatedtype Schema: EntitySchemaType
+  associatedtype Entity: EntityType
+}
+
 public struct NoSchema: EntitySchemaType {
   public init() {
 
   }
 }
 
-/// A wrapper of raw table
-public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityTableType {
+/**
+ A collection of entity.
+ It provides the functions for querying and mutating.
+ */
+public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: _EntityTableType, EntityTableType {
     
   /// An object indicates result of insertion
   /// It can be used to create a getter object.
@@ -110,6 +119,10 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     .init(rawTable.entities.values.lazy.map { $0.base as! Entity })
   }
   
+  /**
+   Finds an entity by the identifier of the entity.
+   - Returns: An entity that found by identifier. Nil if the table does not have that entity.
+   */
   public func find(by id: Entity.EntityID) -> Entity? {
     let t = VergeSignpostTransaction("EntityTable.findBy", label: "EntityType:\(Entity.entityName.name)")
     defer {
@@ -118,7 +131,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     return rawTable.entities[id.any]?.base as? Entity
   }
     
-  /// Find entities by set of ids.
+  /// Finds entities by set of ids.
   /// The order of array would not be sorted, it depends on dictionary's buffer.
   ///
   /// if ids contains same id, result also contains same element.
@@ -134,6 +147,11 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     }
   }
   
+  /**
+   Updates the entity that already exsisting in the table.
+   
+   - Attention: Please don't change `EntityType.entityID` value. if we changed, the crash happens (precondition)
+   */
   @discardableResult
   @inline(__always)
   public mutating func updateExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) throws -> Entity {
@@ -155,11 +173,19 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     return e
   }
    
+  /**
+   Updates the entity that already exsisting in the table.
+   
+   - Attention: Please don't change `EntityType.entityID` value. if we changed, the crash happens (precondition)
+   */
   @discardableResult
   public mutating func updateIfExists(id: Entity.EntityID, update: (inout Entity) throws -> Void) rethrows -> Entity? {
     try? updateExists(id: id, update: update)
   }
   
+  /**
+   Inserts an entity
+   */
   @discardableResult
   public mutating func insert(_ entity: Entity) -> InsertionResult {
     let t = VergeSignpostTransaction("ORM.EntityTable.insertOne", label: "EntityType:\(Entity.entityName.name)")
@@ -172,6 +198,9 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     return .init(entity: entity)
   }
   
+  /**
+   Inserts a collection of the entity.
+   */
   @discardableResult
   public mutating func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
     let t = VergeSignpostTransaction("ORM.EntityTable.insertSequence", label: "EntityType:\(Entity.entityName.name)")
@@ -189,12 +218,18 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: EntityT
     return results
   }
   
+  /**
+   Removes the entity by the identifier.
+   */
   public mutating func remove(_ id: Entity.EntityID) {
     rawTable.updateEntity { (entities) -> Void in
       entities.removeValue(forKey: id.any)
     }
   }
   
+  /**
+   Removes the all of the entities in the table.
+   */
   public mutating func removeAll() {
     rawTable.updateEntity { (entities) in
       entities.removeAll(keepingCapacity: false)
@@ -217,19 +252,32 @@ extension EntityTable where Entity : Equatable {
 /// A structure that store entities with normalizing.
 public typealias StandaloneEntityTable<Entity: EntityType> = EntityTable<NoSchema, Entity>
 
+/**
+ A set of tables each the type of entity.
+ 
+ [Table-Key] 1-1 [Table]
+ */
 @dynamicMemberLookup
 public struct EntityTablesStorage<Schema: EntitySchemaType> {
   
-  private(set) var entityTableStorage: [EntityTableIdentifier : EntityTableType.RawTable]
+  private(set) var entityTableStorage: [EntityTableIdentifier : _EntityTableType.RawTable]
       
+  /**
+   Creates an instance with the empty storage.
+   */
   public init() {
     self.entityTableStorage = [:]
   }
   
-  private init(entityTableStorage: [EntityTableIdentifier : EntityTableType.RawTable]) {
+  private init(entityTableStorage: [EntityTableIdentifier : _EntityTableType.RawTable]) {
     self.entityTableStorage = entityTableStorage
   }
   
+  /**
+   Returns a table of the entity from the type of entity.
+   
+   - Warning: It's not recommended way to get the table because there are no guarantees that the schema has the type of entity.
+   */
   @inline(__always)
   public func table<E: EntityType>(_ entityType: E.Type) -> EntityTable<Schema, E> {
     guard let rawTable = entityTableStorage[E.entityName] else {
@@ -238,6 +286,11 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
     return EntityTable<Schema, E>(rawTable: rawTable)
   }
     
+  /**
+   Returns a table of the entity from the type of entity.
+   
+   - Attention: This way safer than using `table(_ :)`.
+   */
   public subscript <E: EntityType>(dynamicMember keyPath: KeyPath<Schema, EntityTableKey<E>>) -> EntityTable<Schema, E> {
     table(E.self)
   }
@@ -256,7 +309,7 @@ public struct EntityTablesStorage<Schema: EntitySchemaType> {
   }
   
   @inline(__always)
-  private mutating func _merge(anyEntityTable: EntityTableType) {
+  private mutating func _merge(anyEntityTable: _EntityTableType) {
     let rawTable = anyEntityTable.rawTable
     let entityName = anyEntityTable.entityName
     
