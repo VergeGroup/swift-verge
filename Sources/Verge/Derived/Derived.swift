@@ -490,7 +490,12 @@ extension Derived where Value == Any {
 @propertyWrapper
 public final class BindingDerived<State>: Derived<State> {
   
-  /// A current state.
+  /**
+   Returns a derived value that created by get-pipeline.
+   And can modify the value.
+   
+   - Warning: It does not always return the latest value after set a new value. It depends the specified target-queue.
+   */
   public override var primitiveValue: State {
     get { innerStore.primitiveState }
     set {
@@ -502,6 +507,12 @@ public final class BindingDerived<State>: Derived<State> {
     }
   }
 
+  /**
+   Returns a derived value that created by get-pipeline.
+   And can modify the value.
+   
+   - Warning: It does not always return the latest value after set a new value. It depends the specified target-queue.
+   */
   public var wrappedValue: State {
     get { primitiveValue }
     set { primitiveValue = newValue }
