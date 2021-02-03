@@ -118,22 +118,25 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
     get: Pipeline<UpstreamState, Value>,
     set: ((Value) -> Void)?,
     initialUpstreamState: UpstreamState,
-    subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
+    subscribeUpstreamState: (@escaping (UpstreamState, MutationTrace?) -> Void) -> CancellableType,
     retainsUpstream: Any?
   ) {
     
     let store = Store<Value, Never>.init(initialState: get.makeInitial(initialUpstreamState), logger: nil)
                      
-    let s = subscribeUpstreamState { [weak store] value in
+    let s = subscribeUpstreamState { [weak store] value, mutationTrace in
       let update = get.makeResult(value)
       switch update {
       case .noUpdates:
         break
       case .new(let newState):
         // TODO: Take over state.modification & state.mutation
-        store?.commit {
-          $0.replace(with: newState)
-        }
+        store?._commit(
+          trace: mutationTrace ?? .init(),
+          mutation: {
+            $0.replace(with: newState)
+          }
+        )
       }
     }
     

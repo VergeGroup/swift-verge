@@ -32,10 +32,10 @@ public struct MutationTrace: Encodable {
   public let thread: String
 
   public init(
-    name: String,
-    file: StaticString,
-    function: StaticString,
-    line: UInt,
+    name: String = "",
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line,
     thread: Thread = .current
   ) {
     self.name = name

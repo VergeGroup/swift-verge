@@ -136,6 +136,22 @@ extension DispatcherType {
       trace: trace
     )
   }
+  
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  @inline(__always)
+  func _commit<Result>(
+    trace: MutationTrace,
+    mutation: (inout InoutRef<Scope>) throws -> Result
+  ) rethrows -> Result where Scope == WrappedStore.State {
+    return try store.asStore()._receive(
+      mutation: { state -> Result in
+        try mutation(&state)
+      },
+      trace: trace
+    )
+  }
 
   /// Run Mutation that created inline
   ///
@@ -153,13 +169,7 @@ extension DispatcherType {
       function: function,
       line: line
     )
-
-    return try store.asStore()._receive(
-      mutation: { state -> Result in
-        try mutation(&state)
-      },
-      trace: trace
-    )
+    return try self._commit(trace: trace, mutation: mutation)
   }
 
   /// Run Mutation that created inline
