@@ -328,8 +328,8 @@ extension ReadonlyStorage {
     subject.asObservable()
   }
   
-  /// Returns an infallable sequence
-  public func asInfallable() -> Infallible<Value> {
+  /// Returns an infallible sequence
+  public func asInfallible() -> Infallible<Value> {
     subject.asInfallible(onErrorRecover: { _ in fatalError() })
   }
   
@@ -338,8 +338,8 @@ extension ReadonlyStorage {
       .map { $0[keyPath: keyPath] }
   }
   
-  /// Returns an infallable sequence
-  public func asInfallable<S>(keyPath: KeyPath<Value, S>) -> Infallible<S> {
+  /// Returns an infallible sequence
+  public func asInfallible<S>(keyPath: KeyPath<Value, S>) -> Infallible<S> {
     subject.asInfallible(onErrorRecover: { _ in fatalError() })
       .map { $0[keyPath: keyPath] }
   }
