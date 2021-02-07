@@ -47,6 +47,17 @@ extension Reactive where Base : StoreType {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
+  public func stateInfallible(startsFromInitial: Bool = true) -> Infallible<Changes<Base.State>> {
+    stateObservable(startsFromInitial: startsFromInitial)
+      .asInfallible(onErrorRecover: { _ in fatalError() })
+  }
+  
+  /// An observable that repeatedly emits the changes when state updated
+  ///
+  /// Guarantees to emit the first event on started subscribing.
+  ///
+  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
+  /// - Returns:
   @available(*, deprecated, renamed: "stateObservable")
   public func changesObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.State>> {
     if startsFromInitial {
@@ -317,8 +328,19 @@ extension ReadonlyStorage {
     subject.asObservable()
   }
   
+  /// Returns an infallible sequence
+  public func asInfallible() -> Infallible<Value> {
+    subject.asInfallible(onErrorRecover: { _ in fatalError() })
+  }
+  
   public func asObservable<S>(keyPath: KeyPath<Value, S>) -> Observable<S> {
     asObservable()
+      .map { $0[keyPath: keyPath] }
+  }
+  
+  /// Returns an infallible sequence
+  public func asInfallible<S>(keyPath: KeyPath<Value, S>) -> Infallible<S> {
+    subject.asInfallible(onErrorRecover: { _ in fatalError() })
       .map { $0[keyPath: keyPath] }
   }
   
