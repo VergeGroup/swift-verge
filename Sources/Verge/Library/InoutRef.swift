@@ -191,15 +191,21 @@ public final class InoutRef<Wrapped> {
   }
 
   /// Modify the wrapped value with native accessing (without KeyPath + DynamicMemberLookup)
+  ///
+  /// Attention: Using this method makes modifition indeterminate.
   @available(*, renamed: "modifyDirectly")
-  public func modify(_ perform: (inout Wrapped) throws -> Void) rethrows {
-    try modifyDirectly(perform)
+  @discardableResult
+  public func modify<Return>(_ perform: (inout Wrapped) throws -> Return) rethrows -> Return {
+    return try modifyDirectly(perform)
   }
 
   /// Modify the wrapped value with native accessing (without KeyPath + DynamicMemberLookup)
-  public func modifyDirectly(_ perform: (inout Wrapped) throws -> Void) rethrows {
+  ///
+  /// Attention: Using this method makes modifition indeterminate.
+  @discardableResult
+  public func modifyDirectly<Return>(_ perform: (inout Wrapped) throws -> Return) rethrows -> Return {
     markAsModified()
-    try perform(&pointer.pointee)
+    return try perform(&pointer.pointee)
   }
 
   func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result {
