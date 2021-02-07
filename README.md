@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
- <a href="https://vergegroup.github.io/Verge/">
+ <a href="https://www.notion.so/Verge-a-performant-state-management-architecture-for-iOS-app-987250442b5c4645b816d4d58d27bb07">
    <b>📖 Docs</b>
   </a>
   </p>
@@ -161,7 +161,7 @@ final class MyViewController: UIViewController {
 }
 ```
 
-[The details are here!](https://vergegroup.github.io/Verge/docs/)
+[The details are here!](https://www.notion.so/Verge-a-performant-state-management-architecture-for-iOS-app-987250442b5c4645b816d4d58d27bb07)
 
 ### In SwiftUI
 
