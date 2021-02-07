@@ -84,4 +84,16 @@ class EventEmitterTests: XCTestCase {
   }
   
   
+  func testRegistrationPerformance() {
+    
+    let emitter = EventEmitter<Void>()
+    measure {
+      for _ in 0..<1000 {
+        emitter.add { _ in
+          
+        }
+      }
+    }
+    
+  }
 }
