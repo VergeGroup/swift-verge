@@ -68,7 +68,8 @@ extension DispatchQueue {
 
 extension TargetQueue {
 
-  /// It never dispatches.
+  /// Returns a instance that never dispatches.
+  /// The Sink use this targetQueue performs in the queue which the upstream commit dispatched.
   public static let passthrough: TargetQueue = .init { workItem in
     workItem()
   }
