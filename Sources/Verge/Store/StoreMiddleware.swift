@@ -26,14 +26,14 @@ import Foundation
  */
 open class StoreMiddleware<State> {
   
-  open func mutate(state: inout InoutRef<State>, trace: MutationTrace) {
+  open func mutate(state: inout InoutRef<State>) {
     
   }
     
   /**
    Creates an instance that commits mutations according to the original committing.
    */
-  public static func unifiedMutation(_ mutate: @escaping (inout InoutRef<State>, _ trace: MutationTrace) -> Void) -> AnonymousStoreMiddleware<State> {
+  public static func unifiedMutation(_ mutate: @escaping (inout InoutRef<State>) -> Void) -> AnonymousStoreMiddleware<State> {
     return .init(mutate: mutate)
   }
   
@@ -44,13 +44,13 @@ open class StoreMiddleware<State> {
  */
 public final class AnonymousStoreMiddleware<State>: StoreMiddleware<State> {
   
-  private let _mutate: (inout InoutRef<State>, _ trace: MutationTrace) -> Void
+  private let _mutate: (inout InoutRef<State>) -> Void
   
-  public init(mutate: @escaping (inout InoutRef<State>, _ trace: MutationTrace) -> Void) {
+  public init(mutate: @escaping (inout InoutRef<State>) -> Void) {
     self._mutate = mutate
   }
 
-  public override func mutate(state: inout InoutRef<State>, trace: MutationTrace) {
-    _mutate(&state, trace)
+  public override func mutate(state: inout InoutRef<State>) {
+    _mutate(&state)
   }
 }

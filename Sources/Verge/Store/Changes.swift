@@ -80,7 +80,7 @@ public protocol ChangesType: AnyObject {
  This means Changes will return equals if different pointer but the value is the same.
  */
 @dynamicMemberLookup
-public final class Changes<Value>: ChangesType, Equatable {
+public final class Changes<Value>: ChangesType, Equatable, HasTraces {
   public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
 
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
@@ -119,7 +119,7 @@ public final class Changes<Value>: ChangesType, Equatable {
   /// - Important: a returns value won't change against pointer-personality
   public var root: Value { _read { yield innerBox.value } }
 
-  public let mutation: MutationTrace?
+  public let traces: [MutationTrace]
   public let modification: InoutRef<Value>.Modification?
 
   // MARK: - Initializers
@@ -132,7 +132,7 @@ public final class Changes<Value>: ChangesType, Equatable {
       previous: old.map { .init(old: nil, new: $0) },
       innerBox: .init(value: new),
       version: 0,
-      mutation: nil,
+      traces: [],
       modification: nil
     )
   }
@@ -141,13 +141,13 @@ public final class Changes<Value>: ChangesType, Equatable {
     previous: Changes<Value>?,
     innerBox: InnerBox,
     version: UInt64,
-    mutation: MutationTrace?,
+    traces: [MutationTrace],
     modification: InoutRef<Value>.Modification?
   ) {
     self.previous = previous
     self.innerBox = innerBox
     self.version = version
-    self.mutation = mutation
+    self.traces = traces
     self.modification = modification
 
     vergeSignpostEvent("Changes.init", label: "\(type(of: self))")
@@ -165,7 +165,7 @@ public final class Changes<Value>: ChangesType, Equatable {
       previous: nil,
       innerBox: innerBox,
       version: version,
-      mutation: mutation,
+      traces: traces,
       modification: nil
     )
   }
@@ -201,14 +201,14 @@ public final class Changes<Value>: ChangesType, Equatable {
       previous: try previous.map { try $0.map(transform) },
       innerBox: try innerBox.map(transform),
       version: version,
-      mutation: mutation,
+      traces: traces,
       modification: nil
     )
   }
 
   public func makeNextChanges(
     with nextNewValue: Value,
-    from mutation: MutationTrace,
+    from traces: [MutationTrace],
     modification: InoutRef<Value>.Modification
   ) -> Changes<Value> {
     let previous = cloneWithDropsPrevious()
@@ -217,7 +217,7 @@ public final class Changes<Value>: ChangesType, Equatable {
       previous: previous,
       innerBox: .init(value: nextNewValue),
       version: nextVersion,
-      mutation: mutation,
+      traces: traces,
       modification: modification
     )
   }
@@ -477,7 +477,7 @@ extension Changes: CustomReflectable {
         "version": version,
         "previous": previous as Any,
         "primitive": primitive,
-        "mutation": mutation as Any,
+        "traces": traces,
         "modification": modification as Any,
       ],
       displayStyle: .struct,

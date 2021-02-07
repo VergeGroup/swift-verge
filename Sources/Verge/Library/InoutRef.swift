@@ -45,6 +45,8 @@ public final class InoutRef<Wrapped> {
   }
 
   // MARK: - Properties
+  
+  public private(set) var traces: [MutationTrace] = []
 
   public var modification: Modification? {
 
@@ -92,6 +94,14 @@ public final class InoutRef<Wrapped> {
   }
 
   // MARK: - Functions
+  
+  func append(trace: MutationTrace) {
+    traces.append(trace)
+  }
+  
+  func append(traces otherTraces: [MutationTrace]) {
+    traces.append(contentsOf: otherTraces)
+  }
 
   public subscript<T> (dynamicMember keyPath: WritableKeyPath<Wrapped, T>) -> T {
     _read {

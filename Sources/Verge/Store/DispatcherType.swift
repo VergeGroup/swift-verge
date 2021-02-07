@@ -130,10 +130,10 @@ extension DispatcherType {
     return try store.asStore()._receive(
       mutation: { state -> Result in
         try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
-          try mutation(&ref)
+          ref.append(trace: trace)
+          return try mutation(&ref)
         }
-      },
-      trace: trace
+      }
     )
   }
   
@@ -146,10 +146,10 @@ extension DispatcherType {
     mutation: (inout InoutRef<Scope>) throws -> Result
   ) rethrows -> Result where Scope == WrappedStore.State {
     return try store.asStore()._receive(
-      mutation: { state -> Result in
-        try mutation(&state)
-      },
-      trace: trace
+      mutation: { ref -> Result in
+        ref.append(trace: trace)
+        return try mutation(&ref)
+      }
     )
   }
 
@@ -193,10 +193,10 @@ extension DispatcherType {
     return try store.asStore()._receive(
       mutation: { state -> Result in
         try state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>) -> Result in
-          try mutation(&ref)
+          ref.append(trace: trace)
+          return try mutation(&ref)
         }
-      },
-      trace: trace
+      }
     )
   }
 
@@ -221,10 +221,10 @@ extension DispatcherType {
     return try store.asStore()._receive(
       mutation: { state -> Result in
         try state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>?) -> Result in
-          try mutation(&ref)
+          ref?.append(trace: trace)
+          return try mutation(&ref)
         }
-      },
-      trace: trace
+      }
     )
   }
 
