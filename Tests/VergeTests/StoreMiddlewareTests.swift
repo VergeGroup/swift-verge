@@ -7,7 +7,7 @@ final class StoreMiddlewareTests: XCTestCase {
         
     let store = DemoStore()
     
-    store.add(middleware: .unifiedMutation({ (state, _) in
+    store.add(middleware: .unifiedMutation({ (state) in
       state.count += 1
     }))
     

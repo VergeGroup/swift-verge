@@ -21,8 +21,21 @@
 
 import Foundation
 
+public protocol HasTraces {
+  var traces: [MutationTrace] { get }
+}
+
 /// A trace that indicates the mutation where comes from.
-public struct MutationTrace: Encodable {
+public struct MutationTrace: Encodable, Equatable {
+  
+  public static func == (lhs: MutationTrace, rhs: MutationTrace) -> Bool {
+    lhs.createdAt == rhs.createdAt &&
+      lhs.name == rhs.name &&
+      lhs.file.description == rhs.file.description &&
+      lhs.function.description == rhs.function.description &&
+      lhs.line == rhs.line &&
+      lhs.thread == rhs.thread
+  }
 
   public let createdAt: Date = .init()
   public let name: String
@@ -32,10 +45,10 @@ public struct MutationTrace: Encodable {
   public let thread: String
 
   public init(
-    name: String,
-    file: StaticString,
-    function: StaticString,
-    line: UInt,
+    name: String = "",
+    file: StaticString = #file,
+    function: StaticString = #function,
+    line: UInt = #line,
     thread: Thread = .current
   ) {
     self.name = name

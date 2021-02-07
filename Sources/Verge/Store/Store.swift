@@ -166,42 +166,25 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
   func _receive<Result>(
-    mutation: (inout InoutRef<State>) throws -> Result,
-    trace: MutationTrace
+    mutation: (inout InoutRef<State>) throws -> Result
   ) rethrows -> Result {
                 
     let signpost = VergeSignpostTransaction("Store.commit")
     defer {
       signpost.end()
     }
-    
-    var elapsed: CFTimeInterval = 0
-
-    var valueFromMutation: Result!
-    
+        
     #if DEBUG
     let warnings = tracker.register()
-    if warnings.contains(.reentrancyAnomaly) {
-      os_log(
-        """
-⚠️ [Verge Error] Detected another commit recursively from the commit.
-This breaks the order of the states that receiving in the sink.
-
-You might be doing commit inside the sink at the same Store.
-In this case, Using dispatch solve this issue.
-
-Mutation: (%@)
-""",
-        log: VergeOSLogs.debugLog,
-        type: .error,
-        String(describing: trace)
-      )
-    }
     defer {
       tracker.unregister()
     }
     #endif
-
+    
+    var valueFromMutation: Result!
+    var elapsed: CFTimeInterval = 0
+    var commitLog: CommitLog?
+    
     /** a ciritical session */
     try _backingStorage._update { (state) -> Storage<Changes<State>>.UpdateResult in
             
@@ -214,25 +197,46 @@ Mutation: (%@)
 
       let updateResult = try withUnsafeMutablePointer(to: &current) { (pointer) -> Storage<Changes<State>>.UpdateResult in
 
-        var reference = InoutRef<State>.init(pointer)
+        var inoutRef = InoutRef<State>.init(pointer)
 
-        let result = try mutation(&reference)
+        let result = try mutation(&inoutRef)
         valueFromMutation = result
 
-        guard reference.hasModified else {
+        guard inoutRef.hasModified else {
           // No emits update event
           return .nothingUpdates
         }
         
         self.middlewares.forEach { middleware in
-          middleware.mutate(state: &reference, trace: trace)
+          middleware.mutate(state: &inoutRef)
         }
 
         state = state.makeNextChanges(
           with: pointer.pointee,
-          from: trace,
-          modification: reference.modification ?? .indeterminate
+          from: inoutRef.traces,
+          modification: inoutRef.modification ?? .indeterminate
         )
+        
+        #if DEBUG
+        if warnings.contains(.reentrancyAnomaly) {
+          os_log(
+            """
+⚠️ [Verge Error] Detected another commit recursively from the commit.
+This breaks the order of the states that receiving in the sink.
+
+You might be doing commit inside the sink at the same Store.
+In this case, Using dispatch solve this issue.
+
+Mutation: (%@)
+""",
+            log: VergeOSLogs.debugLog,
+            type: .error,
+            String(describing: inoutRef.traces)
+          )
+        }
+        #endif
+        
+        commitLog = CommitLog(storeName: self.name, traces: inoutRef.traces, time: elapsed)
 
         return .updated
       }
@@ -241,8 +245,10 @@ Mutation: (%@)
 
     }
        
-    let log = CommitLog(storeName: self.name, trace: trace, time: elapsed)
-    logger?.didCommit(log: log, sender: self)
+    if let logger = logger, let _commitLog = commitLog {
+      logger.didCommit(log: _commitLog, sender: self)
+    }
+    
     return valueFromMutation
   }
  
@@ -347,9 +353,9 @@ Latest Version (%d): (%@)
                     receivedState.version,
                     latestState.version,
                     receivedState.version,
-                    String(describing: receivedState.mutation),
+                    String(describing: receivedState.traces),
                     latestState.version,
-                    String(describing: latestState.mutation)
+                    String(describing: latestState.traces)
                   )
                 }
                 

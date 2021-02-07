@@ -142,6 +142,46 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
     self._set = set
     self.innerStore = store
   }
+  
+  /// Low-level initializer
+  /// - Parameters:
+  ///   - get: MemoizeMap to make a `Value` from `UpstreamState`
+  ///   - set: A closure to apply new-value to `UpstreamState`, it will need in creating `BindingDerived`.
+  ///   - initialUpstreamState: Initial value of the `UpstreamState`
+  ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
+  ///   - retainsUpstream: Any instances to retain in this instance.
+  public init<UpstreamState: HasTraces>(
+    get: Pipeline<UpstreamState, Value>,
+    set: ((Value) -> Void)?,
+    initialUpstreamState: UpstreamState,
+    subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
+    retainsUpstream: Any?
+  ) {
+  
+    let innerStore = Store<Value, Never>.init(initialState: get.makeInitial(initialUpstreamState), logger: nil)
+        
+    let pointer = Unmanaged.passUnretained(innerStore).toOpaque()
+    
+    let s = subscribeUpstreamState { [weak innerStore] value in
+      let update = get.makeResult(value)
+      switch update {
+      case .noUpdates:
+        break
+      case .new(let newState):
+        // TODO: Take over state.modification & state.mutation
+        innerStore?.commit("Derived<InnerStore:\(pointer)>") {
+          $0.append(traces: value.traces)
+          $0.replace(with: newState)
+        }
+      }
+    }
+    
+    self.retainsUpstream = retainsUpstream
+    self.subscription = VergeAnyCancellable(s)
+    self._set = set
+    self.innerStore = innerStore
+    
+  }
 
   deinit {
 

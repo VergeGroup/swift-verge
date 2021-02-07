@@ -27,14 +27,14 @@ public struct CommitLog: Encodable {
   
   public let type: String = "commit"
   public let tookMilliseconds: Double
-  public let trace: MutationTrace
+  public let traces: [MutationTrace]
   public let store: String
 
   @inlinable
-  public init(storeName: String, trace: MutationTrace, time: CFTimeInterval) {
+  public init(storeName: String, traces: [MutationTrace], time: CFTimeInterval) {
     self.store = storeName
     self.tookMilliseconds = time * 1000
-    self.trace = trace
+    self.traces = traces
   }
 }
 
