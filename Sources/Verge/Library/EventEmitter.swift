@@ -240,7 +240,10 @@ public final class EventEmitter<Event>: EventEmitterType {
   
   private let subscribersLock = NSRecursiveLock()
   
-  private var subscribers: [EventEmitterCancellable : (Event) -> Void] = [:]
+  /**
+   The reason why we use array against dictionary, the subscribers does not often remove.
+   */
+  private var subscribers: ContiguousArray<(EventEmitterCancellable, (Event) -> Void)> = []
   
   private var eventQueue: ContiguousArray<Event> = .init()
   
@@ -265,14 +268,15 @@ public final class EventEmitter<Event>: EventEmitterType {
   public func add(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterCancellable {
     let token = EventEmitterCancellable(owner: self)
     withLocking(subscribersLock) {
-      subscribers[token] = eventReceiver
+      subscribers.append((token, eventReceiver))
     }
     return token
   }
   
   func remove(_ token: EventEmitterCancellable) {
     withLocking(subscribersLock) {
-      subscribers.removeValue(forKey: token)
+      guard let index = subscribers.firstIndex(where: { $0.0 == token }) else { return }
+      subscribers.remove(at: index)
     }
   }
   
@@ -313,13 +317,13 @@ public final class EventEmitter<Event>: EventEmitterType {
         
     withLocking(subscribersLock) {
                   
-      let targets = subscribers.values
+      let targets = subscribers
       
       // Deliver events
       scheduledEvents.forEach { event in
         targets.forEach {
           signpost.event(name: "EventEmitter.oneEmit")
-          $0(event)
+          $0.1(event)
         }
       }
       
