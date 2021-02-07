@@ -120,6 +120,7 @@ extension DispatcherType {
    From calling this method a transaction starts, register mutation into `BatchUpdate` instance.
    If it has no mutations, batch updating won't be executed.
    */
+  @available(*, deprecated, message: "Use commit in favor of https://github.com/VergeGroup/Verge/pull/180")
   public func batchCommit(_ perform: (_ context: inout BatchCommitContext<WrappedStore.State, Scope>) -> Void) {
 
     var context = BatchCommitContext<WrappedStore.State, Scope>(scope: scope)
