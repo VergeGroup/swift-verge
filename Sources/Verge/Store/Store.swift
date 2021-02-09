@@ -150,6 +150,21 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
        
   }
   
+  /// An initializer for preventing using the refence type as a state.
+  @available(*, deprecated, message: "Using the reference type for the state is restricted. it must be a value type to run correctly.")
+  public init(
+    name: String? = nil,
+    initialState: State,
+    backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
+    logger: StoreLogger? = nil,
+    _ file: StaticString = #file,
+    _ line: UInt = #line
+  ) where State : AnyObject {
+    
+    preconditionFailure("Using the reference type for the state is restricted. it must be a value type to run correctly.")
+    
+  }
+  
   /// Registers a middleware.
   /// MIddleware can execute additional operations unified with mutations.
   ///
