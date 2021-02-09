@@ -37,11 +37,5 @@ final class StoreInitTests: XCTestCase {
       self.store = DefaultStore(initialState: .init())
     }
   }
-    
-  func testInitWithReferenceTypeState() {
-    
-    Store<RefState, Never>(initialState: .init())
-    
-  }
-  
+      
 }
