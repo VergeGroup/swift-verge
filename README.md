@@ -5,7 +5,7 @@
 </p>
 
 
-<h1 align="center">Verge</h1>
+<h1 align="center">Verge.swift</h1>
 <p align="center">
 <sub>📍The effective state management architecture for iOS📍</sub><br/>
 <sub>_ An easier way to get unidirectional data flow _</sub><br/>
