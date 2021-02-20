@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://vergegroup.github.io/Verge/">
+  <a href="https://vergegroup.org">
 <img width="128" alt="VergeIcon" src="https://user-images.githubusercontent.com/1888355/85241314-5ac19c80-b476-11ea-9be6-e04ed3bc6994.png">
     </a>
 </p>
@@ -41,7 +41,7 @@
 
 Verge is a performant store-pattern based state management library for iOS.
 
-Please see the website: https://vergegroup.github.io/Verge/
+Please see the website: https://vergegroup.org
 
 [And the article about store-pattern](https://medium.com/eureka-engineering/verge-start-store-pattern-state-management-before-beginning-flux-in-uikit-ios-app-development-6c74d4413829)
 
