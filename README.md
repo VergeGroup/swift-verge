@@ -67,9 +67,18 @@ Creating a view-model (meaning Store)
 final class MyViewModel: StoreComponentType {
 
   /// 💡 The state declaration can be aslo inner-type.
-  struct State {
+  /// As possible adding Equatable for better performance.
+  struct State: Equatable {
+  
+    struct NestedState: Equatable {
+      ...
+    }
+    
     var name: String = ""
     var count: Int = 0
+    
+    var nested: NestedState = .init()  
+    
   }
 
   /// 💡 This is basically a template statement. You might have something type of `Store`.
@@ -97,6 +106,35 @@ final class MyViewModel: StoreComponentType {
       }
     }
   }
+}
+```
+
+### In SwiftUI
+
+```swift
+struct MyView: View {
+
+  let store: MyViewModel
+
+  var body: some View {
+    // ✅ Uses `StateReader` to read the state this clarifies where components need the state.
+    StateReader(store).content { state in
+      Text(state.name)
+      Button(action: {
+        self.store.myAction()
+      }) {
+        Text("Action")
+      }
+    }
+  }
+}
+```
+
+`StateReader` supports to derive a part of the state like below.
+
+```swift
+StateReader(store.derived(.map(\.nested))).content { state in
+  ...
 }
 ```
 
@@ -162,26 +200,6 @@ final class MyViewController: UIViewController {
 ```
 
 [The details are here!](https://www.notion.so/Verge-a-performant-state-management-architecture-for-iOS-app-987250442b5c4645b816d4d58d27bb07)
-
-### In SwiftUI
-
-```swift
-struct MyView: View {
-
-  let store: MyViewModel
-
-  var body: some View {
-    StateReader(store).content { state in
-      Text(state.name)
-      Button(action: {
-        self.store.myAction()
-      }) {
-        Text("Action")
-      }
-    }
-  }
-}
-```
 
 ## Supports Integrating with RxSwift
 
