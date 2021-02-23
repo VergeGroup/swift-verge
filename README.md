@@ -138,6 +138,9 @@ StateReader(store.derived(.map(\.nested))).content { state in
 }
 ```
 
+> 🤲 Verge has not gathered enough experience in SwiftUI. Please let us know your ideas that improve Verge using in SwiftUI! (in Discussions or Issues)
+
+
 ### In UIKit
 
 Binding with a view (or view controller)
