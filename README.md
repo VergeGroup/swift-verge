@@ -14,7 +14,7 @@
 
 <p align="center">
  <a href="https://www.notion.so/Verge-a-performant-state-management-architecture-for-iOS-app-987250442b5c4645b816d4d58d27bb07">
-   <b>📖 Docs</b>
+   <b>📖 Docs and tips</b>
   </a>
   </p>
 
