@@ -108,6 +108,10 @@ public final class InoutRef<Wrapped> {
   
   public func hasModified<U>(_ keyPath: KeyPath<Wrapped, U>) -> Bool {
     
+    guard nonatomic_hasModified else {
+      return false
+    }
+    
     if keyPath == \Wrapped.self {
       return nonatomic_hasModified
     } else {
