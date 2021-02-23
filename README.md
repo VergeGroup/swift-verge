@@ -7,7 +7,7 @@
 
 <h1 align="center">Verge.swift</h1>
 <p align="center">
-<sub>📍The effective state management architecture for iOS📍</sub><br/>
+  <b>📍An effective state management architecture for iOS - SwiftUI and UIKit📍</b><br/>
 <sub>_ An easier way to get unidirectional data flow _</sub><br/>
 <sub>_ Supports concurrent processing _</sub><br/>
 </p>
