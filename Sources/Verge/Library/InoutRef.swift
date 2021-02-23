@@ -21,7 +21,14 @@
 
 import Foundation
 
-/// Do not retain on anywhere.
+/**
+ A reference object that manages a reference of the value type instance in order to achieve the followings:
+   - Tracking the properties which are modified.
+   - Tracking where modifications have happened.
+   - Doing the above things without copying.
+ 
+ - Warning: Do not retain this object anywhere.
+ */
 @dynamicMemberLookup
 public final class InoutRef<Wrapped> {
 
@@ -208,11 +215,41 @@ public final class InoutRef<Wrapped> {
     return try perform(&pointer.pointee)
   }
     
+  /**
+   Runs given closure with its Type and itself.
+   It helps to run static functions to modify state.
+   
+   ```swift
+   struct State {
+     ...
+   
+     static func modifyForSomething(in ref: InoutRef<Self>, argments: ...) {
+       
+     }
+   }
+   ```
+   
+   ```swift
+   commit {
+     $0.withType { type, ref in
+       type.modifyForSomething(in: ref, arguments: ...)
+     }
+   }
+   ```
+   
+   The reason why it does not use a mutating function in the state is to keep InoutRef's modifications are determinate.
+   
+   - SeeAlso: InoutRef<Wrapped>.Modification
+   */
   public func withType<Return>(_ perform: (Wrapped.Type, InoutRef<Wrapped>) throws -> Return) rethrows -> Return {
     try perform(Wrapped.self, self)
   }
 
-  func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result {
+  /**
+   Returns a tantative InoutRef that projects the value specified by KeyPath.
+   That InoutRef must be used only in the given perform closure.
+   */
+  public func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result {
     try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
       var ref = InoutRef<U>.init(pointer)
       defer {
@@ -229,7 +266,11 @@ public final class InoutRef<Wrapped> {
     }
   }
 
-  func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U?>, perform: (inout InoutRef<U>?) throws -> Result) rethrows -> Result {
+  /**
+   Returns a tantative InoutRef that projects the value specified by KeyPath.
+   That InoutRef must be used only in the given perform closure.
+   */
+  public func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U?>, perform: (inout InoutRef<U>?) throws -> Result) rethrows -> Result {
 
     guard pointer.pointee[keyPath: keyPath] != nil else {
       var _nil: InoutRef<U>! = .none
