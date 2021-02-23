@@ -207,6 +207,10 @@ public final class InoutRef<Wrapped> {
     markAsModified()
     return try perform(&pointer.pointee)
   }
+    
+  public func withType<Return>(_ perform: (Wrapped.Type, InoutRef<Wrapped>) throws -> Return) rethrows -> Return {
+    try perform(Wrapped.self, self)
+  }
 
   func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result {
     try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
@@ -249,7 +253,7 @@ public final class InoutRef<Wrapped> {
     }
 
   }
-
+  
 }
 
 /// Do not retain on anywhere.
