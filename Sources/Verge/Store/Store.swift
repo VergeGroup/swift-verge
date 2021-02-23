@@ -217,7 +217,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
         let result = try mutation(&inoutRef)
         valueFromMutation = result
 
-        guard inoutRef.hasModified else {
+        guard inoutRef.nonatomic_hasModified else {
           // No emits update event
           return .nothingUpdates
         }

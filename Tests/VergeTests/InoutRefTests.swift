@@ -180,6 +180,10 @@ final class InoutTests: XCTestCase {
     let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
       let proxy = InoutRef.init(pointer)
       proxy.count += 1
+      
+      XCTAssert(proxy.hasModified(\.self))
+      XCTAssert(proxy.hasModified(\DemoState.count))
+      
       return proxy.modification
     }
 

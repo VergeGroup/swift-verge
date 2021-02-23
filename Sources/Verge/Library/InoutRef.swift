@@ -34,6 +34,9 @@ public final class InoutRef<Wrapped> {
 
   // MARK: - Nested types
 
+  /**
+   A representation that how modified the properties of the wrapped value.
+   */
   public enum Modification: Hashable, CustomDebugStringConvertible {
     case determinate(keyPaths: Set<PartialKeyPath<Wrapped>>)
     case indeterminate
@@ -53,26 +56,27 @@ public final class InoutRef<Wrapped> {
 
   // MARK: - Properties
   
+  /// - Attention: non-atomic property
   public private(set) var traces: [MutationTrace] = []
 
   public var modification: Modification? {
 
-    guard hasModified else {
+    guard nonatomic_hasModified else {
       return nil
     }
 
-    guard !wasModifiedIndeterminate else {
+    guard !nonatomic_wasModifiedIndeterminate else {
       return .indeterminate
     }
     
-    return .determinate(keyPaths: modifiedKeyPaths)
+    return .determinate(keyPaths: nonatomic_modifiedKeyPaths)
   }
 
-  private(set) var hasModified = false
+  private(set) var nonatomic_hasModified = false
 
-  private lazy var modifiedKeyPaths: Set<PartialKeyPath<Wrapped>> = .init()
+  private lazy var nonatomic_modifiedKeyPaths: Set<PartialKeyPath<Wrapped>> = .init()
 
-  private var wasModifiedIndeterminate = false
+  private var nonatomic_wasModifiedIndeterminate = false
 
   private let pointer: UnsafeMutablePointer<Wrapped>
 
@@ -101,6 +105,26 @@ public final class InoutRef<Wrapped> {
   }
 
   // MARK: - Functions
+  
+  public func hasModified<U>(_ keyPath: KeyPath<Wrapped, U>) -> Bool {
+    
+    if keyPath == \Wrapped.self {
+      return nonatomic_hasModified
+    } else {
+      
+      guard let modification = modification else {
+        return false
+      }
+      
+      switch modification {
+      case .determinate(let keyPaths):
+        return keyPaths.contains(keyPath)
+      case .indeterminate:
+        return true
+      }
+      
+    }
+  }
   
   func append(trace: MutationTrace) {
     traces.append(trace)
@@ -175,15 +199,15 @@ public final class InoutRef<Wrapped> {
   }
 
   private func maskAsModified(on keyPath: PartialKeyPath<Wrapped>) {
-    modifiedKeyPaths.insert(keyPath)
-    hasModified = true
+    nonatomic_modifiedKeyPaths.insert(keyPath)
+    nonatomic_hasModified = true
   }
 
   /// Marks as modified
   /// `modification` property becomes to `.indeterminate`.
   public func markAsModified() {
-    hasModified = true
-    wasModifiedIndeterminate = true
+    nonatomic_hasModified = true
+    nonatomic_wasModifiedIndeterminate = true
   }
 
   /**
@@ -253,14 +277,14 @@ public final class InoutRef<Wrapped> {
     try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
       var ref = InoutRef<U>.init(pointer)
       defer {
-        self.hasModified = ref.hasModified
-        self.wasModifiedIndeterminate = ref.wasModifiedIndeterminate
+        self.nonatomic_hasModified = ref.nonatomic_hasModified
+        self.nonatomic_wasModifiedIndeterminate = ref.nonatomic_wasModifiedIndeterminate
 
-        let appended = ref.modifiedKeyPaths.compactMap {
+        let appended = ref.nonatomic_modifiedKeyPaths.compactMap {
           (keyPath as PartialKeyPath<Wrapped>).appending(path: $0)
         }
 
-        self.modifiedKeyPaths.formUnion(appended)
+        self.nonatomic_modifiedKeyPaths.formUnion(appended)
       }
       return try perform(&ref)
     }
@@ -280,14 +304,14 @@ public final class InoutRef<Wrapped> {
     return try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]!) { (pointer) in
       var ref: InoutRef<U>! = InoutRef<U>.init(pointer)
       defer {
-        self.hasModified = ref.hasModified
-        self.wasModifiedIndeterminate = ref.wasModifiedIndeterminate
+        self.nonatomic_hasModified = ref.nonatomic_hasModified
+        self.nonatomic_wasModifiedIndeterminate = ref.nonatomic_wasModifiedIndeterminate
 
-        let appended = ref.modifiedKeyPaths.compactMap {
+        let appended = ref.nonatomic_modifiedKeyPaths.compactMap {
           (keyPath as PartialKeyPath<Wrapped>).appending(path: $0)
         }
 
-        self.modifiedKeyPaths.formUnion(appended)
+        self.nonatomic_modifiedKeyPaths.formUnion(appended)
 
       }
       return try perform(&ref)
