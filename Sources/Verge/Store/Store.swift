@@ -152,7 +152,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   
   /// An initializer for preventing using the refence type as a state.
   @available(*, deprecated, message: "Using the reference type for the state is restricted. it must be a value type to run correctly.")
-  public init(
+  public convenience init(
     name: String? = nil,
     initialState: State,
     backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
