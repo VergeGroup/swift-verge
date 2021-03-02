@@ -22,7 +22,9 @@
 import Foundation
 
 extension VergeConcurrency {
-  /// imported RxSwift
+  ///
+  ///
+  /// Modified based on RxSwift's original implementations.
   public final class SynchronizationTracker {
     
     public enum Warning: Hashable {
@@ -33,11 +35,33 @@ extension VergeConcurrency {
     private let _lock = NSRecursiveLock()
     
     private var _threads = [UnsafeMutableRawPointer: Int]()
-         
-    public init() {}
     
+    private let _isEnabled: Bool
+         
+    public init(debugOnly: Bool = false) {
+      if debugOnly {
+        #if DEBUG
+        self._isEnabled = true
+        #else
+        self.isEnabled = false
+        #endif
+      } else {
+        self._isEnabled = true
+      }
+    }
+    
+    /**
+     Marks as entering a synchronized operation.
+     */
     @discardableResult
-    public func register() -> Set<Warning> {
+    public func register(
+      _ file: StaticString = #file,
+      _ function: StaticString = #function,
+      _ line: UInt = #line,
+      printsConsole: Bool = false
+    ) -> Set<Warning> {
+      
+      guard _isEnabled else { return .init() }
             
       self._lock.lock(); defer { self._lock.unlock() }
       
@@ -55,10 +79,21 @@ extension VergeConcurrency {
       if self._threads.count > 1 {
         flags.insert(.synchronizationAnomaly)
       }
+      
+      if printsConsole, flags.isEmpty == false {
+        print("⚠️[SynchronizationTracker] Found issues \(flags) in \(file):\(function):\(line)")
+      }
+      
       return flags
     }
     
+    /**
+     Marks as exited a synchronized operation.
+     */
     public func unregister() {
+      
+      guard _isEnabled else { return }
+      
       self._lock.lock(); defer { self._lock.unlock() }
       let pointer = Unmanaged.passUnretained(Thread.current).toOpaque()
       self._threads[pointer] = (self._threads[pointer] ?? 1) - 1
