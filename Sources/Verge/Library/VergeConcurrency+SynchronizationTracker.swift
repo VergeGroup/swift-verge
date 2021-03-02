@@ -43,7 +43,7 @@ extension VergeConcurrency {
         #if DEBUG
         self._isEnabled = true
         #else
-        self.isEnabled = false
+        self._isEnabled = false
         #endif
       } else {
         self._isEnabled = true
