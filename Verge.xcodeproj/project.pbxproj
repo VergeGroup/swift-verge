@@ -506,6 +506,8 @@
 		4B04C59625708A5E00731802 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				4BE33C6824875CD800F3F2C6 /* _COWFragment.swift */,
+				4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */,
 				4BF470CC23CC36E8001A1D5D /* Edge.swift */,
 				4B982579254589960040B377 /* BatchCommit.swift */,
 			);
@@ -678,7 +680,7 @@
 				4B786323233912AB009B9C1B /* Info.plist */,
 				4B04C59825708A9700731802 /* Derived */,
 				4B04C4C62570863300731802 /* Library */,
-				4B91B37F2440C0F3005082D7 /* Logger */,
+				4B91B37F2440C0F3005082D7 /* Logging */,
 				4B91B37E2440C0D8005082D7 /* Store */,
 				4B04C59725708A8700731802 /* SwiftUI */,
 				4B04C59625708A5E00731802 /* Utility */,
@@ -760,9 +762,6 @@
 				4BC4896525A06B0D00AC0365 /* StoreType+Derived.swift */,
 				4BC4898125A072F400AC0365 /* StoreType+BindingDerived.swift */,
 				4BC4897725A06C3400AC0365 /* StoreType+SwiftUI.swift */,
-				4B2050F823D5C85B000A2779 /* MutationTrace.swift */,
-				4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */,
-				4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */,
 				4B9AF5B223957DBF007B78D1 /* DispatcherType.swift */,
 				4BCBCA8C2381CC2B00F33B15 /* DetachedDispatcher.swift */,
 				4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */,
@@ -775,22 +774,23 @@
 				4BCE3038246AAD6800D35557 /* Scan.swift */,
 				4BDB78212447934A00675D03 /* StoreWrapperType.swift */,
 				4B1BE8E4244F28050077DB66 /* Pipeline.swift */,
-				4BE33C6824875CD800F3F2C6 /* _COWFragment.swift */,
 				4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */,
 				4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
 		};
-		4B91B37F2440C0F3005082D7 /* Logger */ = {
+		4B91B37F2440C0F3005082D7 /* Logging */ = {
 			isa = PBXGroup;
 			children = (
+				4B2050F823D5C85B000A2779 /* MutationTrace.swift */,
+				4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */,
 				4B2050F623D5C841000A2779 /* StoreLogger.swift */,
 				4B0AFD6C2388643400AABA90 /* DefaultStoreLogger.swift */,
 				4BF5E10325B0B56D00DB3624 /* RuntimeError.swift */,
 				4BF5E10D25B0B70400DB3624 /* RuntimeSanitizer.swift */,
 			);
-			path = Logger;
+			path = Logging;
 			sourceTree = "<group>";
 		};
 		4B9AF04524880145001BAAFC /* VergeSwiftUI */ = {
