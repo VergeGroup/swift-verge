@@ -248,9 +248,7 @@ public final class EventEmitter<Event>: EventEmitterType {
   private var eventQueue: ContiguousArray<Event> = .init()
   
   private let queueLock = NSRecursiveLock()
-  
-  private let emittingLock = NSLock()
-  
+    
   private var isCurrentlyEventEmitting: VergeConcurrency.RecursiveLockAtomic<Int> = .init(0)
   
   public init() {

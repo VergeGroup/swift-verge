@@ -209,6 +209,9 @@
             </BuildableReference>
             <SkippedTests>
                <Test
+                  Identifier = "ConcurrencyTests/testOrderOfEvents()">
+               </Test>
+               <Test
                   Identifier = "GetterTests/testChain()">
                </Test>
                <Test

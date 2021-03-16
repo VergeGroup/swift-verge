@@ -332,7 +332,7 @@ Mutation: (%@)
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
     
-    let execute = queue.executor()
+    let execute = queue.serialExecuter()
     
     var latestStateWrapper: Changes<State>? = nil
         
@@ -342,20 +342,32 @@ Mutation: (%@)
       case .willUpdate:
         break
       case .didUpdate(let receivedState):
-                
-        sanitizer: do {
+        
+        execute {
           
-          if RuntimeSanitizer.isSanitizerStateReceivingByCorrectOrder {
-            
-            sanitizerQueue.async {
-              if let latestState = latestStateWrapper {
-                if latestState.version <= receivedState.version {
-                  // it received newer version than previous version
-                  latestStateWrapper = receivedState
-                } else {
-                  
+          var resolvedReceivedState = receivedState
+          
+          if let latestState = latestStateWrapper {
+            if latestState.version <= receivedState.version {
+              /**
+               No issues case:
+               It has received newer version than previous version
+               */
+              latestStateWrapper = receivedState
+            } else {
+              
+              /**
+               Serious problem case:
+               Received an older version than the state received before.
+               To recover this case, send latest version state with dropping previous value in order to make `ifChanged` returns always true.
+               */
+              resolvedReceivedState = latestState.droppedPrevious()
+              
+              if RuntimeSanitizer.isSanitizerStateReceivingByCorrectOrder {
+                
+                sanitizerQueue.async {
                   RuntimeSanitizer.onDidFindRuntimeError(
-                    .sinkReceivedOlderVersionIncorrectly(
+                    .recoveredStateFromReceivingOlderVersion(
                       latestState: latestState,
                       receivedState: receivedState
                     )
@@ -391,19 +403,15 @@ Latest Version (%d): (%@)
                     String(describing: latestState.traces)
                   )
                 }
-                
-              } else {
-                // first item
-                latestStateWrapper = receivedState
               }
             }
-                       
+            
+          } else {
+            // first item
+            latestStateWrapper = receivedState
           }
           
-        }
-        
-        execute {
-          receive(receivedState)
+          receive(resolvedReceivedState)
         }
               
       case .willDeinit:
@@ -463,7 +471,7 @@ Latest Version (%d): (%@)
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
     
-    let execute = queue.executor()
+    let execute = queue.serialExecuter()
     let cancellable = _activityEmitter.add { (activity) in
       execute {
         receive(activity)
