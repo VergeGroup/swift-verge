@@ -19,10 +19,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-public enum RuntimeSanitizer {
+public final class RuntimeSanitizer {
   
-  public static var isSanitizerStateReceivingByCorrectOrder: Bool = false
-  public static var isRecursivelyCommitDetectionEnabled: Bool = false
+  public static let global = RuntimeSanitizer()
+   
+  public var isSanitizerStateReceivingByCorrectOrder: Bool = false
+  public var isRecursivelyCommitDetectionEnabled: Bool = false
   
-  public static var onDidFindRuntimeError: (RuntimeError) -> Void = { _ in }
+  public var onDidFindRuntimeError: (RuntimeError) -> Void = { _ in }
+  
+  public init() {
+    
+  }
 }

@@ -124,7 +124,8 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   
   private var middlewares: [StoreMiddleware<State>] = []
   
-  public private(set) var logger: StoreLogger?
+  public let logger: StoreLogger?
+  public let sanitizer: RuntimeSanitizer
     
   /// An initializer
   /// - Parameters:
@@ -136,6 +137,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     initialState: State,
     backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
     logger: StoreLogger? = nil,
+    sanitizer: RuntimeSanitizer? = nil,
     _ file: StaticString = #file,
     _ line: UInt = #line
   ) {
@@ -146,6 +148,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     )
 
     self.logger = logger
+    self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
 
     super.init()
@@ -192,14 +195,14 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     }
        
     let warnings: Set<VergeConcurrency.SynchronizationTracker.Warning>
-    if RuntimeSanitizer.isRecursivelyCommitDetectionEnabled {
+    if RuntimeSanitizer.global.isRecursivelyCommitDetectionEnabled {
       warnings = tracker.register()
     } else {
       warnings = .init()
     }
     
     defer {
-      if RuntimeSanitizer.isRecursivelyCommitDetectionEnabled {
+      if RuntimeSanitizer.global.isRecursivelyCommitDetectionEnabled {
         tracker.unregister()
       }
     }
@@ -207,6 +210,8 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     var valueFromMutation: Result!
     var elapsed: CFTimeInterval = 0
     var commitLog: CommitLog?
+    
+    let __sanitizer__ = sanitizer
     
     /** a ciritical session */
     try _backingStorage._update { (state) -> Storage<Changes<State>>.UpdateResult in
@@ -249,7 +254,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
           modification: inoutRef.modification ?? .indeterminate
         )
         
-        if RuntimeSanitizer.isRecursivelyCommitDetectionEnabled {
+        if __sanitizer__.isRecursivelyCommitDetectionEnabled {
           if warnings.contains(.reentrancyAnomaly) {
             os_log(
               """
@@ -265,7 +270,7 @@ Mutation: (%@)
               type: .error,
               String(describing: inoutRef.traces)
             )
-            RuntimeSanitizer.onDidFindRuntimeError(.recursiveleyCommit(storeName: name, traces: inoutRef.traces))
+            __sanitizer__.onDidFindRuntimeError(.recursiveleyCommit(storeName: name, traces: inoutRef.traces))
           }
         }
         
@@ -332,9 +337,11 @@ Mutation: (%@)
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
     
-    let execute = queue.serialExecuter()
+    let serialExecutor = queue.serialExecutor()
     
     var latestStateWrapper: Changes<State>? = nil
+    
+    let __sanitizer__ = sanitizer
         
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
     let cancellable = _backingStorage.sinkEvent { (event) in
@@ -343,7 +350,7 @@ Mutation: (%@)
         break
       case .didUpdate(let receivedState):
         
-        execute {
+        serialExecutor {
           
           var resolvedReceivedState = receivedState
           
@@ -363,10 +370,10 @@ Mutation: (%@)
                */
               resolvedReceivedState = latestState.droppedPrevious()
               
-              if RuntimeSanitizer.isSanitizerStateReceivingByCorrectOrder {
+              if __sanitizer__.isSanitizerStateReceivingByCorrectOrder {
                 
                 sanitizerQueue.async {
-                  RuntimeSanitizer.onDidFindRuntimeError(
+                  __sanitizer__.onDidFindRuntimeError(
                     .recoveredStateFromReceivingOlderVersion(
                       latestState: latestState,
                       receivedState: receivedState
@@ -376,15 +383,17 @@ Mutation: (%@)
                   os_log(
                     """
 ⚠️ [Verge Error] Received older version(%d) value rather than latest received version(%d).
-Probably another commit was dispatched inside sink synchrnously.
-This cause interuppting the order of states.
 
-To solve, make sure to commit with using DispatchQueue.
+The root cause might be from the following things:
+- Committed concurrently from multiple threads.
 
-Technically, If the store has 3 subscribers, and 1 subscriber commits when received a state.
-However, the store still delivering the state to the other 2 subscribers.
-The store process the new commit from 1 subscriber prioritized rather than delivering the other 2 subscribers.
+To solve, make sure to commit in series, for example using DispatchQueue.
 
+Verge can't use a lock to process serially because the dead-lock will happen in some of the cases.
+RxSwift's BehaviorSubject takes the same deal.
+
+Regarding: Extra commit was dispatched inside sink synchronously
+This issue has been fixed by https://github.com/VergeGroup/Verge/pull/222
 ---
 
 Received older version (%d): (%@)
@@ -420,17 +429,14 @@ Latest Version (%d): (%@)
     }
 
     if !dropsFirst {
+      
       let value = _backingStorage.value.droppedPrevious()
       
-      if RuntimeSanitizer.isSanitizerStateReceivingByCorrectOrder {
-        sanitizerQueue.async {
-          latestStateWrapper = value
-        }
-      }
-
-      execute {
+      latestStateWrapper = value
+    
+      serialExecutor {
         /// this closure might contains some mutations.
-        ///  It depends outside usages.
+        /// It depends outside usages.
         receive(value)
       }
     }
@@ -471,7 +477,7 @@ Latest Version (%d): (%@)
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
     
-    let execute = queue.serialExecuter()
+    let execute = queue.serialExecutor()
     let cancellable = _activityEmitter.add { (activity) in
       execute {
         receive(activity)
