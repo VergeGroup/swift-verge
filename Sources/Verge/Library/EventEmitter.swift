@@ -281,6 +281,10 @@ public final class EventEmitter<Event>: EventEmitterType {
   }
   
   private func drain() {
+    
+    /**
+     https://github.com/VergeGroup/Verge/pull/220
+     */
           
     let _isRunning = isRunning.value
     assert(_isRunning == 0 || _isRunning == 1, "\(_isRunning)")
