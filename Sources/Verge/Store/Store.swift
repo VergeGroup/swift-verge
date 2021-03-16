@@ -118,6 +118,8 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   
   private let tracker = VergeConcurrency.SynchronizationTracker()
   
+  /// A name of the store.
+  /// Specified or generated automatically from file and line.
   let name: String
   
   private var middlewares: [StoreMiddleware<State>] = []
@@ -188,13 +190,19 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     defer {
       signpost.end()
     }
-        
-    #if DEBUG
-    let warnings = tracker.register()
-    defer {
-      tracker.unregister()
+       
+    let warnings: Set<VergeConcurrency.SynchronizationTracker.Warning>
+    if RuntimeSanitizer.isRecursivelyCommitDetectionEnabled {
+      warnings = tracker.register()
+    } else {
+      warnings = .init()
     }
-    #endif
+    
+    defer {
+      if RuntimeSanitizer.isRecursivelyCommitDetectionEnabled {
+        tracker.unregister()
+      }
+    }
     
     var valueFromMutation: Result!
     var elapsed: CFTimeInterval = 0
@@ -217,25 +225,34 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
         let result = try mutation(&inoutRef)
         valueFromMutation = result
 
+        /**
+         Checks if the state has been modified
+         */
         guard inoutRef.nonatomic_hasModified else {
           // No emits update event
           return .nothingUpdates
         }
         
+        /**
+         Applying by middlewares
+         */
         self.middlewares.forEach { middleware in
           middleware.mutate(state: &inoutRef)
         }
-
+                
+        /**
+         Make a new state
+         */
         state = state.makeNextChanges(
           with: pointer.pointee,
           from: inoutRef.traces,
           modification: inoutRef.modification ?? .indeterminate
         )
         
-        #if DEBUG
-        if warnings.contains(.reentrancyAnomaly) {
-          os_log(
-            """
+        if RuntimeSanitizer.isRecursivelyCommitDetectionEnabled {
+          if warnings.contains(.reentrancyAnomaly) {
+            os_log(
+              """
 ⚠️ [Verge Error] Detected another commit recursively from the commit.
 This breaks the order of the states that receiving in the sink.
 
@@ -244,12 +261,13 @@ In this case, Using dispatch solve this issue.
 
 Mutation: (%@)
 """,
-            log: VergeOSLogs.debugLog,
-            type: .error,
-            String(describing: inoutRef.traces)
-          )
+              log: VergeOSLogs.debugLog,
+              type: .error,
+              String(describing: inoutRef.traces)
+            )
+            RuntimeSanitizer.onDidFindRuntimeError(.recursiveleyCommit(storeName: name, traces: inoutRef.traces))
+          }
         }
-        #endif
         
         commitLog = CommitLog(storeName: self.name, traces: inoutRef.traces, time: elapsed)
 

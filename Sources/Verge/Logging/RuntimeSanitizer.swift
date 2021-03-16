@@ -22,6 +22,7 @@
 public enum RuntimeSanitizer {
   
   public static var isSanitizerStateReceivingByCorrectOrder: Bool = false
+  public static var isRecursivelyCommitDetectionEnabled: Bool = false
   
   public static var onDidFindRuntimeError: (RuntimeError) -> Void = { _ in }
 }
