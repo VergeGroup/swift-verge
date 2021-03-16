@@ -361,6 +361,11 @@ final class VergeStoreTests: XCTestCase {
   
   func testOrderOfEvents() {
     
+    RuntimeSanitizer.isSanitizerStateReceivingByCorrectOrder = true
+    RuntimeSanitizer.onDidFindRuntimeError = { error in
+      print(error)
+    }
+    
     // Currently, it's collapsed because Storage emits event without locking.
     
     let store = Verge.Store<DemoState, Never>(initialState: .init(), logger: nil)
@@ -379,18 +384,24 @@ final class VergeStoreTests: XCTestCase {
       counter.fulfill()
     }
     
-    DispatchQueue.global().async {
-      DispatchQueue.concurrentPerform(iterations: 1000) { (i) in
-        store.commit {
-          $0.count += 1
-        }
+    var dispatched = Array<Int>.init(repeating: 0, count: 1000)
         
+    DispatchQueue.global().async {
+      
+      dispatched.withUnsafeMutableBufferPointer { (pointer) -> Void in
+        DispatchQueue.concurrentPerform(iterations: 1000) { (i) in
+          pointer[i] = i
+          store.commit {
+            $0.count += 1
+          }
+        }
       }
+      
       exp.fulfill()
     }
            
     wait(for: [exp, counter], timeout: 10)
-    XCTAssertEqual(Array((0...1000).map { $0 }), results.value, "\(Array((0...1000).map { $0 }).difference(from: results.value))")
+    XCTAssertEqual(dispatched, results.value, "\(dispatched.difference(from: results.value))")
     withExtendedLifetime(sub) {}
   }
   

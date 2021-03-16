@@ -251,7 +251,7 @@ public final class EventEmitter<Event>: EventEmitterType {
   
   private let emittingLock = NSLock()
   
-  private var isRunning: VergeConcurrency.RecursiveLockAtomic<Int> = .init(0)
+  private var isCurrentlyEventEmitting: VergeConcurrency.RecursiveLockAtomic<Int> = .init(0)
   
   public init() {
 
@@ -286,10 +286,17 @@ public final class EventEmitter<Event>: EventEmitterType {
      https://github.com/VergeGroup/Verge/pull/220
      */
           
-    let _isRunning = isRunning.value
-    assert(_isRunning == 0 || _isRunning == 1, "\(_isRunning)")
+    assertion: do {
+      #if DEBUG
+      let _isRunning = isCurrentlyEventEmitting.value
+      assert(_isRunning == 0 || _isRunning == 1, "\(_isRunning)")
+      #endif
+    }
                  
-    let result: Bool = isRunning.modify {
+    /**
+     Increments the flag atomically if it can start to emit the events.
+     */
+    let canStartToEmitEvents: Bool = isCurrentlyEventEmitting.modify {
       guard $0 == 0 else {
         return false
       }
@@ -297,22 +304,27 @@ public final class EventEmitter<Event>: EventEmitterType {
       return true
     }
    
-    guard result else {
+    guard canStartToEmitEvents else {
+      /**
+       Currently, EventEmitter is under the emitting events lately registered.
+       This operation would be queued until finished current operations.
+       */
       return
     }
                        
     let scheduledEvents: ContiguousArray<Event> = withLocking(queueLock) {
-      defer {
-        // TODO: Consider how better performance is.
-        eventQueue.removeAll(keepingCapacity: true)
-      }
-      return eventQueue
+      let events = eventQueue
+      eventQueue = []
+      return events
     }
             
     guard !scheduledEvents.isEmpty else {
-      isRunning.modify {
+      /**
+       Decrements the flag atomically.
+       */
+      isCurrentlyEventEmitting.modify {
         $0 &-= 1
-        assert($0 == 0, "\(isRunning.value)")
+        assert($0 == 0, "\(isCurrentlyEventEmitting.value)")
       }
       return
     }
@@ -323,7 +335,7 @@ public final class EventEmitter<Event>: EventEmitterType {
                   
       let targets = subscribers
       
-      // Deliver events
+      /// Delivers events
       scheduledEvents.forEach { event in
         targets.forEach {
           signpost.event(name: "EventEmitter.oneEmit")
@@ -331,9 +343,12 @@ public final class EventEmitter<Event>: EventEmitterType {
         }
       }
       
-      isRunning.modify {
+      /**
+       Decrements the flag atomically.
+       */
+      isCurrentlyEventEmitting.modify {
         $0 &-= 1
-        assert($0 == 0, "\(isRunning.value)")
+        assert($0 == 0, "\(isCurrentlyEventEmitting.value)")
       }
     }
          
