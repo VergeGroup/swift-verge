@@ -21,5 +21,6 @@
 
 public enum RuntimeError: Swift.Error {
   
-  case sinkReceivedOlderVersionIncorrectly(latestState: Any, receivedState: Any)
+  case recoveredStateFromReceivingOlderVersion(latestState: AnyChangesType, receivedState: AnyChangesType)
+  case recursiveleyCommit(storeName: String, traces: [MutationTrace])
 }

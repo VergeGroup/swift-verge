@@ -36,7 +36,7 @@ public final class TargetQueue {
     self.schedule = schedule
   }
 
-  func executor() -> (@escaping () -> Void) -> Void {
+  func serialExecutor() -> (@escaping () -> Void) -> Void {
     schedule
   }
 }

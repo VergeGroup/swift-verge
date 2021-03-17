@@ -226,15 +226,22 @@ open class Storage<Value>: ReadonlyStorage<Value> {
         unlock()
       case .updated:
         let afterValue = nonatomicValue
+        
+        /**
+         Unlocks lock before emitting event to avoid dead-locking.
+         But it causes cracking the order of event.
+         SeeAlso: testOrderOfEvents
+         */
         unlock()
-
+      
         if notificationFilter(previousValue) {
           notifyWillUpdate(value: previousValue)
         }
-        // TODO: cause cracking the order of event
+
         if notificationFilter(afterValue) {
           notifyDidUpdate(value: afterValue)
         }
+        
       }
 
     } catch {

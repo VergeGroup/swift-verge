@@ -26,7 +26,13 @@ import Foundation
 
 private let changesDeallocationQueue = BackgroundDeallocationQueue()
 
-public protocol ChangesType: AnyObject {
+public protocol AnyChangesType: AnyObject {
+  
+  var traces: [MutationTrace] { get }
+  var version: UInt64 { get }
+}
+
+public protocol ChangesType: AnyChangesType {
   associatedtype Value
   var previousPrimitive: Value? { get }
   var primitive: Value { get }
