@@ -109,6 +109,8 @@ public final class InoutRef<Wrapped> {
   /**
   Returns a Boolean value that indicates whether the property pointed by the specified KeyPath has been modified.
   If the modification indicates indeterminate, returns always true.
+ 
+  - Warning: Returns false even child properties modified if specified parent keypath.
   */
   public func hasModified<U>(_ keyPath: KeyPath<Wrapped, U>) -> Bool {
     
