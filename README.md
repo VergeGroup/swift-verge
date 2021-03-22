@@ -61,7 +61,49 @@ The word 'store-pattern' is used on [Vue.js documentation](https://vuejs.org/v2/
 **We're welcome to publish here your application which powered by Verge!**  
 Please Submit from Pull requests
 
-## Exmaple - UIKit / SwiftUI
+## Mininal usage exmaple - In UIView - UIViewController
+
+State-management is everywhere, you can put a store and start state-management.
+
+```swift
+final class CropViewController: UIViewController {
+
+	private struct State: Equatable {
+    var isSelectingAspectRatio = false
+  }
+  
+  private let store: Store<State, Never> = .init(initialState: .init())
+
+	private var subscriptions = Set<VergeAnyCancellable>()
+
+  override public func viewDidLoad() {
+    
+    store.sinkState { [weak self] state in 
+      guard let self = self else { return }
+      
+      state.ifChanged(\.isSelectingAspectRatio) { value in 
+        //
+      }
+
+    }
+    .store(in: &subscriptions)
+  }
+
+  func showAspectRatioSelection() {
+    store.commit {
+      $0.isSelectingAspectRatio = true
+    }
+  }
+  
+  func hideAspectRatioSelection() {
+    store.commit {
+      $0.isSelectingAspectRatio = false
+    }
+  }
+}
+```
+
+## Advanced usage exmaple - UIKit / SwiftUI
 
 Creating a view-model (meaning Store)
 
