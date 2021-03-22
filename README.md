@@ -68,13 +68,13 @@ State-management is everywhere, you can put a store and start state-management.
 ```swift
 final class CropViewController: UIViewController {
 
-	private struct State: Equatable {
+  private struct State: Equatable {
     var isSelectingAspectRatio = false
   }
   
   private let store: Store<State, Never> = .init(initialState: .init())
 
-	private var subscriptions = Set<VergeAnyCancellable>()
+  private var subscriptions = Set<VergeAnyCancellable>()
 
   override public func viewDidLoad() {
     
