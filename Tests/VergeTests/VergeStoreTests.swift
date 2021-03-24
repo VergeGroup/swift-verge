@@ -552,7 +552,7 @@ final class VergeStoreTests: XCTestCase {
     
     let store = Store()
     
-    XCTAssert(store.state.nested != nil)
+    XCTAssert(store.state.optionalNested != nil)
     
     do {
       
