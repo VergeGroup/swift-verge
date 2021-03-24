@@ -1,12 +1,12 @@
 Pod::Spec.new do |s|
   s.name = "Verge"
-  s.version = "8.9.0"
+  s.version = "8.9.1"
   s.summary = "Verge is a state management tools"
   s.description = <<-DESC
   Verge is a state management tools (Store, ViewModel, ORM, Reactive) on iOS App (UIKit / SwiftUI)
                    DESC
   s.license = "MIT"
-  s.author = { "Muukii" => "muukii.app@gmail.com  " }
+  s.author = { "Muukii" => "muukii.app@gmail.com" }
   s.social_media_url = "http://twitter.com/muukii_app"
 
   s.ios.deployment_target = "10.0"
