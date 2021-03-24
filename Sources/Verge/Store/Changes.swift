@@ -193,7 +193,7 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       yield primitive[keyPath: keyPath]
     }
   }
-
+  
   /// Returns a new instance that projects value by transform closure.
   ///
   /// - Warning: modification would be dropped.
@@ -210,6 +210,22 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       traces: traces,
       modification: nil
     )
+  }
+  
+  public func _beta_map<U>(_ keyPath: KeyPath<Value, U?>) -> Changes<U>? {
+    
+    guard self[dynamicMember: keyPath] != nil else {
+      return nil
+    }
+           
+    return Changes<U>(
+      previous: previous.flatMap { $0._beta_map(keyPath) },
+      innerBox: innerBox.map { $0[keyPath: keyPath]! },
+      version: version,
+      traces: traces,
+      modification: nil
+    )
+    
   }
 
   public func makeNextChanges(
@@ -522,7 +538,7 @@ extension Changes {
         cachedComputedValueStorage: cachedComputedValueStorage
       )
     }
-    
+     
     @inline(__always)
     func _read(perform: (ReadRef<Value>) -> Void) {
       withUnsafePointer(to: &value) { (pointer) -> Void in
