@@ -547,5 +547,54 @@ final class VergeStoreTests: XCTestCase {
     XCTAssertEqual(store1.state.version, 0)
 
   }
+  
+  func testChangesBetaMap() {
+    
+    let store = Store()
+    
+    XCTAssert(store.state.nested != nil)
+    
+    do {
+      
+      let state = store.state
+      
+      if let _ = state._beta_map(\.optionalNested) {
+        XCTFail()
+      }
+      
+    }
+    
+    store.commit {
+      $0.optionalNested = .init()
+    }
+    
+    do {
+      
+      let state = store.state
+      
+      if let nested = state._beta_map(\.optionalNested) {
+        XCTAssert(nested.previous == nil)
+      } else {
+        XCTFail()
+      }
+      
+    }
+    
+    store.commit {
+      $0.optionalNested!.myName = "hello"
+    }
+    
+    do {
+      
+      let state = store.state
+      
+      if let nested = state._beta_map(\.optionalNested) {
+        XCTAssert(nested.previous != nil)
+      } else {
+        XCTFail()
+      }
+      
+    }
+  }
 
 }
