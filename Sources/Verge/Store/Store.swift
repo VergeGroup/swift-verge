@@ -251,7 +251,8 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
         state = state.makeNextChanges(
           with: pointer.pointee,
           from: inoutRef.traces,
-          modification: inoutRef.modification ?? .indeterminate
+          modification: inoutRef.modification ?? .indeterminate,
+          transaction: inoutRef.transaction
         )
         
         if __sanitizer__.isRecursivelyCommitDetectionEnabled {

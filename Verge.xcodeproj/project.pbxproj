@@ -131,6 +131,7 @@
 		4BCE3039246AAD6800D35557 /* Scan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE3038246AAD6800D35557 /* Scan.swift */; };
 		4BCE88B6245B1B8A006E20C3 /* ActivityTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */; };
 		4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD260A4245C7F680052B4AC /* Derived+Assign.swift */; };
+		4BD2D959260E2697000BB51E /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD2D958260E2697000BB51E /* Transaction.swift */; };
 		4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD379EC23BD94D800CE474C /* AnyEntity.swift */; };
 		4BDB78222447934A00675D03 /* StoreWrapperType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDB78212447934A00675D03 /* StoreWrapperType.swift */; };
 		4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2BCD5238A68CE00F70CDA /* ViewModelBase.swift */; };
@@ -380,6 +381,7 @@
 		4BCE3038246AAD6800D35557 /* Scan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scan.swift; sourceTree = "<group>"; };
 		4BCE88B5245B1B8A006E20C3 /* ActivityTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTrace.swift; sourceTree = "<group>"; };
 		4BD260A4245C7F680052B4AC /* Derived+Assign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Derived+Assign.swift"; sourceTree = "<group>"; };
+		4BD2D958260E2697000BB51E /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		4BD379EC23BD94D800CE474C /* AnyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEntity.swift; sourceTree = "<group>"; };
 		4BD79C0324477F430073A48B /* VergeConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeConcurrency.swift; sourceTree = "<group>"; };
 		4BD85F2C2331213800FD04E9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
@@ -759,6 +761,7 @@
 			isa = PBXGroup;
 			children = (
 				4B427418236F269C00C302C8 /* Store.swift */,
+				4BD2D958260E2697000BB51E /* Transaction.swift */,
 				4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */,
 				4B3834E024823722008A0B47 /* Store+Combine.swift */,
 				4B56AE3E2554EB1B001BA029 /* StoreType+Assignee.swift */,
@@ -1340,6 +1343,7 @@
 			files = (
 				4BF5E10E25B0B70400DB3624 /* RuntimeSanitizer.swift in Sources */,
 				4B04C5632570875200731802 /* Log.swift in Sources */,
+				4BD2D959260E2697000BB51E /* Transaction.swift in Sources */,
 				4B37735324C78F260058A887 /* BackgroundDeallocationQueue.swift in Sources */,
 				4B04C55D2570875200731802 /* Signpost.swift in Sources */,
 				4B427419236F269C00C302C8 /* Store.swift in Sources */,

@@ -127,6 +127,8 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
 
   public let traces: [MutationTrace]
   public let modification: InoutRef<Value>.Modification?
+  
+  public let transaction: Transaction?
 
   // MARK: - Initializers
 
@@ -139,7 +141,8 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       innerBox: .init(value: new),
       version: 0,
       traces: [],
-      modification: nil
+      modification: nil,
+      transaction: nil
     )
   }
 
@@ -148,13 +151,15 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
     innerBox: InnerBox,
     version: UInt64,
     traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification?
+    modification: InoutRef<Value>.Modification?,
+    transaction: Transaction?
   ) {
     self.previous = previous
     self.innerBox = innerBox
     self.version = version
     self.traces = traces
     self.modification = modification
+    self.transaction = transaction
 
     vergeSignpostEvent("Changes.init", label: "\(type(of: self))")
   }
@@ -172,7 +177,8 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       innerBox: innerBox,
       version: version,
       traces: traces,
-      modification: nil
+      modification: nil,
+      transaction: transaction
     )
   }
 
@@ -208,7 +214,8 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       innerBox: try innerBox.map(transform),
       version: version,
       traces: traces,
-      modification: nil
+      modification: nil,
+      transaction: transaction
     )
   }
   
@@ -223,7 +230,8 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       innerBox: innerBox.map { $0[keyPath: keyPath]! },
       version: version,
       traces: traces,
-      modification: nil
+      modification: nil,
+      transaction: transaction
     )
     
   }
@@ -231,7 +239,8 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
   public func makeNextChanges(
     with nextNewValue: Value,
     from traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification
+    modification: InoutRef<Value>.Modification,
+    transaction: Transaction?
   ) -> Changes<Value> {
     let previous = cloneWithDropsPrevious()
     let nextVersion = previous.version &+ 1
@@ -240,7 +249,8 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       innerBox: .init(value: nextNewValue),
       version: nextVersion,
       traces: traces,
-      modification: modification
+      modification: modification,
+      transaction: transaction
     )
   }
   

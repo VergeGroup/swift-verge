@@ -109,7 +109,7 @@ extension ObservableType {
       if pre == nil {
         pre = Changes<Element>.init(old: nil, new: element)
       } else {
-        pre = pre!.makeNextChanges(with: element, from: [trace], modification: .indeterminate)
+        pre = pre!.makeNextChanges(with: element, from: [trace], modification: .indeterminate, transaction: nil)
       }
     })
     .map { $0! }

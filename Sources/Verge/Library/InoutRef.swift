@@ -91,6 +91,8 @@ public final class InoutRef<Wrapped> {
       yield &pointer.pointee
     }
   }
+  
+  public let transaction: Transaction = .init()
 
   // MARK: - Initializers
 
