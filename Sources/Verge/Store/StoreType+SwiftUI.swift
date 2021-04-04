@@ -54,7 +54,7 @@ extension StoreType {
     ///   - mutation: A closure to update the state.
     ///   If the closure is nil, state will be automatically updated.
     /// - Returns: The result of binding
-    func binding<T>(_ keypath: WritableKeyPath<State, T>, with mutation: ((T) -> Void)? = nil) -> Binding<T> {
+    public func binding<T>(_ keypath: WritableKeyPath<State, T>, with mutation: ((T) -> Void)? = nil) -> Binding<T> {
         .init(get: { [weak self] in
             guard let self = self else {
                 fatalError("The Store should be retained by the view until the view is released.")
