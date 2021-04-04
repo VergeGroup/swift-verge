@@ -48,7 +48,7 @@ extension StoreType {
     ///
     ///     TextField("hoge", text: store.binding(\.inputingText))
     ///
-    /// - Warning: The returned string is not localized.
+    /// - Warning: Still in experimentals.
     /// - Parameters:
     ///   - keypath: A property of the state to be bound.
     ///   - mutation: A closure to update the state.
