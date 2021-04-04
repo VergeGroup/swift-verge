@@ -597,4 +597,17 @@ final class VergeStoreTests: XCTestCase {
     }
   }
 
+  func testChangesSwiftUIBinding() {
+    let store = Store()
+    let binding = store.binding(\.count)
+
+    binding.wrappedValue = 5
+    XCTAssertEqual(store.state.count, 5)
+
+    store.commit {
+      $0.count = 10
+    }
+    XCTAssertEqual(binding.wrappedValue, 10)
+  }
+
 }
