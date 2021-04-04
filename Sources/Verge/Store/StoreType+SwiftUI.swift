@@ -41,4 +41,24 @@ extension BindingDerived {
   }
 }
 
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+extension StoreType {
+    func binding<T>(_ keypath: WritableKeyPath<State, T>, with mutation: ((T) -> Void)? = nil) -> Binding<T> {
+        .init(get: { [weak self] in
+            guard let self = self else {
+                fatalError("The Store should be retained by the view until the view is released.")
+            }
+            return self.primitiveState[keyPath: keypath]
+        }, set: { [weak self] value in
+            if let mutation = mutation {
+                mutation(value)
+            } else {
+                self?.asStore().commit {
+                    $0[keyPath: keypath] = value
+                }
+            }
+        })
+    }
+}
+
 #endif
