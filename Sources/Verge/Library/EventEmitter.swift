@@ -250,9 +250,17 @@ public final class EventEmitter<Event>: EventEmitterType {
   private let queueLock = NSRecursiveLock()
     
   private var isCurrentlyEventEmitting: VergeConcurrency.RecursiveLockAtomic<Int> = .init(0)
+
+  private var deinitHandlers: VergeConcurrency.UnfairLockAtomic<[() -> Void]> = .init([])
   
   public init() {
 
+  }
+
+  deinit {
+    deinitHandlers.value.forEach {
+      $0()
+    }
   }
       
   public func accept(_ event: Event) {
@@ -275,6 +283,12 @@ public final class EventEmitter<Event>: EventEmitterType {
     withLocking(subscribersLock) {
       guard let index = subscribers.firstIndex(where: { $0.0 == token }) else { return }
       subscribers.remove(at: index)
+    }
+  }
+
+  public func onDeinit(_ onDeinit: @escaping () -> Void) {
+    deinitHandlers.modify {
+      $0.append(onDeinit)
     }
   }
   

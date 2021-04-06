@@ -257,7 +257,12 @@ extension ObservableType {
 extension EventEmitter {
   
   private var subject: PublishSubject<Event> {
-    
+
+    objc_sync_enter(self)
+    defer {
+      objc_sync_exit(self)
+    }
+
     if let associated = objc_getAssociatedObject(self, &storage_subject) as? PublishSubject<Event> {
       
       return associated
@@ -268,14 +273,19 @@ extension EventEmitter {
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
       
       let lock = NSRecursiveLock()
+
+      onDeinit {
+        associated.onCompleted()
+      }
       
       add { (event) in
         lock.lock(); defer { lock.unlock() }
         associated.on(.next(event))
       }
-      
+
       return associated
     }
+
   }
   
   public func asSignal() -> Signal<Event> {
