@@ -22,6 +22,9 @@
 import Foundation
 import os
 
+/// A typealias to `Set<VergeAnyCancellable>`.
+public typealias VergeAnyCancellables = Set<VergeAnyCancellable>
+
 /// A type-erasing cancellable object that executes a provided closure when canceled.
 /// An AnyCancellable instance automatically calls cancel() when deinitialized.
 /// To cancel depending owner, can be written following
