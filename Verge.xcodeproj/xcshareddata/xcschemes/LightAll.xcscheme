@@ -98,20 +98,6 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4BE9454E23AD1B180060F977"
-               BuildableName = "VergeCoreTests.xctest"
-               BlueprintName = "VergeCoreTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "4B475BC4239ADE1C008A03E1"
                BuildableName = "VergeORMTests.xctest"
                BlueprintName = "VergeORMTests"
@@ -160,6 +146,34 @@
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4B78879A263D379C00FD358F"
+               BuildableName = "VergeTiny.framework"
+               BlueprintName = "VergeTiny"
+               ReferencedContainer = "container:Verge.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4B7887A2263D379C00FD358F"
+               BuildableName = "VergeTinyTests.xctest"
+               BlueprintName = "VergeTinyTests"
+               ReferencedContainer = "container:Verge.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -168,16 +182,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4BE9454E23AD1B180060F977"
-               BuildableName = "VergeCoreTests.xctest"
-               BlueprintName = "VergeCoreTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
          <TestableReference
             skipped = "NO">
             <BuildableReference

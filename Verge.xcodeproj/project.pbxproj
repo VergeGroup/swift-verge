@@ -83,6 +83,10 @@
 		4B71CEEE23B14394004520CE /* ActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71CEED23B14394004520CE /* ActivityTests.swift */; };
 		4B779B522535A03100EE708B /* KeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B779B512535A03100EE708B /* KeyPathTests.swift */; };
 		4B786324233912AB009B9C1B /* VergeStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B786322233912AB009B9C1B /* VergeStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B7887A4263D379C00FD358F /* VergeTiny.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B78879B263D379C00FD358F /* VergeTiny.framework */; };
+		4B7887A9263D379C00FD358F /* VergeTinyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7887A8263D379C00FD358F /* VergeTinyTests.swift */; };
+		4B7887AB263D379C00FD358F /* VergeTiny.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B78879D263D379C00FD358F /* VergeTiny.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B7887B5263D381D00FD358F /* Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7887B4263D381D00FD358F /* Source.swift */; };
 		4B7A71D024874A8900A116F7 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A71CF24874A8900A116F7 /* PerformanceTests.swift */; };
 		4B7A71D22487532D00A116F7 /* _COWFragmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A71D12487532D00A116F7 /* _COWFragmentTests.swift */; };
 		4B7F275625CFC59C0058BC69 /* MutationTraceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7F275525CFC59C0058BC69 /* MutationTraceTests.swift */; };
@@ -192,6 +196,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
 			remoteInfo = VergeStore;
+		};
+		4B7887A5263D379C00FD358F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B78879A263D379C00FD358F;
+			remoteInfo = VergeTiny;
 		};
 		4B7FBDA223ECB58E00C2D8E6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -321,6 +332,13 @@
 		4B786320233912AB009B9C1B /* Verge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Verge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B786322233912AB009B9C1B /* VergeStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeStore.h; sourceTree = "<group>"; };
 		4B786323233912AB009B9C1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B78879B263D379C00FD358F /* VergeTiny.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeTiny.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B78879D263D379C00FD358F /* VergeTiny.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeTiny.h; sourceTree = "<group>"; };
+		4B78879E263D379C00FD358F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B7887A3263D379C00FD358F /* VergeTinyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeTinyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B7887A8263D379C00FD358F /* VergeTinyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeTinyTests.swift; sourceTree = "<group>"; };
+		4B7887AA263D379C00FD358F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B7887B4263D381D00FD358F /* Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Source.swift; sourceTree = "<group>"; };
 		4B7A71CF24874A8900A116F7 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		4B7A71D12487532D00A116F7 /* _COWFragmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _COWFragmentTests.swift; sourceTree = "<group>"; };
 		4B7F275525CFC59C0058BC69 /* MutationTraceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationTraceTests.swift; sourceTree = "<group>"; };
@@ -467,6 +485,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B04C5702570876800731802 /* VergeObjcBridge.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B788798263D379C00FD358F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B7887A0263D379C00FD358F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B7887A4263D379C00FD358F /* VergeTiny.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -694,9 +727,29 @@
 			path = Verge;
 			sourceTree = "<group>";
 		};
+		4B78879C263D379C00FD358F /* VergeTiny */ = {
+			isa = PBXGroup;
+			children = (
+				4B78879D263D379C00FD358F /* VergeTiny.h */,
+				4B78879E263D379C00FD358F /* Info.plist */,
+				4B7887B4263D381D00FD358F /* Source.swift */,
+			);
+			path = VergeTiny;
+			sourceTree = "<group>";
+		};
+		4B7887A7263D379C00FD358F /* VergeTinyTests */ = {
+			isa = PBXGroup;
+			children = (
+				4B7887A8263D379C00FD358F /* VergeTinyTests.swift */,
+				4B7887AA263D379C00FD358F /* Info.plist */,
+			);
+			path = VergeTinyTests;
+			sourceTree = "<group>";
+		};
 		4B84F3B02388066F00D8BC75 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				4B78879C263D379C00FD358F /* VergeTiny */,
 				4B786321233912AB009B9C1B /* Verge */,
 				4B86A4881F969AD5002D54FE /* VergeClassic */,
 				4B5E84A924618D39009A0CA8 /* VergeObjcBridge */,
@@ -732,6 +785,8 @@
 				4B1743A723C767670074C457 /* VergeRxTests.xctest */,
 				4B5E849C24618D1C009A0CA8 /* VergeObjcBridge.framework */,
 				4B9AF04424880145001BAAFC /* VergeSwiftUI.framework */,
+				4B78879B263D379C00FD358F /* VergeTiny.framework */,
+				4B7887A3263D379C00FD358F /* VergeTinyTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -813,6 +868,7 @@
 			children = (
 				4B95BE59244F10F200124F6B /* DemoState.swift */,
 				4B2F001D2459DC4A0034DA40 /* All.xctestplan */,
+				4B7887A7263D379C00FD358F /* VergeTinyTests */,
 				4B475BC6239ADE1C008A03E1 /* VergeORMTests */,
 				4B1743A823C767670074C457 /* VergeRxTests */,
 				4B68394523705ACD002FFC5A /* VergeTests */,
@@ -854,6 +910,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B786324233912AB009B9C1B /* VergeStore.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B788796263D379C00FD358F /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B7887AB263D379C00FD358F /* VergeTiny.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1031,6 +1095,42 @@
 			productReference = 4B786320233912AB009B9C1B /* Verge.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		4B78879A263D379C00FD358F /* VergeTiny */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B7887B2263D379C00FD358F /* Build configuration list for PBXNativeTarget "VergeTiny" */;
+			buildPhases = (
+				4B788796263D379C00FD358F /* Headers */,
+				4B788797263D379C00FD358F /* Sources */,
+				4B788798263D379C00FD358F /* Frameworks */,
+				4B788799263D379C00FD358F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VergeTiny;
+			productName = VergeTiny;
+			productReference = 4B78879B263D379C00FD358F /* VergeTiny.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		4B7887A2263D379C00FD358F /* VergeTinyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B7887B3263D379C00FD358F /* Build configuration list for PBXNativeTarget "VergeTinyTests" */;
+			buildPhases = (
+				4B78879F263D379C00FD358F /* Sources */,
+				4B7887A0263D379C00FD358F /* Frameworks */,
+				4B7887A1263D379C00FD358F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4B7887A6263D379C00FD358F /* PBXTargetDependency */,
+			);
+			name = VergeTinyTests;
+			productName = VergeTinyTests;
+			productReference = 4B7887A3263D379C00FD358F /* VergeTinyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		4B86A4851F969AD5002D54FE /* VergeClassic */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B86A48E1F969AD6002D54FE /* Build configuration list for PBXNativeTarget "VergeClassic" */;
@@ -1074,7 +1174,7 @@
 		4B86A47D1F969AD5002D54FE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1150;
+				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1210;
 				ORGANIZATIONNAME = muukii;
 				TargetAttributes = {
@@ -1106,6 +1206,13 @@
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
+					4B78879A263D379C00FD358F = {
+						CreatedOnToolsVersion = 12.5;
+						LastSwiftMigration = 1250;
+					};
+					4B7887A2263D379C00FD358F = {
+						CreatedOnToolsVersion = 12.5;
+					};
 					4B86A4851F969AD5002D54FE = {
 						CreatedOnToolsVersion = 9.0;
 						LastSwiftMigration = 0900;
@@ -1133,6 +1240,7 @@
 			projectRoot = "";
 			targets = (
 				4B17438E23C766D70074C457 /* VergeRx */,
+				4B78879A263D379C00FD358F /* VergeTiny */,
 				4B78631F233912AB009B9C1B /* Verge */,
 				4B475BB1239AB954008A03E1 /* VergeORM */,
 				4B86A4851F969AD5002D54FE /* VergeClassic */,
@@ -1142,6 +1250,7 @@
 				4B68394323705ACD002FFC5A /* VergeTests */,
 				4B475BC4239ADE1C008A03E1 /* VergeORMTests */,
 				4B1743A623C767670074C457 /* VergeRxTests */,
+				4B7887A2263D379C00FD358F /* VergeTinyTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1197,6 +1306,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4B78631E233912AB009B9C1B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B788799263D379C00FD358F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B7887A1263D379C00FD358F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1392,6 +1515,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B788797263D379C00FD358F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B7887B5263D381D00FD358F /* Source.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B78879F263D379C00FD358F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B7887A9263D379C00FD358F /* VergeTinyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B86A4811F969AD5002D54FE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1443,6 +1582,11 @@
 			target = 4B78631F233912AB009B9C1B /* Verge */;
 			targetProxy = 4B68394A23705ACE002FFC5A /* PBXContainerItemProxy */;
 		};
+		4B7887A6263D379C00FD358F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B78879A263D379C00FD358F /* VergeTiny */;
+			targetProxy = 4B7887A5263D379C00FD358F /* PBXContainerItemProxy */;
+		};
 		4B7FBDA323ECB58E00C2D8E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4B475BB1239AB954008A03E1 /* VergeORM */;
@@ -1479,7 +1623,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeRx/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1515,7 +1659,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeRx/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1589,7 +1733,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeORM/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1624,7 +1768,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeORM/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1694,7 +1838,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeObjcBridge/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1721,7 +1865,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeObjcBridge/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1747,7 +1891,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeObjcBridge/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1874,7 +2018,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeRx/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1911,7 +2055,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/Sources/Verge/Info.plist";
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1947,7 +2091,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeORM/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1981,7 +2125,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeClassic/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2125,7 +2269,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/Sources/Verge/Info.plist";
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2162,7 +2306,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/Sources/Verge/Info.plist";
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2178,6 +2322,160 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4B7887AC263D379C00FD358F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.vergegroup.Verge.VergeTiny;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B7887AD263D379C00FD358F /* Benchmark */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.vergegroup.Verge.VergeTiny;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Benchmark;
+		};
+		4B7887AE263D379C00FD358F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.vergegroup.Verge.VergeTiny;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4B7887AF263D379C00FD358F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.vergegroup.Verge.VergeTinyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B7887B0263D379C00FD358F /* Benchmark */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.vergegroup.Verge.VergeTinyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Benchmark;
+		};
+		4B7887B1263D379C00FD358F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.vergegroup.Verge.VergeTinyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2325,7 +2623,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeClassic/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2356,7 +2654,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeClassic/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2384,7 +2682,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeSwiftUI/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2412,7 +2710,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeSwiftUI/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2439,7 +2737,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/VergeSwiftUI/Info.plist;
+				INFOPLIST_FILE = "Sources/$(TARGET_NAME)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2535,6 +2833,26 @@
 				4B786329233912AB009B9C1B /* Debug */,
 				4B67673023D8973800D0C076 /* Benchmark */,
 				4B78632A233912AB009B9C1B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B7887B2263D379C00FD358F /* Build configuration list for PBXNativeTarget "VergeTiny" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B7887AC263D379C00FD358F /* Debug */,
+				4B7887AD263D379C00FD358F /* Benchmark */,
+				4B7887AE263D379C00FD358F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B7887B3263D379C00FD358F /* Build configuration list for PBXNativeTarget "VergeTinyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B7887AF263D379C00FD358F /* Debug */,
+				4B7887B0263D379C00FD358F /* Benchmark */,
+				4B7887B1263D379C00FD358F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
