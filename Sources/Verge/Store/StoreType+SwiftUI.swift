@@ -60,12 +60,12 @@ extension StoreType {
         fatalError("The Store should be retained by the view until the view is released.")
       }
       return self.primitiveState[keyPath: keypath]
-    }, set: { [weak self] synchronized_value in
+    }, set: { [weak self] value in
       if let mutation = mutation {
-        mutation(synchronized_value)
+        mutation(value)
       } else {
         self?.asStore().commit {
-          $0[keyPath: keypath] = synchronized_value
+          $0[keyPath: keypath] = value
         }
       }
     })

@@ -26,7 +26,7 @@ public struct AnyEntityIdentifier: Hashable, ExpressibleByStringLiteral {
   public typealias StringLiteralType = String
 
   #if false
-  public let synchronized_value: String
+  public let value: String
   #else
   public let value: AnyHashable
   public init(_ value: AnyHashable) {

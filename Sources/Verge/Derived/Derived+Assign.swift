@@ -70,8 +70,8 @@ extension Publisher {
   public func assign(
     to binder: @escaping (Output) -> Void
   ) -> VergeAnyCancellable {
-    let cancellable = sink(receiveCompletion: { _ in }) { (synchronized_value) in
-      binder(synchronized_value)
+    let cancellable = sink(receiveCompletion: { _ in }) { (value) in
+      binder(value)
     }
     return .init {
       cancellable.cancel()
