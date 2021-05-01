@@ -219,7 +219,7 @@ private var _storageKey: Void?
 
 extension NSObject {
 
-  public var associatedFilter: DynamicPropertyStorage {
+  public var associatedProperties: DynamicPropertyStorage {
 
     objc_sync_enter(self)
     defer {
