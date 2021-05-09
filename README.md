@@ -1,4 +1,4 @@
-> Verge is giving the power of state-management in [muukii/Pixel](https://github.com/muukii/Pixel/pull/53) v2 development!
+> Verge is giving the power of state-management in [muukii/Brightroom](https://github.com/muukii/Brightroom/pull/53) v2 development!
 
 <p align="center">
   <a href="https://vergegroup.org">
