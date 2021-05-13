@@ -150,6 +150,7 @@
 		4BF5E10E25B0B70400DB3624 /* RuntimeSanitizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF5E10D25B0B70400DB3624 /* RuntimeSanitizer.swift */; };
 		4BF76681244E1B5300A5EA10 /* Derived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF76680244E1B5300A5EA10 /* Derived.swift */; };
 		4BF76684244E242A00A5EA10 /* DerivedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF76682244E242500A5EA10 /* DerivedTests.swift */; };
+		4BFA2688264D081100857B27 /* UIStateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFA2687264D081100857B27 /* UIStateStore.swift */; };
 		4BFF9A792548577500692696 /* InoutRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B2C2544B95100B4DFBE /* InoutRef.swift */; };
 		4BFF9A85254857AC00692696 /* InoutRefTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5D3B392544BCBB00B4DFBE /* InoutRefTests.swift */; };
 /* End PBXBuildFile section */
@@ -418,6 +419,7 @@
 		4BF5E10D25B0B70400DB3624 /* RuntimeSanitizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeSanitizer.swift; sourceTree = "<group>"; };
 		4BF76680244E1B5300A5EA10 /* Derived.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Derived.swift; sourceTree = "<group>"; };
 		4BF76682244E242500A5EA10 /* DerivedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedTests.swift; sourceTree = "<group>"; };
+		4BFA2687264D081100857B27 /* UIStateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStateStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -817,6 +819,7 @@
 			isa = PBXGroup;
 			children = (
 				4B427418236F269C00C302C8 /* Store.swift */,
+				4BFA2687264D081100857B27 /* UIStateStore.swift */,
 				4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */,
 				4B3834E024823722008A0B47 /* Store+Combine.swift */,
 				4B56AE3E2554EB1B001BA029 /* StoreType+Assignee.swift */,
@@ -1490,6 +1493,7 @@
 				4BEA328D2591B61A0009A2DF /* Changes+Deprecated.swift in Sources */,
 				4B04C5622570875200731802 /* VergeConcurrency+SynchronizationTracker.swift in Sources */,
 				4BC4897825A06C3400AC0365 /* StoreType+SwiftUI.swift in Sources */,
+				4BFA2688264D081100857B27 /* UIStateStore.swift in Sources */,
 				4BD260A5245C7F680052B4AC /* Derived+Assign.swift in Sources */,
 				4B2050F723D5C841000A2779 /* StoreLogger.swift in Sources */,
 				4B6B77AB243FA3EC00E0C0EA /* _StateTypeContainer.swift in Sources */,
