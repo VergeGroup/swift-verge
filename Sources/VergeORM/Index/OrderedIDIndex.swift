@@ -61,6 +61,10 @@ extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplac
     }
   }
 
+  public mutating func replaceSubrange<C>(_ subrange: Range<Int>, with newElements: C) where C : Collection, C.Element == Entity.EntityID {
+    backing.replaceSubrange(subrange, with: newElements.map { $0.any })
+  }
+
   public subscript(bounds: Range<Int>) -> ArraySlice<Entity.EntityID> {
     ArraySlice<Entity.EntityID>(AnySequence(backing[bounds].lazy.map { Entity.EntityID($0) }))
   }
