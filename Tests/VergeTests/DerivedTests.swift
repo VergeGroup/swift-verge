@@ -91,7 +91,7 @@ final class DerivedTests: XCTestCase {
 
     let wrapper = DemoStore()
     
-    let slice = wrapper.binding(
+    let slice = wrapper.bindingDerived(
       get: .map { $0.count },
       set: { source, new in
         source.count = new
