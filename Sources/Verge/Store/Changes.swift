@@ -27,7 +27,7 @@ import Foundation
 private let changesDeallocationQueue = BackgroundDeallocationQueue()
 
 public protocol AnyChangesType: AnyObject {
-  
+
   var traces: [MutationTrace] { get }
   var version: UInt64 { get }
 }
@@ -42,49 +42,47 @@ public protocol ChangesType: AnyChangesType {
   func asChanges() -> Changes<Value>
 }
 
-/**
- An immutable data object to achieve followings:
- - To know a property has been modified. (It contains 2 instances (old, new))
- - To avoid copying cost with wrapping reference type - So, you can embed this object on the other state.
-
- ```
- struct MyState {
-   var name: String
-   var age: String
-   var height: String
- }
- ```
-
- ```
- let changes: Changes<MyState>
- ```
-
- It can be accessed with properties of MyState by dynamicMemberLookup
- ```
- changes.name
- ```
-
- It would be helpful to update UI partially
- ```
- func updateUI(changes: Changes<MyState>) {
-
-   changes.ifChanged(\.name) { name in
-   // update UI
-   }
-
-   changes.ifChanged(\.age) { age in
-   // update UI
-   }
-
-   changes.ifChanged(\.height) { height in
-   // update UI
-   }
- }
- ```
-
- - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
- This means Changes will return equals if different pointer but the value is the same.
- */
+/// An immutable data object to achieve followings:
+/// - To know a property has been modified. (It contains 2 instances (old, new))
+/// - To avoid copying cost with wrapping reference type - So, you can embed this object on the other state.
+///
+/// ```
+/// struct MyState {
+///   var name: String
+///   var age: String
+///   var height: String
+/// }
+/// ```
+///
+/// ```
+/// let changes: Changes<MyState>
+/// ```
+///
+/// It can be accessed with properties of MyState by dynamicMemberLookup
+/// ```
+/// changes.name
+/// ```
+///
+/// It would be helpful to update UI partially
+/// ```
+/// func updateUI(changes: Changes<MyState>) {
+///
+///   changes.ifChanged(\.name) { name in
+///   // update UI
+///   }
+///
+///   changes.ifChanged(\.age) { age in
+///   // update UI
+///   }
+///
+///   changes.ifChanged(\.height) { height in
+///   // update UI
+///   }
+/// }
+/// ```
+///
+/// - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
+/// This means Changes will return equals if different pointer but the value is the same.
 @dynamicMemberLookup
 public final class Changes<Value>: ChangesType, Equatable, HasTraces {
   public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
@@ -193,7 +191,7 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       yield primitive[keyPath: keyPath]
     }
   }
-  
+
   /// Returns a new instance that projects value by transform closure.
   ///
   /// - Warning: modification would be dropped.
@@ -211,13 +209,13 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       modification: nil
     )
   }
-  
+
   public func _beta_map<U>(_ keyPath: KeyPath<Value, U?>) -> Changes<U>? {
-    
+
     guard self[dynamicMember: keyPath] != nil else {
       return nil
     }
-           
+
     return Changes<U>(
       previous: previous.flatMap { $0._beta_map(keyPath) },
       innerBox: innerBox.map { $0[keyPath: keyPath]! },
@@ -225,7 +223,7 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       traces: traces,
       modification: nil
     )
-    
+
   }
 
   public func makeNextChanges(
@@ -243,17 +241,17 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       modification: modification
     )
   }
-  
+
   public func _read(perform: (ReadRef<Value>) -> Void) {
     innerBox._read(perform: perform)
   }
-  
+
 }
 
 // MARK: - Primitive methods
 
 extension Changes {
-  
+
   /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed>(
@@ -360,7 +358,7 @@ extension Changes {
     _ keyPath1: ChangesKeyPath<T1>,
     _ perform: ((T0, T1)) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) }, .init(==), perform)
+    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) as (T0, T1) }, .init(==), perform)
   }
 
   /**
@@ -375,7 +373,7 @@ extension Changes {
     _ perform: ((T0, T1, T2)) throws -> Result
   ) rethrows -> Result? {
     try ifChanged(
-      { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) },
+      { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) as (T0, T1, T2) },
       .init(==),
       perform
     )
@@ -400,7 +398,8 @@ extension Changes {
           $0[keyPath: keyPath1],
           $0[keyPath: keyPath2],
           $0[keyPath: keyPath3]
-        ) },
+        ) as (T0, T1, T2, T3)
+      },
       .init(==),
       perform
     )
@@ -427,13 +426,16 @@ extension Changes {
     _ perform: ((T0, T1, T2, T3, T4)) throws -> Result
   ) rethrows -> Result? {
     try ifChanged(
-      { (
-        $0[keyPath: keyPath0],
-        $0[keyPath: keyPath1],
-        $0[keyPath: keyPath2],
-        $0[keyPath: keyPath3],
-        $0[keyPath: keyPath4]
-      ) },
+      {
+        (
+          $0[keyPath: keyPath0],
+          $0[keyPath: keyPath1],
+          $0[keyPath: keyPath2],
+          $0[keyPath: keyPath3],
+          $0[keyPath: keyPath4]
+        ) as (T0, T1, T2, T3, T4)
+
+      },
       .init(==),
       perform
     )
@@ -512,12 +514,14 @@ extension Changes: CustomReflectable {
 
 extension Changes {
   private final class InnerBox {
-    
+
     var value: Value
 
     let cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath: Any]>
 
-    init(value: Value) {
+    init(
+      value: Value
+    ) {
       self.value = value
       cachedComputedValueStorage = .init([:])
     }
@@ -538,7 +542,7 @@ extension Changes {
         cachedComputedValueStorage: cachedComputedValueStorage
       )
     }
-     
+
     @inline(__always)
     func _read(perform: (ReadRef<Value>) -> Void) {
       withUnsafePointer(to: &value) { (pointer) -> Void in
@@ -546,7 +550,7 @@ extension Changes {
         perform(ref)
       }
     }
-    
+
   }
 }
 
@@ -555,16 +559,21 @@ extension Changes where Value: ExtendedStateType {
   public struct ComputedProxy {
     let source: Changes<Value>
 
-    public subscript<Output>(dynamicMember keyPath: KeyPath<
-      Value.Extended,
-      Value.Field.Computed<Output>
-    >) -> Output {
+    public subscript<Output>(
+      dynamicMember keyPath: KeyPath<
+        Value.Extended,
+        Value.Field.Computed<Output>
+      >
+    ) -> Output {
       take(with: keyPath)
     }
 
     @inline(__always)
-    private func take<Output>(with keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>)
-    -> Output {
+    private func take<Output>(
+      with keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>
+    )
+      -> Output
+    {
       return source._synchronized_takeFromCacheOrCreate(keyPath: keyPath)
     }
   }
@@ -789,7 +798,9 @@ extension _StateTypeContainer {
     let pipeline: Pipeline<Input, Output>
 
     @usableFromInline
-    init(_ pipeline: Pipeline<Input, Output>) {
+    init(
+      _ pipeline: Pipeline<Input, Output>
+    ) {
       self.pipeline = pipeline
     }
 
@@ -800,7 +811,9 @@ extension _StateTypeContainer {
       self.init(Pipeline<Input, Output>.init(makeInitial: makeInitial, update: update))
     }
 
-    public init(_ compute: @escaping (Input) -> Output) {
+    public init(
+      _ compute: @escaping (Input) -> Output
+    ) {
       self.init(.map(compute))
     }
 
@@ -850,8 +863,11 @@ extension _StateTypeContainer {
 
     @inlinable
     @inline(__always)
-    public func modified(_ modifier: (Pipeline<Input, Output>) -> Pipeline<Input, Output>)
-    -> Self {
+    public func modified(
+      _ modifier: (Pipeline<Input, Output>) -> Pipeline<Input, Output>
+    )
+      -> Self
+    {
       .init(modifier(pipeline))
     }
 
