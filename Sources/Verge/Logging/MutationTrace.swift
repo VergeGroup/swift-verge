@@ -33,8 +33,7 @@ public struct MutationTrace: Encodable, Equatable {
       lhs.name == rhs.name &&
       lhs.file.description == rhs.file.description &&
       lhs.function.description == rhs.function.description &&
-      lhs.line == rhs.line &&
-      lhs.thread == rhs.thread
+      lhs.line == rhs.line
   }
 
   public let createdAt: Date = .init()
@@ -42,20 +41,17 @@ public struct MutationTrace: Encodable, Equatable {
   public let file: StaticString
   public let function: StaticString
   public let line: UInt
-  public let thread: String
 
   public init(
     name: String = "",
     file: StaticString = #file,
     function: StaticString = #function,
-    line: UInt = #line,
-    thread: Thread = .current
+    line: UInt = #line
   ) {
     self.name = name
     self.file = file
     self.function = function
     self.line = line
-    self.thread = thread.description
   }
 
 }
