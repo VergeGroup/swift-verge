@@ -5,7 +5,7 @@ let package = Package(
   name: "Verge",  
   platforms: [
     .macOS(.v10_12),
-    .iOS(.v10),
+    .iOS(.v11),
     .tvOS(.v10),
     .watchOS(.v3)
   ],
