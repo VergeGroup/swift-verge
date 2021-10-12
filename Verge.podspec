@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.source = { :git => "https://github.com/muukii/Verge.git", :tag => s.version }
   s.homepage = "https://github.com/muukii/Verge"
 
-  s.swift_version = "5.3"
+  s.swift_versions = ["5.3", "5.4", "5.5"]
 
   s.default_subspec = "Store"
 
