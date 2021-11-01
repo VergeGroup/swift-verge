@@ -26,6 +26,10 @@
 		4B0DFF2B245C6670002CDFE1 /* ChangedOperatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0DFF2A245C6670002CDFE1 /* ChangedOperatorTests.swift */; };
 		4B13BC7024575F1E00F0BC0F /* DerivedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B13BC6F24575F1E00F0BC0F /* DerivedTests.swift */; };
 		4B13BC72245764BB00F0BC0F /* Derived+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B13BC71245764BB00F0BC0F /* Derived+Rx.swift */; };
+		4B165571273041A2003B930B /* AsyncVerge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B165569273041A1003B930B /* AsyncVerge.framework */; platformFilter = ios; };
+		4B165576273041A2003B930B /* AsyncVergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B165575273041A2003B930B /* AsyncVergeTests.swift */; };
+		4B165577273041A2003B930B /* AsyncVerge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B16556B273041A1003B930B /* AsyncVerge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B165581273041FF003B930B /* AsyncStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B165580273041FF003B930B /* AsyncStorage.swift */; };
 		4B17439323C766D70074C457 /* VergeRx.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B17439123C766D70074C457 /* VergeRx.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B17439C23C766FB0074C457 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B475BB2239AB954008A03E1 /* VergeORM.framework */; };
 		4B17439D23C766FB0074C457 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* Verge.framework */; };
@@ -164,6 +168,13 @@
 			remoteGlobalIDString = 4B5E849B24618D1C009A0CA8;
 			remoteInfo = VergeObjcBridge;
 		};
+		4B165572273041A2003B930B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B165568273041A1003B930B;
+			remoteInfo = AsyncVerge;
+		};
 		4B1743AD23C767670074C457 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -267,6 +278,11 @@
 		4B0DFF2A245C6670002CDFE1 /* ChangedOperatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangedOperatorTests.swift; sourceTree = "<group>"; };
 		4B13BC6F24575F1E00F0BC0F /* DerivedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedTests.swift; sourceTree = "<group>"; };
 		4B13BC71245764BB00F0BC0F /* Derived+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Derived+Rx.swift"; sourceTree = "<group>"; };
+		4B165569273041A1003B930B /* AsyncVerge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AsyncVerge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B16556B273041A1003B930B /* AsyncVerge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncVerge.h; sourceTree = "<group>"; };
+		4B165570273041A2003B930B /* AsyncVergeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AsyncVergeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B165575273041A2003B930B /* AsyncVergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncVergeTests.swift; sourceTree = "<group>"; };
+		4B165580273041FF003B930B /* AsyncStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncStorage.swift; sourceTree = "<group>"; };
 		4B17438F23C766D70074C457 /* VergeRx.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeRx.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B17439123C766D70074C457 /* VergeRx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VergeRx.h; sourceTree = "<group>"; };
 		4B17439223C766D70074C457 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -424,6 +440,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4B165566273041A1003B930B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B16556D273041A2003B930B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B165571273041A2003B930B /* AsyncVerge.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B17438C23C766D70074C457 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -584,6 +615,23 @@
 				4B80B74823F953F9000BCFB2 /* GroupByKeyIndex.swift */,
 			);
 			path = Index;
+			sourceTree = "<group>";
+		};
+		4B16556A273041A1003B930B /* AsyncVerge */ = {
+			isa = PBXGroup;
+			children = (
+				4B16556B273041A1003B930B /* AsyncVerge.h */,
+				4B165580273041FF003B930B /* AsyncStorage.swift */,
+			);
+			path = AsyncVerge;
+			sourceTree = "<group>";
+		};
+		4B165574273041A2003B930B /* AsyncVergeTests */ = {
+			isa = PBXGroup;
+			children = (
+				4B165575273041A2003B930B /* AsyncVergeTests.swift */,
+			);
+			path = AsyncVergeTests;
 			sourceTree = "<group>";
 		};
 		4B17439023C766D70074C457 /* VergeRx */ = {
@@ -753,6 +801,7 @@
 		4B84F3B02388066F00D8BC75 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				4B16556A273041A1003B930B /* AsyncVerge */,
 				4B78879C263D379C00FD358F /* VergeTiny */,
 				4B786321233912AB009B9C1B /* Verge */,
 				4B86A4881F969AD5002D54FE /* VergeClassic */,
@@ -791,6 +840,8 @@
 				4B9AF04424880145001BAAFC /* VergeSwiftUI.framework */,
 				4B78879B263D379C00FD358F /* VergeTiny.framework */,
 				4B7887A3263D379C00FD358F /* VergeTinyTests.xctest */,
+				4B165569273041A1003B930B /* AsyncVerge.framework */,
+				4B165570273041A2003B930B /* AsyncVergeTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -878,6 +929,7 @@
 				4B1743A823C767670074C457 /* VergeRxTests */,
 				4B68394523705ACD002FFC5A /* VergeTests */,
 				4B65F8ED1FB4C0DC00A90A67 /* VergeClassicTests */,
+				4B165574273041A2003B930B /* AsyncVergeTests */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -885,6 +937,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		4B165564273041A1003B930B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B165577273041A2003B930B /* AsyncVerge.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B17438A23C766D70074C457 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -945,6 +1005,42 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		4B165568273041A1003B930B /* AsyncVerge */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B16557E273041A2003B930B /* Build configuration list for PBXNativeTarget "AsyncVerge" */;
+			buildPhases = (
+				4B165564273041A1003B930B /* Headers */,
+				4B165565273041A1003B930B /* Sources */,
+				4B165566273041A1003B930B /* Frameworks */,
+				4B165567273041A1003B930B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AsyncVerge;
+			productName = AsyncVerge;
+			productReference = 4B165569273041A1003B930B /* AsyncVerge.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		4B16556F273041A2003B930B /* AsyncVergeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B16557F273041A2003B930B /* Build configuration list for PBXNativeTarget "AsyncVergeTests" */;
+			buildPhases = (
+				4B16556C273041A2003B930B /* Sources */,
+				4B16556D273041A2003B930B /* Frameworks */,
+				4B16556E273041A2003B930B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4B165573273041A2003B930B /* PBXTargetDependency */,
+			);
+			name = AsyncVergeTests;
+			productName = AsyncVergeTests;
+			productReference = 4B165570273041A2003B930B /* AsyncVergeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		4B17438E23C766D70074C457 /* VergeRx */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B17439A23C766D80074C457 /* Build configuration list for PBXNativeTarget "VergeRx" */;
@@ -1180,10 +1276,17 @@
 		4B86A47D1F969AD5002D54FE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1250;
+				LastSwiftUpdateCheck = 1320;
 				LastUpgradeCheck = 1210;
 				ORGANIZATIONNAME = muukii;
 				TargetAttributes = {
+					4B165568273041A1003B930B = {
+						CreatedOnToolsVersion = 13.2;
+						LastSwiftMigration = 1320;
+					};
+					4B16556F273041A2003B930B = {
+						CreatedOnToolsVersion = 13.2;
+					};
 					4B17438E23C766D70074C457 = {
 						CreatedOnToolsVersion = 11.3;
 					};
@@ -1257,11 +1360,27 @@
 				4B475BC4239ADE1C008A03E1 /* VergeORMTests */,
 				4B1743A623C767670074C457 /* VergeRxTests */,
 				4B7887A2263D379C00FD358F /* VergeTinyTests */,
+				4B165568273041A1003B930B /* AsyncVerge */,
+				4B16556F273041A2003B930B /* AsyncVergeTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4B165567273041A1003B930B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B16556E273041A2003B930B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B17438D23C766D70074C457 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1349,6 +1468,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4B165565273041A1003B930B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B165581273041FF003B930B /* AsyncStorage.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B16556C273041A2003B930B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B165576273041A2003B930B /* AsyncVergeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B17438B23C766D70074C457 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1564,6 +1699,12 @@
 			target = 4B5E849B24618D1C009A0CA8 /* VergeObjcBridge */;
 			targetProxy = 4B04C5722570876800731802 /* PBXContainerItemProxy */;
 		};
+		4B165573273041A2003B930B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = 4B165568273041A1003B930B /* AsyncVerge */;
+			targetProxy = 4B165572273041A2003B930B /* PBXContainerItemProxy */;
+		};
 		4B1743AE23C767670074C457 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4B17438E23C766D70074C457 /* VergeRx */;
@@ -1617,6 +1758,187 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		4B165578273041A2003B930B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 muukii. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVerge;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4B165579273041A2003B930B /* Benchmark */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 muukii. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVerge;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Benchmark;
+		};
+		4B16557A273041A2003B930B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 muukii. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVerge;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		4B16557B273041A2003B930B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVergeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4B16557C273041A2003B930B /* Benchmark */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVergeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Benchmark;
+		};
+		4B16557D273041A2003B930B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KU2QEJ9K3Z;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVergeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		4B17439823C766D80074C457 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2767,6 +3089,26 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4B16557E273041A2003B930B /* Build configuration list for PBXNativeTarget "AsyncVerge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B165578273041A2003B930B /* Debug */,
+				4B165579273041A2003B930B /* Benchmark */,
+				4B16557A273041A2003B930B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B16557F273041A2003B930B /* Build configuration list for PBXNativeTarget "AsyncVergeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B16557B273041A2003B930B /* Debug */,
+				4B16557C273041A2003B930B /* Benchmark */,
+				4B16557D273041A2003B930B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4B17439A23C766D80074C457 /* Build configuration list for PBXNativeTarget "VergeRx" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
