@@ -1,7 +1,7 @@
 
 import Dispatch
 
-private final class UnsafeStorage<Value> {
+private final class SnapshotAsyncStorage<Value> {
 
   let queue = DispatchQueue(label: "UnsafeStorage")
 
@@ -29,28 +29,30 @@ private final class UnsafeStorage<Value> {
 
 public actor AsyncStorage<Value> {
 
-  private let st: UnsafeStorage<Value>
+  private let snapshotStorage: SnapshotAsyncStorage<Value>
   public var value: Value
 
+  /// Returns a snapshot of the value in the point of time to mutation completed.
+  /// the value may be older than the current processing.
   public nonisolated var snapshot: Value {
-    st.value
+    snapshotStorage.value
   }
 
   public init(
     _ value: Value
   ) {
     self.value = value
-    st = .init(value)
+    snapshotStorage = .init(value)
   }
 
   public func read() async -> Value {
-    print("Read", Thread.current)
+    Log.debug(.storage, "Read", Thread.current)
     return value
   }
 
   public func update(_ mutate: @Sendable (inout Value) -> Void) async {
-    print("Update", Thread.current)
+    Log.debug(.storage, "Update", Thread.current)
     mutate(&value)
-    st.setValue(value)
+    snapshotStorage.setValue(value)
   }
 }
