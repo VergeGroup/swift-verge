@@ -53,7 +53,7 @@ final class Test: XCTestCase {
     let v2 = await _run()
     let v3 = await _run()
 
-    print(await [v1, v2, v3])
+    print([v1, v2, v3])
 
   }
 
@@ -68,7 +68,7 @@ final class Test: XCTestCase {
     Task.detached {
       await withTaskGroup(of: Void.self) {
 
-        for i in 0..<1000 {
+        for _ in 0..<1000 {
           $0.addTask {
             await storage.update {
               $0.count += 1
@@ -99,7 +99,7 @@ final class Test: XCTestCase {
 
     await withTaskGroup(of: Void.self) {
 
-      for i in 0..<1000 {
+      for _ in 0..<1000 {
         $0.addTask {
           await storage.update {
             $0.count += 1
@@ -114,11 +114,11 @@ final class Test: XCTestCase {
 
     let storage = self.storage
 
-    await Task.detached {
+    _ = await Task.detached {
 
       await withTaskGroup(of: Void.self) {
 
-        for i in 0..<1000 {
+        for _ in 0..<1000 {
           $0.addTask {
             await storage.update {
               $0.count += 1
