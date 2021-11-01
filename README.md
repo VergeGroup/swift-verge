@@ -1,5 +1,3 @@
-> Verge is giving the power of state-management in [muukii/Brightroom](https://github.com/muukii/Brightroom/pull/53) v2 development!
-
 <p align="center">
   <a href="https://vergegroup.org">
 <img width="128" alt="VergeIcon" src="https://user-images.githubusercontent.com/1888355/85241314-5ac19c80-b476-11ea-9be6-e04ed3bc6994.png">
@@ -31,6 +29,11 @@
     <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg" />
   </a>
 </p>
+
+## News
+
+Next Verge implementation has started.  
+which uses swift-concurrency
 
 ## Requirements
 
