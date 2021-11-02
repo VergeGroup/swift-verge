@@ -45,12 +45,12 @@ public actor AsyncStorage<Value> {
     snapshotStorage = .init(value)
   }
 
-  public func read() async -> Value {
+  public func read() -> Value {
     Log.debug(.storage, "Read", Thread.current)
     return value
   }
 
-  public func update(_ mutate: @Sendable (inout Value) -> Void) async {
+  public func update(_ mutate: @Sendable (inout Value) -> Void) {
     Log.debug(.storage, "Update", Thread.current)
     mutate(&value)
     snapshotStorage.setValue(value)

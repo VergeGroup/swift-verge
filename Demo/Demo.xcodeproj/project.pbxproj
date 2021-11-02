@@ -14,6 +14,10 @@
 		4B19FCB4252E33A1003A628D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B19FCB3252E33A1003A628D /* Preview Assets.xcassets */; };
 		4B19FCCB252E33D5003A628D /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; };
 		4B19FCCC252E33D5003A628D /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B28055827318D1200DA4FBB /* ConcurrencyAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B28055727318D1200DA4FBB /* ConcurrencyAppApp.swift */; };
+		4B28055A27318D1200DA4FBB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B28055927318D1200DA4FBB /* ContentView.swift */; };
+		4B28055C27318D1300DA4FBB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B28055B27318D1300DA4FBB /* Assets.xcassets */; };
+		4B28055F27318D1300DA4FBB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B28055E27318D1300DA4FBB /* Preview Assets.xcassets */; };
 		4B7149E724A4FC90006EB6D5 /* Demo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B7149E524A4FC90006EB6D5 /* Demo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B714A9524A4FD51006EB6D5 /* SpotifyUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */; };
 		4B714A9624A4FD51006EB6D5 /* SpotifyUIKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -135,6 +139,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4B28057027318D1300DA4FBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B78879B263D379C00FD358F;
+			remoteInfo = VergeTiny;
+		};
+		4B28057227318D1300DA4FBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B7887A3263D379C00FD358F;
+			remoteInfo = VergeTinyTests;
+		};
+		4B28057427318D1300DA4FBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B165569273041A1003B930B;
+			remoteInfo = AsyncVerge;
+		};
+		4B28057627318D1300DA4FBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B165570273041A2003B930B;
+			remoteInfo = AsyncVergeTests;
+		};
 		4B714A0524A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
@@ -298,6 +330,11 @@
 		4B19FCB0252E33A1003A628D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B19FCB3252E33A1003A628D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4B19FCB5252E33A1003A628D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B28055527318D1200DA4FBB /* ConcurrencyApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConcurrencyApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B28055727318D1200DA4FBB /* ConcurrencyAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrencyAppApp.swift; sourceTree = "<group>"; };
+		4B28055927318D1200DA4FBB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4B28055B27318D1300DA4FBB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B28055E27318D1300DA4FBB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4B7149E224A4FC90006EB6D5 /* Demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B7149E524A4FC90006EB6D5 /* Demo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Demo.h; sourceTree = "<group>"; };
 		4B7149E624A4FC90006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -415,6 +452,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B28055227318D1200DA4FBB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4B7149DF24A4FC90006EB6D5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -511,6 +555,25 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		4B28055627318D1200DA4FBB /* ConcurrencyApp */ = {
+			isa = PBXGroup;
+			children = (
+				4B28055727318D1200DA4FBB /* ConcurrencyAppApp.swift */,
+				4B28055927318D1200DA4FBB /* ContentView.swift */,
+				4B28055B27318D1300DA4FBB /* Assets.xcassets */,
+				4B28055D27318D1300DA4FBB /* Preview Content */,
+			);
+			path = ConcurrencyApp;
+			sourceTree = "<group>";
+		};
+		4B28055D27318D1300DA4FBB /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4B28055E27318D1300DA4FBB /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 		4B7149D824A4FC90006EB6D5 = {
 			isa = PBXGroup;
 			children = (
@@ -523,6 +586,7 @@
 				4B714A8F24A4FD51006EB6D5 /* SpotifyUIKit */,
 				4B714AA124A4FD61006EB6D5 /* SpotifyService */,
 				4B19FCAB252E33A0003A628D /* StateReaderDemo */,
+				4B28055627318D1200DA4FBB /* ConcurrencyApp */,
 				4B7149E324A4FC90006EB6D5 /* Products */,
 				AD6DE38C48444B06D801C3C3 /* Pods */,
 				D8C547534028A8A2BD8F9069 /* Frameworks */,
@@ -540,6 +604,7 @@
 				4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */,
 				4B714AA024A4FD61006EB6D5 /* SpotifyService.framework */,
 				4B19FCAA252E33A0003A628D /* StateReaderDemo.app */,
+				4B28055527318D1200DA4FBB /* ConcurrencyApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -557,15 +622,19 @@
 			isa = PBXGroup;
 			children = (
 				4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */,
+				4B28057127318D1300DA4FBB /* VergeTiny.framework */,
 				4B714A0824A4FCAB006EB6D5 /* Verge.framework */,
 				4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */,
 				4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */,
 				4B714A0E24A4FCAB006EB6D5 /* VergeSwiftUI.framework */,
 				4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */,
-				4B714A1E24A4FCAB006EB6D5 /* VergeTests.xctest */,
-				4B714A2224A4FCAB006EB6D5 /* VergeStoreTests.xctest */,
+				4B714A1E24A4FCAB006EB6D5 /* VergeClassicTests.xctest */,
+				4B714A2224A4FCAB006EB6D5 /* VergeTests.xctest */,
 				4B714A2424A4FCAB006EB6D5 /* VergeORMTests.xctest */,
 				4B714A2624A4FCAB006EB6D5 /* VergeRxTests.xctest */,
+				4B28057327318D1300DA4FBB /* VergeTinyTests.xctest */,
+				4B28057527318D1300DA4FBB /* AsyncVerge.framework */,
+				4B28057727318D1300DA4FBB /* AsyncVergeTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -869,6 +938,23 @@
 			productReference = 4B19FCAA252E33A0003A628D /* StateReaderDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
+		4B28055427318D1200DA4FBB /* ConcurrencyApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B28057827318D1300DA4FBB /* Build configuration list for PBXNativeTarget "ConcurrencyApp" */;
+			buildPhases = (
+				4B28055127318D1200DA4FBB /* Sources */,
+				4B28055227318D1200DA4FBB /* Frameworks */,
+				4B28055327318D1200DA4FBB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ConcurrencyApp;
+			productName = ConcurrencyApp;
+			productReference = 4B28055527318D1200DA4FBB /* ConcurrencyApp.app */;
+			productType = "com.apple.product-type.application";
+		};
 		4B7149E124A4FC90006EB6D5 /* Demo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B7149EA24A4FC90006EB6D5 /* Build configuration list for PBXNativeTarget "Demo" */;
@@ -1020,12 +1106,15 @@
 		4B7149D924A4FC90006EB6D5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1200;
+				LastSwiftUpdateCheck = 1320;
 				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = muukii;
 				TargetAttributes = {
 					4B19FCA9252E33A0003A628D = {
 						CreatedOnToolsVersion = 12.0;
+					};
+					4B28055427318D1200DA4FBB = {
+						CreatedOnToolsVersion = 13.2;
 					};
 					4B7149E124A4FC90006EB6D5 = {
 						CreatedOnToolsVersion = 11.5;
@@ -1087,11 +1176,40 @@
 				4B714A8D24A4FD51006EB6D5 /* SpotifyUIKit */,
 				4B714A9F24A4FD61006EB6D5 /* SpotifyService */,
 				4B19FCA9252E33A0003A628D /* StateReaderDemo */,
+				4B28055427318D1200DA4FBB /* ConcurrencyApp */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		4B28057127318D1300DA4FBB /* VergeTiny.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VergeTiny.framework;
+			remoteRef = 4B28057027318D1300DA4FBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B28057327318D1300DA4FBB /* VergeTinyTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = VergeTinyTests.xctest;
+			remoteRef = 4B28057227318D1300DA4FBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B28057527318D1300DA4FBB /* AsyncVerge.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AsyncVerge.framework;
+			remoteRef = 4B28057427318D1300DA4FBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4B28057727318D1300DA4FBB /* AsyncVergeTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AsyncVergeTests.xctest;
+			remoteRef = 4B28057627318D1300DA4FBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -1134,14 +1252,14 @@
 			remoteRef = 4B714A0F24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		4B714A1E24A4FCAB006EB6D5 /* VergeTests.xctest */ = {
+		4B714A1E24A4FCAB006EB6D5 /* VergeClassicTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = VergeClassicTests.xctest;
 			remoteRef = 4B714A1D24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		4B714A2224A4FCAB006EB6D5 /* VergeStoreTests.xctest */ = {
+		4B714A2224A4FCAB006EB6D5 /* VergeTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = VergeTests.xctest;
@@ -1171,6 +1289,15 @@
 			files = (
 				4B19FCB4252E33A1003A628D /* Preview Assets.xcassets in Resources */,
 				4B19FCB1252E33A1003A628D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B28055327318D1200DA4FBB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B28055F27318D1300DA4FBB /* Preview Assets.xcassets in Resources */,
+				4B28055C27318D1300DA4FBB /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1386,6 +1513,15 @@
 			files = (
 				4B19FCAF252E33A0003A628D /* ContentView.swift in Sources */,
 				4B19FCAD252E33A0003A628D /* StateReaderDemoApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B28055127318D1200DA4FBB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B28055A27318D1200DA4FBB /* ContentView.swift in Sources */,
+				4B28055827318D1200DA4FBB /* ConcurrencyAppApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1611,6 +1747,68 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.VergeGroup.StateReaderDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4B28056027318D1300DA4FBB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ConcurrencyApp/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.ConcurrencyApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B28056127318D1300DA4FBB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ConcurrencyApp/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.ConcurrencyApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2064,6 +2262,15 @@
 			buildConfigurations = (
 				4B19FCB6252E33A1003A628D /* Debug */,
 				4B19FCB7252E33A1003A628D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B28057827318D1300DA4FBB /* Build configuration list for PBXNativeTarget "ConcurrencyApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B28056027318D1300DA4FBB /* Debug */,
+				4B28056127318D1300DA4FBB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
