@@ -14,20 +14,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4BFA229B23A63B55008D7BCB"
-               BuildableName = "VergeCore.framework"
-               BlueprintName = "VergeCore"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "4B86A4851F969AD5002D54FE"
                BuildableName = "VergeClassic.framework"
                BlueprintName = "VergeClassic"
@@ -93,6 +79,20 @@
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4B78879A263D379C00FD358F"
+               BuildableName = "VergeTiny.framework"
+               BlueprintName = "VergeTiny"
+               ReferencedContainer = "container:Verge.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
             buildForAnalyzing = "NO">
@@ -143,20 +143,6 @@
                BlueprintIdentifier = "4B65F8EB1FB4C0DC00A90A67"
                BuildableName = "VergeClassicTests.xctest"
                BlueprintName = "VergeClassicTests"
-               ReferencedContainer = "container:Verge.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4B78879A263D379C00FD358F"
-               BuildableName = "VergeTiny.framework"
-               BlueprintName = "VergeTiny"
                ReferencedContainer = "container:Verge.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -258,9 +244,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4BFA229B23A63B55008D7BCB"
-            BuildableName = "VergeCore.framework"
-            BlueprintName = "VergeCore"
+            BlueprintIdentifier = "4B86A4851F969AD5002D54FE"
+            BuildableName = "VergeClassic.framework"
+            BlueprintName = "VergeClassic"
             ReferencedContainer = "container:Verge.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

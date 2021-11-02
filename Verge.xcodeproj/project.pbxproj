@@ -299,7 +299,7 @@
 		4B2240A12576431E001BCB93 /* MemoizeMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoizeMapTests.swift; sourceTree = "<group>"; };
 		4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseError.swift; sourceTree = "<group>"; };
 		4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreMiddleware.swift; sourceTree = "<group>"; };
-		4B2F001D2459DC4A0034DA40 /* All.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = All.xctestplan; path = /Users/muukii/.ghq/github.com/muukii/Verge/worktree/space1/Tests/All.xctestplan; sourceTree = "<absolute>"; };
+		4B2F001D2459DC4A0034DA40 /* All.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = All.xctestplan; path = /Users/muukii/.ghq/github.com/VergeGroup/Verge/Tests/All.xctestplan; sourceTree = "<absolute>"; };
 		4B333A97261C3A2C00D678D1 /* SubjectCompletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectCompletionTests.swift; sourceTree = "<group>"; };
 		4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizeDisplayValueTests.swift; sourceTree = "<group>"; };
 		4B37735224C78F260058A887 /* BackgroundDeallocationQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundDeallocationQueue.swift; sourceTree = "<group>"; };
