@@ -47,6 +47,9 @@
 		4B2050F923D5C85B000A2779 /* MutationTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2050F823D5C85B000A2779 /* MutationTrace.swift */; };
 		4B2240A22576431E001BCB93 /* MemoizeMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2240A12576431E001BCB93 /* MemoizeMapTests.swift */; };
 		4B264EF823BD13BC001BD9A0 /* DatabaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */; };
+		4B28053F27311B5100DA4FBB /* AsyncEventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B28053E27311B5100DA4FBB /* AsyncEventEmitter.swift */; };
+		4B28054227311BDC00DA4FBB /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* Verge.framework */; };
+		4B28054627311CB500DA4FBB /* VergeAnyCancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B28054427311C7600DA4FBB /* VergeAnyCancellable.swift */; };
 		4B2EAA0F25B224270048C553 /* StoreMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */; };
 		4B333A98261C3A2C00D678D1 /* SubjectCompletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B333A97261C3A2C00D678D1 /* SubjectCompletionTests.swift */; };
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
@@ -190,6 +193,13 @@
 			remoteGlobalIDString = 4B17438E23C766D70074C457;
 			remoteInfo = VergeRx;
 		};
+		4B28054027311BD500DA4FBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B78631F233912AB009B9C1B;
+			remoteInfo = Verge;
+		};
 		4B475BCB239ADE1C008A03E1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B86A47D1F969AD5002D54FE /* Project object */;
@@ -298,6 +308,8 @@
 		4B2050F823D5C85B000A2779 /* MutationTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationTrace.swift; sourceTree = "<group>"; };
 		4B2240A12576431E001BCB93 /* MemoizeMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoizeMapTests.swift; sourceTree = "<group>"; };
 		4B264EF723BD13BC001BD9A0 /* DatabaseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseError.swift; sourceTree = "<group>"; };
+		4B28053E27311B5100DA4FBB /* AsyncEventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncEventEmitter.swift; sourceTree = "<group>"; };
+		4B28054427311C7600DA4FBB /* VergeAnyCancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeAnyCancellable.swift; sourceTree = "<group>"; };
 		4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreMiddleware.swift; sourceTree = "<group>"; };
 		4B2F001D2459DC4A0034DA40 /* All.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = All.xctestplan; path = /Users/muukii/.ghq/github.com/VergeGroup/Verge/Tests/All.xctestplan; sourceTree = "<absolute>"; };
 		4B333A97261C3A2C00D678D1 /* SubjectCompletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectCompletionTests.swift; sourceTree = "<group>"; };
@@ -446,6 +458,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B28054227311BDC00DA4FBB /* Verge.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -573,6 +586,7 @@
 				4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */,
 				4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */,
 				4B9DD6B624CAE8560062FB7A /* CachedMap.swift */,
+				4B28054427311C7600DA4FBB /* VergeAnyCancellable.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -624,6 +638,7 @@
 			children = (
 				4B16556B273041A1003B930B /* AsyncVerge.h */,
 				4B165580273041FF003B930B /* AsyncStorage.swift */,
+				4B28053E27311B5100DA4FBB /* AsyncEventEmitter.swift */,
 				4B1655822730474C003B930B /* Logger.swift */,
 			);
 			path = AsyncVerge;
@@ -1020,6 +1035,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4B28054127311BD500DA4FBB /* PBXTargetDependency */,
 			);
 			name = AsyncVerge;
 			productName = AsyncVerge;
@@ -1475,6 +1491,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B28053F27311B5100DA4FBB /* AsyncEventEmitter.swift in Sources */,
 				4B165581273041FF003B930B /* AsyncStorage.swift in Sources */,
 				4B1655832730474C003B930B /* Logger.swift in Sources */,
 			);
@@ -1611,6 +1628,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BF5E10E25B0B70400DB3624 /* RuntimeSanitizer.swift in Sources */,
+				4B28054627311CB500DA4FBB /* VergeAnyCancellable.swift in Sources */,
 				4B04C5632570875200731802 /* Log.swift in Sources */,
 				4B37735324C78F260058A887 /* BackgroundDeallocationQueue.swift in Sources */,
 				4B04C55D2570875200731802 /* Signpost.swift in Sources */,
@@ -1718,6 +1736,11 @@
 			isa = PBXTargetDependency;
 			target = 4B17438E23C766D70074C457 /* VergeRx */;
 			targetProxy = 4B1743B523C767D90074C457 /* PBXContainerItemProxy */;
+		};
+		4B28054127311BD500DA4FBB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B78631F233912AB009B9C1B /* Verge */;
+			targetProxy = 4B28054027311BD500DA4FBB /* PBXContainerItemProxy */;
 		};
 		4B475BCC239ADE1C008A03E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
