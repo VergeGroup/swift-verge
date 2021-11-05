@@ -24,13 +24,12 @@ import Foundation
 import os
 
 public struct CommitLog: Encodable {
-  
+
   public let type: String = "commit"
   public let tookMilliseconds: Double
   public let traces: [MutationTrace]
   public let store: String
 
-  @inlinable
   public init(storeName: String, traces: [MutationTrace], time: CFTimeInterval) {
     self.store = storeName
     self.tookMilliseconds = time * 1000
@@ -43,8 +42,7 @@ public struct ActivityLog: Encodable {
   public let type: String = "activity"
   public let trace: ActivityTrace
   public let store: String
-  
-  @inlinable
+
   public init(storeName: String, trace: ActivityTrace) {
     self.store = storeName
     self.trace = trace
@@ -56,8 +54,7 @@ public struct DidCreateDispatcherLog: Encodable {
   public let type: String = "did_create_dispatcher"
   public let store: String
   public let dispatcher: String
-  
-  @inlinable
+
   public init(storeName: String, dispatcherName: String) {
     self.store = storeName
     self.dispatcher = dispatcherName
@@ -70,8 +67,7 @@ public struct DidDestroyDispatcherLog: Encodable {
   public let type: String = "did_destroy_dispatcher"
   public let store: String
   public let dispatcher: String
-  
-  @inlinable
+
   public init(storeName: String, dispatcherName: String) {
     self.store = storeName
     self.dispatcher = dispatcherName
