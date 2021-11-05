@@ -7,7 +7,7 @@ on:
 
 jobs:
   pod-trunk-push:
-    runs-on: macOS-latest
+    runs-on: macOS-11
     steps:
       - uses: maxim-lobanov/setup-xcode@v1.1
         with:
