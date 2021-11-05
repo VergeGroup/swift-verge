@@ -55,6 +55,7 @@
 		4B28054E27315E4F00DA4FBB /* AsyncStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B28054D27315E4F00DA4FBB /* AsyncStore.swift */; };
 		4B2EAA0F25B224270048C553 /* StoreMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */; };
 		4B333A98261C3A2C00D678D1 /* SubjectCompletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B333A97261C3A2C00D678D1 /* SubjectCompletionTests.swift */; };
+		4B34343A27319BD500A55F9D /* AsyncDispatcherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B34343927319BD500A55F9D /* AsyncDispatcherType.swift */; };
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
 		4B37735324C78F260058A887 /* BackgroundDeallocationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B37735224C78F260058A887 /* BackgroundDeallocationQueue.swift */; };
 		4B3834DD2482330C008A0B47 /* StateReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3834DC2482330C008A0B47 /* StateReader.swift */; };
@@ -319,6 +320,7 @@
 		4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreMiddleware.swift; sourceTree = "<group>"; };
 		4B2F001D2459DC4A0034DA40 /* All.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = All.xctestplan; path = /Users/muukii/.ghq/github.com/VergeGroup/Verge/Tests/All.xctestplan; sourceTree = "<absolute>"; };
 		4B333A97261C3A2C00D678D1 /* SubjectCompletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectCompletionTests.swift; sourceTree = "<group>"; };
+		4B34343927319BD500A55F9D /* AsyncDispatcherType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncDispatcherType.swift; sourceTree = "<group>"; };
 		4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizeDisplayValueTests.swift; sourceTree = "<group>"; };
 		4B37735224C78F260058A887 /* BackgroundDeallocationQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundDeallocationQueue.swift; sourceTree = "<group>"; };
 		4B3834DC2482330C008A0B47 /* StateReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateReader.swift; sourceTree = "<group>"; };
@@ -646,6 +648,7 @@
 				4B165580273041FF003B930B /* AsyncStorage.swift */,
 				4B28053E27311B5100DA4FBB /* AsyncEventEmitter.swift */,
 				4B28054D27315E4F00DA4FBB /* AsyncStore.swift */,
+				4B34343927319BD500A55F9D /* AsyncDispatcherType.swift */,
 				4B1655822730474C003B930B /* Logger.swift */,
 			);
 			path = AsyncVerge;
@@ -1501,6 +1504,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B28053F27311B5100DA4FBB /* AsyncEventEmitter.swift in Sources */,
+				4B34343A27319BD500A55F9D /* AsyncDispatcherType.swift in Sources */,
 				4B165581273041FF003B930B /* AsyncStorage.swift in Sources */,
 				4B28054E27315E4F00DA4FBB /* AsyncStore.swift in Sources */,
 				4B1655832730474C003B930B /* Logger.swift in Sources */,

@@ -198,13 +198,13 @@ open class ReadonlyStorage<Value>: CustomReflectable {
 }
 
 open class Storage<Value>: ReadonlyStorage<Value> {
-  
-  private var notificationFilter: (Value) -> Bool = { _ in true }
 
   public enum UpdateResult {
     case updated
     case nothingUpdates
   }
+
+  private var notificationFilter: (Value) -> Bool = { _ in true }
 
   @inline(__always)
   public final func _update(_ update: (inout Value) throws -> UpdateResult) rethrows {
