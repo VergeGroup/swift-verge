@@ -34,6 +34,10 @@ open class AsyncStore<State, Activity>: _VergeObservableObjectBase, CustomReflec
     func add(middleware: StoreMiddleware<State>) {
       middlewares.append(middleware)
     }
+
+    func perform<T>(_ closure: (_ middlewares: [StoreMiddleware<State>]) async throws -> T) async rethrows -> T {
+      try await closure(middlewares)
+    }
   }
 
 #if canImport(Combine)
@@ -135,7 +139,7 @@ open class AsyncStore<State, Activity>: _VergeObservableObjectBase, CustomReflec
   @inline(__always)
   func _receive<Result>(
     mutation: (inout InoutRef<State>) throws -> Result
-  ) rethrows -> Result {
+  ) async rethrows -> Result {
 
     let signpost = VergeSignpostTransaction("Store.commit")
     defer {
@@ -146,76 +150,79 @@ open class AsyncStore<State, Activity>: _VergeObservableObjectBase, CustomReflec
     var elapsed: CFTimeInterval = 0
     var commitLog: CommitLog?
 
-    /** a ciritical session */
-    try _backingStorage._update { (state) -> Storage<Changes<State>>.UpdateResult in
+    try await self.backing.perform { middlewares -> Void in
 
-      let startedTime = CFAbsoluteTimeGetCurrent()
-      defer {
-        elapsed = CFAbsoluteTimeGetCurrent() - startedTime
-      }
+      /** a ciritical session */
+      try await _backingStorage.update { state -> AsyncStorage<Changes<State>>.UpdateResult in
 
-      var current = state.primitive
-
-      let updateResult = try withUnsafeMutablePointer(to: &current) { (pointer) -> Storage<Changes<State>>.UpdateResult in
-
-        var inoutRef = InoutRef<State>.init(pointer)
-
-        let result = try mutation(&inoutRef)
-        valueFromMutation = result
-
-        /**
-         Checks if the state has been modified
-         */
-        guard inoutRef.nonatomic_hasModified else {
-          // No emits update event
-          return .nothingUpdates
+        let startedTime = CFAbsoluteTimeGetCurrent()
+        defer {
+          elapsed = CFAbsoluteTimeGetCurrent() - startedTime
         }
 
-        /**
-         Applying by middlewares
-         */
-        self.middlewares.forEach { middleware in
-          middleware.mutate(state: &inoutRef)
-        }
+        var current = state.primitive
 
-        /**
-         Make a new state
-         */
-        state = state.makeNextChanges(
-          with: pointer.pointee,
-          from: inoutRef.traces,
-          modification: inoutRef.modification ?? .indeterminate
-        )
+        let updateResult = try withUnsafeMutablePointer(to: &current) { (pointer) -> AsyncStorage<Changes<State>>.UpdateResult in
 
-        if __sanitizer__.isRecursivelyCommitDetectionEnabled {
-          if warnings.contains(.reentrancyAnomaly) {
-            os_log(
-              """
-⚠️ [Verge Error] Detected another commit recursively from the commit.
-This breaks the order of the states that receiving in the sink.
+          var inoutRef = InoutRef<State>.init(pointer)
 
-You might be doing commit inside the sink at the same Store.
-In this case, Using dispatch solve this issue.
+          let result = try mutation(&inoutRef)
+          valueFromMutation = result
 
-Mutation: (%@)
-""",
-              log: VergeOSLogs.debugLog,
-              type: .error,
-              String(describing: inoutRef.traces)
-            )
-            __sanitizer__.onDidFindRuntimeError(.recursiveleyCommit(storeName: name, traces: inoutRef.traces))
+          /**
+           Checks if the state has been modified
+           */
+          guard inoutRef.nonatomic_hasModified else {
+            // No emits update event
+            return .nothingUpdates
           }
+
+          /**
+           Applying by middlewares
+           */
+          middlewares.forEach { middleware in
+            middleware.mutate(state: &inoutRef)
+          }
+
+          /**
+           Make a new state
+           */
+          state = state.makeNextChanges(
+            with: pointer.pointee,
+            from: inoutRef.traces,
+            modification: inoutRef.modification ?? .indeterminate
+          )
+
+          //        if __sanitizer__.isRecursivelyCommitDetectionEnabled {
+          //          if warnings.contains(.reentrancyAnomaly) {
+          //            os_log(
+          //              """
+          //⚠️ [Verge Error] Detected another commit recursively from the commit.
+          //This breaks the order of the states that receiving in the sink.
+          //
+          //You might be doing commit inside the sink at the same Store.
+          //In this case, Using dispatch solve this issue.
+          //
+          //Mutation: (%@)
+          //""",
+          //              log: VergeOSLogs.debugLog,
+          //              type: .error,
+          //              String(describing: inoutRef.traces)
+          //            )
+          //            __sanitizer__.onDidFindRuntimeError(.recursiveleyCommit(storeName: name, traces: inoutRef.traces))
+          //          }
+          //        }
+
+          commitLog = CommitLog(storeName: self.name, traces: inoutRef.traces, time: elapsed)
+
+          return .updated
         }
 
-        commitLog = CommitLog(storeName: self.name, traces: inoutRef.traces, time: elapsed)
+        return updateResult
 
-        return .updated
       }
-
-      return updateResult
 
     }
-
     if let logger = logger, let _commitLog = commitLog {
       logger.didCommit(log: _commitLog, sender: self)
     }
@@ -267,16 +274,16 @@ Mutation: (%@)
     dropsFirst: Bool = false,
     queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Changes<State>) -> Void
-  ) -> VergeAnyCancellable {
+  ) async -> VergeAnyCancellable {
 
     let serialExecutor = queue.serialExecutor()
 
     var latestStateWrapper: Changes<State>? = nil
 
-    let __sanitizer__ = sanitizer
+//    let __sanitizer__ = sanitizer
 
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
-    let cancellable = _backingStorage.sinkEvent { (event) in
+    let cancellable = await _backingStorage.sinkEvent { (event) in
       switch event {
       case .willUpdate:
         break
@@ -301,7 +308,7 @@ Mutation: (%@)
                To recover this case, send latest version state with dropping previous value in order to make `ifChanged` returns always true.
                */
               resolvedReceivedState = latestState.droppedPrevious()
-
+/*
               if __sanitizer__.isSanitizerStateReceivingByCorrectOrder {
 
                 sanitizerQueue.async {
@@ -345,6 +352,7 @@ Latest Version (%d): (%@)
                   )
                 }
               }
+ */
             }
 
           } else {
@@ -362,7 +370,7 @@ Latest Version (%d): (%@)
 
     if !dropsFirst {
 
-      let value = _backingStorage.value.droppedPrevious()
+      let value = await _backingStorage.value.droppedPrevious()
 
       latestStateWrapper = value
 
@@ -391,9 +399,9 @@ Latest Version (%d): (%@)
     dropsFirst: Bool = false,
     queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Changes<State>, Accumulate) -> Void
-  ) -> VergeAnyCancellable {
+  ) async -> VergeAnyCancellable {
 
-    sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+    await sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
 
       let accumulate = scan.accumulate(changes)
       receive(changes, accumulate)
@@ -407,10 +415,10 @@ Latest Version (%d): (%@)
   public func sinkActivity(
     queue: TargetQueue = .mainIsolated(),
     receive: @escaping (Activity) -> Void
-  ) -> VergeAnyCancellable {
+  ) async -> VergeAnyCancellable {
 
     let execute = queue.serialExecutor()
-    let cancellable = _activityEmitter.add { (activity) in
+    let cancellable = await _activityEmitter.add { (activity) in
       execute {
         receive(activity)
       }

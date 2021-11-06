@@ -32,6 +32,7 @@ final class Test: XCTestCase {
 
     await storage.update {
       $0.count += 1
+      return .updated
     }
 
     print(await [state1, state2, state3])
@@ -72,6 +73,7 @@ final class Test: XCTestCase {
           $0.addTask {
             await storage.update {
               $0.count += 1
+              return .updated
             }
           }
         }
@@ -103,6 +105,7 @@ final class Test: XCTestCase {
         $0.addTask {
           await storage.update {
             $0.count += 1
+            return .updated
           }
         }
       }
@@ -122,6 +125,7 @@ final class Test: XCTestCase {
           $0.addTask {
             await storage.update {
               $0.count += 1
+              return .updated
             }
           }
         }

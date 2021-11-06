@@ -63,12 +63,12 @@ public actor AsyncStorage<Value> {
     return value
   }
 
-  public func update(_ mutate: (inout Value) -> UpdateResult) async {
+  public func update(_ mutate: (inout Value) throws -> UpdateResult) async rethrows {
     Log.debug(.storage, "Update", Thread.current)
 
     let previousValue = value
 
-    let result = mutate(&value)
+    let result = try mutate(&value)
 
     snapshotStorage.setValue(value)
 

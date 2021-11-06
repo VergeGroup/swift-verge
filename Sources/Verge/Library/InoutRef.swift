@@ -72,7 +72,7 @@ public final class InoutRef<Wrapped> {
     return .determinate(keyPaths: nonatomic_modifiedKeyPaths)
   }
 
-  private(set) var nonatomic_hasModified = false
+  public private(set) var nonatomic_hasModified = false
 
   private lazy var nonatomic_modifiedKeyPaths: Set<PartialKeyPath<Wrapped>> = .init()
 
