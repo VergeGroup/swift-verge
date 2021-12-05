@@ -217,3 +217,55 @@ final class ConcurrencyFacts: XCTestCase {
   }
 
 }
+
+
+final class ActorFacts: XCTestCase {
+
+  actor MyActor {
+
+    var results: [String] = []
+
+    func run(value: Int) {
+      if value == 1 {
+        run(value: 2)
+      }
+      process(value: value)
+    }
+
+    @discardableResult
+    func run_task(value: Int) -> Task<Void, Never> {
+      Task {
+        if value == 1 {
+          run_task(value: 2)
+        }
+        process(value: value)
+      }
+    }
+
+    private func process(value: Any) {
+      let value = "✅ \(value)"
+      results.append(value)
+      print(results)
+    }
+
+  }
+
+  @MainActor
+  func test_task() async {
+
+    let actor = MyActor()
+
+    await actor.run_task(value: 1)
+
+  }
+
+  @MainActor
+  func test_no_task() async {
+
+    let actor = MyActor()
+
+    await actor.run(value: 1)
+
+  }
+
+}
