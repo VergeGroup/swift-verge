@@ -242,6 +242,16 @@ final class ActorFacts: XCTestCase {
       }
     }
 
+    @discardableResult
+    func run_task2(value: Int) -> Task<Void, Never> {
+      Task {
+        if value == 1 {
+          run_task(value: 2)
+        }
+        process(value: value)
+      }
+    }
+
     private func process(value: Any) {
       let value = "✅ \(value)"
       results.append(value)
