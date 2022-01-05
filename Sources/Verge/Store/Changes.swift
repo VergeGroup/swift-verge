@@ -210,20 +210,31 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
     )
   }
 
-  public func _beta_map<U>(_ keyPath: KeyPath<Value, U?>) -> Changes<U>? {
+  /**
+   Returns an ``Changes`` containing the value of mapping the given key path over the root value if value present.
+   */
+  public func mapIfPresent<U>(_ keyPath: KeyPath<Value, U?>) -> Changes<U>? {
 
     guard self[dynamicMember: keyPath] != nil else {
       return nil
     }
 
     return Changes<U>(
-      previous: previous.flatMap { $0._beta_map(keyPath) },
+      previous: previous.flatMap { $0.mapIfPresent(keyPath) },
       innerBox: innerBox.map { $0[keyPath: keyPath]! },
       version: version,
       traces: traces,
       modification: nil
     )
 
+  }
+
+  /**
+   Returns an ``Changes`` containing the value of mapping the given key path over the root value if value present.
+   */
+  @available(*, deprecated, renamed: "mapIfPresent")
+  public func _beta_map<U>(_ keyPath: KeyPath<Value, U?>) -> Changes<U>? {
+    mapIfPresent(keyPath)
   }
 
   public func makeNextChanges(
