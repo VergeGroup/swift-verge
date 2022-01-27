@@ -337,33 +337,39 @@ Mutation: (%@)
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
     
-    let serialExecutor = queue.serialExecutor()
+    let executor = queue.executor()
     
     var latestStateWrapper: Changes<State>? = nil
     
     let __sanitizer__ = sanitizer
-        
+    
+    let lock = VergeConcurrency.UnfairLock()
+    
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
+    /// To get recursive updates that comes from first call receive closure.
     let cancellable = _backingStorage.sinkEvent { (event) in
       switch event {
       case .willUpdate:
         break
       case .didUpdate(let receivedState):
         
-        serialExecutor {
+        executor {
+          
+          lock.lock()
           
           var resolvedReceivedState = receivedState
           
+          // To escaping from critical issue
           if let latestState = latestStateWrapper {
             if latestState.version <= receivedState.version {
-              /**
+              /*
                No issues case:
                It has received newer version than previous version
                */
               latestStateWrapper = receivedState
             } else {
               
-              /**
+              /*
                Serious problem case:
                Received an older version than the state received before.
                To recover this case, send latest version state with dropping previous value in order to make `ifChanged` returns always true.
@@ -420,6 +426,8 @@ Latest Version (%d): (%@)
             latestStateWrapper = receivedState
           }
           
+          lock.unlock()
+          
           receive(resolvedReceivedState)
         }
               
@@ -431,12 +439,13 @@ Latest Version (%d): (%@)
     if !dropsFirst {
       
       let value = _backingStorage.value.droppedPrevious()
-      
-      latestStateWrapper = value
-    
-      serialExecutor {
-        /// this closure might contains some mutations.
-        /// It depends outside usages.
+                
+      executor {
+        lock.lock()
+        latestStateWrapper = value
+        lock.unlock()
+        // this closure might contains some mutations.
+        // It depends outside usages.
         receive(value)
       }
     }
@@ -477,7 +486,7 @@ Latest Version (%d): (%@)
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
     
-    let execute = queue.serialExecutor()
+    let execute = queue.executor()
     let cancellable = _activityEmitter.add { (activity) in
       execute {
         receive(activity)
