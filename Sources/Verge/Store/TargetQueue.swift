@@ -36,7 +36,7 @@ public final class TargetQueue {
     self.schedule = schedule
   }
 
-  func serialExecutor() -> (@escaping () -> Void) -> Void {
+  func executor() -> (@escaping () -> Void) -> Void {
     schedule
   }
 }
@@ -130,7 +130,10 @@ extension TargetQueue {
       } else {
         queue.schedule(workItem)
       }
+      
+      
     }
+
   }
 }
 
