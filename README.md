@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
- <a href="https://vergegroup.org">
+ <a href="https://bit.ly/3p27wNg">
    <b>📖 Docs and tips</b>
   </a>
   </p>
