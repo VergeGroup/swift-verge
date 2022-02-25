@@ -42,7 +42,7 @@ public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: Inde
      
 }
 
-extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplaceableCollection {
+extension OrderedIDIndex: BidirectionalCollection, RandomAccessCollection, MutableCollection, RangeReplaceableCollection {
   
   public typealias Element = Entity.EntityID
   public typealias Index = Int
@@ -66,7 +66,12 @@ extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplac
   }
 
   public subscript(bounds: Range<Int>) -> ArraySlice<Entity.EntityID> {
-    ArraySlice<Entity.EntityID>(AnySequence(backing[bounds].lazy.map { Entity.EntityID($0) }))
+    get {
+      ArraySlice<Entity.EntityID>(AnySequence(backing[bounds].lazy.map { Entity.EntityID($0) }))
+    }
+    set {
+      backing[bounds] = ArraySlice<AnyEntityIdentifier>(newValue.map { $0.any })
+    }
   }
   
   public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {
