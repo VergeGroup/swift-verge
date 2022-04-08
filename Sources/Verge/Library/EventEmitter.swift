@@ -57,7 +57,7 @@ public final class EventEmitter<Event>: EventEmitterType {
   /**
    The reason why we use array against dictionary, the subscribers does not often remove.
    */
-  private var subscribers: ContiguousArray<(EventEmitterCancellable, (Event) -> Void)> = []
+  private var subscribers: [(EventEmitterCancellable, (Event) -> Void)] = []
   
   private var eventQueue: ContiguousArray<Event> = .init()
   
