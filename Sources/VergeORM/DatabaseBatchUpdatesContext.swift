@@ -105,13 +105,15 @@ public final class EntityModifier<Schema: EntitySchemaType, Entity: EntityType>:
   /// Set inserts entity
   @discardableResult
   public func insert(_ entity: Entity) -> InsertionResult {
-    insertsOrUpdates.insert(entity)
+    deletes.remove(entity.entityID.any)
+    return insertsOrUpdates.insert(entity)
   }
   
   /// Set inserts entities
   @discardableResult
   public func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
-    insertsOrUpdates.insert(addingEntities)
+    deletes.subtract(addingEntities.map(\.entityID.any))
+    return insertsOrUpdates.insert(addingEntities)
   }
     
   /// Set deletes entity with entity object
