@@ -52,7 +52,6 @@ public struct Pipeline<Input, Output>: Equatable {
   private let _makeOutput: (Input) -> Output
   private let _makeContinousOutput: (Input) -> ContinuousResult
   private let _dropInput: (Input) -> Bool
-  private let _onBackwarded: ((Output) -> Void)?
 
   /**
    An identifier to be used from Derived to use the same instance if Pipeline is same.   
@@ -92,11 +91,9 @@ public struct Pipeline<Input, Output>: Equatable {
   private init(
     makeOutput: @escaping (Input) -> Output,
     dropInput: @escaping (Input) -> Bool,
-    makeContinuousOutput: @escaping (Input) -> ContinuousResult,
-    onBackwarded: ((Output) -> Void)? = nil
+    makeContinuousOutput: @escaping (Input) -> ContinuousResult
   ) {
 
-    self._onBackwarded = onBackwarded
     self._makeOutput = makeOutput
     self._dropInput = dropInput
     self._makeContinousOutput = { input in
@@ -142,14 +139,6 @@ public struct Pipeline<Input, Output>: Equatable {
     )
   }
 
-  func _backward(_ output: Output) {
-    guard let closure = _onBackwarded else {
-      assertionFailure("Unsupported backward output while not registered the `onBackward` closure.")
-      return
-    }
-    closure(output)
-  }
-   
 }
 
 extension Pipeline where Input : ChangesType {
