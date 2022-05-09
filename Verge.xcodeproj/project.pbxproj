@@ -130,6 +130,7 @@
 		4BAF902D23A8EB36004D6356 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */; };
 		4BAF902F23A92B69004D6356 /* MiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */; };
 		4BB1F98C2465ACB900AF5F0C /* TargetQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */; };
+		4BBE2D2928291F1A001E5B48 /* PrimitiveIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBE2D2828291F1A001E5B48 /* PrimitiveIdentifier.swift */; };
 		4BC4896625A06B0D00AC0365 /* StoreType+Derived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC4896525A06B0D00AC0365 /* StoreType+Derived.swift */; };
 		4BC4897825A06C3400AC0365 /* StoreType+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC4897725A06C3400AC0365 /* StoreType+SwiftUI.swift */; };
 		4BC4898225A072F400AC0365 /* StoreType+BindingDerived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC4898125A072F400AC0365 /* StoreType+BindingDerived.swift */; };
@@ -419,6 +420,7 @@
 		4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddlewareTests.swift; sourceTree = "<group>"; };
 		4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetQueue.swift; sourceTree = "<group>"; };
+		4BBE2D2828291F1A001E5B48 /* PrimitiveIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimitiveIdentifier.swift; sourceTree = "<group>"; };
 		4BBFF45D24389D3D005BA03C /* Changes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Changes.swift; sourceTree = "<group>"; };
 		4BC35666249BD70B0096B15B /* Indexed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Indexed.swift; sourceTree = "<group>"; };
 		4BC4896525A06B0D00AC0365 /* StoreType+Derived.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoreType+Derived.swift"; sourceTree = "<group>"; };
@@ -705,6 +707,7 @@
 				4BCC0846245626F300ECAB8A /* Comparer+ORM.swift */,
 				4BCC08412456222100ECAB8A /* Derived+ORM.swift */,
 				4B49D3502552E6B60049F0F2 /* Deprecated.swift */,
+				4BBE2D2828291F1A001E5B48 /* PrimitiveIdentifier.swift */,
 			);
 			path = VergeORM;
 			sourceTree = "<group>";
@@ -1559,6 +1562,7 @@
 				4BD379ED23BD94D800CE474C /* AnyEntity.swift in Sources */,
 				4BC6EFB823A8D1B500EFD688 /* Database.swift in Sources */,
 				4BC6EFAF23A8BF7800EFD688 /* OrderedIDIndex.swift in Sources */,
+				4BBE2D2928291F1A001E5B48 /* PrimitiveIdentifier.swift in Sources */,
 				4B49D3512552E6B60049F0F2 /* Deprecated.swift in Sources */,
 				4BCC08432456228C00ECAB8A /* Derived+ORM.swift in Sources */,
 				4B264EF823BD13BC001BD9A0 /* DatabaseError.swift in Sources */,

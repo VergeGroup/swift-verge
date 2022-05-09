@@ -21,25 +21,13 @@
 
 import Foundation
 
-public struct AnyEntityIdentifier: Hashable, ExpressibleByStringLiteral {
+public struct AnyEntityIdentifier: Hashable {
   
   public typealias StringLiteralType = String
 
-  #if false
-  public let value: String
-  #else
-  public let value: AnyHashable
-  public init(_ value: AnyHashable) {
+  public let value: PrimitiveIdentifier
+  public init(_ value: PrimitiveIdentifier) {
     self.value = value
-  }
-  #endif
-
-  public init(stringLiteral string: String) {
-    self.value = string
-  }
-
-  public init(_ string: String) {
-    self.value = string
   }
 
 }
@@ -54,30 +42,18 @@ public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConve
     raw.hash(into: &hasher)
   }
 
-  #if false
-
-  #else
-
   let any: AnyEntityIdentifier
 
   public let raw: Entity.EntityIDRawType
 
   public init(_ raw: Entity.EntityIDRawType) {
     self.raw = raw
-    self.any = .init(raw)
+    self.any = .init(raw._primitiveIdentifier)
   }
-
-  #endif
-
-//  public let raw: AnyEntityIdentifier
-//
-//  public init(_ raw: String) {
-//    self.raw = .init(raw)
-//  }
-
-  public init(_ raw: AnyEntityIdentifier) {
-    self.any = raw
-    self.raw = raw.value as! Entity.EntityIDRawType
+  
+  init(_ anyIdentifier: AnyEntityIdentifier) {
+    self.any = anyIdentifier
+    self.raw = Entity.EntityIDRawType._restore(from: anyIdentifier.value)!
   }
   
   public var description: String {
@@ -91,7 +67,7 @@ public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConve
 /// You might use IdentifiableEntityType instead, if you create SwiftUI app.
 public protocol EntityType {
 
-  associatedtype EntityIDRawType: Hashable, CustomStringConvertible
+  associatedtype EntityIDRawType: _PrimitiveIdentifierConvertible
 
   static var entityName: EntityTableIdentifier { get }
 
