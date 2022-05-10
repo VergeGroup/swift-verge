@@ -130,7 +130,7 @@ open class ReadonlyStorage<Value>: CustomReflectable {
     _ value: Value,
     upstreams: [AnyObject] = []
   ) {
-    self.init(value, recursiveLock: NSRecursiveLock(), upstreams: upstreams)
+    self.init(value, recursiveLock: VergeConcurrency.RecursiveLock(), upstreams: upstreams)
   }
   
   public init<RecursiveLock: _VergeRecursiveLockType>(

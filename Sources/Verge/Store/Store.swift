@@ -144,7 +144,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
 
     self._backingStorage = .init(
       .init(old: nil, new: initialState),
-      recursiveLock: backingStorageRecursiveLock ?? NSRecursiveLock().asAny()
+      recursiveLock: backingStorageRecursiveLock ?? VergeConcurrency.RecursiveLock().asAny()
     )
 
     self.logger = logger
