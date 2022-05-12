@@ -32,7 +32,7 @@ extension VergeConcurrency {
       case synchronizationAnomaly
     }
     
-    private let _lock = NSRecursiveLock()
+    private let _lock = VergeConcurrency.RecursiveLock()
     
     private var _threads = [UnsafeMutableRawPointer: Int]()
     

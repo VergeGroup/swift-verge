@@ -52,7 +52,7 @@ public final class EventEmitter<Event>: EventEmitterType {
   
   private var __publisher: Any?
   
-  private let subscribersLock = NSRecursiveLock()
+  private let subscribersLock = VergeConcurrency.RecursiveLock()
   
   /**
    The reason why we use array against dictionary, the subscribers does not often remove.
@@ -61,7 +61,7 @@ public final class EventEmitter<Event>: EventEmitterType {
   
   private var eventQueue: ContiguousArray<Event> = .init()
   
-  private let queueLock = NSRecursiveLock()
+  private let queueLock = VergeConcurrency.RecursiveLock()
     
   private var isCurrentlyEventEmitting: VergeConcurrency.RecursiveLockAtomic<Int> = .init(0)
 

@@ -272,7 +272,7 @@ extension EventEmitter {
       let associated = PublishSubject<Event>()
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
       
-      let lock = NSRecursiveLock()
+      let lock = VergeConcurrency.RecursiveLock()
 
       onDeinit {
         associated.onCompleted()
@@ -312,7 +312,7 @@ extension ReadonlyStorage {
       let associated = BehaviorSubject<Value>.init(value: value)
       objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
       
-      let lock = NSRecursiveLock()
+      let lock = VergeConcurrency.RecursiveLock()
 
       sinkEvent { (event) in
         switch event {
