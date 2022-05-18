@@ -11,7 +11,7 @@ final class AsyncEventEmitterTests: XCTestCase {
 
     var value: Int = 0
 
-    await emitter.add { event in
+    await emitter.addEventHandler { event in
       value = event
     }
 
@@ -20,14 +20,18 @@ final class AsyncEventEmitterTests: XCTestCase {
     XCTAssertEqual(value, 1)
 
   }
-
+   
   @MainActor
   func test_emit_recursive() async {
 
+    var events1: [Int] = []
+    var events2: [Int] = []
     let emitter = AsyncEventEmitter<Int>()
-
-    await emitter.add { event in
+    
+    await emitter.addEventHandler { event in
       print("[1]", event)
+      
+      events1.append(event)
 
       if event == 1 {
         Task {
@@ -37,12 +41,15 @@ final class AsyncEventEmitterTests: XCTestCase {
 
     }
 
-    await emitter.add { event in
+    await emitter.addEventHandler { event in
       print("[2]", event)
+      events2.append(event)
     }
 
     await emitter.accept(1)
 
+    XCTAssertEqual(events1, [1, 2])
+    XCTAssertEqual(events2, [1, 2])
   }
 
 }

@@ -1,4 +1,3 @@
-import UIKit
 import os.log
 
 enum Log {

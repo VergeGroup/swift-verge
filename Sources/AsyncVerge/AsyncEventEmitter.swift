@@ -7,9 +7,9 @@ public final class AsyncEventEmitterCancellable: Hashable, CancellableType {
     lhs === rhs
   }
 
-  private weak var owner: AsyncEventEmitterType?
+  private weak var owner: (any AsyncEventEmitterType)?
 
-  fileprivate init(owner: AsyncEventEmitterType) {
+  fileprivate init(owner: any AsyncEventEmitterType) {
     self.owner = owner
   }
 
@@ -30,25 +30,47 @@ protocol AsyncEventEmitterType: Actor {
 
 public actor AsyncEventEmitter<Event>: AsyncEventEmitterType {
 
-  private var subscribers: ContiguousArray<(AsyncEventEmitterCancellable, (Event) -> Void)> = []
+  private var subscribers: [(AsyncEventEmitterCancellable, (Event) -> Void)] = []
 
-  private var deinitHandlers: VergeConcurrency.UnfairLockAtomic<[() -> Void]> = .init([])
-
+  private var deinitHandlers: [() -> Void] = []
+  
+#if DEBUG
+  private let reentrancyDetector = AsyncReentrancyDetector()
+#endif
+  
   public init() {
 
   }
 
-  public func accept(_ event: Event) async {
-    subscribers.forEach {
-      $0.1(event)
+  public func accept(_ event: Event) {
+    
+#if DEBUG
+    
+    /*
+     Make sure it eliminates accepting another event while emitting the current event.
+     */
+    
+    reentrancyDetector.enter()
+    defer {
+      reentrancyDetector.leave()
     }
+#endif
+    
+    for subscriber in subscribers {
+      subscriber.1(event)
+    }
+    
   }
 
   @discardableResult
-  public func add(_ eventReceiver: @escaping (Event) -> Void) -> AsyncEventEmitterCancellable {
+  public func addEventHandler(_ eventReceiver: @escaping (Event) -> Void) -> AsyncEventEmitterCancellable {
     let token = AsyncEventEmitterCancellable(owner: self)
     subscribers.append((token, eventReceiver))
     return token
+  }
+  
+  public func addDeinitHandler(_ eventReceiver: @escaping () -> Void) {
+    deinitHandlers.append(eventReceiver)
   }
 
   func remove(_ token: AsyncEventEmitterCancellable) {
@@ -57,8 +79,8 @@ public actor AsyncEventEmitter<Event>: AsyncEventEmitterType {
   }
 
   deinit {
-    deinitHandlers.value.forEach {
-      $0()
+    for handler in deinitHandlers {
+      handler()
     }
   }
 }
