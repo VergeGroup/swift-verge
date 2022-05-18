@@ -1,4 +1,5 @@
 
+import Foundation
 import Dispatch
 
 private final class SnapshotAsyncStorage<Value> {
