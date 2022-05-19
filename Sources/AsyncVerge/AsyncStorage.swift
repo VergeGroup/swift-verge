@@ -2,7 +2,7 @@
 import Foundation
 import Dispatch
 
-private final class SnapshotAsyncStorage<Value> {
+private final class SnapshotAsyncStorage<Value>: @unchecked Sendable {
 
   let queue = DispatchQueue(label: "UnsafeStorage")
 

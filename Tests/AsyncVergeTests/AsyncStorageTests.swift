@@ -19,7 +19,7 @@ func _run() async -> String {
   return "Value"
 }
 
-final class Test: XCTestCase {
+final class AsyncStorageTests: XCTestCase {
 
   let storage = AsyncStorage<State>(.init())
 
@@ -34,7 +34,9 @@ final class Test: XCTestCase {
       $0.count += 1
     }
 
-    print(await [state1, state2, state3])
+    let results = await [state1.count, state2.count, state3.count]
+    
+    XCTAssertEqual(results, [1, 1, 1])
   }
 
   func test_async_let() async {
