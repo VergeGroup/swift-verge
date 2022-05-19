@@ -28,7 +28,6 @@
 		4B13BC72245764BB00F0BC0F /* Derived+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B13BC71245764BB00F0BC0F /* Derived+Rx.swift */; };
 		4B165571273041A2003B930B /* AsyncVerge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B165569273041A1003B930B /* AsyncVerge.framework */; platformFilter = ios; };
 		4B165576273041A2003B930B /* AsyncVergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B165575273041A2003B930B /* AsyncVergeTests.swift */; };
-		4B165577273041A2003B930B /* AsyncVerge.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B16556B273041A1003B930B /* AsyncVerge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B165581273041FF003B930B /* AsyncStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B165580273041FF003B930B /* AsyncStorage.swift */; };
 		4B1655832730474C003B930B /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1655822730474C003B930B /* Logger.swift */; };
 		4B17439323C766D70074C457 /* VergeRx.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B17439123C766D70074C457 /* VergeRx.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -53,6 +52,7 @@
 		4B2805492731234700DA4FBB /* ConcurrencyFacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2805472731226F00DA4FBB /* ConcurrencyFacts.swift */; };
 		4B28054C27314C4200DA4FBB /* AsyncEventEmitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B28054A27314C3B00DA4FBB /* AsyncEventEmitterTests.swift */; };
 		4B28054E27315E4F00DA4FBB /* AsyncStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B28054D27315E4F00DA4FBB /* AsyncStore.swift */; };
+		4B2E2B9628357AC600A65183 /* AsyncReentrancyDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2E2B9528357AC600A65183 /* AsyncReentrancyDetector.swift */; };
 		4B2EAA0F25B224270048C553 /* StoreMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */; };
 		4B333A98261C3A2C00D678D1 /* SubjectCompletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B333A97261C3A2C00D678D1 /* SubjectCompletionTests.swift */; };
 		4B35F5752376A692005E6C01 /* SynchronizeDisplayValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */; };
@@ -295,7 +295,6 @@
 		4B13BC6F24575F1E00F0BC0F /* DerivedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedTests.swift; sourceTree = "<group>"; };
 		4B13BC71245764BB00F0BC0F /* Derived+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Derived+Rx.swift"; sourceTree = "<group>"; };
 		4B165569273041A1003B930B /* AsyncVerge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AsyncVerge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B16556B273041A1003B930B /* AsyncVerge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncVerge.h; sourceTree = "<group>"; };
 		4B165570273041A2003B930B /* AsyncVergeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AsyncVergeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B165575273041A2003B930B /* AsyncVergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncVergeTests.swift; sourceTree = "<group>"; };
 		4B165580273041FF003B930B /* AsyncStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncStorage.swift; sourceTree = "<group>"; };
@@ -318,6 +317,7 @@
 		4B2805472731226F00DA4FBB /* ConcurrencyFacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrencyFacts.swift; sourceTree = "<group>"; };
 		4B28054A27314C3B00DA4FBB /* AsyncEventEmitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncEventEmitterTests.swift; sourceTree = "<group>"; };
 		4B28054D27315E4F00DA4FBB /* AsyncStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncStore.swift; sourceTree = "<group>"; };
+		4B2E2B9528357AC600A65183 /* AsyncReentrancyDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncReentrancyDetector.swift; sourceTree = "<group>"; };
 		4B2EAA0E25B224270048C553 /* StoreMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreMiddleware.swift; sourceTree = "<group>"; };
 		4B2F001D2459DC4A0034DA40 /* All.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = All.xctestplan; path = /Users/muukii/.ghq/github.com/VergeGroup/Verge/Tests/All.xctestplan; sourceTree = "<absolute>"; };
 		4B333A97261C3A2C00D678D1 /* SubjectCompletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectCompletionTests.swift; sourceTree = "<group>"; };
@@ -646,11 +646,11 @@
 		4B16556A273041A1003B930B /* AsyncVerge */ = {
 			isa = PBXGroup;
 			children = (
-				4B16556B273041A1003B930B /* AsyncVerge.h */,
 				4B165580273041FF003B930B /* AsyncStorage.swift */,
 				4B28053E27311B5100DA4FBB /* AsyncEventEmitter.swift */,
 				4B28054D27315E4F00DA4FBB /* AsyncStore.swift */,
 				4B1655822730474C003B930B /* Logger.swift */,
+				4B2E2B9528357AC600A65183 /* AsyncReentrancyDetector.swift */,
 			);
 			path = AsyncVerge;
 			sourceTree = "<group>";
@@ -974,7 +974,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B165577273041A2003B930B /* AsyncVerge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1508,6 +1507,7 @@
 			files = (
 				4B28053F27311B5100DA4FBB /* AsyncEventEmitter.swift in Sources */,
 				4B165581273041FF003B930B /* AsyncStorage.swift in Sources */,
+				4B2E2B9628357AC600A65183 /* AsyncReentrancyDetector.swift in Sources */,
 				4B28054E27315E4F00DA4FBB /* AsyncStore.swift in Sources */,
 				4B1655832730474C003B930B /* Logger.swift in Sources */,
 			);
@@ -1830,13 +1830,13 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVerge;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1869,12 +1869,12 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVerge;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1907,12 +1907,12 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVerge;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1936,7 +1936,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVergeTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
@@ -1958,7 +1958,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVergeTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
@@ -1980,7 +1980,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = app.muukii.AsyncVergeTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};

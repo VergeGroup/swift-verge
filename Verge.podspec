@@ -45,6 +45,12 @@ Pod::Spec.new do |s|
     ss.dependency "Verge/ObjcBridge"
   end
 
+#  s.subspec "Async" do |ss|
+#    ss.source_files = "Sources/AsyncVerge/**/*.swift"
+#    ss.dependency "Verge/Store"
+#    ss.ios.deployment_target = "13.0"
+#  end
+
   s.subspec "Rx" do |ss|
     ss.dependency "Verge/ORM"
     ss.dependency "Verge/Store"

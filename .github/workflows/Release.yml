@@ -8,11 +8,11 @@ on:
 
 jobs:
   pod-trunk-push:
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
       - uses: maxim-lobanov/setup-xcode@v1.1
         with:
-          xcode-version: "13.0"
+          xcode-version: "13.3"
       - uses: actions/checkout@v2
       - name: webfactory/ssh-agent
         uses: webfactory/ssh-agent@v0.4.1
