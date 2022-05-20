@@ -121,5 +121,43 @@ final class ConcurrencyFacts: XCTestCase {
     print("finish")
 
   }
+  
+  func test_retain_task() async {
+    
+    let task = Task<Int, _>.detached {
+      
+      try! await Task.sleep(nanoseconds: 1_000_000_000)
+      
+      return 0
+    }
+    
+    print(CFAbsoluteTimeGetCurrent())
+    print(await task.result)
+    
+    print(CFAbsoluteTimeGetCurrent())
+    print(await task.result)
+    
+    print(CFAbsoluteTimeGetCurrent())
+  }
+  
+  @MainActor
+  func test_custom_actor() async {
+    
+    _ = await Task {
+      XCTAssertEqual(Thread.current, .main)
+    }
+    .result
 
+    _ = await Task { @BackgroundActor in
+      XCTAssertNotEqual(Thread.current, .main)
+    }
+    .result
+    
+  }
+
+}
+
+@globalActor actor BackgroundActor {
+  static var shared = BackgroundActor()
+  
 }

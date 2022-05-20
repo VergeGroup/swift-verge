@@ -2,9 +2,9 @@
 import Foundation
 import Dispatch
 
-private final class SnapshotAsyncStorage<Value>: @unchecked Sendable {
+private final class SnapshotStorage<Value>: @unchecked Sendable {
 
-  let queue = DispatchQueue(label: "UnsafeStorage")
+  private let queue = DispatchQueue(label: "UnsafeStorage")
 
   var value: Value {
     queue.sync {
@@ -30,7 +30,7 @@ private final class SnapshotAsyncStorage<Value>: @unchecked Sendable {
 
 public actor AsyncStorage<Value> {
 
-  private let snapshotStorage: SnapshotAsyncStorage<Value>
+  private let snapshotStorage: SnapshotStorage<Value>
   public var value: Value
 
   /// Returns a snapshot of the value in the point of time to mutation completed.
