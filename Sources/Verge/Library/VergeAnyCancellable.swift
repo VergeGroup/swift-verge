@@ -118,6 +118,11 @@ public final class VergeAnyCancellable: Hashable, CancellableType {
 
 }
 
+@available(iOS 13, *)
+extension VergeAnyCancellable: @unchecked Sendable {
+  
+}
+
 /// An object to cancel subscription
 ///
 /// To cancel depending owner, can be written following

@@ -1,6 +1,7 @@
 
 import Foundation
 import Dispatch
+import Verge
 
 private final class SnapshotStorage<Value>: @unchecked Sendable {
 
@@ -28,10 +29,33 @@ private final class SnapshotStorage<Value>: @unchecked Sendable {
 
 }
 
-public actor AsyncStorage<Value> {
+//public final class AsyncStorageSubscription: Hashable {
+//
+//  public static func == (lhs: Self, rhs: Self) -> Bool {
+//    lhs === rhs
+//  }
+//
+//  public func hash(into hasher: inout Hasher) {
+//    ObjectIdentifier(self).hash(into: &hasher)
+//  }
+//
+//}
 
+public actor AsyncStorage<Value> {
+  
+  public enum Event {
+    case willUpdate
+    case didUpdate(Value)
+    case willDeinit
+  }
+  
   private let snapshotStorage: SnapshotStorage<Value>
-  public var value: Value
+  
+  public private(set) var value: Value
+
+  /// for performance, set emtpy closure
+  private var subscriber: (Event) -> Void = { _ in }
+  private var hasSetSubscriber = false
 
   /// Returns a snapshot of the value in the point of time to mutation completed.
   /// the value may be older than the current processing.
@@ -45,15 +69,33 @@ public actor AsyncStorage<Value> {
     self.value = value
     snapshotStorage = .init(value)
   }
-
-  public func read() -> Value {
-    Log.debug(.storage, "Read", Thread.current)
-    return value
+  
+  deinit {
+    emit(.willDeinit)
   }
 
   public func update(_ mutate: @Sendable (inout Value) -> Void) {
+    
+    emit(.willUpdate)
+        
     Log.debug(.storage, "Update", Thread.current)
     mutate(&value)
     snapshotStorage.setValue(value)
+    
+    emit(.didUpdate(value))
+    
+  }
+  
+  /**
+   Allows set only once.
+   */
+  func setEventHandlerOnce(subscriber: @escaping (Event) -> Void) {
+    assert(self.hasSetSubscriber == false)
+    self.subscriber = subscriber
+  }
+  
+  @inline(__always)
+  private func emit(_ event: Event) {
+    subscriber(event)
   }
 }

@@ -24,9 +24,9 @@ final class AsyncStorageTests: XCTestCase {
   let storage = AsyncStorage<State>(.init())
 
   func test_1() async {
-    async let state1 = storage.read()
-    async let state2 = storage.read()
-    async let state3 = storage.read()
+    async let state1 = storage.value
+    async let state2 = storage.value
+    async let state3 = storage.value
 
     print(await storage.value.count)
 
