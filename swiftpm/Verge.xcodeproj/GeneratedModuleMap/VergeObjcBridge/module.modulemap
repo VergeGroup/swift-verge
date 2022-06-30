@@ -1,4 +1,0 @@
-module VergeObjcBridge {
-    umbrella "/Users/muukii/.ghq/github.com/muukii/Verge/worktree/space1/Sources/VergeObjcBridge/include"
-    export *
-}
