@@ -29,7 +29,7 @@ jobs:
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting ".build/Build/Products/Debug-iphoneos/Verge.doccarchive" \
             --output-path public \
-            --hosting-base-path "${{ env.SCHEME }}"
+            --hosting-base-path Verge
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
