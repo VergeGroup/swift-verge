@@ -1,16 +1,32 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "RxSwift",
-        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
-        "state": {
-          "branch": null,
-          "revision": "c8742ed97fc2f0c015a5ea5eddefb064cd7532d2",
-          "version": "6.0.0"
-        }
+  "pins" : [
+    {
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift.git",
+      "state" : {
+        "revision" : "c8742ed97fc2f0c015a5ea5eddefb064cd7532d2",
+        "version" : "6.0.0"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "swift-docc-plugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-docc-plugin.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "8afe7434fd793db8c3a9a772c5ec0f2c538e3ac6"
+      }
+    },
+    {
+      "identity" : "swift-docc-symbolkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-docc-symbolkit",
+      "state" : {
+        "branch" : "main",
+        "revision" : "cfa80d701f7d8699d64237c7bcc760d6c9616529"
+      }
+    }
+  ],
+  "version" : 2
 }
