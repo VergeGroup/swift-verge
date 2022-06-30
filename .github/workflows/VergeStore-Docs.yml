@@ -27,7 +27,7 @@ jobs:
       - name: Generate
         run: |
           $(xcrun --find docc) process-archive \
-            transform-for-static-hosting ".build/Build/Products/Debug-iphoneos/${{ env.SCHEME }}.doccarchive" \
+            transform-for-static-hosting ".build/Build/Products/Debug-iphoneos/Verge.doccarchive" \
             --output-path public \
             --hosting-base-path "${{ env.SCHEME }}"
       - name: Deploy
