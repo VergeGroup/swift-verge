@@ -18,7 +18,7 @@ import Foundation
 import libkern
 
 #if !COCOAPODS
-import VergeObjcBridge
+@_implementationOnly import VergeObjcBridge
 #endif
 
 extension VergeConcurrency {

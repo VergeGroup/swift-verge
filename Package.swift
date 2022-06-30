@@ -14,6 +14,7 @@ let package = Package(
     .library(name: "VergeTiny", targets: ["VergeTiny"]),
     .library(name: "VergeORM", targets: ["VergeORM"]),
     .library(name: "VergeRx", targets: ["VergeRx"]),
+    .library(name: "VergeClassic", targets: ["VergeClassic"]),
   ],
   dependencies: [
     .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.0.0")
@@ -22,6 +23,7 @@ let package = Package(
     .target(name: "VergeObjcBridge", dependencies: []),
     .target(name: "VergeTiny", dependencies: []),
     .target(name: "Verge", dependencies: ["VergeObjcBridge"]),
+    .target(name: "VergeClassic", dependencies: ["RxSwift", "RxCocoa", "VergeObjcBridge", "VergeRx"]),
     .target(name: "VergeORM", dependencies: ["Verge", "VergeObjcBridge"]),
     .target(name: "VergeRx", dependencies: ["Verge", "VergeObjcBridge", "RxSwift", "RxCocoa"]),
   ],
