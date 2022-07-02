@@ -24,7 +24,13 @@ let package = Package(
     .target(name: "VergeObjcBridge", dependencies: []),
     .target(name: "VergeTiny", dependencies: []),
     .target(name: "Verge", dependencies: ["VergeObjcBridge"]),
-    .target(name: "VergeClassic", dependencies: ["RxSwift", "RxCocoa", "VergeObjcBridge", "VergeRx"]),
+    .target(
+      name: "VergeClassic",
+      dependencies: [
+        "VergeObjcBridge",
+        "VergeRx",
+      ]
+    ),
     .target(name: "VergeORM", dependencies: ["Verge", "VergeObjcBridge"]),
     .target(
       name: "VergeRx",
@@ -32,7 +38,7 @@ let package = Package(
         "Verge",
         "VergeObjcBridge",
         .product(name: "RxSwift", package: "RxSwift"),
-        .product(name: "RxCocoa", package: "RxSwift")
+        .product(name: "RxCocoa", package: "RxSwift"),
       ]
     ),
   ],
