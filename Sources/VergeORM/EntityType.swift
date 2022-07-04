@@ -78,12 +78,12 @@ public protocol EntityType {
   #else
   typealias EntityTableKey = VergeORM.EntityTableKey<Self>
   #endif
+  
+  typealias EntityID = EntityIdentifier<Self>
 }
 
 extension EntityType {
     
-  public typealias EntityID = EntityIdentifier<Self>
-
   /// Returns EntityName from reflection
   ///
   /// - Warning:
