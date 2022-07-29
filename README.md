@@ -168,7 +168,7 @@ struct MyView: View {
 
   var body: some View {
     // ✅ Uses `StateReader` to read the state this clarifies where components need the state.
-    StateReader(store).content { state in
+    StateReader(store) { state in
       Text(state.name)
       Button(action: {
         self.store.myAction()
@@ -183,7 +183,7 @@ struct MyView: View {
 `StateReader` supports to derive a part of the state like below.
 
 ```swift
-StateReader(store.derived(.map(\.nested))).content { state in
+StateReader(store.derived(.map(\.nested))) { state in
   ...
 }
 ```
