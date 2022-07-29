@@ -26,58 +26,11 @@ import Foundation
 import SwiftUI
 import Combine
 
-@available(*, deprecated, message: "Please use StateReader instead.")
-@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-public typealias UseState<Value, Content: View> = _StateReaderContent<Value, Content>
-
 /**
  A descriptor view that indicates what reads state value from Store/Derived.
- 
- It doesn't have content-view still.
- Make sure it owning content-view with calling `.content()`.
  */
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-public struct StateReader<Value>: View {
-
-  private let observableObject: _VergeObservableObjectBase
-  private let updateValue: () -> Changes<Value>
-
-  fileprivate init(
-    updateTrigger: _VergeObservableObjectBase,
-    updateValue: @escaping () -> Changes<Value>
-  ) {
-    self.observableObject = updateTrigger
-    self.updateValue = updateValue
-  }
-
-  public var body: EmptyView {
-    assertionFailure("""
-      Warning: StateReader still does not have a content-view.
-      Please add a content by `.content()`.
-
-      This issue comes from current auto-completion function doesn't work well.
-      Probably, it's might be fixed with better syntax.
-      """)
-    return EmptyView()
-  }
-
-  /**
-   Makes itself having content.
-
-   This syntax and approach are related to the lacking of current Xcode's auto-completion. (Xcode12)
-   */
-  public func content<NewContent: View>(@ViewBuilder _ makeContent: @escaping (Changes<Value>) -> NewContent) -> _StateReaderContent<Value, NewContent> {
-    return .init(updateTrigger: observableObject, updateValue: updateValue, content: makeContent)
-  }
-
-  @available(*, deprecated, message: "You're returning a value which is not a type of `SwiftUI.View`.")
-  public func content(@ViewBuilder _ makeContent: @escaping (Changes<Value>) -> Never) -> Never {
-    fatalError()
-  }
-}
-
-@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-public struct _StateReaderContent<Value, Content: View>: View {
+public struct StateReader<Value, Content: View>: View {
 
   @ObservedObject private var observableObject: _VergeObservableObjectBase
 
@@ -99,6 +52,15 @@ public struct _StateReaderContent<Value, Content: View>: View {
     let changes = updateValue()
     return content(changes)
   }
+  
+  /**
+   Makes itself having content.
+   
+   This syntax and approach are related to the lacking of current Xcode's auto-completion. (Xcode12)
+   */
+  public func content<NewContent: View>(@ViewBuilder _ makeContent: @escaping (Changes<Value>) -> NewContent) -> StateReader<Value, NewContent> {
+    return .init(updateTrigger: observableObject, updateValue: updateValue, content: makeContent)
+  }
 
 }
 
@@ -108,7 +70,7 @@ extension StateReader {
   /// inner init
   private init<Derived: DerivedType>(
     derived: Derived
-  ) where Value == Derived.Value {
+  ) where Value == Derived.Value, Content == EmptyView {
 
     let concrete = derived.asDerived()
 
@@ -116,7 +78,8 @@ extension StateReader {
       updateTrigger: concrete,
       updateValue: {
         concrete.value
-      }
+      },
+      content: { _ in EmptyView() }
     )
 
   }
@@ -129,7 +92,7 @@ extension StateReader {
   ///   - content:
   public init<Store: StoreType>(
     _ store: Store
-  ) where Value == Store.State {
+  ) where Value == Store.State, Content == EmptyView {
 
     let store = store.asStore()
 
@@ -137,7 +100,8 @@ extension StateReader {
       updateTrigger: store,
       updateValue: {
         store.state
-      }
+      },
+      content: { _ in EmptyView() }
     )
 
   }
@@ -150,7 +114,7 @@ extension StateReader {
   ///   - content:
   public init<Derived: DerivedType>(
     _ derived: Derived
-  ) where Value == Derived.Value {
+  ) where Value == Derived.Value, Content == EmptyView {
 
     self.init(derived: derived)
 
@@ -164,7 +128,7 @@ extension StateReader {
   ///   - content:
   public init<Store: StoreType>(
     _ store: Store
-  ) where Value == Store.State, Value : Equatable {
+  ) where Value == Store.State, Value : Equatable, Content == EmptyView {
     self.init(store.derived(.map(\.root)))
   }
 
@@ -176,7 +140,7 @@ extension StateReader {
   ///   - content:
   public init<Derived: DerivedType>(
     _ derived: Derived
-  ) where Value == Derived.Value, Value : Equatable {
+  ) where Value == Derived.Value, Value : Equatable, Content == EmptyView {
     assert(derived.asDerived().attributes.contains(.dropsDuplicatedOutput) == true)
     self.init(derived: derived)
   }
@@ -184,7 +148,7 @@ extension StateReader {
 }
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-extension _StateReaderContent {
+extension StateReader {
 
   /// inner init
   private init<Derived: DerivedType>(
