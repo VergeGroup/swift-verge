@@ -21,7 +21,7 @@
   https://vergegroup.github.io/Verge/documentation/verge/
 
 <p align="center">
-<img alt="swift5.3" src="https://img.shields.io/badge/swift-5.3-ED523F.svg?style=flat"/>
+<img alt="swift5.5" src="https://img.shields.io/badge/swift-5.5-ED523F.svg?style=flat"/>
 <img alt="Tests" src="https://github.com/VergeGroup/Verge/workflows/Tests/badge.svg"/>
 <img alt="cocoapods" src="https://img.shields.io/cocoapods/v/Verge" />
 </p>
