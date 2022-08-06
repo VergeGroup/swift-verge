@@ -128,6 +128,37 @@
 				<string>com.apple.platform.iphonesimulator</string>
 			</dict>
 		</dict>
+		<key>6AFB1B1E-C3E9-43C9-AF14-BD6237D46672</key>
+		<dict>
+			<key>localComputer</key>
+			<dict>
+				<key>busSpeedInMHz</key>
+				<integer>0</integer>
+				<key>cpuCount</key>
+				<integer>1</integer>
+				<key>cpuKind</key>
+				<string>Apple M1 Max</string>
+				<key>cpuSpeedInMHz</key>
+				<integer>0</integer>
+				<key>logicalCPUCoresPerPackage</key>
+				<integer>10</integer>
+				<key>modelCode</key>
+				<string>MacBookPro18,4</string>
+				<key>physicalCPUCoresPerPackage</key>
+				<integer>10</integer>
+				<key>platformIdentifier</key>
+				<string>com.apple.platform.macosx</string>
+			</dict>
+			<key>targetArchitecture</key>
+			<string>arm64</string>
+			<key>targetDevice</key>
+			<dict>
+				<key>modelCode</key>
+				<string>iPhone10,4</string>
+				<key>platformIdentifier</key>
+				<string>com.apple.platform.iphonesimulator</string>
+			</dict>
+		</dict>
 		<key>F49FF95E-D609-4BEB-B96D-5CAFE6031DBC</key>
 		<dict>
 			<key>localComputer</key>
