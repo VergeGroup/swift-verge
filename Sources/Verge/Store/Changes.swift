@@ -38,6 +38,8 @@ public protocol ChangesType: AnyChangesType {
   var primitive: Value { get }
 
   var previous: Self? { get }
+  
+  var modification: InoutRef<Value>.Modification? { get }
 
   func asChanges() -> Changes<Value>
 }
