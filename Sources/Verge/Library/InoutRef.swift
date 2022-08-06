@@ -37,6 +37,7 @@ public final class InoutRef<Wrapped> {
   /**
    A representation that how modified the properties of the wrapped value.
    */
+  @dynamicMemberLookup
   public enum Modification: Hashable, CustomDebugStringConvertible {
     case determinate(keyPaths: Set<PartialKeyPath<Wrapped>>)
     case indeterminate
@@ -52,6 +53,25 @@ public final class InoutRef<Wrapped> {
         .joined(separator: "\n")
       }
     }
+    
+    public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T>) -> Bool {
+      switch self {
+      case .indeterminate:
+        return true
+      case .determinate(let keyPaths):
+        return keyPaths.contains(keyPath)
+      }
+    }
+    
+    public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T?>) -> Bool {
+      switch self {
+      case .indeterminate:
+        return true
+      case .determinate(let keyPaths):
+        return keyPaths.contains(keyPath)
+      }
+    }
+    
   }
 
   // MARK: - Properties
