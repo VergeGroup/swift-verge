@@ -197,7 +197,7 @@ open class ReadonlyStorage<Value>: @unchecked Sendable, CustomReflectable {
   
 }
 
-open class Storage<Value>: ReadonlyStorage<Value>, @unchecked Sendable {
+open class Storage<Value>: ReadonlyStorage<Value> {
   
   private var notificationFilter: (Value) -> Bool = { _ in true }
 
