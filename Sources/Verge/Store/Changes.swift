@@ -26,7 +26,7 @@ import Foundation
 
 private let changesDeallocationQueue = BackgroundDeallocationQueue()
 
-public protocol AnyChangesType: AnyObject {
+public protocol AnyChangesType: AnyObject, Sendable {
 
   var traces: [MutationTrace] { get }
   var version: UInt64 { get }
@@ -86,7 +86,7 @@ public protocol ChangesType: AnyChangesType {
 /// - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
 /// This means Changes will return equals if different pointer but the value is the same.
 @dynamicMemberLookup
-public final class Changes<Value>: ChangesType, Equatable, HasTraces {
+public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
   public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
 
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {

@@ -26,7 +26,7 @@ public protocol HasTraces {
 }
 
 /// A trace that indicates the mutation where comes from.
-public struct MutationTrace: Encodable, Equatable {
+public struct MutationTrace: Encodable, Equatable, Sendable {
   
   public static func == (lhs: MutationTrace, rhs: MutationTrace) -> Bool {
     lhs.createdAt == rhs.createdAt &&

@@ -56,7 +56,7 @@ public typealias StoreBase<State, Activity> = Store<State, Activity>
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable, StoreType, DispatcherType {
+open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
 
   public typealias Scope = State
   public typealias Dispatcher = DispatcherBase<State, Activity>
