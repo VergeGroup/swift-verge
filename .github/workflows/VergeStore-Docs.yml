@@ -3,7 +3,7 @@ name: VergeStore Docs
 on:
   push:
     branches:
-      - main  # Set a branch name to trigger deployment
+      - main # Set a branch name to trigger deployment
   workflow_dispatch:
 
 env:
@@ -17,11 +17,11 @@ jobs:
     steps:
       - uses: maxim-lobanov/setup-xcode@v1.1
         with:
-          xcode-version: "13.3"
+          xcode-version: "13.4"
       - uses: actions/checkout@v2
         with:
-          submodules: true  # Fetch Hugo themes (true OR recursive)
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+          submodules: true # Fetch Hugo themes (true OR recursive)
+          fetch-depth: 0 # Fetch all history for .GitInfo and .Lastmod
       - name: Build
         run: xcodebuild docbuild -scheme ${{ env.SCHEME }} -derivedDataPath .build -destination 'generic/platform=iOS'
       - name: Generate
