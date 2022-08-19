@@ -51,7 +51,7 @@ public protocol EdgeType : Equatable {
  `MemoizeMap.map(_ map: @escaping (Changes<Input.Value>) -> Edge<Output>) -> MemoizeMap<Input, Output>`
  */
 @propertyWrapper
-public struct Edge<State>: EdgeType {
+public struct Edge<State: Sendable>: EdgeType, Sendable {
 
   public static func == (lhs: Edge<State>, rhs: Edge<State>) -> Bool {
     lhs.version == rhs.version
@@ -131,14 +131,14 @@ extension Edge {
    @Edge(middleware: .assert { $0 >= 0 }) var count: Int = 0
    ```
    */
-  public struct Middleware {
+  public struct Middleware: Sendable {
 
-    let _onSet: (inout State) -> Void
+    let _onSet: @Sendable (inout State) -> Void
 
     /// Initialize a instance that performs multiple middlewares from start index
     /// - Parameter onSet: It can access a new value and modify to validate something.
     public init(
-      onSet: @escaping (inout State) -> Void
+      onSet: @escaping @Sendable (inout State) -> Void
     ) {
       self._onSet = onSet
     }

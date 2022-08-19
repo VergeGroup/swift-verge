@@ -32,7 +32,7 @@ public protocol DerivedType {
   func asDerived() -> Derived<Value>
 }
 
-public struct DerivedAttributes: OptionSet {
+public struct DerivedAttributes: OptionSet, Sendable {
   
   public typealias RawValue = Int8
   
@@ -64,7 +64,7 @@ public struct DerivedAttributes: OptionSet {
 
  Conforms to Equatable that compares pointer personality.
  */
-public class Derived<Value>: _VergeObservableObjectBase, DerivedType {
+public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked Sendable {
 
   /// Returns Derived object that provides constant value.
   ///
@@ -427,7 +427,8 @@ extension Derived where Value : Equatable {
 
 }
 
-extension Derived where Value == Any {
+// `Value == Never` eliminates specializing requirements.
+extension Derived where Value == Never {
     
   /// Make Derived that projects combined value from specified source Derived objects.
   ///

@@ -21,7 +21,7 @@ public typealias VergeAnyCancellables = Set<VergeAnyCancellable>
 ///
 /// }
 /// ```
-public final class VergeAnyCancellable: Hashable, CancellableType {
+public final class VergeAnyCancellable: Hashable, CancellableType, Sendable {
 
   private let lock = VergeConcurrency.UnfairLock()
 
