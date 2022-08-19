@@ -90,7 +90,7 @@ public struct VergeAnyRecursiveLock: _VergeRecursiveLockType {
 
 }
 
-open class ReadonlyStorage<Value>: CustomReflectable {
+open class ReadonlyStorage<Value>: @unchecked Sendable, CustomReflectable {
 
   public enum Event {
     case willUpdate
@@ -197,7 +197,7 @@ open class ReadonlyStorage<Value>: CustomReflectable {
   
 }
 
-open class Storage<Value>: ReadonlyStorage<Value> {
+open class Storage<Value>: ReadonlyStorage<Value>, @unchecked Sendable {
   
   private var notificationFilter: (Value) -> Bool = { _ in true }
 
