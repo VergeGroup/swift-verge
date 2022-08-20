@@ -21,7 +21,7 @@ public typealias VergeAnyCancellables = Set<VergeAnyCancellable>
 ///
 /// }
 /// ```
-public final class VergeAnyCancellable: Hashable, CancellableType {
+public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Sendable {
 
   private let lock = VergeConcurrency.UnfairLock()
 
@@ -116,11 +116,6 @@ public final class VergeAnyCancellable: Hashable, CancellableType {
 
   }
 
-}
-
-@available(iOS 13, *)
-extension VergeAnyCancellable: @unchecked Sendable {
-  
 }
 
 /// An object to cancel subscription

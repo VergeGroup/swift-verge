@@ -22,7 +22,7 @@
 import Foundation
 
 /// A container that manages raw value to describe mark as updated.
-public struct NonAtomicVersionCounter: Hashable {
+public struct NonAtomicVersionCounter: Hashable, Sendable {
   
   private(set) public var version: UInt64 = 0
   

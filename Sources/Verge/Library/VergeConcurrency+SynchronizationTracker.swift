@@ -25,7 +25,7 @@ extension VergeConcurrency {
   ///
   ///
   /// Modified based on RxSwift's original implementations.
-  public final class SynchronizationTracker {
+  public final class SynchronizationTracker: @unchecked Sendable {
     
     public enum Warning: Hashable {
       case reentrancyAnomaly

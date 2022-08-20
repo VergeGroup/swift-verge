@@ -23,7 +23,7 @@ import libkern
 
 extension VergeConcurrency {
           
-  public class AtomicInt {
+  public class AtomicInt: @unchecked Sendable {
         
     /// The current value.
     public var value: Int {

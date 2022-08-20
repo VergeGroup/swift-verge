@@ -90,7 +90,7 @@ public struct VergeAnyRecursiveLock: _VergeRecursiveLockType {
 
 }
 
-open class ReadonlyStorage<Value>: CustomReflectable {
+open class ReadonlyStorage<Value>: @unchecked Sendable, CustomReflectable {
 
   public enum Event {
     case willUpdate

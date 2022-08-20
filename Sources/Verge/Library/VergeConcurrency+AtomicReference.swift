@@ -26,7 +26,7 @@ extension VergeConcurrency {
   /// reference. Unlike using a lock, concurrent read and write accesses to this class is allowed. At
   /// the same time, concurrent operations using the atomic functions provided by this class ensures
   /// synchronization correctness without the higher cost of locking.
-  public class AtomicReference<ValueType> {
+  public class AtomicReference<ValueType: Sendable>: @unchecked Sendable {
     
     /// The value that guarantees atomic read and write-through memory behavior.
     public var value: ValueType {

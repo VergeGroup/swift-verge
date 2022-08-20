@@ -202,7 +202,7 @@ final class DerivedTests: XCTestCase {
     let update1 = expectation(description: "")
     update1.assertForOverFulfill = true
     update1.expectedFulfillmentCount = 2
-    
+        
     let d = Derived.combined(s0, s1, queue: .passthrough)
     
     XCTAssert(d.primitiveValue == (0, ""))
