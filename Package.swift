@@ -41,6 +41,12 @@ let package = Package(
         .product(name: "RxCocoa", package: "RxSwift"),
       ]
     ),
+//    .testTarget(name: "AsyncVergeTests", dependencies: ["AsyncVerge"]),
+    .testTarget(name: "VergeClassicTests", dependencies: ["VergeClassic"]),
+    .testTarget(name: "VergeORMTests", dependencies: ["VergeORM"]),
+    .testTarget(name: "VergeRxTests", dependencies: ["VergeRx"]),
+    .testTarget(name: "VergeTests", dependencies: ["Verge"]),
+    .testTarget(name: "VergeTinyTests", dependencies: ["VergeTiny"]),
   ],
   swiftLanguageVersions: [.v5]
 )

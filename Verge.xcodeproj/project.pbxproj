@@ -298,7 +298,6 @@
 		4B17438F23C766D70074C457 /* VergeRx.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeRx.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B1743A723C767670074C457 /* VergeRxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeRxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B1743A923C767670074C457 /* VergeRxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeRxTests.swift; sourceTree = "<group>"; };
-		4B1743AB23C767670074C457 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B186CBC2461474E00A0611F /* ReflectingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflectingTests.swift; sourceTree = "<group>"; };
 		4B1BE8E4244F28050077DB66 /* Pipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pipeline.swift; sourceTree = "<group>"; };
 		4B1F19C3243A88A000CED46B /* ComputedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputedTests.swift; sourceTree = "<group>"; };
@@ -330,7 +329,6 @@
 		4B475BBE239AB97F008A03E1 /* DatabaseBatchUpdatesContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseBatchUpdatesContext.swift; sourceTree = "<group>"; };
 		4B475BC5239ADE1C008A03E1 /* VergeORMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeORMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B475BC7239ADE1C008A03E1 /* VergeORMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeORMTests.swift; sourceTree = "<group>"; };
-		4B475BC9239ADE1C008A03E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B49D3502552E6B60049F0F2 /* Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deprecated.swift; sourceTree = "<group>"; };
 		4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReproduceDeadlockTests.swift; sourceTree = "<group>"; };
 		4B4AB16D244DF35E005E7283 /* VergeConcurrency+SynchronizationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VergeConcurrency+SynchronizationTracker.swift"; sourceTree = "<group>"; };
@@ -348,10 +346,8 @@
 		4B654BF025869A3300F5AEA4 /* EdgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeTests.swift; sourceTree = "<group>"; };
 		4B65F8EC1FB4C0DC00A90A67 /* VergeClassicTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeClassicTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeTests.swift; sourceTree = "<group>"; };
-		4B65F8F01FB4C0DC00A90A67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B68394423705ACD002FFC5A /* VergeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B68394623705ACD002FFC5A /* VergeStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeStoreTests.swift; sourceTree = "<group>"; };
-		4B68394823705ACE002FFC5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B68394F237062F7002FFC5A /* StateType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateType.swift; sourceTree = "<group>"; };
 		4B6B77AA243FA3EB00E0C0EA /* _StateTypeContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = _StateTypeContainer.swift; sourceTree = "<group>"; };
 		4B6BF62923AD7B55001E5361 /* CollectionPerformance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionPerformance.swift; sourceTree = "<group>"; };
@@ -365,7 +361,6 @@
 		4B78879B263D379C00FD358F /* VergeTiny.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VergeTiny.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B7887A3263D379C00FD358F /* VergeTinyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VergeTinyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B7887A8263D379C00FD358F /* VergeTinyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergeTinyTests.swift; sourceTree = "<group>"; };
-		4B7887AA263D379C00FD358F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B7887B4263D381D00FD358F /* Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Source.swift; sourceTree = "<group>"; };
 		4B7A71CF24874A8900A116F7 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		4B7A71D12487532D00A116F7 /* _COWFragmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _COWFragmentTests.swift; sourceTree = "<group>"; };
@@ -669,7 +664,6 @@
 				4B4AB16A244DECC8005E7283 /* ReproduceDeadlockTests.swift */,
 				4B4011BC23C779D400C582BC /* State.swift */,
 				4B1743A923C767670074C457 /* VergeRxTests.swift */,
-				4B1743AB23C767670074C457 /* Info.plist */,
 				4BA5915023DF536F007F614C /* FunctionBuilderTests.swift */,
 				4B8035FA244CB96B0028BD32 /* MigrationFromClassicTests.swift */,
 				4B0DFF2A245C6670002CDFE1 /* ChangedOperatorTests.swift */,
@@ -711,7 +705,6 @@
 				4BAF902E23A92B69004D6356 /* MiddlewareTests.swift */,
 				4BAF902C23A8EB36004D6356 /* PerformanceTests.swift */,
 				4BF3C2EA24209324006B1726 /* MultithreadingTests.swift */,
-				4B475BC9239ADE1C008A03E1 /* Info.plist */,
 				4B99D69223AF6C4300E26127 /* ProtocolTests.swift */,
 				4BF21F2F2458C1860045B5C2 /* UtilTests.swift */,
 				4B186CBC2461474E00A0611F /* ReflectingTests.swift */,
@@ -742,7 +735,6 @@
 			isa = PBXGroup;
 			children = (
 				4B65F8EE1FB4C0DC00A90A67 /* VergeTests.swift */,
-				4B65F8F01FB4C0DC00A90A67 /* Info.plist */,
 			);
 			path = VergeClassicTests;
 			sourceTree = "<group>";
@@ -758,7 +750,6 @@
 				4B86D825244A2A1D008D3040 /* Sample.swift */,
 				4B68394623705ACD002FFC5A /* VergeStoreTests.swift */,
 				4BF76682244E242500A5EA10 /* DerivedTests.swift */,
-				4B68394823705ACE002FFC5A /* Info.plist */,
 				4B89538423CCE3B1002F95C8 /* FilterTests.swift */,
 				4B35F5742376A692005E6C01 /* SynchronizeDisplayValueTests.swift */,
 				4B71CEED23B14394004520CE /* ActivityTests.swift */,
@@ -804,7 +795,6 @@
 			isa = PBXGroup;
 			children = (
 				4B7887A8263D379C00FD358F /* VergeTinyTests.swift */,
-				4B7887AA263D379C00FD358F /* Info.plist */,
 			);
 			path = VergeTinyTests;
 			sourceTree = "<group>";
@@ -2035,7 +2025,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2055,7 +2045,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2144,7 +2134,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEVELOPMENT_TEAM = 9T4USX98DB;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2164,7 +2154,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEVELOPMENT_TEAM = 9T4USX98DB;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2260,7 +2250,7 @@
 		4B65F8F51FB4C0DC00A90A67 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2275,7 +2265,7 @@
 		4B65F8F61FB4C0DC00A90A67 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2499,7 +2489,7 @@
 		4B67673723D8973800D0C076 /* Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2515,7 +2505,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2535,7 +2525,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEVELOPMENT_TEAM = 9T4USX98DB;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2554,7 +2544,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2574,7 +2564,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2593,7 +2583,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2772,7 +2762,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2795,7 +2785,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2817,7 +2807,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = "Tests/$(TARGET_NAME)/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
