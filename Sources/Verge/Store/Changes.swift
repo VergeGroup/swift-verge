@@ -818,14 +818,14 @@ extension _StateTypeContainer {
     }
 
     public init(
-      makeInitial: @escaping (Input) -> Output,
-      update: @escaping (Input) -> Pipeline<Input, Output>.ContinuousResult
+      makeInitial: @escaping @Sendable (Input) -> Output,
+      update: @escaping @Sendable (Input) -> Pipeline<Input, Output>.ContinuousResult
     ) {
       self.init(Pipeline<Input, Output>.init(makeInitial: makeInitial, update: update))
     }
 
     public init(
-      _ compute: @escaping (Input) -> Output
+      _ compute: @escaping @Sendable (Input) -> Output
     ) {
       self.init(.map(compute))
     }

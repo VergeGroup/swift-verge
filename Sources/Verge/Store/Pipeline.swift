@@ -32,7 +32,7 @@ fileprivate let counter = VergeConcurrency.AtomicInt(initialValue: 0)
  inputs value: Input -> Pipeline -> Pipeline.Result
  inputs value initially: -> Pipeline -> Output
 */
-public struct Pipeline<Input, Output>: Equatable {
+public struct Pipeline<Input, Output>: Equatable, Sendable {
 
   public static func == (lhs: Pipeline<Input, Output>, rhs: Pipeline<Input, Output>) -> Bool {
     lhs.identifier == rhs.identifier
@@ -49,9 +49,9 @@ public struct Pipeline<Input, Output>: Equatable {
    Properties should be `let` because to avoid mutating value with using the same identifier under the manager does not know that.
    */
 
-  private let _makeOutput: (Input) -> Output
-  private let _makeContinousOutput: (Input) -> ContinuousResult
-  private let _dropInput: (Input) -> Bool
+  private let _makeOutput: @Sendable (Input) -> Output
+  private let _makeContinousOutput: @Sendable (Input) -> ContinuousResult
+  private let _dropInput: @Sendable (Input) -> Bool
 
   /**
    An identifier to be used from Derived to use the same instance if Pipeline is same.   
@@ -62,22 +62,22 @@ public struct Pipeline<Input, Output>: Equatable {
     
   @_disfavoredOverload
   public init(
-    makeInitial: @escaping (Input) -> Output,
-    update: @escaping (Input) -> ContinuousResult
+    makeInitial: @escaping @Sendable (Input) -> Output,
+    update: @escaping @Sendable (Input) -> ContinuousResult
   ) {
     
     self.init(makeOutput: makeInitial, dropInput: { _ in false }, makeContinuousOutput: update)
   }
   
   public init(
-    map: @escaping (Input) -> Output
+    map: @escaping @Sendable (Input) -> Output
   ) {
     self.init(dropInput: { _ in false }, map: map)
   }
 
   public init(
-    dropInput: @escaping (Input) -> Bool,
-    map: @escaping (Input) -> Output
+    dropInput: @escaping @Sendable (Input) -> Bool,
+    map: @escaping @Sendable (Input) -> Output
   ) {
 
     self.init(
@@ -89,9 +89,9 @@ public struct Pipeline<Input, Output>: Equatable {
 
   /// The primitive initializer
   private init(
-    makeOutput: @escaping (Input) -> Output,
-    dropInput: @escaping (Input) -> Bool,
-    makeContinuousOutput: @escaping (Input) -> ContinuousResult
+    makeOutput: @escaping @Sendable (Input) -> Output,
+    dropInput: @escaping @Sendable (Input) -> Bool,
+    makeContinuousOutput: @escaping @Sendable (Input) -> ContinuousResult
   ) {
 
     self._makeOutput = makeOutput
@@ -122,7 +122,7 @@ public struct Pipeline<Input, Output>: Equatable {
   /// - Parameter predicate: Return true, the coming input would be dropped.
   /// - Returns:
   public func dropsInput(
-    while predicate: @escaping (Input) -> Bool
+    while predicate: @escaping @Sendable (Input) -> Bool
   ) -> Self {
     Self.init(
       makeOutput: _makeOutput,
@@ -149,7 +149,7 @@ extension Pipeline where Input : ChangesType {
   /// - Parameter map:
   /// - Returns:
   @available(*, renamed: "map(edge:)")
-  public static func map<_Edge: EdgeType>(_ map: @escaping (Input) -> _Edge) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
+  public static func map<_Edge: EdgeType>(_ map: @escaping @Sendable (Input) -> _Edge) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
     .map(edge: map)
   }
 
@@ -158,7 +158,7 @@ extension Pipeline where Input : ChangesType {
   /// - Complexity: ✅ Active Memoization with Fragment's version
   /// - Parameter map:
   /// - Returns:
-  public static func map<_Edge: EdgeType>(edge map: @escaping (Input) -> _Edge) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
+  public static func map<_Edge: EdgeType>(edge map: @escaping @Sendable (Input) -> _Edge) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
 
     return .init(
       makeInitial: {
@@ -214,7 +214,7 @@ extension Pipeline where Input : ChangesType {
   ///
   /// - Parameter map:
   /// - Returns:
-  public static func map(_ map: @escaping (Input) -> Output) -> Pipeline<Input, Output> {
+  public static func map(_ map: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> {
     .init(map: map)
   }
   
@@ -247,9 +247,9 @@ extension Pipeline where Input : ChangesType {
   ///     If return true, drops the value.
   ///   - compute: A closure to compose a computed value from the derived value.
   public static func map<Derived>(
-    derive: @escaping (Changes<Input.Value>) -> Derived,
-    dropsDerived: @escaping (Derived, Derived) -> Bool,
-    compute: @escaping (Derived) -> Output
+    derive: @escaping @Sendable (Changes<Input.Value>) -> Derived,
+    dropsDerived: @escaping @Sendable (Derived, Derived) -> Bool,
+    compute: @escaping @Sendable (Derived) -> Output
   ) -> Pipeline<Input, Output> {
 
     .init(
@@ -278,8 +278,8 @@ extension Pipeline where Input : ChangesType {
   ///   - derive: A closure to create value from the state to put into the compute closure.
   ///   - compute: A closure to compose a computed value from the derived value.
   public static func map<Derived: Equatable>(
-    derive: @escaping (Changes<Input.Value>) -> Derived,
-    compute: @escaping (Derived) -> Output
+    derive: @escaping @Sendable (Changes<Input.Value>) -> Derived,
+    compute: @escaping @Sendable (Derived) -> Output
   ) -> Pipeline<Input, Output> {
 
     self.map(derive: derive, dropsDerived: ==, compute: compute)
@@ -290,8 +290,8 @@ extension Pipeline where Input : ChangesType {
 extension Pipeline where Input : ChangesType, Input.Value : Equatable {
   
   public init(
-    makeInitial: @escaping (Input) -> Output,
-    update: @escaping (Input) -> ContinuousResult
+    makeInitial: @escaping @Sendable (Input) -> Output,
+    update: @escaping @Sendable (Input) -> ContinuousResult
   ) {
     
     self.init(
@@ -307,7 +307,7 @@ extension Pipeline where Input : ChangesType, Input.Value : Equatable {
   /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
   public init(
-    map: @escaping (Input) -> Output
+    map: @escaping @Sendable (Input) -> Output
   ) {
     
     self.init(
@@ -321,7 +321,7 @@ extension Pipeline where Input : ChangesType, Input.Value : Equatable {
   ///
   /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
-  public static func map(_ map: @escaping (Input) -> Output) -> Pipeline<Input, Output> {
+  public static func map(_ map: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> {
     .init(map: map)
   }
   
@@ -350,7 +350,7 @@ extension Pipeline {
   ///
   /// - Parameter map:
   /// - Returns:
-  public static func map(_ map: @escaping (Input) -> Output) -> Self {
+  public static func map(_ map: @escaping @Sendable (Input) -> Output) -> Self {
     .init(dropInput: { _ in false }, map: map)
   }
 
@@ -375,7 +375,9 @@ extension Pipeline {
 
 }
 
-// No Thread safety
+/**
+ Manages identifiers for each KeyPath locally. 
+ */
 enum KeyPathIdentifierStore {
   
   private static var counter = NonAtomicCounter()
@@ -399,6 +401,7 @@ enum KeyPathIdentifierStore {
 
 extension AnyKeyPath {
 
+  @inline(__always)
   fileprivate func _getIdentifier() -> UInt64 {
     KeyPathIdentifierStore.getLocalIdentifier(self)
   }
@@ -409,10 +412,10 @@ fileprivate enum Static {
   
   typealias Storage<T> = VergeConcurrency.RecursiveLockAtomic<T>
   
-  static var cache1: Storage<[String : Int]> = .init([:])
-  static var cache2: Storage<[String : Int]> = .init([:])
-  static var cache3: Storage<[String : Int]> = .init([:])
-  static var cache4: Storage<[String : Int]> = .init([:])
+  static let cache1: Storage<[String : Int]> = .init([:])
+  static let cache2: Storage<[String : Int]> = .init([:])
+  static let cache3: Storage<[String : Int]> = .init([:])
+  static let cache4: Storage<[String : Int]> = .init([:])
   
   static func modifyIdentifier<I, O>(
     on storage: Storage<[String : Int]>,
