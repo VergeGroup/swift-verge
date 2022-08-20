@@ -406,13 +406,15 @@ extension AnyKeyPath {
 
 fileprivate enum Static {
   
-  static var cache1: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
-  static var cache2: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
-  static var cache3: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
-  static var cache4: VergeConcurrency.RecursiveLockAtomic<[String : Int]> = .init([:])
+  typealias Storage<T> = VergeConcurrency.RecursiveLockAtomic<T>
+  
+  static var cache1: Storage<[String : Int]> = .init([:])
+  static var cache2: Storage<[String : Int]> = .init([:])
+  static var cache3: Storage<[String : Int]> = .init([:])
+  static var cache4: Storage<[String : Int]> = .init([:])
   
   static func modifyIdentifier<I, O>(
-    on storage: VergeConcurrency.RecursiveLockAtomic<[String : Int]>,
+    on storage: Storage<[String : Int]>,
     for pipeline: inout Pipeline<I, O>,
     keyPath: AnyKeyPath
   ) {
