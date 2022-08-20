@@ -86,7 +86,7 @@
 		4B6BF62B23AD7B74001E5361 /* CollectionPerformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6BF62923AD7B55001E5361 /* CollectionPerformance.swift */; };
 		4B6E361023A7ED1900EB490C /* IndexType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6E360F23A7ED1900EB490C /* IndexType.swift */; };
 		4B6F6F3924521F1E00B6CC3A /* Edge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CC23CC36E8001A1D5D /* Edge.swift */; };
-		4B6F6F3A24521F1E00B6CC3A /* NonAtomicVersionCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */; };
+		4B6F6F3A24521F1E00B6CC3A /* NonAtomicCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470D123CC3A43001A1D5D /* NonAtomicCounter.swift */; };
 		4B6F6F3B24521F2B00B6CC3A /* CounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF470CE23CC3949001A1D5D /* CounterTests.swift */; };
 		4B70306825C46A78005C7677 /* StoreMiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B70306725C46A78005C7677 /* StoreMiddlewareTests.swift */; };
 		4B71CEEE23B14394004520CE /* ActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B71CEED23B14394004520CE /* ActivityTests.swift */; };
@@ -437,7 +437,7 @@
 		4BF3C2EA24209324006B1726 /* MultithreadingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultithreadingTests.swift; sourceTree = "<group>"; };
 		4BF470CC23CC36E8001A1D5D /* Edge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Edge.swift; sourceTree = "<group>"; };
 		4BF470CE23CC3949001A1D5D /* CounterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterTests.swift; sourceTree = "<group>"; };
-		4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonAtomicVersionCounter.swift; sourceTree = "<group>"; };
+		4BF470D123CC3A43001A1D5D /* NonAtomicCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonAtomicCounter.swift; sourceTree = "<group>"; };
 		4BF5E10325B0B56D00DB3624 /* RuntimeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeError.swift; sourceTree = "<group>"; };
 		4BF5E10D25B0B70400DB3624 /* RuntimeSanitizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeSanitizer.swift; sourceTree = "<group>"; };
 		4BF76680244E1B5300A5EA10 /* Derived.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Derived.swift; sourceTree = "<group>"; };
@@ -892,7 +892,7 @@
 				4BCE3038246AAD6800D35557 /* Scan.swift */,
 				4BDB78212447934A00675D03 /* StoreWrapperType.swift */,
 				4B1BE8E4244F28050077DB66 /* Pipeline.swift */,
-				4BF470D123CC3A43001A1D5D /* NonAtomicVersionCounter.swift */,
+				4BF470D123CC3A43001A1D5D /* NonAtomicCounter.swift */,
 				4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */,
 			);
 			path = Store;
@@ -1618,7 +1618,7 @@
 				4B04C55D2570875200731802 /* Signpost.swift in Sources */,
 				4B427419236F269C00C302C8 /* Store.swift in Sources */,
 				4B3834DD2482330C008A0B47 /* StateReader.swift in Sources */,
-				4B6F6F3A24521F1E00B6CC3A /* NonAtomicVersionCounter.swift in Sources */,
+				4B6F6F3A24521F1E00B6CC3A /* NonAtomicCounter.swift in Sources */,
 				4B6F6F3924521F1E00B6CC3A /* Edge.swift in Sources */,
 				4B04C5642570875200731802 /* VergeConcurrency.swift in Sources */,
 				4B1BE8E5244F28050077DB66 /* Pipeline.swift in Sources */,

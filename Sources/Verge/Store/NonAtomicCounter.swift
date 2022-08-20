@@ -22,14 +22,14 @@
 import Foundation
 
 /// A container that manages raw value to describe mark as updated.
-public struct NonAtomicVersionCounter: Hashable, Sendable {
+public struct NonAtomicCounter: Hashable, Sendable {
   
-  private(set) public var version: UInt64 = 0
+  private(set) public var value: UInt64 = 0
   
   public init() {}
   
-  public mutating func markAsUpdated() {
-    version &+= 1
+  public mutating func increment() {
+    value &+= 1
   }
   
 }

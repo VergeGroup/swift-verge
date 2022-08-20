@@ -60,11 +60,11 @@ public struct Edge<State: Sendable>: EdgeType, Sendable {
   /// A number value that indicates how many times State was updated.
   public var version: UInt64 {
     _read {
-      yield counter.version
+      yield counter.value
     }
   }
 
-  private(set) public var counter: NonAtomicVersionCounter = .init()
+  private(set) public var counter: NonAtomicCounter = .init()
   private let middleware: Middleware?
 
   public init(wrappedValue: State, middleware: Middleware? = nil) {
@@ -99,7 +99,7 @@ public struct Edge<State: Sendable>: EdgeType, Sendable {
 
   private var _wrappedValue: State {
     didSet {
-      counter.markAsUpdated()
+      counter.increment()
     }
   }
 

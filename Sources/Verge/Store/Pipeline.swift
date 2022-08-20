@@ -378,16 +378,17 @@ extension Pipeline {
 // No Thread safety
 enum KeyPathIdentifierStore {
   
-  private static let counter = VergeConcurrency.AtomicInt(initialValue: 0)
+  private static var counter = NonAtomicCounter()
   
-  static var cache: VergeConcurrency.UnfairLockAtomic<[AnyKeyPath : Int]> = .init([:])
+  static var cache: VergeConcurrency.UnfairLockAtomic<[AnyKeyPath : UInt64]> = .init([:])
   
-  static func getLocalIdentifier(_ keyPath: AnyKeyPath) -> Int {
-    cache.modify { cache -> Int in
+  static func getLocalIdentifier(_ keyPath: AnyKeyPath) -> UInt64 {
+    cache.modify { cache -> UInt64 in
       if let value = cache[keyPath] {
         return value
       } else {
-        let v = counter.getAndIncrement()
+        counter.increment()
+        let v = counter.value
         cache[keyPath] = v
         return v
       }
@@ -398,7 +399,7 @@ enum KeyPathIdentifierStore {
 
 extension AnyKeyPath {
 
-  fileprivate func _getIdentifier() -> Int {
+  fileprivate func _getIdentifier() -> UInt64 {
     KeyPathIdentifierStore.getLocalIdentifier(self)
   }
 
