@@ -41,13 +41,13 @@ struct _EntityRawTable: Equatable {
 
   typealias RawTable = [AnyEntityIdentifier : AnyEntity]
   
-  private(set) var updatedMarker = NonAtomicVersionCounter()
+  private(set) var updatedMarker = NonAtomicCounter()
 
   private(set) var entities: RawTable = [:]
   
   mutating func updateEntity<Result>(_ update: (inout RawTable) throws -> Result) rethrows -> Result {    
     let r = try update(&entities)
-    updatedMarker.markAsUpdated()
+    updatedMarker.increment()
     return r
   }
     
@@ -82,7 +82,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: _Entity
   
   let entityName: EntityTableIdentifier = Entity.entityName
   
-  public var updatedMarker: NonAtomicVersionCounter {
+  public var updatedMarker: NonAtomicCounter {
     _read { yield rawTable.updatedMarker }
   }
     

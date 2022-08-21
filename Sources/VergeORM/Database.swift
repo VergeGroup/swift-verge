@@ -133,8 +133,8 @@ public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType>: E
     return true
   }
 
-  private(set) public var entityUpdatedMarker = NonAtomicVersionCounter()
-  private(set) public var indexUpdatedMarker = NonAtomicVersionCounter()
+  private(set) public var entityUpdatedMarker = NonAtomicCounter()
+  private(set) public var indexUpdatedMarker = NonAtomicCounter()
   internal(set) public var lastUpdatesResult: DatabaseEntityUpdatesResult<Schema>?
   
   var entityBackingStorage: EntityTablesStorage<Schema> = .init()
@@ -142,8 +142,8 @@ public struct DatabaseStorage<Schema: EntitySchemaType, Indexes: IndexesType>: E
   var indexesStorage: IndexesStorage<Schema, Indexes> = .init()
   
   mutating func markUpdated() {
-    entityUpdatedMarker.markAsUpdated()
-    indexUpdatedMarker.markAsUpdated()
+    entityUpdatedMarker.increment()
+    indexUpdatedMarker.increment()
   }
   
   public init() {

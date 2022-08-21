@@ -57,11 +57,11 @@ public struct _COWFragment<State>: EdgeType {
 
   public var version: UInt64 {
     _read {
-      yield counter.version
+      yield counter.value
     }
   }
 
-  private(set) public var counter: NonAtomicVersionCounter = .init()
+  private(set) public var counter: NonAtomicCounter = .init()
 
   public init(wrappedValue: State) {
     self.storage = Storage(wrappedValue)
@@ -74,7 +74,7 @@ public struct _COWFragment<State>: EdgeType {
       yield storage.value
     }
     _modify {
-      counter.markAsUpdated()
+      counter.increment()
       let oldValue = storage.value
       if isKnownUniquelyReferenced(&storage) {
         yield &storage.value
