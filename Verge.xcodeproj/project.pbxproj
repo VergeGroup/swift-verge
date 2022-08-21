@@ -137,6 +137,7 @@
 		4BC6EFB323A8C98A00EFD688 /* OrderedIDIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */; };
 		4BC6EFB523A8C99900EFD688 /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB423A8C99900EFD688 /* State.swift */; };
 		4BC6EFB823A8D1B500EFD688 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6EFB623A8D1AF00EFD688 /* Database.swift */; };
+		4BC93C1028B264370007AD1F /* Pipeline+Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC93C0F28B264370007AD1F /* Pipeline+Map.swift */; };
 		4BCBCA8B2381C82100F33B15 /* DispatcherBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */; };
 		4BCBCA8D2381CC2B00F33B15 /* DetachedDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCBCA8C2381CC2B00F33B15 /* DetachedDispatcher.swift */; };
 		4BCC08432456228C00ECAB8A /* Derived+ORM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC08412456222100ECAB8A /* Derived+ORM.swift */; };
@@ -416,6 +417,7 @@
 		4BC6EFB223A8C98A00EFD688 /* OrderedIDIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedIDIndexTests.swift; sourceTree = "<group>"; };
 		4BC6EFB423A8C99900EFD688 /* State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
 		4BC6EFB623A8D1AF00EFD688 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		4BC93C0F28B264370007AD1F /* Pipeline+Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Pipeline+Map.swift"; sourceTree = "<group>"; };
 		4BCBCA8A2381C82100F33B15 /* DispatcherBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherBase.swift; sourceTree = "<group>"; };
 		4BCBCA8C2381CC2B00F33B15 /* DetachedDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetachedDispatcher.swift; sourceTree = "<group>"; };
 		4BCC08412456222100ECAB8A /* Derived+ORM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Derived+ORM.swift"; sourceTree = "<group>"; };
@@ -892,6 +894,7 @@
 				4BCE3038246AAD6800D35557 /* Scan.swift */,
 				4BDB78212447934A00675D03 /* StoreWrapperType.swift */,
 				4B1BE8E4244F28050077DB66 /* Pipeline.swift */,
+				4BC93C0F28B264370007AD1F /* Pipeline+Map.swift */,
 				4BF470D123CC3A43001A1D5D /* NonAtomicCounter.swift */,
 				4BB1F98B2465ACB900AF5F0C /* TargetQueue.swift */,
 			);
@@ -1635,6 +1638,7 @@
 				4B98257A254589960040B377 /* BatchCommit.swift in Sources */,
 				4BDBDF6A23CE027D00EEA112 /* ViewModelBase.swift in Sources */,
 				4BEA328D2591B61A0009A2DF /* Changes+Deprecated.swift in Sources */,
+				4BC93C1028B264370007AD1F /* Pipeline+Map.swift in Sources */,
 				4B04C5622570875200731802 /* VergeConcurrency+SynchronizationTracker.swift in Sources */,
 				4BC4897825A06C3400AC0365 /* StoreType+SwiftUI.swift in Sources */,
 				4BFA2688264D081100857B27 /* UIStateStore.swift in Sources */,
