@@ -54,6 +54,8 @@ public final class InoutRef<Wrapped> {
       }
     }
     
+    /// Returns if modified
+    /// It returns true if modified indeterminately.
     public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T>) -> Bool {
       switch self {
       case .indeterminate:
@@ -63,6 +65,8 @@ public final class InoutRef<Wrapped> {
       }
     }
     
+    /// Returns if modified
+    /// It returns true if modified indeterminately.
     public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T?>) -> Bool {
       switch self {
       case .indeterminate:

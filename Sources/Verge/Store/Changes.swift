@@ -176,7 +176,7 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
     )
   }
 
-  @inlinable
+  @inline(__always)
   public func asChanges() -> Changes<Value> {
     self
   }
