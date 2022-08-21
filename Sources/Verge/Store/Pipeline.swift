@@ -282,7 +282,7 @@ extension Pipeline where Input : ChangesType {
     compute: @escaping @Sendable (Derived) -> Output
   ) -> Pipeline<Input, Output> {
 
-    self.map(derive: derive, dropsDerived: ==, compute: compute)
+    self.map(derive: derive, dropsDerived: { $0 == $1 }, compute: compute)
   }
   
 }
