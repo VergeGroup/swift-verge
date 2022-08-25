@@ -213,7 +213,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
   /// Returns new Derived object that provides only changed value
   ///
   /// - Parameter predicate: Return true, removes value
-  public func makeRemovingDuplicates(by predicate: @escaping (Changes<Value>) -> Bool) -> Derived<Value> {
+  public func makeRemovingDuplicates(by predicate: @escaping @Sendable (Changes<Value>) -> Bool) -> Derived<Value> {
     guard !attributes.contains(.dropsDuplicatedOutput) else {
       assertionFailure("\(self) has already applied removeDuplicates")
       return self
@@ -233,9 +233,30 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkValue(
     dropsFirst: Bool = false,
-    queue: TargetQueue = .mainIsolated(),
+    queue: TargetQueue,
     receive: @escaping (Changes<Value>) -> Void
-  ) -> VergeAnyCancellable {    
+  ) -> VergeAnyCancellable {
+    innerStore.sinkState(
+      dropsFirst: dropsFirst,
+      queue: queue,
+      receive: receive
+    )
+    .associate(self)
+  }
+  
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - dropsFirst: Drops the latest value on start. if true, receive closure will be called next time state is updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkValue(
+    dropsFirst: Bool = false,
+    queue: MainActorTargetQueue = .mainIsolated(),
+    receive: @escaping @MainActor (Changes<Value>) -> Void
+  ) -> VergeAnyCancellable {
     innerStore.sinkState(
       dropsFirst: dropsFirst,
       queue: queue,
@@ -256,8 +277,32 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
   public func sinkValue<Accumulate>(
     scan: Scan<Changes<Value>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue = .mainIsolated(),
+    queue: TargetQueue,
     receive: @escaping (Changes<Value>, Accumulate) -> Void
+  ) -> VergeAnyCancellable {
+    innerStore.sinkState(
+      scan: scan,
+      dropsFirst: dropsFirst,
+      queue: queue,
+      receive: receive
+    )
+    .associate(self)
+  }
+  
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - scan: Accumulates a specified type of value over receiving updates.
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkValue<Accumulate>(
+    scan: Scan<Changes<Value>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: MainActorTargetQueue = .mainIsolated(),
+    receive: @escaping @MainActor (Changes<Value>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     innerStore.sinkState(
       scan: scan,
@@ -270,7 +315,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
 
   fileprivate func _makeChain<NewState>(
     _ map: Pipeline<Changes<Value>, NewState>,
-    queue: TargetQueue
+    queue: TargetQueueType
   ) -> Derived<NewState> {
     
     vergeSignpostEvent("Derived.chain.new", label: "\(type(of: Value.self)) -> \(type(of: NewState.self))")
@@ -287,7 +332,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
       set: { _ in },
       initialUpstreamState: value,
       subscribeUpstreamState: { callback in
-        self.innerStore.sinkState(
+        self.innerStore._sinkState(
           dropsFirst: true,
           queue: queue,
           receive: callback
@@ -314,7 +359,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
   public func chain<NewState>(
     _ pipeline: Pipeline<Changes<Value>, NewState>,
     dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueueType = TargetQueue.passthrough
     ) -> Derived<NewState> {
         
     let derived = chainCahce2.withValue { cache -> Derived<NewState> in
@@ -415,7 +460,7 @@ extension Derived where Value : Equatable {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkChangedPrimitiveValue(
     dropsFirst: Bool = false,
-    queue: TargetQueue = .mainIsolated(),
+    queue: TargetQueue,
     receive: @escaping (Value) -> Void
   ) -> VergeAnyCancellable {
     sinkValue(dropsFirst: dropsFirst, queue: queue) { (changes) in
@@ -425,6 +470,23 @@ extension Derived where Value : Equatable {
     }
   }
 
+  /// Subscribe the state changes
+  ///
+  /// Receives a value only changed
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkChangedPrimitiveValue(
+    dropsFirst: Bool = false,
+    queue: MainActorTargetQueue = .mainIsolated(),
+    receive: @escaping @MainActor (Value) -> Void
+  ) -> VergeAnyCancellable {
+    sinkValue(dropsFirst: dropsFirst, queue: queue) { (changes) in
+      changes.ifChanged { value in
+        receive(value)
+      }
+    }
+  }
+  
 }
 
 // `Value == Never` eliminates specializing requirements.

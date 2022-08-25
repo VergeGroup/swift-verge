@@ -26,7 +26,7 @@ extension StoreType {
   /// Creates an instance of Derived
   private func _makeDerived<NewState>(
     _ pipeline: Pipeline<Changes<State>, NewState>,
-    queue: TargetQueue
+    queue: TargetQueueType
   ) -> Derived<NewState> {
 
     vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
@@ -37,7 +37,7 @@ extension StoreType {
       },
       initialUpstreamState: asStore().state,
       subscribeUpstreamState: { callback in
-        asStore().sinkState(dropsFirst: true, queue: queue, receive: callback)
+        asStore()._sinkState(dropsFirst: true, queue: queue, receive: callback)
       },
       retainsUpstream: nil
     )
@@ -56,8 +56,8 @@ extension StoreType {
   /// - Returns: Derived object that cached depends on the specified parameters
   public func derived<NewState>(
     _ pipeline: Pipeline<Changes<State>, NewState>,
-    dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
-    queue: TargetQueue = .passthrough
+    dropsOutput: (@Sendable (Changes<NewState>) -> Bool)? = nil,
+    queue: TargetQueueType = .passthrough
   ) -> Derived<NewState> {
 
     let derived = asStore().derivedCache2.withValue { cache -> Derived<NewState> in

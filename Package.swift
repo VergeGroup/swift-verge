@@ -4,10 +4,10 @@ import PackageDescription
 let package = Package(
   name: "Verge",
   platforms: [
-    .macOS(.v10_12),
-    .iOS(.v11),
-    .tvOS(.v10),
-    .watchOS(.v3),
+    .macOS(.v10_15),
+    .iOS(.v13),
+    .tvOS(.v13),
+    .watchOS(.v6),
   ],
   products: [
     .library(name: "Verge", targets: ["Verge"]),
