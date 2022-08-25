@@ -96,7 +96,7 @@ extension StoreType {
   /// - Returns: Derived object that cached depends on the specified parameters
   public func derived<NewState: Equatable>(
     _ pipeline: Pipeline<Changes<State>, NewState>,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueueType = .passthrough
   ) -> Derived<NewState> {
 
     return asStore().derivedCache1.withValue { cache in

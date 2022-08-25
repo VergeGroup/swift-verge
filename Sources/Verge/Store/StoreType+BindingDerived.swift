@@ -40,7 +40,7 @@ extension StoreType {
     get: Pipeline<Changes<State>, NewState>,
     dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
     set: @escaping (inout InoutRef<State>, NewState) -> Void,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueueType = .passthrough
   ) -> BindingDerived<NewState> {
 
     let derived = BindingDerived<NewState>.init(
@@ -52,7 +52,7 @@ extension StoreType {
       },
       initialUpstreamState: asStore().state,
       subscribeUpstreamState: { callback in
-        asStore().sinkState(
+        asStore()._sinkState(
           dropsFirst: true,
           queue: queue,
           receive: callback
@@ -79,7 +79,7 @@ extension StoreType {
     _ line: UInt = #line,
     get: Pipeline<Changes<State>, NewState>,
     set: @escaping (inout InoutRef<State>, NewState) -> Void,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueueType = .passthrough
   ) -> BindingDerived<NewState> where NewState : Equatable {
 
     bindingDerived(
@@ -112,7 +112,7 @@ extension StoreType {
     get: Pipeline<Changes<State>, NewState>,
     dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
     set: @escaping (inout InoutRef<State>, NewState) -> Void,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueueType = .passthrough
   ) -> BindingDerived<NewState> {
 
     bindingDerived(name, file, function, line, get: get, dropsOutput: dropsOutput, set: set, queue: queue)
@@ -134,7 +134,7 @@ extension StoreType {
     _ line: UInt = #line,
     get: Pipeline<Changes<State>, NewState>,
     set: @escaping (inout InoutRef<State>, NewState) -> Void,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueueType = .passthrough
   ) -> BindingDerived<NewState> where NewState : Equatable {
     bindingDerived(name, file, function, line, get: get, set: set, queue: queue)
   }

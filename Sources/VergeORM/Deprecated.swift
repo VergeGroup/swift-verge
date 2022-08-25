@@ -40,7 +40,7 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<E0: EntityType & Equatable, E1: EntityType & Equatable>(
     from e0ID: E0.EntityID,
     _ e1ID: E1.EntityID,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueueType = .passthrough
   ) throws -> Derived<(NonNullEntityWrapper<E0>, NonNullEntityWrapper<E1>)> {
 
     Derived.combined(
@@ -64,7 +64,7 @@ extension StoreType where State : DatabaseEmbedding {
     from e0ID: E0.EntityID,
     _ e1ID: E1.EntityID,
     _ e2ID: E2.EntityID,
-    queue: TargetQueue = .passthrough
+    queue: TargetQueueType = .passthrough
   ) throws -> Derived<(NonNullEntityWrapper<E0>, NonNullEntityWrapper<E1>, NonNullEntityWrapper<E2>)> {
 
     Derived.combined(

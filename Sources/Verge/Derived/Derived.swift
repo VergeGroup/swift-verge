@@ -223,6 +223,19 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
     return chained
   }
   
+  private func _sinkValue(
+    dropsFirst: Bool = false,
+    queue: TargetQueueType,
+    receive: @escaping (Changes<Value>) -> Void
+  ) -> VergeAnyCancellable {
+    innerStore._sinkState(
+      dropsFirst: dropsFirst,
+      queue: queue,
+      receive: receive
+    )
+    .associate(self)
+  }
+  
   /// Subscribe the state changes
   ///
   /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
@@ -500,7 +513,7 @@ extension Derived where Value == Never {
   ///   - s0:
   ///   - s1:
   /// - Returns:
-  public static func combined<S0, S1>(_ s0: Derived<S0>, _ s1: Derived<S1>, queue: TargetQueue = .passthrough) -> Derived<(S0, S1)> {
+  public static func combined<S0, S1>(_ s0: Derived<S0>, _ s1: Derived<S1>, queue: TargetQueueType = .passthrough) -> Derived<(S0, S1)> {
     
     typealias Shape = (S0, S1)
     
@@ -514,14 +527,14 @@ extension Derived where Value == Never {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
                 
-        let _s0 = s0.sinkValue(dropsFirst: true, queue: queue) { (s0) in
+        let _s0 = s0._sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             value.0 = s0.primitive
             callback(value)
           }
         }
         
-        let _s1 = s1.sinkValue(dropsFirst: true, queue: queue) { (s1) in
+        let _s1 = s1._sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
             value.1 = s1.primitive
             callback(value)
@@ -548,7 +561,7 @@ extension Derived where Value == Never {
   ///   - s1:
   ///   - s2:
   /// - Returns:
-  public static func combined<S0, S1, S2>(_ s0: Derived<S0>, _ s1: Derived<S1>, _ s2: Derived<S2>, queue: TargetQueue = .passthrough) -> Derived<(S0, S1, S2)> {
+  public static func combined<S0, S1, S2>(_ s0: Derived<S0>, _ s1: Derived<S1>, _ s2: Derived<S2>, queue: TargetQueueType = .passthrough) -> Derived<(S0, S1, S2)> {
     
     typealias Shape = (S0, S1, S2)
     
@@ -562,21 +575,21 @@ extension Derived where Value == Never {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
         
-        let _s0 = s0.sinkValue(dropsFirst: true, queue: queue) { (s0) in
+        let _s0 = s0._sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             value.0 = s0.primitive
             callback(value)
           }
         }
         
-        let _s1 = s1.sinkValue(dropsFirst: true, queue: queue) { (s1) in
+        let _s1 = s1._sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
             value.1 = s1.primitive
             callback(value)
           }
         }
         
-        let _s2 = s2.sinkValue(dropsFirst: true, queue: queue) { (s2) in
+        let _s2 = s2._sinkValue(dropsFirst: true, queue: queue) { (s2) in
           buffer.modify { value in
             value.2 = s2.primitive
             callback(value)
