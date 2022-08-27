@@ -21,12 +21,14 @@
 
 import Foundation
 
-#if !COCOAPODS
-#endif
+public protocol TargetQueueType: AnyObject {
+  func executor() -> (@escaping () -> Void) -> Void
+}
 
 /// Describes queue to dispatch event
 /// Currently light-weight impl
-public final class TargetQueue {
+/// A reason why class is to take an object identifier.
+public final class TargetQueue: TargetQueueType {
 
   private let schedule: (@escaping () -> Void) -> Void
 
@@ -36,12 +38,27 @@ public final class TargetQueue {
     self.schedule = schedule
   }
 
-  func executor() -> (@escaping () -> Void) -> Void {
+  public func executor() -> (@escaping () -> Void) -> Void {
     schedule
   }
 }
 
-fileprivate enum StaticMember {
+public final class MainActorTargetQueue: TargetQueueType {
+
+  private let schedule: (@escaping () -> Void) -> Void
+
+  fileprivate init(
+    schedule: @escaping (@escaping () -> Void) -> Void
+  ) {
+    self.schedule = schedule
+  }
+
+  public func executor() -> (@escaping () -> Void) -> Void {
+    schedule
+  }
+}
+
+private enum StaticMember {
 
   static let serialBackgroundDispatchQueue: DispatchQueue = .init(
     label: "org.verge.background",
@@ -65,32 +82,66 @@ extension DispatchQueue {
   }
 }
 
-
-extension TargetQueue {
-
+extension TargetQueueType where Self == TargetQueue {
   /// Returns a instance that never dispatches.
   /// The Sink use this targetQueue performs in the queue which the upstream commit dispatched.
-  public static let passthrough: TargetQueue = .init { workItem in
-    workItem()
+  public static var passthrough: TargetQueue {
+    TargetQueue._passthrough
   }
 
+  /// Use specified queue, always dispatches
+  public static func specific(_ targetQueue: DispatchQueue) -> TargetQueue {
+    return .init { workItem in
+      targetQueue.async(execute: workItem)
+    }
+  }
+  /// It dispatches to the serial background queue asynchronously.
+  public static var asyncSerialBackground: TargetQueue {
+    TargetQueue._asyncSerialBackground
+  }
+
+  /// Enqueue first item on current-thread(synchronously).
+  /// From then, using specified queue.
+  public static func startsFromCurrentThread<Queue: TargetQueueType>(andUse queue: Queue) -> TargetQueue {
+    let numberEnqueued = VergeConcurrency.AtomicReference.init(initialValue: false)
+    
+    let execute = queue.executor()
+    
+    return .init { workItem in
+      
+      let isFirst = numberEnqueued.compareAndSet(expect: false, newValue: true)
+      
+      if isFirst {
+        workItem()
+      } else {
+        execute(workItem)
+      }
+      
+    }
+  }
+}
+
+extension TargetQueueType where Self == MainActorTargetQueue {
+
   /// It dispatches to main-queue asynchronously always.
-  public static let asyncMain: TargetQueue = .init { workItem in
-    DispatchQueue.main.async(execute: workItem)
+  public static var asyncMain: MainActorTargetQueue {
+    MainActorTargetQueue._asyncMain
   }
 
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
-  public static let main: TargetQueue = mainIsolated()
+  public static var main: MainActorTargetQueue {
+    MainActorTargetQueue._main
+  }
 
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
   /// This create isolated queue against using `.main`.
-  public static func mainIsolated() -> TargetQueue {
+  public static func mainIsolated() -> MainActorTargetQueue {
     let numberEnqueued = VergeConcurrency.AtomicInt(initialValue: 0)
-
+    
     return .init { workItem in
-
+      
       let previousNumberEnqueued = numberEnqueued.getAndIncrement()
-
+      
       if DispatchQueue.isMain && previousNumberEnqueued == 0 {
         workItem()
         numberEnqueued.decrementAndGet()
@@ -102,39 +153,31 @@ extension TargetQueue {
       }
     }
   }
+}
 
-  /// Use specified queue, always dispatches
-  public static func specific(_ targetQueue: DispatchQueue) -> TargetQueue {
-    return .init { workItem in
-      targetQueue.async(execute: workItem)
-    }
+extension MainActorTargetQueue {
+  /// It dispatches to main-queue asynchronously always.
+  static let _asyncMain: MainActorTargetQueue = .init { workItem in
+    DispatchQueue.main.async(execute: workItem)
+  }
+
+  /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
+  static let _main: MainActorTargetQueue = mainIsolated()
+
+}
+
+extension TargetQueue {
+
+  /// Returns a instance that never dispatches.
+  /// The Sink use this targetQueue performs in the queue which the upstream commit dispatched.
+  static let _passthrough: TargetQueue = .init { workItem in
+    workItem()
   }
 
   /// It dispatches to the serial background queue asynchronously.
-  public static var asyncSerialBackground: TargetQueue = .init { workItem in
+  static let _asyncSerialBackground: TargetQueue = .init { workItem in
     StaticMember.serialBackgroundDispatchQueue.async(execute: workItem)
   }
 
-  /// Enqueue first item on current-thread(synchronously).
-  /// From then, using specified queue.
-  public static func startsFromCurrentThread(andUse queue: TargetQueue) -> TargetQueue {
-
-    let numberEnqueued = VergeConcurrency.AtomicReference.init(initialValue: false)
-
-    return .init { workItem in
-
-      let isFirst = numberEnqueued.compareAndSet(expect: false, newValue: true)
-
-      if isFirst {
-        workItem()
-      } else {
-        queue.schedule(workItem)
-      }
-      
-      
-    }
-
-  }
+ 
 }
-
-
