@@ -110,6 +110,8 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
     
     /**
      https://github.com/VergeGroup/Verge/pull/220
+     https://github.com/VergeGroup/Verge/issues/221
+     https://github.com/VergeGroup/Verge/pull/222
      */
           
     assertion: do {
