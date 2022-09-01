@@ -58,6 +58,7 @@ public struct StateReader<Value, Content: View>: View {
    
    This syntax and approach are related to the lacking of current Xcode's auto-completion. (Xcode12)
    */
+  @available(*, deprecated, message: "Use init with content")
   public func content<NewContent: View>(@ViewBuilder _ makeContent: @escaping (Changes<Value>) -> NewContent) -> StateReader<Value, NewContent> {
     return .init(updateTrigger: observableObject, updateValue: updateValue, content: makeContent)
   }
@@ -66,43 +67,19 @@ public struct StateReader<Value, Content: View>: View {
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 extension StateReader {
-
-  /// inner init
-  private init<Derived: DerivedType>(
-    derived: Derived
-  ) where Value == Derived.Value, Content == EmptyView {
-
-    let concrete = derived.asDerived()
-
-    self.init(
-      updateTrigger: concrete,
-      updateValue: {
-        concrete.value
-      },
-      content: { _ in EmptyView() }
-    )
-
-  }
-
+ 
   /// Creates an instance from `Store`
   ///
   /// - Complexity: ⚠️ No memoization, content closure runs every time according to the store's updates.
   /// - Parameters:
   ///   - store:
   ///   - content:
+  @available(*, deprecated, message: "Use init with content")
   public init<Store: StoreType>(
     _ store: Store
   ) where Value == Store.State, Content == EmptyView {
-
-    let store = store.asStore()
-
-    self.init(
-      updateTrigger: store,
-      updateValue: {
-        store.state
-      },
-      content: { _ in EmptyView() }
-    )
+        
+    self.init(store, content: { _ in EmptyView() })
 
   }
 
@@ -112,11 +89,12 @@ extension StateReader {
   /// - Parameters:
   ///   - derived:
   ///   - content:
+  @available(*, deprecated, message: "Use init with content")
   public init<Derived: DerivedType>(
     _ derived: Derived
   ) where Value == Derived.Value, Content == EmptyView {
 
-    self.init(derived: derived)
+    self.init(derived: derived, content: { _ in EmptyView() })
 
   }
 
@@ -126,6 +104,7 @@ extension StateReader {
   /// - Parameters:
   ///   - store:
   ///   - content:
+  @available(*, deprecated, message: "Use init with content")
   public init<Store: StoreType>(
     _ store: Store
   ) where Value == Store.State, Value : Equatable, Content == EmptyView {
@@ -138,11 +117,12 @@ extension StateReader {
   /// - Parameters:
   ///   - store:
   ///   - content:
+  @available(*, deprecated, message: "Use init with content")
   public init<Derived: DerivedType>(
     _ derived: Derived
   ) where Value == Derived.Value, Value : Equatable, Content == EmptyView {
     assert(derived.asDerived().attributes.contains(.dropsDuplicatedOutput) == true)
-    self.init(derived: derived)
+    self.init(derived: derived, content: { _ in EmptyView() })
   }
 
 }
@@ -175,7 +155,7 @@ extension StateReader {
   ///   - store:
   ///   - content:
   public init<Store: StoreType>(
-    store: Store,
+    _ store: Store,
     @ViewBuilder content: @escaping (Changes<Store.State>) -> Content
   ) where Value == Store.State {
 
