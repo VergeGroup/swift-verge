@@ -90,7 +90,7 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
         
     if flag.compareAndSet(expect: 0, newValue: 1) {
             
-      while let event = queue.modify({
+      while let event: Event = queue.modify({
         if $0.isEmpty == false {
           return $0.removeFirst()
         } else {
@@ -101,6 +101,12 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
           subscriber.1(event)
         }
       }
+      
+      /**
+       might contain a bug in here?
+       a conjunction of enqueue and dequeue
+       */
+      
       flag.compareAndSet(expect: 1, newValue: 0)
     } else {
       // enqueue only
