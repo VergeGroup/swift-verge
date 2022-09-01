@@ -90,8 +90,13 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
         
     if flag.compareAndSet(expect: 0, newValue: 1) {
             
-      while queue.value.isEmpty == false {
-        let event = queue.modify { $0.removeFirst() }
+      while let event = queue.modify({
+        if $0.isEmpty == false {
+          return $0.removeFirst()
+        } else {
+          return nil
+        }
+      }) {
         for subscriber in capturedSubscribers {
           subscriber.1(event)
         }
