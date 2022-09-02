@@ -112,6 +112,7 @@
 		4B8A5C0925D29CA70024A39A /* StoreInitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8A5C0825D29CA70024A39A /* StoreInitTests.swift */; };
 		4B91B3782440B9C4005082D7 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* Verge.framework */; };
 		4B91B3792440B9C4005082D7 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B786320233912AB009B9C1B /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B92BE7C28C08C1F000BA659 /* EmitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B92BE7B28C08C1F000BA659 /* EmitterTests.swift */; };
 		4B93C875247A523500372BC4 /* SyntaxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B93C874247A523500372BC4 /* SyntaxTests.swift */; };
 		4B95BE5A244F10F200124F6B /* DemoState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B95BE59244F10F200124F6B /* DemoState.swift */; };
 		4B965EAF28B65CAE00F2DEC0 /* ThunkToMainActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B965EAE28B65CAE00F2DEC0 /* ThunkToMainActor.swift */; };
@@ -387,6 +388,7 @@
 		4B8EB4F823C034A900035B2A /* Comparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparer.swift; sourceTree = "<group>"; };
 		4B8F5AB6246160AB005F68B6 /* VergeConcurrency+AtomicInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VergeConcurrency+AtomicInt.swift"; sourceTree = "<group>"; };
 		4B8F5ABA24616416005F68B6 /* VergeConcurrency+AtomicReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VergeConcurrency+AtomicReference.swift"; sourceTree = "<group>"; };
+		4B92BE7B28C08C1F000BA659 /* EmitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmitterTests.swift; sourceTree = "<group>"; };
 		4B93C874247A523500372BC4 /* SyntaxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyntaxTests.swift; sourceTree = "<group>"; };
 		4B93EC7323307637002BB30B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4B95BE59244F10F200124F6B /* DemoState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoState.swift; sourceTree = "<group>"; };
@@ -774,6 +776,7 @@
 				4B89F83F2600B3CB0090676B /* ConcurrencyTests.swift */,
 				4B73A8E5282AC8F0005E17FB /* ComparerTests.swift */,
 				4BF4105C28B7AB5F00B5AA54 /* IsolatedContextTests.swift */,
+				4B92BE7B28C08C1F000BA659 /* EmitterTests.swift */,
 			);
 			path = VergeTests;
 			sourceTree = "<group>";
@@ -1592,6 +1595,7 @@
 				4B95BE5A244F10F200124F6B /* DemoState.swift in Sources */,
 				4B04C4FC257086D900731802 /* EventEmitterTests.swift in Sources */,
 				4B9DD6B924CB6B0C0062FB7A /* CachedMapTests.swift in Sources */,
+				4B92BE7C28C08C1F000BA659 /* EmitterTests.swift in Sources */,
 				4BC489A425A07A9700AC0365 /* KeyPathIdentifierStoreTests.swift in Sources */,
 				4B2240A22576431E001BCB93 /* MemoizeMapTests.swift in Sources */,
 				4B68394723705ACE002FFC5A /* VergeStoreTests.swift in Sources */,

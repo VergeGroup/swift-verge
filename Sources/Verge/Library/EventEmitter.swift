@@ -52,18 +52,14 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   
   private var __publisher: Any?
   
-  private let subscribersLock = VergeConcurrency.RecursiveLock()
-  
   /**
    The reason why we use array against dictionary, the subscribers does not often remove.
    */
-  private var subscribers: [(EventEmitterCancellable, (Event) -> Void)] = []
+  private var subscribers: VergeConcurrency.UnfairLockAtomic<[(EventEmitterCancellable, (Event) -> Void)]> = .init([])
   
-  private var eventQueue: ContiguousArray<Event> = .init()
-  
-  private let queueLock = VergeConcurrency.RecursiveLock()
-    
-  private var isCurrentlyEventEmitting: VergeConcurrency.RecursiveLockAtomic<Int> = .init(0)
+  private let queue: VergeConcurrency.UnfairLockAtomic<ContiguousArray<Event>> = .init(.init())
+        
+  private let flag = VergeConcurrency.AtomicInt(initialValue: 0)
 
   private var deinitHandlers: VergeConcurrency.UnfairLockAtomic<[() -> Void]> = .init([])
   
@@ -78,25 +74,59 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   }
       
   public func accept(_ event: Event) {
-    withLocking(queueLock) {
-      eventQueue.append(event)
+    
+    /**
+     https://github.com/VergeGroup/Verge/pull/220
+     https://github.com/VergeGroup/Verge/issues/221
+     https://github.com/VergeGroup/Verge/pull/222
+     */
+        
+    // delivers a given event for subscribers at this point.
+    let capturedSubscribers = subscribers.value
+    
+    queue.modify {
+      $0.append(event)
     }
-    drain()
+        
+    if flag.compareAndSet(expect: 0, newValue: 1) {
+            
+      while let event: Event = queue.modify({
+        if $0.isEmpty == false {
+          return $0.removeFirst()
+        } else {
+          return nil
+        }
+      }) {
+        for subscriber in capturedSubscribers {
+          subscriber.1(event)
+        }
+      }
+      
+      /**
+       might contain a bug in here?
+       a conjunction of enqueue and dequeue
+       */
+      
+      flag.compareAndSet(expect: 1, newValue: 0)
+    } else {
+      // enqueue only
+    }
+              
   }
   
   @discardableResult
   public func add(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterCancellable {
     let token = EventEmitterCancellable(owner: self)
-    withLocking(subscribersLock) {
-      subscribers.append((token, eventReceiver))
+    subscribers.modify {
+      $0.append((token, eventReceiver))
     }
     return token
   }
   
   func remove(_ token: EventEmitterCancellable) {
-    withLocking(subscribersLock) {
-      guard let index = subscribers.firstIndex(where: { $0.0 == token }) else { return }
-      subscribers.remove(at: index)
+    subscribers.modify {
+      guard let index = $0.firstIndex(where: { $0.0 == token }) else { return }
+      $0.remove(at: index)
     }
   }
 
@@ -108,83 +138,8 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   
   private func drain() {
     
-    /**
-     https://github.com/VergeGroup/Verge/pull/220
-     https://github.com/VergeGroup/Verge/issues/221
-     https://github.com/VergeGroup/Verge/pull/222
-     */
-          
-    assertion: do {
-      #if DEBUG
-      let _isRunning = isCurrentlyEventEmitting.value
-      assert(_isRunning == 0 || _isRunning == 1, "\(_isRunning)")
-      #endif
-    }
-                 
-    /**
-     Increments the flag atomically if it can start to emit the events.
-     */
-    let canStartToEmitEvents: Bool = isCurrentlyEventEmitting.modify {
-      guard $0 == 0 else {
-        return false
-      }
-      $0 &+= 1
-      return true
-    }
-   
-    guard canStartToEmitEvents else {
-      /**
-       Currently, EventEmitter is under the emitting events lately registered.
-       This operation would be queued until finished current operations.
-       */
-      return
-    }
-                       
-    let scheduledEvents: ContiguousArray<Event> = withLocking(queueLock) {
-      let events = eventQueue
-      eventQueue = []
-      return events
-    }
-            
-    guard !scheduledEvents.isEmpty else {
-      /**
-       Decrements the flag atomically.
-       */
-      isCurrentlyEventEmitting.modify {
-        $0 &-= 1
-        assert($0 == 0, "\(isCurrentlyEventEmitting.value)")
-      }
-      return
-    }
-                          
-    let signpost = VergeSignpostTransaction("EventEmitter.emits")
-        
-    withLocking(subscribersLock) {
-                  
-      let targets = subscribers
-      
-      /// Delivers events
-      scheduledEvents.forEach { event in
-        targets.forEach {
-          signpost.event(name: "EventEmitter.oneEmit")
-          $0.1(event)
-        }
-      }
-      
-      /**
-       Decrements the flag atomically.
-       */
-      isCurrentlyEventEmitting.modify {
-        $0 &-= 1
-        assert($0 == 0, "\(isCurrentlyEventEmitting.value)")
-      }
-    }
-         
-    signpost.end()
-  
-    drain()
-    
   }
+  
 }
 
 #if canImport(Combine)
