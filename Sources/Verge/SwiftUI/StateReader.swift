@@ -131,6 +131,7 @@ extension StateReader {
 extension StateReader {
 
   /// inner init
+  @inline(__always)
   private init<Derived: DerivedType>(
     derived: Derived,
     @ViewBuilder content: @escaping (Changes<Derived.Value>) -> Content
@@ -147,7 +148,7 @@ extension StateReader {
     )
 
   }
-
+    
   /// Initialize from `Store`
   ///
   /// - Complexity: ⚠️ No memoization, content closure runs every time according to the store's updates.
@@ -170,7 +171,7 @@ extension StateReader {
     )
 
   }
-
+  
   /// Creates an instance  from `Derived`
   ///
   /// - Complexity: 💡 It depends on how Derived does memoization.
@@ -213,6 +214,21 @@ extension StateReader {
 
   }
 
+}
+
+extension StateReader {
+  
+  public init<Store: StoreType>(
+    _ store: Store,
+    _ pipeline: Pipeline<Changes<Store.State>, Value>,
+    @ViewBuilder content: @escaping (Changes<Value>) -> Content
+  ) {
+    
+    let derived = store.derived(pipeline, queue: .passthrough)
+    
+    self.init(derived: derived, content: content)
+    
+  }
 }
 
 #endif
