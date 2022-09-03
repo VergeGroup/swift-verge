@@ -14,11 +14,11 @@ jobs:
       - name:
         run: xcodebuild -scheme Verge-Package -resultBundlePath results/VergeTests.xcresult test -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.4' -derivedDataPath ./DerivedData | xcbeautify
 
-     - uses: kishikawakatsumi/xcresulttool@v1
-       with:
-         path: |
-           results/VergeTests.xcresult        
-       if: success() || failure()
+      - uses: kishikawakatsumi/xcresulttool@v1
+        with:
+          path: |
+            results/VergeTests.xcresult
+        if: success() || failure()
 
   lint:
     runs-on: macos-12
