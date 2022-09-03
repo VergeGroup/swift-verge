@@ -14,7 +14,7 @@ import Combine
 
 @available(iOS 13, *)
 final class ConcurrencyTests: XCTestCase {
-  func testOrderOfEvents() {
+  func optout_testOrderOfEvents() {
     RuntimeSanitizer.global.isSanitizerStateReceivingByCorrectOrder = true
     RuntimeSanitizer.global.onDidFindRuntimeError = { error in
       print(error)

@@ -44,7 +44,7 @@ let package = Package(
 //    .testTarget(name: "AsyncVergeTests", dependencies: ["AsyncVerge"]),
     .testTarget(name: "VergeClassicTests", dependencies: ["VergeClassic"]),
     .testTarget(name: "VergeORMTests", dependencies: ["VergeORM"]),
-    .testTarget(name: "VergeRxTests", dependencies: ["VergeRx"]),
+    .testTarget(name: "VergeRxTests", dependencies: ["VergeRx", "VergeClassic", "VergeORM"]),
     .testTarget(name: "VergeTests", dependencies: ["Verge"]),
     .testTarget(name: "VergeTinyTests", dependencies: ["VergeTiny"]),
   ],
