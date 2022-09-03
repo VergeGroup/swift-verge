@@ -1,6 +1,24 @@
 {
   "pins" : [
     {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "8dd85aee02e39dd280c75eef88ffdb86eed4b07b",
+        "version" : "5.6.2"
+      }
+    },
+    {
+      "identity" : "bulk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/FluidGroup/Bulk.git",
+      "state" : {
+        "revision" : "d015785718b8c0a6cb418dc9f8cb5a08bb36caa8",
+        "version" : "0.7.0"
+      }
+    },
+    {
       "identity" : "combineext",
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:CombineCommunity/CombineExt.git",
@@ -19,6 +37,24 @@
       }
     },
     {
+      "identity" : "jayson",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/muukii/JAYSON.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "4a672f4282a52d620094764c308e7e2a7d6158dc"
+      }
+    },
+    {
+      "identity" : "moya",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Moya/Moya.git",
+      "state" : {
+        "revision" : "c263811c1f3dbf002be9bd83107f7cdc38992b26",
+        "version" : "15.0.3"
+      }
+    },
+    {
       "identity" : "nuke",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke.git",
@@ -28,12 +64,57 @@
       }
     },
     {
+      "identity" : "reactiveswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveCocoa/ReactiveSwift.git",
+      "state" : {
+        "revision" : "c43bae3dac73fdd3cb906bd5a1914686ca71ed3c",
+        "version" : "6.7.0"
+      }
+    },
+    {
+      "identity" : "realm-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-core",
+      "state" : {
+        "revision" : "6f6a0f415bd33cf2ced4467e36a47f7c84f0a1d7",
+        "version" : "12.5.1"
+      }
+    },
+    {
+      "identity" : "realm-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-swift.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "20ec0f6b04a6fe51d2b2d6be8f6d5528c90c07ea"
+      }
+    },
+    {
       "identity" : "rxswift",
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:ReactiveX/RxSwift.git",
       "state" : {
         "revision" : "b4307ba0b6425c0ba4178e138799946c3da594f8",
         "version" : "6.5.0"
+      }
+    },
+    {
+      "identity" : "swift-docc-plugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-docc-plugin.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "6a6577adb48651a1ca7dee6861c894ee6ca66021"
+      }
+    },
+    {
+      "identity" : "swift-docc-symbolkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-docc-symbolkit",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ccad2c3189e2a128e5773c3ce4787bc3e28672eb"
       }
     }
   ],

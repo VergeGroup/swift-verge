@@ -1,6 +1,7 @@
 
 import Foundation
 import Bulk
+import BulkLogger
 
 public let Log = Logger(context: "", sinks: [
   BulkSink<LogData>(

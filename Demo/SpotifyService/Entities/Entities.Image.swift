@@ -13,8 +13,8 @@ extension Entities {
 
     init(from json: JSON) throws {
 
-      self.width = json.width?.int
-      self.height = json.height?.int
+      self.width = json["width"]?.int
+      self.height = json["height"]?.int
       self.url = try json.next("url").get {
         try URL(string: $0.getString()).unwrap()
       }

@@ -7,13 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		13BD6D0FA0ABF698AFCCA4D8 /* Pods_Demo_VergeStoreDemoSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 823BB27FFFB6D98FF641E929 /* Pods_Demo_VergeStoreDemoSwiftUI.framework */; };
+		4B111B5F28C3E72700E80C01 /* VergeORM in Frameworks */ = {isa = PBXBuildFile; productRef = 4B111B5E28C3E72700E80C01 /* VergeORM */; };
+		4B111B6128C3E73B00E80C01 /* VergeORM in Frameworks */ = {isa = PBXBuildFile; productRef = 4B111B6028C3E73B00E80C01 /* VergeORM */; };
+		4B111B6528C3E7DB00E80C01 /* JAYSON in Frameworks */ = {isa = PBXBuildFile; productRef = 4B111B6428C3E7DB00E80C01 /* JAYSON */; };
+		4B111B6828C3E87800E80C01 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 4B111B6728C3E87800E80C01 /* Moya */; };
+		4B111B6A28C3E88600E80C01 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 4B111B6928C3E88600E80C01 /* Moya */; };
+		4B111B6C28C3E89500E80C01 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 4B111B6B28C3E89500E80C01 /* Realm */; };
+		4B111B6E28C3E89500E80C01 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4B111B6D28C3E89500E80C01 /* RealmSwift */; };
+		4B111B7028C3E8A500E80C01 /* Bulk in Frameworks */ = {isa = PBXBuildFile; productRef = 4B111B6F28C3E8A500E80C01 /* Bulk */; };
+		4B111B7228C3E8A500E80C01 /* BulkLogger in Frameworks */ = {isa = PBXBuildFile; productRef = 4B111B7128C3E8A500E80C01 /* BulkLogger */; };
+		4B111B7428C3E8DD00E80C01 /* VergeORM in Frameworks */ = {isa = PBXBuildFile; productRef = 4B111B7328C3E8DD00E80C01 /* VergeORM */; };
 		4B19FCAD252E33A0003A628D /* StateReaderDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B19FCAC252E33A0003A628D /* StateReaderDemoApp.swift */; };
 		4B19FCAF252E33A0003A628D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B19FCAE252E33A0003A628D /* ContentView.swift */; };
 		4B19FCB1252E33A1003A628D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B19FCB0252E33A1003A628D /* Assets.xcassets */; };
 		4B19FCB4252E33A1003A628D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B19FCB3252E33A1003A628D /* Preview Assets.xcassets */; };
-		4B19FCCB252E33D5003A628D /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; };
-		4B19FCCC252E33D5003A628D /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B28055827318D1200DA4FBB /* ConcurrencyAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B28055727318D1200DA4FBB /* ConcurrencyAppApp.swift */; };
 		4B28055A27318D1200DA4FBB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B28055927318D1200DA4FBB /* ContentView.swift */; };
 		4B28055C27318D1300DA4FBB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B28055B27318D1300DA4FBB /* Assets.xcassets */; };
@@ -45,13 +52,6 @@
 		4B714AF524A4FF2C006EB6D5 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AE024A4FF2C006EB6D5 /* RootTabView.swift */; };
 		4B714AF624A4FF2C006EB6D5 /* LoggedInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AE124A4FF2C006EB6D5 /* LoggedInView.swift */; };
 		4B714AF724A4FF2C006EB6D5 /* SessionRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AE224A4FF2C006EB6D5 /* SessionRootView.swift */; };
-		4B714B0324A4FF45006EB6D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AF824A4FF45006EB6D5 /* ViewController.swift */; };
-		4B714B0424A4FF45006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714AFA24A4FF45006EB6D5 /* LaunchScreen.storyboard */; };
-		4B714B0524A4FF45006EB6D5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714AFC24A4FF45006EB6D5 /* Main.storyboard */; };
-		4B714B0624A4FF45006EB6D5 /* CycleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AFE24A4FF45006EB6D5 /* CycleViewModel.swift */; };
-		4B714B0724A4FF45006EB6D5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AFF24A4FF45006EB6D5 /* Logger.swift */; };
-		4B714B0824A4FF45006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714B0024A4FF45006EB6D5 /* Assets.xcassets */; };
-		4B714B0A24A4FF45006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B0224A4FF45006EB6D5 /* AppDelegate.swift */; };
 		4B714B3224A4FF82006EB6D5 /* SettingsViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B2D24A4FF82006EB6D5 /* SettingsViewComponents.swift */; };
 		4B714B3324A4FF82006EB6D5 /* SampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B2E24A4FF82006EB6D5 /* SampleView.swift */; };
 		4B714B3424A4FF82006EB6D5 /* SpotifyUIKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B714B2F24A4FF82006EB6D5 /* SpotifyUIKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -86,9 +86,6 @@
 		4B714B7324A4FF92006EB6D5 /* BackendStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5524A4FF91006EB6D5 /* BackendStackManager.swift */; };
 		4B714B7424A4FF92006EB6D5 /* RealmObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5624A4FF92006EB6D5 /* RealmObjects.swift */; };
 		4B714B7624A4FFAF006EB6D5 /* FetchImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714B7524A4FFAF006EB6D5 /* FetchImage */; };
-		4B714B7924A4FFE0006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
-		4B714B7B24A4FFE0006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; platformFilter = ios; };
-		4B714B7D24A4FFE0006EB6D5 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; platformFilter = ios; };
 		4B714B8124A50006006EB6D5 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714B8024A50006006EB6D5 /* CombineExt */; };
 		4B714B9424A50065006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8224A50064006EB6D5 /* AppDelegate.swift */; };
 		4B714B9524A50065006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714B8424A50064006EB6D5 /* LaunchScreen.storyboard */; };
@@ -110,133 +107,17 @@
 		4B714BB024A50070006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714BA924A50070006EB6D5 /* Assets.xcassets */; };
 		4B714BB224A50070006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714BAB24A50070006EB6D5 /* AppDelegate.swift */; };
 		4B714BB324A50070006EB6D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714BAC24A50070006EB6D5 /* ViewController.swift */; };
-		4B714BB624A50094006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
-		4B714BB724A50094006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BB824A50094006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; };
-		4B714BB924A50094006EB6D5 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BBA24A50094006EB6D5 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; };
-		4B714BBB24A50094006EB6D5 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BBC24A500A6006EB6D5 /* VergeClassic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */; };
-		4B714BBD24A500A6006EB6D5 /* VergeClassic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BC324A500B2006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
-		4B714BC424A500B2006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BC524A500B2006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; };
-		4B714BC624A500B2006EB6D5 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BC724A500B2006EB6D5 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; };
-		4B714BC824A500B2006EB6D5 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BCC24A500BC006EB6D5 /* VergeObjcBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; };
-		4B714BCD24A500BC006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BCE24A500BC006EB6D5 /* VergeORM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; };
-		4B714BCF24A500BC006EB6D5 /* VergeORM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BD024A500BC006EB6D5 /* VergeRx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */; };
-		4B714BD124A500BC006EB6D5 /* VergeRx.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4B714BD224A500BC006EB6D5 /* Verge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; };
-		4B714BD324A500BC006EB6D5 /* Verge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A0824A4FCAB006EB6D5 /* Verge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B88BFD9256F55AF00823FA5 /* DemoCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B88BFD8256F55AF00823FA5 /* DemoCollectionViewController.swift */; };
-		9557558F01303402FCDDE2A7 /* Pods_Demo_VergeStoreDemoUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA16EEB0DF281CD9411B8A6E /* Pods_Demo_VergeStoreDemoUIKit.framework */; };
-		C35D763A6BC06F1C9BC9DF9E /* Pods_SpotifyService_SpotifyDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD3E331DC830854E203EE9C /* Pods_SpotifyService_SpotifyDemo.framework */; };
-		ED954F9E013950B84ADD7C4C /* Pods_SpotifyService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3114F85E3DB9175EF2B569F8 /* Pods_SpotifyService.framework */; };
+		4BADC22128C3E4DE003C0079 /* Verge in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADC22028C3E4DE003C0079 /* Verge */; };
+		4BADC22328C3E4E9003C0079 /* Verge in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADC22228C3E4E9003C0079 /* Verge */; };
+		4BADC22528C3E4FC003C0079 /* Verge in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADC22428C3E4FC003C0079 /* Verge */; };
+		4BADC22728C3E504003C0079 /* Verge in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADC22628C3E504003C0079 /* Verge */; };
+		4BADC23328C3E626003C0079 /* JAYSON in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADC23228C3E626003C0079 /* JAYSON */; };
+		4BADC23628C3E652003C0079 /* Bulk in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADC23528C3E652003C0079 /* Bulk */; };
+		4BADC23828C3E652003C0079 /* BulkLogger in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADC23728C3E652003C0079 /* BulkLogger */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		4B28057027318D1300DA4FBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B78879B263D379C00FD358F;
-			remoteInfo = VergeTiny;
-		};
-		4B28057227318D1300DA4FBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B7887A3263D379C00FD358F;
-			remoteInfo = VergeTinyTests;
-		};
-		4B28057427318D1300DA4FBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B165569273041A1003B930B;
-			remoteInfo = AsyncVerge;
-		};
-		4B28057627318D1300DA4FBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B165570273041A2003B930B;
-			remoteInfo = AsyncVergeTests;
-		};
-		4B714A0524A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B17438F23C766D70074C457;
-			remoteInfo = VergeRx;
-		};
-		4B714A0724A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B786320233912AB009B9C1B;
-			remoteInfo = VergeStore;
-		};
-		4B714A0924A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B475BB2239AB954008A03E1;
-			remoteInfo = VergeORM;
-		};
-		4B714A0B24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B86A4861F969AD5002D54FE;
-			remoteInfo = VergeClassic;
-		};
-		4B714A0D24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B9AF04424880145001BAAFC;
-			remoteInfo = VergeSwiftUI;
-		};
-		4B714A0F24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B5E849C24618D1C009A0CA8;
-			remoteInfo = VergeObjcBridge;
-		};
-		4B714A1D24A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B65F8EC1FB4C0DC00A90A67;
-			remoteInfo = VergeTests;
-		};
-		4B714A2124A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B68394423705ACD002FFC5A;
-			remoteInfo = VergeStoreTests;
-		};
-		4B714A2324A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B475BC5239ADE1C008A03E1;
-			remoteInfo = VergeORMTests;
-		};
-		4B714A2524A4FCAB006EB6D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B1743A723C767670074C457;
-			remoteInfo = VergeRxTests;
-		};
 		4B714A9324A4FD51006EB6D5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4B7149D924A4FC90006EB6D5 /* Project object */;
@@ -260,7 +141,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4B19FCCC252E33D5003A628D /* Verge.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -272,21 +152,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				4B714A9624A4FD51006EB6D5 /* SpotifyUIKit.framework in Embed Frameworks */,
-				4B714BB924A50094006EB6D5 /* VergeORM.framework in Embed Frameworks */,
-				4B714BBB24A50094006EB6D5 /* Verge.framework in Embed Frameworks */,
-				4B714BB724A50094006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */,
 				4B714AA824A4FD61006EB6D5 /* SpotifyService.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B714BC024A500A6006EB6D5 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				4B714BBD24A500A6006EB6D5 /* VergeClassic.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -297,9 +163,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4B714BC624A500B2006EB6D5 /* VergeORM.framework in Embed Frameworks */,
-				4B714BC824A500B2006EB6D5 /* Verge.framework in Embed Frameworks */,
-				4B714BC424A500B2006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -310,10 +173,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4B714BD124A500BC006EB6D5 /* VergeRx.framework in Embed Frameworks */,
-				4B714BCF24A500BC006EB6D5 /* VergeORM.framework in Embed Frameworks */,
-				4B714BD324A500BC006EB6D5 /* Verge.framework in Embed Frameworks */,
-				4B714BCD24A500BC006EB6D5 /* VergeObjcBridge.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -321,9 +180,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		183B8CD63E3A820A537C2EC1 /* Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig"; sourceTree = "<group>"; };
-		1FD3E331DC830854E203EE9C /* Pods_SpotifyService_SpotifyDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpotifyService_SpotifyDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3114F85E3DB9175EF2B569F8 /* Pods_SpotifyService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpotifyService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B19FCAA252E33A0003A628D /* StateReaderDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StateReaderDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B19FCAC252E33A0003A628D /* StateReaderDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateReaderDemoApp.swift; sourceTree = "<group>"; };
 		4B19FCAE252E33A0003A628D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -338,9 +194,7 @@
 		4B7149E224A4FC90006EB6D5 /* Demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B7149E524A4FC90006EB6D5 /* Demo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Demo.h; sourceTree = "<group>"; };
 		4B7149E624A4FC90006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Verge.xcodeproj; path = ../Verge.xcodeproj; sourceTree = "<group>"; };
 		4B714A2D24A4FCE3006EB6D5 /* SpotifyDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpotifyDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B714A4524A4FCF9006EB6D5 /* Verge-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Verge-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B714A5D24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B714A7524A4FD2C006EB6D5 /* VergeStoreDemoUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VergeStoreDemoUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpotifyUIKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -366,14 +220,6 @@
 		4B714AE024A4FF2C006EB6D5 /* RootTabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
 		4B714AE124A4FF2C006EB6D5 /* LoggedInView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggedInView.swift; sourceTree = "<group>"; };
 		4B714AE224A4FF2C006EB6D5 /* SessionRootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionRootView.swift; sourceTree = "<group>"; };
-		4B714AF824A4FF45006EB6D5 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		4B714AFB24A4FF45006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		4B714AFD24A4FF45006EB6D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
-		4B714AFE24A4FF45006EB6D5 /* CycleViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CycleViewModel.swift; sourceTree = "<group>"; };
-		4B714AFF24A4FF45006EB6D5 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		4B714B0024A4FF45006EB6D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4B714B0124A4FF45006EB6D5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4B714B0224A4FF45006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B714B2D24A4FF82006EB6D5 /* SettingsViewComponents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewComponents.swift; sourceTree = "<group>"; };
 		4B714B2E24A4FF82006EB6D5 /* SampleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleView.swift; sourceTree = "<group>"; };
 		4B714B2F24A4FF82006EB6D5 /* SpotifyUIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotifyUIKit.h; sourceTree = "<group>"; };
@@ -432,15 +278,7 @@
 		4B714BAB24A50070006EB6D5 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B714BAC24A50070006EB6D5 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4B88BFD8256F55AF00823FA5 /* DemoCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCollectionViewController.swift; sourceTree = "<group>"; };
-		79AE80BD9C633D16F47512FB /* Pods-Demo-VergeStoreDemoUIKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoUIKit.release.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit.release.xcconfig"; sourceTree = "<group>"; };
-		7CC20B4761208C7A47226CB1 /* Pods-SpotifyService-SpotifyDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService-SpotifyDemo.debug.xcconfig"; path = "Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo.debug.xcconfig"; sourceTree = "<group>"; };
-		823BB27FFFB6D98FF641E929 /* Pods_Demo_VergeStoreDemoSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Demo_VergeStoreDemoSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8BC3303C2BD976DD9734BDA9 /* Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig"; sourceTree = "<group>"; };
-		96600602DAADE2DFF0BC0217 /* Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig"; path = "Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig"; sourceTree = "<group>"; };
-		B30CE7812DD52F9ECAE1AB51 /* Pods-SpotifyService-SpotifyDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService-SpotifyDemo.release.xcconfig"; path = "Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo.release.xcconfig"; sourceTree = "<group>"; };
-		B39815E29DAC92090500336F /* Pods-SpotifyService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService.release.xcconfig"; path = "Target Support Files/Pods-SpotifyService/Pods-SpotifyService.release.xcconfig"; sourceTree = "<group>"; };
-		CA16EEB0DF281CD9411B8A6E /* Pods_Demo_VergeStoreDemoUIKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Demo_VergeStoreDemoUIKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EEDBBBCBF1ADEBEABF793B55 /* Pods-SpotifyService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotifyService.debug.xcconfig"; path = "Target Support Files/Pods-SpotifyService/Pods-SpotifyService.debug.xcconfig"; sourceTree = "<group>"; };
+		4BADC21F28C3E498003C0079 /* Verge */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Verge; path = ..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -448,7 +286,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B19FCCB252E33D5003A628D /* Verge.framework in Frameworks */,
+				4BADC22128C3E4DE003C0079 /* Verge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,7 +301,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BADC23828C3E652003C0079 /* BulkLogger in Frameworks */,
 				4B714AB024A4FE19006EB6D5 /* CombineExt in Frameworks */,
+				4B111B6828C3E87800E80C01 /* Moya in Frameworks */,
+				4BADC23328C3E626003C0079 /* JAYSON in Frameworks */,
+				4BADC23628C3E652003C0079 /* Bulk in Frameworks */,
 				4B714AC624A4FE37006EB6D5 /* FetchImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -473,19 +315,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B714A9524A4FD51006EB6D5 /* SpotifyUIKit.framework in Frameworks */,
-				4B714BBA24A50094006EB6D5 /* Verge.framework in Frameworks */,
 				4B714AA724A4FD61006EB6D5 /* SpotifyService.framework in Frameworks */,
-				4B714BB824A50094006EB6D5 /* VergeORM.framework in Frameworks */,
-				4B714BB624A50094006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
-				C35D763A6BC06F1C9BC9DF9E /* Pods_SpotifyService_SpotifyDemo.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B714A4224A4FCF9006EB6D5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B714BBC24A500A6006EB6D5 /* VergeClassic.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,10 +323,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714BC324A500B2006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
-				4B714BC524A500B2006EB6D5 /* VergeORM.framework in Frameworks */,
-				4B714BC724A500B2006EB6D5 /* Verge.framework in Frameworks */,
-				13BD6D0FA0ABF698AFCCA4D8 /* Pods_Demo_VergeStoreDemoSwiftUI.framework in Frameworks */,
+				4BADC22728C3E504003C0079 /* Verge in Frameworks */,
+				4B111B5F28C3E72700E80C01 /* VergeORM in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,11 +332,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714BCC24A500BC006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
-				4B714BCE24A500BC006EB6D5 /* VergeORM.framework in Frameworks */,
-				4B714BD224A500BC006EB6D5 /* Verge.framework in Frameworks */,
-				9557558F01303402FCDDE2A7 /* Pods_Demo_VergeStoreDemoUIKit.framework in Frameworks */,
-				4B714BD024A500BC006EB6D5 /* VergeRx.framework in Frameworks */,
+				4BADC22528C3E4FC003C0079 /* Verge in Frameworks */,
+				4B111B6128C3E73B00E80C01 /* VergeORM in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -524,17 +349,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714B7924A4FFE0006EB6D5 /* VergeObjcBridge.framework in Frameworks */,
-				4B714B7B24A4FFE0006EB6D5 /* VergeORM.framework in Frameworks */,
-				4B714B7D24A4FFE0006EB6D5 /* Verge.framework in Frameworks */,
-				ED954F9E013950B84ADD7C4C /* Pods_SpotifyService.framework in Frameworks */,
+				4B111B7228C3E8A500E80C01 /* BulkLogger in Frameworks */,
+				4B111B6E28C3E89500E80C01 /* RealmSwift in Frameworks */,
+				4B111B7028C3E8A500E80C01 /* Bulk in Frameworks */,
+				4BADC22328C3E4E9003C0079 /* Verge in Frameworks */,
+				4B111B6528C3E7DB00E80C01 /* JAYSON in Frameworks */,
+				4B111B6A28C3E88600E80C01 /* Moya in Frameworks */,
 				4B714B8124A50006006EB6D5 /* CombineExt in Frameworks */,
+				4B111B6C28C3E89500E80C01 /* Realm in Frameworks */,
+				4B111B7428C3E8DD00E80C01 /* VergeORM in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B111B5D28C3E72700E80C01 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		4B19FCAB252E33A0003A628D /* StateReaderDemo */ = {
 			isa = PBXGroup;
 			children = (
@@ -577,10 +413,9 @@
 		4B7149D824A4FC90006EB6D5 = {
 			isa = PBXGroup;
 			children = (
-				4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */,
+				4BADC21F28C3E498003C0079 /* Verge */,
 				4B7149E424A4FC90006EB6D5 /* Demo */,
 				4B714A2E24A4FCE3006EB6D5 /* SpotifyDemo */,
-				4B714A4624A4FCF9006EB6D5 /* Verge-Demo */,
 				4B714A5E24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI */,
 				4B714A7624A4FD2C006EB6D5 /* VergeStoreDemoUIKit */,
 				4B714A8F24A4FD51006EB6D5 /* SpotifyUIKit */,
@@ -588,8 +423,7 @@
 				4B19FCAB252E33A0003A628D /* StateReaderDemo */,
 				4B28055627318D1200DA4FBB /* ConcurrencyApp */,
 				4B7149E324A4FC90006EB6D5 /* Products */,
-				AD6DE38C48444B06D801C3C3 /* Pods */,
-				D8C547534028A8A2BD8F9069 /* Frameworks */,
+				4B111B5D28C3E72700E80C01 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -598,7 +432,6 @@
 			children = (
 				4B7149E224A4FC90006EB6D5 /* Demo.framework */,
 				4B714A2D24A4FCE3006EB6D5 /* SpotifyDemo.app */,
-				4B714A4524A4FCF9006EB6D5 /* Verge-Demo.app */,
 				4B714A5D24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI.app */,
 				4B714A7524A4FD2C006EB6D5 /* VergeStoreDemoUIKit.app */,
 				4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */,
@@ -618,27 +451,6 @@
 			path = Demo;
 			sourceTree = "<group>";
 		};
-		4B7149EE24A4FCAA006EB6D5 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */,
-				4B28057127318D1300DA4FBB /* VergeTiny.framework */,
-				4B714A0824A4FCAB006EB6D5 /* Verge.framework */,
-				4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */,
-				4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */,
-				4B714A0E24A4FCAB006EB6D5 /* VergeSwiftUI.framework */,
-				4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */,
-				4B714A1E24A4FCAB006EB6D5 /* VergeClassicTests.xctest */,
-				4B714A2224A4FCAB006EB6D5 /* VergeTests.xctest */,
-				4B714A2424A4FCAB006EB6D5 /* VergeORMTests.xctest */,
-				4B714A2624A4FCAB006EB6D5 /* VergeRxTests.xctest */,
-				4B28057327318D1300DA4FBB /* VergeTinyTests.xctest */,
-				4B28057527318D1300DA4FBB /* AsyncVerge.framework */,
-				4B28057727318D1300DA4FBB /* AsyncVergeTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		4B714A2E24A4FCE3006EB6D5 /* SpotifyDemo */ = {
 			isa = PBXGroup;
 			children = (
@@ -656,20 +468,6 @@
 				4B714AD724A4FF2C006EB6D5 /* Views */,
 			);
 			path = SpotifyDemo;
-			sourceTree = "<group>";
-		};
-		4B714A4624A4FCF9006EB6D5 /* Verge-Demo */ = {
-			isa = PBXGroup;
-			children = (
-				4B714B0224A4FF45006EB6D5 /* AppDelegate.swift */,
-				4B714B0024A4FF45006EB6D5 /* Assets.xcassets */,
-				4B714AF924A4FF45006EB6D5 /* Base.lproj */,
-				4B714AFE24A4FF45006EB6D5 /* CycleViewModel.swift */,
-				4B714B0124A4FF45006EB6D5 /* Info.plist */,
-				4B714AFF24A4FF45006EB6D5 /* Logger.swift */,
-				4B714AF824A4FF45006EB6D5 /* ViewController.swift */,
-			);
-			path = "Verge-Demo";
 			sourceTree = "<group>";
 		};
 		4B714A5E24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI */ = {
@@ -805,15 +603,6 @@
 			path = LoggedIn;
 			sourceTree = "<group>";
 		};
-		4B714AF924A4FF45006EB6D5 /* Base.lproj */ = {
-			isa = PBXGroup;
-			children = (
-				4B714AFA24A4FF45006EB6D5 /* LaunchScreen.storyboard */,
-				4B714AFC24A4FF45006EB6D5 /* Main.storyboard */,
-			);
-			path = Base.lproj;
-			sourceTree = "<group>";
-		};
 		4B714B3B24A4FF91006EB6D5 /* Service */ = {
 			isa = PBXGroup;
 			children = (
@@ -864,32 +653,6 @@
 			path = Base.lproj;
 			sourceTree = "<group>";
 		};
-		AD6DE38C48444B06D801C3C3 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				8BC3303C2BD976DD9734BDA9 /* Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig */,
-				183B8CD63E3A820A537C2EC1 /* Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig */,
-				96600602DAADE2DFF0BC0217 /* Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig */,
-				79AE80BD9C633D16F47512FB /* Pods-Demo-VergeStoreDemoUIKit.release.xcconfig */,
-				EEDBBBCBF1ADEBEABF793B55 /* Pods-SpotifyService.debug.xcconfig */,
-				B39815E29DAC92090500336F /* Pods-SpotifyService.release.xcconfig */,
-				7CC20B4761208C7A47226CB1 /* Pods-SpotifyService-SpotifyDemo.debug.xcconfig */,
-				B30CE7812DD52F9ECAE1AB51 /* Pods-SpotifyService-SpotifyDemo.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		D8C547534028A8A2BD8F9069 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				823BB27FFFB6D98FF641E929 /* Pods_Demo_VergeStoreDemoSwiftUI.framework */,
-				CA16EEB0DF281CD9411B8A6E /* Pods_Demo_VergeStoreDemoUIKit.framework */,
-				3114F85E3DB9175EF2B569F8 /* Pods_SpotifyService.framework */,
-				1FD3E331DC830854E203EE9C /* Pods_SpotifyService_SpotifyDemo.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -934,6 +697,9 @@
 			dependencies = (
 			);
 			name = StateReaderDemo;
+			packageProductDependencies = (
+				4BADC22028C3E4DE003C0079 /* Verge */,
+			);
 			productName = StateReaderDemo;
 			productReference = 4B19FCAA252E33A0003A628D /* StateReaderDemo.app */;
 			productType = "com.apple.product-type.application";
@@ -972,6 +738,10 @@
 			packageProductDependencies = (
 				4B714AAF24A4FE19006EB6D5 /* CombineExt */,
 				4B714AC524A4FE37006EB6D5 /* FetchImage */,
+				4BADC23228C3E626003C0079 /* JAYSON */,
+				4BADC23528C3E652003C0079 /* Bulk */,
+				4BADC23728C3E652003C0079 /* BulkLogger */,
+				4B111B6728C3E87800E80C01 /* Moya */,
 			);
 			productName = Demo;
 			productReference = 4B7149E224A4FC90006EB6D5 /* Demo.framework */;
@@ -981,12 +751,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B714A3E24A4FCE4006EB6D5 /* Build configuration list for PBXNativeTarget "SpotifyDemo" */;
 			buildPhases = (
-				B3CDDC80A4C1726BAC1D52B9 /* [CP] Check Pods Manifest.lock */,
 				4B714A2924A4FCE3006EB6D5 /* Sources */,
 				4B714A2A24A4FCE3006EB6D5 /* Frameworks */,
 				4B714A2B24A4FCE3006EB6D5 /* Resources */,
 				4B714A9A24A4FD51006EB6D5 /* Embed Frameworks */,
-				438EDA0A3C384846F1FB867B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -995,37 +763,19 @@
 				4B714AA624A4FD61006EB6D5 /* PBXTargetDependency */,
 			);
 			name = SpotifyDemo;
+			packageProductDependencies = (
+			);
 			productName = SpotifyDemo;
 			productReference = 4B714A2D24A4FCE3006EB6D5 /* SpotifyDemo.app */;
-			productType = "com.apple.product-type.application";
-		};
-		4B714A4424A4FCF9006EB6D5 /* Verge-Demo */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4B714A5624A4FCF9006EB6D5 /* Build configuration list for PBXNativeTarget "Verge-Demo" */;
-			buildPhases = (
-				4B714A4124A4FCF9006EB6D5 /* Sources */,
-				4B714A4224A4FCF9006EB6D5 /* Frameworks */,
-				4B714A4324A4FCF9006EB6D5 /* Resources */,
-				4B714BC024A500A6006EB6D5 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Verge-Demo";
-			productName = "Verge-Demo";
-			productReference = 4B714A4524A4FCF9006EB6D5 /* Verge-Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
 		4B714A5C24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B714A6E24A4FD18006EB6D5 /* Build configuration list for PBXNativeTarget "VergeStoreDemoSwiftUI" */;
 			buildPhases = (
-				4D24AB2E41537DFD16F535B3 /* [CP] Check Pods Manifest.lock */,
 				4B714A5924A4FD18006EB6D5 /* Sources */,
 				4B714A5A24A4FD18006EB6D5 /* Frameworks */,
 				4B714A5B24A4FD18006EB6D5 /* Resources */,
-				DC43746BDDDCFFB780119717 /* [CP] Embed Pods Frameworks */,
 				4B714BC924A500B2006EB6D5 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -1033,6 +783,10 @@
 			dependencies = (
 			);
 			name = VergeStoreDemoSwiftUI;
+			packageProductDependencies = (
+				4BADC22628C3E504003C0079 /* Verge */,
+				4B111B5E28C3E72700E80C01 /* VergeORM */,
+			);
 			productName = VergeStoreDemoSwiftUI;
 			productReference = 4B714A5D24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI.app */;
 			productType = "com.apple.product-type.application";
@@ -1041,11 +795,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B714A8624A4FD2D006EB6D5 /* Build configuration list for PBXNativeTarget "VergeStoreDemoUIKit" */;
 			buildPhases = (
-				635400A341C38CA5A9B43240 /* [CP] Check Pods Manifest.lock */,
 				4B714A7124A4FD2C006EB6D5 /* Sources */,
 				4B714A7224A4FD2C006EB6D5 /* Frameworks */,
 				4B714A7324A4FD2C006EB6D5 /* Resources */,
-				4A903D6C4891932C0C09CDDF /* [CP] Embed Pods Frameworks */,
 				4B714BD424A500BC006EB6D5 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -1053,6 +805,10 @@
 			dependencies = (
 			);
 			name = VergeStoreDemoUIKit;
+			packageProductDependencies = (
+				4BADC22428C3E4FC003C0079 /* Verge */,
+				4B111B6028C3E73B00E80C01 /* VergeORM */,
+			);
 			productName = VergeStoreDemoUIKit;
 			productReference = 4B714A7524A4FD2C006EB6D5 /* VergeStoreDemoUIKit.app */;
 			productType = "com.apple.product-type.application";
@@ -1082,7 +838,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B714AA924A4FD61006EB6D5 /* Build configuration list for PBXNativeTarget "SpotifyService" */;
 			buildPhases = (
-				EFEFB8A0FBDCB13395616F10 /* [CP] Check Pods Manifest.lock */,
 				4B714A9B24A4FD61006EB6D5 /* Headers */,
 				4B714A9C24A4FD61006EB6D5 /* Sources */,
 				4B714A9D24A4FD61006EB6D5 /* Frameworks */,
@@ -1095,6 +850,14 @@
 			name = SpotifyService;
 			packageProductDependencies = (
 				4B714B8024A50006006EB6D5 /* CombineExt */,
+				4BADC22228C3E4E9003C0079 /* Verge */,
+				4B111B6428C3E7DB00E80C01 /* JAYSON */,
+				4B111B6928C3E88600E80C01 /* Moya */,
+				4B111B6B28C3E89500E80C01 /* Realm */,
+				4B111B6D28C3E89500E80C01 /* RealmSwift */,
+				4B111B6F28C3E8A500E80C01 /* Bulk */,
+				4B111B7128C3E8A500E80C01 /* BulkLogger */,
+				4B111B7328C3E8DD00E80C01 /* VergeORM */,
 			);
 			productName = SpotifyService;
 			productReference = 4B714AA024A4FD61006EB6D5 /* SpotifyService.framework */;
@@ -1120,10 +883,6 @@
 						CreatedOnToolsVersion = 11.5;
 					};
 					4B714A2C24A4FCE3006EB6D5 = {
-						CreatedOnToolsVersion = 11.5;
-						LastSwiftMigration = 1150;
-					};
-					4B714A4424A4FCF9006EB6D5 = {
 						CreatedOnToolsVersion = 11.5;
 						LastSwiftMigration = 1150;
 					};
@@ -1157,20 +916,17 @@
 			packageReferences = (
 				4B714AAE24A4FE19006EB6D5 /* XCRemoteSwiftPackageReference "CombineExt" */,
 				4B714AC424A4FE37006EB6D5 /* XCRemoteSwiftPackageReference "FetchImage" */,
+				4BADC22C28C3E5F4003C0079 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				4BADC23128C3E625003C0079 /* XCRemoteSwiftPackageReference "JAYSON" */,
+				4BADC23428C3E652003C0079 /* XCRemoteSwiftPackageReference "Bulk" */,
+				4B111B6628C3E87700E80C01 /* XCRemoteSwiftPackageReference "Moya" */,
 			);
 			productRefGroup = 4B7149E324A4FC90006EB6D5 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 4B7149EE24A4FCAA006EB6D5 /* Products */;
-					ProjectRef = 4B7149ED24A4FCAA006EB6D5 /* Verge.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				4B7149E124A4FC90006EB6D5 /* Demo */,
 				4B714A2C24A4FCE3006EB6D5 /* SpotifyDemo */,
-				4B714A4424A4FCF9006EB6D5 /* Verge-Demo */,
 				4B714A5C24A4FD18006EB6D5 /* VergeStoreDemoSwiftUI */,
 				4B714A7424A4FD2C006EB6D5 /* VergeStoreDemoUIKit */,
 				4B714A8D24A4FD51006EB6D5 /* SpotifyUIKit */,
@@ -1180,107 +936,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		4B28057127318D1300DA4FBB /* VergeTiny.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = VergeTiny.framework;
-			remoteRef = 4B28057027318D1300DA4FBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B28057327318D1300DA4FBB /* VergeTinyTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = VergeTinyTests.xctest;
-			remoteRef = 4B28057227318D1300DA4FBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B28057527318D1300DA4FBB /* AsyncVerge.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AsyncVerge.framework;
-			remoteRef = 4B28057427318D1300DA4FBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B28057727318D1300DA4FBB /* AsyncVergeTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AsyncVergeTests.xctest;
-			remoteRef = 4B28057627318D1300DA4FBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A0624A4FCAB006EB6D5 /* VergeRx.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = VergeRx.framework;
-			remoteRef = 4B714A0524A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A0824A4FCAB006EB6D5 /* Verge.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Verge.framework;
-			remoteRef = 4B714A0724A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A0A24A4FCAB006EB6D5 /* VergeORM.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = VergeORM.framework;
-			remoteRef = 4B714A0924A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A0C24A4FCAB006EB6D5 /* VergeClassic.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = VergeClassic.framework;
-			remoteRef = 4B714A0B24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A0E24A4FCAB006EB6D5 /* VergeSwiftUI.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = VergeSwiftUI.framework;
-			remoteRef = 4B714A0D24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A1024A4FCAB006EB6D5 /* VergeObjcBridge.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = VergeObjcBridge.framework;
-			remoteRef = 4B714A0F24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A1E24A4FCAB006EB6D5 /* VergeClassicTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = VergeClassicTests.xctest;
-			remoteRef = 4B714A1D24A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A2224A4FCAB006EB6D5 /* VergeTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = VergeTests.xctest;
-			remoteRef = 4B714A2124A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A2424A4FCAB006EB6D5 /* VergeORMTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = VergeORMTests.xctest;
-			remoteRef = 4B714A2324A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4B714A2624A4FCAB006EB6D5 /* VergeRxTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = VergeRxTests.xctest;
-			remoteRef = 4B714A2524A4FCAB006EB6D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		4B19FCA8252E33A0003A628D /* Resources */ = {
@@ -1315,16 +970,6 @@
 				4B714AE524A4FF2C006EB6D5 /* Assets.xcassets in Resources */,
 				4B714AEC24A4FF2C006EB6D5 /* LaunchScreen.storyboard in Resources */,
 				4B714AE424A4FF2C006EB6D5 /* Preview Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B714A4324A4FCF9006EB6D5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B714B0424A4FF45006EB6D5 /* LaunchScreen.storyboard in Resources */,
-				4B714B0824A4FF45006EB6D5 /* Assets.xcassets in Resources */,
-				4B714B0524A4FF45006EB6D5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1363,148 +1008,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		438EDA0A3C384846F1FB867B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SpotifyService-SpotifyDemo/Pods-SpotifyService-SpotifyDemo-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		4A903D6C4891932C0C09CDDF /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoUIKit/Pods-Demo-VergeStoreDemoUIKit-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		4D24AB2E41537DFD16F535B3 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Demo-VergeStoreDemoSwiftUI-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		635400A341C38CA5A9B43240 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Demo-VergeStoreDemoUIKit-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B3CDDC80A4C1726BAC1D52B9 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SpotifyService-SpotifyDemo-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		DC43746BDDDCFFB780119717 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Demo-VergeStoreDemoSwiftUI/Pods-Demo-VergeStoreDemoSwiftUI-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EFEFB8A0FBDCB13395616F10 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SpotifyService-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4B19FCA6252E33A0003A628D /* Sources */ = {
@@ -1553,17 +1056,6 @@
 				4B714AE724A4FF2C006EB6D5 /* IndicatorView.swift in Sources */,
 				4B714AE324A4FF2C006EB6D5 /* import.swift in Sources */,
 				4B714AF124A4FF2C006EB6D5 /* SettingsView.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B714A4124A4FCF9006EB6D5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B714B0A24A4FF45006EB6D5 /* AppDelegate.swift in Sources */,
-				4B714B0324A4FF45006EB6D5 /* ViewController.swift in Sources */,
-				4B714B0724A4FF45006EB6D5 /* Logger.swift in Sources */,
-				4B714B0624A4FF45006EB6D5 /* CycleViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1663,22 +1155,6 @@
 				4B714AD424A4FF2C006EB6D5 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		4B714AFA24A4FF45006EB6D5 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4B714AFB24A4FF45006EB6D5 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		4B714AFC24A4FF45006EB6D5 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4B714AFD24A4FF45006EB6D5 /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		4B714B8424A50064006EB6D5 /* LaunchScreen.storyboard */ = {
@@ -1982,7 +1458,6 @@
 		};
 		4B714A3F24A4FCE4006EB6D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7CC20B4761208C7A47226CB1 /* Pods-SpotifyService-SpotifyDemo.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -2006,7 +1481,6 @@
 		};
 		4B714A4024A4FCE4006EB6D5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B30CE7812DD52F9ECAE1AB51 /* Pods-SpotifyService-SpotifyDemo.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -2027,48 +1501,8 @@
 			};
 			name = Release;
 		};
-		4B714A5724A4FCF9006EB6D5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = "Verge-Demo/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "app.muukii.Verge-Demo";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		4B714A5824A4FCF9006EB6D5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = "Verge-Demo/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "app.muukii.Verge-Demo";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		4B714A6F24A4FD18006EB6D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8BC3303C2BD976DD9734BDA9 /* Pods-Demo-VergeStoreDemoSwiftUI.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -2091,7 +1525,6 @@
 		};
 		4B714A7024A4FD18006EB6D5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 183B8CD63E3A820A537C2EC1 /* Pods-Demo-VergeStoreDemoSwiftUI.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -2113,7 +1546,6 @@
 		};
 		4B714A8724A4FD2D006EB6D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 96600602DAADE2DFF0BC0217 /* Pods-Demo-VergeStoreDemoUIKit.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -2133,7 +1565,6 @@
 		};
 		4B714A8824A4FD2D006EB6D5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 79AE80BD9C633D16F47512FB /* Pods-Demo-VergeStoreDemoUIKit.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -2203,7 +1634,6 @@
 		};
 		4B714AAA24A4FD61006EB6D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EEDBBBCBF1ADEBEABF793B55 /* Pods-SpotifyService.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -2230,7 +1660,6 @@
 		};
 		4B714AAB24A4FD61006EB6D5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B39815E29DAC92090500336F /* Pods-SpotifyService.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -2302,15 +1731,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4B714A5624A4FCF9006EB6D5 /* Build configuration list for PBXNativeTarget "Verge-Demo" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4B714A5724A4FCF9006EB6D5 /* Debug */,
-				4B714A5824A4FCF9006EB6D5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		4B714A6E24A4FD18006EB6D5 /* Build configuration list for PBXNativeTarget "VergeStoreDemoSwiftUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2350,6 +1770,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4B111B6628C3E87700E80C01 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.0;
+			};
+		};
 		4B714AAE24A4FE19006EB6D5 /* XCRemoteSwiftPackageReference "CombineExt" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:CombineCommunity/CombineExt.git";
@@ -2366,9 +1794,80 @@
 				minimumVersion = 0.2.1;
 			};
 		};
+		4BADC22C28C3E5F4003C0079 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		4BADC23128C3E625003C0079 /* XCRemoteSwiftPackageReference "JAYSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/muukii/JAYSON.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		4BADC23428C3E652003C0079 /* XCRemoteSwiftPackageReference "Bulk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/FluidGroup/Bulk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.7.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4B111B5E28C3E72700E80C01 /* VergeORM */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = VergeORM;
+		};
+		4B111B6028C3E73B00E80C01 /* VergeORM */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = VergeORM;
+		};
+		4B111B6428C3E7DB00E80C01 /* JAYSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BADC23128C3E625003C0079 /* XCRemoteSwiftPackageReference "JAYSON" */;
+			productName = JAYSON;
+		};
+		4B111B6728C3E87800E80C01 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B111B6628C3E87700E80C01 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+		4B111B6928C3E88600E80C01 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B111B6628C3E87700E80C01 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+		4B111B6B28C3E89500E80C01 /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BADC22C28C3E5F4003C0079 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		4B111B6D28C3E89500E80C01 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BADC22C28C3E5F4003C0079 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		4B111B6F28C3E8A500E80C01 /* Bulk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BADC23428C3E652003C0079 /* XCRemoteSwiftPackageReference "Bulk" */;
+			productName = Bulk;
+		};
+		4B111B7128C3E8A500E80C01 /* BulkLogger */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BADC23428C3E652003C0079 /* XCRemoteSwiftPackageReference "Bulk" */;
+			productName = BulkLogger;
+		};
+		4B111B7328C3E8DD00E80C01 /* VergeORM */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = VergeORM;
+		};
 		4B714AAF24A4FE19006EB6D5 /* CombineExt */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4B714AAE24A4FE19006EB6D5 /* XCRemoteSwiftPackageReference "CombineExt" */;
@@ -2388,6 +1887,37 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4B714AAE24A4FE19006EB6D5 /* XCRemoteSwiftPackageReference "CombineExt" */;
 			productName = CombineExt;
+		};
+		4BADC22028C3E4DE003C0079 /* Verge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Verge;
+		};
+		4BADC22228C3E4E9003C0079 /* Verge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Verge;
+		};
+		4BADC22428C3E4FC003C0079 /* Verge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Verge;
+		};
+		4BADC22628C3E504003C0079 /* Verge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Verge;
+		};
+		4BADC23228C3E626003C0079 /* JAYSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BADC23128C3E625003C0079 /* XCRemoteSwiftPackageReference "JAYSON" */;
+			productName = JAYSON;
+		};
+		4BADC23528C3E652003C0079 /* Bulk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BADC23428C3E652003C0079 /* XCRemoteSwiftPackageReference "Bulk" */;
+			productName = Bulk;
+		};
+		4BADC23728C3E652003C0079 /* BulkLogger */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BADC23428C3E652003C0079 /* XCRemoteSwiftPackageReference "Bulk" */;
+			productName = BulkLogger;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
