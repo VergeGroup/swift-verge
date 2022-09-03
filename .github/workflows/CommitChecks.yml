@@ -12,7 +12,7 @@ jobs:
           xcode-version: "13.4"
       - uses: actions/checkout@v2
       - name:
-        run: xcodebuild -scheme Verge-Package -resultBundlePath results/VergeTests.xcresult test -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.4' -derivedDataPath ./DerivedData | xcpretty
+        run: xcodebuild -scheme Verge-Package -resultBundlePath results/VergeTests.xcresult test -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.5' -derivedDataPath ./DerivedData | xcpretty
 
       - uses: kishikawakatsumi/xcresulttool@v1
         with:
@@ -51,4 +51,4 @@ jobs:
           xcode-version: "13.4"
       - uses: actions/checkout@v2
       - name: Build
-        run: xcodebuild -scheme Verge-Package -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.4' | xcpretty
+        run: xcodebuild -scheme Verge-Package -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.5' | xcpretty
