@@ -218,6 +218,12 @@ extension StateReader {
 
 extension StateReader {
   
+  /// Initialize from `Store` with pipeline
+  ///
+  /// - Complexity: ⚠️ No memoization, content closure runs every time according to the store's updates.
+  /// - Parameters:
+  ///   - store:
+  ///   - content:
   public init<Store: StoreType>(
     _ store: Store,
     _ pipeline: Pipeline<Changes<Store.State>, Value>,
@@ -226,7 +232,25 @@ extension StateReader {
     
     let derived = store.derived(pipeline, queue: .passthrough)
     
-    self.init(derived: derived, content: content)
+    self.init(derived, content: content)
+    
+  }
+  
+  /// Initialize from `Store` with pipeline
+  ///
+  /// - Complexity: ✅ Using implicit drop-input with Equatable
+  /// - Parameters:
+  ///   - store:
+  ///   - content:
+  public init<Store: StoreType>(
+    _ store: Store,
+    _ pipeline: Pipeline<Changes<Store.State>, Value>,
+    @ViewBuilder content: @escaping (Changes<Value>) -> Content
+  ) where Value : Equatable {
+    
+    let derived = store.derived(pipeline, queue: .passthrough)
+    
+    self.init(derived, content: content)
     
   }
 }
