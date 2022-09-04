@@ -82,16 +82,23 @@ struct RootView: View {
         }
       }
 
-      StateReader(viewModel.derived(.map(\.count))).content { state in
+      StateReader(viewModel.derived(.map(\.count))) { state in
         VStack {
           Text("Store count \(state.primitive)")
           Text("Local count inner \(localCountInner)")
         }
       }
 
-      StateReader(viewModel.store).content { state in
+      StateReader(viewModel.store) { state in
         VStack {
           Text("Store count \(state.count)")
+          Text("Local count inner \(localCountInner)")
+        }
+      }
+      
+      StateReader(viewModel.store, .map(\.count)) { count in
+        VStack {
+          Text("Store count \(count.root)")
           Text("Local count inner \(localCountInner)")
         }
       }

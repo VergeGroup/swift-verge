@@ -8,8 +8,6 @@
 
 import UIKit
 
-import RxSwift
-
 final class ViewController: UIViewController {
   
   let viewModel = CompositionRoot.demo.viewModel
@@ -75,7 +73,6 @@ final class ViewModel: StoreComponentType {
   
   let rootStore: RootStore
   
-  private let disposeBag = DisposeBag()
   private var cancellables = Set<VergeAnyCancellable>()
 
   let store = DefaultStore(initialState: .init())
