@@ -102,7 +102,7 @@ public struct Edge<State: Sendable>: EdgeType, Sendable {
       counter.increment()
     }
   }
-  
+
   public var projectedValue: Edge<State> {
     self
   }
