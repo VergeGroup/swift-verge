@@ -3,99 +3,27 @@ import Foundation
 
 extension Pipeline where Input : ChangesType {
   
-  /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
+  /// Projects a specified shape from Input.
   ///
-  /// - Complexity: ✅ Active Memoization with Fragment's version
-  /// - Parameter map:
-  /// - Returns:
-  @available(*, renamed: "map(edge:)")
-  public static func map<_Edge: EdgeType>(_ map: @escaping @Sendable (Input) -> _Edge) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
-    .map(edge: map)
+  /// Actually same with `select`
+  /// - Complexity: ✅ It drops inputs by comparing Edge's version changes.
+  public static func map(_ keyPath: KeyPath<Input, Edge<Output>>) -> Self {
+    select(keyPath)
   }
-  
-  /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
+    
+  /// Projects a specified shape from Input.
   ///
-  /// - Complexity: ✅ Active Memoization with Fragment's version
-  /// - Parameter map:
-  /// - Returns:
-  public static func map<_Edge: EdgeType>(edge map: @escaping @Sendable (Input) -> _Edge) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
-    
-    return .init(
-      makeInitial: {
-        
-        map($0).wrappedValue
-        
-      }, update: { changes in
-        
-        guard let previous = changes.previous else {
-          return .new(map(changes).wrappedValue)
-        }
-        
-        guard map(changes).version != map(previous).version else {
-          return .noUpdates
-        }
-        
-        return .new(map(changes).wrappedValue)
-        
-      })
-  }
-  
-  /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
-  ///
-  /// - Complexity: ✅ Active Memoization with Fragment's version
-  /// - Parameter map:
-  /// - Returns:
-  @available(*, renamed: "map(edge:)")
-  public static func map<_Edge: EdgeType>(_ keyPath: KeyPath<Input, _Edge>) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
-    .map(edge: keyPath)
-  }
-  
-  /// Projects a value of Fragment structure from Input with memoized by the version of Fragment.
-  ///
-  /// - Complexity: ✅ Active Memoization with Fragment's version
-  /// - Parameter map:
-  /// - Returns:
-  public static func map<_Edge: EdgeType>(edge keyPath: KeyPath<Input, _Edge>) -> Pipeline<Input, _Edge.State> where Output == _Edge.State {
-    
-    var instance = Pipeline.map({ $0[keyPath: keyPath] })
-    
-    // set an identifier according to the keypath
-    Static.modifyIdentifier(
-      on: Static.cache1,
-      for: &instance,
-      keyPath: keyPath
-    )
-    
-    return instance
+  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
+  @_disfavoredOverload
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> {
+    select(keyPath)
   }
   
   /// Projects a specified shape from Input.
   ///
   /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
-  ///
-  /// - Parameter map:
-  /// - Returns:
   public static func map(_ map: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> {
     .init(map: map)
-  }
-  
-  /// Projects a specified shape from Input.
-  ///
-  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
-  ///
-  /// - Parameter map:
-  /// - Returns:
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> {
-    
-    var instance = map({ $0[keyPath: keyPath] })
-    
-    Static.modifyIdentifier(
-      on: Static.cache4,
-      for: &instance,
-      keyPath: keyPath
-    )
-    
-    return instance
   }
   
   /// Makes an instance that computes value from derived value
@@ -190,110 +118,8 @@ extension Pipeline where Input : ChangesType, Input.Value : Equatable {
   ///
   /// - Complexity: ✅ Using implicit drop-input with Equatable
   /// - Parameter map:
+  @_disfavoredOverload
   public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> {
-    var instance = Pipeline.map({ $0[keyPath: keyPath] })
-    
-    Static.modifyIdentifier(
-      on: Static.cache2,
-      for: &instance,
-      keyPath: keyPath
-    )
-    
-    return instance
+    return select(keyPath)
   }
-}
-
-extension Pipeline {
-  
-  /// Projects a specified shape from Input.
-  ///
-  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
-  ///
-  /// - Parameter map:
-  /// - Returns:
-  public static func map(_ map: @escaping @Sendable (Input) -> Output) -> Self {
-    .init(dropInput: { _ in false }, map: map)
-  }
-  
-  /// Projects a specified shape from Input.
-  ///
-  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
-  ///
-  /// - Parameter map:
-  /// - Returns:
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self {
-    
-    var instance = map({ $0[keyPath: keyPath] })
-    
-    Static.modifyIdentifier(
-      on: Static.cache3,
-      for: &instance,
-      keyPath: keyPath
-    )
-    
-    return instance
-  }
-  
-}
-
-/**
- Manages identifiers for each KeyPath locally.
- */
-enum KeyPathIdentifierStore {
-  
-  private static var counter = NonAtomicCounter()
-  
-  static var cache: VergeConcurrency.UnfairLockAtomic<[AnyKeyPath : UInt64]> = .init([:])
-  
-  static func getLocalIdentifier(_ keyPath: AnyKeyPath) -> UInt64 {
-    cache.modify { cache -> UInt64 in
-      if let value = cache[keyPath] {
-        return value
-      } else {
-        counter.increment()
-        let v = counter.value
-        cache[keyPath] = v
-        return v
-      }
-    }
-  }
-  
-}
-
-extension AnyKeyPath {
-  
-  @inline(__always)
-  fileprivate func _getIdentifier() -> UInt64 {
-    KeyPathIdentifierStore.getLocalIdentifier(self)
-  }
-  
-}
-
-fileprivate enum Static {
-  
-  typealias Storage<T> = VergeConcurrency.RecursiveLockAtomic<T>
-  
-  static let cache1: Storage<[String : Int]> = .init([:])
-  static let cache2: Storage<[String : Int]> = .init([:])
-  static let cache3: Storage<[String : Int]> = .init([:])
-  static let cache4: Storage<[String : Int]> = .init([:])
-  
-  static func modifyIdentifier<I, O>(
-    on storage: Storage<[String : Int]>,
-    for pipeline: inout Pipeline<I, O>,
-    keyPath: AnyKeyPath
-  ) {
-    
-    storage.modify { cache in
-      
-      let combinedKey = "\(ObjectIdentifier(I.self))\(ObjectIdentifier(O.self))\(keyPath._getIdentifier())"
-      
-      if let id = cache[combinedKey] {
-        pipeline.identifier = id
-      } else {
-        cache[combinedKey] = pipeline.identifier
-      }
-    }
-  }
-  
 }
