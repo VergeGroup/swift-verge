@@ -37,6 +37,27 @@ struct DemoState: Equatable {
 
 }
 
+struct NonEquatableDemoState {
+  
+  struct Inner: Equatable {
+    var name: String = ""
+  }
+  
+  var name: String = ""
+  var count: Int = 0
+  var items: [Int] = []
+  var inner: Inner = .init()
+  
+  @Edge var nonEquatable: NonEquatable = .init()
+  
+  @Edge var onEquatable: OnEquatable = .init()
+  
+  mutating func updateFromItself() {
+    count += 1
+  }
+  
+}
+
 #if canImport(Verge)
 
 import Verge
@@ -56,6 +77,23 @@ extension DemoState: ExtendedStateType {
 
   }
 
+}
+
+extension NonEquatableDemoState: ExtendedStateType {
+  
+  struct Extended: ExtendedType {
+    
+    static let instance = Extended()
+    
+    let nameCount = Field.Computed<Int> {
+      $0.name.count
+    }
+      .dropsInput {
+        $0.noChanges(\.name)
+      }
+    
+  }
+  
 }
 
 final class DemoStore: Verge.Store<DemoState, Never> {

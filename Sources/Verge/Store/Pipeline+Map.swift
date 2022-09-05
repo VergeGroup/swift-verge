@@ -3,29 +3,6 @@ import Foundation
 
 extension Pipeline where Input : ChangesType {
   
-  /// Projects a specified shape from Input.
-  ///
-  /// Actually same with `select`
-  /// - Complexity: ✅ It drops inputs by comparing Edge's version changes.
-  public static func map(_ keyPath: KeyPath<Input, Edge<Output>>) -> Self {
-    select(keyPath)
-  }
-    
-  /// Projects a specified shape from Input.
-  ///
-  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
-  @_disfavoredOverload
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> {
-    select(keyPath)
-  }
-  
-  /// Projects a specified shape from Input.
-  ///
-  /// - Complexity: ⚠️ No memoization, additionally you need to call `dropsInput` to get memoization.
-  public static func map(_ map: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> {
-    .init(map: map)
-  }
-  
   /// Makes an instance that computes value from derived value
   /// - Complexity: ✅ Active Memoization with Derived parameter
   ///
@@ -106,20 +83,55 @@ extension Pipeline where Input : ChangesType, Input.Value : Equatable {
     )
   }
   
-  /// Projects a specified shape from Input.
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameter map:
-  public static func map(_ map: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> {
-    .init(map: map)
+}
+
+extension Pipeline {
+  
+  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Self where Input: ChangesType {
+    fatalError()
   }
   
-  /// Projects a specified shape from Input.
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameter map:
-  @_disfavoredOverload
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> {
-    return select(keyPath)
+  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Self where Input: ChangesType, Output: Equatable {
+    fatalError()
+  }
+  
+  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Self where Input: ChangesType, Input.Value: Equatable {
+    fatalError()
+  }
+  
+  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Self where Input: ChangesType, Input.Value: Equatable, Output: Equatable {
+    fatalError()
+  }
+  
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType {
+    fatalError()
+  }
+  
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Output: Equatable {
+    fatalError()
+  }
+  
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Input.Value: Equatable {
+    fatalError()
+  }
+  
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Input.Value: Equatable, Output: Equatable {
+    fatalError()
+  }
+  
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Output: EdgeType {
+    fatalError()
+  }
+  
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Output: EdgeType, Output.State : Equatable {
+    fatalError()
+  }
+  
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Input.Value: Equatable, Output: EdgeType {
+    fatalError()
+  }
+  
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Input.Value: Equatable, Output: EdgeType, Output.State : Equatable {
+    fatalError()
   }
 }

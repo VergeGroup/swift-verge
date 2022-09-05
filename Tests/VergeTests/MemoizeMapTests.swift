@@ -16,6 +16,7 @@ final class MemoizeMapTests: XCTestCase {
   func testEdge() {
 
     do {
+      
       let result = Pipeline.map(\Changes<DemoState>.$nonEquatable)
       let erased = result as Any
       XCTAssertTrue(erased is Pipeline<Changes<DemoState>, NonEquatable>)
