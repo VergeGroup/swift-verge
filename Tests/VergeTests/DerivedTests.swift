@@ -300,7 +300,7 @@ final class DerivedCacheTests: XCTestCase {
     let store1 = DemoStore()
     let store2 = DemoStore()
     
-    XCTAssert(store1.derived(.map(\.count)) === store1.derived(.map(\.count)))
+    XCTAssert(store1.derived(.map(\.count)) !== store1.derived(.map(\.count)))
     
     /// Stored in each store
     XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
@@ -313,12 +313,12 @@ final class DerivedCacheTests: XCTestCase {
     let store2 = DemoStore()
 
     XCTAssert(
-      store1.derived(.map(\.count), queue: .asyncMain) ===
+      store1.derived(.map(\.count), queue: .asyncMain) !==
         store1.derived(.map(\.count), queue: .asyncMain)
     )
     
     XCTAssert(
-      store1.derived(.map(\.count), queue: .main) ===
+      store1.derived(.map(\.count), queue: .main) !==
         store1.derived(.map(\.count), queue: .main)
     )
 
@@ -342,7 +342,7 @@ final class DerivedCacheTests: XCTestCase {
     let queue = TargetQueue.specific(DispatchQueue(label: "test"))
     let queue2 = TargetQueue.specific(DispatchQueue(label: "test"))
     
-    XCTAssert(store1.derived(.map(\.count), queue: queue) === store1.derived(.map(\.count), queue: queue))
+    XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: queue))
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: queue2))
     XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
@@ -356,7 +356,7 @@ final class DerivedCacheTests: XCTestCase {
     
     let queue = TargetQueue.specific(DispatchQueue.global())
     
-    XCTAssert(store1.derived(.map(\.count), queue: queue) === store1.derived(.map(\.count), queue: queue))
+    XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: queue))
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))
     XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
     
@@ -373,15 +373,5 @@ final class DerivedCacheTests: XCTestCase {
     XCTAssert(store1.derived(map) === store1.derived(map))
 
   }
-  
-  func test_cachingDerived_concurrent() {
-    
-    let store1 = DemoStore()
-    
-    DispatchQueue.concurrentPerform(iterations: 10000) { _ in
-      XCTAssert(store1.derived(.map(\.count)) === store1.derived(.map(\.count)))
-    }
-    
-  }
-  
+     
 }
