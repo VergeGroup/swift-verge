@@ -44,7 +44,7 @@ final class MemoizeMapTests: XCTestCase {
     }
 
     do {
-      let result = Pipeline.map(edge: \Changes<DemoState>.$nonEquatable)
+      let result = Pipeline.map(\Changes<DemoState>.$nonEquatable)
       let erased = result as Any
       XCTAssertTrue(erased is Pipeline<Changes<DemoState>, NonEquatable>)
     }
@@ -62,7 +62,7 @@ final class MemoizeMapTests: XCTestCase {
     }
 
     do {
-      let result = Pipeline.map(edge: \Changes<DemoState>.$onEquatable)
+      let result = Pipeline.map(\Changes<DemoState>.$onEquatable)
       let erased = result as Any
       XCTAssertTrue(erased is Pipeline<Changes<DemoState>, OnEquatable>)
     }

@@ -87,51 +87,52 @@ extension Pipeline where Input : ChangesType, Input.Value : Equatable {
 
 extension Pipeline {
   
-  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Self where Input: ChangesType {
+  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> where Input: ChangesType {
     fatalError()
   }
   
-  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Self where Input: ChangesType, Output: Equatable {
+  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> where Input: ChangesType, Output: Equatable {
     fatalError()
   }
   
-  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Self where Input: ChangesType, Input.Value: Equatable {
+  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> where Input: ChangesType, Input.Value: Equatable {
     fatalError()
   }
   
-  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Self where Input: ChangesType, Input.Value: Equatable, Output: Equatable {
+  public static func map(_ closure: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> where Input: ChangesType, Input.Value: Equatable, Output: Equatable {
     fatalError()
   }
   
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType {
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> where Input: ChangesType {
     fatalError()
   }
   
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Output: Equatable {
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> where Input: ChangesType, Output: Equatable {
     fatalError()
   }
   
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Input.Value: Equatable {
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> where Input: ChangesType, Input.Value: Equatable {
     fatalError()
   }
   
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Input.Value: Equatable, Output: Equatable {
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> where Input: ChangesType, Input.Value: Equatable, Output: Equatable {
     fatalError()
   }
   
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Output: EdgeType {
+  /// For Edge
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State> where Input: ChangesType, Output: EdgeType {
     fatalError()
   }
   
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Output: EdgeType, Output.State : Equatable {
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State> where Input: ChangesType, Output: EdgeType, Output.State : Equatable {
     fatalError()
   }
   
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Input.Value: Equatable, Output: EdgeType {
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State> where Input: ChangesType, Input.Value: Equatable, Output: EdgeType {
     fatalError()
   }
   
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Self where Input: ChangesType, Input.Value: Equatable, Output: EdgeType, Output.State : Equatable {
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State> where Input: ChangesType, Input.Value: Equatable, Output: EdgeType, Output.State : Equatable {
     fatalError()
   }
 }
