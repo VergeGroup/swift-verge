@@ -50,4 +50,32 @@ final class PipelineTests: XCTestCase {
         
   }
   
+  func testEdge() {
+    
+    do {
+      
+      let result = Pipeline.map(\Changes<DemoState>.$nonEquatable)
+      let erased = result as Any
+      XCTAssertTrue(erased is Pipeline<Changes<DemoState>, Edge<NonEquatable>>)
+    }
+    
+    do {
+      let result = Pipeline.map(\Changes<DemoState>.nonEquatable)
+      let erased = result as Any
+      XCTAssertTrue(erased is Pipeline<Changes<DemoState>, NonEquatable>)
+    }
+    
+    do {
+      let result = Pipeline.map(\Changes<DemoState>.$onEquatable)
+      let erased = result as Any
+      XCTAssertTrue(erased is Pipeline<Changes<DemoState>, Edge<OnEquatable>>)
+    }
+    
+    do {
+      let result = Pipeline.map(\Changes<DemoState>.onEquatable)
+      let erased = result as Any
+      XCTAssertTrue(erased is Pipeline<Changes<DemoState>, OnEquatable>)
+    }
+    
+  }
 }

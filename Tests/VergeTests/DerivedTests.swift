@@ -317,7 +317,7 @@ final class DerivedCacheTests: XCTestCase {
     )
     
     XCTAssert(
-      store1.derived(.map(\.count), queue: .main) ===
+      store1.derived(.map(\.count), queue: .main) !==
         store1.derived(.map(\.count), queue: .main)
     )
 
@@ -369,7 +369,7 @@ final class DerivedCacheTests: XCTestCase {
    
     let map = Pipeline<Changes<DemoState>, Int>.map { $0.count }
     
-    XCTAssert(store1.derived(map) === store1.derived(map))
+    XCTAssert(store1.derived(map) !== store1.derived(map))
 
   }
   
