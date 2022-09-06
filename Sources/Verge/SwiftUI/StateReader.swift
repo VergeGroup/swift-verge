@@ -53,78 +53,6 @@ public struct StateReader<Value, Content: View>: View {
     return content(changes)
   }
   
-  /**
-   Makes itself having content.
-   
-   This syntax and approach are related to the lacking of current Xcode's auto-completion. (Xcode12)
-   */
-  @available(*, deprecated, message: "Use init with content")
-  public func content<NewContent: View>(@ViewBuilder _ makeContent: @escaping (Changes<Value>) -> NewContent) -> StateReader<Value, NewContent> {
-    return .init(updateTrigger: observableObject, updateValue: updateValue, content: makeContent)
-  }
-
-}
-
-@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-extension StateReader {
- 
-  /// Creates an instance from `Store`
-  ///
-  /// - Complexity: ⚠️ No memoization, content closure runs every time according to the store's updates.
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  @available(*, deprecated, message: "Use init with content")
-  public init<Store: StoreType>(
-    _ store: Store
-  ) where Value == Store.State, Content == EmptyView {
-        
-    self.init(store, content: { _ in EmptyView() })
-
-  }
-
-  /// Creates an instance  from `Derived`
-  ///
-  /// - Complexity: 💡 It depends on how Derived does memoization.
-  /// - Parameters:
-  ///   - derived:
-  ///   - content:
-  @available(*, deprecated, message: "Use init with content")
-  public init<Derived: DerivedType>(
-    _ derived: Derived
-  ) where Value == Derived.Value, Content == EmptyView {
-
-    self.init(derived: derived, content: { _ in EmptyView() })
-
-  }
-
-  /// Initialize from `Store`
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  @available(*, deprecated, message: "Use init with content")
-  public init<Store: StoreType>(
-    _ store: Store
-  ) where Value == Store.State, Value : Equatable, Content == EmptyView {
-    self.init(store.derived(.map(\.root)))
-  }
-
-  /// Initialize from `Store`
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  @available(*, deprecated, message: "Use init with content")
-  public init<Derived: DerivedType>(
-    _ derived: Derived
-  ) where Value == Derived.Value, Value : Equatable, Content == EmptyView {
-    assert(derived.asDerived().attributes.contains(.dropsDuplicatedOutput) == true)
-    self.init(derived: derived, content: { _ in EmptyView() })
-  }
-
 }
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
@@ -209,7 +137,6 @@ extension StateReader {
     _ derived: Derived,
     @ViewBuilder content: @escaping (Changes<Value>) -> Content
   ) where Value == Derived.Value, Value : Equatable {
-    assert(derived.asDerived().attributes.contains(.dropsDuplicatedOutput) == true)
     self.init(derived: derived, content: content)
 
   }

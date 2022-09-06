@@ -53,7 +53,7 @@ final class StateReaderTests: XCTestCase {
 
         })
         Text(count1.description)
-        StateReader(store).content { state in
+        StateReader(store) { state in
           VStack {
             HandlerView(onInit: {
               record.innerCount += 1

@@ -32,24 +32,6 @@ public protocol DerivedType {
   func asDerived() -> Derived<Value>
 }
 
-public struct DerivedAttributes: OptionSet, Sendable {
-  
-  public typealias RawValue = Int8
-  
-  public var rawValue: Int8
-  
-  public init(rawValue: RawValue) {
-    self.rawValue = rawValue
-  }
-  
-  public init() {
-    self.rawValue = 0
-  }
-  
-  public static let dropsDuplicatedOutput: Self = .init(rawValue: 1 << 0)
-  public static let cached: Self = .init(rawValue: 1 << 1)
-}
-
 /**
  A container object that provides the current value and changes from the source Store.
 
@@ -108,8 +90,6 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
   private let subscription: VergeAnyCancellable
   private let retainsUpstream: Any?
   private var associatedObjects: ContiguousArray<AnyObject> = .init()
-
-  public internal(set) var attributes: DerivedAttributes = .init()
   
   // MARK: - Initializers
 
@@ -363,7 +343,6 @@ extension Derived: CustomReflectable {
       self,
       children: [
         "upstream" : retainsUpstream as Any,
-        "attributes" : attributes,
         "value" : value
     ],
       displayStyle: .struct,
