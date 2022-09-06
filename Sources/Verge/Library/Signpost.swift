@@ -1,6 +1,7 @@
 import os
+import Foundation
 
-public var _verge_signpost_enabled = false
+public var _verge_signpost_enabled = ProcessInfo.processInfo.environment["VERGE_SIGNPOST_ENABLED"] != nil
 
 @available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *)
 @usableFromInline
