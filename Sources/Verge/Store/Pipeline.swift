@@ -56,7 +56,7 @@ public struct Pipeline<Input, Output>: Equatable, Sendable {
   /**
    An identifier to be used from Derived to use the same instance if Pipeline is same.   
    */
-  var identifier: Int = counter.getAndIncrement()
+  let identifier: Int = counter.getAndIncrement()
 
   // MARK: - Initializers
     
@@ -122,6 +122,16 @@ public struct Pipeline<Input, Output>: Equatable, Sendable {
   /// - Parameter predicate: Return true, the coming input would be dropped.
   /// - Returns:
   public func dropsInput(
+    while predicate: @escaping @Sendable (Input) -> Bool
+  ) -> Self {
+    drop(while: predicate)
+  }
+  
+  /// Tune memoization logic up.
+  ///
+  /// - Parameter predicate: Return true, the coming input would be dropped.
+  /// - Returns:
+  public func drop(
     while predicate: @escaping @Sendable (Input) -> Bool
   ) -> Self {
     Self.init(

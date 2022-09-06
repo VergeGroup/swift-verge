@@ -11,7 +11,12 @@ final class PipelineTests: XCTestCase {
       XCTAssert(any is Derived<NonEquatable>)
     }
     
-    DemoStore().derived(.map(\.$nonEquatable))
+    DemoStore()
+      .derived(.map(\.$nonEquatable))
+      .sinkValue { c in
+        c.id
+      }
+    
     DemoStore().derived(.map(\.count))
     
     let _ = Pipeline<Changes<DemoState>, _>.map { $0.nonEquatable }

@@ -51,10 +51,29 @@ public protocol EdgeType : Equatable {
  `MemoizeMap.map(_ map: @escaping (Changes<Input.Value>) -> Edge<Output>) -> MemoizeMap<Input, Output>`
  */
 @propertyWrapper
+@dynamicMemberLookup
 public struct Edge<State: Sendable>: EdgeType, Sendable {
 
   public static func == (lhs: Edge<State>, rhs: Edge<State>) -> Bool {
     lhs.version == rhs.version
+  }
+  
+  public subscript <U>(dynamicMember keyPath: KeyPath<State, U>) -> U {
+    _read { yield wrappedValue[keyPath: keyPath] }
+  }
+  
+  public subscript <U>(dynamicMember keyPath: KeyPath<State, U?>) -> U? {
+    _read { yield wrappedValue[keyPath: keyPath] }
+  }
+  
+  public subscript <U>(dynamicMember keyPath: WritableKeyPath<State, U>) -> U {
+    _read { yield wrappedValue[keyPath: keyPath] }
+    _modify { yield &wrappedValue[keyPath: keyPath] }
+  }
+  
+  public subscript <U>(dynamicMember keyPath: WritableKeyPath<State, U?>) -> U? {
+    _read { yield wrappedValue[keyPath: keyPath] }
+    _modify { yield &wrappedValue[keyPath: keyPath] }
   }
 
   /// A number value that indicates how many times State was updated.

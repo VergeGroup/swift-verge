@@ -226,8 +226,7 @@ extension StoreType where State : DatabaseEmbedding {
     }
         
     let d = underlyingDerived.chain(
-      .init(map: { $0.root }),
-      dropsOutput: { changes in
+      .init(map: { $0.root }).drop { changes in
         changes.noChanges(\.root, .init {
           dropsOutput($0.wrapped, $1.wrapped)
         })

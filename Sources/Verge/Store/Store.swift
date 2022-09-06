@@ -109,13 +109,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   /// You shouldn't access this directly unless special case.
   let _backingStorage: StateStorage<Changes<State>>
   let _activityEmitter: EventEmitter<Activity> = .init()
-    
-  /// Cache for derived object each method. Don't share it with between methods.
-  let derivedCache1 = VergeConcurrency.RecursiveLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
-  
-  /// Cache for derived object each method. Don't share it with between methods.
-  let derivedCache2 = VergeConcurrency.RecursiveLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
-  
+      
   private let tracker = VergeConcurrency.SynchronizationTracker()
   
   /// A name of the store.

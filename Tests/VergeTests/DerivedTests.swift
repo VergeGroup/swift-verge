@@ -53,8 +53,7 @@ final class DerivedTests: XCTestCase {
     let wrapper = DemoStore()
 
     let slice = wrapper.derived(
-      .map { $0.count },
-      dropsOutput: { $0.noChanges(\.root) },
+      .map { $0.count }.drop { $0.noChanges(\.root) },
       queue: .passthrough
     )
 
