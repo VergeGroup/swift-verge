@@ -107,18 +107,18 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
   ///   - initialUpstreamState: Initial value of the `UpstreamState`
   ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
   ///   - retainsUpstream: Any instances to retain in this instance.
-  public init<UpstreamState>(
-    get: Pipeline<UpstreamState, Value>,
+  public init<UpstreamState, Pipeline: PipelineType>(
+    get pipeline: Pipeline,
     set: ((Value) -> Void)?,
     initialUpstreamState: UpstreamState,
     subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
     retainsUpstream: Any?
-  ) {
+  ) where Pipeline.Input == UpstreamState, Value == Pipeline.Output {
     
-    let store = Store<Value, Never>.init(initialState: get.makeInitial(initialUpstreamState), logger: nil)
+    let store = Store<Value, Never>.init(initialState: pipeline.yield(initialUpstreamState), logger: nil)
                      
     let s = subscribeUpstreamState { [weak store] value in
-      let update = get.makeResult(value)
+      let update = pipeline.yieldContinuously(value)
       switch update {
       case .noUpdates:
         break

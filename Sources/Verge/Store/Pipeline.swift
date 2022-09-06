@@ -36,7 +36,7 @@ public protocol PipelineType {
   
   func yieldContinuously(_ input: Input) -> ContinuousResult<Output>
   
-//  func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self
+  func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self
 }
 
 public struct SelectPipeline<Source, Output>: PipelineType {
@@ -44,9 +44,14 @@ public struct SelectPipeline<Source, Output>: PipelineType {
   public typealias Input = Changes<Source>
   
   private let keyPath: KeyPath<Input, Output>
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
   
-  init(keyPath: KeyPath<Input, Output>) {
+  init(
+    keyPath: KeyPath<Input, Output>,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self.keyPath = keyPath
+    self.additionalDropCondition = additionalDropCondition
   }
   
   @_effects(readnone)
@@ -57,7 +62,12 @@ public struct SelectPipeline<Source, Output>: PipelineType {
     }
     
     guard previous.version == input.version else {
-      return .new(input[keyPath: keyPath])
+      
+      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+        return .new(input[keyPath: keyPath])
+      }
+      
+      return .noUpdates
     }
     
     return .noUpdates
@@ -68,6 +78,17 @@ public struct SelectPipeline<Source, Output>: PipelineType {
   public func yield(_ input: Input) -> Output {
     input[keyPath: keyPath]
   }
+  
+  public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
+    return .init(
+      keyPath: keyPath,
+      additionalDropCondition: additionalDropCondition.map { currentCondition in
+        { input in
+          currentCondition(input) || predicate(input)
+        }
+      } ?? predicate
+    )
+  }
     
 }
 
@@ -76,9 +97,14 @@ public struct SelectEquatableOutputPipeline<Source, Output: Equatable>: Pipeline
   public typealias Input = Changes<Source>
   
   private let keyPath: KeyPath<Input, Output>
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
   
-  init(keyPath: KeyPath<Input, Output>) {
+  init(
+    keyPath: KeyPath<Input, Output>,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self.keyPath = keyPath
+    self.additionalDropCondition = additionalDropCondition
   }
   
   @_effects(readnone)
@@ -92,7 +118,12 @@ public struct SelectEquatableOutputPipeline<Source, Output: Equatable>: Pipeline
       previous.version == input.version ||
         previous[keyPath: keyPath] == input[keyPath: keyPath]
     else {
-      return .new(input[keyPath: keyPath])
+      
+      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+        return .new(input[keyPath: keyPath])
+      }
+      
+      return .noUpdates
     }
     
     return .noUpdates
@@ -104,16 +135,32 @@ public struct SelectEquatableOutputPipeline<Source, Output: Equatable>: Pipeline
     input[keyPath: keyPath]
   }
   
+  public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
+    return .init(
+      keyPath: keyPath,
+      additionalDropCondition: additionalDropCondition.map { currentCondition in
+        { input in
+          currentCondition(input) || predicate(input)
+        }
+      } ?? predicate
+    )
+  }
+  
 }
 
 public struct SelectEquatableSourcePipeline<Source: Equatable, Output>: PipelineType {
   
   public typealias Input = Changes<Source>
-  
+    
   private let keyPath: KeyPath<Input, Output>
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
   
-  init(keyPath: KeyPath<Input, Output>) {
+  init(
+    keyPath: KeyPath<Input, Output>,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self.keyPath = keyPath
+    self.additionalDropCondition = additionalDropCondition
   }
   
   @_effects(readnone)
@@ -146,9 +193,14 @@ public struct SelectEquatableSourceEquatableOutputPipeline<Source: Equatable, Ou
   public typealias Input = Changes<Source>
   
   private let keyPath: KeyPath<Input, Output>
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
   
-  init(keyPath: KeyPath<Input, Output>) {
+  init(
+    keyPath: KeyPath<Input, Output>,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self.keyPath = keyPath
+    self.additionalDropCondition = additionalDropCondition
   }
     
   @_effects(readnone)
@@ -183,9 +235,14 @@ public struct SelectEdgePipeline<Source, EdgeValue>: PipelineType {
   public typealias Output = Edge<EdgeValue>
   
   private let keyPath: KeyPath<Input, Output>
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
   
-  init(keyPath: KeyPath<Input, Output>) {
+  init(
+    keyPath: KeyPath<Input, Output>,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self.keyPath = keyPath
+    self.additionalDropCondition = additionalDropCondition
   }
   
   @_effects(readnone)
@@ -215,13 +272,15 @@ public struct SelectEdgePipeline<Source, EdgeValue>: PipelineType {
 
 public struct SelectEdgeEquatableOutputPipeline<Source, EdgeValue: Equatable>: PipelineType {
   
-  public typealias Input = Changes<Source>
-  public typealias Output = Edge<EdgeValue>
-  
   private let keyPath: KeyPath<Input, Output>
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
   
-  init(keyPath: KeyPath<Input, Output>) {
+  init(
+    keyPath: KeyPath<Input, Output>,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self.keyPath = keyPath
+    self.additionalDropCondition = additionalDropCondition
   }
   
   @_effects(readnone)
@@ -255,9 +314,14 @@ public struct SelectEdgeEquatableSourcePipeline<Source: Equatable, EdgeValue>: P
   public typealias Output = Edge<EdgeValue>
   
   private let keyPath: KeyPath<Input, Output>
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
   
-  init(keyPath: KeyPath<Input, Output>) {
+  init(
+    keyPath: KeyPath<Input, Output>,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self.keyPath = keyPath
+    self.additionalDropCondition = additionalDropCondition
   }
   
   @_effects(readnone)
@@ -291,9 +355,14 @@ public struct SelectEdgeEquatableSourceEquatableOutputPipeline<Source: Equatable
   public typealias Output = Edge<EdgeValue>
   
   private let keyPath: KeyPath<Input, Output>
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
   
-  init(keyPath: KeyPath<Input, Output>) {
+  init(
+    keyPath: KeyPath<Input, Output>,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self.keyPath = keyPath
+    self.additionalDropCondition = additionalDropCondition
   }
   
   @_effects(readnone)
@@ -329,11 +398,15 @@ public struct MapPipeline<Source, Output>: PipelineType {
   // MARK: - Properties
   
   private let _map: @Sendable (Input) -> Output
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
  
-  public init(map: @escaping @Sendable (Input) -> Output) {
+  public init(
+    map: @escaping @Sendable (Input) -> Output,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self._map = map
   }
-  
+    
   // MARK: - Functions
     
   public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
@@ -362,8 +435,12 @@ public struct MapEquatableOutputPipeline<Source, Output: Equatable>: PipelineTyp
   // MARK: - Properties
   
   private let _map: @Sendable (Input) -> Output
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
   
-  public init(map: @escaping @Sendable (Input) -> Output) {
+  public init(
+    map: @escaping @Sendable (Input) -> Output,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self._map = map
   }
   
@@ -402,8 +479,12 @@ public struct MapEquatableSourcePipeline<Source: Equatable, Output>: PipelineTyp
   // MARK: - Properties
   
   private let _map: @Sendable (Input) -> Output
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
   
-  public init(map: @escaping @Sendable (Input) -> Output) {
+  public init(
+    map: @escaping @Sendable (Input) -> Output,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self._map = map
   }
   
@@ -438,8 +519,12 @@ public struct MapEquatableSourceEquatableOutputPipeline<Source: Equatable, Outpu
   // MARK: - Properties
   
   private let _map: @Sendable (Input) -> Output
+  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
   
-  public init(map: @escaping @Sendable (Input) -> Output) {
+  public init(
+    map: @escaping @Sendable (Input) -> Output,
+    additionalDropCondition: (@Sendable (Input) -> Bool)?
+  ) {
     self._map = map
   }
   
