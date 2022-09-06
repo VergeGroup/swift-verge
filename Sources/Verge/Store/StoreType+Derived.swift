@@ -44,5 +44,29 @@ extension StoreType {
     
     return derived
   }
+  
+  public func derived2<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: TargetQueueType = .passthrough
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State> {
+    
+    fatalError()
+//    vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
+//
+//    let derived = Derived<NewState>(
+//      get: pipeline,
+//      set: { _ in
+//
+//      },
+//      initialUpstreamState: asStore().state,
+//      subscribeUpstreamState: { callback in
+//        asStore()._sinkState(dropsFirst: true, queue: queue, receive: callback)
+//      },
+//      retainsUpstream: nil
+//    )
+//
+//    return derived
+  }
+
 
 }

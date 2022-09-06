@@ -21,27 +21,595 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "Pipeline")
-public typealias MemoizeMap<Input, Output> = Pipeline<Input, Output>
+private let counter = VergeConcurrency.AtomicInt(initialValue: 0)
 
-fileprivate let counter = VergeConcurrency.AtomicInt(initialValue: 0)
+public enum ContinuousResult<Output> {
+  case new(Output)
+  case noUpdates
+}
 
-/**
- A handler that how receives and provides value.
+public protocol PipelineType {
+  associatedtype Input
+  associatedtype Output
+  
+  func yield(_ input: Input) -> Output
+  
+  func yieldContinuously(_ input: Input) -> ContinuousResult<Output>
+  
+//  func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self
+}
 
- inputs value: Input -> Pipeline -> Pipeline.Result
- inputs value initially: -> Pipeline -> Output
-*/
+public struct SelectPipeline<Source, Output>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+  
+  private let keyPath: KeyPath<Input, Output>
+  
+  init(keyPath: KeyPath<Input, Output>) {
+    self.keyPath = keyPath
+  }
+  
+  @_effects(readnone)
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    guard previous.version == input.version else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    return .noUpdates
+    
+  }
+  
+  @_effects(readnone)
+  public func yield(_ input: Input) -> Output {
+    input[keyPath: keyPath]
+  }
+    
+}
+
+public struct SelectEquatableOutputPipeline<Source, Output: Equatable>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+  
+  private let keyPath: KeyPath<Input, Output>
+  
+  init(keyPath: KeyPath<Input, Output>) {
+    self.keyPath = keyPath
+  }
+  
+  @_effects(readnone)
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    guard
+      previous.version == input.version ||
+        previous[keyPath: keyPath] == input[keyPath: keyPath]
+    else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    return .noUpdates
+    
+  }
+  
+  @_effects(readnone)
+  public func yield(_ input: Input) -> Output {
+    input[keyPath: keyPath]
+  }
+  
+}
+
+public struct SelectEquatableSourcePipeline<Source: Equatable, Output>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+  
+  private let keyPath: KeyPath<Input, Output>
+  
+  init(keyPath: KeyPath<Input, Output>) {
+    self.keyPath = keyPath
+  }
+  
+  @_effects(readnone)
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    guard
+      previous.version == input.version ||
+        previous.primitive == input.primitive
+    else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    return .noUpdates
+    
+  }
+     
+  @_effects(readnone)
+  public func yield(_ input: Input) -> Output {
+    input[keyPath: keyPath]
+  }
+  
+}
+
+public struct SelectEquatableSourceEquatableOutputPipeline<Source: Equatable, Output: Equatable>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+  
+  private let keyPath: KeyPath<Input, Output>
+  
+  init(keyPath: KeyPath<Input, Output>) {
+    self.keyPath = keyPath
+  }
+    
+  @_effects(readnone)
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    guard
+      previous.version == input.version ||
+        previous.primitive == input.primitive ||
+        previous[keyPath: keyPath] == input[keyPath: keyPath]
+    else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    return .noUpdates
+    
+  }
+  
+  @_effects(readnone)
+  public func yield(_ input: Input) -> Output {
+    input[keyPath: keyPath]
+  }
+  
+}
+
+public struct SelectEdgePipeline<Source, EdgeValue>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+  public typealias Output = Edge<EdgeValue>
+  
+  private let keyPath: KeyPath<Input, Output>
+  
+  init(keyPath: KeyPath<Input, Output>) {
+    self.keyPath = keyPath
+  }
+  
+  @_effects(readnone)
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    guard
+      previous.version == input.version ||
+        previous[keyPath: keyPath].version == input[keyPath: keyPath].version
+    else {
+      return .new(input[keyPath: keyPath])
+    }
+            
+    return .noUpdates
+    
+  }
+  
+  @_effects(readnone)
+  public func yield(_ input: Input) -> Output {
+    input[keyPath: keyPath]
+  }
+  
+}
+
+public struct SelectEdgeEquatableOutputPipeline<Source, EdgeValue: Equatable>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+  public typealias Output = Edge<EdgeValue>
+  
+  private let keyPath: KeyPath<Input, Output>
+  
+  init(keyPath: KeyPath<Input, Output>) {
+    self.keyPath = keyPath
+  }
+  
+  @_effects(readnone)
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    guard
+      previous.version == input.version ||
+        previous[keyPath: keyPath].version == input[keyPath: keyPath].version ||
+        previous[keyPath: keyPath].wrappedValue == input[keyPath: keyPath].wrappedValue
+    else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    return .noUpdates
+  }
+  
+  @_effects(readnone)
+  public func yield(_ input: Input) -> Output {
+    input[keyPath: keyPath]
+  }
+  
+}
+
+public struct SelectEdgeEquatableSourcePipeline<Source: Equatable, EdgeValue>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+  public typealias Output = Edge<EdgeValue>
+  
+  private let keyPath: KeyPath<Input, Output>
+  
+  init(keyPath: KeyPath<Input, Output>) {
+    self.keyPath = keyPath
+  }
+  
+  @_effects(readnone)
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    guard
+      previous.version == input.version ||
+        previous.primitive == input.primitive ||
+        previous[keyPath: keyPath].version == input[keyPath: keyPath].version
+    else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    return .noUpdates
+  }
+  
+  @_effects(readnone)
+  public func yield(_ input: Input) -> Output {
+    input[keyPath: keyPath]
+  }
+    
+}
+
+public struct SelectEdgeEquatableSourceEquatableOutputPipeline<Source: Equatable, EdgeValue: Equatable>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+  public typealias Output = Edge<EdgeValue>
+  
+  private let keyPath: KeyPath<Input, Output>
+  
+  init(keyPath: KeyPath<Input, Output>) {
+    self.keyPath = keyPath
+  }
+  
+  @_effects(readnone)
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    guard
+      previous.version == input.version ||
+        previous.primitive == input.primitive ||
+        previous[keyPath: keyPath].version == input[keyPath: keyPath].version ||
+        previous[keyPath: keyPath].wrappedValue == input[keyPath: keyPath].wrappedValue
+    else {
+      return .new(input[keyPath: keyPath])
+    }
+    
+    return .noUpdates
+  }
+  
+  @_effects(readnone)
+  public func yield(_ input: Input) -> Output {
+    input[keyPath: keyPath]
+  }
+  
+}
+
+public struct MapPipeline<Source, Output>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+   
+  // MARK: - Properties
+  
+  private let _map: @Sendable (Input) -> Output
+ 
+  public init(map: @escaping @Sendable (Input) -> Output) {
+    self._map = map
+  }
+  
+  // MARK: - Functions
+    
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(_map(input))
+    }
+    
+    guard previous.version == input.version else {
+      return .new(_map(input))
+    }
+    
+    return .noUpdates
+  }
+  
+  public func yield(_ input: Input) -> Output {
+    _map(input)
+  }
+  
+}
+
+public struct MapEquatableOutputPipeline<Source, Output: Equatable>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+  
+  // MARK: - Properties
+  
+  private let _map: @Sendable (Input) -> Output
+  
+  public init(map: @escaping @Sendable (Input) -> Output) {
+    self._map = map
+  }
+  
+  // MARK: - Functions
+  
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(_map(input))
+    }
+    
+    guard previous.version == input.version else {
+      
+      let mapped = _map(input)
+      
+      guard _map(previous) == mapped else {
+        return .new(mapped)
+      }
+      
+      return .noUpdates
+    }
+    
+    return .noUpdates
+  }
+  
+  public func yield(_ input: Input) -> Output {
+    _map(input)
+  }
+  
+}
+
+public struct MapEquatableSourcePipeline<Source: Equatable, Output>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+  
+  // MARK: - Properties
+  
+  private let _map: @Sendable (Input) -> Output
+  
+  public init(map: @escaping @Sendable (Input) -> Output) {
+    self._map = map
+  }
+  
+  // MARK: - Functions
+  
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(_map(input))
+    }
+    
+    guard
+      previous.version == input.version ||
+        previous.primitive == input.primitive
+    else {
+      return .new(_map(input))
+    }
+    
+    return .noUpdates
+  }
+  
+  public func yield(_ input: Input) -> Output {
+    _map(input)
+  }
+  
+}
+
+public struct MapEquatableSourceEquatableOutputPipeline<Source: Equatable, Output: Equatable>: PipelineType {
+  
+  public typealias Input = Changes<Source>
+  
+  // MARK: - Properties
+  
+  private let _map: @Sendable (Input) -> Output
+  
+  public init(map: @escaping @Sendable (Input) -> Output) {
+    self._map = map
+  }
+  
+  // MARK: - Functions
+  
+  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    guard let previous = input.previous else {
+      return .new(_map(input))
+    }
+    
+    guard
+      previous.version == input.version ||
+        previous.primitive == input.primitive
+    else {
+      
+      let mapped = _map(input)
+      
+      guard _map(previous) == mapped else {
+        return .new(mapped)
+      }
+      
+      return .noUpdates
+    
+    }
+    
+    return .noUpdates
+  }
+  
+  public func yield(_ input: Input) -> Output {
+    _map(input)
+  }
+}
+
+extension PipelineType {
+  
+  /**
+   KeyPath
+   - Input: *
+   - Output: *
+   */
+  @_disfavoredOverload // next to Edge
+  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self where Self == SelectPipeline<Input, Output> {
+    self.init(keyPath: keyPath)
+  }
+
+  /**
+   KeyPath
+   - Input: *
+   - Output: ==
+   */
+  @_disfavoredOverload // next to Edge
+  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
+  where Output: Equatable, Self == SelectEquatableOutputPipeline<Input, Output> {
+    self.init(keyPath: keyPath)
+  }
+
+  /**
+   KeyPath
+   - Input: ==
+   - Output: *
+   */
+  @_disfavoredOverload // next to Edge
+  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
+  where Input: Equatable, Self == SelectEquatableSourcePipeline<Input, Output> {
+    self.init(keyPath: keyPath)
+  }
+
+  /**
+   KeyPath
+   - Input: ==
+   - Output: ==
+   */
+  @_disfavoredOverload // next to Edge
+  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
+  where Input: Equatable, Output: Equatable, Self == SelectEquatableSourceEquatableOutputPipeline<Input, Output> {
+    self.init(keyPath: keyPath)
+  }
+
+  /**
+   KeyPath to Edge
+   - Input: *
+   - Output: *
+   */
+  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Edge<Output>>) -> Self
+  where Self == SelectEdgePipeline<Input, Output> {
+    self.init(keyPath: keyPath)
+  }
+
+  /**
+   KeyPath to Edge
+   - Input: *
+   - Output: ==
+   */
+  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Edge<Output>>) -> Self
+  where Output: Equatable, Self == SelectEdgeEquatableOutputPipeline<Input, Output> {
+    self.init(keyPath: keyPath)
+  }
+
+  /**
+   KeyPath to Edge
+   - Input: ==
+   - Output: *
+   */
+  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Edge<Output>>) -> Self
+  where Input: Equatable, Self == SelectEdgeEquatableSourcePipeline<Input, Output> {
+    self.init(keyPath: keyPath)
+  }
+
+  /**
+   KeyPath to Edge
+   - Input: ==
+   - Output: ==
+   */
+  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Edge<Output>>) -> Self
+  where Input: Equatable, Output: Equatable, Self == SelectEdgeEquatableSourceEquatableOutputPipeline<Input, Output> {
+    self.init(keyPath: keyPath)
+  }
+}
+
+extension PipelineType {
+  /**
+   Closure based map
+   - Input: *
+   - Output: *
+   */
+  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Self == MapPipeline<Input, Output> {
+    self.init(map: closure)
+  }
+
+  /**
+   Closure based map
+   - Input: *
+   - Output: ==
+   */
+  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Output: Equatable, Self == MapEquatableOutputPipeline<Input, Output> {
+    self.init(map: closure)
+  }
+
+  /**
+   Closure based map
+   - Input: ==
+   - Output: *
+   */
+  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Input: Equatable, Self == MapEquatableSourcePipeline<Input, Output> {
+    self.init(map: closure)
+  }
+
+  /**
+   Closure based map
+   - Input: ==
+   - Output: ==
+   */
+  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Input: Equatable, Output: Equatable, Self == MapEquatableSourceEquatableOutputPipeline<Input, Output> {
+    self.init(map: closure)
+  }
+
+}
+
+/// A handler that how receives and provides value.
+///
+/// inputs value: Input -> Pipeline -> Pipeline.Result
+/// inputs value initially: -> Pipeline -> Output
 public struct Pipeline<Input, Output>: Equatable, Sendable {
 
   public static func == (lhs: Pipeline<Input, Output>, rhs: Pipeline<Input, Output>) -> Bool {
     lhs.identifier == rhs.identifier
   }
 
-  public enum ContinuousResult {
-    case new(Output)
-    case noUpdates
-  }
+  public typealias ContinuousResult = Verge.ContinuousResult<Output>
 
   // MARK: - Properties
 
@@ -54,21 +622,21 @@ public struct Pipeline<Input, Output>: Equatable, Sendable {
   private let _dropInput: @Sendable (Input) -> Bool
 
   /**
-   An identifier to be used from Derived to use the same instance if Pipeline is same.   
+   An identifier to be used from Derived to use the same instance if Pipeline is same.
    */
   let identifier: Int = counter.getAndIncrement()
 
   // MARK: - Initializers
-    
+
   @_disfavoredOverload
   public init(
     makeInitial: @escaping @Sendable (Input) -> Output,
     update: @escaping @Sendable (Input) -> ContinuousResult
   ) {
-    
+
     self.init(makeOutput: makeInitial, dropInput: { _ in false }, makeContinuousOutput: update)
   }
-  
+
   public init(
     map: @escaping @Sendable (Input) -> Output
   ) {
@@ -106,7 +674,6 @@ public struct Pipeline<Input, Output>: Equatable, Sendable {
 
   // MARK: - Functions
 
-
   // TODO: Rename `makeContinuousOutput`
   public func makeResult(_ source: Input) -> ContinuousResult {
     _makeContinousOutput(source)
@@ -117,16 +684,6 @@ public struct Pipeline<Input, Output>: Equatable, Sendable {
     _makeOutput(source)
   }
 
-  /// Tune memoization logic up.
-  ///
-  /// - Parameter predicate: Return true, the coming input would be dropped.
-  /// - Returns:
-  public func dropsInput(
-    while predicate: @escaping @Sendable (Input) -> Bool
-  ) -> Self {
-    drop(while: predicate)
-  }
-  
   /// Tune memoization logic up.
   ///
   /// - Parameter predicate: Return true, the coming input would be dropped.

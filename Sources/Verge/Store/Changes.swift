@@ -870,7 +870,7 @@ extension _StateTypeContainer {
     @inline(__always)
     public func dropsInput(while predicate: @escaping (Input) -> Bool) -> Self {
       modified {
-        $0.dropsInput(while: predicate)
+        $0.drop(while: predicate)
       }
     }
 
