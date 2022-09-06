@@ -199,8 +199,6 @@ open class ReadonlyStorage<Value>: @unchecked Sendable, CustomReflectable {
 
 open class Storage<Value>: ReadonlyStorage<Value> {
   
-  private var notificationFilter: (Value) -> Bool = { _ in true }
-
   public enum UpdateResult {
     case updated
     case nothingUpdates
@@ -234,14 +232,10 @@ open class Storage<Value>: ReadonlyStorage<Value> {
          */
         unlock()
       
-        if notificationFilter(previousValue) {
-          notifyWillUpdate(value: previousValue)
-        }
-
-        if notificationFilter(afterValue) {
-          notifyDidUpdate(value: afterValue)
-        }
-        
+        // it's not actual `will` 👨🏻❓
+        notifyWillUpdate(value: previousValue)
+        notifyDidUpdate(value: afterValue)
+            
       }
 
     } catch {
@@ -262,9 +256,7 @@ open class Storage<Value>: ReadonlyStorage<Value> {
       lock()
       notifyValue = nonatomicValue
       unlock()
-      if notificationFilter(notifyValue) {
-        notifyWillUpdate(value: notifyValue)
-      }
+      notifyWillUpdate(value: notifyValue)
     }
     
     lock()
@@ -273,9 +265,7 @@ open class Storage<Value>: ReadonlyStorage<Value> {
       let notifyValue = nonatomicValue
       unlock()
       // TODO: cause cracking the order of event
-      if notificationFilter(notifyValue) {
-        notifyDidUpdate(value: notifyValue)
-      }
+      notifyDidUpdate(value: notifyValue)
       return r
     } catch {
       unlock()
@@ -283,12 +273,6 @@ open class Storage<Value>: ReadonlyStorage<Value> {
     }
   }
     
-  /// Filter to supress update notifications
-  /// - Parameter filter: Return true, notification will emit.
-  public final func setNotificationFilter(_ filter: @escaping (Value) -> Bool) {
-    notificationFilter = filter
-  }
-     
 }
 
 public final class StateStorage<Value>: Storage<Value> {

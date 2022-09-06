@@ -571,17 +571,4 @@ public final class BindingDerived<State>: Derived<State> {
     self
   }
 
-  /// Registers a condition which drops outputs.
-  ///
-  /// You might use this method when you want to get to drop outputs in some situations as additional conditions.
-  /// For example, Even dropping by Equatable, it might need to be dropped by extra value status.
-  ///
-  /// - Parameter postFilter: Returns the objects are equals
-  /// - Returns:
-  internal func setDropsOutput(_ dropsOutput: @escaping (Changes<Value>) -> Bool) {
-    innerStore.setNotificationFilter { changes in
-      !dropsOutput(changes)
-    }
-  }
-    
 }

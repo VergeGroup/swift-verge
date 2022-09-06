@@ -295,11 +295,7 @@ Mutation: (%@)
     let log = ActivityLog(storeName: self.name, trace: trace)
     logger?.didSendActivity(log: log, sender: self)
   }
-  
-  func setNotificationFilter(_ filter: @escaping (Changes<State>) -> Bool) {
-    self._backingStorage.setNotificationFilter(filter)
-  }
-     
+ 
   public var customMirror: Mirror {
     return Mirror(
       self,
