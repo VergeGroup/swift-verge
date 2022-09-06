@@ -312,10 +312,10 @@ extension Pipeline {
   }
 
   /// For Edge
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State>
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output>
   where Input: ChangesType, Output: EdgeType {
     .init(
-      makeOutput: { $0[keyPath: keyPath].wrappedValue },
+      makeOutput: { $0[keyPath: keyPath] },
       dropInput: { changes in
         
         guard let previous = changes.previous else {
@@ -332,14 +332,14 @@ extension Pipeline {
          
         return true
       },
-      makeContinuousOutput: { .new($0[keyPath: keyPath].wrappedValue) }
+      makeContinuousOutput: { .new($0[keyPath: keyPath]) }
     )
   }
 
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State>
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output>
   where Input: ChangesType, Output: EdgeType, Output.State: Equatable {
     .init(
-      makeOutput: { $0[keyPath: keyPath].wrappedValue },
+      makeOutput: { $0[keyPath: keyPath] },
       dropInput: { changes in
         
         guard let previous = changes.previous else {
@@ -360,14 +360,14 @@ extension Pipeline {
         
         return true
       },
-      makeContinuousOutput: { .new($0[keyPath: keyPath].wrappedValue) }
+      makeContinuousOutput: { .new($0[keyPath: keyPath]) }
     )
   }
 
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State>
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output>
   where Input: ChangesType, Input.Value: Equatable, Output: EdgeType {
     .init(
-      makeOutput: { $0[keyPath: keyPath].wrappedValue },
+      makeOutput: { $0[keyPath: keyPath] },
       dropInput: { changes in
         
         guard let previous = changes.previous else {
@@ -384,14 +384,14 @@ extension Pipeline {
             
         return true
       },
-      makeContinuousOutput: { .new($0[keyPath: keyPath].wrappedValue) }
+      makeContinuousOutput: { .new($0[keyPath: keyPath]) }
     )
   }
 
-  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State>
+  public static func map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output>
   where Input: ChangesType, Input.Value: Equatable, Output: EdgeType, Output.State: Equatable {
     .init(
-      makeOutput: { $0[keyPath: keyPath].wrappedValue },
+      makeOutput: { $0[keyPath: keyPath] },
       dropInput: { changes in
         
         guard let previous = changes.previous else {
@@ -412,7 +412,7 @@ extension Pipeline {
                    
         return true
       },
-      makeContinuousOutput: { .new($0[keyPath: keyPath].wrappedValue) }
+      makeContinuousOutput: { .new($0[keyPath: keyPath]) }
     )
   }
 }

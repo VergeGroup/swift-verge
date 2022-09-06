@@ -84,6 +84,13 @@ extension StoreType {
     }
 
   }
+  
+  public func derived<Edge: EdgeType>(
+    _ pipeline: Pipeline<Changes<State>, Edge>,
+    queue: TargetQueueType = .passthrough
+  ) -> Derived<Edge.State> {
+    
+  }
 
   /// Returns a Dervived object with making
   ///

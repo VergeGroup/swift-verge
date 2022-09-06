@@ -2,89 +2,46 @@
 import XCTest
 import Verge
 
-extension Pipeline {
-  
-  public static func _map(_ closure: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> where Input: ChangesType {
-    fatalError()
-  }
-  
-  public static func _map(_ closure: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> where Input: ChangesType, Output: Equatable {
-    fatalError()
-  }
-  
-  public static func _map(_ closure: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> where Input: ChangesType, Input.Value: Equatable {
-    fatalError()
-  }
-  
-  public static func _map(_ closure: @escaping @Sendable (Input) -> Output) -> Pipeline<Input, Output> where Input: ChangesType, Input.Value: Equatable, Output: Equatable {
-    fatalError()
-  }
-  
-  public static func _map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> where Input: ChangesType {
-    fatalError()
-  }
-    
-  public static func _map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> where Input: ChangesType, Output: Equatable {
-    fatalError()
-  }
-
-  public static func _map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> where Input: ChangesType, Input.Value: Equatable {
-    fatalError()
-  }
-  
-  public static func _map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output> where Input: ChangesType, Input.Value: Equatable, Output: Equatable {
-    fatalError()
-  }
-  
-  public static func _map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State> where Input: ChangesType, Output: EdgeType {
-    fatalError()
-  }
-  
-  public static func _map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State> where Input: ChangesType, Output: EdgeType, Output.State : Equatable {
-    fatalError()
-  }
-  
-  public static func _map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State> where Input: ChangesType, Input.Value: Equatable, Output: EdgeType {
-    fatalError()
-  }
-  
-  public static func _map(_ keyPath: KeyPath<Input, Output>) -> Pipeline<Input, Output.State> where Input: ChangesType, Input.Value: Equatable, Output: EdgeType, Output.State : Equatable {
-    fatalError()
-  }
-}
-
 final class PipelineTests: XCTestCase {
   
   func testSelect() {
     
-    let _ = Pipeline<Changes<DemoState>, _>._map { $0.nonEquatable }
+    do {
+      let any: Any = DemoStore().derived(.map(\.$onEquatable))
+      XCTAssert(any is Derived<NonEquatable>)
+    }
     
-    let _ = Pipeline<Changes<DemoState>, _>._map { $0.count }
+    DemoStore().derived(.map(\.$nonEquatable))
+    DemoStore().derived(.map(\.count))
     
-    let _ = Pipeline<Changes<DemoState>, _>._map(\.count)
+    let _ = Pipeline<Changes<DemoState>, _>.map { $0.nonEquatable }
     
-    let _ = Pipeline<Changes<DemoState>, _>._map(\.nonEquatable)
+    let _ = Pipeline<Changes<DemoState>, _>.map { $0.count }
+    
+    let _ = Pipeline<Changes<DemoState>, _>.map(\.count)
+    
+    let _ = Pipeline<Changes<DemoState>, _>.map(\.nonEquatable)
             
-    let _ = Pipeline<Changes<DemoState>, _>._map(\.$nonEquatable)
+    let _ = Pipeline<Changes<DemoState>, _>.map(\.$nonEquatable)
     
-    let _ = Pipeline<Changes<DemoState>, _>._map(\.$onEquatable)
+    let _ = Pipeline<Changes<DemoState>, _>.map(\.$onEquatable)
     
-    let _ = Pipeline<Changes<DemoState>, _>._map(\.computed.nameCount)
+    let _ = Pipeline<Changes<DemoState>, _>.map(\.computed.nameCount)
     
     
-    let _ = Pipeline<Changes<NonEquatableDemoState>, _>._map { $0.nonEquatable }
+    let _ = Pipeline<Changes<NonEquatableDemoState>, _>.map { $0.nonEquatable }
     
-    let _ = Pipeline<Changes<NonEquatableDemoState>, _>._map { $0.count }
+    let _ = Pipeline<Changes<NonEquatableDemoState>, _>.map { $0.count }
     
-    let _ = Pipeline<Changes<NonEquatableDemoState>, _>._map(\.count)
+    let _ = Pipeline<Changes<NonEquatableDemoState>, _>.map(\.count)
     
-    let _ = Pipeline<Changes<NonEquatableDemoState>, _>._map(\.nonEquatable)
+    let _ = Pipeline<Changes<NonEquatableDemoState>, _>.map(\.nonEquatable)
     
-    let _ = Pipeline<Changes<NonEquatableDemoState>, _>._map(\.$nonEquatable)
+    let _ = Pipeline<Changes<NonEquatableDemoState>, _>.map(\.$nonEquatable)
     
-    let _ = Pipeline<Changes<NonEquatableDemoState>, _>._map(\.$onEquatable)
+    let _ = Pipeline<Changes<NonEquatableDemoState>, _>.map(\.$onEquatable)
     
-    let _ = Pipeline<Changes<NonEquatableDemoState>, _>._map(\.computed.nameCount)
+    let _ = Pipeline<Changes<NonEquatableDemoState>, _>.map(\.computed.nameCount)
         
   }
   
