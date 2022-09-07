@@ -9,14 +9,14 @@
 import Foundation
 import Verge
 
-struct NonEquatable {
+struct NonEquatable, Sendable {
   let id = UUID()
 }
-struct OnEquatable: Equatable {
+struct OnEquatable: Equatable, Sendable {
   let id = UUID()
 }
 
-struct DemoState: Equatable {
+struct DemoState: Equatable, Sendable {
 
   struct Inner: Equatable {
     var name: String = ""
@@ -37,7 +37,7 @@ struct DemoState: Equatable {
 
 }
 
-struct NonEquatableDemoState {
+struct NonEquatableDemoState: Sendable {
   
   struct Inner: Equatable {
     var name: String = ""

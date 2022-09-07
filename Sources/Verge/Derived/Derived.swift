@@ -412,36 +412,46 @@ extension Derived where Value == Never {
   ///   - s0:
   ///   - s1:
   /// - Returns:
-  public static func combined<S0, S1, Pipeline: PipelineType>(
+  public static func combined<S0, S1>(
     _ s0: Derived<S0>,
     _ s1: Derived<S1>,
-    pipeline: Pipeline,
     queue: TargetQueueType = .passthrough
-  ) -> Derived<(S0, S1)> where Pipeline.Input == (S0, S1), Pipeline.Output == (S0, S1) {
+  ) -> Derived<(Changes<S0>, Changes<S1>)> {
     
-    typealias Shape = (S0, S1)
+    typealias Shape = Changes<(Changes<S0>, Changes<S1>)>
     
-    let initial = (s0.primitiveValue, s1.primitiveValue)
+    let initial = Changes.init(old: nil, new: (s0.value, s1.value))
     
     let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
-    return Derived<Shape>(
-      get: pipeline,
+    return Derived<(Changes<S0>, Changes<S1>)>(
+      get: Pipelines.SelectPipeline.init(keyPath: \.root, additionalDropCondition: nil),
       set: { _, _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
                 
         let _s0 = s0._sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
-            value.0 = s0.primitive
-            callback(value)
+            let newValue = value.makeNextChanges(
+              with: (s0, value.primitive.1),
+              from: [],
+              modification: .indeterminate
+            )
+            value = newValue
+            callback(newValue)
           }
         }
         
         let _s1 = s1._sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
-            value.1 = s1.primitive
-            callback(value)
+            
+            let newValue = value.makeNextChanges(
+              with: (value.primitive.0, s1),
+              from: [],
+              modification: .indeterminate
+            )
+            value = newValue
+            callback(newValue)          
           }
         }
         

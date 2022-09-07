@@ -39,542 +39,485 @@ public protocol PipelineType {
   func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self
 }
 
-public struct SelectPipeline<Source, Output>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-  
-  private let keyPath: KeyPath<Input, Output>
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
-  
-  init(
-    keyPath: KeyPath<Input, Output>,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self.keyPath = keyPath
-    self.additionalDropCondition = additionalDropCondition
-  }
-  
-  @_effects(readnone)
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+public enum Pipelines {
+  public struct SelectPipeline<Source, Output>: PipelineType {
     
-    guard let previous = input.previous else {
-      return .new(input[keyPath: keyPath])
+    public typealias Input = Changes<Source>
+    
+    private let keyPath: KeyPath<Input, Output>
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      keyPath: KeyPath<Input, Output>,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self.keyPath = keyPath
+      self.additionalDropCondition = additionalDropCondition
     }
     
-    guard previous.version == input.version else {
+    @_effects(readnone)
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
       
-      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+      guard let previous = input.previous else {
         return .new(input[keyPath: keyPath])
       }
       
-      return .noUpdates
-    }
-    
-    return .noUpdates
-    
-  }
-  
-  @_effects(readnone)
-  public func yield(_ input: Input) -> Output {
-    input[keyPath: keyPath]
-  }
-  
-  public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
-    return .init(
-      keyPath: keyPath,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
+      guard previous.version == input.version else {
+        
+        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+          return .new(input[keyPath: keyPath])
         }
-      } ?? predicate
-    )
-  }
-    
-}
-
-public struct SelectEquatableOutputPipeline<Source, Output: Equatable>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-  
-  private let keyPath: KeyPath<Input, Output>
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
-  
-  init(
-    keyPath: KeyPath<Input, Output>,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self.keyPath = keyPath
-    self.additionalDropCondition = additionalDropCondition
-  }
-  
-  @_effects(readnone)
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-    
-    guard let previous = input.previous else {
-      return .new(input[keyPath: keyPath])
-    }
-    
-    guard
-      previous.version == input.version ||
-        previous[keyPath: keyPath] == input[keyPath: keyPath]
-    else {
-      
-      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-        return .new(input[keyPath: keyPath])
-      }
-      
-      return .noUpdates
-    }
-    
-    return .noUpdates
-    
-  }
-  
-  @_effects(readnone)
-  public func yield(_ input: Input) -> Output {
-    input[keyPath: keyPath]
-  }
-  
-  public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
-    return .init(
-      keyPath: keyPath,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
-        }
-      } ?? predicate
-    )
-  }
-  
-}
-
-public struct SelectEquatableSourcePipeline<Source: Equatable, Output>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-    
-  private let keyPath: KeyPath<Input, Output>
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
-  
-  init(
-    keyPath: KeyPath<Input, Output>,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self.keyPath = keyPath
-    self.additionalDropCondition = additionalDropCondition
-  }
-  
-  @_effects(readnone)
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-    
-    guard let previous = input.previous else {
-      return .new(input[keyPath: keyPath])
-    }
-    
-    guard
-      previous.version == input.version ||
-        previous.primitive == input.primitive
-    else {
-      
-      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-        return .new(input[keyPath: keyPath])
-      }
-      
-      return .noUpdates
-    }
-    
-    return .noUpdates
-    
-  }
-     
-  @_effects(readnone)
-  public func yield(_ input: Input) -> Output {
-    input[keyPath: keyPath]
-  }
-  
-  public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
-    return .init(
-      keyPath: keyPath,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
-        }
-      } ?? predicate
-    )
-  }
-  
-}
-
-public struct SelectEquatableSourceEquatableOutputPipeline<Source: Equatable, Output: Equatable>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-  
-  private let keyPath: KeyPath<Input, Output>
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
-  
-  init(
-    keyPath: KeyPath<Input, Output>,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self.keyPath = keyPath
-    self.additionalDropCondition = additionalDropCondition
-  }
-    
-  @_effects(readnone)
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-    
-    guard let previous = input.previous else {
-      return .new(input[keyPath: keyPath])
-    }
-    
-    guard
-      previous.version == input.version ||
-        previous.primitive == input.primitive ||
-        previous[keyPath: keyPath] == input[keyPath: keyPath]
-    else {
-      
-      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-        return .new(input[keyPath: keyPath])
-      }
-            
-      return .noUpdates
-    }
-    
-    return .noUpdates
-    
-  }
-  
-  @_effects(readnone)
-  public func yield(_ input: Input) -> Output {
-    input[keyPath: keyPath]
-  }
-  
-  public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
-    return .init(
-      keyPath: keyPath,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
-        }
-      } ?? predicate
-    )
-  }
-  
-}
-
-public struct SelectEdgePipeline<Source, EdgeValue>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-  public typealias Output = Edge<EdgeValue>
-  
-  private let keyPath: KeyPath<Input, Output>
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
-  
-  init(
-    keyPath: KeyPath<Input, Output>,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self.keyPath = keyPath
-    self.additionalDropCondition = additionalDropCondition
-  }
-  
-  @_effects(readnone)
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-    
-    guard let previous = input.previous else {
-      return .new(input[keyPath: keyPath])
-    }
-    
-    guard
-      previous.version == input.version ||
-        previous[keyPath: keyPath].version == input[keyPath: keyPath].version
-    else {
-      
-      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-        return .new(input[keyPath: keyPath])
-      }
-      
-      return .noUpdates
-    }
-            
-    return .noUpdates
-    
-  }
-  
-  @_effects(readnone)
-  public func yield(_ input: Input) -> Output {
-    input[keyPath: keyPath]
-  }
-  
-  public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
-    return .init(
-      keyPath: keyPath,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
-        }
-      } ?? predicate
-    )
-  }
-  
-}
-
-public struct SelectEdgeEquatableOutputPipeline<Source, EdgeValue: Equatable>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-  public typealias Output = Edge<EdgeValue>
-  
-  private let keyPath: KeyPath<Input, Output>
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
-  
-  init(
-    keyPath: KeyPath<Input, Output>,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self.keyPath = keyPath
-    self.additionalDropCondition = additionalDropCondition
-  }
-  
-  @_effects(readnone)
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-    
-    guard let previous = input.previous else {
-      return .new(input[keyPath: keyPath])
-    }
-    
-    guard
-      previous.version == input.version ||
-        previous[keyPath: keyPath].version == input[keyPath: keyPath].version ||
-        previous[keyPath: keyPath].wrappedValue == input[keyPath: keyPath].wrappedValue
-    else {
-      
-      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-        return .new(input[keyPath: keyPath])
-      }
-            
-      return .noUpdates
-    }
-    
-    return .noUpdates
-  }
-  
-  @_effects(readnone)
-  public func yield(_ input: Input) -> Output {
-    input[keyPath: keyPath]
-  }
-  
-  public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
-    return .init(
-      keyPath: keyPath,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
-        }
-      } ?? predicate
-    )
-  }
-  
-}
-
-public struct SelectEdgeEquatableSourcePipeline<Source: Equatable, EdgeValue>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-  public typealias Output = Edge<EdgeValue>
-  
-  private let keyPath: KeyPath<Input, Output>
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
-  
-  init(
-    keyPath: KeyPath<Input, Output>,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self.keyPath = keyPath
-    self.additionalDropCondition = additionalDropCondition
-  }
-  
-  @_effects(readnone)
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-    
-    guard let previous = input.previous else {
-      return .new(input[keyPath: keyPath])
-    }
-    
-    guard
-      previous.version == input.version ||
-        previous.primitive == input.primitive ||
-        previous[keyPath: keyPath].version == input[keyPath: keyPath].version
-    else {
-      
-      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-        return .new(input[keyPath: keyPath])
+        
+        return .noUpdates
       }
       
       return .noUpdates
       
     }
     
-    return .noUpdates
-  }
-  
-  @_effects(readnone)
-  public func yield(_ input: Input) -> Output {
-    input[keyPath: keyPath]
-  }
-    
-  public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
-    return .init(
-      keyPath: keyPath,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
-        }
-      } ?? predicate
-    )
-  }
-}
-
-public struct SelectEdgeEquatableSourceEquatableOutputPipeline<Source: Equatable, EdgeValue: Equatable>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-  public typealias Output = Edge<EdgeValue>
-  
-  private let keyPath: KeyPath<Input, Output>
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
-  
-  init(
-    keyPath: KeyPath<Input, Output>,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self.keyPath = keyPath
-    self.additionalDropCondition = additionalDropCondition
-  }
-  
-  @_effects(readnone)
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-    
-    guard let previous = input.previous else {
-      return .new(input[keyPath: keyPath])
+    @_effects(readnone)
+    public func yield(_ input: Input) -> Output {
+      input[keyPath: keyPath]
     }
     
-    guard
-      previous.version == input.version ||
-        previous.primitive == input.primitive ||
-        previous[keyPath: keyPath].version == input[keyPath: keyPath].version ||
-        previous[keyPath: keyPath].wrappedValue == input[keyPath: keyPath].wrappedValue
-    else {
-
-      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+    public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
+      return .init(
+        keyPath: keyPath,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+    
+  }
+  
+  public struct SelectEquatableOutputPipeline<Source, Output: Equatable>: PipelineType {
+    
+    public typealias Input = Changes<Source>
+    
+    private let keyPath: KeyPath<Input, Output>
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      keyPath: KeyPath<Input, Output>,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self.keyPath = keyPath
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    @_effects(readnone)
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+      
+      guard let previous = input.previous else {
         return .new(input[keyPath: keyPath])
+      }
+      
+      guard
+        previous.version == input.version ||
+          previous[keyPath: keyPath] == input[keyPath: keyPath]
+      else {
+        
+        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+          return .new(input[keyPath: keyPath])
+        }
+        
+        return .noUpdates
       }
       
       return .noUpdates
       
     }
     
-    return .noUpdates
-  }
-  
-  @_effects(readnone)
-  public func yield(_ input: Input) -> Output {
-    input[keyPath: keyPath]
-  }
-  
-  public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
-    return .init(
-      keyPath: keyPath,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
-        }
-      } ?? predicate
-    )
-  }
-  
-}
-
-public struct MapPipeline<Source, Output>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-   
-  // MARK: - Properties
-  
-  private let _map: @Sendable (Input) -> Output
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
- 
-  public init(
-    map: @escaping @Sendable (Input) -> Output,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self._map = map
-    self.additionalDropCondition = additionalDropCondition
-  }
-    
-  // MARK: - Functions
-    
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-    
-    guard let previous = input.previous else {
-      return .new(_map(input))
+    @_effects(readnone)
+    public func yield(_ input: Input) -> Output {
+      input[keyPath: keyPath]
     }
     
-    guard previous.version == input.version else {
+    public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
+      return .init(
+        keyPath: keyPath,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+    
+  }
+  
+  public struct SelectEquatableSourcePipeline<Source: Equatable, Output>: PipelineType {
+    
+    public typealias Input = Changes<Source>
+    
+    private let keyPath: KeyPath<Input, Output>
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      keyPath: KeyPath<Input, Output>,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self.keyPath = keyPath
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    @_effects(readnone)
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
       
-      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+      guard let previous = input.previous else {
+        return .new(input[keyPath: keyPath])
+      }
+      
+      guard
+        previous.version == input.version ||
+          previous.primitive == input.primitive
+      else {
+        
+        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+          return .new(input[keyPath: keyPath])
+        }
+        
+        return .noUpdates
+      }
+      
+      return .noUpdates
+      
+    }
+    
+    @_effects(readnone)
+    public func yield(_ input: Input) -> Output {
+      input[keyPath: keyPath]
+    }
+    
+    public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
+      return .init(
+        keyPath: keyPath,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+    
+  }
+  
+  public struct SelectEquatableSourceEquatableOutputPipeline<Source: Equatable, Output: Equatable>: PipelineType {
+    
+    public typealias Input = Changes<Source>
+    
+    private let keyPath: KeyPath<Input, Output>
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      keyPath: KeyPath<Input, Output>,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self.keyPath = keyPath
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    @_effects(readnone)
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+      
+      guard let previous = input.previous else {
+        return .new(input[keyPath: keyPath])
+      }
+      
+      guard
+        previous.version == input.version ||
+          previous.primitive == input.primitive ||
+          previous[keyPath: keyPath] == input[keyPath: keyPath]
+      else {
+        
+        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+          return .new(input[keyPath: keyPath])
+        }
+        
+        return .noUpdates
+      }
+      
+      return .noUpdates
+      
+    }
+    
+    @_effects(readnone)
+    public func yield(_ input: Input) -> Output {
+      input[keyPath: keyPath]
+    }
+    
+    public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
+      return .init(
+        keyPath: keyPath,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+    
+  }
+  
+  public struct SelectEdgePipeline<Source, EdgeValue>: PipelineType {
+    
+    public typealias Input = Changes<Source>
+    public typealias Output = Edge<EdgeValue>
+    
+    private let keyPath: KeyPath<Input, Output>
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      keyPath: KeyPath<Input, Output>,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self.keyPath = keyPath
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    @_effects(readnone)
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+      
+      guard let previous = input.previous else {
+        return .new(input[keyPath: keyPath])
+      }
+      
+      guard
+        previous.version == input.version ||
+          previous[keyPath: keyPath].version == input[keyPath: keyPath].version
+      else {
+        
+        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+          return .new(input[keyPath: keyPath])
+        }
+        
+        return .noUpdates
+      }
+      
+      return .noUpdates
+      
+    }
+    
+    @_effects(readnone)
+    public func yield(_ input: Input) -> Output {
+      input[keyPath: keyPath]
+    }
+    
+    public func drop(while predicate: @escaping @Sendable (Changes<Source>) -> Bool) -> Self {
+      return .init(
+        keyPath: keyPath,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+    
+  }
+  
+  public struct SelectEdgeEquatableOutputPipeline<Source, EdgeValue: Equatable>: PipelineType {
+    
+    public typealias Input = Changes<Source>
+    public typealias Output = Edge<EdgeValue>
+    
+    private let keyPath: KeyPath<Input, Output>
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      keyPath: KeyPath<Input, Output>,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self.keyPath = keyPath
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    @_effects(readnone)
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+      
+      guard let previous = input.previous else {
+        return .new(input[keyPath: keyPath])
+      }
+      
+      guard
+        previous.version == input.version ||
+          previous[keyPath: keyPath].version == input[keyPath: keyPath].version ||
+          previous[keyPath: keyPath].wrappedValue == input[keyPath: keyPath].wrappedValue
+      else {
+        
+        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+          return .new(input[keyPath: keyPath])
+        }
+        
+        return .noUpdates
+      }
+      
+      return .noUpdates
+    }
+    
+    @_effects(readnone)
+    public func yield(_ input: Input) -> Output {
+      input[keyPath: keyPath]
+    }
+    
+    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
+      return .init(
+        keyPath: keyPath,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+    
+  }
+  
+  public struct SelectEdgeEquatableSourcePipeline<Source: Equatable, EdgeValue>: PipelineType {
+    
+    public typealias Input = Changes<Source>
+    public typealias Output = Edge<EdgeValue>
+    
+    private let keyPath: KeyPath<Input, Output>
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      keyPath: KeyPath<Input, Output>,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self.keyPath = keyPath
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    @_effects(readnone)
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+      
+      guard let previous = input.previous else {
+        return .new(input[keyPath: keyPath])
+      }
+      
+      guard
+        previous.version == input.version ||
+          previous.primitive == input.primitive ||
+          previous[keyPath: keyPath].version == input[keyPath: keyPath].version
+      else {
+        
+        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+          return .new(input[keyPath: keyPath])
+        }
+        
+        return .noUpdates
+        
+      }
+      
+      return .noUpdates
+    }
+    
+    @_effects(readnone)
+    public func yield(_ input: Input) -> Output {
+      input[keyPath: keyPath]
+    }
+    
+    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
+      return .init(
+        keyPath: keyPath,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+  }
+  
+  public struct SelectEdgeEquatableSourceEquatableOutputPipeline<Source: Equatable, EdgeValue: Equatable>: PipelineType {
+    
+    public typealias Input = Changes<Source>
+    public typealias Output = Edge<EdgeValue>
+    
+    private let keyPath: KeyPath<Input, Output>
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      keyPath: KeyPath<Input, Output>,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self.keyPath = keyPath
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    @_effects(readnone)
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+      
+      guard let previous = input.previous else {
+        return .new(input[keyPath: keyPath])
+      }
+      
+      guard
+        previous.version == input.version ||
+          previous.primitive == input.primitive ||
+          previous[keyPath: keyPath].version == input[keyPath: keyPath].version ||
+          previous[keyPath: keyPath].wrappedValue == input[keyPath: keyPath].wrappedValue
+      else {
+        
+        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+          return .new(input[keyPath: keyPath])
+        }
+        
+        return .noUpdates
+        
+      }
+      
+      return .noUpdates
+    }
+    
+    @_effects(readnone)
+    public func yield(_ input: Input) -> Output {
+      input[keyPath: keyPath]
+    }
+    
+    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
+      return .init(
+        keyPath: keyPath,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+    
+  }
+  
+  public struct MapPipeline<Source, Output>: PipelineType {
+    
+    public typealias Input = Changes<Source>
+    
+    // MARK: - Properties
+    
+    private let _map: @Sendable (Input) -> Output
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      map: @escaping @Sendable (Input) -> Output,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self._map = map
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    // MARK: - Functions
+    
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+      
+      guard let previous = input.previous else {
         return .new(_map(input))
       }
       
-      return .noUpdates
-    }
-        
-    return .noUpdates
-  }
-  
-  public func yield(_ input: Input) -> Output {
-    _map(input)
-  }
-  
-  public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
-    return .init(
-      map: _map,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
-        }
-      } ?? predicate
-    )
-  }
-  
-}
-
-public struct MapEquatableOutputPipeline<Source, Output: Equatable>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-  
-  // MARK: - Properties
-  
-  private let _map: @Sendable (Input) -> Output
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
-  
-  public init(
-    map: @escaping @Sendable (Input) -> Output,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self._map = map
-    self.additionalDropCondition = additionalDropCondition
-  }
-  
-  // MARK: - Functions
-  
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-    
-    guard let previous = input.previous else {
-      return .new(_map(input))
-    }
-    
-    guard previous.version == input.version else {
-      
-      let mapped = _map(input)
-      
-      guard _map(previous) == mapped else {
+      guard previous.version == input.version else {
         
         guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
           return .new(_map(input))
@@ -586,115 +529,112 @@ public struct MapEquatableOutputPipeline<Source, Output: Equatable>: PipelineTyp
       return .noUpdates
     }
     
-    return .noUpdates
-  }
-  
-  public func yield(_ input: Input) -> Output {
-    _map(input)
-  }
-  
-  public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
-    return .init(
-      map: _map,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
-        }
-      } ?? predicate
-    )
-  }
-}
-
-public struct MapEquatableSourcePipeline<Source: Equatable, Output>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-  
-  // MARK: - Properties
-  
-  private let _map: @Sendable (Input) -> Output
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
-  
-  public init(
-    map: @escaping @Sendable (Input) -> Output,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self._map = map
-    self.additionalDropCondition = additionalDropCondition
-  }
-  
-  // MARK: - Functions
-  
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-    
-    guard let previous = input.previous else {
-      return .new(_map(input))
+    public func yield(_ input: Input) -> Output {
+      _map(input)
     }
     
-    guard
-      previous.version == input.version ||
-        previous.primitive == input.primitive
-    else {
+    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
+      return .init(
+        map: _map,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+    
+  }
+  
+  public struct MapEquatableOutputPipeline<Source, Output: Equatable>: PipelineType {
+    
+    public typealias Input = Changes<Source>
+    
+    // MARK: - Properties
+    
+    private let _map: @Sendable (Input) -> Output
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      map: @escaping @Sendable (Input) -> Output,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self._map = map
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    // MARK: - Functions
+    
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
       
-      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+      guard let previous = input.previous else {
         return .new(_map(input))
+      }
+      
+      guard previous.version == input.version else {
+        
+        let mapped = _map(input)
+        
+        guard _map(previous) == mapped else {
+          
+          guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+            return .new(_map(input))
+          }
+          
+          return .noUpdates
+        }
+        
+        return .noUpdates
       }
       
       return .noUpdates
     }
     
-    return .noUpdates
-  }
-  
-  public func yield(_ input: Input) -> Output {
-    _map(input)
-  }
-  
-  public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
-    return .init(
-      map: _map,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
-        }
-      } ?? predicate
-    )
-  }
-  
-}
-
-public struct MapEquatableSourceEquatableOutputPipeline<Source: Equatable, Output: Equatable>: PipelineType {
-  
-  public typealias Input = Changes<Source>
-  
-  // MARK: - Properties
-  
-  private let _map: @Sendable (Input) -> Output
-  private let additionalDropCondition: (@Sendable (Input) -> Bool)?
-  
-  public init(
-    map: @escaping @Sendable (Input) -> Output,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
-  ) {
-    self._map = map
-    self.additionalDropCondition = additionalDropCondition
-  }
-  
-  // MARK: - Functions
-  
-  public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-    
-    guard let previous = input.previous else {
-      return .new(_map(input))
+    public func yield(_ input: Input) -> Output {
+      _map(input)
     }
     
-    guard
-      previous.version == input.version ||
-        previous.primitive == input.primitive
-    else {
+    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
+      return .init(
+        map: _map,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+  }
+  
+  public struct MapEquatableSourcePipeline<Source: Equatable, Output>: PipelineType {
+    
+    public typealias Input = Changes<Source>
+    
+    // MARK: - Properties
+    
+    private let _map: @Sendable (Input) -> Output
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      map: @escaping @Sendable (Input) -> Output,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self._map = map
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    // MARK: - Functions
+    
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
       
-      let mapped = _map(input)
+      guard let previous = input.previous else {
+        return .new(_map(input))
+      }
       
-      guard _map(previous) == mapped else {
+      guard
+        previous.version == input.version ||
+          previous.primitive == input.primitive
+      else {
         
         guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
           return .new(_map(input))
@@ -704,27 +644,91 @@ public struct MapEquatableSourceEquatableOutputPipeline<Source: Equatable, Outpu
       }
       
       return .noUpdates
-    
     }
     
-    return .noUpdates
+    public func yield(_ input: Input) -> Output {
+      _map(input)
+    }
+    
+    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
+      return .init(
+        map: _map,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+    
   }
   
-  public func yield(_ input: Input) -> Output {
-    _map(input)
-  }
-  
-  public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
-    return .init(
-      map: _map,
-      additionalDropCondition: additionalDropCondition.map { currentCondition in
-        { input in
-          currentCondition(input) || predicate(input)
+  public struct MapEquatableSourceEquatableOutputPipeline<Source: Equatable, Output: Equatable>: PipelineType {
+    
+    public typealias Input = Changes<Source>
+    
+    // MARK: - Properties
+    
+    private let _map: @Sendable (Input) -> Output
+    private let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    
+    public init(
+      map: @escaping @Sendable (Input) -> Output,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
+    ) {
+      self._map = map
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    // MARK: - Functions
+    
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+      
+      guard let previous = input.previous else {
+        return .new(_map(input))
+      }
+      
+      guard
+        previous.version == input.version ||
+          previous.primitive == input.primitive
+      else {
+        
+        let mapped = _map(input)
+        
+        guard _map(previous) == mapped else {
+          
+          guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+            return .new(_map(input))
+          }
+          
+          return .noUpdates
         }
-      } ?? predicate
-    )
+        
+        return .noUpdates
+        
+      }
+      
+      return .noUpdates
+    }
+    
+    public func yield(_ input: Input) -> Output {
+      _map(input)
+    }
+    
+    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
+      return .init(
+        map: _map,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
   }
+
 }
+
 
 extension PipelineType {
   
@@ -734,7 +738,7 @@ extension PipelineType {
    - Output: *
    */
   @_disfavoredOverload // next to Edge
-  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self where Self == SelectPipeline<Input, Output> {
+  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self where Self == Pipelines.SelectPipeline<Input, Output> {
     self.init(keyPath: keyPath, additionalDropCondition: nil)
   }
 
@@ -745,7 +749,7 @@ extension PipelineType {
    */
   @_disfavoredOverload // next to Edge
   public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
-  where Output: Equatable, Self == SelectEquatableOutputPipeline<Input, Output> {
+  where Output: Equatable, Self == Pipelines.SelectEquatableOutputPipeline<Input, Output> {
     self.init(keyPath: keyPath, additionalDropCondition: nil)
   }
 
@@ -756,7 +760,7 @@ extension PipelineType {
    */
   @_disfavoredOverload // next to Edge
   public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
-  where Input: Equatable, Self == SelectEquatableSourcePipeline<Input, Output> {
+  where Input: Equatable, Self == Pipelines.SelectEquatableSourcePipeline<Input, Output> {
     self.init(keyPath: keyPath, additionalDropCondition: nil)
   }
 
@@ -767,7 +771,7 @@ extension PipelineType {
    */
   @_disfavoredOverload // next to Edge
   public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
-  where Input: Equatable, Output: Equatable, Self == SelectEquatableSourceEquatableOutputPipeline<Input, Output> {
+  where Input: Equatable, Output: Equatable, Self == Pipelines.SelectEquatableSourceEquatableOutputPipeline<Input, Output> {
     self.init(keyPath: keyPath, additionalDropCondition: nil)
   }
 
@@ -777,7 +781,7 @@ extension PipelineType {
    - Output: *
    */
   public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Edge<Output>>) -> Self
-  where Self == SelectEdgePipeline<Input, Output> {
+  where Self == Pipelines.SelectEdgePipeline<Input, Output> {
     self.init(keyPath: keyPath, additionalDropCondition: nil)
   }
 
@@ -787,7 +791,7 @@ extension PipelineType {
    - Output: ==
    */
   public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Edge<Output>>) -> Self
-  where Output: Equatable, Self == SelectEdgeEquatableOutputPipeline<Input, Output> {
+  where Output: Equatable, Self == Pipelines.SelectEdgeEquatableOutputPipeline<Input, Output> {
     self.init(keyPath: keyPath, additionalDropCondition: nil)
   }
 
@@ -797,7 +801,7 @@ extension PipelineType {
    - Output: *
    */
   public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Edge<Output>>) -> Self
-  where Input: Equatable, Self == SelectEdgeEquatableSourcePipeline<Input, Output> {
+  where Input: Equatable, Self == Pipelines.SelectEdgeEquatableSourcePipeline<Input, Output> {
     self.init(keyPath: keyPath, additionalDropCondition: nil)
   }
 
@@ -807,7 +811,7 @@ extension PipelineType {
    - Output: ==
    */
   public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Edge<Output>>) -> Self
-  where Input: Equatable, Output: Equatable, Self == SelectEdgeEquatableSourceEquatableOutputPipeline<Input, Output> {
+  where Input: Equatable, Output: Equatable, Self == Pipelines.SelectEdgeEquatableSourceEquatableOutputPipeline<Input, Output> {
     self.init(keyPath: keyPath, additionalDropCondition: nil)
   }
 }
@@ -818,7 +822,7 @@ extension PipelineType {
    - Input: *
    - Output: *
    */
-  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Self == MapPipeline<Input, Output> {
+  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Self == Pipelines.MapPipeline<Input, Output> {
     self.init(map: closure, additionalDropCondition: nil)
   }
 
@@ -827,7 +831,7 @@ extension PipelineType {
    - Input: *
    - Output: ==
    */
-  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Output: Equatable, Self == MapEquatableOutputPipeline<Input, Output> {
+  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Output: Equatable, Self == Pipelines.MapEquatableOutputPipeline<Input, Output> {
     self.init(map: closure, additionalDropCondition: nil)
   }
 
@@ -836,7 +840,7 @@ extension PipelineType {
    - Input: ==
    - Output: *
    */
-  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Input: Equatable, Self == MapEquatableSourcePipeline<Input, Output> {
+  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Input: Equatable, Self == Pipelines.MapEquatableSourcePipeline<Input, Output> {
     self.init(map: closure, additionalDropCondition: nil)
   }
 
@@ -845,7 +849,7 @@ extension PipelineType {
    - Input: ==
    - Output: ==
    */
-  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Input: Equatable, Output: Equatable, Self == MapEquatableSourceEquatableOutputPipeline<Input, Output> {
+  public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapEquatableSourceEquatableOutputPipeline<Input, Output> {
     self.init(map: closure, additionalDropCondition: nil)
   }
 
@@ -855,6 +859,7 @@ extension PipelineType {
 ///
 /// inputs value: Input -> Pipeline -> Pipeline.Result
 /// inputs value initially: -> Pipeline -> Output
+@available(*, deprecated, message: "No longer used in v9")
 public struct Pipeline<Input, Output>: Equatable, Sendable {
 
   public static func == (lhs: Pipeline<Input, Output>, rhs: Pipeline<Input, Output>) -> Bool {
