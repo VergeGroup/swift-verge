@@ -412,7 +412,12 @@ extension Derived where Value == Never {
   ///   - s0:
   ///   - s1:
   /// - Returns:
-  public static func combined<S0, S1>(_ s0: Derived<S0>, _ s1: Derived<S1>, queue: TargetQueueType = .passthrough) -> Derived<(S0, S1)> {
+  public static func combined<S0, S1, Pipeline: PipelineType>(
+    _ s0: Derived<S0>,
+    _ s1: Derived<S1>,
+    pipeline: Pipeline,
+    queue: TargetQueueType = .passthrough
+  ) -> Derived<(S0, S1)> where Pipeline.Input == (S0, S1), Pipeline.Output == (S0, S1) {
     
     typealias Shape = (S0, S1)
     
@@ -421,7 +426,7 @@ extension Derived where Value == Never {
     let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
     return Derived<Shape>(
-      get: Pipeline<Shape, Shape>.init(map: { $0 }),
+      get: pipeline,
       set: { _, _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
@@ -460,7 +465,13 @@ extension Derived where Value == Never {
   ///   - s1:
   ///   - s2:
   /// - Returns:
-  public static func combined<S0, S1, S2>(_ s0: Derived<S0>, _ s1: Derived<S1>, _ s2: Derived<S2>, queue: TargetQueueType = .passthrough) -> Derived<(S0, S1, S2)> {
+  public static func combined<S0, S1, S2, Pipeline: PipelineType>(
+    _ s0: Derived<S0>,
+    _ s1: Derived<S1>,
+    _ s2: Derived<S2>,
+    pipeline: Pipeline,
+    queue: TargetQueueType = .passthrough
+  ) -> Derived<(S0, S1, S2)> where Pipeline.Input == (S0, S1, S2), Pipeline.Output == (S0, S1, S2) {
     
     typealias Shape = (S0, S1, S2)
     
@@ -469,7 +480,7 @@ extension Derived where Value == Never {
     let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
     return Derived<Shape>(
-      get: Pipeline<Shape, Shape>.init(map: { $0 }),
+      get: pipeline,
       set: { _, _, _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
