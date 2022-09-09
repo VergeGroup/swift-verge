@@ -4,14 +4,67 @@ import Verge
 
 final class PipelineTests: XCTestCase {
   
-  func test_hoge() {
+  func test_select_pipeline() {
     
-    let pipeline = Pipelines.SelectPipeline<Changes<DemoState>, _>.init(keyPath: \.count, additionalDropCondition: nil)
+    let pipeline = Pipelines.SelectPipeline<DemoState, _>.init(keyPath: \.count, additionalDropCondition: nil)
     
-//    let initialState = Changes<DemoState>.init(old: nil, new: .init())
-//
-//    XCTAssertEqual(pipeline.yieldContinuously(initialState), .new(0))
-   
+    let initialState = Changes<DemoState>.init(old: nil, new: .init())
+
+    XCTAssertEqual(pipeline.yieldContinuously(initialState), .new(0))
+    
+    XCTAssertEqual(
+      pipeline.yieldContinuously(
+        initialState.makeNextChanges(
+          with: DemoState(count: 1),
+          from: [],
+          modification: .indeterminate
+        )
+      ),
+      .new(1)
+    )
+    
+    XCTAssertEqual(
+      pipeline.yieldContinuously(
+        initialState.makeNextChanges(
+          with: DemoState(count: 1),
+          from: [],
+          modification: .indeterminate
+        )
+      ),
+      .new(1)
+    )
+    
+  }
+  
+  func test_select_pipeline_equatable() {
+    
+    let pipeline = Pipelines.SelectEquatableOutputPipeline<DemoState, _>.init(keyPath: \.count, additionalDropCondition: nil)
+    
+    let initialState = Changes<DemoState>.init(old: nil, new: .init())
+    
+    XCTAssertEqual(pipeline.yieldContinuously(initialState), .new(0))
+    
+    XCTAssertEqual(
+      pipeline.yieldContinuously(
+        initialState.makeNextChanges(
+          with: DemoState(count: 1),
+          from: [],
+          modification: .indeterminate
+        )
+      ),
+      .new(1)
+    )
+    
+    XCTAssertEqual(
+      pipeline.yieldContinuously(
+        initialState.makeNextChanges(
+          with: DemoState(count: 1),
+          from: [],
+          modification: .indeterminate
+        )
+      ),
+      .new(1)
+    )
     
   }
   
