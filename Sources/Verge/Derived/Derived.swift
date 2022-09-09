@@ -109,7 +109,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
   ///   - retainsUpstream: Any instances to retain in this instance.
   public init<UpstreamState, Pipeline: PipelineType>(
     get pipeline: Pipeline,
-    set: ((Value) -> Void)?,
+    set: ((Pipeline.Output) -> Void)?,
     initialUpstreamState: UpstreamState,
     subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
     retainsUpstream: Any?
@@ -143,20 +143,20 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
   ///   - initialUpstreamState: Initial value of the `UpstreamState`
   ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
   ///   - retainsUpstream: Any instances to retain in this instance.
-  public init<UpstreamState: HasTraces>(
-    get: Pipeline<UpstreamState, Value>,
-    set: ((Value) -> Void)?,
+  public init<UpstreamState: HasTraces, Pipeline: PipelineType>(
+    get pipeline: Pipeline,
+    set: ((Pipeline.Output) -> Void)?,
     initialUpstreamState: UpstreamState,
     subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
     retainsUpstream: Any?
-  ) {
+  ) where Pipeline.Input == UpstreamState, Value == Pipeline.Output {
   
-    let innerStore = Store<Value, Never>.init(initialState: get.makeInitial(initialUpstreamState), logger: nil)
+    let innerStore = Store<Value, Never>.init(initialState: pipeline.yield(initialUpstreamState), logger: nil)
         
     let pointer = Unmanaged.passUnretained(innerStore).toOpaque()
-    
+           
     let s = subscribeUpstreamState { [weak innerStore] value in
-      let update = get.makeResult(value)
+      let update = pipeline.yieldContinuously(value)
       switch update {
       case .noUpdates:
         break
@@ -168,7 +168,7 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
         }
       }
     }
-    
+        
     self.retainsUpstream = retainsUpstream
     self.subscription = VergeAnyCancellable(s)
     self._set = set
@@ -304,22 +304,23 @@ public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked
   /// - Attention:
   ///     As possible use the same pipeline instance and queue in order to enable caching.
   ///     Returns the Derived that previously created with that combination.
-  public func chain<NewState>(
-    _ pipeline: Pipeline<Changes<Value>, NewState>,
+  public func chain<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
     queue: TargetQueueType = TargetQueue.passthrough
-  ) -> Derived<NewState> {
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<Value> {
     
-    vergeSignpostEvent("Derived.chain.new", label: "\(type(of: Value.self)) -> \(type(of: NewState.self))")
+    vergeSignpostEvent("Derived.chain.new", label: "\(type(of: Value.self)) -> \(type(of: Pipeline.Output.self))")
     
-    let d = Derived<NewState>(
-      get: .init(makeInitial: {
-        pipeline.makeInitial($0)
-      }, update: {
-        switch pipeline.makeResult($0) {
-        case .noUpdates: return .noUpdates
-        case .new(let s): return .new(s)
-        }
-      }),
+    let d = Derived<Pipeline.Output>(
+//      get: .init(makeInitial: {
+//        pipeline.makeInitial($0)
+//      }, update: {
+//        switch pipeline.makeResult($0) {
+//        case .noUpdates: return .noUpdates
+//        case .new(let s): return .new(s)
+//        }
+//      }),
+      get: pipeline,
       set: { _ in },
       initialUpstreamState: value,
       subscribeUpstreamState: { callback in

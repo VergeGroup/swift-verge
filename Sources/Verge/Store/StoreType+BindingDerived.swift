@@ -32,18 +32,18 @@ extension StoreType {
   ///   - dropsOutput: Predicate to drops object if found a duplicated output
   ///   - set:
   /// - Returns:
-  public func bindingDerived<NewState>(
+  public func bindingDerived<Pipeline: PipelineType>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    get: Pipeline<Changes<State>, NewState>,
-    set: @escaping (inout InoutRef<State>, NewState) -> Void,
+    get pipeline: Pipeline,
+    set: @escaping (inout InoutRef<State>, Pipeline.Output) -> Void,
     queue: TargetQueueType = .passthrough
-  ) -> BindingDerived<NewState> {
+  ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<State> {
 
-    let derived = BindingDerived<NewState>.init(
-      get: get,
+    let derived = BindingDerived<Pipeline.Output>.init(
+      get: pipeline,
       set: { [weak self] state in
         self?.asStore().commit(name, file, function, line) {
           set(&$0, state)
