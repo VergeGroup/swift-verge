@@ -204,7 +204,7 @@ final class DerivedTests: XCTestCase {
         
     let d = Derived.combined(s0, s1, queue: .passthrough)
     
-    XCTAssert(d.primitiveValue == (0, ""))
+    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (0, ""))
         
     let sub = d.sinkValue { (changes) in
       
@@ -224,13 +224,13 @@ final class DerivedTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssert(d.primitiveValue == (1, ""))
+    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (1, ""))
     
     wrapper.commit {
       $0.name = "next"
     }
     
-    XCTAssert(d.primitiveValue == (1, "next"))
+    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (1, "next"))
     
     wait(for: [updateCount, update1, update0], timeout: 10)
     withExtendedLifetime(sub) {}
@@ -258,7 +258,7 @@ final class DerivedTests: XCTestCase {
     
     let d = Derived.combined(s0, s1, queue: .passthrough)
     
-    XCTAssert(d.primitiveValue == (0, 0))
+    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (0, 0))
     
     let sub = d.sinkValue { (changes) in
       
@@ -278,13 +278,13 @@ final class DerivedTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssert(d.primitiveValue == (1, 0))
+    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (1, 0))
     
     wrapper.commit {
       $0.name = "next"
     }
     
-    XCTAssert(d.primitiveValue == (1, 4))
+    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (1, 4))
     
     wait(for: [updateCount, update1, update0], timeout: 10)
     withExtendedLifetime(sub) {}
@@ -360,17 +360,5 @@ final class DerivedCacheTests: XCTestCase {
     XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
     
   }
-  
-  func test_identify_by_instance() {
-    
-    let store1 = DemoStore()
-    
-    XCTAssert(store1.derived(.map { $0.count }) !== store1.derived(.map { $0.count }))
-   
-    let map = Pipeline<Changes<DemoState>, Int>.map { $0.count }
-    
-    XCTAssert(store1.derived(map) !== store1.derived(map))
-
-  }
-  
+     
 }

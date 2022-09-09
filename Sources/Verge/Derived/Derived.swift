@@ -475,44 +475,60 @@ extension Derived where Value == Never {
   ///   - s1:
   ///   - s2:
   /// - Returns:
-  public static func combined<S0, S1, S2, Pipeline: PipelineType>(
+  public static func combined<S0, S1, S2>(
     _ s0: Derived<S0>,
     _ s1: Derived<S1>,
     _ s2: Derived<S2>,
-    pipeline: Pipeline,
     queue: TargetQueueType = .passthrough
-  ) -> Derived<(S0, S1, S2)> where Pipeline.Input == (S0, S1, S2), Pipeline.Output == (S0, S1, S2) {
+  ) -> Derived<(Changes<S0>, Changes<S1>, Changes<S2>)> {
     
-    typealias Shape = (S0, S1, S2)
+    typealias Shape = Changes<(Changes<S0>, Changes<S1>, Changes<S2>)>
     
-    let initial = (s0.primitiveValue, s1.primitiveValue, s2.primitiveValue)
+    let initial = Changes.init(old: nil, new: (s0.value, s1.value, s2.value))
     
     let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
     
-    return Derived<Shape>(
-      get: pipeline,
+    return Derived<(Changes<S0>, Changes<S1>, Changes<S2>)>(
+      get: Pipelines.SelectPipeline.init(keyPath: \.root, additionalDropCondition: nil),
       set: { _, _, _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
         
         let _s0 = s0._sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
-            value.0 = s0.primitive
-            callback(value)
+            let newValue = value.makeNextChanges(
+              with: (s0, value.primitive.1, value.primitive.2),
+              from: [],
+              modification: .indeterminate
+            )
+            value = newValue
+            callback(newValue)
           }
         }
         
         let _s1 = s1._sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
-            value.1 = s1.primitive
-            callback(value)
+            
+            let newValue = value.makeNextChanges(
+              with: (value.primitive.0, s1, value.primitive.2),
+              from: [],
+              modification: .indeterminate
+            )
+            value = newValue
+            callback(newValue)
           }
         }
         
         let _s2 = s2._sinkValue(dropsFirst: true, queue: queue) { (s2) in
           buffer.modify { value in
-            value.2 = s2.primitive
-            callback(value)
+            
+            let newValue = value.makeNextChanges(
+              with: (value.primitive.0, value.primitive.1, s2),
+              from: [],
+              modification: .indeterminate
+            )
+            value = newValue
+            callback(newValue)
           }
         }
         
@@ -522,8 +538,8 @@ extension Derived where Value == Never {
           _s2.cancel()
         })
         
-    },
-      retainsUpstream: [s0, s1]
+      },
+      retainsUpstream: [s0, s1, s2]
     )
     
   }

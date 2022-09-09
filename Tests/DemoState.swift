@@ -9,7 +9,7 @@
 import Foundation
 import Verge
 
-struct NonEquatable, Sendable {
+struct NonEquatable: Sendable {
   let id = UUID()
 }
 struct OnEquatable: Equatable, Sendable {
