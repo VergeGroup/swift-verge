@@ -208,8 +208,7 @@ public enum Pipelines {
       }
       
       guard
-        previous.version == input.version ||
-          previous.primitive == input.primitive
+        previous.primitive == input.primitive
       else {
         
         guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
@@ -253,8 +252,7 @@ public enum Pipelines {
       }
       
       guard
-        previous.version == input.version ||
-          previous.primitive == input.primitive ||
+        previous.primitive == input.primitive ||
           previous[keyPath: keyPath] == input[keyPath: keyPath]
       else {
         
@@ -300,8 +298,7 @@ public enum Pipelines {
       }
       
       guard
-        previous.version == input.version ||
-          previous[keyPath: keyPath].version == input[keyPath: keyPath].version
+        previous[keyPath: keyPath].version == input[keyPath: keyPath].version
       else {
         
         guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
@@ -346,8 +343,7 @@ public enum Pipelines {
       }
       
       guard
-        previous.version == input.version ||
-          previous[keyPath: keyPath].version == input[keyPath: keyPath].version ||
+        previous[keyPath: keyPath].version == input[keyPath: keyPath].version ||
           previous[keyPath: keyPath].wrappedValue == input[keyPath: keyPath].wrappedValue
       else {
         
@@ -392,8 +388,7 @@ public enum Pipelines {
       }
       
       guard
-        previous.version == input.version ||
-          previous.primitive == input.primitive ||
+        previous.primitive == input.primitive ||
           previous[keyPath: keyPath].version == input[keyPath: keyPath].version
       else {
         
@@ -439,8 +434,7 @@ public enum Pipelines {
       }
       
       guard
-        previous.version == input.version ||
-          previous.primitive == input.primitive ||
+        previous.primitive == input.primitive ||
           previous[keyPath: keyPath].version == input[keyPath: keyPath].version ||
           previous[keyPath: keyPath].wrappedValue == input[keyPath: keyPath].wrappedValue
       else {
@@ -484,20 +478,16 @@ public enum Pipelines {
     
     public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
       
-      guard let previous = input.previous else {
+      guard let _ = input.previous else {
         return .new(map(input))
       }
       
-      guard previous.version == input.version else {
-        
-        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-          return .new(map(input))
-        }
-        
-        return .noUpdates
+      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+        return .new(map(input))
       }
       
       return .noUpdates
+      
     }
     
     public func yield(_ input: Input) -> Output {
@@ -532,23 +522,19 @@ public enum Pipelines {
         return .new(map(input))
       }
       
-      guard previous.version == input.version else {
+      let mapped = map(input)
+      
+      guard map(previous) == mapped else {
         
-        let mapped = map(input)
-        
-        guard map(previous) == mapped else {
-          
-          guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-            return .new(map(input))
-          }
-          
-          return .noUpdates
+        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+          return .new(mapped)
         }
         
         return .noUpdates
       }
       
       return .noUpdates
+      
     }
     
     public func yield(_ input: Input) -> Output {
@@ -582,10 +568,7 @@ public enum Pipelines {
         return .new(map(input))
       }
       
-      guard
-        previous.version == input.version ||
-          previous.primitive == input.primitive
-      else {
+      guard previous.primitive == input.primitive else {
         
         guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
           return .new(map(input))
@@ -628,17 +611,14 @@ public enum Pipelines {
         return .new(map(input))
       }
       
-      guard
-        previous.version == input.version ||
-          previous.primitive == input.primitive
-      else {
+      guard previous.primitive == input.primitive else {
         
         let mapped = map(input)
         
         guard map(previous) == mapped else {
           
           guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-            return .new(map(input))
+            return .new(mapped)
           }
           
           return .noUpdates

@@ -165,6 +165,76 @@ extension StoreType {
     }
   }
   
+  
+}
+
+/// A result instance that contains created Derived object
+/// While creating non-null derived from entity id, some entity may be not founded.
+/// Created derived object are stored in hashed storage to the consumer can check if the entity was not found by the id.
+public struct DerivedResult<Entity: EntityType, Derived: AnyObject> {
+  
+  /// A dictionary of Derived that stored by id
+  /// It's faster than filtering values array to use this dictionary to find missing id or created id.
+  public private(set) var storage: [Entity.EntityID : Derived] = [:]
+  
+  /// An array of Derived that orderd by specified the order of id.
+  public private(set) var values: [Derived]
+  
+  public init() {
+    self.storage = [:]
+    self.values = []
+  }
+  
+  public mutating func append(derived: Derived, id: Entity.EntityID) {
+    storage[id] = derived
+    values.append(derived)
+  }
+  
+}
+
+/**
+ Do not retain, use as just method-chain
+ */
+public struct DatabaseContext<Store: StoreType, Database: DatabaseType> {
+  
+  let keyPath: KeyPath<Store.State, Database>
+  unowned let store: Store
+  
+  init(keyPath: KeyPath<Store.State, Database>, store: Store) {
+    self.keyPath = keyPath
+    self.store = store
+  }
+    
+}
+
+@dynamicMemberLookup
+public struct DatabaseDynamicMembers<Store: StoreType> {
+  
+  unowned let store: Store
+  
+  init(store: Store) {
+    self.store = store
+  }
+
+  public subscript<Database: DatabaseType>(dynamicMember keyPath: KeyPath<Store.State, Database>) -> DatabaseContext<Store, Database> {
+    .init(keyPath: keyPath, store: store)
+  }
+  
+}
+
+extension StoreType {
+  
+  /**
+   A cushion for databases. the return object has properties to databases.
+   
+   ```
+   yourStore.databases.yourDatabase.derived(...)
+   ```
+   */
+  public var databases: DatabaseDynamicMembers<Self> {
+    .init(store: self)
+  }
+  
   /**
    Returns a ``Verge/Derived`` object that projects fetched Entity object by the entity identifier.
    
@@ -200,12 +270,10 @@ extension StoreType {
     
     return underlyingDerived
   }
-  
 }
 
-extension StoreType where State : DatabaseEmbedding {
-
-  
+extension DatabaseContext {
+     
   /**
    Returns Derived object that projects fetched Entity object by the entity identifier.
    
@@ -225,16 +293,10 @@ extension StoreType where State : DatabaseEmbedding {
     from entityID: Entity.EntityID,
     queue: TargetQueueType = .passthrough
   ) -> Entity.Derived {
-    
-    derivedEntity(entityID: entityID, from: State.getterToDatabase)
-  
+    store.derivedEntity(entityID: entityID, from: keyPath)
   }
   
-}
-
-// MARK: - Convenience operators
-
-extension StoreType where State : DatabaseEmbedding {
+  // MARK: - Convenience operators
   
   @inline(__always)
   fileprivate func _primary_derivedNonNull<Entity: EntityType>(
@@ -287,34 +349,6 @@ extension StoreType where State : DatabaseEmbedding {
     _primary_derivedNonNull(from: entity, queue: queue)
   }
   
-}
-
-/// A result instance that contains created Derived object
-/// While creating non-null derived from entity id, some entity may be not founded.
-/// Created derived object are stored in hashed storage to the consumer can check if the entity was not found by the id.
-public struct DerivedResult<Entity: EntityType, Derived: AnyObject> {
-  
-  /// A dictionary of Derived that stored by id
-  /// It's faster than filtering values array to use this dictionary to find missing id or created id.
-  public private(set) var storage: [Entity.EntityID : Derived] = [:]
-  
-  /// An array of Derived that orderd by specified the order of id.
-  public private(set) var values: [Derived]
-  
-  public init() {
-    self.storage = [:]
-    self.values = []
-  }
-  
-  public mutating func append(derived: Derived, id: Entity.EntityID) {
-    storage[id] = derived
-    values.append(derived)
-  }
-  
-}
-
-extension StoreType where State : DatabaseEmbedding {
-
   /// Returns a derived object that provides a concrete entity according to the updating source state
   /// It uses the last value if the entity has been removed source.
   /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
@@ -328,10 +362,8 @@ extension StoreType where State : DatabaseEmbedding {
     from entityID: Entity.EntityID,
     queue: TargetQueueType = .passthrough
   ) throws -> Entity.NonNullDerived {
-    
-    let path = State.getterToDatabase
-    
-    guard let initalValue = primitiveState[keyPath: path].entities.table(Entity.self).find(by: entityID) else {
+          
+    guard let initalValue = store.primitiveState[keyPath: keyPath].entities.table(Entity.self).find(by: entityID) else {
       throw VergeORMError.notFoundEntityFromDatabase
     }
    
@@ -433,7 +465,7 @@ extension StoreType where State : DatabaseEmbedding {
   ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
-    from insertionResult: EntityTable<State.Database.Schema, Entity>.InsertionResult,
+    from insertionResult: EntityTable<Database.Schema, Entity>.InsertionResult,
     queue: TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
     _primary_derivedNonNull(from: insertionResult.entity, queue: queue)
@@ -451,85 +483,106 @@ extension StoreType where State : DatabaseEmbedding {
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from insertionResults: S,
     queue: TargetQueueType = .passthrough
-  ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
+  ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<Database.Schema, Entity>.InsertionResult {
     derivedNonNull(from: insertionResults.map { $0.entity }, queue: queue)
   }
-
-}
-
-// MARK: - Collection
-
-extension StoreType where State : DatabaseEmbedding {
 
   /// Experimental
   /// TODO: More performant
   public func _derivedQueriedEntities<Entity: EntityType>(
-    update: @escaping (IndexesPropertyAdapter<State.Database>) -> AnyCollection<Entity.EntityID>,
+    ids: @escaping (IndexesPropertyAdapter<Database>) -> any Collection<Entity.EntityID>,
     queue: TargetQueueType = .passthrough
   ) -> Derived<[Entity.Derived]> {
     
-    let path = State.getterToDatabase
-    let storage: CachedMapStorage<Entity.EntityID, Derived<EntityWrapper<Entity>>> = .init(keySelector: \.raw)
-    
-    let noChangesComparer = Comparer<State.Database>(or: [
-
-      /** Step 1 */
-      Comparer<State.Database>.indexNoUpdates(),
-
-      /** Step 2 */
-      Comparer<State.Database>.tableNoUpdates(Entity.self),
-
-      /** And more we need */
-    ])
-
-    let pipeline = Pipeline<Changes<State>, [Entity.Derived]>(
-      makeInitial: { (state: Changes<State>) in
-        
-        let db = path(state.primitive)
-        let ids = update(db.indexes)
-
-        // TODO: O(n)
-        let result = ids.cachedMap(using: storage) {
+    return store.derived(
+      _DatabaseMultipleEntityPipeline(
+        keyPathToDatabase: keyPath,
+        index: ids,
+        makeDerived: {
           self.derived(from: $0)
         }
-        
-        return result
-      },
-      update: { state in
-
-        let changes = state.asChanges()
-
-        guard changes.hasChanges({ path($0.primitive) }, noChangesComparer) else {
-          return .noUpdates
-        }
-
-        let _derivedArray = changes.takeIfChanged({ state -> [Entity.Derived] in
-
-          let ids = update(path(state.primitive).indexes)
-
-          // TODO: O(n)
-          let result = ids.cachedMap(using: storage) {
-            self.derived(from: $0)
-          }
-
-          return result
-
-        }, .init(==))
-
-        guard let derivedArray = _derivedArray else {
-          return .noUpdates
-        }
-
-        return .new(derivedArray)
-
-      }
+      )
     )
-    
-    let d = derived(pipeline)
-    d.associate(storage)
-    return d
+       
   }
 
+}
+
+struct _DatabaseMultipleEntityPipeline<Source, Database: DatabaseType, Entity: EntityType>: PipelineType {
+  
+  typealias Input = Changes<Source>
+  
+  typealias Output = [Entity.Derived]
+  
+  let keyPathToDatabase: KeyPath<Source, Database>
+  
+  // TODO: write inline
+  private let noChangesComparer: Comparer<Database>
+  private let index: (IndexesPropertyAdapter<Database>) -> any Collection<Entity.EntityID>
+  private let storage: CachedMapStorage<Entity.EntityID, Entity.Derived> = .init(keySelector: \.raw)
+  private let makeDerived: (Entity.EntityID) -> Entity.Derived
+  
+  init(
+    keyPathToDatabase: KeyPath<Source, Database>,
+    index: @escaping (IndexesPropertyAdapter<Database>) -> any Collection<Entity.EntityID>,
+    makeDerived: @escaping (Entity.EntityID) -> Entity.Derived
+  ) {
+    
+    self.keyPathToDatabase = keyPathToDatabase
+    self.index = index
+    self.makeDerived = makeDerived
+    
+    self.noChangesComparer = Comparer<Database>(or: [
+      
+      /** Step 1 */
+      Comparer<Database>.indexNoUpdates(),
+      
+      /** Step 2 */
+      Comparer<Database>.tableNoUpdates(Entity.self),
+      
+      /** And more we need */
+    ])
+  }
+  
+  func yield(_ input: Changes<Source>) -> [Entity.Derived] {
+    
+    let db = input.primitive[keyPath: keyPathToDatabase]
+    let ids = index(db.indexes)
+    
+    // TODO: O(n)
+    let result = ids.cachedMap(using: storage, makeNew: makeDerived)
+    
+    return result
+    
+  }
+  
+  func yieldContinuously(_ input: Changes<Source>) -> ContinuousResult<[Entity.Derived]> {
+    
+    let changes = input
+    
+    guard changes.hasChanges({ $0.primitive[keyPath: keyPathToDatabase] }, noChangesComparer) else {
+      return .noUpdates
+    }
+    
+    let _derivedArray = changes.takeIfChanged({ state -> [Entity.Derived] in
+      
+      let ids = index(state.primitive[keyPath: keyPathToDatabase].indexes)
+      
+      // TODO: O(n)
+      let result = ids.cachedMap(using: storage, makeNew: makeDerived)
+      
+      return result
+      
+    }, .init(==))
+    
+    guard let derivedArray = _derivedArray else {
+      return .noUpdates
+    }
+    
+    return .new(derivedArray)
+
+    
+  }
 }
 
 struct _DatabaseSingleEntityPipeline<Source, Database: DatabaseType, Entity: EntityType>: PipelineType {

@@ -243,12 +243,6 @@ extension EntityTable: Equatable {
   }
 }
 
-extension EntityTable where Entity : Equatable {
-  public static func == (lhs: EntityTable<Schema, Entity>, rhs: EntityTable<Schema, Entity>) -> Bool {
-    (lhs.rawTable) == (rhs.rawTable)
-  }
-}
-
 /// A structure that store entities with normalizing.
 public typealias StandaloneEntityTable<Entity: EntityType> = EntityTable<NoSchema, Entity>
 

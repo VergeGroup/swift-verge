@@ -11,17 +11,17 @@ import Combine
 #endif
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-class DerivedTests: XCTestCase {
+final class DerivedTests: XCTestCase {
 
   private var subscriptions = Set<AnyCancellable>()
   
   func testSelector() {
     
-    let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
+    let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
     let id = Book.EntityID.init("some")
     
-    let nullableSelector = storage.derived(from: id, queue: .passthrough)
+    let nullableSelector = store.databases.db.derived(from: id, queue: .passthrough)
     
     XCTAssertNil(nullableSelector.primitiveValue.wrapped)
     
@@ -38,7 +38,7 @@ class DerivedTests: XCTestCase {
             
       var book: Book!
       
-      storage.commit { state in
+      store.commit { state in
         let createdBook = state.db.performBatchUpdates { (context) -> Book in
           
           let book = Book(rawID: id.raw, authorID: Author.anonymous.entityID)
@@ -51,7 +51,7 @@ class DerivedTests: XCTestCase {
         book = createdBook
       }
       
-      let selector = storage.derivedNonNull(
+      let selector = store.databases.db.derivedNonNull(
         from: book,
         queue: .passthrough
       )
@@ -63,7 +63,7 @@ class DerivedTests: XCTestCase {
       
       XCTContext.runActivity(named: "modify") { (_) -> Void in
         
-        storage.commit { state in
+        store.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
             var book = context.entities.book.current.find(by: id)!
@@ -80,7 +80,7 @@ class DerivedTests: XCTestCase {
       
       XCTContext.runActivity(named: "delete") { (_) -> Void in
         
-        storage.commit { state in
+        store.commit { state in
           state.db.performBatchUpdates { (context) -> Void in
             
             context.entities.book.delete(id)
@@ -113,7 +113,7 @@ class DerivedTests: XCTestCase {
         }
       }
             
-      let selector = storage.derivedNonNull(from: result, queue: .passthrough)
+      let selector = storage.databases.db.derivedNonNull(from: result, queue: .passthrough)
       
       XCTAssertEqual(selector.primitiveValue.rawID, "some")
       XCTAssertEqual(selector.primitiveValue.name, "")
@@ -166,7 +166,7 @@ class DerivedTests: XCTestCase {
     
     var updatedCount = 0
     
-    let authorGetter = storage.derivedNonNull(from: result, queue: .passthrough)
+    let authorGetter = storage.databases.db.derivedNonNull(from: result, queue: .passthrough)
     
     authorGetter.valuePublisher()
       .dropFirst(1).sink { _ in
@@ -251,7 +251,7 @@ class DerivedTests: XCTestCase {
     let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
     measure {
-      let _ = storage.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
+      let _ = storage.databases.db.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
     }
     
   }
@@ -260,10 +260,10 @@ class DerivedTests: XCTestCase {
     
     let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
-    let _ = storage.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
+    let _ = storage.databases.db.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
     
     measure {
-      let _ = storage.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
+      let _ = storage.databases.db.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
     }
     
   }
@@ -289,7 +289,7 @@ class DerivedTests: XCTestCase {
 
     measure(metrics: [XCTClockMetric()], options: option) {
       for i in 0..<10000 {
-        _ = store.derived(from: Author.EntityID("\(i)"))
+        _ = store.databases.db.derived(from: Author.EntityID("\(i)"))
       }
     }
 
