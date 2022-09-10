@@ -41,12 +41,13 @@ public protocol PipelineType {
    
   func yieldContinuously(_ input: Input) -> ContinuousResult<Output>
   
-  func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self
 }
 
 public protocol _PipelineType: PipelineType {
     
   var additionalDropCondition: (@Sendable (Input) -> Bool)? { get }
+  
+  func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self
 }
 
 public protocol _SelectPipelineType: _PipelineType {

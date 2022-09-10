@@ -29,6 +29,6 @@ public protocol DatabaseEmbedding {
   /// Returns keypath as closure to Database
   /// It uses to read and write.
   /// Make sure it always returns the same value.
-  static var getterToDatabase: (Self) -> Database { get }
+  static var getterToDatabase: KeyPath<Self, Database> { get }
   
 }
