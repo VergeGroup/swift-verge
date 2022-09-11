@@ -32,7 +32,7 @@ extension ContinuousResult: Equatable where Output: Equatable {
   
 }
 
-public protocol PipelineType {
+public protocol PipelineType<Input, Output> {
   
   associatedtype Input
   associatedtype Output
@@ -761,116 +761,6 @@ extension PipelineType {
    */
   public static func map<Input, Output>(_ closure: @escaping @Sendable (Changes<Input>) -> Output) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapEquatableSourceEquatableOutputPipeline<Input, Output> {
     self.init(map: closure, additionalDropCondition: nil)
-  }
-
-}
-
-/// A handler that how receives and provides value.
-///
-/// inputs value: Input -> Pipeline -> Pipeline.Result
-/// inputs value initially: -> Pipeline -> Output
-@available(*, deprecated, message: "No longer used in v9")
-public struct Pipeline<Input, Output>: Equatable, Sendable {
-
-  public static func == (lhs: Pipeline<Input, Output>, rhs: Pipeline<Input, Output>) -> Bool {
-    lhs.identifier == rhs.identifier
-  }
-
-  public typealias ContinuousResult = Verge.ContinuousResult<Output>
-
-  // MARK: - Properties
-
-  /*
-   Properties should be `let` because to avoid mutating value with using the same identifier under the manager does not know that.
-   */
-
-  private let _makeOutput: @Sendable (Input) -> Output
-  private let _makeContinousOutput: @Sendable (Input) -> ContinuousResult
-  private let _dropInput: @Sendable (Input) -> Bool
-
-  /**
-   An identifier to be used from Derived to use the same instance if Pipeline is same.
-   */
-  let identifier: Int = counter.getAndIncrement()
-
-  // MARK: - Initializers
-
-  @_disfavoredOverload
-  public init(
-    makeInitial: @escaping @Sendable (Input) -> Output,
-    update: @escaping @Sendable (Input) -> ContinuousResult
-  ) {
-
-    self.init(makeOutput: makeInitial, dropInput: { _ in false }, makeContinuousOutput: update)
-  }
-
-  public init(
-    map: @escaping @Sendable (Input) -> Output
-  ) {
-    self.init(dropInput: { _ in false }, map: map)
-  }
-
-  public init(
-    dropInput: @escaping @Sendable (Input) -> Bool,
-    map: @escaping @Sendable (Input) -> Output
-  ) {
-
-    self.init(
-      makeOutput: map,
-      dropInput: dropInput,
-      makeContinuousOutput: { .new(map($0)) }
-    )
-  }
-
-  /// The primitive initializer
-  init(
-    makeOutput: @escaping @Sendable (Input) -> Output,
-    dropInput: @escaping @Sendable (Input) -> Bool,
-    makeContinuousOutput: @escaping @Sendable (Input) -> ContinuousResult
-  ) {
-
-    self._makeOutput = makeOutput
-    self._dropInput = dropInput
-    self._makeContinousOutput = { input in
-      guard !dropInput(input) else {
-        return .noUpdates
-      }
-      return makeContinuousOutput(input)
-    }
-  }
-
-  // MARK: - Functions
-
-  // TODO: Rename `makeContinuousOutput`
-  public func makeResult(_ source: Input) -> ContinuousResult {
-    _makeContinousOutput(source)
-  }
-
-  // TODO: Rename `makeOutput`
-  public func makeInitial(_ source: Input) -> Output {
-    _makeOutput(source)
-  }
-
-  /// Tune memoization logic up.
-  ///
-  /// - Parameter predicate: Return true, the coming input would be dropped.
-  /// - Returns:
-  public func drop(
-    while predicate: @escaping @Sendable (Input) -> Bool
-  ) -> Self {
-    Self.init(
-      makeOutput: _makeOutput,
-      dropInput: { [_dropInput] input in
-        guard !_dropInput(input) else {
-          return true
-        }
-        guard !predicate(input) else {
-          return true
-        }
-        return false
-      },
-      makeContinuousOutput: _makeContinousOutput
-    )
   }
 
 }

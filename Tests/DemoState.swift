@@ -67,13 +67,8 @@ extension DemoState: ExtendedStateType {
   struct Extended: ExtendedType {
 
     static let instance = Extended()
-
-    let nameCount = Field.Computed<Int> {
-      $0.name.count
-    }
-    .dropsInput {
-      $0.noChanges(\.name)
-    }
+    
+    let nameCount = Field.Computed<Int>.init(pipeline: .map(\.name.count))
 
   }
 
@@ -85,12 +80,7 @@ extension NonEquatableDemoState: ExtendedStateType {
     
     static let instance = Extended()
     
-    let nameCount = Field.Computed<Int> {
-      $0.name.count
-    }
-      .dropsInput {
-        $0.noChanges(\.name)
-      }
+    let nameCount = Field.Computed<Int>.init(pipeline: .map(\.name.count))
     
   }
   

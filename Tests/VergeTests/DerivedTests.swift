@@ -16,7 +16,7 @@ final class DerivedTests: XCTestCase {
   func testSlice() {
 
     let localStore = DemoStore()
-                
+                    
     let slice = localStore.derived(.map { $0.count }, queue: .passthrough)
 
     XCTAssertEqual(slice.primitiveValue, 0)
