@@ -21,16 +21,16 @@ final class DerivedTests: XCTestCase {
     
     let id = Book.EntityID.init("some")
     
-    let nullableSelector = store.databases.db.derived(from: id, queue: .passthrough)
+    let nullableDerived = store.databases.db.derived(from: id, queue: .passthrough)
     
-    XCTAssertNil(nullableSelector.primitiveValue.wrapped)
+    XCTAssertNil(nullableDerived.primitiveValue.wrapped, "It should be nil because the target entity is not stored.")
     
     XCTContext.runActivity(named: "simple") { (a) -> Void in
       let waiter = XCTWaiter()
       
       let didUpdate = XCTestExpectation()
       
-      nullableSelector.valuePublisher()
+      nullableDerived.valuePublisher()
         .dropFirst(1).sink { _ in
           didUpdate.fulfill()
       }
@@ -51,13 +51,16 @@ final class DerivedTests: XCTestCase {
         book = createdBook
       }
       
-      let selector = store.databases.db.derivedNonNull(
+      let nonnullDerived = store.databases.db.derivedNonNull(
         from: book,
         queue: .passthrough
       )
       
-      XCTAssertNotNil(nullableSelector.primitiveValue.wrapped)
-      XCTAssertNotNil(selector.primitiveValue.wrapped)
+      XCTAssertNotNil(nullableDerived.primitiveValue.wrapped)
+      XCTAssertNotNil(nonnullDerived.primitiveValue.wrapped)
+      
+      XCTAssertNotNil(nullableDerived.value.wrapped?.name, "initial")
+      XCTAssertEqual(nonnullDerived.value.wrapped.name, "initial")
       
       waiter.wait(for: [didUpdate], timeout: 2)
       
@@ -73,8 +76,8 @@ final class DerivedTests: XCTestCase {
           }
         }
                 
-        XCTAssertEqual(selector.primitiveValue.name, "Hey")
-        XCTAssertEqual(nullableSelector.primitiveValue.wrapped!.name, "Hey")
+        XCTAssertEqual(nullableDerived.primitiveValue.wrapped!.name, "Hey")
+        XCTAssertEqual(nonnullDerived.primitiveValue.name, "Hey")
         
       }
       
@@ -88,8 +91,8 @@ final class DerivedTests: XCTestCase {
           }
         }
         
-        XCTAssertEqual(selector.primitiveValue.name, "Hey")
-        XCTAssertEqual(nullableSelector.primitiveValue.wrapped == nil, true)
+        XCTAssertEqual(nonnullDerived.primitiveValue.name, "Hey")
+        XCTAssertEqual(nullableDerived.primitiveValue.wrapped == nil, true)
         
       }
     }
@@ -116,7 +119,7 @@ final class DerivedTests: XCTestCase {
       let selector = storage.databases.db.derivedNonNull(from: result, queue: .passthrough)
       
       XCTAssertEqual(selector.primitiveValue.rawID, "some")
-      XCTAssertEqual(selector.primitiveValue.name, "")
+      XCTAssertEqual(selector.primitiveValue.name, "initial")
       
       XCTContext.runActivity(named: "modify") { (_) -> Void in
         
@@ -151,7 +154,7 @@ final class DerivedTests: XCTestCase {
     
   }
   
-  func testEqualsWithNonEquatableEntity() {
+  func testEqualsWithEquatableEntity() {
     
     let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
@@ -206,7 +209,7 @@ final class DerivedTests: XCTestCase {
       
     }
     
-    XCTAssertEqual(updatedCount, 2)
+    XCTAssertEqual(updatedCount, 1)
     
     XCTContext.runActivity(named: "Update other, getter would not emit changes") { _ in
       
@@ -242,7 +245,7 @@ final class DerivedTests: XCTestCase {
       return
     }
     
-    XCTAssertEqual(updatedCount, 2)
+    XCTAssertEqual(updatedCount, 1)
     
   }
   

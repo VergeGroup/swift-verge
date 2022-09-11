@@ -21,7 +21,7 @@ struct Book: EntityType, Hashable {
   
   let rawID: String
   let authorID: Author.EntityID
-  var name: String = ""
+  var name: String = "initial"
 }
 
 struct Author: EntityType {

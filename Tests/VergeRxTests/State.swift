@@ -38,7 +38,7 @@ struct Author: EntityType {
   static let anonymous: Author = .init(rawID: "anonymous")
 }
 
-struct RootState: StateType, DatabaseEmbedding {
+struct RootState: StateType {
   
   static let getterToDatabase: (RootState) -> RootState.Database = { $0.db }
   

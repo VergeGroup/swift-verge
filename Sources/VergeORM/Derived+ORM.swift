@@ -97,39 +97,39 @@ extension NonNullEntityWrapper: Equatable where Entity: Equatable {}
 extension NonNullEntityWrapper: Hashable where Entity: Hashable {}
 
 
-fileprivate final class _DerivedObjectCache {
+private final class DerivedCacheKey: NSObject {
   
-  final class CacheKey: NSObject {
-    
-    let entityType: ObjectIdentifier
-    let entityID: AnyEntityIdentifier
-    let keyPathToDatabase: AnyKeyPath
-    
-    init(entityType: ObjectIdentifier, entityID: AnyEntityIdentifier, keyPathToDatabase: AnyKeyPath) {
-      self.entityType = entityType
-      self.entityID = entityID
-      self.keyPathToDatabase = keyPathToDatabase
-    }
-    
-    override func isEqual(_ object: Any?) -> Bool {
-      
-      guard let other = object as? CacheKey else {
-        return false
-      }
-      
-      guard entityType == other.entityType else { return false }
-      guard entityID == other.entityID else { return false }
-      guard keyPathToDatabase == other.keyPathToDatabase else { return false }
-      
-      return true
-    }
-    
+  let entityType: ObjectIdentifier
+  let entityID: AnyEntityIdentifier
+  let keyPathToDatabase: AnyKeyPath
+  
+  init(entityType: ObjectIdentifier, entityID: AnyEntityIdentifier, keyPathToDatabase: AnyKeyPath) {
+    self.entityType = entityType
+    self.entityID = entityID
+    self.keyPathToDatabase = keyPathToDatabase
   }
   
-  private let _cache = NSCache<CacheKey, AnyObject>()
+  override func isEqual(_ object: Any?) -> Bool {
+    
+    guard let other = object as? DerivedCacheKey else {
+      return false
+    }
+    
+    guard entityType == other.entityType else { return false }
+    guard entityID == other.entityID else { return false }
+    guard keyPathToDatabase == other.keyPathToDatabase else { return false }
+    
+    return true
+  }
+  
+}
+
+fileprivate final class _DerivedObjectCache {
+    
+  private let _cache = NSCache<DerivedCacheKey, AnyObject>()
   
   @inline(__always)
-  private func key<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> CacheKey {
+  private func key<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> DerivedCacheKey {
     return .init(entityType: ObjectIdentifier(E.self), entityID: entityID.any, keyPathToDatabase: keyPathToDatabase)
   }
   
@@ -143,29 +143,62 @@ fileprivate final class _DerivedObjectCache {
   
 }
 
+fileprivate final class _NonNullDerivedObjectCache {
+  
+  private let _cache = NSCache<DerivedCacheKey, AnyObject>()
+  
+  @inline(__always)
+  private func key<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> DerivedCacheKey {
+    return .init(entityType: ObjectIdentifier(E.self), entityID: entityID.any, keyPathToDatabase: keyPathToDatabase)
+  }
+  
+  func get<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> E.NonNullDerived? {
+    _cache.object(forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase)) as? E.NonNullDerived
+  }
+  
+  func set<E: EntityType>(_ getter: E.NonNullDerived, entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) {
+    _cache.setObject(getter, forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase))
+  }
+  
+}
+
 public typealias NonNullDerivedResult<Entity: EntityType> = DerivedResult<Entity, Entity.NonNullDerived>
 
 // MARK: - Primitive operators
 
-fileprivate var _valueContainerAssociated: Void?
+fileprivate var _derivedContainerAssociated: Void?
+fileprivate var _nonnull_derivedContainerAssociated: Void?
 
 extension StoreType {
         
   private var _nonatomic_derivedObjectCache: _DerivedObjectCache {
     
-    if let associated = objc_getAssociatedObject(self, &_valueContainerAssociated) as? _DerivedObjectCache {
+    if let associated = objc_getAssociatedObject(self, &_derivedContainerAssociated) as? _DerivedObjectCache {
       
       return associated
       
     } else {
       
       let associated = _DerivedObjectCache()
-      objc_setAssociatedObject(self, &_valueContainerAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
+      objc_setAssociatedObject(self, &_derivedContainerAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
       return associated
     }
   }
   
-  
+  private var _nonatomic_nonnull_derivedObjectCache: _NonNullDerivedObjectCache {
+    
+    if let associated = objc_getAssociatedObject(self, &_nonnull_derivedContainerAssociated) as? _NonNullDerivedObjectCache {
+      
+      return associated
+      
+    } else {
+      
+      let associated = _NonNullDerivedObjectCache()
+      objc_setAssociatedObject(self, &_nonnull_derivedContainerAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
+      return associated
+    }
+  }
+    
 }
 
 /// A result instance that contains created Derived object
@@ -260,12 +293,54 @@ extension StoreType {
     } else {
       /// creates a new underlying derived object
       underlyingDerived = derived(
-        _DatabaseSingleEntityPipeline(keyPathToDatabase: keyPathToDatabase, entityID: entityID),
+        _DatabaseSingleEntityPipeline(
+          keyPathToDatabase: keyPathToDatabase,
+          entityID: entityID
+        ),
         queue: queue
       )
       .chain(.map(\.root))
       
       _nonatomic_derivedObjectCache.set(underlyingDerived, entityID: entityID, keyPathToDatabase: keyPathToDatabase)
+    }
+    
+    return underlyingDerived
+  }
+  
+  /**
+   Returns a ``Verge/Derived`` object that projects fetched Entity object by the entity identifier.
+   
+   The Derived object is constructed from multiple Derived.
+   Underlying-Derived: Fetch the entity from id
+   DropsOutput-Derived: Drops the duplicated object
+   
+   Underlying-Derived would be cached by the id.
+   */
+  @inline(__always)
+  public func derivedEntityPersistent<Entity: EntityType, Database: DatabaseType>(
+    entity: Entity,
+    from keyPathToDatabase: KeyPath<State, Database>,
+    queue: TargetQueueType = .passthrough
+  ) -> Entity.NonNullDerived {
+    
+    objc_sync_enter(self); defer { objc_sync_exit(self) }
+    
+    let underlyingDerived: Derived<NonNullEntityWrapper<Entity>>
+    
+    if let cached = _nonatomic_nonnull_derivedObjectCache.get(entityID: entity.entityID, keyPathToDatabase: keyPathToDatabase) {
+      underlyingDerived = cached
+    } else {
+      /// creates a new underlying derived object
+      underlyingDerived = derived(
+        _DatabaseCachedSingleEntityPipeline(
+          keyPathToDatabase: keyPathToDatabase,
+          entity: entity
+        ),
+        queue: queue
+      )
+      .chain(.map(\.root))
+      
+      _nonatomic_nonnull_derivedObjectCache.set(underlyingDerived, entityID: entity.entityID, keyPathToDatabase: keyPathToDatabase)
     }
     
     return underlyingDerived
@@ -303,28 +378,7 @@ extension DatabaseContext {
     from entity: Entity,
     queue: TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
-    
-    let fallingBackValue = VergeConcurrency.RecursiveLockAtomic<Entity>.init(entity)
-    
-    #if DEBUG
-    let checker = VergeConcurrency.SynchronizationTracker()
-    #endif
-    
-    return derived(from: entity.entityID, queue: queue)
-      .chain(
-        .map {
-#if DEBUG
-          checker.register(); defer { checker.unregister() }
-#endif
-          if let wrapped = $0.root.wrapped {
-            fallingBackValue.swap(wrapped)
-            return .init(entity: wrapped, isFallBack: false)
-          }
-          return .init(entity: fallingBackValue.value, isFallBack: true)
-        },
-        queue: queue
-      )
-    
+    store.derivedEntityPersistent(entity: entity, from: keyPath)
   }
 
   /// Returns a derived object that provides a concrete entity according to the updating source state
@@ -629,25 +683,100 @@ struct _DatabaseSingleEntityPipeline<Source, Database: DatabaseType, Entity: Ent
   
   func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
     
-    let hasChanges = input.hasChanges(
-      { (composing) -> Database in
-        // TODO: causing copy in some-cases
-        // `initializeWithCopy`
-        let db = input.primitive[keyPath: keyPathToDatabase]
-        return db
-      }, noChangesComparer
-    )
-    
-    guard hasChanges else {
-      return .noUpdates
+    func makeNew() -> ContinuousResult<Output> {
+      let wrapper =  EntityWrapper<Entity>(
+        id: entityID,
+        entity: input.primitive[keyPath: keyPathToDatabase].entities.table(Entity.self).find(by: entityID) /** Queries an entity */
+      )
+      return .new(wrapper)
     }
     
-    let wrapper =  EntityWrapper<Entity>(
-      id: entityID,
-      entity: input.primitive[keyPath: keyPathToDatabase].entities.table(Entity.self).find(by: entityID) /** Queries an entity */
-    )
+    guard let previous = input.previous else {
+      return makeNew()
+    }
     
-    return .new(wrapper)
+    let previousDB = previous.primitive[keyPath: keyPathToDatabase]
+    let newDB = input.primitive[keyPath: keyPathToDatabase]
+    
+    guard noChangesComparer.equals(previousDB, newDB) else {
+      return makeNew()
+    }
+        
+    return .noUpdates
+  }
+  
+}
+
+struct _DatabaseCachedSingleEntityPipeline<Source, Database: DatabaseType, Entity: EntityType>: PipelineType {
+  
+  typealias Input = Changes<Source>
+  
+  typealias Output = NonNullEntityWrapper<Entity>
+  
+  let keyPathToDatabase: KeyPath<Source, Database>
+  let entityID: Entity.EntityID
+  
+  // TODO: write inline
+  private let noChangesComparer: Comparer<Database>
+  
+  private let latestValue: VergeConcurrency.RecursiveLockAtomic<Entity>
+  
+  init(
+    keyPathToDatabase: KeyPath<Source, Database>,
+    entity: Entity
+  ) {
+    
+    self.keyPathToDatabase = keyPathToDatabase
+    self.entityID = entity.entityID
+    self.latestValue = .init(entity)
+    
+    self.noChangesComparer = Comparer<Database>(or: [
+      
+      /** Step 1 */
+      Comparer<Database>.databaseNoUpdates(),
+      
+      /** Step 2 */
+      Comparer<Database>.tableNoUpdates(Entity.self),
+      
+      /** Step 3 */
+      Comparer<Database>.changesNoContains(entityID),
+      
+    ])
+  }
+  
+  func yield(_ input: Input) -> Output {
+    
+    let entity = input.primitive[keyPath: keyPathToDatabase].entities.table(Entity.self).find(by: entityID) /** Queries an entity */
+    
+    if let entity {
+      latestValue.swap(entity)
+      return NonNullEntityWrapper.init(
+        entity: entity,
+        isFallBack: false
+      )
+    } else {
+      return NonNullEntityWrapper.init(
+        entity: latestValue.value,
+        isFallBack: true
+      )
+    }
+    
+  }
+  
+  func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+           
+    guard let previous = input.previous else {
+      return .new(yield(input))
+    }
+    
+    let previousDB = previous.primitive[keyPath: keyPathToDatabase]
+    let newDB = input.primitive[keyPath: keyPathToDatabase]
+    
+    guard noChangesComparer.equals(previousDB, newDB) else {
+      return .new(yield(input))
+    }
+    
+    return .noUpdates
   }
   
 }
