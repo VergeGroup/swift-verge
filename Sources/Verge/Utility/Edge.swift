@@ -98,6 +98,7 @@ public struct Edge<Value: Sendable>: EdgeType, Sendable {
   public func next(_ value: Value) -> Self {
     var copy = self
     copy.counter.increment()
+    copy.wrappedValue = value
     return copy
   }
 

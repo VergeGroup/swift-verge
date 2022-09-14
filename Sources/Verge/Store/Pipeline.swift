@@ -45,9 +45,9 @@ public protocol PipelineType<Input, Output> {
 
 public protocol _PipelineType: PipelineType {
     
-  var additionalDropCondition: (@Sendable (Input) -> Bool)? { get }
+  var additionalDropCondition: ((Input) -> Bool)? { get }
   
-  func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self
+  func drop(while predicate: @escaping (Input) -> Bool) -> Self
 }
 
 public protocol _SelectPipelineType: _PipelineType {
@@ -56,7 +56,7 @@ public protocol _SelectPipelineType: _PipelineType {
   
   init(
     keyPath: KeyPath<Input, Output>,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
+    additionalDropCondition: ((Input) -> Bool)?
   )
   
 }
@@ -65,19 +65,19 @@ public protocol _MapPipelineType: _PipelineType {
   
   associatedtype Intermediate
   
-  var intermediate: @Sendable (Input) -> Intermediate { get }
-  var map: @Sendable (Intermediate) -> Output { get }
+  var intermediate: (Input) -> PipelineIntermediate<Intermediate> { get }
+  var map: (Intermediate) -> Output { get }
   
   init(
-    intermediate: @escaping @Sendable (Input) -> Intermediate,
-    map: @escaping @Sendable (Intermediate) -> Output,
-    additionalDropCondition: (@Sendable (Input) -> Bool)?
+    @PipelineIntermediateBuilder intermediate: @escaping (Input) -> PipelineIntermediate<Intermediate>,
+    map: @escaping (Intermediate) -> Output,
+    additionalDropCondition: ((Input) -> Bool)?
   )
 }
 
 extension _SelectPipelineType {
   
-  public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
+  public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
     return .init(
       keyPath: keyPath,
       additionalDropCondition: additionalDropCondition.map { currentCondition in
@@ -91,7 +91,7 @@ extension _SelectPipelineType {
 }
 
 extension _MapPipelineType {
-  public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
+  public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
     return .init(
       intermediate: intermediate,
       map: map,
@@ -112,11 +112,11 @@ public enum Pipelines {
     public typealias Input = Changes<Source>
     
     public let keyPath: KeyPath<Input, Output>
-    public let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    public let additionalDropCondition: ((Input) -> Bool)?
     
     public init(
       keyPath: KeyPath<Input, Output>,
-      additionalDropCondition: (@Sendable (Input) -> Bool)?
+      additionalDropCondition: ((Input) -> Bool)?
     ) {
       self.keyPath = keyPath
       self.additionalDropCondition = additionalDropCondition
@@ -150,20 +150,20 @@ public enum Pipelines {
           
   }
  
-  public struct MapEquatableSourceEquatableOutputPipeline<Source: Equatable, Intermediate: Equatable, Output: Equatable>: _MapPipelineType {
+  public struct MapEquatableSourceEquatableOutputPipeline<Source: Equatable, Intermediate, Output: Equatable>: _MapPipelineType {
     
     public typealias Input = Changes<Source>
     
     // MARK: - Properties
     
-    public let intermediate: @Sendable (Input) -> Intermediate
-    public let map: @Sendable (Intermediate) -> Output
-    public let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    public let intermediate: (Input) -> PipelineIntermediate<Intermediate>
+    public let map: (Intermediate) -> Output
+    public let additionalDropCondition: ((Input) -> Bool)?
     
     public init(
-      intermediate: @escaping @Sendable (Input) -> Intermediate,
-      map: @escaping @Sendable (Intermediate) -> Output,
-      additionalDropCondition: (@Sendable (Input) -> Bool)?
+      @PipelineIntermediateBuilder intermediate: @escaping (Input) -> PipelineIntermediate<Intermediate>,
+      map: @escaping (Intermediate) -> Output,
+      additionalDropCondition: ((Input) -> Bool)?
     ) {
       self.intermediate = intermediate
       self.map = map
@@ -185,8 +185,8 @@ public enum Pipelines {
         
         guard previousIntermediate == newIntermediate else {
           
-          let previousMapped = map(previousIntermediate)
-          let newMapped = map(newIntermediate)
+          let previousMapped = map(previousIntermediate.value)
+          let newMapped = map(newIntermediate.value)
           
           guard previousMapped == newMapped else {
             
@@ -208,7 +208,7 @@ public enum Pipelines {
     }
     
     public func yield(_ input: Input) -> Output {
-      map(intermediate(input))
+      map(intermediate(input).value)
     }
       
   }
@@ -251,9 +251,9 @@ extension PipelineType {
    - Output: ==
    */
   public static func map<Input, Intermediate, Output>(
-    _ intermediate: @escaping @Sendable (Changes<Input>) -> Intermediate,
-    _ map: @escaping @Sendable (Intermediate) -> Output
-  ) -> Self where Input: Equatable, Output: Equatable, Intermediate: Equatable, Self == Pipelines.MapEquatableSourceEquatableOutputPipeline<Input, Intermediate, Output> {
+    @PipelineIntermediateBuilder _ intermediate: @escaping (Changes<Input>) -> PipelineIntermediate<Intermediate>,
+    _ map: @escaping (Intermediate) -> Output
+  ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapEquatableSourceEquatableOutputPipeline<Input, Intermediate, Output> {
     
     self.init(
       intermediate: intermediate,
@@ -263,7 +263,7 @@ extension PipelineType {
   }
   
   public static func map<Input, Output>(
-    _ map: @escaping @Sendable (Changes<Input>) -> Output
+    _ map: @escaping (Changes<Input>) -> Output
   ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapEquatableSourceEquatableOutputPipeline<Input, Changes<Input>, Output> {
     
     self.init(
@@ -273,4 +273,59 @@ extension PipelineType {
     )
   }
 
+}
+
+public struct PipelineIntermediate<T>: Equatable {
+  
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.comparer(lhs.value, rhs.value)
+  }
+      
+  public var value: T
+  public let comparer: ((T, T) -> Bool)
+  
+  @inlinable
+  public init(value: T, comparer: @escaping (T, T) -> Bool) {
+    self.value = value
+    self.comparer = comparer
+  }
+    
+  @inlinable
+  public init(value: T) where T: Equatable {
+    self.value = value
+    self.comparer = (==) // this won't be called
+  }
+  
+}
+
+extension PipelineIntermediate where T : Equatable {
+  
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.value == rhs.value
+  }
+  
+}
+
+@resultBuilder
+public enum PipelineIntermediateBuilder {
+      
+  public static func buildBlock<S1: Equatable>(_ s1: S1) -> PipelineIntermediate<S1> {
+    .init(value: s1)
+  }
+  
+  public static func buildBlock<S1: Equatable, S2: Equatable>(_ s1: S1, _ s2: S2) -> PipelineIntermediate<(S1, S2)> {
+    .init(value: (s1, s2), comparer: ==)
+  }
+  
+  public static func buildBlock<S1: Equatable, S2: Equatable, S3: Equatable>(_ s1: S1, _ s2: S2, _ s3: S3) -> PipelineIntermediate<(S1, S2, S3)> {
+    .init(value: (s1, s2, s3), comparer: ==)
+  }
+  
+  public static func buildBlock<S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable>(_ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4) -> PipelineIntermediate<(S1, S2, S3, S4)> {
+    .init(value: (s1, s2, s3, s4), comparer: ==)
+  }
+  
+  public static func buildBlock<S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable, S5: Equatable>(_ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5) -> PipelineIntermediate<(S1, S2, S3, S4, S5)> {
+    .init(value: (s1, s2, s3, s4, s5), comparer: ==)
+  }
 }

@@ -47,7 +47,7 @@ extension DemoState: ExtendedStateType {
 
     static let instance = Extended()
     
-    let nameCount = Field.Computed<Int>.init(pipeline: .map(\.name.count))
+    let nameCount = Field.Computed(.map(\.name.count))
 
   }
 

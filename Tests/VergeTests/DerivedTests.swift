@@ -202,11 +202,11 @@ final class DerivedTests: XCTestCase {
     update1.assertForOverFulfill = true
     update1.expectedFulfillmentCount = 2
         
-    let d = Derived.combined(s0, s1, queue: .passthrough)
+    let combined = Derived.combined(s0, s1, queue: .passthrough)
     
-    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (0, ""))
+    XCTAssert((combined.primitiveValue.0.primitive, combined.primitiveValue.1.primitive) == (0, ""))
         
-    let sub = d.sinkValue { (changes) in
+    let sub = combined.sinkValue { (changes) in
       
       updateCount.fulfill()
       
@@ -224,13 +224,13 @@ final class DerivedTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (1, ""))
+    XCTAssert((combined.primitiveValue.0.primitive, combined.primitiveValue.1.primitive) == (1, ""))
     
     wrapper.commit {
       $0.name = "next"
     }
     
-    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (1, "next"))
+    XCTAssert((combined.primitiveValue.0.primitive, combined.primitiveValue.1.primitive) == (1, "next"))
     
     wait(for: [updateCount, update1, update0], timeout: 10)
     withExtendedLifetime(sub) {}

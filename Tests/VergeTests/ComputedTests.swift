@@ -63,11 +63,11 @@ class Computed2Tests: XCTestCase {
     }
     
     struct Extended: ExtendedType {
-      
+          
       static let instance = Extended()
               
-      let filteredArray = Field.Computed(.map(\.largeArray, { @Sendable in $0.filter { $0 > 300 } }))
-              
+      let filteredArray = Field.Computed(.map({ $0.largeArray }, { $0.filter { $0 > 300 } }))
+                
       let num_0 = Field.Computed(.select(\.num_0))
         .onTransform {
           rootTransformCounter += 1
@@ -76,12 +76,12 @@ class Computed2Tests: XCTestCase {
       let num_1 = Field.Computed(.select(\.num_1))
       
       let num_2 = Field.Computed(.select(\.num_2))
-          
-      let multiplied = Field.Computed(.map({ ($0.computed.num_0, $0.computed.num_2) }, { $0 * $1}))
-                              
-      let _nameCount = Field.Computed(.select(\.name))
       
-      let nameCount = Field.Computed(.map(\.name, \.count))
+      let multiplied = Field.Computed(.map({ $0.computed.num_0; $0.computed.num_2 }, { $0 * $1}))
+      
+      let _nameCount = Field.Computed(.select(\.name))
+
+      let nameCount = Field.Computed(.map({ $0.name }, \.count))
         .onHitPreFilter {
           rootPreFilterCounter += 1
         }
@@ -92,7 +92,7 @@ class Computed2Tests: XCTestCase {
           rootTransformCounter += 1
         }
 
-      let nameCount_derived = Field.Computed(.map(\.name, { (name) in
+      let nameCount_derived = Field.Computed(.map({ $0.name }, { (name) in
         name.count
       }))
       .onRead {

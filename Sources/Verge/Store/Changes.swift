@@ -828,6 +828,15 @@ extension _StateTypeContainer {
       self.pipeline = pipeline as (any PipelineType<Pipeline.Input, Output>)
       
     }
+    
+    // to fix ambiguity
+    public init<Intermediate>(
+      _ pipeline: Pipelines.MapEquatableSourceEquatableOutputPipeline<Input.Value, Intermediate, Output>
+    ) {
+            
+      self.pipeline = pipeline as (any PipelineType<Input, Output>)
+      
+    }
   
     /**
      Registers callback-closure that will call when accessed the computed property
