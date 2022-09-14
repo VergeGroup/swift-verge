@@ -562,7 +562,7 @@ extension DatabaseContext {
 
 }
 
-struct _DatabaseMultipleEntityPipeline<Source, Database: DatabaseType, Entity: EntityType>: PipelineType {
+struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType, Entity: EntityType>: PipelineType {
   
   typealias Input = Changes<Source>
   
@@ -639,7 +639,7 @@ struct _DatabaseMultipleEntityPipeline<Source, Database: DatabaseType, Entity: E
   }
 }
 
-struct _DatabaseSingleEntityPipeline<Source, Database: DatabaseType, Entity: EntityType>: PipelineType {
+struct _DatabaseSingleEntityPipeline<Source: Equatable, Database: DatabaseType, Entity: EntityType>: PipelineType {
   
   typealias Input = Changes<Source>
   
@@ -707,7 +707,7 @@ struct _DatabaseSingleEntityPipeline<Source, Database: DatabaseType, Entity: Ent
   
 }
 
-struct _DatabaseCachedSingleEntityPipeline<Source, Database: DatabaseType, Entity: EntityType>: PipelineType {
+struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: DatabaseType, Entity: EntityType>: PipelineType {
   
   typealias Input = Changes<Source>
   

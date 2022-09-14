@@ -32,8 +32,10 @@ public protocol AnyChangesType: AnyObject, Sendable {
   var version: UInt64 { get }
 }
 
-public protocol ChangesType: AnyChangesType {
-  associatedtype Value
+public protocol ChangesType<Value>: AnyChangesType {
+  
+  associatedtype Value: Equatable
+  
   var previousPrimitive: Value? { get }
   var primitive: Value { get }
 
@@ -86,7 +88,7 @@ public protocol ChangesType: AnyChangesType {
 /// - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
 /// This means Changes will return equals if different pointer but the value is the same.
 @dynamicMemberLookup
-public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
+public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
   public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
 
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
@@ -812,16 +814,15 @@ extension _StateTypeContainer {
 
     @usableFromInline
     let pipeline: any PipelineType<Input, Output>
-
-    @usableFromInline
-    init(
+    
+    private init(
       _ pipeline: any PipelineType<Input, Output>
     ) {
       self.pipeline = pipeline
     }
     
     public init<Pipeline: PipelineType>(
-      pipeline: Pipeline
+      _ pipeline: Pipeline
     ) where Pipeline.Input == Input, Pipeline.Output == Output {
             
       self.pipeline = pipeline as (any PipelineType<Pipeline.Input, Output>)

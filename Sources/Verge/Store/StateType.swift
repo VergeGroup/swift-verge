@@ -25,7 +25,7 @@ import Foundation
 /// Not required to use with Store's state
 ///
 /// You may use ExtendedStateType to define computed property with caching to be performant.
-public protocol StateType {
+public protocol StateType: Equatable {
   
 }
 

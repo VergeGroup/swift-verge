@@ -24,7 +24,7 @@ import Foundation
 // It would be renamed as StoreContextType
 public protocol DispatcherType {
   associatedtype WrappedStore: StoreType
-  associatedtype Scope = WrappedStore.State
+  associatedtype Scope: Equatable = WrappedStore.State
 
   var store: WrappedStore { get }
   var scope: WritableKeyPath<WrappedStore.State, Scope> { get }
@@ -272,12 +272,12 @@ extension DispatcherType {
     )
   }
 
-  public func detached<NewScope>(from newScope: WritableKeyPath<WrappedStore.State, NewScope>)
+  public func detached<NewScope: Equatable>(from newScope: WritableKeyPath<WrappedStore.State, NewScope>)
   -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
     .init(targetStore: store.asStore(), scope: newScope)
   }
 
-  public func detached<NewScope>(by appendingScope: WritableKeyPath<Scope, NewScope>)
+  public func detached<NewScope: Equatable>(by appendingScope: WritableKeyPath<Scope, NewScope>)
   -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
     .init(targetStore: store.asStore(), scope: scope.appending(path: appendingScope))
   }

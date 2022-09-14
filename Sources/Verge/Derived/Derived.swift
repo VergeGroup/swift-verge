@@ -27,7 +27,7 @@ import Combine
 #endif
 
 public protocol DerivedType {
-  associatedtype Value
+  associatedtype Value: Equatable
 
   func asDerived() -> Derived<Value>
 }
@@ -46,7 +46,7 @@ public protocol DerivedType {
 
  Conforms to Equatable that compares pointer personality.
  */
-public class Derived<Value>: _VergeObservableObjectBase, DerivedType, @unchecked Sendable {
+public class Derived<Value: Equatable>: _VergeObservableObjectBase, DerivedType, @unchecked Sendable {
 
   /// Returns Derived object that provides constant value.
   ///
@@ -417,24 +417,22 @@ extension Derived where Value == Never {
     _ s0: Derived<S0>,
     _ s1: Derived<S1>,
     queue: TargetQueueType = .passthrough
-  ) -> Derived<(Changes<S0>, Changes<S1>)> {
+  ) -> Derived<Edge<(Changes<S0>, Changes<S1>)>> {
+        
+    let initial = Changes.init(old: nil, new: Edge((s0.value, s1.value)))
     
-    typealias Shape = Changes<(Changes<S0>, Changes<S1>)>
-    
-    let initial = Changes.init(old: nil, new: (s0.value, s1.value))
-    
-    let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
-    
-    return Derived<(Changes<S0>, Changes<S1>)>(
-      get: Pipelines.SelectPipeline.init(keyPath: \.root, additionalDropCondition: nil),
-      set: { _, _ in },
+    let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
+        
+    return Derived<Edge<(Changes<S0>, Changes<S1>)>>(
+      get: .map(\.root),
+      set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
                 
         let _s0 = s0._sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             let newValue = value.makeNextChanges(
-              with: (s0, value.primitive.1),
+              with: value.primitive.next((s0, value.primitive.1)),
               from: [],
               modification: .indeterminate
             )
@@ -442,20 +440,20 @@ extension Derived where Value == Never {
             callback(newValue)
           }
         }
-        
+
         let _s1 = s1._sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
-            
+
             let newValue = value.makeNextChanges(
-              with: (value.primitive.0, s1),
+              with: value.primitive.next((value.primitive.0, s1)),
               from: [],
               modification: .indeterminate
             )
             value = newValue
-            callback(newValue)          
+            callback(newValue)
           }
         }
-        
+
         return VergeAnyCancellable(onDeinit: {
           _s0.cancel()
           _s1.cancel()
@@ -481,24 +479,22 @@ extension Derived where Value == Never {
     _ s1: Derived<S1>,
     _ s2: Derived<S2>,
     queue: TargetQueueType = .passthrough
-  ) -> Derived<(Changes<S0>, Changes<S1>, Changes<S2>)> {
+  ) -> Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>> {
+        
+    let initial = Changes.init(old: nil, new: Edge((s0.value, s1.value, s2.value)))
     
-    typealias Shape = Changes<(Changes<S0>, Changes<S1>, Changes<S2>)>
+    let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
     
-    let initial = Changes.init(old: nil, new: (s0.value, s1.value, s2.value))
-    
-    let buffer = VergeConcurrency.RecursiveLockAtomic<Shape>.init(initial)
-    
-    return Derived<(Changes<S0>, Changes<S1>, Changes<S2>)>(
-      get: Pipelines.SelectPipeline.init(keyPath: \.root, additionalDropCondition: nil),
-      set: { _, _, _ in },
+    return Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>>(
+      get: .map(\.root),
+      set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
         
         let _s0 = s0._sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             let newValue = value.makeNextChanges(
-              with: (s0, value.primitive.1, value.primitive.2),
+              with: value.primitive.next((s0, value.primitive.1, value.primitive.2)),
               from: [],
               modification: .indeterminate
             )
@@ -511,7 +507,7 @@ extension Derived where Value == Never {
           buffer.modify { value in
             
             let newValue = value.makeNextChanges(
-              with: (value.primitive.0, s1, value.primitive.2),
+              with: value.primitive.next((value.primitive.0, s1, value.primitive.2)),
               from: [],
               modification: .indeterminate
             )
@@ -524,7 +520,7 @@ extension Derived where Value == Never {
           buffer.modify { value in
             
             let newValue = value.makeNextChanges(
-              with: (value.primitive.0, value.primitive.1, s2),
+              with: value.primitive.next((value.primitive.0, value.primitive.1, s2)),
               from: [],
               modification: .indeterminate
             )
@@ -554,7 +550,7 @@ extension Derived where Value == Never {
  In most cases, `Store` will be running underlying.
  */
 @propertyWrapper
-public final class BindingDerived<State>: Derived<State> {
+public final class BindingDerived<Value: Equatable>: Derived<Value> {
   
   /**
    Returns a derived value that created by get-pipeline.
@@ -562,7 +558,7 @@ public final class BindingDerived<State>: Derived<State> {
    
    - Warning: It does not always return the latest value after set a new value. It depends the specified target-queue.
    */
-  public override var primitiveValue: State {
+  public override var primitiveValue: Value {
     get { innerStore.primitiveState }
     set {
       guard let set = _set else {
@@ -579,12 +575,12 @@ public final class BindingDerived<State>: Derived<State> {
    
    - Warning: It does not always return the latest value after set a new value. It depends the specified target-queue.
    */
-  public var wrappedValue: State {
+  public var wrappedValue: Value {
     get { primitiveValue }
     set { primitiveValue = newValue }
   }
   
-  public var projectedValue: BindingDerived<State> {
+  public var projectedValue: BindingDerived<Value> {
     self
   }
 

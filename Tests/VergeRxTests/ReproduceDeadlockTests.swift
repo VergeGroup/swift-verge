@@ -16,7 +16,7 @@ class ReproduceDeadlockTests: XCTestCase {
   
   class StoreWrapper: StoreWrapperType {
         
-    struct State {
+    struct State: Equatable {
       var count = 0
     }
         

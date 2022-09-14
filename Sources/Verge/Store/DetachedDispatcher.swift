@@ -21,6 +21,6 @@
 
 import Foundation
 
-public final class DetachedDispatcher<State, Activity, Scope>: ScopedDispatcherBase<State, Activity, Scope> {
+public final class DetachedDispatcher<State: Equatable, Activity, Scope: Equatable>: ScopedDispatcherBase<State, Activity, Scope> {
   
 }

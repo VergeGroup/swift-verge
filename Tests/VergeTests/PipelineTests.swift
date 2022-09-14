@@ -3,7 +3,7 @@ import XCTest
 import Verge
 
 final class PipelineTests: XCTestCase {
-  
+ /*
   func test_select_pipeline() {
     
     let pipeline = Pipelines.SelectPipeline<DemoState, _>.init(keyPath: \.count, additionalDropCondition: nil)
@@ -67,6 +67,7 @@ final class PipelineTests: XCTestCase {
     )
     
   }
+  */
   
   func testSelect() {
     
@@ -86,12 +87,7 @@ final class PipelineTests: XCTestCase {
         let d = store.derived(.map(\.onEquatable))
         XCTAssert((d as Any) is Derived<OnEquatable>)
       }
-      
-      do {
-        let d = store.derived(.map(\.nonEquatable))
-        XCTAssert((d as Any) is Derived<NonEquatable>)
-      }
-      
+            
       do {
         let d = store.derived(.map(\.count))
         XCTAssert((d as Any) is Derived<Int>)
@@ -102,39 +98,7 @@ final class PipelineTests: XCTestCase {
         XCTAssert((d as Any) is Derived<Int>)
       }
     }
-    
-    do {
-      let store = Verge.Store<NonEquatableDemoState, Never>(initialState: .init())
-      do {
-        let d = store.derived(.map(\.$onEquatable))
-        XCTAssert((d as Any) is Derived<Edge<OnEquatable>>)
-      }
-      
-      do {
-        let d = store.derived(.map(\.$nonEquatable))
-        XCTAssert((d as Any) is Derived<Edge<NonEquatable>>)
-      }
-      
-      do {
-        let d = store.derived(.map(\.onEquatable))
-        XCTAssert((d as Any) is Derived<OnEquatable>)
-      }
-      
-      do {
-        let d = store.derived(.map(\.nonEquatable))
-        XCTAssert((d as Any) is Derived<NonEquatable>)
-      }
-      
-      do {
-        let d = store.derived(.map(\.count))
-        XCTAssert((d as Any) is Derived<Int>)
-      }
-      
-      do {
-        let d = store.derived(.map { $0.count })
-        XCTAssert((d as Any) is Derived<Int>)
-      }
-    }
+       
   }
  
 }

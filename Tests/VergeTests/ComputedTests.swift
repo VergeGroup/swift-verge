@@ -53,14 +53,11 @@ class Computed2Tests: XCTestCase {
       struct Extended: ExtendedType {
         
         static let instance = Extended()
-             
-        let nameCount = Field.Computed(\.value.count)
-          .dropsInput {
-            $0.noChanges(\.value)
-        }
-        .onTransform {
-          nestedCounter += 1
-        }
+        
+        let nameCount = Field.Computed(.select(\.value.count))
+          .onTransform {
+            nestedCounter += 1
+          }
                          
       }
     }
@@ -69,66 +66,35 @@ class Computed2Tests: XCTestCase {
       
       static let instance = Extended()
               
-      let filteredArray = Field.Computed<[Int]> {
-        $0.largeArray.filter { $0 > 300 }
-      }
-      .dropsInput {
-        $0.noChanges(\.largeArray)
-      }
+      let filteredArray = Field.Computed(.map(\.largeArray, { @Sendable in $0.filter { $0 > 300 } }))
+              
+      let num_0 = Field.Computed(.select(\.num_0))
+        .onTransform {
+          rootTransformCounter += 1
+        }
       
-      let filteredArrayWithoutPreFilter = Field.Computed<[Int]> {
-        $0.largeArray.filter { $0 > 300 }
-      }
+      let num_1 = Field.Computed(.select(\.num_1))
       
-      let num_0 = Field.Computed<Int>(\.num_0)
-        .dropsInput {
-          $0.noChanges(\.num_0)
-      }
-      .onTransform {
-        rootTransformCounter += 1
-      }
-      
-      let num_1 = Field.Computed<Int>(\.num_1)
-        .dropsInput {
-          $0.noChanges(\.num_1)
-      }
-      
-      let num_2 = Field.Computed<Int>(\.num_2)
-        .dropsInput {
-          $0.noChanges(\.num_2)
-      }
-      
-      let multiplied = Field.Computed<Int> {
-        $0.computed.num_1 * $0.computed.num_2
-      }
-      .dropsInput {
-        $0.noChanges(\.num_1) && $0.noChanges(\.num_2)
-      }
+      let num_2 = Field.Computed(.select(\.num_2))
+          
+      let multiplied = Field.Computed(.map({ ($0.computed.num_0, $0.computed.num_2) }, { $0 * $1}))
                               
-      let _nameCount = Field.Computed {
-        $0.name
-      }
-      .dropsInput {
-        $0.noChanges(\.name)
-      }
+      let _nameCount = Field.Computed(.select(\.name))
       
-      let nameCount = Field.Computed(\.name.count)
-        .dropsInput {
-          $0.noChanges(\.name)
-      }
+      let nameCount = Field.Computed(.map(\.name, \.count))
         .onHitPreFilter {
           rootPreFilterCounter += 1
-      }
-      .onRead {
-        rootReadCounter += 1
-      }
-      .onTransform {
-        rootTransformCounter += 1
-      }
+        }
+        .onRead {
+          rootReadCounter += 1
+        }
+        .onTransform {
+          rootTransformCounter += 1
+        }
 
-      let nameCount_derived = Field.Computed.init(derive: { $0.name }) { (name) in
+      let nameCount_derived = Field.Computed(.map(\.name, { (name) in
         name.count
-      }
+      }))
       .onRead {
         nameCount_derived_counter.read += 1
       }
@@ -167,18 +133,6 @@ class Computed2Tests: XCTestCase {
     
   }
   
-  func testPerformanceComputingWithourPrefilter() {
-   
-    let store = MyStore()
-    
-    let changes = store.state
-    
-    measure {
-      _ = changes.computed.filteredArrayWithoutPreFilter
-    }
-    
-  }
-  
   func testPerformanceComputingWithCommits() {
     
     let store = MyStore()
@@ -189,20 +143,6 @@ class Computed2Tests: XCTestCase {
         $0.num_1 += 1
       }
       _ = store.state.computed.filteredArray
-    }
-    
-  }
-  
-  func testPerformanceComputingWithourPrefilterWithCommits() {
-    
-    let store = MyStore()
-        
-    measure {
-      store.commit {
-        // no affects to array
-        $0.num_1 += 1
-      }
-      _ = store.state.computed.filteredArrayWithoutPreFilter
     }
     
   }

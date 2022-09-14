@@ -30,7 +30,7 @@ import Combine
  A descriptor view that indicates what reads state value from Store/Derived.
  */
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-public struct StateReader<Value, Content: View>: View {
+public struct StateReader<Value: Equatable, Content: View>: View {
 
   @ObservedObject private var observableObject: _VergeObservableObjectBase
 
@@ -79,7 +79,6 @@ extension StateReader {
     
   /// Initialize from `Store`
   ///
-  /// - Complexity: ⚠️ No memoization, content closure runs every time according to the store's updates.
   /// - Parameters:
   ///   - store:
   ///   - content:
@@ -112,33 +111,6 @@ extension StateReader {
   ) where Value == Derived.Value {
 
     self.init(derived: derived, content: content)
-  }
-
-  /// Initialize from `Store`
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  public init<Store: StoreType>(
-    _ store: Store,
-    @ViewBuilder content: @escaping (Changes<Value>) -> Content
-  ) where Value == Store.State, Value : Equatable {
-    self.init(store.derived(.map(\.root)), content: content)
-  }
-
-  /// Initialize from `Store`
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  public init<Derived: DerivedType>(
-    _ derived: Derived,
-    @ViewBuilder content: @escaping (Changes<Value>) -> Content
-  ) where Value == Derived.Value, Value : Equatable {
-    self.init(derived: derived, content: content)
-
   }
 
 }

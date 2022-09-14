@@ -67,7 +67,7 @@ struct RootState: StateType {
     var _backingStorage: BackingStorage = .init()
   }
   
-  struct Other {
+  struct Other: Equatable {
     var count: Int = 0
   }
   

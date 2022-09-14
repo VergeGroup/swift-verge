@@ -66,10 +66,10 @@ struct RootState: StateType {
     var _backingStorage: BackingStorage = .init()
   }
   
-  struct Other {
+  struct Other: Equatable {
     var count: Int = 0
     var collection: [Int] = []
-    var dictionary: [AnyHashable : Any] = [:]
+    @Edge var dictionary: [AnyHashable : Any] = [:]
 
     mutating func makeAsHuge() {
       collection = Array.init(repeating: 5, count: 50000)
