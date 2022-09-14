@@ -107,7 +107,7 @@ extension _MapPipelineType {
 
 public enum Pipelines {
    
-  public struct SelectEquatableSourceEquatableOutputPipeline<Source: Equatable, Output: Equatable>: _SelectPipelineType {
+  public struct SelectPipeline<Source: Equatable, Output: Equatable>: _SelectPipelineType {
     
     public typealias Input = Changes<Source>
     
@@ -150,7 +150,7 @@ public enum Pipelines {
           
   }
  
-  public struct MapEquatableSourceEquatableOutputPipeline<Source: Equatable, Intermediate, Output: Equatable>: _MapPipelineType {
+  public struct MapPipeline<Source: Equatable, Intermediate, Output: Equatable>: _MapPipelineType {
     
     public typealias Input = Changes<Source>
     
@@ -226,7 +226,7 @@ extension PipelineType {
    exactly same with ``PipelineType/select(_:)``
    */
   public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
-  where Input: Equatable, Output: Equatable, Self == Pipelines.SelectEquatableSourceEquatableOutputPipeline<Input, Output> {
+  where Input: Equatable, Output: Equatable, Self == Pipelines.SelectPipeline<Input, Output> {
     select(keyPath)
   }
   
@@ -238,7 +238,7 @@ extension PipelineType {
    exactly same with ``PipelineType/map(_:)-7xvom``
    */
   public static func select<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
-  where Input: Equatable, Output: Equatable, Self == Pipelines.SelectEquatableSourceEquatableOutputPipeline<Input, Output> {
+  where Input: Equatable, Output: Equatable, Self == Pipelines.SelectPipeline<Input, Output> {
     self.init(keyPath: keyPath, additionalDropCondition: nil)
   }
 }
@@ -253,7 +253,7 @@ extension PipelineType {
   public static func map<Input, Intermediate, Output>(
     @PipelineIntermediateBuilder _ intermediate: @escaping (Changes<Input>) -> PipelineIntermediate<Intermediate>,
     _ map: @escaping (Intermediate) -> Output
-  ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapEquatableSourceEquatableOutputPipeline<Input, Intermediate, Output> {
+  ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapPipeline<Input, Intermediate, Output> {
     
     self.init(
       intermediate: intermediate,
@@ -264,7 +264,7 @@ extension PipelineType {
   
   public static func map<Input, Output>(
     _ map: @escaping (Changes<Input>) -> Output
-  ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapEquatableSourceEquatableOutputPipeline<Input, Changes<Input>, Output> {
+  ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapPipeline<Input, Changes<Input>, Output> {
     
     self.init(
       intermediate: { $0 },

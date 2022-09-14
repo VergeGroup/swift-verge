@@ -823,7 +823,7 @@ extension _StateTypeContainer {
     
     public init<Pipeline: PipelineType>(
       _ pipeline: Pipeline
-    ) where Pipeline.Input == Input, Pipeline.Output == Output {
+    ) where Pipeline.Input == Input, Output == Pipeline.Output {
             
       self.pipeline = pipeline as (any PipelineType<Pipeline.Input, Output>)
       
@@ -831,7 +831,7 @@ extension _StateTypeContainer {
     
     // to fix ambiguity
     public init<Intermediate>(
-      _ pipeline: Pipelines.MapEquatableSourceEquatableOutputPipeline<Input.Value, Intermediate, Output>
+      _ pipeline: Pipelines.MapPipeline<Input.Value, Intermediate, Output>
     ) {
             
       self.pipeline = pipeline as (any PipelineType<Input, Output>)

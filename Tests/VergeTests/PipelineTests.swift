@@ -3,71 +3,31 @@ import XCTest
 import Verge
 
 final class PipelineTests: XCTestCase {
- /*
-  func test_select_pipeline() {
+ 
+  func testIntermediate() {
     
-    let pipeline = Pipelines.SelectPipeline<DemoState, _>.init(keyPath: \.count, additionalDropCondition: nil)
+    var mapCounter = NonAtomicCounter()
     
-    let initialState = Changes<DemoState>.init(old: nil, new: .init())
-
-    XCTAssertEqual(pipeline.yieldContinuously(initialState), .new(0))
-    
-    XCTAssertEqual(
-      pipeline.yieldContinuously(
-        initialState.makeNextChanges(
-          with: DemoState(count: 1),
-          from: [],
-          modification: .indeterminate
-        )
-      ),
-      .new(1)
+    let pipeline = Pipelines.MapPipeline<DemoState, _, _>(
+      intermediate: {
+        $0.name
+      },
+      map: {
+        mapCounter.increment()
+        return $0.count
+      },
+      additionalDropCondition: nil
     )
     
-    XCTAssertEqual(
-      pipeline.yieldContinuously(
-        initialState.makeNextChanges(
-          with: DemoState(count: 1),
-          from: [],
-          modification: .indeterminate
-        )
-      ),
-      .new(1)
+    let inputChanges = Changes<DemoState>.init(
+      old: .init(name: "A", count: 1),
+      new: .init(name: "A", count: 2)
     )
+    
+    XCTAssertEqual(pipeline.yieldContinuously(inputChanges), .noUpdates)
+    XCTAssertEqual(mapCounter.value, 0)
     
   }
-  
-  func test_select_pipeline_equatable() {
-    
-    let pipeline = Pipelines.SelectEquatableOutputPipeline<DemoState, _>.init(keyPath: \.count, additionalDropCondition: nil)
-    
-    let initialState = Changes<DemoState>.init(old: nil, new: .init())
-    
-    XCTAssertEqual(pipeline.yieldContinuously(initialState), .new(0))
-    
-    XCTAssertEqual(
-      pipeline.yieldContinuously(
-        initialState.makeNextChanges(
-          with: DemoState(count: 1),
-          from: [],
-          modification: .indeterminate
-        )
-      ),
-      .new(1)
-    )
-    
-    XCTAssertEqual(
-      pipeline.yieldContinuously(
-        initialState.makeNextChanges(
-          with: DemoState(count: 1),
-          from: [],
-          modification: .indeterminate
-        )
-      ),
-      .new(1)
-    )
-    
-  }
-  */
   
   func testSelect() {
     
