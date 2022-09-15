@@ -105,8 +105,15 @@ extension _MapPipelineType {
   
 }
 
+/**
+ It produces outputs from inputs with their own conditions.
+ 
+ Against just using map closure, it can drop output if there are no changes.
+ This will be helpful in performance. Therefore most type parameters require Equatable.
+ */
 public enum Pipelines {
    
+  /// KeyPath based pipeline, light weight operation just take value from source.
   public struct SelectPipeline<Source: Equatable, Output: Equatable>: _SelectPipelineType {
     
     public typealias Input = Changes<Source>
@@ -150,6 +157,7 @@ public enum Pipelines {
           
   }
  
+  /// Closure based pipeline, 
   public struct MapPipeline<Source: Equatable, Intermediate, Output: Equatable>: _MapPipelineType {
     
     public typealias Input = Changes<Source>
@@ -215,13 +223,10 @@ public enum Pipelines {
 
 }
 
-
 extension PipelineType {
 
   /**
-   KeyPath
-   - Input: ==
-   - Output: ==
+   Produces output values using KeyPath-based projection.
    
    exactly same with ``PipelineType/select(_:)``
    */
@@ -231,9 +236,7 @@ extension PipelineType {
   }
   
   /**
-   KeyPath
-   - Input: ==
-   - Output: ==
+   Produces output values using KeyPath-based projection.
    
    exactly same with ``PipelineType/map(_:)-7xvom``
    */
@@ -246,12 +249,12 @@ extension PipelineType {
 extension PipelineType {
 
   /**
-   Closure based map
-   - Input: ==
-   - Output: ==
+   Produces output values using closure-based projection.
+   `map` closure takes the value projected from `using` closure which is intermediate value.
+   If the intermediate value is not changed, map closure won't perform.
    */
   public static func map<Input, Intermediate, Output>(
-    @PipelineIntermediateBuilder _ intermediate: @escaping (Changes<Input>) -> PipelineIntermediate<Intermediate>,
+    @PipelineIntermediateBuilder using intermediate: @escaping (Changes<Input>) -> PipelineIntermediate<Intermediate>,
     _ map: @escaping (Intermediate) -> Output
   ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapPipeline<Input, Intermediate, Output> {
     
@@ -262,8 +265,12 @@ extension PipelineType {
     )
   }
   
+  /**
+   Produces output values using closure-based projection.
+   Using Edge as intermediate, output value will be unwrapped value from the Edge.
+   */
   public static func map<Input, EdgeIntermediate>(
-    @PipelineIntermediateBuilder _ intermediate: @escaping (Changes<Input>) -> PipelineIntermediate<Edge<EdgeIntermediate>>
+    @PipelineIntermediateBuilder using intermediate: @escaping (Changes<Input>) -> PipelineIntermediate<Edge<EdgeIntermediate>>
   ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapPipeline<Input, Edge<EdgeIntermediate>, EdgeIntermediate> {
     
     self.init(
@@ -273,6 +280,12 @@ extension PipelineType {
     )
   }
   
+  /**
+   Produces output values using closure-based projection.
+   
+   ## 💡Tips
+   Consider to use intermediate value with `using` parameter variant if `map` closure takes much higher cost.
+   */
   public static func map<Input, Output>(
     _ map: @escaping (Changes<Input>) -> Output
   ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapPipeline<Input, Changes<Input>, Output> {
