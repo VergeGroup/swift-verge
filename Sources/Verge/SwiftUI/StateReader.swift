@@ -30,7 +30,7 @@ import Combine
  A descriptor view that indicates what reads state value from Store/Derived.
  */
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-public struct StateReader<Value, Content: View>: View {
+public struct StateReader<Value: Equatable, Content: View>: View {
 
   @ObservedObject private var observableObject: _VergeObservableObjectBase
 
@@ -53,78 +53,6 @@ public struct StateReader<Value, Content: View>: View {
     return content(changes)
   }
   
-  /**
-   Makes itself having content.
-   
-   This syntax and approach are related to the lacking of current Xcode's auto-completion. (Xcode12)
-   */
-  @available(*, deprecated, message: "Use init with content")
-  public func content<NewContent: View>(@ViewBuilder _ makeContent: @escaping (Changes<Value>) -> NewContent) -> StateReader<Value, NewContent> {
-    return .init(updateTrigger: observableObject, updateValue: updateValue, content: makeContent)
-  }
-
-}
-
-@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-extension StateReader {
- 
-  /// Creates an instance from `Store`
-  ///
-  /// - Complexity: ⚠️ No memoization, content closure runs every time according to the store's updates.
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  @available(*, deprecated, message: "Use init with content")
-  public init<Store: StoreType>(
-    _ store: Store
-  ) where Value == Store.State, Content == EmptyView {
-        
-    self.init(store, content: { _ in EmptyView() })
-
-  }
-
-  /// Creates an instance  from `Derived`
-  ///
-  /// - Complexity: 💡 It depends on how Derived does memoization.
-  /// - Parameters:
-  ///   - derived:
-  ///   - content:
-  @available(*, deprecated, message: "Use init with content")
-  public init<Derived: DerivedType>(
-    _ derived: Derived
-  ) where Value == Derived.Value, Content == EmptyView {
-
-    self.init(derived: derived, content: { _ in EmptyView() })
-
-  }
-
-  /// Initialize from `Store`
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  @available(*, deprecated, message: "Use init with content")
-  public init<Store: StoreType>(
-    _ store: Store
-  ) where Value == Store.State, Value : Equatable, Content == EmptyView {
-    self.init(store.derived(.map(\.root)))
-  }
-
-  /// Initialize from `Store`
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  @available(*, deprecated, message: "Use init with content")
-  public init<Derived: DerivedType>(
-    _ derived: Derived
-  ) where Value == Derived.Value, Value : Equatable, Content == EmptyView {
-    assert(derived.asDerived().attributes.contains(.dropsDuplicatedOutput) == true)
-    self.init(derived: derived, content: { _ in EmptyView() })
-  }
-
 }
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
@@ -151,7 +79,6 @@ extension StateReader {
     
   /// Initialize from `Store`
   ///
-  /// - Complexity: ⚠️ No memoization, content closure runs every time according to the store's updates.
   /// - Parameters:
   ///   - store:
   ///   - content:
@@ -186,73 +113,21 @@ extension StateReader {
     self.init(derived: derived, content: content)
   }
 
-  /// Initialize from `Store`
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  public init<Store: StoreType>(
-    _ store: Store,
-    @ViewBuilder content: @escaping (Changes<Value>) -> Content
-  ) where Value == Store.State, Value : Equatable {
-    self.init(store.derived(.map(\.root)), content: content)
-  }
-
-  /// Initialize from `Store`
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  public init<Derived: DerivedType>(
-    _ derived: Derived,
-    @ViewBuilder content: @escaping (Changes<Value>) -> Content
-  ) where Value == Derived.Value, Value : Equatable {
-    assert(derived.asDerived().attributes.contains(.dropsDuplicatedOutput) == true)
-    self.init(derived: derived, content: content)
-
-  }
-
 }
 
 extension StateReader {
-  
-  /// Initialize from `Store` with pipeline
-  ///
-  /// - Complexity: ⚠️ No memoization, content closure runs every time according to the store's updates.
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  public init<Store: StoreType>(
+ 
+  public init<Store: StoreType, Pipeline: PipelineType>(
     _ store: Store,
-    _ pipeline: Pipeline<Changes<Store.State>, Value>,
+    _ pipeline: Pipeline,
     @ViewBuilder content: @escaping (Changes<Value>) -> Content
-  ) {
+  ) where Pipeline.Input == Changes<Store.State>, Pipeline.Output == Value {
     
     let derived = store.derived(pipeline, queue: .passthrough)
     
-    self.init(derived, content: content)
-    
+    self.init(derived, content: content)    
   }
-  
-  /// Initialize from `Store` with pipeline
-  ///
-  /// - Complexity: ✅ Using implicit drop-input with Equatable
-  /// - Parameters:
-  ///   - store:
-  ///   - content:
-  public init<Store: StoreType>(
-    _ store: Store,
-    _ pipeline: Pipeline<Changes<Store.State>, Value>,
-    @ViewBuilder content: @escaping (Changes<Value>) -> Content
-  ) where Value : Equatable {
-    
-    let derived = store.derived(pipeline, queue: .passthrough)
-    
-    self.init(derived, content: content)
-    
-  }
+
 }
 
 #endif

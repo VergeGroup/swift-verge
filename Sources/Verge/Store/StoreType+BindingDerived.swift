@@ -32,19 +32,18 @@ extension StoreType {
   ///   - dropsOutput: Predicate to drops object if found a duplicated output
   ///   - set:
   /// - Returns:
-  public func bindingDerived<NewState>(
+  public func bindingDerived<Pipeline: PipelineType>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    get: Pipeline<Changes<State>, NewState>,
-    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
-    set: @escaping (inout InoutRef<State>, NewState) -> Void,
+    get pipeline: Pipeline,
+    set: @escaping (inout InoutRef<State>, Pipeline.Output) -> Void,
     queue: TargetQueueType = .passthrough
-  ) -> BindingDerived<NewState> {
+  ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<State> {
 
-    let derived = BindingDerived<NewState>.init(
-      get: get,
+    let derived = BindingDerived<Pipeline.Output>.init(
+      get: pipeline,
       set: { [weak self] state in
         self?.asStore().commit(name, file, function, line) {
           set(&$0, state)
@@ -57,86 +56,11 @@ extension StoreType {
           queue: queue,
           receive: callback
         )
-      }, retainsUpstream: nil)
-
-    derived.setDropsOutput(dropsOutput)
+      },
+      retainsUpstream: nil
+    )
 
     return derived
-  }
-
-  /// Returns Binding Derived object
-  ///
-  /// - Complexity: ✅ Drops duplicated the output with Equatable comparison.
-  /// - Parameters:
-  ///   - name:
-  ///   - get:
-  ///   - set:
-  /// - Returns:
-  public func bindingDerived<NewState>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    get: Pipeline<Changes<State>, NewState>,
-    set: @escaping (inout InoutRef<State>, NewState) -> Void,
-    queue: TargetQueueType = .passthrough
-  ) -> BindingDerived<NewState> where NewState : Equatable {
-
-    bindingDerived(
-      name,
-      file,
-      function,
-      line,
-      get: get,
-      dropsOutput: { $0.asChanges().noChanges(\.root) },
-      set: set,
-      queue: queue
-    )
-  }
-
-  /// Returns Binding Derived object
-  ///
-  /// - Complexity: 💡 It's better to set `dropsOutput` predicate.
-  /// - Parameters:
-  ///   - name:
-  ///   - get:
-  ///   - dropsOutput: Predicate to drops object if found a duplicated output
-  ///   - set:
-  /// - Returns:
-  @available(*, deprecated, renamed: "bindingDerived")
-  public func binding<NewState>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    get: Pipeline<Changes<State>, NewState>,
-    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
-    set: @escaping (inout InoutRef<State>, NewState) -> Void,
-    queue: TargetQueueType = .passthrough
-  ) -> BindingDerived<NewState> {
-
-    bindingDerived(name, file, function, line, get: get, dropsOutput: dropsOutput, set: set, queue: queue)
-  }
-
-  /// Returns Binding Derived object
-  ///
-  /// - Complexity: ✅ Drops duplicated the output with Equatable comparison.
-  /// - Parameters:
-  ///   - name:
-  ///   - get:
-  ///   - set:
-  /// - Returns:
-  @available(*, deprecated, renamed: "bindingDerived")
-  public func binding<NewState>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    get: Pipeline<Changes<State>, NewState>,
-    set: @escaping (inout InoutRef<State>, NewState) -> Void,
-    queue: TargetQueueType = .passthrough
-  ) -> BindingDerived<NewState> where NewState : Equatable {
-    bindingDerived(name, file, function, line, get: get, set: set, queue: queue)
   }
 
 }

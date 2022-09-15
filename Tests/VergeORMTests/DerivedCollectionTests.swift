@@ -29,8 +29,8 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
     
-    let d = store._derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
-      return AnyCollection(index.allAuthros.prefix(3))
+    let d = store.databases.db._derivedQueriedEntities(ids: { index in
+      index.allAuthros.prefix(3)
     })
 
     // FIXME: this fails, since the middleware doesn't care the order
@@ -52,7 +52,7 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
 
-    let d = store._derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
+    let d = store.databases.db._derivedQueriedEntities(ids: { index in
       return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
     })
 
@@ -85,8 +85,8 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
 
-    let d = store._derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
-      return AnyCollection(index.allAuthros.filter { $0.raw.first == "1" })
+    let d = store.databases.db._derivedQueriedEntities(ids: { index in
+      index.allAuthros.filter { $0.raw.first == "1" }
     })
 
     XCTAssertEqual(d.value.map { $0.value.wrapped?.entityID.raw }, ["1"])
@@ -117,8 +117,8 @@ class DerivedCollectionTests: XCTestCase {
       }
     }
 
-    let d = store._derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
-      return AnyCollection(index.allAuthros.filter { _ in return true })
+    let d = store.databases.db._derivedQueriedEntities(ids: { index in
+      index.allAuthros.filter { _ in return true }
     })
     
     let tmp = d.value.primitive
@@ -144,8 +144,8 @@ class DerivedCollectionTests: XCTestCase {
     let store = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     var updateCount = 0
 
-    let d = store._derivedQueriedEntities(update: { index -> AnyCollection<Author.EntityID> in
-      return AnyCollection(index.allAuthros.filter { _ in return true })
+    let d = store.databases.db._derivedQueriedEntities(ids: { index in
+      index.allAuthros.filter { _ in return true }
     })
 
     d.sinkValue { _ in

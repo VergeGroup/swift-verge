@@ -9,14 +9,14 @@
 import Foundation
 import Verge
 
-struct NonEquatable {
+struct NonEquatable: Sendable {
   let id = UUID()
 }
-struct OnEquatable: Equatable {
+struct OnEquatable: Equatable, Sendable {
   let id = UUID()
 }
 
-struct DemoState: Equatable {
+struct DemoState: Equatable, Sendable {
 
   struct Inner: Equatable {
     var name: String = ""
@@ -46,13 +46,8 @@ extension DemoState: ExtendedStateType {
   struct Extended: ExtendedType {
 
     static let instance = Extended()
-
-    let nameCount = Field.Computed<Int> {
-      $0.name.count
-    }
-    .dropsInput {
-      $0.noChanges(\.name)
-    }
+    
+    let nameCount = Field.Computed(.map(\.name.count))
 
   }
 

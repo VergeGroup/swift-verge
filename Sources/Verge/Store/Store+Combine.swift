@@ -34,7 +34,7 @@ extension Store {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
-  public func statePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
+  public func statePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<Value>, Never> {
     if startsFromInitial {
       return _backingStorage.valuePublisher.dropFirst()
         .merge(with: Just(_backingStorage.value.droppedPrevious()))
@@ -51,7 +51,7 @@ extension Store {
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
   @available(*, deprecated, renamed: "statePublisher")
-  public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
+  public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<Value>, Never> {
     if startsFromInitial {
       return _backingStorage.valuePublisher.dropFirst()
         .merge(with: Just(_backingStorage.value.droppedPrevious()))

@@ -21,7 +21,7 @@ struct Book: EntityType, Hashable {
   
   let rawID: String
   let authorID: Author.EntityID
-  var name: String = ""
+  var name: String = "initial"
 }
 
 struct Author: EntityType {
@@ -38,10 +38,8 @@ struct Author: EntityType {
   static let anonymous: Author = .init(rawID: "anonymous")
 }
 
-struct RootState: StateType, DatabaseEmbedding {
-  
-  static let getterToDatabase: (RootState) -> RootState.Database = { $0.db }
-  
+struct RootState: StateType {
+    
   struct Database: DatabaseType {
           
     struct Schema: EntitySchemaType {
@@ -68,10 +66,10 @@ struct RootState: StateType, DatabaseEmbedding {
     var _backingStorage: BackingStorage = .init()
   }
   
-  struct Other {
+  struct Other: Equatable {
     var count: Int = 0
     var collection: [Int] = []
-    var dictionary: [AnyHashable : Any] = [:]
+    @Edge var dictionary: [AnyHashable : Any] = [:]
 
     mutating func makeAsHuge() {
       collection = Array.init(repeating: 5, count: 50000)

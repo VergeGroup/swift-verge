@@ -22,7 +22,7 @@
 /**
  Dispatcher allows us to update the state of the Store from away the store and to manage dependencies to create Mutation.
  */
-open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
+open class ScopedDispatcherBase<State: Equatable, Activity, Scope: Equatable>: DispatcherType {
 
   /// A writable key path to shortly read and modify the state
   public let scope: WritableKeyPath<State, Scope>
@@ -72,7 +72,7 @@ open class ScopedDispatcherBase<State, Activity, Scope>: DispatcherType {
 /**
  Dispatcher allows us to update the state of the Store from away the store and to manage dependencies to create Mutation.
  */
-open class DispatcherBase<State, Activity>: ScopedDispatcherBase<State, Activity, State> {
+open class DispatcherBase<State: Equatable, Activity>: ScopedDispatcherBase<State, Activity, State> {
       
   public init(
     targetStore: Store<State, Activity>

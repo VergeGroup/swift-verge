@@ -21,122 +21,311 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "Pipeline")
-public typealias MemoizeMap<Input, Output> = Pipeline<Input, Output>
+private let counter = VergeConcurrency.AtomicInt(initialValue: 0)
 
-fileprivate let counter = VergeConcurrency.AtomicInt(initialValue: 0)
+public enum ContinuousResult<Output> {
+  case new(Output)
+  case noUpdates
+}
 
-/**
- A handler that how receives and provides value.
+extension ContinuousResult: Equatable where Output: Equatable {
+  
+}
 
- inputs value: Input -> Pipeline -> Pipeline.Result
- inputs value initially: -> Pipeline -> Output
-*/
-public struct Pipeline<Input, Output>: Equatable, Sendable {
+public protocol PipelineType<Input, Output> {
+  
+  associatedtype Input
+  associatedtype Output
+     
+  func yield(_ input: Input) -> Output
+   
+  func yieldContinuously(_ input: Input) -> ContinuousResult<Output>
+  
+}
 
-  public static func == (lhs: Pipeline<Input, Output>, rhs: Pipeline<Input, Output>) -> Bool {
-    lhs.identifier == rhs.identifier
-  }
-
-  public enum ContinuousResult {
-    case new(Output)
-    case noUpdates
-  }
-
-  // MARK: - Properties
-
-  /*
-   Properties should be `let` because to avoid mutating value with using the same identifier under the manager does not know that.
-   */
-
-  private let _makeOutput: @Sendable (Input) -> Output
-  private let _makeContinousOutput: @Sendable (Input) -> ContinuousResult
-  private let _dropInput: @Sendable (Input) -> Bool
-
-  /**
-   An identifier to be used from Derived to use the same instance if Pipeline is same.   
-   */
-  var identifier: Int = counter.getAndIncrement()
-
-  // MARK: - Initializers
+public protocol _PipelineType: PipelineType {
     
-  @_disfavoredOverload
-  public init(
-    makeInitial: @escaping @Sendable (Input) -> Output,
-    update: @escaping @Sendable (Input) -> ContinuousResult
-  ) {
-    
-    self.init(makeOutput: makeInitial, dropInput: { _ in false }, makeContinuousOutput: update)
+  var additionalDropCondition: ((Input) -> Bool)? { get }
+  
+  func drop(while predicate: @escaping (Input) -> Bool) -> Self
+}
+
+public protocol _SelectPipelineType: _PipelineType {
+  
+  var keyPath: KeyPath<Input, Output> { get }
+  
+  init(
+    keyPath: KeyPath<Input, Output>,
+    additionalDropCondition: ((Input) -> Bool)?
+  )
+  
+}
+
+public protocol _MapPipelineType: _PipelineType {
+  
+  associatedtype Intermediate
+  
+  var intermediate: (Input) -> PipelineIntermediate<Intermediate> { get }
+  var map: (Intermediate) -> Output { get }
+  
+  init(
+    @PipelineIntermediateBuilder intermediate: @escaping (Input) -> PipelineIntermediate<Intermediate>,
+    map: @escaping (Intermediate) -> Output,
+    additionalDropCondition: ((Input) -> Bool)?
+  )
+}
+
+extension _SelectPipelineType {
+  
+  public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
+    return .init(
+      keyPath: keyPath,
+      additionalDropCondition: additionalDropCondition.map { currentCondition in
+        { input in
+          currentCondition(input) || predicate(input)
+        }
+      } ?? predicate
+    )
   }
   
-  public init(
-    map: @escaping @Sendable (Input) -> Output
-  ) {
-    self.init(dropInput: { _ in false }, map: map)
-  }
+}
 
-  public init(
-    dropInput: @escaping @Sendable (Input) -> Bool,
-    map: @escaping @Sendable (Input) -> Output
-  ) {
-
-    self.init(
-      makeOutput: map,
-      dropInput: dropInput,
-      makeContinuousOutput: { .new(map($0)) }
+extension _MapPipelineType {
+  public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
+    return .init(
+      intermediate: intermediate,
+      map: map,
+      additionalDropCondition: additionalDropCondition.map { currentCondition in
+        { input in
+          currentCondition(input) || predicate(input)
+        }
+      } ?? predicate
     )
   }
+  
+}
 
-  /// The primitive initializer
-  init(
-    makeOutput: @escaping @Sendable (Input) -> Output,
-    dropInput: @escaping @Sendable (Input) -> Bool,
-    makeContinuousOutput: @escaping @Sendable (Input) -> ContinuousResult
-  ) {
-
-    self._makeOutput = makeOutput
-    self._dropInput = dropInput
-    self._makeContinousOutput = { input in
-      guard !dropInput(input) else {
+public enum Pipelines {
+   
+  public struct SelectPipeline<Source: Equatable, Output: Equatable>: _SelectPipelineType {
+    
+    public typealias Input = Changes<Source>
+    
+    public let keyPath: KeyPath<Input, Output>
+    public let additionalDropCondition: ((Input) -> Bool)?
+    
+    public init(
+      keyPath: KeyPath<Input, Output>,
+      additionalDropCondition: ((Input) -> Bool)?
+    ) {
+      self.keyPath = keyPath
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+      
+      guard let previous = input.previous else {
+        return .new(input[keyPath: keyPath])
+      }
+      
+      guard
+        previous.primitive == input.primitive ||
+          previous[keyPath: keyPath] == input[keyPath: keyPath]
+      else {
+        
+        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+          return .new(input[keyPath: keyPath])
+        }
+        
         return .noUpdates
       }
-      return makeContinuousOutput(input)
+      
+      return .noUpdates
+      
     }
+    
+    public func yield(_ input: Input) -> Output {
+      input[keyPath: keyPath]
+    }
+          
   }
-
-  // MARK: - Functions
-
-
-  // TODO: Rename `makeContinuousOutput`
-  public func makeResult(_ source: Input) -> ContinuousResult {
-    _makeContinousOutput(source)
-  }
-
-  // TODO: Rename `makeOutput`
-  public func makeInitial(_ source: Input) -> Output {
-    _makeOutput(source)
-  }
-
-  /// Tune memoization logic up.
-  ///
-  /// - Parameter predicate: Return true, the coming input would be dropped.
-  /// - Returns:
-  public func dropsInput(
-    while predicate: @escaping @Sendable (Input) -> Bool
-  ) -> Self {
-    Self.init(
-      makeOutput: _makeOutput,
-      dropInput: { [_dropInput] input in
-        guard !_dropInput(input) else {
-          return true
+ 
+  public struct MapPipeline<Source: Equatable, Intermediate, Output: Equatable>: _MapPipelineType {
+    
+    public typealias Input = Changes<Source>
+    
+    // MARK: - Properties
+    
+    public let intermediate: (Input) -> PipelineIntermediate<Intermediate>
+    public let map: (Intermediate) -> Output
+    public let additionalDropCondition: ((Input) -> Bool)?
+    
+    public init(
+      @PipelineIntermediateBuilder intermediate: @escaping (Input) -> PipelineIntermediate<Intermediate>,
+      map: @escaping (Intermediate) -> Output,
+      additionalDropCondition: ((Input) -> Bool)?
+    ) {
+      self.intermediate = intermediate
+      self.map = map
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    // MARK: - Functions
+    
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+      
+      guard let previous = input.previous else {
+        return .new(yield(input))
+      }
+      
+      guard previous.primitive == input.primitive else {
+        
+        let previousIntermediate = intermediate(previous)
+        let newIntermediate = intermediate(input)
+        
+        guard previousIntermediate == newIntermediate else {
+          
+          let previousMapped = map(previousIntermediate.value)
+          let newMapped = map(newIntermediate.value)
+          
+          guard previousMapped == newMapped else {
+            
+            guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+              return .new(newMapped)
+            }
+            
+            return .noUpdates
+          }
+                  
+          return .noUpdates
         }
-        guard !predicate(input) else {
-          return true
-        }
-        return false
-      },
-      makeContinuousOutput: _makeContinousOutput
+              
+        return .noUpdates
+        
+      }
+      
+      return .noUpdates
+    }
+    
+    public func yield(_ input: Input) -> Output {
+      map(intermediate(input).value)
+    }
+      
+  }
+
+}
+
+
+extension PipelineType {
+
+  /**
+   KeyPath
+   - Input: ==
+   - Output: ==
+   
+   exactly same with ``PipelineType/select(_:)``
+   */
+  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
+  where Input: Equatable, Output: Equatable, Self == Pipelines.SelectPipeline<Input, Output> {
+    select(keyPath)
+  }
+  
+  /**
+   KeyPath
+   - Input: ==
+   - Output: ==
+   
+   exactly same with ``PipelineType/map(_:)-7xvom``
+   */
+  public static func select<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
+  where Input: Equatable, Output: Equatable, Self == Pipelines.SelectPipeline<Input, Output> {
+    self.init(keyPath: keyPath, additionalDropCondition: nil)
+  }
+}
+
+extension PipelineType {
+
+  /**
+   Closure based map
+   - Input: ==
+   - Output: ==
+   */
+  public static func map<Input, Intermediate, Output>(
+    @PipelineIntermediateBuilder _ intermediate: @escaping (Changes<Input>) -> PipelineIntermediate<Intermediate>,
+    _ map: @escaping (Intermediate) -> Output
+  ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapPipeline<Input, Intermediate, Output> {
+    
+    self.init(
+      intermediate: intermediate,
+      map: map,
+      additionalDropCondition: nil
+    )
+  }
+  
+  public static func map<Input, Output>(
+    _ map: @escaping (Changes<Input>) -> Output
+  ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapPipeline<Input, Changes<Input>, Output> {
+    
+    self.init(
+      intermediate: { $0 },
+      map: map,
+      additionalDropCondition: nil
     )
   }
 
+}
+
+public struct PipelineIntermediate<T>: Equatable {
+  
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.comparer(lhs.value, rhs.value)
+  }
+      
+  public var value: T
+  public let comparer: ((T, T) -> Bool)
+  
+  @inlinable
+  public init(value: T, comparer: @escaping (T, T) -> Bool) {
+    self.value = value
+    self.comparer = comparer
+  }
+    
+  @inlinable
+  public init(value: T) where T: Equatable {
+    self.value = value
+    self.comparer = (==) // this won't be called
+  }
+  
+}
+
+extension PipelineIntermediate where T : Equatable {
+  
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.value == rhs.value
+  }
+  
+}
+
+@resultBuilder
+public enum PipelineIntermediateBuilder {
+      
+  public static func buildBlock<S1: Equatable>(_ s1: S1) -> PipelineIntermediate<S1> {
+    .init(value: s1)
+  }
+  
+  public static func buildBlock<S1: Equatable, S2: Equatable>(_ s1: S1, _ s2: S2) -> PipelineIntermediate<(S1, S2)> {
+    .init(value: (s1, s2), comparer: ==)
+  }
+  
+  public static func buildBlock<S1: Equatable, S2: Equatable, S3: Equatable>(_ s1: S1, _ s2: S2, _ s3: S3) -> PipelineIntermediate<(S1, S2, S3)> {
+    .init(value: (s1, s2, s3), comparer: ==)
+  }
+  
+  public static func buildBlock<S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable>(_ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4) -> PipelineIntermediate<(S1, S2, S3, S4)> {
+    .init(value: (s1, s2, s3, s4), comparer: ==)
+  }
+  
+  public static func buildBlock<S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable, S5: Equatable>(_ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5) -> PipelineIntermediate<(S1, S2, S3, S4, S5)> {
+    .init(value: (s1, s2, s3, s4, s5), comparer: ==)
+  }
 }

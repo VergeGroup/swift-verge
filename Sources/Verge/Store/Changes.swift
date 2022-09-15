@@ -32,8 +32,10 @@ public protocol AnyChangesType: AnyObject, Sendable {
   var version: UInt64 { get }
 }
 
-public protocol ChangesType: AnyChangesType {
-  associatedtype Value
+public protocol ChangesType<Value>: AnyChangesType {
+  
+  associatedtype Value: Equatable
+  
   var previousPrimitive: Value? { get }
   var primitive: Value { get }
 
@@ -86,7 +88,7 @@ public protocol ChangesType: AnyChangesType {
 /// - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
 /// This means Changes will return equals if different pointer but the value is the same.
 @dynamicMemberLookup
-public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
+public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
   public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
 
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
@@ -591,6 +593,7 @@ extension Changes where Value: ExtendedStateType {
     }
   }
 
+  // namespace for computed properties
   public var computed: ComputedProxy {
     .init(source: self)
   }
@@ -599,6 +602,7 @@ extension Changes where Value: ExtendedStateType {
   private func _synchronized_takeFromCacheOrCreate<Output>(
     keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>
   ) -> Output {
+    
     let components = Value.Extended.instance[keyPath: keyPath]
 
     components._onRead()
@@ -641,7 +645,7 @@ extension Changes where Value: ExtendedStateType {
 
             components._onHitPreviousCache()
 
-            switch components.pipeline.makeResult(self) {
+            switch components.pipeline.yieldContinuously(self) {
             case .noUpdates:
 
               // No changes
@@ -664,7 +668,7 @@ extension Changes where Value: ExtendedStateType {
 
             components._onTransform()
 
-            let initialValue = components.pipeline.makeInitial(self)
+            let initialValue = components.pipeline.yield(self)
             cache[keyPath] = initialValue
             return initialValue
           }
@@ -678,7 +682,7 @@ extension Changes where Value: ExtendedStateType {
 
         components._onTransform()
 
-        let initialValue = components.pipeline.makeInitial(self)
+        let initialValue = components.pipeline.yield(self)
         cache[keyPath] = initialValue
         return initialValue
       }
@@ -790,6 +794,7 @@ extension _StateTypeContainer {
    ```
    */
   public struct Computed<Output> {
+    
     public typealias Input = Changes<State>
 
     @usableFromInline
@@ -808,82 +813,31 @@ extension _StateTypeContainer {
     fileprivate(set) var _onTransform: () -> Void = {}
 
     @usableFromInline
-    let pipeline: Pipeline<Input, Output>
-
-    @usableFromInline
-    init(
-      _ pipeline: Pipeline<Input, Output>
+    let pipeline: any PipelineType<Input, Output>
+    
+    private init(
+      _ pipeline: any PipelineType<Input, Output>
     ) {
       self.pipeline = pipeline
     }
-
-    public init(
-      makeInitial: @escaping @Sendable (Input) -> Output,
-      update: @escaping @Sendable (Input) -> Pipeline<Input, Output>.ContinuousResult
+    
+    public init<Pipeline: PipelineType>(
+      _ pipeline: Pipeline
+    ) where Pipeline.Input == Input, Output == Pipeline.Output {
+            
+      self.pipeline = pipeline as (any PipelineType<Pipeline.Input, Output>)
+      
+    }
+    
+    // to fix ambiguity
+    public init<Intermediate>(
+      _ pipeline: Pipelines.MapPipeline<Input.Value, Intermediate, Output>
     ) {
-      self.init(Pipeline<Input, Output>.init(makeInitial: makeInitial, update: update))
+            
+      self.pipeline = pipeline as (any PipelineType<Input, Output>)
+      
     }
-
-    public init(
-      _ compute: @escaping @Sendable (Input) -> Output
-    ) {
-      self.init(.map(compute))
-    }
-
-    /// Initialize Computed property that computes value from derived value
-    /// Drops duplicated derived value with Equatable of Derived type.
-    ///
-    /// - Complexity: ✅ Drops duplicated derived values.
-    /// - Parameters:
-    ///   - derive: A closure to create value from the state to put into the compute closure.
-    ///   - compute: A closure to compose a computed value from the derived value.
-    public init<Derived: Equatable>(
-      derive: @escaping (Input) -> Derived,
-      compute: @escaping (Derived) -> Output
-    ) {
-      self.init(derive: derive, dropsDerived: ==, compute: compute)
-    }
-
-    /// Initialize Computed property that computes value from derived value
-    ///
-    /// - Complexity:
-    ///   - ✅ Drops duplicated derived values
-    ///   - 💡 depends on dropsDerived closure
-    /// - Parameters:
-    ///   - derive: A closure to create value from the state to put into the compute closure.
-    ///   - dropsDerived:
-    ///     A predicate to drop a duplicated value, closure gets an old value and a new value.
-    ///     If return true, drops the value.
-    ///   - compute: A closure to compose a computed value from the derived value.
-    public init<Derived>(
-      derive: @escaping (Input) -> Derived,
-      dropsDerived: @escaping (Derived, Derived) -> Bool,
-      compute: @escaping (Derived) -> Output
-    ) {
-      self.init(.map(derive: derive, dropsDerived: dropsDerived, compute: compute))
-    }
-
-    /**
-     Adds a rule to drop input value from the root state changed.
-     */
-    @inlinable
-    @inline(__always)
-    public func dropsInput(while predicate: @escaping (Input) -> Bool) -> Self {
-      modified {
-        $0.dropsInput(while: predicate)
-      }
-    }
-
-    @inlinable
-    @inline(__always)
-    public func modified(
-      _ modifier: (Pipeline<Input, Output>) -> Pipeline<Input, Output>
-    )
-      -> Self
-    {
-      .init(modifier(pipeline))
-    }
-
+  
     /**
      Registers callback-closure that will call when accessed the computed property
      */

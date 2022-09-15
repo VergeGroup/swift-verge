@@ -105,7 +105,7 @@ public struct AnyMiddleware<Database: DatabaseType>: MiddlewareType, Equatable {
 }
  ```
  */
-public protocol DatabaseType: Equatable, DatabaseEmbedding where Database == Self {
+public protocol DatabaseType: Equatable {
     
   associatedtype Schema: EntitySchemaType
   associatedtype Indexes: IndexesType
@@ -113,11 +113,6 @@ public protocol DatabaseType: Equatable, DatabaseEmbedding where Database == Sel
   var _backingStorage: BackingStorage { get set }
   
   var middlewares: [AnyMiddleware<Self>] { get }
-}
-
-// MARK: - DatabaseEmbedding
-extension DatabaseType {
-  public static var getterToDatabase: (Self) -> Self { { $0 } }
 }
 
 extension DatabaseType {

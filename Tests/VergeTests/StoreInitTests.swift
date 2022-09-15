@@ -10,7 +10,10 @@ final class StoreInitTests: XCTestCase {
   
   class RefViewModel: StoreComponentType {
     
-    class State {
+    class State: Equatable {
+      static func == (lhs: StoreInitTests.RefViewModel.State, rhs: StoreInitTests.RefViewModel.State) -> Bool {
+        true
+      }
       
       init() {}
     }
@@ -19,13 +22,14 @@ final class StoreInitTests: XCTestCase {
     
     init() {
       
+      // it raises a warning
       self.store = DefaultStore(initialState: .init())
     }
   }
   
   class StructViewModel: StoreComponentType {
     
-    struct State {
+    struct State: Equatable {
       
       init() {}
     }

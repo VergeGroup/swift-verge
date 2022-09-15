@@ -55,7 +55,7 @@ enum MigrationExample {
         
       }
       
-      public struct State {
+      public struct State: Equatable {
         
         var state1: String = ""
         var state2: String = ""

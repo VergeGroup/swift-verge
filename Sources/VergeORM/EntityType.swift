@@ -65,7 +65,7 @@ public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConve
 ///
 /// EntityType has VergeTypedIdentifiable.
 /// You might use IdentifiableEntityType instead, if you create SwiftUI app.
-public protocol EntityType {
+public protocol EntityType: Equatable {
 
   associatedtype EntityIDRawType: _PrimitiveIdentifierConvertible
 

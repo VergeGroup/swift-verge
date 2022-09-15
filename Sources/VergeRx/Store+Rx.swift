@@ -86,7 +86,7 @@ extension StoreWrapperType {
 
 }
 
-extension ObservableType {
+extension ObservableType where Element : Equatable {
     
   /// Make Changes sequense from current sequence
   /// - Returns:

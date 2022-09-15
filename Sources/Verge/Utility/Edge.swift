@@ -30,8 +30,11 @@ public typealias Fragment = Edge
 public protocol EdgeType : Equatable {
   associatedtype State
   var wrappedValue: State { get }
+  var globalID: Int { get }
   var version: UInt64 { get }
 }
+
+private let _edge_global_counter = VergeConcurrency.AtomicInt(initialValue: 0)
 
 /**
  A structure that manages sub-state-tree from root-state-tree.
@@ -48,13 +51,32 @@ public protocol EdgeType : Equatable {
  Memoization can use that version if it should pass new input.
 
  To activate this feature, you can check this method.
- `MemoizeMap.map(_ map: @escaping (Changes<Input.Value>) -> Edge<Output>) -> MemoizeMap<Input, Output>`
+ `Pipeline.map(_ map: @escaping (Changes<Input.Value>) -> Edge<Output>) -> MemoizeMap<Input, Output>`
  */
 @propertyWrapper
-public struct Edge<State: Sendable>: EdgeType, Sendable {
+@dynamicMemberLookup
+public struct Edge<Value: Sendable>: EdgeType, Sendable {
 
-  public static func == (lhs: Edge<State>, rhs: Edge<State>) -> Bool {
-    lhs.version == rhs.version
+  public static func == (lhs: Edge<Value>, rhs: Edge<Value>) -> Bool {
+    lhs.globalID == rhs.globalID && lhs.version == rhs.version || lhs.comparerForNonEquatable(lhs.wrappedValue, rhs.wrappedValue)
+  }
+  
+  public subscript <U>(dynamicMember keyPath: KeyPath<Value, U>) -> U {
+    _read { yield wrappedValue[keyPath: keyPath] }
+  }
+  
+  public subscript <U>(dynamicMember keyPath: KeyPath<Value, U?>) -> U? {
+    _read { yield wrappedValue[keyPath: keyPath] }
+  }
+  
+  public subscript <U>(dynamicMember keyPath: WritableKeyPath<Value, U>) -> U {
+    _read { yield wrappedValue[keyPath: keyPath] }
+    _modify { yield &wrappedValue[keyPath: keyPath] }
+  }
+  
+  public subscript <U>(dynamicMember keyPath: WritableKeyPath<Value, U?>) -> U? {
+    _read { yield wrappedValue[keyPath: keyPath] }
+    _modify { yield &wrappedValue[keyPath: keyPath] }
   }
 
   /// A number value that indicates how many times State was updated.
@@ -64,12 +86,30 @@ public struct Edge<State: Sendable>: EdgeType, Sendable {
     }
   }
 
+  public let globalID: Int
+  
   private(set) public var counter: NonAtomicCounter = .init()
   private let middleware: Middleware?
+  
+  private let comparerForNonEquatable: @Sendable (Value, Value) -> Bool
+     
+  public func next(_ value: Value) -> Self {
+    var copy = self
+    copy.counter.increment()
+    copy.wrappedValue = value
+    return copy
+  }
 
-  public init(wrappedValue: State, middleware: Middleware? = nil) {
+  @_disfavoredOverload
+  public init(
+    wrappedValue: Value,
+    middleware: Middleware? = nil,
+    comparer: @escaping @Sendable (Value, Value) -> Bool = { @Sendable _, _ in false }
+  ) {
 
+    self.globalID = _edge_global_counter.getAndIncrement()
     self.middleware = middleware
+    self.comparerForNonEquatable = comparer
 
     if let middleware = middleware {
       var mutable = wrappedValue
@@ -82,7 +122,7 @@ public struct Edge<State: Sendable>: EdgeType, Sendable {
   }
 
   /// A value that wrapped with Edge.
-  public var wrappedValue: State {
+  public var wrappedValue: Value {
     get {
       _wrappedValue
     }
@@ -97,28 +137,103 @@ public struct Edge<State: Sendable>: EdgeType, Sendable {
     }
   }
 
-  private var _wrappedValue: State {
+  private var _wrappedValue: Value {
     didSet {
       counter.increment()
     }
   }
 
-  public var projectedValue: Edge<State> {
-    self
+  public var projectedValue: Edge<Value> {
+    get {
+      self
+    }
+    set {
+      self = newValue
+    }
   }
 
 }
 
-extension Edge where State : Equatable {
-  public static func == (lhs: Edge<State>, rhs: Edge<State>) -> Bool {
-    lhs.version == rhs.version || lhs.wrappedValue == rhs.wrappedValue
+extension Edge {
+  
+  /**
+   Tuple binding initializer - S1
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable>(
+    wrappedValue tuple: (S1),
+    middleware: Middleware? = nil
+  ) where Value == (S1) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+  
+  /**
+   Tuple binding initializer - S1, S2
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable, S2: Equatable>(
+    wrappedValue tuple: (S1, S2),
+    middleware: Middleware? = nil
+  ) where Value == (S1, S2) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+  
+  /**
+   Tuple binding initializer - S1, S2, S3
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable, S2: Equatable, S3: Equatable>(
+    wrappedValue tuple: (S1, S2, S3),
+    middleware: Middleware? = nil
+  ) where Value == (S1, S2, S3) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+  
+  /**
+   Tuple binding initializer - S1, S2, S3, S4
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable>(
+    wrappedValue tuple: (S1, S2, S3, S4),
+    middleware: Middleware? = nil
+  ) where Value == (S1, S2, S3, S4) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+  
+  /**
+   Tuple binding initializer - S1, S2, S3, S4, S5
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable, S5: Equatable>(
+    wrappedValue tuple: (S1, S2, S3, S4, S5),
+    middleware: Middleware? = nil
+  ) where Value == (S1, S2, S3, S4, S5) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+  
+  /**
+   Tuple binding initializer - S1, S2, S3, S4, S5, S6
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable, S5: Equatable, S6: Equatable>(
+    wrappedValue tuple: (S1, S2, S3, S4, S5, S6),
+    middleware: Middleware? = nil
+  ) where Value == (S1, S2, S3, S4, S5, S6) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+   
+}
+
+extension Edge where Value : Equatable {
+  public static func == (lhs: Edge<Value>, rhs: Edge<Value>) -> Bool {
+    (lhs.globalID == rhs.globalID && lhs.version == rhs.version) || lhs.wrappedValue == rhs.wrappedValue
   }
 }
 
 extension Comparer where Input : EdgeType {
 
   public static func versionEquals() -> Comparer<Input> {
-    Comparer<Input>.init { $0.version == $1.version }
+    Comparer<Input>.init { $0.globalID == $1.globalID && $0.version == $1.version }
   }
 }
 
@@ -133,12 +248,12 @@ extension Edge {
    */
   public struct Middleware: Sendable {
 
-    let _onSet: @Sendable (inout State) -> Void
+    let _onSet: @Sendable (inout Value) -> Void
 
     /// Initialize a instance that performs multiple middlewares from start index
     /// - Parameter onSet: It can access a new value and modify to validate something.
     public init(
-      onSet: @escaping @Sendable (inout State) -> Void
+      onSet: @escaping @Sendable (inout Value) -> Void
     ) {
       self._onSet = onSet
     }
@@ -160,10 +275,10 @@ extension Edge {
     /// Raises an Swift.assertionFailure when its new value does not fit the condition.
     /// - Parameter condition:
     /// - Returns: A Middleware instance
-    public static func assert(_ condition: @escaping (State) -> Bool, _ failureReason: String? = nil) -> Self {
+    public static func assert(_ condition: @escaping (Value) -> Bool, _ failureReason: String? = nil) -> Self {
       #if DEBUG
       return .init(onSet: { state in
-        let message = failureReason ?? "[Verge] \(Edge<State>.self) raised a failure in the assertion. \(state)"
+        let message = failureReason ?? "[Verge] \(Edge<Value>.self) raised a failure in the assertion. \(state)"
         Swift.assert(condition(state), message)
       })
       #else
@@ -181,7 +296,7 @@ extension Edge {
     /// It won't mutate the value
     ///
     /// - Returns: A Middleware instance
-    public static func `do`(_ perform: @escaping (State) -> Void) -> Self {
+    public static func `do`(_ perform: @escaping (Value) -> Void) -> Self {
       return .init(onSet: { perform($0) })
     }
 

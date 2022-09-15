@@ -28,7 +28,7 @@ import Combine
 
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
 public protocol StoreType: AnyObject {
-  associatedtype State
+  associatedtype State: Equatable
   associatedtype Activity = Never
   
   func asStore() -> Store<State, Activity>
@@ -36,12 +36,9 @@ public protocol StoreType: AnyObject {
   var primitiveState: State { get }
 }
 
-public typealias NoActivityStoreBase<State: StateType> = Store<State, Never>
+public typealias NoActivityStoreBase<State: Equatable> = Store<State, Never>
 
 private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.sanitizer")
-
-@available(*, deprecated, renamed: "Store")
-public typealias StoreBase<State, Activity> = Store<State, Activity>
 
 /// An object that retains a latest state value and receives mutations that modify itself state.
 /// Those updates would be shared all of the subscribers these are sink(s), Derived(s)
@@ -56,11 +53,11 @@ public typealias StoreBase<State, Activity> = Store<State, Activity>
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
+open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
 
   public typealias Scope = State
   public typealias Dispatcher = DispatcherBase<State, Activity>
-  public typealias ScopedDispatcher<Scope> = ScopedDispatcherBase<State, Activity, Scope>
+  public typealias ScopedDispatcher<Scope: Equatable> = ScopedDispatcherBase<State, Activity, Scope>
   public typealias Value = State
 
   #if canImport(Combine)
@@ -109,13 +106,7 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   /// You shouldn't access this directly unless special case.
   let _backingStorage: StateStorage<Changes<State>>
   let _activityEmitter: EventEmitter<Activity> = .init()
-    
-  /// Cache for derived object each method. Don't share it with between methods.
-  let derivedCache1 = VergeConcurrency.RecursiveLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
-  
-  /// Cache for derived object each method. Don't share it with between methods.
-  let derivedCache2 = VergeConcurrency.RecursiveLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
-  
+      
   private let tracker = VergeConcurrency.SynchronizationTracker()
   
   /// A name of the store.
@@ -301,11 +292,7 @@ Mutation: (%@)
     let log = ActivityLog(storeName: self.name, trace: trace)
     logger?.didSendActivity(log: log, sender: self)
   }
-  
-  func setNotificationFilter(_ filter: @escaping (Changes<State>) -> Bool) {
-    self._backingStorage.setNotificationFilter(filter)
-  }
-     
+ 
   public var customMirror: Mirror {
     return Mirror(
       self,

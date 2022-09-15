@@ -15,7 +15,7 @@ import Combine
 @available(iOS 13.0, *)
 final class VergeStoreTests: XCTestCase {
       
-  struct State: StateType {
+  struct State: Equatable, StateType {
     
     struct TreeA {
       
@@ -29,12 +29,12 @@ final class VergeStoreTests: XCTestCase {
       
     }
     
-    struct NestedState {
+    struct NestedState: Equatable {
       
       var myName: String = ""
     }
     
-    struct OptionalNestedState {
+    struct OptionalNestedState: Equatable {
       
       var myName: String = ""
     }
@@ -128,30 +128,33 @@ final class VergeStoreTests: XCTestCase {
     
   }
   
-  final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
+  /**
+   Use Edge due to TreeA does not have Equatable.
+   */
+  final class TreeADispatcher: Store.ScopedDispatcher<Edge<State.TreeA>> {
     
     init(store: Store) {
-      super.init(targetStore: store, scope: \.treeA)
+      super.init(targetStore: store, scope: \.$treeA)
     }
     
     func operation() {
       
-      let _: Changes<State.TreeA> = state
+      let _: Changes<Edge<State.TreeA>> = state
       
       commit { state in
-        let _: InoutRef<State.TreeA> = state
+        let _: InoutRef<Edge<State.TreeA>> = state
       }
       
       commit(scope: \.treeB) { state in
         let _: InoutRef<State.TreeB> = state
       }
       
-      let treeB = detached(from: \.treeB)
+      let treeB = detached(from: \.$treeB)
       
-      let _: Changes<State.TreeB> = treeB.state
+      let _: Changes<Edge<State.TreeB>> = treeB.state
                          
       treeB.commit { state in
-        let _: InoutRef<State.TreeB> = state
+        let _: InoutRef<Edge<State.TreeB>> = state
       }
          
     }
@@ -460,7 +463,7 @@ final class VergeStoreTests: XCTestCase {
 
   final class DemoStoreWrapper2: StoreWrapperType {
 
-    struct State {
+    struct State: Equatable {
       var source: Changes<Int>
     }
 
@@ -572,7 +575,7 @@ final class VergeStoreTests: XCTestCase {
       
       let state = store.state
       
-      if let nested = state._beta_map(\.optionalNested) {
+      if let nested = state.mapIfPresent(\.optionalNested) {
         XCTAssert(nested.previous == nil)
       } else {
         XCTFail()
@@ -588,7 +591,7 @@ final class VergeStoreTests: XCTestCase {
       
       let state = store.state
       
-      if let nested = state._beta_map(\.optionalNested) {
+      if let nested = state.mapIfPresent(\.optionalNested) {
         XCTAssert(nested.previous != nil)
       } else {
         XCTFail()
