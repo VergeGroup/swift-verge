@@ -22,14 +22,16 @@ jobs:
         with:
           submodules: true # Fetch Hugo themes (true OR recursive)
           fetch-depth: 0 # Fetch all history for .GitInfo and .Lastmod
+      - name: Make dir
+        run: mkdir -p public/Verge
       - name: Build
         run: swift package --allow-writing-to-directory public 
           generate-documentation
-          --target Verge
+          --target public/Verge
           --disable-indexing 
           --transform-for-static-hosting 
           --hosting-base-path swift-Verge 
-          --output-path public      
+          --output-path public/Verge      
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
