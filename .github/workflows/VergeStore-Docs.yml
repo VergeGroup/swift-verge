@@ -25,9 +25,9 @@ jobs:
       - name: Make dir
         run: mkdir -p public/Verge
       - name: Build
-        run: swift package --allow-writing-to-directory public 
+        run: swift package --allow-writing-to-directory public/Verge 
           generate-documentation
-          --target public/Verge
+          --target Verge
           --disable-indexing 
           --transform-for-static-hosting 
           --hosting-base-path swift-Verge 
