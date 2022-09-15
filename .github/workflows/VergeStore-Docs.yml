@@ -23,13 +23,13 @@ jobs:
           submodules: true # Fetch Hugo themes (true OR recursive)
           fetch-depth: 0 # Fetch all history for .GitInfo and .Lastmod
       - name: Build
-        run: xcodebuild docbuild -scheme ${{ env.SCHEME }} -derivedDataPath .build -destination 'generic/platform=iOS'
-      - name: Generate
-        run: |
-          $(xcrun --find docc) process-archive \
-            transform-for-static-hosting ".build/Build/Products/Debug-iphoneos/Verge.doccarchive" \
-            --output-path public \
-            --hosting-base-path Verge
+        run: swift package --allow-writing-to-directory public 
+          generate-documentation
+          --target Verge
+          --disable-indexing 
+          --transform-for-static-hosting 
+          --hosting-base-path Verge 
+          --output-path public      
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
