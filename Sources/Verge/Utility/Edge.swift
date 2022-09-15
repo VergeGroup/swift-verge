@@ -37,21 +37,20 @@ public protocol EdgeType : Equatable {
 private let _edge_global_counter = VergeConcurrency.AtomicInt(initialValue: 0)
 
 /**
- A structure that manages sub-state-tree from root-state-tree.
-
- When you create derived data for this sub-tree, you may need to activate memoization.
- The reason why it needs memoization, the derived data does not need to know if other sub-state-tree updated.
- Better memoization must know owning state-tree has been updated at least.
- To get this done, it's not always we need to support Equatable.
- It's easier to detect the difference than detect equals.
-
- Edge is a wrapper structure and manages version number inside.
- It increments the version number each wrapped value updated.
-
- Memoization can use that version if it should pass new input.
-
- To activate this feature, you can check this method.
- `Pipeline.map(_ map: @escaping (Changes<Input.Value>) -> Edge<Output>) -> MemoizeMap<Input, Output>`
+ A wrapper structure provides equatability as False-negative.
+ Helpful in adding members which can’t conform to Equatable into a state due to the state of Store requiring Equatable.
+ 
+ This structure holds two identifiers inside, a unique identifier (global-id) and a version number incrementally.
+ the global id will be issued distinct each initialization.
+ the version will increment each modification.
+ 
+ If the wrapped type does not conform to Equatable, it compares using those identifiers. It will be `true` if they have not changed.
+ But if `false`,  it might be false-negative because it can’t compare wrapped values.
+ 
+ If the wrapped type conforms to Equatable, it compares using those identifiers and wrapped values. The result would be fully correct.
+ Even in this case, using this structure works useful if comparing wrapped values takes much more expensive.
+ 
+ Warnings: Do not assign a reference type object. It does not completely work.
  */
 @propertyWrapper
 @dynamicMemberLookup
