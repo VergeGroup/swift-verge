@@ -18,7 +18,7 @@
   </a>
   </p>
   
-  https://vergegroup.github.io/Verge/documentation/verge/
+  https://vergegroup.github.io/swift-Verge/Verge/documentation/verge/
 
 <p align="center">
 <img alt="swift5.5" src="https://img.shields.io/badge/swift-5.5-ED523F.svg?style=flat"/>
