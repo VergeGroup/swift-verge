@@ -40,8 +40,8 @@ which uses swift-concurrency
 
 ## Requirements
 
-* Swift 5.5 +
-* @available(iOS 10, macOS 10.13, tvOS 10, watchOS 3)
+* Swift 5.7 +
+* @available(iOS 13, macOS 10.13, tvOS 10, watchOS 3)
 * UIKit
 * SwiftUI
 
