@@ -28,7 +28,7 @@ jobs:
           --target Verge
           --disable-indexing 
           --transform-for-static-hosting 
-          --hosting-base-path Verge 
+          --hosting-base-path swift-Verge 
           --output-path public      
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
