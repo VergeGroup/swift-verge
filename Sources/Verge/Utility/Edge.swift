@@ -58,7 +58,7 @@ private let _edge_global_counter = VergeConcurrency.AtomicInt(initialValue: 0)
 public struct Edge<Value: Sendable>: EdgeType, Sendable {
 
   public static func == (lhs: Edge<Value>, rhs: Edge<Value>) -> Bool {
-    lhs.globalID == rhs.globalID && lhs.version == rhs.version
+    lhs.globalID == rhs.globalID && lhs.version == rhs.version || lhs.comparerForNonEquatable(lhs.wrappedValue, rhs.wrappedValue)
   }
   
   public subscript <U>(dynamicMember keyPath: KeyPath<Value, U>) -> U {
@@ -91,10 +91,8 @@ public struct Edge<Value: Sendable>: EdgeType, Sendable {
   private(set) public var counter: NonAtomicCounter = .init()
   private let middleware: Middleware?
   
-  public init(_ wrappedValue: Value, middleware: Middleware? = nil) {
-    self.init(wrappedValue: wrappedValue, middleware: middleware)
-  }
-  
+  private let comparerForNonEquatable: @Sendable (Value, Value) -> Bool
+     
   public func next(_ value: Value) -> Self {
     var copy = self
     copy.counter.increment()
@@ -102,10 +100,16 @@ public struct Edge<Value: Sendable>: EdgeType, Sendable {
     return copy
   }
 
-  public init(wrappedValue: Value, middleware: Middleware? = nil) {
+  @_disfavoredOverload
+  public init(
+    wrappedValue: Value,
+    middleware: Middleware? = nil,
+    comparer: @escaping @Sendable (Value, Value) -> Bool = { @Sendable _, _ in false }
+  ) {
 
     self.globalID = _edge_global_counter.getAndIncrement()
     self.middleware = middleware
+    self.comparerForNonEquatable = comparer
 
     if let middleware = middleware {
       var mutable = wrappedValue
@@ -148,6 +152,76 @@ public struct Edge<Value: Sendable>: EdgeType, Sendable {
     }
   }
 
+}
+
+extension Edge {
+  
+  /**
+   Tuple binding initializer - S1
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable>(
+    wrappedValue tuple: (S1),
+    middleware: Middleware? = nil
+  ) where Value == (S1) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+  
+  /**
+   Tuple binding initializer - S1, S2
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable, S2: Equatable>(
+    wrappedValue tuple: (S1, S2),
+    middleware: Middleware? = nil
+  ) where Value == (S1, S2) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+  
+  /**
+   Tuple binding initializer - S1, S2, S3
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable, S2: Equatable, S3: Equatable>(
+    wrappedValue tuple: (S1, S2, S3),
+    middleware: Middleware? = nil
+  ) where Value == (S1, S2, S3) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+  
+  /**
+   Tuple binding initializer - S1, S2, S3, S4
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable>(
+    wrappedValue tuple: (S1, S2, S3, S4),
+    middleware: Middleware? = nil
+  ) where Value == (S1, S2, S3, S4) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+  
+  /**
+   Tuple binding initializer - S1, S2, S3, S4, S5
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable, S5: Equatable>(
+    wrappedValue tuple: (S1, S2, S3, S4, S5),
+    middleware: Middleware? = nil
+  ) where Value == (S1, S2, S3, S4, S5) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+  
+  /**
+   Tuple binding initializer - S1, S2, S3, S4, S5, S6
+   It compares equality using `==` operator.
+   */
+  public init<S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable, S5: Equatable, S6: Equatable>(
+    wrappedValue tuple: (S1, S2, S3, S4, S5, S6),
+    middleware: Middleware? = nil
+  ) where Value == (S1, S2, S3, S4, S5, S6) {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  }
+   
 }
 
 extension Edge where Value : Equatable {

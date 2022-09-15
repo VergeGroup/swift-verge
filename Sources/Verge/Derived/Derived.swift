@@ -419,7 +419,7 @@ extension Derived where Value == Never {
     queue: TargetQueueType = .passthrough
   ) -> Derived<Edge<(Changes<S0>, Changes<S1>)>> {
         
-    let initial = Changes.init(old: nil, new: Edge((s0.value, s1.value)))
+    let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.value, s1.value)))
     
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
         
@@ -481,7 +481,7 @@ extension Derived where Value == Never {
     queue: TargetQueueType = .passthrough
   ) -> Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>> {
         
-    let initial = Changes.init(old: nil, new: Edge((s0.value, s1.value, s2.value)))
+    let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.value, s1.value, s2.value)))
     
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
     
