@@ -262,6 +262,17 @@ extension PipelineType {
     )
   }
   
+  public static func map<Input, EdgeIntermediate>(
+    @PipelineIntermediateBuilder _ intermediate: @escaping (Changes<Input>) -> PipelineIntermediate<Edge<EdgeIntermediate>>
+  ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapPipeline<Input, Edge<EdgeIntermediate>, EdgeIntermediate> {
+    
+    self.init(
+      intermediate: intermediate,
+      map: { $0.wrappedValue },
+      additionalDropCondition: nil
+    )
+  }
+  
   public static func map<Input, Output>(
     _ map: @escaping (Changes<Input>) -> Output
   ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.MapPipeline<Input, Changes<Input>, Output> {
