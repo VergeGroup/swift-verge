@@ -30,7 +30,7 @@ class DerivedCollectionTests: XCTestCase {
     }
     
     let d = store.databases.db._derivedQueriedEntities(ids: { index in
-      index.allAuthros.prefix(3)
+        .init(index.allAuthros.prefix(3))
     })
 
     // FIXME: this fails, since the middleware doesn't care the order
@@ -86,7 +86,7 @@ class DerivedCollectionTests: XCTestCase {
     }
 
     let d = store.databases.db._derivedQueriedEntities(ids: { index in
-      index.allAuthros.filter { $0.raw.first == "1" }
+        .init(index.allAuthros.filter { $0.raw.first == "1" })
     })
 
     XCTAssertEqual(d.value.map { $0.value.wrapped?.entityID.raw }, ["1"])
@@ -118,7 +118,7 @@ class DerivedCollectionTests: XCTestCase {
     }
 
     let d = store.databases.db._derivedQueriedEntities(ids: { index in
-      index.allAuthros.filter { _ in return true }
+        .init(index.allAuthros.filter { _ in return true })
     })
     
     let tmp = d.value.primitive
@@ -145,7 +145,7 @@ class DerivedCollectionTests: XCTestCase {
     var updateCount = 0
 
     let d = store.databases.db._derivedQueriedEntities(ids: { index in
-      index.allAuthros.filter { _ in return true }
+        .init(index.allAuthros.filter { _ in return true })
     })
 
     d.sinkValue { _ in

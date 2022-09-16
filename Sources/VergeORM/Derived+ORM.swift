@@ -544,7 +544,7 @@ extension DatabaseContext {
   /// Experimental
   /// TODO: More performant
   public func _derivedQueriedEntities<Entity: EntityType>(
-    ids: @escaping (IndexesPropertyAdapter<Database>) -> any Collection<Entity.EntityID>,
+    ids: @escaping (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>,
     queue: TargetQueueType = .passthrough
   ) -> Derived<[Entity.Derived]> {
     
@@ -572,13 +572,13 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
   
   // TODO: write inline
   private let noChangesComparer: Comparer<Database>
-  private let index: (IndexesPropertyAdapter<Database>) -> any Collection<Entity.EntityID>
+  private let index: (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>
   private let storage: CachedMapStorage<Entity.EntityID, Entity.Derived> = .init(keySelector: \.raw)
   private let makeDerived: (Entity.EntityID) -> Entity.Derived
   
   init(
     keyPathToDatabase: KeyPath<Source, Database>,
-    index: @escaping (IndexesPropertyAdapter<Database>) -> any Collection<Entity.EntityID>,
+    index: @escaping (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>,
     makeDerived: @escaping (Entity.EntityID) -> Entity.Derived
   ) {
     

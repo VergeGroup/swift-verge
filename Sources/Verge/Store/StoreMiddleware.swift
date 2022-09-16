@@ -24,7 +24,7 @@ import Foundation
 /**
  Middleware enables us to do extra operations according to dispatched commits in Store.
  */
-open class StoreMiddleware<State> {
+open class StoreMiddleware<State: Equatable> {
   
   open func mutate(state: inout InoutRef<State>) {
     
@@ -42,7 +42,7 @@ open class StoreMiddleware<State> {
 /**
  A closure-based middleware. It enables us to create middleware without creating sub-class.
  */
-public final class AnonymousStoreMiddleware<State>: StoreMiddleware<State> {
+public final class AnonymousStoreMiddleware<State: Equatable>: StoreMiddleware<State> {
   
   private let _mutate: (inout InoutRef<State>) -> Void
   

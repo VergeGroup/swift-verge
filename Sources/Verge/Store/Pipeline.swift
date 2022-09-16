@@ -112,7 +112,7 @@ extension _MapPipelineType {
  This will be helpful in performance. Therefore most type parameters require Equatable.
  */
 public enum Pipelines {
-   
+  
   /// KeyPath based pipeline, light weight operation just take value from source.
   public struct SelectPipeline<Source: Equatable, Output: Equatable>: _SelectPipelineType {
     
@@ -131,6 +131,19 @@ public enum Pipelines {
     
     public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
       
+//      if let modification = input.modification {
+//        switch modification {
+//        case .indeterminate:
+//          break
+//        case .determinate(_, let changesKeyPaths):
+//          
+//          if changesKeyPaths.contains(keyPath) == false {
+//            return .noUpdates
+//          }
+//          
+//        }
+//      }
+            
       guard let previous = input.previous else {
         return .new(input[keyPath: keyPath])
       }
@@ -220,12 +233,57 @@ public enum Pipelines {
     }
       
   }
+  
+  public struct BasicMapPipeline<Input: Equatable, Output: Equatable>: _PipelineType {
+        
+    // MARK: - Properties
+    
+    public let map: (Input) -> Output
+    public let additionalDropCondition: ((Input) -> Bool)?
+    
+    public init(
+      map: @escaping (Input) -> Output,
+      additionalDropCondition: ((Input) -> Bool)?
+    ) {
+      self.map = map
+      self.additionalDropCondition = additionalDropCondition
+    }
+    
+    // MARK: - Functions
+    
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+                      
+      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+        return .new(yield(input))
+      }
+      
+      return .noUpdates
+      
+    }
+    
+    public func yield(_ input: Input) -> Output {
+      map(input)
+    }
+    
+    public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
+      return .init(
+        map: map,
+        additionalDropCondition: additionalDropCondition.map { currentCondition in
+          { input in
+            currentCondition(input) || predicate(input)
+          }
+        } ?? predicate
+      )
+    }
+    
+  }
 
 }
 
 extension PipelineType {
 
   /**
+   For Changes input
    Produces output values using KeyPath-based projection.
    
    exactly same with ``PipelineType/select(_:)``
@@ -236,6 +294,7 @@ extension PipelineType {
   }
   
   /**
+   For Changes input
    Produces output values using KeyPath-based projection.
    
    exactly same with ``PipelineType/map(_:)-7xvom``
@@ -249,6 +308,7 @@ extension PipelineType {
 extension PipelineType {
 
   /**
+   For Changes input
    Produces output values using closure-based projection.
    `map` closure takes the value projected from `using` closure which is intermediate value.
    If the intermediate value is not changed, map closure won't perform.
@@ -266,6 +326,7 @@ extension PipelineType {
   }
   
   /**
+   For Changes input
    Produces output values using closure-based projection.
    Using Edge as intermediate, output value will be unwrapped value from the Edge.
    */
@@ -281,6 +342,7 @@ extension PipelineType {
   }
   
   /**
+   For Changes input
    Produces output values using closure-based projection.
    
    ## 💡Tips
