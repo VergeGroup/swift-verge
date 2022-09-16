@@ -1,5 +1,17 @@
 # ``Verge``
 
+## 🛹 Small start unidirectional data flow
+
+Verge is designed for use from small and supports to scale. Setting Verge up quickly, and tune-up when we need it.
+
+## 🏎 Focus on performance
+
+Does flux have a good performance?The performance will be the worst depends on how it is used.Verge automatically tune-up and shows us how we could gain a performant.
+
+## ⛱ Available in **UIKit** and **SwiftUI**
+
+Verge supports both of UI framework. Especially, it highly supports to update partially UI on UIKit.
+
 ## Verge supports small start and scaling up
 
 Verge is a state management library for iOS (UIKit / SwiftUI).Mostly it's based on Flux architecture.Flux architecture is so beautiful and simplified thinking.Although, we need to do several tuning to bring it into a real product.In fact, Flux needs to consider about computing resources.
