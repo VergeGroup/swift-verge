@@ -15,7 +15,7 @@ A way to create a ViewModel
 ```swift
 final class MyViewModel: StoreComponentType {
 
-  struct State {
+  struct State: Equatable {
     var name: String = ""
     var count: Int = 0
   }
@@ -39,7 +39,7 @@ final class MyViewModel: StoreComponentType {
 A way to create a customized store
 
 ```swift
-struct MyState {
+struct MyState: Equatable {
   var name: String = ""
   var count: Int = 0
 }
@@ -68,7 +68,7 @@ struct MyView: View {
   let store: MyViewModel
 
   var body: some View {
-    StateReader(store).content { state in
+    StateReader(store) { state in
       Text(state.name)
       Button(action: {
         self.store.myAction()

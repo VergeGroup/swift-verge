@@ -11,6 +11,14 @@ import XCTest
 
 import Verge
 
+private protocol MyProtocol {
+  
+}
+
+private protocol MyEquatableProtocol: Equatable {
+  
+}
+
 final class DerivedTests: XCTestCase {
 
   func testSlice() {
