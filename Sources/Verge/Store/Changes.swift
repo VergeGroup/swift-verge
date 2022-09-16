@@ -50,25 +50,25 @@ public protocol ChangesType<Value>: AnyChangesType {
 /// - To know a property has been modified. (It contains 2 instances (old, new))
 /// - To avoid copying cost with wrapping reference type - So, you can embed this object on the other state.
 ///
-/// ```
-/// struct MyState {
+/// ```swift
+/// struct MyState: Equatable {
 ///   var name: String
 ///   var age: String
 ///   var height: String
 /// }
 /// ```
 ///
-/// ```
+/// ```swift
 /// let changes: Changes<MyState>
 /// ```
 ///
 /// It can be accessed with properties of MyState by dynamicMemberLookup
-/// ```
+/// ```swift
 /// changes.name
 /// ```
 ///
 /// It would be helpful to update UI partially
-/// ```
+/// ```swift
 /// func updateUI(changes: Changes<MyState>) {
 ///
 ///   changes.ifChanged(\.name) { name in
