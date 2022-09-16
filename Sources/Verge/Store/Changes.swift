@@ -266,7 +266,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
 // MARK: - Primitive methods
 
 extension Changes {
-
+  
   /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed>(

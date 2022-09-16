@@ -39,7 +39,9 @@ public final class InoutRef<Wrapped> {
    */
   @dynamicMemberLookup
   public enum Modification: Hashable, CustomDebugStringConvertible {
-    case determinate(keyPaths: Set<PartialKeyPath<Wrapped>>)
+    case determinate(
+      keyPaths: Set<PartialKeyPath<Wrapped>>
+    )
     case indeterminate
 
     public var debugDescription: String {
@@ -89,7 +91,10 @@ public final class InoutRef<Wrapped> {
       return .indeterminate
     }
     
-    return .determinate(keyPaths: nonatomic_modifiedKeyPaths)
+    return .determinate(
+      keyPaths: nonatomic_modifiedKeyPaths
+    )
+    
   }
 
   private(set) var nonatomic_hasModified = false
@@ -228,7 +233,14 @@ public final class InoutRef<Wrapped> {
     }
   }
 
-  private func maskAsModified(on keyPath: PartialKeyPath<Wrapped>) {
+  @inline(__always)
+  private func maskAsModified<U>(on keyPath: KeyPath<Wrapped, U>) {
+    nonatomic_modifiedKeyPaths.insert(keyPath)
+    nonatomic_hasModified = true
+  }
+  
+  @inline(__always)
+  private func maskAsModified<U>(on keyPath: KeyPath<Wrapped, U?>) {
     nonatomic_modifiedKeyPaths.insert(keyPath)
     nonatomic_hasModified = true
   }

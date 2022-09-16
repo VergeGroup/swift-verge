@@ -516,42 +516,8 @@ final class VergeStoreTests: XCTestCase {
     withExtendedLifetime(subscription) {}
     wait(for: [expect], timeout: 1)
   }
-
-  func testBatchCommits() {
-
-    let store1 = DemoStore()
-
-    XCTAssertEqual(store1.state.version, 0)
-
-    store1.batchCommit { (context) in
-      context.commit {
-        $0.count += 1
-      }
-    }
-
-    XCTAssertEqual(store1.state.version, 1)
-
-  }
-
-  func testBatchCommitsNoCommits() {
-
-    let store1 = DemoStore()
-
-    XCTAssertEqual(store1.state.version, 0)
-
-    store1.batchCommit { (context) in
-      if false {
-        context.commit {
-          $0.count += 1
-        }
-      }
-    }
-
-    XCTAssertEqual(store1.state.version, 0)
-
-  }
-  
-  func testChangesBetaMap() {
+   
+  func testMapIfPresent() {
     
     let store = Store()
     
@@ -561,7 +527,7 @@ final class VergeStoreTests: XCTestCase {
       
       let state = store.state
       
-      if let _ = state._beta_map(\.optionalNested) {
+      if let _ = state.mapIfPresent(\.optionalNested) {
         XCTFail()
       }
       
