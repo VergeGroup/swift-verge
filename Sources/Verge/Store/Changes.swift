@@ -831,7 +831,7 @@ extension _StateTypeContainer {
     
     // to fix ambiguity
     public init<Intermediate>(
-      _ pipeline: Pipelines.MapPipeline<Input.Value, Intermediate, Output>
+      _ pipeline: Pipelines.ChangesMapPipeline<Input.Value, Intermediate, Output>
     ) {
             
       self.pipeline = pipeline as (any PipelineType<Input, Output>)
