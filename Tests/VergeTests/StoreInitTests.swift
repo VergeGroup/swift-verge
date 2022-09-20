@@ -23,7 +23,7 @@ final class StoreInitTests: XCTestCase {
     init() {
       
       // it raises a warning
-      self.store = DefaultStore(initialState: .init())
+//      self.store = DefaultStore(initialState: .init())
     }
   }
   
