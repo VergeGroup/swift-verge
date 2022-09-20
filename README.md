@@ -12,14 +12,8 @@
 <sub>_ Supports concurrent processing _</sub><br/>
 </p>
 
-<p align="center">
- <a href="https://bit.ly/3p27wNg">
-   <b>📖 Docs and tips</b>
-  </a>
-  </p>
- 
-[Verge Docs](https://vergegroup.github.io/swift-Verge/Verge/documentation/verge/)
-[VergeORM Docs](https://vergegroup.github.io/swift-Verge/VergeORM/documentation/vergeorm/)
+- [Verge Docs](https://vergegroup.github.io/swift-Verge/Verge/documentation/verge/)
+- [VergeORM Docs](https://vergegroup.github.io/swift-Verge/VergeORM/documentation/vergeorm/)
 
 
 <p align="center">
