@@ -159,11 +159,11 @@ extension Edge {
    Tuple binding initializer - S1
    It compares equality using `==` operator.
    */
-  public init<S1: Equatable>(
-    wrappedValue tuple: (S1),
+  public init(
+    wrappedValue tuple: (Value),
     middleware: Middleware? = nil
-  ) where Value == (S1) {
-    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+  ) where Value : Equatable {
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: { @Sendable in $0 == $1 })
   }
   
   /**
@@ -174,7 +174,7 @@ extension Edge {
     wrappedValue tuple: (S1, S2),
     middleware: Middleware? = nil
   ) where Value == (S1, S2) {
-    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: { @Sendable in $0 == $1 })
   }
   
   /**
@@ -185,7 +185,7 @@ extension Edge {
     wrappedValue tuple: (S1, S2, S3),
     middleware: Middleware? = nil
   ) where Value == (S1, S2, S3) {
-    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: { @Sendable in $0 == $1 })
   }
   
   /**
@@ -196,7 +196,7 @@ extension Edge {
     wrappedValue tuple: (S1, S2, S3, S4),
     middleware: Middleware? = nil
   ) where Value == (S1, S2, S3, S4) {
-    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: { @Sendable in $0 == $1 })
   }
   
   /**
@@ -207,7 +207,7 @@ extension Edge {
     wrappedValue tuple: (S1, S2, S3, S4, S5),
     middleware: Middleware? = nil
   ) where Value == (S1, S2, S3, S4, S5) {
-    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: { @Sendable in $0 == $1 })
   }
   
   /**
@@ -218,7 +218,7 @@ extension Edge {
     wrappedValue tuple: (S1, S2, S3, S4, S5, S6),
     middleware: Middleware? = nil
   ) where Value == (S1, S2, S3, S4, S5, S6) {
-    self.init(wrappedValue: tuple, middleware: middleware, comparer: ==)
+    self.init(wrappedValue: tuple, middleware: middleware, comparer: { @Sendable in $0 == $1 })
   }
    
 }

@@ -44,7 +44,7 @@ public struct EmptyVergeLogger : VergeLogging {
   public func didMutate(name: String, description: String, file: StaticString, function: StaticString, line: UInt, on verge: AnyVergeType) {}
 }
 
-public protocol AnyVergeType : class {
+public protocol AnyVergeType : AnyObject {
 
 }
 
