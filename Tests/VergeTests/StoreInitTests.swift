@@ -7,7 +7,7 @@ final class StoreInitTests: XCTestCase {
   class RefState {
     
   }
-  
+ /*
   class RefViewModel: StoreComponentType {
     
     class State: Equatable {
@@ -23,9 +23,10 @@ final class StoreInitTests: XCTestCase {
     init() {
       
       // it raises a warning
-//      self.store = DefaultStore(initialState: .init())
+      self.store = DefaultStore(initialState: .init())
     }
   }
+  */
   
   class StructViewModel: StoreComponentType {
     
