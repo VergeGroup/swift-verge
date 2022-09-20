@@ -8,11 +8,11 @@ final class PipelineTests: XCTestCase {
     
     var mapCounter = NonAtomicCounter()
     
-    let pipeline = Pipelines.MapPipeline<DemoState, _, _>(
+    let pipeline = Pipelines.ChangesMapPipeline<DemoState, _, _>(
       intermediate: {
         $0
       },
-      map: {
+      transform: {
         mapCounter.increment()
         return $0.name.count
       },
@@ -57,11 +57,11 @@ final class PipelineTests: XCTestCase {
     
     var mapCounter = NonAtomicCounter()
     
-    let pipeline = Pipelines.MapPipeline<DemoState, _, _>(
+    let pipeline = Pipelines.ChangesMapPipeline<DemoState, _, _>(
       intermediate: {
         $0.name
       },
-      map: {
+      transform: {
         mapCounter.increment()
         return $0.count
       },
