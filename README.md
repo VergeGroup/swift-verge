@@ -17,8 +17,10 @@
    <b>📖 Docs and tips</b>
   </a>
   </p>
-  
-  https://vergegroup.github.io/swift-Verge/Verge/documentation/verge/
+ 
+[Verge Docs](https://vergegroup.github.io/swift-Verge/Verge/documentation/verge/)
+[VergeORM Docs](https://vergegroup.github.io/swift-Verge/VergeORM/documentation/vergeorm/)
+
 
 <p align="center">
 <img alt="swift5.5" src="https://img.shields.io/badge/swift-5.5-ED523F.svg?style=flat"/>
