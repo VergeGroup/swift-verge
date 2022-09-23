@@ -66,7 +66,12 @@ class Computed2Tests: XCTestCase {
           
       static let instance = Extended()
               
-      let filteredArray = Field.Computed(.map(using: { $0.largeArray }, transform: { $0.filter { $0 > 300 } }))
+      let filteredArray = Field.Computed(
+        .map(
+          using: { $0.largeArray },
+          transform: { $0.filter { $0 > 300 } }
+        )
+      )
                 
       let num_0 = Field.Computed(.select(\.num_0))
         .onTransform {
