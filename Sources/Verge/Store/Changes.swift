@@ -315,6 +315,21 @@ extension Changes {
 
     return try perform(result)
   }
+  
+  public func ifChanged<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    _ perform: (Pipeline.Output) -> Void
+  ) where Pipeline.Input == Changes<Value> {
+    
+    switch pipeline.yieldContinuously(self) {
+    case .new(let newValue):
+      perform(newValue)
+    case .noUpdates:
+      break
+    }
+    
+  }
+  
 }
 
 // MARK: - Convenience methods
