@@ -158,8 +158,9 @@ extension ObservableType where Element : ChangesType {
   public func changed<S>(_ selector: @escaping (Changes<Element.Value>) -> S, _ compare: @escaping (S, S) -> Bool) -> Observable<S> {
     
     return flatMap { changes -> Observable<S> in
-      let _r = changes.asChanges().ifChanged(selector, .init(compare)) { value in
-        return value
+      
+      let _r = changes.asChanges().ifChanged(.map(using: { PipelineIntermediate<S>(value: selector($0), comparer: compare) })) { (value: PipelineIntermediate<S>) in
+        return value.value
       }
       return _r.map { .just($0) } ?? .empty()
     }

@@ -208,16 +208,16 @@ class Computed2Tests: XCTestCase {
     let store = MyStore()
     
     var count = 0
-        
-    store.state.ifChanged({ $0.computed.num_0 }, .init(==)) { v in
-        count += 1
+            
+    store.state.ifChanged(.map(using: { $0.computed.num_0 })) { v in
+      count += 1
     }
     
     store.commit {
       $0.num_0 = 0
     }
     
-    store.state.ifChanged({ $0.computed.num_0 }, .init(==)) { v in
+    store.state.ifChanged(.map(using: { $0.computed.num_0 })) { v in
         count += 1
     }
     
@@ -233,15 +233,15 @@ class Computed2Tests: XCTestCase {
     
     func ifChange(_ perform: () -> Void) {
       store.state.ifChanged(
-        {
-          (
-            $0.num_1,
-            $0.num_0,
+        .map(
+          using: {
+            $0.num_1
+            $0.num_0
             $0.computed.num_0
-          )
-      },
-        .init(==)) { _ in
-          perform()
+          }
+        )
+      ) { a in
+        perform()
       }
     }
         

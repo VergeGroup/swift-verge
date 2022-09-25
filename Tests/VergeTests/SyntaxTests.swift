@@ -20,18 +20,18 @@ enum SyntaxTests {
 
     }
 
-    changes.ifChanged(\.nonEquatable, .alwaysFalse) { name in
+    changes.ifChanged(\.$nonEquatable) { name in
 
     }
 
 
-    changes.ifChanged({ $0.name }) { name in
+    changes.ifChanged(\.name) { name in
 
     }
 
-    changes.ifChanged(\.name, \.count) { name, count in
+    changes.ifChanged(.map(using: { $0.name }, transform: { $0.count })) { a in
 
     }
-
+    
   }
 }

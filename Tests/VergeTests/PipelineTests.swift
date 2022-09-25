@@ -14,7 +14,7 @@ final class PipelineTests: XCTestCase {
       },
       transform: {
         mapCounter.increment()
-        return $0.name.count
+        return $0.value.name.count
       },
       additionalDropCondition: nil
     )
@@ -63,7 +63,7 @@ final class PipelineTests: XCTestCase {
       },
       transform: {
         mapCounter.increment()
-        return $0.count
+        return $0.value.count
       },
       additionalDropCondition: nil
     )

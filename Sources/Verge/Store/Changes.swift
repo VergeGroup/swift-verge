@@ -267,260 +267,92 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
 
 extension Changes {
   
-  /// Takes a composed value if it's changed from old value.
   @inline(__always)
-  public func takeIfChanged<Composed>(
-    _ compose: (Changes) throws -> Composed,
-    _ comparer: Comparer<Composed>
-  ) rethrows -> Composed? {
-    let signpost = VergeSignpostTransaction("Changes.takeIfChanged(compose:comparer:)")
-    defer {
-      signpost.end()
-    }
-
-    let current = self
-
-    guard let previousValue = previous else {
-      return try compose(current)
-    }
-
-    let old = previousValue
-    let compare = comparer.curried()
-
-    let composedFromCurrent = try compose(current)
-    guard !compare(try compose(old), composedFromCurrent) else {
-      return nil
-    }
-
-    return composedFromCurrent
-  }
-
-  /// Performs a closure if the selected value changed from the previous one.
-  ///
-  /// - Parameters:
-  ///   - compose: A closure that projects a composed value from self. that executes with both of value(new and old).
-  ///   - comparer: A Comparer that checks if the composed values are different between current and old.
-  ///   - perform: A closure that executes any operation if composed value changed.
-  ///
-  /// - Returns: An instance that returned from the perform closure if performed.
-  @inline(__always)
-  public func ifChanged<Composed, Result>(
-    _ compose: (Changes) -> Composed,
-    _ comparer: Comparer<Composed>,
-    _ perform: (Composed) throws -> Result
-  ) rethrows -> Result? {
-    guard let result = takeIfChanged(compose, comparer) else {
-      return nil
-    }
-
-    return try perform(result)
-  }
-  
-  public func ifChanged<Pipeline: PipelineType>(
-    _ pipeline: Pipeline,
-    _ perform: (Pipeline.Output) -> Void
-  ) where Pipeline.Input == Changes<Value> {
+  public func takeIfChanged<Pipeline: PipelineType>(
+    _ pipeline: Pipeline
+  ) -> Pipeline.Output? where Pipeline.Input == Changes {
     
     switch pipeline.yieldContinuously(self) {
     case .new(let newValue):
-      perform(newValue)
+      return newValue
     case .noUpdates:
-      break
+      return nil
     }
     
   }
+
+  /**
+   Performs the given function if the selected value has been changed from the previous one.
+   */
+  public func ifChanged<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    _ perform: (Pipeline.Output) throws -> Void
+  ) rethrows where Pipeline.Input == Changes<Value> {
+
+    guard let result = takeIfChanged(pipeline) else {
+      return
+    }
+
+    try perform(result)
+
+  }
+  
+  /**
+   Performs the given function if the selected value has been changed from the previous one.
+   */
+  public func ifChanged<I, O>(
+    _ pipeline: Pipelines.ChangesMapPipeline<Value, I, PipelineIntermediate<O>>,
+    _ perform: (O) throws -> Void
+  ) rethrows {
+    try ifChanged(pipeline) { o in
+      try perform(o.value)
+    }
+  }
+  
   
 }
 
-// MARK: - Convenience methods
-
 extension Changes {
-  /// Takes a composed value if it's changed from old value.
+  
   @inline(__always)
-  public func takeIfChanged<Composed: Equatable>(
-    _ compose: (Changes) throws -> Composed
-  ) rethrows -> Composed? {
-    try takeIfChanged(compose, .usingEquatable)
+  public func takeIfChanged<Output: Equatable>(
+    _ keyPath: KeyPath<Changes<Value>, Output>
+  ) -> Output? {
+    return takeIfChanged(.map(keyPath))
   }
-
+  
   /**
-   Performs a closure if the selected value changed from the previous one.
+   Performs the given function if the selected value has been changed from the previous one.
    */
-  public func ifChanged<T, Result>(
-    _ selector: ChangesKeyPath<T>,
-    _ comparer: Comparer<T>,
-    _ perform: (T) throws -> Result
-  ) rethrows -> Result? {
-    guard let value = takeIfChanged({ $0[keyPath: selector] }, comparer) else {
-      return nil
-    }
-    return try perform(value)
+  @_disfavoredOverload
+  public func ifChanged<Output: Equatable>(
+    _ keyPath: KeyPath<Changes<Value>, Output>,
+    _ perform: (Output) throws -> Void
+  ) rethrows {
+//    try ifChanged(.map(keyPath), perform)
   }
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   */
-  public func ifChanged<Composed: Equatable, Result>(
-    _ compose: (Changes) -> Composed,
-    _ perform: (Composed) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(compose, .usingEquatable, perform)
-  }
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   */
-  @inline(__always)
-  public func ifChanged<T: Equatable, Result>(
-    _ keyPath: ChangesKeyPath<T>,
-    _ perform: (T) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(keyPath, .usingEquatable, perform)
-  }
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   Selected multiple value would be packed as tuple.
-   */
-  @inline(__always)
-  public func ifChanged<T0: Equatable, T1: Equatable, Result>(
-    _ keyPath0: ChangesKeyPath<T0>,
-    _ keyPath1: ChangesKeyPath<T1>,
-    _ perform: ((T0, T1)) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) as (T0, T1) }, .init(==), perform)
-  }
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   Selected multiple value would be packed as tuple.
-   */
-  @inline(__always)
-  public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, Result>(
-    _ keyPath0: ChangesKeyPath<T0>,
-    _ keyPath1: ChangesKeyPath<T1>,
-    _ keyPath2: ChangesKeyPath<T2>,
-    _ perform: ((T0, T1, T2)) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(
-      { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) as (T0, T1, T2) },
-      .init(==),
-      perform
-    )
-  }
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   Selected multiple value would be packed as tuple.
-   */
-  @inline(__always)
-  public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, T3: Equatable, Result>(
-    _ keyPath0: ChangesKeyPath<T0>,
-    _ keyPath1: ChangesKeyPath<T1>,
-    _ keyPath2: ChangesKeyPath<T2>,
-    _ keyPath3: ChangesKeyPath<T3>,
-    _ perform: ((T0, T1, T2, T3)) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(
-      {
-        (
-          $0[keyPath: keyPath0],
-          $0[keyPath: keyPath1],
-          $0[keyPath: keyPath2],
-          $0[keyPath: keyPath3]
-        ) as (T0, T1, T2, T3)
-      },
-      .init(==),
-      perform
-    )
-  }
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   Selected multiple value would be packed as tuple.
-   */
-  @inline(__always)
-  public func ifChanged<
-    T0: Equatable,
-    T1: Equatable,
-    T2: Equatable,
-    T3: Equatable,
-    T4: Equatable,
-    Result
-  >(
-    _ keyPath0: ChangesKeyPath<T0>,
-    _ keyPath1: ChangesKeyPath<T1>,
-    _ keyPath2: ChangesKeyPath<T2>,
-    _ keyPath3: ChangesKeyPath<T3>,
-    _ keyPath4: ChangesKeyPath<T4>,
-    _ perform: ((T0, T1, T2, T3, T4)) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(
-      {
-        (
-          $0[keyPath: keyPath0],
-          $0[keyPath: keyPath1],
-          $0[keyPath: keyPath2],
-          $0[keyPath: keyPath3],
-          $0[keyPath: keyPath4]
-        ) as (T0, T1, T2, T3, T4)
-
-      },
-      .init(==),
-      perform
-    )
-  }
+  
 }
 
 // MARK: - Has changes
 
 extension Changes {
+  
+  @inline(__always)
+  public func hasChanges<Pipeline: PipelineType>(
+    _ pipeline: Pipeline
+  ) -> Bool where Pipeline.Input == Changes<Value> {
+   
+    return takeIfChanged(pipeline) != nil
+    
+  }
+  
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   @inline(__always)
-  public func hasChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
-    hasChanges(keyPath, .usingEquatable)
+  public func hasChanges<T: Equatable>(_ keyPath: KeyPath<Changes<Value>, T>) -> Bool {
+    hasChanges(.map(keyPath))
   }
 
-  /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
-  @inline(__always)
-  public func hasChanges<T>(
-    _ keyPath: ChangesKeyPath<T>,
-    _ comparer: Comparer<T>
-  ) -> Bool {
-    hasChanges({ $0[keyPath: keyPath] }, comparer)
-  }
-
-  @inline(__always)
-  public func hasChanges<Composed: Equatable>(
-    _ compose: (Changes) -> Composed
-  ) -> Bool {
-    hasChanges(compose, .usingEquatable)
-  }
-
-  @inline(__always)
-  public func hasChanges<Composed>(
-    _ compose: (Changes) -> Composed,
-    _ comparer: Comparer<Composed>
-  ) -> Bool {
-    takeIfChanged(compose, comparer) != nil
-  }
-
-}
-
-// MARK: - NoChanges
-
-extension Changes {
-  /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
-  @inline(__always)
-  public func noChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
-    !hasChanges(keyPath, .usingEquatable)
-  }
-
-  /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
-  @inline(__always)
-  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: Comparer<T>) -> Bool {
-    !hasChanges(keyPath, comparer)
-  }
 }
 
 extension Changes: CustomReflectable {
@@ -711,7 +543,7 @@ extension Changes where Value: Equatable {
   }
 
   public func ifChanged(_ perform: (Value) throws -> Void) rethrows {
-    try ifChanged(\.root, perform)
+    try ifChanged(.map(\.root), perform)
   }
 }
 

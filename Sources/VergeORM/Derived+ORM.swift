@@ -614,20 +614,19 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
     
     let changes = input
     
-    guard changes.hasChanges({ $0.primitive[keyPath: keyPathToDatabase] }, noChangesComparer) else {
+    guard changes.hasChanges(.map(using: { PipelineIntermediate(value: $0.primitive[keyPath: keyPathToDatabase], comparer: noChangesComparer.curried())})) else {
       return .noUpdates
     }
     
-    let _derivedArray = changes.takeIfChanged({ state -> [Entity.Derived] in
-      
+    let _derivedArray = changes.takeIfChanged(.map { state -> [Entity.Derived] in
+           
       let ids = index(state.primitive[keyPath: keyPathToDatabase].indexes)
       
       // TODO: O(n)
       let result = ids.cachedMap(using: storage, makeNew: makeDerived)
       
       return result
-      
-    }, .init(==))
+    })
     
     guard let derivedArray = _derivedArray else {
       return .noUpdates

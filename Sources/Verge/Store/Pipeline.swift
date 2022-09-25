@@ -128,12 +128,12 @@ public enum Pipelines {
     // MARK: - Properties
     
     public let intermediate: (Input) -> PipelineIntermediate<Intermediate>
-    public let transform: (Intermediate) -> Output
+    public let transform: (PipelineIntermediate<Intermediate>) -> Output
     public let additionalDropCondition: ((Input) -> Bool)?
     
     public init(
       @PipelineIntermediateBuilder intermediate: @escaping (Input) -> PipelineIntermediate<Intermediate>,
-      transform: @escaping (Intermediate) -> Output,
+      transform: @escaping (PipelineIntermediate<Intermediate>) -> Output,
       additionalDropCondition: ((Input) -> Bool)?
     ) {
       self.intermediate = intermediate
@@ -156,8 +156,8 @@ public enum Pipelines {
         
         guard previousIntermediate == newIntermediate else {
           
-          let previousMapped = transform(previousIntermediate.value)
-          let newMapped = transform(newIntermediate.value)
+          let previousMapped = transform(previousIntermediate)
+          let newMapped = transform(newIntermediate)
           
           guard previousMapped == newMapped else {
             
@@ -179,7 +179,7 @@ public enum Pipelines {
     }
     
     public func yield(_ input: Input) -> Output {
-      transform(intermediate(input).value)
+      transform(intermediate(input))
     }
       
     public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
@@ -290,9 +290,37 @@ extension PipelineType {
     
     self.init(
       intermediate: intermediate,
-      transform: transform,
+      transform: { transform($0.value) },
       additionalDropCondition: nil
     )
+  }
+  
+  /**
+   For Changes input
+   Produces output values using closure-based projection.
+   `map` closure takes the value projected from `using` closure which is intermediate value.
+   If the intermediate value is not changed, map closure won't perform.
+   
+   - Parameters:
+   - using: Specifies values for transforming. This function is annotated ``PipelineIntermediateBuilder``
+   - transform: Transforms the given value from `using` function
+   
+   ```swift
+   `.map(using: { $0.a; $0.b;}`
+   ```
+   
+   */
+  @_disfavoredOverload
+  public static func map<Input, Intermediate>(
+    @PipelineIntermediateBuilder using intermediate: @escaping (Changes<Input>) -> PipelineIntermediate<Intermediate>
+  ) -> Self where Input: Equatable, Self == Pipelines.ChangesMapPipeline<Input, Intermediate, PipelineIntermediate<Intermediate>> {
+    
+    self.init(
+      intermediate: intermediate,
+      transform: { $0 },
+      additionalDropCondition: nil
+    )
+    
   }
   
   /**
@@ -306,10 +334,12 @@ extension PipelineType {
     
     self.init(
       intermediate: intermediate,
-      transform: { $0.wrappedValue },
+      transform: { $0.value.wrappedValue },
       additionalDropCondition: nil
     )
   }
+  
+
   
   /**
    For Changes input
@@ -324,7 +354,7 @@ extension PipelineType {
     
     self.init(
       intermediate: { $0 },
-      transform: transform,
+      transform: { transform($0.value) },
       additionalDropCondition: nil
     )
   }
