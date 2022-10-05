@@ -166,6 +166,7 @@ We accept your questions about usage of Verge and something else in GitHub Issue
 
 ### Essentials
 
-- ``Store``
-- ``Changes``
-- ``Derived``
+- ``Verge/Store``
+- ``Verge/Changes``
+- ``Verge/Derived``
+- ``Verge/DispatcherType``
