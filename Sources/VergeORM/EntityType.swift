@@ -21,7 +21,7 @@
 
 import Foundation
 
-public struct AnyEntityIdentifier: Hashable {
+public struct AnyEntityIdentifier: Hashable, Sendable {
   
   public typealias StringLiteralType = String
 
@@ -32,7 +32,7 @@ public struct AnyEntityIdentifier: Hashable {
 
 }
 
-public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConvertible {
+public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConvertible, Sendable {
   
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.raw == rhs.raw

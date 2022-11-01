@@ -1,5 +1,5 @@
 
-public enum PrimitiveIdentifier: Hashable {
+public enum PrimitiveIdentifier: Hashable, Sendable {
   
   case string(String)
   case int64(Int64)
@@ -8,7 +8,7 @@ public enum PrimitiveIdentifier: Hashable {
 
 }
 
-public protocol _PrimitiveIdentifierConvertible: Hashable {
+public protocol _PrimitiveIdentifierConvertible: Hashable, Sendable {
   
   var _primitiveIdentifier: PrimitiveIdentifier { get }
   
