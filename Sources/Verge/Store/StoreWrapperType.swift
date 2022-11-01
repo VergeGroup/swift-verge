@@ -79,16 +79,16 @@ extension StoreComponentType {
   ///
   /// It causes locking and unlocking with a bit cost.
   /// It may cause blocking if any other is doing mutation or reading.
-  public var state: Changes<WrappedStore.State> {
+  public nonisolated var state: Changes<WrappedStore.State> {
     store.asStore().state
   }
 
   @available(*, deprecated, renamed: "state")
-  public var changes: Changes<WrappedStore.State> {
+  public nonisolated var changes: Changes<WrappedStore.State> {
     store.asStore().changes
   }
   
-  public var primitiveState: WrappedStore.State {
+  public nonisolated var primitiveState: WrappedStore.State {
     store.primitiveState
   }
   
@@ -100,7 +100,7 @@ extension StoreComponentType {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkState(
+  public nonisolated func sinkState(
     dropsFirst: Bool = false,
     queue: TargetQueue,
     receive: @escaping (Changes<WrappedStore.State>) -> Void
@@ -116,7 +116,7 @@ extension StoreComponentType {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkState(
+  public nonisolated func sinkState(
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<WrappedStore.State>) -> Void
@@ -133,7 +133,7 @@ extension StoreComponentType {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkState<Accumulate>(
+  public nonisolated func sinkState<Accumulate>(
     scan: Scan<Changes<WrappedStore.State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: TargetQueue,
@@ -151,7 +151,7 @@ extension StoreComponentType {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkState<Accumulate>(
+  public nonisolated func sinkState<Accumulate>(
     scan: Scan<Changes<WrappedStore.State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
@@ -163,7 +163,7 @@ extension StoreComponentType {
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkActivity(
+  public nonisolated func sinkActivity(
     queue: TargetQueue,
     receive: @escaping (WrappedStore.Activity) -> Void
   ) -> VergeAnyCancellable  {
@@ -173,7 +173,7 @@ extension StoreComponentType {
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkActivity(
+  public nonisolated func sinkActivity(
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (WrappedStore.Activity) -> Void
   ) -> VergeAnyCancellable  {
