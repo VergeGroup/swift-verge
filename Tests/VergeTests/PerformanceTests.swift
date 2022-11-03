@@ -18,7 +18,7 @@ class PerformanceTests: XCTestCase {
 
     let store = DemoStore()
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       store.increment()
     }
 

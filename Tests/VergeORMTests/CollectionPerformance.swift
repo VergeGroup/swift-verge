@@ -13,19 +13,19 @@ import XCTest
 class CollectionPerformance: XCTestCase {  
   
   func testMakeCollection() {
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = AnyCollection((0..<100000).map { $0 })
     }
   }
   
   func testMakeLazySequence() {
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = (0..<100000).lazy.map { $0 }
     }
   }
   
   func testMakeLazyCollection() {
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = AnyCollection((0..<100000).lazy.map { $0 })
     }
   }
@@ -34,7 +34,7 @@ class CollectionPerformance: XCTestCase {
     
     let a = (0..<10000).map { Int($0) }
     
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = a as [Any]
     }
     
@@ -46,7 +46,7 @@ class CollectionPerformance: XCTestCase {
       d[n] = n
     }
     
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = a as [Int : Any]
     }
     
@@ -58,7 +58,7 @@ class CollectionPerformance: XCTestCase {
       d[n] = n
     }
     
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = a as! [Int : Int]
     }
     

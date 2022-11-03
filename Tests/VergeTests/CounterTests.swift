@@ -39,14 +39,14 @@ final class CounterTests: XCTestCase {
   
   func testGenDatePerformance() {
     
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = Date()
     }
   }
   
   func testGenCFDatePerformance() {
     
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = CFAbsoluteTimeGetCurrent()
     }
   }

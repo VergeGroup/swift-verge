@@ -16,13 +16,13 @@ final class PerformanceTests: XCTestCase {
   var state = RootState()
 
   func testReflectionObjectIdentifier() {
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = ObjectIdentifier(Author.self)
     }
   }
 
   func testReflectionString() {
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = String(reflecting: Author.self)
     }
   }
@@ -37,7 +37,7 @@ final class PerformanceTests: XCTestCase {
       context.entities.author.insert(authors)
     }
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       state.db.performBatchUpdates { context in
         var author = context.entities.author.current.find(by: .init("author.100"))!
         author.name = "mmm"
@@ -57,7 +57,7 @@ final class PerformanceTests: XCTestCase {
       context.entities.author.insert(authors)
     }
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       state.db.performBatchUpdates { context -> Void in
         context.entities.author.updateIfExists(id: .init("author.100")) { (author) in
           author.name = "mmm"
@@ -69,7 +69,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsertMany() {
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       state.db.performBatchUpdates { (context) in
 
         let authors = (0..<10000).map { i in Author(rawID: "author.\(i)") }
@@ -82,7 +82,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsert3000() {
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       state.db.performBatchUpdates { (context) in
 
         for i in 0..<3000 {
@@ -97,7 +97,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsert3000UseCollection() {
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       state.db.performBatchUpdates { (context) in
 
         let authors = (0..<3000).map { i in
@@ -113,7 +113,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsert10000UseCollection() {
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       state.db.performBatchUpdates { (context) in
 
         let authors = (0..<10000).map { i in
@@ -129,7 +129,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsert100000UseCollection() {
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       state.db.performBatchUpdates { (context) in
 
         let authors = (0..<100000).map { i in
@@ -153,7 +153,7 @@ final class PerformanceTests: XCTestCase {
       context.entities.author.insert(authors)
     }
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       state.db.performBatchUpdates { (context) in
 
         let authors = (0..<1000).map { i in
@@ -169,7 +169,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsertSoManySeparatedTransaction() {
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       for l in 0..<10 {
         state.db.performBatchUpdates { (context) in
 
@@ -185,7 +185,7 @@ final class PerformanceTests: XCTestCase {
   }
 
   func testInsertManyEachTransaction() {
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       /// O(n^2)
       for i in 0..<10 {
         state.db.performBatchUpdates { (context) in
@@ -217,7 +217,7 @@ final class FindPerformanceTests: XCTestCase {
 
   func testFindOne() {
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = state.db.entities.author.find(by: .init("author.199"))
     }
 
@@ -231,7 +231,7 @@ final class FindPerformanceTests: XCTestCase {
       .init("author.399"),
     ])
 
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = state.db.entities.author.find(in: ids)
     }
 

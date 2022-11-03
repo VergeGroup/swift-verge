@@ -57,7 +57,7 @@ class MultithreadingTests: XCTestCase {
     
     let store = Storage(RootState())
     
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       DispatchQueue.concurrentPerform(iterations: 1000) { (i) in
         store.update { state in
           state.other.count += 1

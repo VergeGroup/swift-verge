@@ -41,19 +41,19 @@ class SetIndexTests: XCTestCase {
   }()
     
   func testSample() {            
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = db.indexes.allBooks.map { $0.raw }
     }
   }
   
   func testCompactMap() {
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = db.indexes.allBooks.compactMap { $0.raw }
     }
   }
   
   func testFilter() {
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = db.indexes.allBooks.sorted { $0.raw > $1.raw }
     }
   }

@@ -132,7 +132,7 @@ class Computed2Tests: XCTestCase {
     
     let changes = store.state
     
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = changes.computed.filteredArray
     }
     
@@ -142,7 +142,7 @@ class Computed2Tests: XCTestCase {
     
     let store = MyStore()
         
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       store.commit {
         // no affects to array
         $0.num_1 += 1
@@ -293,7 +293,7 @@ class Computed2Tests: XCTestCase {
 
     let changes = store.state
                   
-    vergeMeasure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       DispatchQueue.concurrentPerform(iterations: 500) { (i) in
         XCTAssertEqual(changes.hasChanges(\.computed.num_0), false)
       }
