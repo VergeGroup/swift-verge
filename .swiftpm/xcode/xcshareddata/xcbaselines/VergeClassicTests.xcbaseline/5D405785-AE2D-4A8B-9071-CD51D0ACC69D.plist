@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>classNames</key>
+	<dict>
+		<key>VergeTests</key>
+		<dict>
+			<key>testPerformanceDispatchCommit()</key>
+			<dict>
+				<key>com.apple.dt.XCTMetric_CPU.cycles</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>1208.825000</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+				<key>com.apple.dt.XCTMetric_CPU.instructions_retired</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>2988.425000</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+				<key>com.apple.dt.XCTMetric_CPU.time</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.000393</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+				<key>com.apple.dt.XCTMetric_Clock.time.monotonic</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.000007</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+				<key>com.apple.dt.XCTMetric_Memory.physical</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>13.107200</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+				<key>com.apple.dt.XCTMetric_Memory.physical_peak</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.000000</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+			</dict>
+			<key>testPerformanceExample()</key>
+			<dict>
+				<key>com.apple.dt.XCTMetric_CPU.cycles</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>3309.928200</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+				<key>com.apple.dt.XCTMetric_CPU.instructions_retired</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>6147.898000</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+				<key>com.apple.dt.XCTMetric_CPU.time</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.001110</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+				<key>com.apple.dt.XCTMetric_Clock.time.monotonic</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.000008</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+				<key>com.apple.dt.XCTMetric_Memory.physical</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>6.553600</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+				<key>com.apple.dt.XCTMetric_Memory.physical_peak</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.000000</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Nov 4, 2022 0:28:13</string>
+				</dict>
+			</dict>
+		</dict>
+	</dict>
+</dict>
+</plist>
