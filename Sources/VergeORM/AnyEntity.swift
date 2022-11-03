@@ -22,15 +22,15 @@ struct AnyEntity : Hashable {
   }
   
   func hash(into hasher: inout Hasher) {
-    makeHash(&hasher)
+    entityIdentifier.hash(into: &hasher)
   }
       
   private let identifier: AnyEntityIdentifier
-  
-  private let makeHash: (inout Hasher) -> Void
+    
+  private let entityIdentifier: PrimitiveIdentifier
     
   init<Base: EntityType>(_ base: Base) {
-    self.makeHash = base.entityID.hash
+    self.entityIdentifier = base.entityID.raw._primitiveIdentifier
     self.base = base
     self.identifier = base.entityID.any
   }
