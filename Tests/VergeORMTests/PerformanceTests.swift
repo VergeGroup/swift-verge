@@ -8,6 +8,7 @@
 
 import Foundation
 import XCTest
+import Verge
 
 @available(iOS 13.0, *)
 final class PerformanceTests: XCTestCase {
@@ -15,13 +16,13 @@ final class PerformanceTests: XCTestCase {
   var state = RootState()
 
   func testReflectionObjectIdentifier() {
-    measure {
+    vergeMeasure {
       _ = ObjectIdentifier(Author.self)
     }
   }
 
   func testReflectionString() {
-    measure {
+    vergeMeasure {
       _ = String(reflecting: Author.self)
     }
   }
@@ -36,7 +37,7 @@ final class PerformanceTests: XCTestCase {
       context.entities.author.insert(authors)
     }
 
-    measure {
+    vergeMeasure {
       state.db.performBatchUpdates { context in
         var author = context.entities.author.current.find(by: .init("author.100"))!
         author.name = "mmm"
@@ -56,7 +57,7 @@ final class PerformanceTests: XCTestCase {
       context.entities.author.insert(authors)
     }
 
-    measure {
+    vergeMeasure {
       state.db.performBatchUpdates { context -> Void in
         context.entities.author.updateIfExists(id: .init("author.100")) { (author) in
           author.name = "mmm"
@@ -68,7 +69,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsertMany() {
 
-    measure {
+    vergeMeasure {
       state.db.performBatchUpdates { (context) in
 
         let authors = (0..<10000).map { i in Author(rawID: "author.\(i)") }
@@ -81,7 +82,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsert3000() {
 
-    measure {
+    vergeMeasure {
       state.db.performBatchUpdates { (context) in
 
         for i in 0..<3000 {
@@ -96,7 +97,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsert3000UseCollection() {
 
-    measure {
+    vergeMeasure {
       state.db.performBatchUpdates { (context) in
 
         let authors = (0..<3000).map { i in
@@ -112,7 +113,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsert10000UseCollection() {
 
-    measure {
+    vergeMeasure {
       state.db.performBatchUpdates { (context) in
 
         let authors = (0..<10000).map { i in
@@ -128,7 +129,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsert100000UseCollection() {
 
-    measure {
+    vergeMeasure {
       state.db.performBatchUpdates { (context) in
 
         let authors = (0..<100000).map { i in
@@ -152,7 +153,7 @@ final class PerformanceTests: XCTestCase {
       context.entities.author.insert(authors)
     }
 
-    measure {
+    vergeMeasure {
       state.db.performBatchUpdates { (context) in
 
         let authors = (0..<1000).map { i in
@@ -168,7 +169,7 @@ final class PerformanceTests: XCTestCase {
 
   func testInsertSoManySeparatedTransaction() {
 
-    measure {
+    vergeMeasure {
       for l in 0..<10 {
         state.db.performBatchUpdates { (context) in
 
@@ -184,7 +185,7 @@ final class PerformanceTests: XCTestCase {
   }
 
   func testInsertManyEachTransaction() {
-    measure {
+    vergeMeasure {
       /// O(n^2)
       for i in 0..<10 {
         state.db.performBatchUpdates { (context) in
@@ -216,7 +217,7 @@ final class FindPerformanceTests: XCTestCase {
 
   func testFindOne() {
 
-    measure {
+    vergeMeasure {
       _ = state.db.entities.author.find(by: .init("author.199"))
     }
 
@@ -230,7 +231,7 @@ final class FindPerformanceTests: XCTestCase {
       .init("author.399"),
     ])
 
-    measure {
+    vergeMeasure {
       _ = state.db.entities.author.find(in: ids)
     }
 
@@ -403,6 +404,23 @@ final class DictionaryPerformanceTests: XCTestCase {
       }
     }
 
+  }
+  
+  @available(iOS 13, *)
+  func testModify_withCOWBox() {
+    
+    let base = (0..<100000).reduce(into: [Int: _COWFragment<Any>]()) { partialResult, i in
+      partialResult[i] = .init(wrappedValue: Concrete(id: i))
+    }
+    
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
+      
+      for _ in (0..<100) {
+        var copy = base
+        copy[4] = .init(wrappedValue: Concrete(id: 4))
+      }
+    }
+    
   }
 
 }

@@ -41,19 +41,19 @@ class SetIndexTests: XCTestCase {
   }()
     
   func testSample() {            
-    measure {
+    vergeMeasure {
       _ = db.indexes.allBooks.map { $0.raw }
     }
   }
   
   func testCompactMap() {
-    measure {
+    vergeMeasure {
       _ = db.indexes.allBooks.compactMap { $0.raw }
     }
   }
   
   func testFilter() {
-    measure {
+    vergeMeasure {
       _ = db.indexes.allBooks.sorted { $0.raw > $1.raw }
     }
   }

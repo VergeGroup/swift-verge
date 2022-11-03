@@ -9,7 +9,7 @@
 import XCTest
 
 import RxSwift
-@testable import VergeClassic
+import VergeClassic
 import Verge
 
 class VergeTests: XCTestCase {
@@ -121,7 +121,7 @@ class VergeTests: XCTestCase {
 
   func testPerformanceExample() {
     // This is an example of a performance test case.
-    self.measure {
+    self.vergeMeasure {
       // Put the code you want to measure the time of here.
     }
   }
@@ -130,7 +130,7 @@ class VergeTests: XCTestCase {
 
     let vm = ViewModel()
 
-    self.measure {
+    self.vergeMeasure {
       vm.increment()
     }
   }

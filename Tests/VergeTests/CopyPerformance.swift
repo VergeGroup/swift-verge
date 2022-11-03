@@ -16,7 +16,7 @@ final class CopyPerformance: XCTestCase {
   
   func testCopy() {
     
-    measure {
+    vergeMeasure {
       run(with: source)
     }
   }
@@ -24,20 +24,20 @@ final class CopyPerformance: XCTestCase {
   func testCopyWithShared() {
     
     let huge = Shared(source)
-    measure {
+    vergeMeasure {
       run(with: huge)
     }
   }
   
   func testAny() {
-    measure {
+    vergeMeasure {
       run(any: source)
     }
   }
   
   func testAnyWithShared() {
     let huge = Shared(source)
-    measure {
+    vergeMeasure {
       run(anyObject: huge)
     }
   }

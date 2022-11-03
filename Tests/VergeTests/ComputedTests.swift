@@ -9,7 +9,7 @@
 import Foundation
 
 import XCTest
-@testable import Verge
+import Verge
 
 fileprivate var rootTransformCounter: Int = 0
 fileprivate var nestedCounter: Int = 0
@@ -132,7 +132,7 @@ class Computed2Tests: XCTestCase {
     
     let changes = store.state
     
-    measure {
+    vergeMeasure {
       _ = changes.computed.filteredArray
     }
     
@@ -142,7 +142,7 @@ class Computed2Tests: XCTestCase {
     
     let store = MyStore()
         
-    measure {
+    vergeMeasure {
       store.commit {
         // no affects to array
         $0.num_1 += 1
@@ -293,7 +293,7 @@ class Computed2Tests: XCTestCase {
 
     let changes = store.state
                   
-    measure {
+    vergeMeasure {
       DispatchQueue.concurrentPerform(iterations: 500) { (i) in
         XCTAssertEqual(changes.hasChanges(\.computed.num_0), false)
       }

@@ -10,7 +10,7 @@ import Foundation
 
 import XCTest
 
-@testable import Verge
+import Verge
 
 fileprivate struct _COWBox<State> {
 

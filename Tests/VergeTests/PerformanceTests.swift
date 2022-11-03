@@ -2,7 +2,7 @@
 import Foundation
 
 import XCTest
-@testable import Verge
+import Verge
 
 /**
  Store's state contains a huge dictionary.
@@ -18,7 +18,7 @@ class PerformanceTests: XCTestCase {
 
     let store = DemoStore()
 
-    measure {
+    vergeMeasure {
       store.increment()
     }
 

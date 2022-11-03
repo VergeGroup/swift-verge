@@ -8,6 +8,13 @@
 
 import Foundation
 import Verge
+import XCTest
+
+extension XCTestCase {
+  func vergeMeasure(perform: () -> Void) {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()], block: perform)
+  }
+}
 
 struct NonEquatable: Sendable {
   let id = UUID()

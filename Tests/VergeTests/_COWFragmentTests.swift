@@ -1,6 +1,6 @@
 
 import XCTest
-@testable import Verge
+import Verge
 
 final class FragmentTests: XCTestCase {
 

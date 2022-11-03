@@ -253,7 +253,7 @@ final class DerivedTests: XCTestCase {
     
     let storage = Store<RootState, Never>.init(initialState: .init(), logger: nil)
     
-    measure {
+    vergeMeasure {
       let _ = storage.databases.db.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
     }
     
@@ -265,7 +265,7 @@ final class DerivedTests: XCTestCase {
     
     let _ = storage.databases.db.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
     
-    measure {
+    vergeMeasure {
       let _ = storage.databases.db.derived(from: Author.EntityID("Hoo"), queue: .passthrough)
     }
     
