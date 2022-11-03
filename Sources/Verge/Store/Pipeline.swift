@@ -37,9 +37,9 @@ public protocol PipelineType<Input, Output> {
   associatedtype Input
   associatedtype Output
      
-  func yield(_ input: Input) -> Output
+  func yield(_ input: __shared Input) -> Output
    
-  func yieldContinuously(_ input: Input) -> ContinuousResult<Output>
+  func yieldContinuously(_ input: __shared Input) -> ContinuousResult<Output>
   
 }
 
@@ -57,17 +57,17 @@ public enum Pipelines {
     public typealias Input = Changes<Source>
     
     public let keyPath: KeyPath<Input, Output>
-    public let additionalDropCondition: ((Input) -> Bool)?
+    public let additionalDropCondition: ((__shared Input) -> Bool)?
     
     public init(
       keyPath: KeyPath<Input, Output>,
-      additionalDropCondition: ((Input) -> Bool)?
+      additionalDropCondition: ((__shared Input) -> Bool)?
     ) {
       self.keyPath = keyPath
       self.additionalDropCondition = additionalDropCondition
     }
     
-    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    public func yieldContinuously(_ input: __shared Input) -> ContinuousResult<Output> {
       
       // TODO: Using keypath to look up modification
 //      if let modification = input.modification {
@@ -103,11 +103,11 @@ public enum Pipelines {
       
     }
     
-    public func yield(_ input: Input) -> Output {
+    public func yield(_ input: __shared Input) -> Output {
       input[keyPath: keyPath]
     }
     
-    public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
+    public func drop(while predicate: @escaping (__shared Input) -> Bool) -> Self {
       return .init(
         keyPath: keyPath,
         additionalDropCondition: additionalDropCondition.map { currentCondition in
@@ -127,14 +127,14 @@ public enum Pipelines {
     
     // MARK: - Properties
     
-    public let intermediate: (Input) -> PipelineIntermediate<Intermediate>
-    public let transform: (Intermediate) -> Output
-    public let additionalDropCondition: ((Input) -> Bool)?
+    public let intermediate: (__shared Input) -> PipelineIntermediate<Intermediate>
+    public let transform: (__shared Intermediate) -> Output
+    public let additionalDropCondition: ((__shared Input) -> Bool)?
     
     public init(
-      @PipelineIntermediateBuilder intermediate: @escaping (Input) -> PipelineIntermediate<Intermediate>,
-      transform: @escaping (Intermediate) -> Output,
-      additionalDropCondition: ((Input) -> Bool)?
+      @PipelineIntermediateBuilder intermediate: @escaping (__shared Input) -> PipelineIntermediate<Intermediate>,
+      transform: @escaping (__shared Intermediate) -> Output,
+      additionalDropCondition: ((__shared Input) -> Bool)?
     ) {
       self.intermediate = intermediate
       self.transform = transform
@@ -143,7 +143,7 @@ public enum Pipelines {
     
     // MARK: - Functions
     
-    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    public func yieldContinuously(_ input: __shared Input) -> ContinuousResult<Output> {
       
       guard let previous = input.previous else {
         return .new(yield(input))
@@ -178,11 +178,11 @@ public enum Pipelines {
       return .noUpdates
     }
     
-    public func yield(_ input: Input) -> Output {
+    public func yield(_ input: __shared Input) -> Output {
       transform(intermediate(input).value)
     }
       
-    public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
+    public func drop(while predicate: @escaping (__shared Input) -> Bool) -> Self {
       return .init(
         intermediate: intermediate,
         transform: transform,
@@ -199,12 +199,12 @@ public enum Pipelines {
         
     // MARK: - Properties
     
-    public let map: (Input) -> Output
-    public let additionalDropCondition: ((Input) -> Bool)?
+    public let map: (__shared Input) -> Output
+    public let additionalDropCondition: ((__shared Input) -> Bool)?
     
     public init(
-      map: @escaping (Input) -> Output,
-      additionalDropCondition: ((Input) -> Bool)?
+      map: @escaping (__shared Input) -> Output,
+      additionalDropCondition: ((__shared Input) -> Bool)?
     ) {
       self.map = map
       self.additionalDropCondition = additionalDropCondition
@@ -212,7 +212,7 @@ public enum Pipelines {
     
     // MARK: - Functions
     
-    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    public func yieldContinuously(_ input: __shared Input) -> ContinuousResult<Output> {
                       
       guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
         return .new(yield(input))
@@ -222,11 +222,11 @@ public enum Pipelines {
       
     }
     
-    public func yield(_ input: Input) -> Output {
+    public func yield(_ input: __shared Input) -> Output {
       map(input)
     }
     
-    public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
+    public func drop(while predicate: @escaping (__shared Input) -> Bool) -> Self {
       return .init(
         map: map,
         additionalDropCondition: additionalDropCondition.map { currentCondition in
