@@ -12,7 +12,30 @@ import Foundation
 /// Identifier based Equality
 struct AnyEntity : Hashable {
   
-  var base: Any
+  private final class Storage {
+    
+    var value: Any
+    
+    init(_ value: Any) {
+      self.value = value
+    }
+    
+  }
+  
+  private var storage: Storage
+  
+  var base: Any {
+    _read { yield storage.value }
+    _modify {
+      let oldValue = storage.value
+      if isKnownUniquelyReferenced(&storage) {
+        yield &storage.value
+      } else {
+        storage = Storage(oldValue)
+        yield &storage.value
+      }
+    }
+  }
     
   static func == (lhs: AnyEntity, rhs: AnyEntity) -> Bool {
     if lhs.identifier == rhs.identifier {
@@ -28,7 +51,7 @@ struct AnyEntity : Hashable {
   private let identifier: AnyEntityIdentifier
         
   init<Base: EntityType>(_ base: Base) {
-    self.base = base
+    self.storage = .init(base)
     self.identifier = base.entityID.any
   }
   
