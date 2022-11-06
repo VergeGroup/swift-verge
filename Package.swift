@@ -11,6 +11,7 @@ let package = Package(
   ],
   products: [
     .library(name: "Verge", targets: ["Verge"]),
+    .library(name: "VergeTaskManager", targets: ["VergeTaskManager"]),
     .library(name: "VergeTiny", targets: ["VergeTiny"]),
     .library(name: "VergeORM", targets: ["VergeORM"]),
     .library(name: "VergeRx", targets: ["VergeRx"]),
@@ -19,11 +20,18 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.0.0"),
     .package(url: "https://github.com/apple/swift-docc-plugin.git", branch: "main"),
+    .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
   ],
   targets: [
+    .target(
+      name: "VergeTaskManager",
+      dependencies: [
+//        .product(name: "Atomics", package: "swift-atomics")
+      ]
+    ),
     .target(name: "VergeObjcBridge", dependencies: []),
     .target(name: "VergeTiny", dependencies: []),
-    .target(name: "Verge", dependencies: ["VergeObjcBridge"]),
+    .target(name: "Verge", dependencies: ["VergeObjcBridge", "VergeTaskManager"]),
     .target(
       name: "VergeClassic",
       dependencies: [
@@ -41,7 +49,8 @@ let package = Package(
         .product(name: "RxCocoa", package: "RxSwift"),
       ]
     ),
-//    .testTarget(name: "AsyncVergeTests", dependencies: ["AsyncVerge"]),
+    //    .testTarget(name: "AsyncVergeTests", dependencies: ["AsyncVerge"]),
+    .testTarget(name: "VergeTaskManagerTests", dependencies: ["VergeTaskManager"]),
     .testTarget(name: "VergeClassicTests", dependencies: ["VergeClassic"]),
     .testTarget(name: "VergeORMTests", dependencies: ["VergeORM"]),
     .testTarget(name: "VergeRxTests", dependencies: ["VergeRx", "VergeClassic", "VergeORM"]),

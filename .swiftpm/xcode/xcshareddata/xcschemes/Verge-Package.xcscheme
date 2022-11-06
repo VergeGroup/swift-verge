@@ -160,6 +160,20 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "VergeTaskManager"
+               BuildableName = "VergeTaskManager"
+               BlueprintName = "VergeTaskManager"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -215,6 +229,16 @@
                BlueprintIdentifier = "VergeTinyTests"
                BuildableName = "VergeTinyTests"
                BlueprintName = "VergeTinyTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "VergeTaskManagerTests"
+               BuildableName = "VergeTaskManagerTests"
+               BlueprintName = "VergeTaskManagerTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
