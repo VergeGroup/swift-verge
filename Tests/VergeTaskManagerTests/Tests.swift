@@ -8,12 +8,12 @@ final class TaskTests: XCTestCase {
     
     let manager = TaskManager()
     
-    let id = TaskManager.TaskKey.distinct()
+    let key = TaskKey.distinct()
     
     let firstTask = expectation(description: "cancelled")
     let nextTask = expectation(description: "cancelled")
     
-    manager.task(id: id, mode: .dropCurrent) {
+    manager.task(key: key, mode: .dropCurrent) {
       await withTaskCancellationHandler {
         try? await Task.sleep(nanoseconds: 1_000_000_000)
       } onCancel: {
@@ -23,7 +23,7 @@ final class TaskTests: XCTestCase {
     
     XCTAssertEqual(manager.count, 1)
     
-    manager.task(id: id, mode: .dropCurrent) {
+    manager.task(key: key, mode: .dropCurrent) {
       await withTaskCancellationHandler {
         try? await Task.sleep(nanoseconds: 1_000_000_000)
         nextTask.fulfill()
@@ -49,7 +49,7 @@ final class TaskTests: XCTestCase {
     
     let firstTask = expectation(description: "cancelled")
     
-    manager.task(id: .distinct(), mode: .dropCurrent) {
+    manager.task(key: .distinct(), mode: .dropCurrent) {
       await withTaskCancellationHandler {
         try? await Task.sleep(nanoseconds: 1_000_000_000)
       } onCancel: {
