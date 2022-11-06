@@ -25,7 +25,9 @@ let package = Package(
   targets: [
     .target(
       name: "VergeTaskManager",
-      dependencies: [.product(name: "Atomics", package: "swift-atomics")]
+      dependencies: [
+//        .product(name: "Atomics", package: "swift-atomics")
+      ]
     ),
     .target(name: "VergeObjcBridge", dependencies: []),
     .target(name: "VergeTiny", dependencies: []),
