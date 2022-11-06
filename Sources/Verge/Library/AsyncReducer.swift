@@ -25,6 +25,11 @@ open class AsyncReducer<Result: Equatable, Partial>: StoreComponentType {
     store.task(key: .distinct(), mode: .dropCurrent, priority: .userInitiated) { [weak self] in
       
       let partial = await operation()
+      
+      guard Task.isCancelled else {
+        return
+      }
+      
       self?.store.commit { state in
         self?.reduce(result: &state, partial: partial)
       }
