@@ -1,6 +1,13 @@
 import Foundation
 
 public final class TaskManager: @unchecked Sendable, CustomReflectable {
+  
+  public struct Configuration {
+    
+    public init() {
+      
+    }
+  }
 
   public struct TaskID: Hashable {
     public var raw: String
@@ -14,11 +21,11 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
     }
   }
 
-  private struct InternalTaskID: Hashable {
+  private struct DistinctID: Hashable {
     let publicID: TaskID
     let internalID: TaskID
   }
-
+  
   public enum Mode {
     case dropCurrent
     //    case waitCurrent
@@ -26,8 +33,8 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
 
   // MARK: Lifecycle
 
-  public init() {
-
+  public init(configuration: Configuration = .init()) {
+    self.configuration = configuration
   }
 
   deinit {
@@ -35,6 +42,8 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
   }
 
   // MARK: Public
+  
+  public let configuration: Configuration
   
   /// Number of counts in current managing tasks
   public var count: Int {
@@ -51,6 +60,10 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
       displayStyle: .struct,
       ancestorRepresentation: .generated
     )
+  }
+  
+  public func isRunning(id: TaskID) -> Bool {
+    tasks.first(where: { $0.0.publicID == id }) != nil
   }
 
   public func task(
@@ -69,7 +82,7 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
 
     weak var weakSelf = self
 
-    let task = Task(priority: priority) { [weakSelf] in
+    let task = Task.detached(priority: priority) { [weakSelf] in
 
       await withTaskCancellationHandler {
         await action()
@@ -109,7 +122,7 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
 
   private let lock = NSRecursiveLock()
 
-  private var tasks: ContiguousArray<(InternalTaskID, any _Verge_TaskType)> = .init()
+  private var tasks: ContiguousArray<(DistinctID, any _Verge_TaskType)> = .init()
 
   private func unmanageTask(internalID: TaskID) {
     tasks.removeAll { $0.0.internalID == internalID }

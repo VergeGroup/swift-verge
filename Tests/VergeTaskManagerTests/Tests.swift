@@ -43,4 +43,25 @@ final class TaskTests: XCTestCase {
     XCTAssertEqual(manager.count, 0)
   }
   
+  func testCancelAll() {
+    
+    let manager = TaskManager()
+    
+    let firstTask = expectation(description: "cancelled")
+    
+    manager.task(id: .distinct(), mode: .dropCurrent) {
+      await withTaskCancellationHandler {
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
+      } onCancel: {
+        firstTask.fulfill()
+      }
+    }
+    
+    manager.cancelAll()
+    XCTAssertEqual(manager.count, 0)
+    
+    wait(for: [firstTask], timeout: 2)
+    
+  }
+  
 }
