@@ -20,17 +20,6 @@ jobs:
             results/VergeTests.xcresult
         if: success() || failure()
 
-  lint:
-    runs-on: macos-12
-
-    steps:
-      - uses: maxim-lobanov/setup-xcode@v1.1
-        with:
-          xcode-version: "14.0"
-      - uses: actions/checkout@v2
-      - name: Lint Cocoapods
-        run: pod lib lint --allow-warnings
-
   build-package-on-swiftpm:
     runs-on: macos-12
 
