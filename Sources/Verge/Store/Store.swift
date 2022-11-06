@@ -581,13 +581,13 @@ Latest Version (%d): (%@)
    Carefully use this function - If the task retains this store, it will continue to live until the task is finished.
    */
   public func task(
-    id: TaskManager.TaskID = .distinct(),
-    mode: TaskManager.Mode = .dropCurrent,
+    key: VergeTaskManager.TaskKey = .distinct(),
+    mode: VergeTaskManager.TaskManager.Mode = .dropCurrent,
     priority: TaskPriority = .userInitiated,
     _ action: @Sendable @escaping () async -> Void
   ) {
     
-    taskManager.task(id: id, mode: mode, priority: priority, action)
+    taskManager.task(key: key, mode: mode, priority: priority, action)
     
   }
   

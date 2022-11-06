@@ -1,5 +1,50 @@
 import Foundation
 
+public protocol TaskKeyType {
+  
+}
+
+public struct TaskKey: Hashable {
+  
+  private struct TypedKey: Hashable {
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+      lhs.metatype == rhs.metatype
+    }
+    
+    func hash(into hasher: inout Hasher) {
+      hasher.combine(ObjectIdentifier(metatype))
+    }
+    
+    let metatype: Any.Type
+    
+    init<T>(base: T.Type) {
+      self.metatype = base
+    }
+    
+  }
+  
+  private enum Node: Hashable {
+    case customString(String)
+    case type(TypedKey)
+  }
+  
+  private let node: Node
+  
+  public init<Key: TaskKeyType>(_ key: Key.Type) {
+    self.node = .type(.init(base: Key.self))
+  }
+  
+  public init(_ customString: String) {
+    self.node = .customString(customString)
+  }
+  
+  public static func distinct() -> Self {
+    .init(UUID().uuidString)
+  }
+  
+}
+
 public final class TaskManager: @unchecked Sendable, CustomReflectable {
   
   public struct Configuration {
@@ -8,21 +53,21 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
       
     }
   }
-
-  public struct TaskID: Hashable {
-    public var raw: String
-
-    public init(_ id: String) {
+  
+  private struct TaskID: Hashable {
+    var raw: String
+    
+    init(_ id: String) {
       self.raw = id
     }
-
-    public static func distinct() -> Self {
+    
+    static func distinct() -> Self {
       .init(UUID().uuidString)
     }
   }
 
   private struct DistinctID: Hashable {
-    let publicID: TaskID
+    let key: TaskKey
     let internalID: TaskID
   }
   
@@ -62,12 +107,12 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
     )
   }
   
-  public func isRunning(id: TaskID) -> Bool {
-    tasks.first(where: { $0.0.publicID == id }) != nil
+  public func isRunning(key: TaskKey) -> Bool {
+    return tasks.first(where: { $0.0.key == key }) != nil
   }
 
   public func task(
-    id: TaskID,
+    key: TaskKey,
     mode: Mode,
     priority: TaskPriority = .userInitiated,
     _ action: @Sendable @escaping () async -> Void
@@ -95,12 +140,15 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
 
     let anyTask = task as _Verge_TaskType
 
-    if let item = tasks.first(where: { $0.0.publicID == id }) {
-      unmanageTask(internalID: item.0.internalID)
-      item.1.cancel()
+    if let item = tasks.first(where: { $0.0.key == key }) {
+      switch mode {
+      case .dropCurrent:
+        unmanageTask(internalID: item.0.internalID)
+        item.1.cancel()
+      }
     }
 
-    tasks.append((.init(publicID: id, internalID: internalID), anyTask))
+    tasks.append((.init(key: key, internalID: internalID), anyTask))
 
   }
 

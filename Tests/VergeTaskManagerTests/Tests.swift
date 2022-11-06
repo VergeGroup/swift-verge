@@ -8,7 +8,7 @@ final class TaskTests: XCTestCase {
     
     let manager = TaskManager()
     
-    let id = TaskManager.TaskID.distinct()
+    let id = TaskManager.TaskKey.distinct()
     
     let firstTask = expectation(description: "cancelled")
     let nextTask = expectation(description: "cancelled")
