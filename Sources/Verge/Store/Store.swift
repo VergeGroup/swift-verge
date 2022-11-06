@@ -21,6 +21,7 @@
 
 import Foundation
 import os.log
+import VergeTaskManager
 
 #if canImport(Combine)
 import Combine
@@ -567,5 +568,27 @@ Latest Version (%d): (%@)
     
   }
 
+  // MARK: - Task
+  
+  public let taskManager: TaskManager = .init()
+  
+  /**
+   Adds an asynchronous task to perform.
+   
+   Use this function to perform an asynchronous task with a lifetime that matches that of this store.
+   If this store is deallocated ealier than the given task finished, that asynchronous task will be cancelled.
+   
+   Carefully use this function - If the task retains this store, it will continue to live until the task is finished.
+   */
+  public func task(
+    id: TaskManager.TaskID = .distinct(),
+    mode: TaskManager.Mode = .dropCurrent,
+    priority: TaskPriority = .userInitiated,
+    _ action: @Sendable @escaping () async -> Void
+  ) {
+    
+    taskManager.task(id: id, mode: mode, priority: priority, action)
+    
+  }
   
 }

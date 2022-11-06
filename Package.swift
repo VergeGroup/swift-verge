@@ -31,7 +31,7 @@ let package = Package(
     ),
     .target(name: "VergeObjcBridge", dependencies: []),
     .target(name: "VergeTiny", dependencies: []),
-    .target(name: "Verge", dependencies: ["VergeObjcBridge"]),
+    .target(name: "Verge", dependencies: ["VergeObjcBridge", "VergeTaskManager"]),
     .target(
       name: "VergeClassic",
       dependencies: [
