@@ -56,6 +56,7 @@ private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.san
 ///
 open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
 
+  // MARK: - Typealias
   public typealias Scope = State
   public typealias Dispatcher = DispatcherBase<State, Activity>
   public typealias ScopedDispatcher<Scope: Equatable> = ScopedDispatcherBase<State, Activity, Scope>
@@ -119,6 +120,8 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
   public let logger: StoreLogger?
   public let sanitizer: RuntimeSanitizer
     
+  // MARK: - Initializers
+  
   /// An initializer
   /// - Parameters:
   ///   - initialState: A state instance that will be modified by the first commit.
@@ -161,6 +164,8 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
     preconditionFailure("Using the reference type for the state is restricted. it must be a value type to run correctly.")
     
   }
+
+  // MARK: - Middleware
   
   /// Registers a middleware.
   /// MIddleware can execute additional operations unified with mutations.
@@ -172,128 +177,7 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
     }
   }
 
-  /// Receives mutation
-  ///
-  /// - Parameters:
-  ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
-  @inline(__always)
-  func _receive<Result>(
-    mutation: (inout InoutRef<State>) throws -> Result
-  ) rethrows -> Result {
-                
-    let signpost = VergeSignpostTransaction("Store.commit")
-    defer {
-      signpost.end()
-    }
-       
-    let warnings: Set<VergeConcurrency.SynchronizationTracker.Warning>
-    if RuntimeSanitizer.global.isRecursivelyCommitDetectionEnabled {
-      warnings = tracker.register()
-    } else {
-      warnings = .init()
-    }
-    
-    defer {
-      if RuntimeSanitizer.global.isRecursivelyCommitDetectionEnabled {
-        tracker.unregister()
-      }
-    }
-    
-    var valueFromMutation: Result!
-    var elapsed: CFTimeInterval = 0
-    var commitLog: CommitLog?
-    
-    let __sanitizer__ = sanitizer
-    
-    /** a ciritical session */
-    try _backingStorage._update { (state) -> Storage<Changes<State>>.UpdateResult in
-            
-      let startedTime = CFAbsoluteTimeGetCurrent()
-      defer {
-        elapsed = CFAbsoluteTimeGetCurrent() - startedTime
-      }
-
-      var current = state.primitive
-
-      let updateResult = try withUnsafeMutablePointer(to: &current) { (pointer) -> Storage<Changes<State>>.UpdateResult in
-
-        var inoutRef = InoutRef<State>.init(pointer)
-
-        let result = try mutation(&inoutRef)
-        valueFromMutation = result
-
-        /**
-         Checks if the state has been modified
-         */
-        guard inoutRef.nonatomic_hasModified else {
-          // No emits update event
-          return .nothingUpdates
-        }
-        
-        /**
-         Applying by middlewares
-         */
-        self.middlewares.forEach { middleware in
-          middleware.mutate(state: &inoutRef)
-        }
-                
-        /**
-         Make a new state
-         */
-        state = state.makeNextChanges(
-          with: pointer.pointee,
-          from: inoutRef.traces,
-          modification: inoutRef.modification ?? .indeterminate
-        )
-        
-        if __sanitizer__.isRecursivelyCommitDetectionEnabled {
-          if warnings.contains(.reentrancyAnomaly) {
-            os_log(
-              """
-⚠️ [Verge Error] Detected another commit recursively from the commit.
-This breaks the order of the states that receiving in the sink.
-
-You might be doing commit inside the sink at the same Store.
-In this case, Using dispatch solve this issue.
-
-Mutation: (%@)
-""",
-              log: VergeOSLogs.debugLog,
-              type: .error,
-              String(describing: inoutRef.traces)
-            )
-            __sanitizer__.onDidFindRuntimeError(.recursiveleyCommit(storeName: name, traces: inoutRef.traces))
-          }
-        }
-        
-        commitLog = CommitLog(storeName: self.name, traces: inoutRef.traces, time: elapsed)
-
-        return .updated
-      }
-
-      return updateResult
-
-    }
-       
-    if let logger = logger, let _commitLog = commitLog {
-      logger.didCommit(log: _commitLog, sender: self)
-    }
-    
-    return valueFromMutation
-  }
- 
-  @inline(__always)
-  func _send(
-    activity: Activity,
-    trace: ActivityTrace
-  ) {
-    
-    _activityEmitter.accept(activity)
-    
-    let log = ActivityLog(storeName: self.name, trace: trace)
-    logger?.didSendActivity(log: log, sender: self)
-  }
- 
+  // MARK: - CustomReflectable
   public var customMirror: Mirror {
     return Mirror(
       self,
@@ -310,129 +194,8 @@ Mutation: (%@)
   public func asStore() -> Store<State, Activity> {
     self
   }
-  
-  func _sinkState(
-    dropsFirst: Bool = false,
-    queue: TargetQueueType,
-    receive: @escaping (Changes<State>) -> Void
-  ) -> VergeAnyCancellable {
-        
-    let executor = queue.executor()
-    
-    var latestStateWrapper: Changes<State>? = nil
-    
-    let __sanitizer__ = sanitizer
-    
-    let lock = VergeConcurrency.UnfairLock()
-    
-    /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
-    /// To get recursive updates that comes from first call receive closure.
-    let cancellable = _backingStorage.sinkEvent { (event) in
-      switch event {
-      case .willUpdate:
-        break
-      case .didUpdate(let receivedState):
-        
-        executor {
-          
-          lock.lock()
-          
-          var resolvedReceivedState = receivedState
-          
-          // To escaping from critical issue
-          if let latestState = latestStateWrapper {
-            if latestState.version <= receivedState.version {
-              /*
-               No issues case:
-               It has received newer version than previous version
-               */
-              latestStateWrapper = receivedState
-            } else {
-              
-              /*
-               Serious problem case:
-               Received an older version than the state received before.
-               To recover this case, send latest version state with dropping previous value in order to make `ifChanged` returns always true.
-               */
-              resolvedReceivedState = latestState.droppedPrevious()
-              
-              if __sanitizer__.isSanitizerStateReceivingByCorrectOrder {
-                
-                sanitizerQueue.async {
-                  __sanitizer__.onDidFindRuntimeError(
-                    .recoveredStateFromReceivingOlderVersion(
-                      latestState: latestState,
-                      receivedState: receivedState
-                    )
-                  )
-                  
-                  os_log(
-                    """
-⚠️ [Verge Error] Received older version(%d) value rather than latest received version(%d).
 
-The root cause might be from the following things:
-- Committed concurrently from multiple threads.
-
-To solve, make sure to commit in series, for example using DispatchQueue.
-
-Verge can't use a lock to process serially because the dead-lock will happen in some of the cases.
-RxSwift's BehaviorSubject takes the same deal.
-
-Regarding: Extra commit was dispatched inside sink synchronously
-This issue has been fixed by https://github.com/VergeGroup/Verge/pull/222
----
-
-Received older version (%d): (%@)
-
-Latest Version (%d): (%@)
-
-===
-""",
-                    log: VergeOSLogs.debugLog,
-                    type: .error,
-                    receivedState.version,
-                    latestState.version,
-                    receivedState.version,
-                    String(describing: receivedState.traces),
-                    latestState.version,
-                    String(describing: latestState.traces)
-                  )
-                }
-              }
-            }
-            
-          } else {
-            // first item
-            latestStateWrapper = receivedState
-          }
-          
-          lock.unlock()
-          
-          receive(resolvedReceivedState)
-        }
-              
-      case .willDeinit:
-        break
-      }
-    }
-
-    if !dropsFirst {
-      
-      let value = _backingStorage.value.droppedPrevious()
-                
-      executor {
-        lock.lock()
-        latestStateWrapper = value
-        lock.unlock()
-        // this closure might contains some mutations.
-        // It depends outside usages.
-        receive(value)
-      }
-    }
-
-    return .init(cancellable)
-
-  }
+  // MARK: - Subscribings
   
   /// Subscribe the state changes
   ///
@@ -470,21 +233,6 @@ Latest Version (%d): (%@)
     }
   }
 
-  func _sinkState<Accumulate>(
-    scan: Scan<Changes<State>, Accumulate>,
-    dropsFirst: Bool = false,
-    queue: TargetQueueType,
-    receive: @escaping (Changes<State>, Accumulate) -> Void
-  ) -> VergeAnyCancellable {
-
-    _sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
-
-      let accumulate = scan.accumulate(changes)
-      receive(changes, accumulate)
-    }
-
-  }
-    
   /// Subscribe the state changes
   ///
   /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
@@ -590,5 +338,268 @@ Latest Version (%d): (%@)
     taskManager.task(key: key, mode: mode, priority: priority, action)
     
   }
+ 
+  // MARK: - Internal
+    
+  /// Receives mutation
+  ///
+  /// - Parameters:
+  ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
+  @inline(__always)
+  func _receive<Result>(
+    mutation: (inout InoutRef<State>) throws -> Result
+  ) rethrows -> Result {
+    
+    let signpost = VergeSignpostTransaction("Store.commit")
+    defer {
+      signpost.end()
+    }
+    
+    let warnings: Set<VergeConcurrency.SynchronizationTracker.Warning>
+    if RuntimeSanitizer.global.isRecursivelyCommitDetectionEnabled {
+      warnings = tracker.register()
+    } else {
+      warnings = .init()
+    }
+    
+    defer {
+      if RuntimeSanitizer.global.isRecursivelyCommitDetectionEnabled {
+        tracker.unregister()
+      }
+    }
+    
+    var valueFromMutation: Result!
+    var elapsed: CFTimeInterval = 0
+    var commitLog: CommitLog?
+    
+    let __sanitizer__ = sanitizer
+    
+    /** a ciritical session */
+    try _backingStorage._update { (state) -> Storage<Changes<State>>.UpdateResult in
+      
+      let startedTime = CFAbsoluteTimeGetCurrent()
+      defer {
+        elapsed = CFAbsoluteTimeGetCurrent() - startedTime
+      }
+      
+      var current = state.primitive
+      
+      let updateResult = try withUnsafeMutablePointer(to: &current) { (pointer) -> Storage<Changes<State>>.UpdateResult in
+        
+        var inoutRef = InoutRef<State>.init(pointer)
+        
+        let result = try mutation(&inoutRef)
+        valueFromMutation = result
+        
+        /**
+         Checks if the state has been modified
+         */
+        guard inoutRef.nonatomic_hasModified else {
+          // No emits update event
+          return .nothingUpdates
+        }
+        
+        /**
+         Applying by middlewares
+         */
+        self.middlewares.forEach { middleware in
+          middleware.mutate(state: &inoutRef)
+        }
+        
+        /**
+         Make a new state
+         */
+        state = state.makeNextChanges(
+          with: pointer.pointee,
+          from: inoutRef.traces,
+          modification: inoutRef.modification ?? .indeterminate
+        )
+        
+        if __sanitizer__.isRecursivelyCommitDetectionEnabled {
+          if warnings.contains(.reentrancyAnomaly) {
+            os_log(
+              """
+⚠️ [Verge Error] Detected another commit recursively from the commit.
+This breaks the order of the states that receiving in the sink.
+
+You might be doing commit inside the sink at the same Store.
+In this case, Using dispatch solve this issue.
+
+Mutation: (%@)
+""",
+              log: VergeOSLogs.debugLog,
+              type: .error,
+              String(describing: inoutRef.traces)
+            )
+            __sanitizer__.onDidFindRuntimeError(.recursiveleyCommit(storeName: name, traces: inoutRef.traces))
+          }
+        }
+        
+        commitLog = CommitLog(storeName: self.name, traces: inoutRef.traces, time: elapsed)
+        
+        return .updated
+      }
+      
+      return updateResult
+      
+    }
+    
+    if let logger = logger, let _commitLog = commitLog {
+      logger.didCommit(log: _commitLog, sender: self)
+    }
+    
+    return valueFromMutation
+  }
+  
+  @inline(__always)
+  func _send(
+    activity: Activity,
+    trace: ActivityTrace
+  ) {
+    
+    _activityEmitter.accept(activity)
+    
+    let log = ActivityLog(storeName: self.name, trace: trace)
+    logger?.didSendActivity(log: log, sender: self)
+  }
+  
+  func _sinkState(
+    dropsFirst: Bool = false,
+    queue: TargetQueueType,
+    receive: @escaping (Changes<State>) -> Void
+  ) -> VergeAnyCancellable {
+    
+    let executor = queue.executor()
+    
+    var latestStateWrapper: Changes<State>? = nil
+    
+    let __sanitizer__ = sanitizer
+    
+    let lock = VergeConcurrency.UnfairLock()
+    
+    /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
+    /// To get recursive updates that comes from first call receive closure.
+    let cancellable = _backingStorage.sinkEvent { (event) in
+      switch event {
+      case .willUpdate:
+        break
+      case .didUpdate(let receivedState):
+        
+        executor {
+          
+          lock.lock()
+          
+          var resolvedReceivedState = receivedState
+          
+          // To escaping from critical issue
+          if let latestState = latestStateWrapper {
+            if latestState.version <= receivedState.version {
+              /*
+               No issues case:
+               It has received newer version than previous version
+               */
+              latestStateWrapper = receivedState
+            } else {
+              
+              /*
+               Serious problem case:
+               Received an older version than the state received before.
+               To recover this case, send latest version state with dropping previous value in order to make `ifChanged` returns always true.
+               */
+              resolvedReceivedState = latestState.droppedPrevious()
+              
+              if __sanitizer__.isSanitizerStateReceivingByCorrectOrder {
+                
+                sanitizerQueue.async {
+                  __sanitizer__.onDidFindRuntimeError(
+                    .recoveredStateFromReceivingOlderVersion(
+                      latestState: latestState,
+                      receivedState: receivedState
+                    )
+                  )
+                  
+                  os_log(
+                    """
+⚠️ [Verge Error] Received older version(%d) value rather than latest received version(%d).
+
+The root cause might be from the following things:
+- Committed concurrently from multiple threads.
+
+To solve, make sure to commit in series, for example using DispatchQueue.
+
+Verge can't use a lock to process serially because the dead-lock will happen in some of the cases.
+RxSwift's BehaviorSubject takes the same deal.
+
+Regarding: Extra commit was dispatched inside sink synchronously
+This issue has been fixed by https://github.com/VergeGroup/Verge/pull/222
+---
+
+Received older version (%d): (%@)
+
+Latest Version (%d): (%@)
+
+===
+""",
+                    log: VergeOSLogs.debugLog,
+                    type: .error,
+                    receivedState.version,
+                    latestState.version,
+                    receivedState.version,
+                    String(describing: receivedState.traces),
+                    latestState.version,
+                    String(describing: latestState.traces)
+                  )
+                }
+              }
+            }
+            
+          } else {
+            // first item
+            latestStateWrapper = receivedState
+          }
+          
+          lock.unlock()
+          
+          receive(resolvedReceivedState)
+        }
+        
+      case .willDeinit:
+        break
+      }
+    }
+    
+    if !dropsFirst {
+      
+      let value = _backingStorage.value.droppedPrevious()
+      
+      executor {
+        lock.lock()
+        latestStateWrapper = value
+        lock.unlock()
+        // this closure might contains some mutations.
+        // It depends outside usages.
+        receive(value)
+      }
+    }
+    
+    return .init(cancellable)
+    
+  }
+    
+  func _sinkState<Accumulate>(
+    scan: Scan<Changes<State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: TargetQueueType,
+    receive: @escaping (Changes<State>, Accumulate) -> Void
+  ) -> VergeAnyCancellable {
+    
+    _sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+      
+      let accumulate = scan.accumulate(changes)
+      receive(changes, accumulate)
+    }
+    
+  }
   
 }
+

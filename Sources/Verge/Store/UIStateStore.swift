@@ -19,18 +19,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-/**
- A store that optimized for only using in UI thread.
- No using locks.
- */
+/// A store that optimized for only using in UI thread.
+/// No using locks.
+@MainActor
 public final class UIStateStore<State: Equatable, Activity>: Store<State, Activity> {
 
-  public init(
+  public nonisolated init(
     initialState: State,
     logger: StoreLogger? = nil
   ) {
-    super.init(initialState: initialState, backingStorageRecursiveLock: VergeNoLock().asAny(), logger: logger)
+    super.init(
+      initialState: initialState,
+      backingStorageRecursiveLock: VergeNoLock().asAny(),
+      logger: logger
+    )
   }
 
 }
 
+@propertyWrapper
+@MainActor
+public struct UIState<State: Equatable>: Sendable {
+
+  private let store: UIStateStore<State, Never>
+
+  public nonisolated init(wrappedValue: State) {
+    self.store = .init(initialState: wrappedValue)
+  }
+
+  // MARK: - PropertyWrapper
+
+  public var wrappedValue: State {
+    get { store.primitiveState }
+    set {
+      store.commit {
+        $0.replace(with: newValue)
+      }
+    }
+  }
+
+  public var projectedValue: UIStateStore<State, Never> {
+    return store
+  }
+  
+}

@@ -16,7 +16,7 @@ final class CachedMapTests: XCTestCase {
   struct Entity {
     let id: String
   }
-
+    
   final class ViewModel: Equatable {
 
     static func == (lhs: ViewModel, rhs: ViewModel) -> Bool {
@@ -26,9 +26,9 @@ final class CachedMapTests: XCTestCase {
     init(entity: Entity) {
     }
   }
-
-  func testCacheAvailability() {
-
+    
+  func testCacheAvailability() {    
+    
     let storage = CachedMapStorage<Entity, ViewModel>.init(keySelector: \.id)
 
     let fetchedEntities: [Entity] = (0..<100).map { Entity(id: $0.description) }
