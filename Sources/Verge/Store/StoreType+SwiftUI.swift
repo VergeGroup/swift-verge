@@ -43,6 +43,17 @@ extension BindingDerived {
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension StoreType {
+  
+  public func binding() -> SwiftUI.Binding<State> {
+    .init(get: { [self /* source store lives until binding released */] in
+      return self.primitiveState
+    }, set: { [weak self] value in
+      self?.asStore().commit {
+        $0[keyPath: \.self] = value
+      }
+    })
+  }
+  
   /// Generates a SwiftUI.Binding that gets and updates the StoreType.State.
   /// Usage:
   ///
@@ -54,11 +65,8 @@ extension StoreType {
   ///   - mutation: A closure to update the state.
   ///   If the closure is nil, state will be automatically updated.
   /// - Returns: The result of binding
-  public func binding<T>(_ keypath: WritableKeyPath<State, T>, with mutation: ((T) -> Void)? = nil) -> Binding<T> {
-    .init(get: { [weak self] in
-      guard let self = self else {
-        fatalError("The Store should be retained by the view until the view is released.")
-      }
+  public func binding<T>(_ keypath: WritableKeyPath<State, T>, with mutation: ((T) -> Void)? = nil) -> SwiftUI.Binding<T> {
+    .init(get: { [self /* source store lives until binding released */] in
       return self.primitiveState[keyPath: keypath]
     }, set: { [weak self] value in
       if let mutation = mutation {
@@ -85,7 +93,7 @@ extension StoreComponentType {
   ///   - mutation: A closure to update the state.
   ///   If the closure is nil, state will be automatically updated.
   /// - Returns: The result of binding
-  public func binding<T>(_ keypath: WritableKeyPath<Self.WrappedStore.State, T>, with mutation: ((T) -> Void)? = nil) -> Binding<T> {
+  public func binding<T>(_ keypath: WritableKeyPath<Self.WrappedStore.State, T>, with mutation: ((T) -> Void)? = nil) -> SwiftUI.Binding<T> {
     store.binding(keypath, with: mutation)
   }
 }
