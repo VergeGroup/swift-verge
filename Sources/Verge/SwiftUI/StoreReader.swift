@@ -3,7 +3,13 @@ import Foundation
 import SwiftUI
 
 /**
+ For SwiftUI - A View that reads a ``Store`` including ``Derived``.
+ It updates its content when reading properties have been updated.
  
+ Technically, it observes what properties used in making content closure as KeyPath.
+ ``ReadTracker`` can get those using dynamicMemberLookup.
+ Store emits events of updated state, StoreReader filters them with current using KeyPaths.
+ Therefore functions of the state are not available in this situation.
  */
 public struct StoreReader<StateType: Equatable, Content: View>: View {
   
