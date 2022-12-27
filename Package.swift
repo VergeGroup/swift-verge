@@ -21,6 +21,7 @@ let package = Package(
     .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.0.0"),
     .package(url: "https://github.com/apple/swift-docc-plugin.git", branch: "main"),
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
+    .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.9.3")
   ],
   targets: [
     .target(
@@ -54,7 +55,7 @@ let package = Package(
     .testTarget(name: "VergeClassicTests", dependencies: ["VergeClassic"]),
     .testTarget(name: "VergeORMTests", dependencies: ["VergeORM"]),
     .testTarget(name: "VergeRxTests", dependencies: ["VergeRx", "VergeClassic", "VergeORM"]),
-    .testTarget(name: "VergeTests", dependencies: ["Verge"]),
+    .testTarget(name: "VergeTests", dependencies: ["Verge", "ViewInspector"]),
     .testTarget(name: "VergeTinyTests", dependencies: ["VergeTiny"]),
   ],
   swiftLanguageVersions: [.v5]
