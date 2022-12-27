@@ -28,15 +28,6 @@
       }
     },
     {
-      "identity" : "fetchimage",
-      "kind" : "remoteSourceControl",
-      "location" : "git@github.com:kean/FetchImage.git",
-      "state" : {
-        "revision" : "b9ea4f9f97a4bc9fde452cea277d25d0a4f8f6df",
-        "version" : "0.2.1"
-      }
-    },
-    {
       "identity" : "jayson",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/muukii/JAYSON.git",
@@ -52,15 +43,6 @@
       "state" : {
         "revision" : "c263811c1f3dbf002be9bd83107f7cdc38992b26",
         "version" : "15.0.3"
-      }
-    },
-    {
-      "identity" : "nuke",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kean/Nuke.git",
-      "state" : {
-        "revision" : "a2a56211cd80614e1ac90bf2e76c5329f4f6b3d0",
-        "version" : "9.1.2"
       }
     },
     {
@@ -97,6 +79,15 @@
       "state" : {
         "revision" : "b4307ba0b6425c0ba4178e138799946c3da594f8",
         "version" : "6.5.0"
+      }
+    },
+    {
+      "identity" : "swift-atomics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-atomics.git",
+      "state" : {
+        "revision" : "ff3d2212b6b093db7f177d0855adbc4ef9c5f036",
+        "version" : "1.0.3"
       }
     },
     {
