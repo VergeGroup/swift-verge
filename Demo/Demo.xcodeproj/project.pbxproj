@@ -25,13 +25,13 @@
 		4B28055A27318D1200DA4FBB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B28055927318D1200DA4FBB /* ContentView.swift */; };
 		4B28055C27318D1300DA4FBB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B28055B27318D1300DA4FBB /* Assets.xcassets */; };
 		4B28055F27318D1300DA4FBB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B28055E27318D1300DA4FBB /* Preview Assets.xcassets */; };
+		4B41114B295AC9EB00AEFE60 /* DemoStateReader2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B41114A295AC9EB00AEFE60 /* DemoStateReader2.swift */; };
 		4B7149E724A4FC90006EB6D5 /* Demo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B7149E524A4FC90006EB6D5 /* Demo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B714A9524A4FD51006EB6D5 /* SpotifyUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */; };
 		4B714A9624A4FD51006EB6D5 /* SpotifyUIKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B714AA724A4FD61006EB6D5 /* SpotifyService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714AA024A4FD61006EB6D5 /* SpotifyService.framework */; };
 		4B714AA824A4FD61006EB6D5 /* SpotifyService.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B714AA024A4FD61006EB6D5 /* SpotifyService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B714AB024A4FE19006EB6D5 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714AAF24A4FE19006EB6D5 /* CombineExt */; };
-		4B714AC624A4FE37006EB6D5 /* FetchImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714AC524A4FE37006EB6D5 /* FetchImage */; };
 		4B714AE324A4FF2C006EB6D5 /* import.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714AC724A4FF2C006EB6D5 /* import.swift */; };
 		4B714AE424A4FF2C006EB6D5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714AC924A4FF2C006EB6D5 /* Preview Assets.xcassets */; };
 		4B714AE524A4FF2C006EB6D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B714ACA24A4FF2C006EB6D5 /* Assets.xcassets */; };
@@ -85,7 +85,6 @@
 		4B714B7224A4FF92006EB6D5 /* RefreshTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5424A4FF91006EB6D5 /* RefreshTokenProvider.swift */; };
 		4B714B7324A4FF92006EB6D5 /* BackendStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5524A4FF91006EB6D5 /* BackendStackManager.swift */; };
 		4B714B7424A4FF92006EB6D5 /* RealmObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B5624A4FF92006EB6D5 /* RealmObjects.swift */; };
-		4B714B7624A4FFAF006EB6D5 /* FetchImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714B7524A4FFAF006EB6D5 /* FetchImage */; };
 		4B714B8124A50006006EB6D5 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 4B714B8024A50006006EB6D5 /* CombineExt */; };
 		4B714B9424A50065006EB6D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B714B8224A50064006EB6D5 /* AppDelegate.swift */; };
 		4B714B9524A50065006EB6D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B714B8424A50064006EB6D5 /* LaunchScreen.storyboard */; };
@@ -191,6 +190,7 @@
 		4B28055927318D1200DA4FBB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4B28055B27318D1300DA4FBB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B28055E27318D1300DA4FBB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4B41114A295AC9EB00AEFE60 /* DemoStateReader2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoStateReader2.swift; sourceTree = "<group>"; };
 		4B7149E224A4FC90006EB6D5 /* Demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B7149E524A4FC90006EB6D5 /* Demo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Demo.h; sourceTree = "<group>"; };
 		4B7149E624A4FC90006EB6D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -306,7 +306,6 @@
 				4B111B6828C3E87800E80C01 /* Moya in Frameworks */,
 				4BADC23328C3E626003C0079 /* JAYSON in Frameworks */,
 				4BADC23628C3E652003C0079 /* Bulk in Frameworks */,
-				4B714AC624A4FE37006EB6D5 /* FetchImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,7 +340,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B714B7624A4FFAF006EB6D5 /* FetchImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -376,6 +374,7 @@
 			children = (
 				4B19FCAC252E33A0003A628D /* StateReaderDemoApp.swift */,
 				4B19FCAE252E33A0003A628D /* ContentView.swift */,
+				4B41114A295AC9EB00AEFE60 /* DemoStateReader2.swift */,
 				4B19FCB0252E33A1003A628D /* Assets.xcassets */,
 				4B19FCB5252E33A1003A628D /* Info.plist */,
 				4B19FCB2252E33A1003A628D /* Preview Content */,
@@ -737,7 +736,6 @@
 			name = Demo;
 			packageProductDependencies = (
 				4B714AAF24A4FE19006EB6D5 /* CombineExt */,
-				4B714AC524A4FE37006EB6D5 /* FetchImage */,
 				4BADC23228C3E626003C0079 /* JAYSON */,
 				4BADC23528C3E652003C0079 /* Bulk */,
 				4BADC23728C3E652003C0079 /* BulkLogger */,
@@ -828,7 +826,6 @@
 			);
 			name = SpotifyUIKit;
 			packageProductDependencies = (
-				4B714B7524A4FFAF006EB6D5 /* FetchImage */,
 			);
 			productName = SpotifyUIKit;
 			productReference = 4B714A8E24A4FD51006EB6D5 /* SpotifyUIKit.framework */;
@@ -915,7 +912,6 @@
 			mainGroup = 4B7149D824A4FC90006EB6D5;
 			packageReferences = (
 				4B714AAE24A4FE19006EB6D5 /* XCRemoteSwiftPackageReference "CombineExt" */,
-				4B714AC424A4FE37006EB6D5 /* XCRemoteSwiftPackageReference "FetchImage" */,
 				4BADC22C28C3E5F4003C0079 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				4BADC23128C3E625003C0079 /* XCRemoteSwiftPackageReference "JAYSON" */,
 				4BADC23428C3E652003C0079 /* XCRemoteSwiftPackageReference "Bulk" */,
@@ -1015,6 +1011,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B19FCAF252E33A0003A628D /* ContentView.swift in Sources */,
+				4B41114B295AC9EB00AEFE60 /* DemoStateReader2.swift in Sources */,
 				4B19FCAD252E33A0003A628D /* StateReaderDemoApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1786,14 +1783,6 @@
 				minimumVersion = 1.2.0;
 			};
 		};
-		4B714AC424A4FE37006EB6D5 /* XCRemoteSwiftPackageReference "FetchImage" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:kean/FetchImage.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.1;
-			};
-		};
 		4BADC22C28C3E5F4003C0079 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
@@ -1872,16 +1861,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4B714AAE24A4FE19006EB6D5 /* XCRemoteSwiftPackageReference "CombineExt" */;
 			productName = CombineExt;
-		};
-		4B714AC524A4FE37006EB6D5 /* FetchImage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4B714AC424A4FE37006EB6D5 /* XCRemoteSwiftPackageReference "FetchImage" */;
-			productName = FetchImage;
-		};
-		4B714B7524A4FFAF006EB6D5 /* FetchImage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4B714AC424A4FE37006EB6D5 /* XCRemoteSwiftPackageReference "FetchImage" */;
-			productName = FetchImage;
 		};
 		4B714B8024A50006006EB6D5 /* CombineExt */ = {
 			isa = XCSwiftPackageProductDependency;

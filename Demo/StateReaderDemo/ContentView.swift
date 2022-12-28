@@ -16,7 +16,7 @@ final class ViewModel: StoreComponentType, ObservableObject {
     var dummyCount = 0
   }
 
-  let store = DefaultStore(initialState: .init())
+  let store = DefaultStore(initialState: .init(), logger: DefaultStoreLogger())
 
   init() {
     print("init")
@@ -37,7 +37,8 @@ struct ContentView: View {
   }
 
   var body: some View {
-    RootView(viewModel: viewModel)
+    DemoStateReader2()
+//    RootView(viewModel: viewModel)
   }
 }
 
