@@ -157,6 +157,10 @@ final class MyViewModel: StoreComponentType {
 
 ### In SwiftUI
 
+Use **StoreReader** to read a state of the store.  
+It optimizes frequency of update its content for performance wise.
+The content closure runs when reading properties have changed or parnet tree updated.
+
 ```swift
 struct MyView: View {
 
@@ -164,7 +168,7 @@ struct MyView: View {
 
   var body: some View {
     // ✅ Uses `StateReader` to read the state this clarifies where components need the state.
-    StateReader(store) { state in
+    StoreReader(store) { state in
       Text(state.name)
       Button(action: {
         self.store.myAction()
@@ -175,17 +179,6 @@ struct MyView: View {
   }
 }
 ```
-
-`StateReader` supports to derive a part of the state like below.
-
-```swift
-StateReader(store.derived(.map(\.nested))) { state in
-  ...
-}
-```
-
-> 🤲 Verge has not gathered enough experience in SwiftUI. Please let us know your ideas that improve Verge using in SwiftUI! (in Discussions or Issues)
-
 
 ### In UIKit
 
