@@ -6,10 +6,18 @@ final class StoreMiddlewareTests: XCTestCase {
   func testCommitHook() {
         
     let store = DemoStore()
+        
+    store.add(middleware: .modify { @Sendable modifyingState, current in
+      current.ifChanged(\.count) { _ in
+        modifyingState.count += 1
+      }
+    })
     
-    store.add(middleware: .unifiedMutation({ (state) in
-      state.count += 1
-    }))
+    store.add(middleware: .modify { @Sendable modifyingState, current in
+      current.ifChanged(\.name) { _ in
+        modifyingState.count = 100
+      }
+    })
     
     XCTAssertEqual(store.state.count, 0)
     
@@ -18,7 +26,12 @@ final class StoreMiddlewareTests: XCTestCase {
     }
     
     XCTAssertEqual(store.state.count, 2)
+    
+    store.commit {
+      $0.name = "A"
+    }
      
+    XCTAssertEqual(store.state.count, 100)
   }
   
 }

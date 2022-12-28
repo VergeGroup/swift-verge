@@ -115,7 +115,7 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
   /// Specified or generated automatically from file and line.
   let name: String
   
-  private var middlewares: [StoreMiddleware<State>] = []
+  private var middlewares: [AnyStoreMiddleware<State>] = []
   
   public let logger: StoreLogger?
   public let sanitizer: RuntimeSanitizer
@@ -170,10 +170,10 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
   /// Registers a middleware.
   /// MIddleware can execute additional operations unified with mutations.
   ///
-  public func add(middleware: StoreMiddleware<State>) {
+  public func add(middleware: some StoreMiddlewareType<State>) {
     // use lock
     _backingStorage.update { _ in
-      middlewares.append(middleware)
+      middlewares.append(.init(modify: middleware.modify))
     }
   }
 
@@ -384,9 +384,9 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
       
       var current = state.primitive
       
-      let updateResult = try withUnsafeMutablePointer(to: &current) { (pointer) -> Storage<Changes<State>>.UpdateResult in
+      let updateResult = try withUnsafeMutablePointer(to: &current) { (stateMutablePointer) -> Storage<Changes<State>>.UpdateResult in
         
-        var inoutRef = InoutRef<State>.init(pointer)
+        var inoutRef = InoutRef<State>.init(stateMutablePointer)
         
         let result = try mutation(&inoutRef)
         valueFromMutation = result
@@ -403,14 +403,20 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
          Applying by middlewares
          */
         self.middlewares.forEach { middleware in
-          middleware.mutate(state: &inoutRef)
+          
+          let intermediate = state.makeNextChanges(
+            with: stateMutablePointer.pointee,
+            from: inoutRef.traces,
+            modification: inoutRef.modification ?? .indeterminate
+          )
+          middleware.modify(modifyingState: &inoutRef, current: intermediate)
         }
         
         /**
          Make a new state
          */
         state = state.makeNextChanges(
-          with: pointer.pointee,
+          with: stateMutablePointer.pointee,
           from: inoutRef.traces,
           modification: inoutRef.modification ?? .indeterminate
         )
