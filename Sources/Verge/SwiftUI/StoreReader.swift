@@ -13,14 +13,14 @@ import SwiftUI
  */
 public struct StoreReader<StateType: Equatable, Content: View>: View {
   
-  @_StateObject private var node: Node
+  @_StateObject private var node: StoreReaderComponents<StateType>.Node
   
-  public typealias ContentMaker = @MainActor (inout ReadTracker) -> Content
+  public typealias ContentMaker = @MainActor (inout StoreReaderComponents<StateType>.ReadTracker) -> Content
   
   private let content: ContentMaker
   
   private init(
-    node: @autoclosure @escaping () -> Node,
+    node: @autoclosure @escaping () -> StoreReaderComponents<StateType>.Node,
     content: @escaping ContentMaker
   ) {
     self._node = .init(wrappedValue: node())
@@ -64,7 +64,7 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
   }
 }
 
-extension StoreReader {
+public enum StoreReaderComponents<StateType: Equatable> {
   
   @dynamicMemberLookup
   public struct ReadTracker {
@@ -93,7 +93,7 @@ extension StoreReader {
   }
   
   @MainActor
-  private final class Node: ObservableObject {
+  fileprivate final class Node: ObservableObject {
     
     nonisolated var objectWillChange: ObservableObjectPublisher {
       _publisher
@@ -199,6 +199,7 @@ extension StoreReader {
     
   }
 }
+
 
 @available(iOS, deprecated: 14.0)
 @propertyWrapper
