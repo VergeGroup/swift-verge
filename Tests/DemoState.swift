@@ -42,18 +42,6 @@ struct DemoState: Equatable, Sendable {
 
 import Verge
 
-extension DemoState: ExtendedStateType {
-
-  struct Extended: ExtendedType {
-
-    static let instance = Extended()
-    
-    let nameCount = Field.Computed(.map(\.name.count))
-
-  }
-
-}
-
 final class DemoStore: Verge.Store<DemoState, Never> {
 
   init() {
