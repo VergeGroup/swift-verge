@@ -243,61 +243,7 @@ final class DerivedTests: XCTestCase {
     wait(for: [updateCount, update1, update0], timeout: 10)
     withExtendedLifetime(sub) {}
   }
-    
-  /// combine 1 Stored and 1 Computed
-  func testCombine2computed() {
-
-    let wrapper = DemoStore()
-    
-    let s0 = wrapper.derived(.map { $0.count }, queue: .passthrough)
-    let s1 = wrapper.derived(.map { $0.computed.nameCount }, queue: .passthrough)
-    
-    let updateCount = expectation(description: "updatecount")
-    updateCount.assertForOverFulfill = true
-    updateCount.expectedFulfillmentCount = 3
-    
-    let update0 = expectation(description: "")
-    update0.assertForOverFulfill = true
-    update0.expectedFulfillmentCount = 2
-    
-    let update1 = expectation(description: "")
-    update1.assertForOverFulfill = true
-    update1.expectedFulfillmentCount = 2
-    
-    let d = Derived.combined(s0, s1, queue: .passthrough)
-    
-    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (0, 0))
-    
-    let sub = d.sinkValue { (changes) in
-      
-      updateCount.fulfill()
-      
-      changes.ifChanged(\.0) { _0 in
-        update0.fulfill()
-      }
-      
-      changes.ifChanged(\.1) { _1 in
-        update1.fulfill()
-      }
-      
-    }
-    
-    wrapper.commit {
-      $0.count += 1
-    }
-    
-    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (1, 0))
-    
-    wrapper.commit {
-      $0.name = "next"
-    }
-    
-    XCTAssert((d.primitiveValue.0.primitive, d.primitiveValue.1.primitive) == (1, 4))
-    
-    wait(for: [updateCount, update1, update0], timeout: 10)
-    withExtendedLifetime(sub) {}
-  }
-      
+          
 }
 
 final class DerivedCacheTests: XCTestCase {
