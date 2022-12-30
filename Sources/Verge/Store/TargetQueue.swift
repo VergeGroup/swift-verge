@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 
 import Foundation
+@_implementationOnly import Atomics
 
 public protocol TargetQueueType: AnyObject {
   func executor() -> (@escaping () -> Void) -> Void
@@ -103,13 +104,13 @@ extension TargetQueueType where Self == TargetQueue {
   /// Enqueue first item on current-thread(synchronously).
   /// From then, using specified queue.
   public static func startsFromCurrentThread<Queue: TargetQueueType>(andUse queue: Queue) -> TargetQueue {
-    let numberEnqueued = VergeConcurrency.AtomicReference.init(initialValue: false)
+    let numberEnqueued = ManagedAtomic<Bool>.init(true)
     
     let execute = queue.executor()
     
     return .init { workItem in
       
-      let isFirst = numberEnqueued.compareAndSet(expect: false, newValue: true)
+      let isFirst = numberEnqueued.loadThenLogicalAnd(with: false, ordering: .relaxed)
       
       if isFirst {
         workItem()
@@ -136,19 +137,19 @@ extension TargetQueueType where Self == MainActorTargetQueue {
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
   /// This create isolated queue against using `.main`.
   public static func mainIsolated() -> MainActorTargetQueue {
-    let numberEnqueued = VergeConcurrency.AtomicInt(initialValue: 0)
+    let numberEnqueued = ManagedAtomic<UInt64>.init(0)
     
     return .init { workItem in
       
-      let previousNumberEnqueued = numberEnqueued.getAndIncrement()
+      let previousNumberEnqueued = numberEnqueued.loadThenWrappingIncrement(ordering: .sequentiallyConsistent)
       
       if DispatchQueue.isMain && previousNumberEnqueued == 0 {
         workItem()
-        numberEnqueued.decrementAndGet()
+        numberEnqueued.wrappingDecrement(ordering: .sequentiallyConsistent)
       } else {
         DispatchQueue.main.async {
           workItem()
-          numberEnqueued.decrementAndGet()
+          numberEnqueued.wrappingDecrement(ordering: .sequentiallyConsistent)
         }
       }
     }

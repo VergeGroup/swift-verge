@@ -21,6 +21,7 @@
 
 import Foundation
 import os
+@_implementationOnly import Atomics
 
 public final class EventEmitterCancellable: Hashable, CancellableType {
   
@@ -59,7 +60,7 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   
   private let queue: VergeConcurrency.UnfairLockAtomic<ContiguousArray<Event>> = .init(.init())
         
-  private let flag = VergeConcurrency.AtomicInt(initialValue: 0)
+  private let flag = ManagedAtomic<Bool>.init(false)
 
   private var deinitHandlers: VergeConcurrency.UnfairLockAtomic<[() -> Void]> = .init([])
   
@@ -87,8 +88,8 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
     queue.modify {
       $0.append(event)
     }
-        
-    if flag.compareAndSet(expect: 0, newValue: 1) {
+
+    if flag.compareExchange(expected: false, desired: true, ordering: .sequentiallyConsistent).exchanged {
             
       while let event: Event = queue.modify({
         if $0.isEmpty == false {
@@ -107,7 +108,7 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
        a conjunction of enqueue and dequeue
        */
       
-      flag.compareAndSet(expect: 1, newValue: 0)
+      _ = flag.compareExchange(expected: true, desired: false, ordering: .sequentiallyConsistent)
     } else {
       // enqueue only
     }
