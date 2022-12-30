@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 
 import Foundation
+@_implementationOnly import Atomics
 
 @available(*, deprecated, renamed: "EdgeType")
 public typealias FragmentType = EdgeType
@@ -30,11 +31,11 @@ public typealias Fragment = Edge
 public protocol EdgeType : Equatable {
   associatedtype State
   var wrappedValue: State { get }
-  var globalID: Int { get }
+  var globalID: UInt64 { get }
   var version: UInt64 { get }
 }
 
-private let _edge_global_counter = VergeConcurrency.AtomicInt(initialValue: 0)
+private let _edge_global_counter = ManagedAtomic<UInt64>.init(0)
 
 /**
  A wrapper structure provides equatability as False-negative.
@@ -85,7 +86,7 @@ public struct Edge<Value: Sendable>: EdgeType, Sendable {
     }
   }
 
-  public let globalID: Int
+  public let globalID: UInt64
   
   private(set) public var counter: NonAtomicCounter = .init()
   private let middleware: Middleware?
@@ -105,8 +106,8 @@ public struct Edge<Value: Sendable>: EdgeType, Sendable {
     middleware: Middleware? = nil,
     comparer: @escaping @Sendable (Value, Value) -> Bool = { @Sendable _, _ in false }
   ) {
-
-    self.globalID = _edge_global_counter.getAndIncrement()
+    
+    self.globalID = _edge_global_counter.loadThenWrappingIncrement(ordering: .relaxed)
     self.middleware = middleware
     self.comparerForNonEquatable = comparer
 

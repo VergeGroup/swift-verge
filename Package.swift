@@ -30,22 +30,23 @@ let package = Package(
 //        .product(name: "Atomics", package: "swift-atomics")
       ]
     ),
-    .target(name: "VergeObjcBridge", dependencies: []),
     .target(name: "VergeTiny", dependencies: []),
-    .target(name: "Verge", dependencies: ["VergeObjcBridge", "VergeTaskManager"]),
+    .target(name: "Verge", dependencies: [
+      .product(name: "Atomics", package: "swift-atomics"),
+      "VergeTaskManager"
+    ]
+    ),
     .target(
       name: "VergeClassic",
       dependencies: [
-        "VergeObjcBridge",
         "VergeRx",
       ]
     ),
-    .target(name: "VergeORM", dependencies: ["Verge", "VergeObjcBridge"]),
+    .target(name: "VergeORM", dependencies: ["Verge"]),
     .target(
       name: "VergeRx",
       dependencies: [
         "Verge",
-        "VergeObjcBridge",
         .product(name: "RxSwift", package: "RxSwift"),
         .product(name: "RxCocoa", package: "RxSwift"),
       ]

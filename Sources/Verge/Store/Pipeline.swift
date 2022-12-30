@@ -21,8 +21,6 @@
 
 import Foundation
 
-private let counter = VergeConcurrency.AtomicInt(initialValue: 0)
-
 public enum ContinuousResult<Output> {
   case new(Output)
   case noUpdates
