@@ -119,6 +119,8 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
   
   public let logger: StoreLogger?
   public let sanitizer: RuntimeSanitizer
+  
+  private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>) -> Void
     
   // MARK: - Initializers
   
@@ -145,9 +147,40 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
+    self.externalOperation = { @Sendable _, _ in }
 
     super.init()
        
+  }
+  
+  public init(
+    name: String? = nil,
+    initialState: State,
+    backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
+    logger: StoreLogger? = nil,
+    sanitizer: RuntimeSanitizer? = nil,
+    _ file: StaticString = #file,
+    _ line: UInt = #line
+  ) where State : StateType {
+    
+    self._backingStorage = .init(
+      .init(old: nil, new: initialState),
+      recursiveLock: backingStorageRecursiveLock ?? VergeConcurrency.RecursiveLock().asAny()
+    )
+    
+    self.logger = logger
+    self.sanitizer = sanitizer ?? RuntimeSanitizer.global
+    self.name = name ?? "\(file):\(line)"
+    self.externalOperation = { @Sendable inoutRef, state in
+      let intermediate = state.makeNextChanges(
+        with: inoutRef.wrapped,
+        from: inoutRef.traces,
+        modification: inoutRef.modification ?? .indeterminate
+      )
+      State.reduce(modifying: &inoutRef, current: intermediate)
+    }
+    
+    super.init()
   }
   
   /// An initializer for preventing using the refence type as a state.
@@ -392,6 +425,7 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
         valueFromMutation = result
         
         /**
+         Step-1:
          Checks if the state has been modified
          */
         guard inoutRef.nonatomic_hasModified else {
@@ -400,6 +434,14 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
         }
         
         /**
+         Step-2:
+         Reduce modifying state with externalOperation
+         */
+       
+        externalOperation(&inoutRef, state)
+              
+        /**
+         Step-3
          Applying by middlewares
          */
         self.middlewares.forEach { middleware in
@@ -606,6 +648,8 @@ Latest Version (%d): (%@)
     }
     
   }
-  
+      
 }
+
+
 

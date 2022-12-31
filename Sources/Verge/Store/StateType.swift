@@ -21,10 +21,27 @@
 
 import Foundation
 
-/// A protocol provides stuff to help to mutate itself.
-/// Not required to use with Store's state
-///
-/// You may use ExtendedStateType to define computed property with caching to be performant.
+/**
+ An opt-in protocol that indicates it's used as a state of the State.
+ */
 public protocol StateType: Equatable {
-  
+
+  /**
+   A chance of modifying state alongside the commit.
+   You may use this to make another value that consists of the state's self.
+   It's better to use it for better performance to get the value rather than using computed property.
+   */
+  @Sendable
+  static func reduce(modifying: inout InoutRef<Self>, current: Changes<Self>)
+}
+
+extension StateType {
+
+  /**
+   Default empty implementation
+   */
+  @Sendable
+  public static func reduce(modifying: inout InoutRef<Self>, current: Changes<Self>) {
+
+  }
 }
