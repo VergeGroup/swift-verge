@@ -532,29 +532,17 @@ extension Changes {
 
     var value: Value
 
-    let cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath: Any]>
-
     init(
       value: Value
     ) {
       self.value = value
-      cachedComputedValueStorage = .init([:])
     }
-
-    private init(
-      value: Value,
-      cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath: Any]>
-    ) {
-      self.value = value
-      self.cachedComputedValueStorage = cachedComputedValueStorage
-    }
-
+ 
     deinit {}
 
     func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerBox {
       return .init(
-        value: try transform(value),
-        cachedComputedValueStorage: cachedComputedValueStorage
+        value: try transform(value)
       )
     }
 
