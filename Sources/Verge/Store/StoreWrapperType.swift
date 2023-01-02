@@ -56,7 +56,7 @@ public protocol StoreComponentType: StoreType, DispatcherType {
   associatedtype Activity = WrappedStore.Activity
     
   associatedtype Scope
-  var store: WrappedStore { get }
+  nonisolated var store: WrappedStore { get }
 }
 
 /// It would be deprecated in the future.
@@ -73,22 +73,18 @@ extension StoreComponentType where State == WrappedStore.State, Activity == Wrap
   }
 }
 
+@MainActor
 extension StoreComponentType {
 
   /// Returns a current state with thread-safety.
   ///
   /// It causes locking and unlocking with a bit cost.
   /// It may cause blocking if any other is doing mutation or reading.
-  public nonisolated var state: Changes<WrappedStore.State> {
+  public var state: Changes<WrappedStore.State> {
     store.asStore().state
   }
 
-  @available(*, deprecated, renamed: "state")
-  public nonisolated var changes: Changes<WrappedStore.State> {
-    store.asStore().changes
-  }
-  
-  public nonisolated var primitiveState: WrappedStore.State {
+  public var primitiveState: WrappedStore.State {
     store.primitiveState
   }
   
@@ -100,7 +96,7 @@ extension StoreComponentType {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkState(
+  public func sinkState(
     dropsFirst: Bool = false,
     queue: TargetQueue,
     receive: @escaping (Changes<WrappedStore.State>) -> Void
@@ -116,7 +112,7 @@ extension StoreComponentType {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkState(
+  public func sinkState(
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<WrappedStore.State>) -> Void
@@ -133,7 +129,7 @@ extension StoreComponentType {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkState<Accumulate>(
+  public func sinkState<Accumulate>(
     scan: Scan<Changes<WrappedStore.State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: TargetQueue,
@@ -151,7 +147,7 @@ extension StoreComponentType {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkState<Accumulate>(
+  public func sinkState<Accumulate>(
     scan: Scan<Changes<WrappedStore.State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
@@ -163,7 +159,7 @@ extension StoreComponentType {
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkActivity(
+  public func sinkActivity(
     queue: TargetQueue,
     receive: @escaping (WrappedStore.Activity) -> Void
   ) -> VergeAnyCancellable  {
@@ -173,7 +169,7 @@ extension StoreComponentType {
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkActivity(
+  public func sinkActivity(
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (WrappedStore.Activity) -> Void
   ) -> VergeAnyCancellable  {
@@ -186,6 +182,7 @@ extension StoreComponentType {
 import Combine
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
+@MainActor
 extension StoreComponentType where State == WrappedStore.State, Activity == WrappedStore.Activity {
   
   public func statePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {

@@ -1,6 +1,7 @@
 
 import XCTest
 
+@MainActor
 final class StoreMiddlewareTests: XCTestCase {
     
   func testCommitHook() {

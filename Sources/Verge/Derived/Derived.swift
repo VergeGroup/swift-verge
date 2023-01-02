@@ -26,6 +26,7 @@ import class Foundation.NSString
 import Combine
 #endif
 
+@MainActor
 public protocol DerivedType {
   associatedtype Value: Equatable
 
@@ -46,7 +47,8 @@ public protocol DerivedType {
 
  Conforms to Equatable that compares pointer personality.
  */
-public class Derived<Value: Equatable>: _VergeObservableObjectBase, DerivedType, @unchecked Sendable {
+@MainActor
+public class Derived<Value: Equatable>: _VergeObservableObjectBase, DerivedType {
 
   /// Returns Derived object that provides constant value.
   ///

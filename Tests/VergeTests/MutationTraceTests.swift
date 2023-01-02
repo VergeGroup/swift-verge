@@ -3,6 +3,7 @@ import XCTest
 
 import Verge
 
+@MainActor
 final class MutationTraceTests: XCTestCase {
   
   func testOneCommit() {

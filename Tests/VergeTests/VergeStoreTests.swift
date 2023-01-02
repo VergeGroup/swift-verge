@@ -13,6 +13,7 @@ import Verge
 import Combine
 
 @available(iOS 13.0, *)
+@MainActor
 final class VergeStoreTests: XCTestCase {
       
   struct State: Equatable, StateType {
@@ -212,11 +213,14 @@ final class VergeStoreTests: XCTestCase {
     let exp = expectation(description: "async")
 
     DispatchQueue.global().async {
-      store.commit {
-        $0.inner.name = "xxx"
+      Task {
+        await store.commit {
+          $0.inner.name = "xxx"
+        }
+        let name = await store.state.inner.name
+        XCTAssertEqual(name, "xxx")
+        exp.fulfill()
       }
-      XCTAssertEqual(store.state.inner.name, "xxx")
-      exp.fulfill()
     }
 
     wait(for: [exp], timeout: 1)

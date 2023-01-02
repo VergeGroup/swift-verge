@@ -4,6 +4,7 @@ import XCTest
 @MainActor
 fileprivate func isInMain() {}
 
+@MainActor
 final class IsolatedContextTests: XCTestCase {
   
   func testMainActorSubscription() {

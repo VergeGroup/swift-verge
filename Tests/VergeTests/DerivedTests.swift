@@ -19,6 +19,7 @@ private protocol MyEquatableProtocol: Equatable {
   
 }
 
+@MainActor
 final class DerivedTests: XCTestCase {
 
   func testSlice() {
@@ -246,6 +247,7 @@ final class DerivedTests: XCTestCase {
           
 }
 
+@MainActor
 final class DerivedCacheTests: XCTestCase {
   
   func test_identify_keypath() {

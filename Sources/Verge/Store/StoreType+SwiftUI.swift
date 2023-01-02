@@ -93,6 +93,7 @@ extension StoreComponentType {
   ///   - mutation: A closure to update the state.
   ///   If the closure is nil, state will be automatically updated.
   /// - Returns: The result of binding
+  @MainActor
   public func binding<T>(_ keypath: WritableKeyPath<Self.WrappedStore.State, T>, with mutation: ((T) -> Void)? = nil) -> SwiftUI.Binding<T> {
     store.binding(keypath, with: mutation)
   }

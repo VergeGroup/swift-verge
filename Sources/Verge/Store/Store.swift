@@ -28,11 +28,12 @@ import Combine
 #endif
 
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
+@MainActor
 public protocol StoreType: AnyObject {
   associatedtype State: Equatable
   associatedtype Activity = Never
   
-  func asStore() -> Store<State, Activity>
+  nonisolated func asStore() -> Store<State, Activity>
   
   var primitiveState: State { get }
 }
@@ -54,7 +55,8 @@ private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.san
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
+@MainActor
+open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, StoreType, DispatcherType {
 
   // MARK: - Typealias
   public typealias Scope = State
@@ -129,7 +131,7 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
   ///   - initialState: A state instance that will be modified by the first commit.
   ///   - backingStorageRecursiveLock: A lock instance for mutual exclusion.
   ///   - logger: You can also use `DefaultLogger.shared`.
-  public init(
+  public nonisolated init(
     name: String? = nil,
     initialState: State,
     backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
@@ -153,7 +155,7 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
        
   }
   
-  public init(
+  public nonisolated init(
     name: String? = nil,
     initialState: State,
     backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
@@ -215,19 +217,6 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
     _backingStorage.update { _ in
       middlewares.append(.init(modify: middleware.modify))
     }
-  }
-
-  // MARK: - CustomReflectable
-  public var customMirror: Mirror {
-    return Mirror(
-      self,
-      children: KeyValuePairs.init(
-        dictionaryLiteral:
-          ("stateVersion", state.version),
-        ("middlewares", middlewares)
-      ),
-      displayStyle: .class
-    )
   }
   
   @inline(__always)

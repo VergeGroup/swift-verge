@@ -10,6 +10,7 @@ import XCTest
 
 import VergeRx
 
+@MainActor
 class VergeRxTests: XCTestCase {
   
   func testChangesObbservable() {

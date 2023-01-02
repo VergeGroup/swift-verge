@@ -11,6 +11,7 @@ extension Derived: ReactiveCompatible {
   
 }
 
+@MainActor
 extension Reactive where Base : DerivedType {
   
   private var store: Store<Base.Value, Never> {

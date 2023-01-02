@@ -11,6 +11,7 @@ import Combine
 #endif
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
+@MainActor
 final class DerivedTests: XCTestCase {
 
   private var subscriptions = Set<AnyCancellable>()

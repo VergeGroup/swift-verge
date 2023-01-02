@@ -22,6 +22,7 @@
 /**
  Dispatcher allows us to update the state of the Store from away the store and to manage dependencies to create Mutation.
  */
+@MainActor
 open class ScopedDispatcherBase<State: Equatable, Activity, Scope: Equatable>: DispatcherType {
 
   /// A writable key path to shortly read and modify the state
@@ -39,10 +40,8 @@ open class ScopedDispatcherBase<State: Equatable, Activity, Scope: Equatable>: D
   public var rootState: Changes<State> {
     return store.state
   }
-   
-  private var logger: StoreLogger? {
-    store.logger
-  }
+  
+  private nonisolated let logger: StoreLogger?
   
   let name: String
   
@@ -56,12 +55,13 @@ open class ScopedDispatcherBase<State: Equatable, Activity, Scope: Equatable>: D
     self.store = targetStore
     self.scope = scope
     self.name = name ?? "\(file):\(line)"
-      
+    self.logger = targetStore.logger
+    
     let log = DidCreateDispatcherLog(storeName: targetStore.name, dispatcherName: self.name)
     logger?.didCreateDispatcher(log: log, sender: self)
 
   }
-
+  
   deinit {
     let log = DidDestroyDispatcherLog(storeName: store.name, dispatcherName: name)
     logger?.didDestroyDispatcher(log: log, sender: self)

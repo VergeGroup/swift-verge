@@ -15,6 +15,7 @@ import VergeRx
 import Verge
 import VergeORM
 
+@MainActor
 class ChangedOperatorTests: XCTestCase {
   
   let store = Store<DemoState, Never>.init(initialState: .init(), logger: nil)

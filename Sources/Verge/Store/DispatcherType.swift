@@ -22,6 +22,7 @@
 import Foundation
 
 // It would be renamed as StoreContextType
+@MainActor
 public protocol DispatcherType {
   associatedtype WrappedStore: StoreType
   associatedtype Scope: Equatable = WrappedStore.State
@@ -30,12 +31,14 @@ public protocol DispatcherType {
   var scope: WritableKeyPath<WrappedStore.State, Scope> { get }
 }
 
+@MainActor
 extension DispatcherType where Scope == WrappedStore.State {
   public var scope: WritableKeyPath<WrappedStore.State, WrappedStore.State> {
     \WrappedStore.State.self
   }
 }
 
+@MainActor
 extension DispatcherType {
   /**
     Subscribe the state that scoped

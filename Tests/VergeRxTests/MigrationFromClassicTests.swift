@@ -76,6 +76,7 @@ enum MigrationExample {
       }
     }
     
+    @MainActor
     static func sample() {
       
       let viewModel = ViewModel()
@@ -156,6 +157,7 @@ enum MigrationExample {
       
     }
 
+    @MainActor
     static func sample() {
       
       let viewModel = MyViewModel()
@@ -203,7 +205,7 @@ enum MigrationExample {
       }
     }
     
-    
+    @MainActor
     static func sample() {
       
       let viewModel = ViewModel()

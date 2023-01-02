@@ -12,6 +12,7 @@ import XCTest
 import Verge
 import VergeRx
 
+@MainActor
 class ReproduceDeadlockTests: XCTestCase {
   
   class StoreWrapper: StoreWrapperType {
@@ -33,8 +34,10 @@ class ReproduceDeadlockTests: XCTestCase {
         let group = DispatchGroup()
         group.enter()
         DispatchQueue.global().async {
-          store.commit { $0.count += 1 }
-          group.leave()
+          Task {
+            await store.commit { $0.count += 1 }
+            group.leave()
+          }
         }
         group.wait()
       }

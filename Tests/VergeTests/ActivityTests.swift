@@ -15,6 +15,7 @@ import Verge
 
 import Combine
 
+@MainActor
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 class ActivityTests: XCTestCase {
   
@@ -39,6 +40,7 @@ class ActivityTests: XCTestCase {
   
   private var subscriptions = Set<AnyCancellable>()
   
+  @MainActor
   func testSend() {
     
     let store = Store()

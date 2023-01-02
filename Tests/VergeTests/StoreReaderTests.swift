@@ -4,9 +4,9 @@ import SwiftUI
 import Verge
 import ViewInspector
 
+@MainActor
 final class StoreReaderTests: XCTestCase {
-  
-      
+        
   func test_increment_counter() throws {
     
     let store = Store<State, Never>(initialState: .init())

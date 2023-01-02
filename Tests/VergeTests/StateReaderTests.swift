@@ -14,6 +14,7 @@ import Verge
 
 /** Not working */
 @available(iOS 13, *)
+@MainActor
 final class StateReaderTests: XCTestCase {
 
   struct HandlerView: View {

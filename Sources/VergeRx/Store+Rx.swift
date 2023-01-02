@@ -13,6 +13,7 @@ fileprivate var storage_subject: Void?
 extension Storage: ReactiveCompatible {}
 extension Store: ReactiveCompatible {}
 
+@MainActor
 extension Reactive where Base : StoreType {
   
   private var storage: StateStorage<Changes<Base.State>> {
@@ -368,11 +369,10 @@ extension ReadonlyStorage {
 extension Reactive where Base : StoreType {
 
   public func commitBinder<S>(
-    scheduler: ImmediateSchedulerType = MainScheduler(),
     mutate: @escaping (inout InoutRef<Base.State>, S) -> Void
   ) -> Binder<S> {
 
-    return Binder<S>(base, scheduler: scheduler) { t, e in
+    return Binder<S>(base, scheduler: MainScheduler()) { @MainActor(unsafe) t, e in
       t.asStore().commit { s in
         mutate(&s, e)
       }
@@ -381,11 +381,10 @@ extension Reactive where Base : StoreType {
   }
 
   public func commitBinder<S>(
-    scheduler: ImmediateSchedulerType = MainScheduler(),
     mutate: @escaping (inout InoutRef<Base.State>, S?) -> Void
   ) -> Binder<S?> {
 
-    return Binder<S?>(base, scheduler: scheduler) { t, e in
+    return Binder<S?>(base, scheduler: MainScheduler()) { @MainActor(unsafe) t, e in
       t.asStore().commit { s in
         mutate(&s, e)
       }
@@ -394,11 +393,10 @@ extension Reactive where Base : StoreType {
   }
 
   public func commitBinder<S>(
-    scheduler: ImmediateSchedulerType = MainScheduler(),
     target: WritableKeyPath<Base.State, S>
   ) -> Binder<S> {
 
-    return Binder<S>(base, scheduler: scheduler) { t, e in
+    return Binder<S>(base, scheduler: MainScheduler()) { @MainActor(unsafe) t, e in
       t.asStore().commit { s in
         s[keyPath: target] = e
       }
@@ -407,11 +405,10 @@ extension Reactive where Base : StoreType {
   }
 
   public func commitBinder<S>(
-    scheduler: ImmediateSchedulerType = MainScheduler(),
     target: WritableKeyPath<Base.State, S?>
   ) -> Binder<S?> {
 
-    return Binder<S?>(base, scheduler: scheduler) { t, e in
+    return Binder<S?>(base, scheduler: MainScheduler()) { @MainActor(unsafe) t, e in
       t.asStore().commit { s in
         s[keyPath: target] = e
       }

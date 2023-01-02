@@ -12,6 +12,7 @@ import XCTest
 
 import Combine
 
+@MainActor
 @available(iOS 13, *)
 final class ConcurrencyTests: XCTestCase {
   func optout_testOrderOfEvents() {
@@ -47,9 +48,11 @@ final class ConcurrencyTests: XCTestCase {
 
     DispatchQueue.global().async {
       DispatchQueue.concurrentPerform(iterations: 100) { i in
-        store.commit {
-          $0.count = i
-          dispatched.append(i)
+        Task {
+          await store.commit {
+            $0.count = i
+            dispatched.append(i)
+          }
         }
       }
 

@@ -2,6 +2,7 @@ import Foundation
 import Verge
 import XCTest
 
+@MainActor
 final class StateTypeTests: XCTestCase {
   
   func test_init() {

@@ -2,6 +2,7 @@
 import XCTest
 import Verge
 
+@MainActor
 final class PipelineTests: XCTestCase {
   
   func test_MapPipeline() {

@@ -228,6 +228,7 @@ public struct DerivedResult<Entity: EntityType, Derived: AnyObject> {
 /**
  Do not retain, use as just method-chain
  */
+@MainActor
 public struct DatabaseContext<Store: StoreType, Database: DatabaseType> {
   
   let keyPath: KeyPath<Store.State, Database>
@@ -240,6 +241,7 @@ public struct DatabaseContext<Store: StoreType, Database: DatabaseType> {
     
 }
 
+@MainActor
 @dynamicMemberLookup
 public struct DatabaseDynamicMembers<Store: StoreType> {
   

@@ -12,6 +12,7 @@ import Verge
 import VergeRx
 import XCTest
 
+@MainActor
 final class SubjectCompletionTests: XCTestCase {
 
   func testStateObsevableCompletion() {

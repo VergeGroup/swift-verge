@@ -12,6 +12,7 @@ import Verge
  It compares that performance.
  It would be good if the first 1 test-case is fast without unaffected from a huge dictionary.
  */
+@MainActor
 class PerformanceTests: XCTestCase {
 
   func testMutationOnAnotherProperty() {
