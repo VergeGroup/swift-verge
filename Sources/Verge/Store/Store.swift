@@ -163,8 +163,14 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
     _ line: UInt = #line
   ) where State : StateType {
     
+    // making reduced state
+    var _initialState = initialState
+    var inoutRef = InoutRef<State>.init(&_initialState)
+    State.reduce(modifying: &inoutRef, current: .init(old: nil, new: initialState))
+    let reduced = inoutRef.wrapped
+        
     self._backingStorage = .init(
-      .init(old: nil, new: initialState),
+      .init(old: nil, new: reduced),
       recursiveLock: backingStorageRecursiveLock ?? VergeConcurrency.RecursiveLock().asAny()
     )
     
@@ -181,6 +187,7 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
     }
     
     super.init()
+
   }
   
   /// An initializer for preventing using the refence type as a state.
