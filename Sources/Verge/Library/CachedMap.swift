@@ -102,7 +102,7 @@ public final class CachedMapStorage<Source, Target> {
     }
   }
 
-  public func concurrentMap<C: Collection>(from collection: C, makeNew: (C.Element) throws -> Target) -> ConcurrentMapResult<Target> where C.Element == Source {
+  public func concurrentMap<C: Collection>(from collection: C, makeNew: @Sendable (C.Element) throws -> Target) -> ConcurrentMapResult<Target> where C.Element == Source {
 
     outerLock.lock()
     defer {
@@ -118,7 +118,10 @@ public final class CachedMapStorage<Source, Target> {
 
     /// Concurrent perform without locking
     let result = newObjectResults.withUnsafeMutableBufferPointer { (buffer) in
-      Array(collection)._concurrentMap { (element, i) throws -> Target in
+      
+      let baseAddress = buffer.baseAddress!
+      
+      return Array(collection)._concurrentMap { (element, i) throws -> Target in
         let key = generateKey(element)
 
         if let cached = currentCache[key], !updateCondition(cached.source, element) {
@@ -128,7 +131,7 @@ public final class CachedMapStorage<Source, Target> {
         let newObject = try makeNew(element)
         let artifact = Artifact(source: element, value: newObject)
 
-        let targetPointer = buffer.baseAddress!.advanced(by: i)
+        let targetPointer = baseAddress.advanced(by: i)
         targetPointer.pointee = (key, artifact)
 
         return newObject
@@ -207,7 +210,7 @@ extension Collection {
 
    - Author: Verge
    */
-  public func cachedConcurrentMap<U>(using storage: CachedMapStorage<Self.Element, U>, makeNew: (Self.Element) throws -> U) -> ConcurrentMapResult<U> {
+  public func cachedConcurrentMap<U>(using storage: CachedMapStorage<Self.Element, U>, makeNew: @Sendable (Self.Element) throws -> U) -> ConcurrentMapResult<U> {
     return storage.concurrentMap(from: self, makeNew: makeNew)
   }
 
@@ -215,7 +218,7 @@ extension Collection {
 
 extension Array {
 
-  fileprivate func _concurrentMap<U>(_ transform: (Element, Int) throws -> U) -> ConcurrentMapResult<U> {
+  fileprivate func _concurrentMap<U>(_ transform: @Sendable (Element, Int) throws -> U) -> ConcurrentMapResult<U> {
 
     var resultBuffer = [U?].init(repeating: nil, count: count)
     var errorsBuffer = [Error?].init(repeating: nil, count: count)
