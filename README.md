@@ -63,7 +63,7 @@ The word 'store-pattern' is used on [Vue.js documentation](https://vuejs.org/v2/
 **We're welcome to publish here your application which powered by Verge!**  
 Please Submit from Pull requests
 
-## Mininal usage exmaple - In UIView - UIViewController
+## Minimal usage example - In UIView - UIViewController
 
 State-management is everywhere, you can put a store and start state-management.
 
@@ -159,7 +159,7 @@ final class MyViewModel: StoreComponentType {
 
 Use **StoreReader** to read a state of the store.  
 It optimizes frequency of update its content for performance wise.
-The content closure runs when reading properties have changed or parnet tree updated.
+The content closure runs when reading properties have changed or parent tree updated.
 
 ```swift
 struct MyView: View {
@@ -255,7 +255,7 @@ Flux works with the multiple restricted rules top of the 'store-pattern'.
 
 ![store-pattern](https://user-images.githubusercontent.com/1888355/100537431-07951680-326c-11eb-93bd-4b9246fbeb96.png)
 
-This means we can start using like Flux without using Action, Muation payload values.  
+This means we can start using like Flux without using Action, Mutation payload values.  
 
 ```swift
 // ✌️ no needs to use.
@@ -283,7 +283,7 @@ store.increment()
 ```
 
 It can be easy start.  
-Of cource, we can create the layer to manage strict action and mutation payload on top of the Verge primitive layer.  
+Of course, we can create the layer to manage strict action and mutation payload on top of the Verge primitive layer.  
 Because 'store-pattern' is core-concept of Flux.
 
 --
@@ -348,7 +348,7 @@ pod 'Verge/Rx'
 These are separated with subspecs in Podspec.<br>
 After installed, these are merged into single module as `Verge`.
 
-To use Verge in your code, define import decralation following.
+To use Verge in your code, define import declaration following.
 
 ```swift
 import Verge
