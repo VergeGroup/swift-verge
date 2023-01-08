@@ -29,6 +29,7 @@ import Combine
 /**
  A descriptor view that indicates what reads state value from Store/Derived.
  */
+@available(*, deprecated, message: "Use StoreReader instead")
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 public struct StateReader<Value: Equatable, Content: View>: View {
 
