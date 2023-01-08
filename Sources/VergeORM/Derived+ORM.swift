@@ -573,7 +573,7 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
   // TODO: write inline
   private let noChangesComparer: Comparer<Database>
   private let index: (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>
-  private let storage: CachedMapStorage<Entity.EntityID, Entity.Derived> = .init(keySelector: \.raw)
+  private let storage: InstancePool<Entity.EntityID, Entity.Derived> = .init(keySelector: \.raw)
   private let makeDerived: (Entity.EntityID) -> Entity.Derived
   
   init(
@@ -603,8 +603,8 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
     let db = input.primitive[keyPath: keyPathToDatabase]
     let ids = index(db.indexes)
     
-    // TODO: O(n)
-    let result = ids.cachedMap(using: storage, makeNew: makeDerived)
+    // Complexity: O(n)
+    let result = ids.cachedMap(using: storage, sweepsUnused: true, makeNew: makeDerived)
     
     return result
     
@@ -622,8 +622,8 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
       
       let ids = index(state.primitive[keyPath: keyPathToDatabase].indexes)
       
-      // TODO: O(n)
-      let result = ids.cachedMap(using: storage, makeNew: makeDerived)
+      // Complexity: O(n)
+      let result = ids.cachedMap(using: storage, sweepsUnused: true, makeNew: makeDerived)
       
       return result
       
