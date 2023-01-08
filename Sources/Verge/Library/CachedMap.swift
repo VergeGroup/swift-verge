@@ -148,7 +148,7 @@ extension Collection {
    */
   public func cachedMap<U>(
     using pool: InstancePool<Self.Element, U>,
-    sweepsUnused: Bool,
+    sweepsUnused: Bool = false,
     makeNew: (Self.Element) throws -> U,
     update: (Self.Element, inout U) -> Void = { _, _ in }
   ) rethrows -> [U] {
@@ -166,7 +166,7 @@ extension Collection {
    */
   public func cachedCompactMap<U>(
     using pool: InstancePool<Self.Element, U>,
-    sweepsUnused: Bool,
+    sweepsUnused: Bool = false,
     makeNew: (Self.Element) throws -> U?,
     update: (Self.Element, inout U) -> Void = { _, _ in }
   ) rethrows -> [U] {
