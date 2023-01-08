@@ -325,35 +325,6 @@ This concept would help us to describe something that is not easy to describe as
 
 ## Installation
 
-### CocoaPods
-
-**Verge** (core module)
-
-```ruby
-pod 'Verge/Store'
-```
-
-**VergeORM**
-
-```ruby
-pod 'Verge/ORM'
-```
-
-**VergeRx**
-
-```ruby
-pod 'Verge/Rx'
-```
-
-These are separated with subspecs in Podspec.<br>
-After installed, these are merged into single module as `Verge`.
-
-To use Verge in your code, define import declaration following.
-
-```swift
-import Verge
-```
-
 ## SwiftPM
 
 Verge supports also SwiftPM.
