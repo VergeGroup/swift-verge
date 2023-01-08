@@ -29,39 +29,20 @@ final class CachedMapTests: XCTestCase {
     
   func testCacheAvailability() {    
     
-    let storage = CachedMapStorage<Entity, ViewModel>.init(keySelector: \.id)
+    let storage = InstancePool<Entity, ViewModel>.init(keySelector: \.id)
 
     let fetchedEntities: [Entity] = (0..<100).map { Entity(id: $0.description) }
 
-    let resultA = fetchedEntities.cachedMap(using: storage, makeNew: {
+    let resultA = fetchedEntities.cachedMap(using: storage, sweepsUnused: true, makeNew: {
       ViewModel(entity: $0)
     })
 
-    let resultB = fetchedEntities.cachedMap(using: storage, makeNew: {
+    let resultB = fetchedEntities.cachedMap(using: storage, sweepsUnused: true, makeNew: {
       XCTFail()
       return ViewModel(entity: $0)
     })
 
     XCTAssertEqual(resultA, resultB)
   }
-
-  func testCacheAvailabilityConcurrently() {
-
-    let storage = CachedMapStorage<Entity, ViewModel>.init(keySelector: \.id)
-
-    let fetchedEntities: [Entity] = (0..<100).map { Entity(id: $0.description) }
-
-    let resultA = fetchedEntities.cachedConcurrentMap(using: storage, makeNew: {
-      ViewModel(entity: $0)
-    })
-      .elements
-
-    let resultB = fetchedEntities.cachedConcurrentMap(using: storage, makeNew: {
-      XCTFail()
-      return ViewModel(entity: $0)
-    })
-      .elements
-
-    XCTAssertEqual(resultA, resultB)
-  }
+ 
 }
