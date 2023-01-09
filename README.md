@@ -27,12 +27,6 @@
   </a>
 </p>
 
-## News
-
-**Still in development**
-Next Verge implementation has started.  
-which uses swift-concurrency
-
 ## Requirements
 
 * Swift 5.7 +
