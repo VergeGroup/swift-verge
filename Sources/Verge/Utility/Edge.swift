@@ -55,7 +55,7 @@ private let _edge_global_counter = ManagedAtomic<UInt64>.init(0)
  */
 @propertyWrapper
 @dynamicMemberLookup
-public struct Edge<Value: Sendable>: EdgeType, Sendable {
+public struct Edge<Value>: EdgeType {
 
   public static func == (lhs: Edge<Value>, rhs: Edge<Value>) -> Bool {
     lhs.globalID == rhs.globalID && lhs.version == rhs.version || lhs.comparerForNonEquatable(lhs.wrappedValue, rhs.wrappedValue)
@@ -152,6 +152,10 @@ public struct Edge<Value: Sendable>: EdgeType, Sendable {
     }
   }
 
+}
+
+extension Edge : Sendable where Value : Sendable {
+  
 }
 
 extension Edge {
