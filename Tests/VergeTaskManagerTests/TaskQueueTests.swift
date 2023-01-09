@@ -37,5 +37,9 @@ final class TaskQueueTests: XCTestCase {
       try! await Task.sleep(nanoseconds: 1_000)
 //      XCTFail()
     }
+    
+    await queue.waitUntilAllItemProcessed()
+    
+    print("done")
   }
 }

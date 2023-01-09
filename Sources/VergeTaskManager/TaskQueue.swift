@@ -3,7 +3,7 @@ import Foundation
 
 public actor TaskQueue {
     
-  private var items: ContiguousArray<() async -> Void> = .init()
+  @Published private var items: ContiguousArray<() async -> Void> = .init()
   
   private var isTaskProcessing = false
   
@@ -91,6 +91,28 @@ public actor TaskQueue {
     Task {
       await self._addTask(priority: priority, operation: operation)
     }
+  }
+  
+  public func waitUntilAllItemProcessed() async {
+           
+    let stream = AsyncStream<ContiguousArray<() async -> Void>> { continuation in
+      
+      let cancellable = $items.sink { value in
+        continuation.yield(value)
+      }
+      
+      continuation.onTermination = { _ in
+        cancellable.cancel()
+      }
+      
+    }
+                
+    for await items in stream {
+      if items.isEmpty {
+        return
+      }
+    }
+        
   }
   
 }
