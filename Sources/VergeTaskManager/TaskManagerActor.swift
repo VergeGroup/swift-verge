@@ -45,7 +45,7 @@ public struct TaskKey: Hashable {
   
 }
 
-public final class TaskManager: @unchecked Sendable, CustomReflectable {
+public actor TaskManagerActor {
   
   public struct Configuration {
     
@@ -83,7 +83,11 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
   }
 
   deinit {
-    cancelAll()
+    for (_, task) in tasks {
+      task.cancel()
+    }
+    
+    tasks.removeAll()
   }
 
   // MARK: Public
@@ -93,18 +97,6 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
   /// Number of counts in current managing tasks
   public var count: Int {
     tasks.count
-  }
-
-  public var customMirror: Mirror {
-    Mirror.init(
-      self,
-      children: [
-        ("taskCount", tasks.count.description),
-        ("tasks", tasks.description)
-      ],
-      displayStyle: .struct,
-      ancestorRepresentation: .generated
-    )
   }
   
   public func isRunning(key: TaskKey) -> Bool {
@@ -118,22 +110,19 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
     _ action: @Sendable @escaping () async -> Void
   ) {
 
-    lock.lock()
-    defer {
-      lock.unlock()
-    }
-
     let internalID = TaskID.distinct()
 
     weak var weakSelf = self
 
-    let task = Task.detached(priority: priority) { [weakSelf] in
+    let task = Task(priority: priority) { [weakSelf] in
 
       await withTaskCancellationHandler {
         await action()
-        weakSelf?.unmanageTask(internalID: internalID)
+        await weakSelf?.unmanageTask(internalID: internalID)
       } onCancel: {
-        weakSelf?.unmanageTask(internalID: internalID)
+        Task {
+          await weakSelf?.unmanageTask(internalID: internalID)
+        }
       }
 
     }
@@ -153,12 +142,7 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
   }
 
   public func cancelAll() {
-
-    lock.lock()
-    defer {
-      lock.unlock()
-    }
-
+  
     for (_, task) in tasks {
       task.cancel()
     }
@@ -167,8 +151,6 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
   }
 
   // MARK: Private
-
-  private let lock = NSRecursiveLock()
 
   private var tasks: ContiguousArray<(DistinctID, any _Verge_TaskType)> = .init()
 

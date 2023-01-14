@@ -4,16 +4,17 @@ import VergeTaskManager
 
 final class TaskTests: XCTestCase {
   
+  @MainActor
   func testCancel() async {
     
-    let manager = TaskManager()
+    let manager = TaskManagerActor()
     
     let key = TaskKey.distinct()
     
     let firstTask = expectation(description: "cancelled")
     let nextTask = expectation(description: "cancelled")
     
-    manager.task(key: key, mode: .dropCurrent) {
+    await manager.task(key: key, mode: .dropCurrent) {
       await withTaskCancellationHandler {
         try? await Task.sleep(nanoseconds: 1_000_000_000)
       } onCancel: {
@@ -21,9 +22,12 @@ final class TaskTests: XCTestCase {
       }
     }
     
-    XCTAssertEqual(manager.count, 1)
+    do {
+      let count = await manager.count
+      XCTAssertEqual(count, 1)
+    }
     
-    manager.task(key: key, mode: .dropCurrent) {
+    await manager.task(key: key, mode: .dropCurrent) {
       await withTaskCancellationHandler {
         try? await Task.sleep(nanoseconds: 1_000_000_000)
         nextTask.fulfill()
@@ -32,24 +36,34 @@ final class TaskTests: XCTestCase {
       }
     }
     
-    XCTAssertEqual(manager.count, 1)
+    do {
+      let count = await manager.count
+      XCTAssertEqual(count, 1)
+    }
         
     wait(for: [firstTask], timeout: 2)
     
-    XCTAssertEqual(manager.count, 1)
+    do {
+      let count = await manager.count
+      XCTAssertEqual(count, 1)
+    }
     
     wait(for: [nextTask], timeout: 2)
     
-    XCTAssertEqual(manager.count, 0)
+    do {
+      let count = await manager.count
+      XCTAssertEqual(count, 0)
+    }
   }
-  
-  func testCancelAll() {
+
+  @MainActor
+  func testCancelAll() async {
     
-    let manager = TaskManager()
+    let manager = TaskManagerActor()
     
     let firstTask = expectation(description: "cancelled")
     
-    manager.task(key: .distinct(), mode: .dropCurrent) {
+    await manager.task(key: .distinct(), mode: .dropCurrent) {
       await withTaskCancellationHandler {
         try? await Task.sleep(nanoseconds: 1_000_000_000)
       } onCancel: {
@@ -57,8 +71,12 @@ final class TaskTests: XCTestCase {
       }
     }
     
-    manager.cancelAll()
-    XCTAssertEqual(manager.count, 0)
+    await manager.cancelAll()
+    
+    do {
+      let count = await manager.count
+      XCTAssertEqual(count, 0)
+    }
     
     wait(for: [firstTask], timeout: 2)
     

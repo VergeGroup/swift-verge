@@ -17,7 +17,7 @@ open class AsyncReducer<Result: Equatable, Partial>: StoreComponentType {
    
   public func task(
     key: VergeTaskManager.TaskKey = .distinct(),
-    mode: VergeTaskManager.TaskManager.Mode = .dropCurrent,
+    mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
     priority: TaskPriority = .userInitiated,
     _ operation: @Sendable @escaping () async -> Partial
   ) {
