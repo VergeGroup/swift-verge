@@ -1,7 +1,7 @@
 
 import Foundation
 
-public actor TaskQueue {
+public actor TaskQueueActor {
     
   @Published private var items: ContiguousArray<() async -> Void> = .init()
   

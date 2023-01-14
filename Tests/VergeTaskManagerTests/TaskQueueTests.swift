@@ -7,7 +7,7 @@ final class TaskQueueTests: XCTestCase {
   @MainActor
   func testQueue() async {
     
-    let queue = TaskQueue()
+    let queue = TaskQueueActor()
     
     let exp = expectation(description: "")
         
@@ -27,7 +27,7 @@ final class TaskQueueTests: XCTestCase {
   @MainActor
   func testCancel() async {
     
-    let queue = TaskQueue()
+    let queue = TaskQueueActor()
     
     let exp_1 = expectation(description: "1")
     
