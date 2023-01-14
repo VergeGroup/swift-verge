@@ -177,9 +177,3 @@ public final class TaskManager: @unchecked Sendable, CustomReflectable {
   }
 
 }
-
-public protocol _Verge_TaskType {
-  func cancel()
-}
-
-extension _Concurrency.Task: _Verge_TaskType {}
