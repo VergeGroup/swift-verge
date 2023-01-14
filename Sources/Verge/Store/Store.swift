@@ -358,7 +358,7 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
 
   // MARK: - Task
   
-  public let taskManager: TaskManager = .init()
+  public let taskManager: TaskManagerActor = .init()
   
   /**
    Adds an asynchronous task to perform.
@@ -370,13 +370,25 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
    */
   public func task(
     key: VergeTaskManager.TaskKey = .distinct(),
-    mode: VergeTaskManager.TaskManager.Mode = .dropCurrent,
+    mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
     priority: TaskPriority = .userInitiated,
     _ action: @Sendable @escaping () async -> Void
   ) {
     
-    taskManager.task(key: key, mode: mode, priority: priority, action)
+    Task {
+      await taskManager.task(key: key, mode: mode, priority: priority, action)
+    }
     
+  }
+  
+  public func task(
+    key: VergeTaskManager.TaskKey = .distinct(),
+    mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
+    priority: TaskPriority = .userInitiated,
+    _ action: @Sendable @escaping () async -> Void
+  ) async {
+    
+    await taskManager.task(key: key, mode: mode, priority: priority, action)
   }
  
   // MARK: - Internal
