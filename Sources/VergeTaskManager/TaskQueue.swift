@@ -28,9 +28,13 @@ public actor TaskQueue {
         return
       }
       
-      let item = self.items.removeFirst()
+      let item = self.items.first!
       
       await item()
+      
+      if self.items.isEmpty == false {
+        self.items.removeFirst()
+      }
             
       isTaskProcessing = false
       self.drain()
@@ -73,24 +77,20 @@ public actor TaskQueue {
     items.removeAll()
   }
   
-  public nonisolated func addTask(
+  public func addTask(
     priority: TaskPriority? = nil,
     operation: @escaping @Sendable () async -> Void
   ) {
         
-    Task {
-      await self._addTask(priority: priority, operation: operation)
-    }
+    self._addTask(priority: priority, operation: operation)
   }
   
-  public nonisolated func addTask(
+  public func addTask(
     priority: TaskPriority? = nil,
     operation: @escaping @Sendable () async throws -> Void
   ) {
     
-    Task {
-      await self._addTask(priority: priority, operation: operation)
-    }
+    self._addTask(priority: priority, operation: operation)
   }
   
   public func waitUntilAllItemProcessed() async {

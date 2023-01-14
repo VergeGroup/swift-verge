@@ -11,11 +11,11 @@ final class TaskQueueTests: XCTestCase {
     
     let exp = expectation(description: "")
         
-    queue.addTask {
+    await queue.addTask {
       try! await Task.sleep(nanoseconds: 1)
     }
     
-    queue.addTask {
+    await queue.addTask {
       try! await Task.sleep(nanoseconds: 1)
       exp.fulfill()
     }
@@ -29,16 +29,25 @@ final class TaskQueueTests: XCTestCase {
     
     let queue = TaskQueue()
     
-    queue.addTask {
+    let exp_1 = expectation(description: "1")
+    
+    await queue.addTask {
+      print("1")
       try! await Task.sleep(nanoseconds: 1_000)
+      exp_1.fulfill()
     }
     
-    queue.addTask {
+    await queue.addTask {
+      print("2")
       try! await Task.sleep(nanoseconds: 1_000)
-//      XCTFail()
+      XCTFail()
     }
+    
+    await queue.cancelAllTasks()
     
     await queue.waitUntilAllItemProcessed()
+    
+    wait(for: [exp_1], timeout: 12)
     
     print("done")
   }
