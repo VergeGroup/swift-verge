@@ -66,30 +66,79 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
 
 public enum StoreReaderComponents<StateType: Equatable> {
   
+  @MainActor
   @dynamicMemberLookup
   public struct ReadTracker {
     
+    typealias Detectors = [PartialKeyPath<StateType> : (Changes<StateType>) -> Bool]
+    
     private let wrapped: StateType
     
-    private(set) var consumedKeyPaths: Set<PartialKeyPath<StateType>> = .init()
+    private(set) var detectors: Detectors = [:]
     
     init(wrapped: __owned StateType) {
       self.wrapped = wrapped
     }
     
-    public subscript<T>(dynamicMember keyPath: KeyPath<StateType, T>) -> T {
+    /**
+     ✅ Equatable version
+     */
+    public subscript<T>(dynamicMember keyPath: KeyPath<StateType, T>) -> T where T : Equatable {
       mutating get {
-        consumedKeyPaths.insert(keyPath)
+        
+        if detectors[keyPath as PartialKeyPath<StateType>] == nil {
+          
+          let maybeChanged: (Changes<StateType>) -> Bool = { changes in
+            
+            switch changes.modification {
+            case .determinate(let keyPaths):
+              
+              /// modified but maybe value not changed.
+              let mayHasChanges = keyPaths.contains(keyPath)
+              
+              if mayHasChanges {
+                return true
+              }
+              
+              return changes.hasChanges({ $0.primitive[keyPath: keyPath] })
+              
+            case .indeterminate:
+              return true
+            case nil:
+              return true
+            }
+            
+          }
+          
+          detectors[keyPath] = maybeChanged
+        }
+        
         return wrapped[keyPath: keyPath]
       }
     }
     
-    public subscript<T>(dynamicMember keyPath: KeyPath<StateType, T?>) -> T? {
+    /**
+     ⚠️ Not equatable version.
+     */
+    public subscript<T>(dynamicMember keyPath: KeyPath<StateType, T>) -> T {
       mutating get {
-        consumedKeyPaths.insert(keyPath)
+         
+        if detectors[keyPath as PartialKeyPath<StateType>] == nil {
+          
+          let maybeChanged: (Changes<StateType>) -> Bool = { changes in
+            
+            return true
+            
+          }
+          
+          detectors[keyPath] = maybeChanged
+        }
+        
         return wrapped[keyPath: keyPath]
       }
+            
     }
+       
   }
   
   @MainActor
@@ -100,7 +149,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
     }
     
     /// nil means not loaded first yet
-    private var consumingKeyPaths: Set<PartialKeyPath<StateType>>?
+    private var detectors: ReadTracker.Detectors?
     
     private let _publisher: ObservableObjectPublisher = .init()
     private var cancellable: VergeAnyCancellable?
@@ -128,22 +177,17 @@ public enum StoreReaderComponents<StateType: Equatable> {
         /// consider to trigger update
         let shouldUpdate: Bool = {
           
-          guard let consumingKeyPaths = self.consumingKeyPaths else {
+          guard let detectors = self.detectors else {
             // through this filter to make content as a first time.
             return true
           }
           
-          switch state.modification {
-          case .determinate(let keyPaths):
-            
-            let hasChanges = keyPaths.intersection(consumingKeyPaths).isEmpty == false
-            
-            return hasChanges
-          case .indeterminate:
-            return true
-          case nil:
-            return true
+          let _shouldUpdate = detectors.contains {
+            $0.value(state)
           }
+                    
+          return _shouldUpdate
+          
         }()
         
         if shouldUpdate {
@@ -173,26 +217,8 @@ public enum StoreReaderComponents<StateType: Equatable> {
     {
       var tracker = ReadTracker(wrapped: currentValue.primitive)
       let content = make(&tracker)
-      
-#if DEBUG
-      if debug {
-        
-        if let consumingKeyPaths {
-          
-          let removedKeyPaths = consumingKeyPaths.subtracting(tracker.consumedKeyPaths)
-          let addedKeyPaths = tracker.consumedKeyPaths.subtracting(consumingKeyPaths)
-          
-          Log.debug(
-            .storeReader,
-            "[MakeContent] Consumed: \(tracker.consumedKeyPaths), Removed: \(removedKeyPaths), Added: \(addedKeyPaths)"
-          )
-        } else {
-          Log.debug(.storeReader, "[MakeContent] First load Consumed: \(tracker.consumedKeyPaths)")
-        }
-      }
-#endif
-      
-      consumingKeyPaths = tracker.consumedKeyPaths
+            
+      detectors = tracker.detectors
       
       return content
     }
