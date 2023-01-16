@@ -29,31 +29,31 @@ final class DerivedTests: XCTestCase {
 
     XCTAssertEqual(slice.primitiveValue, 0)
     XCTAssertEqual(slice.value.root, 0)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
     
     localStore.increment()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.root, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
       
     localStore.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     localStore.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     localStore.increment()
 
     XCTAssertEqual(slice.primitiveValue, 2)
     XCTAssertEqual(slice.value.version, 2)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
   }
 
   func testSlice2() {
@@ -61,37 +61,37 @@ final class DerivedTests: XCTestCase {
     let wrapper = DemoStore()
 
     let slice = wrapper.derived(
-      .map { $0.count }.drop { $0.noChanges(\.root) },
+      .map { $0.count }.drop { $0.noChanges(\.self) },
       queue: .passthrough
     )
 
     XCTAssertEqual(slice.primitiveValue, 0)
     XCTAssertEqual(slice.value.root, 0)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     wrapper.increment()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.root, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     wrapper.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     wrapper.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     wrapper.increment()
 
     XCTAssertEqual(slice.primitiveValue, 2)
     XCTAssertEqual(slice.value.version, 2)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
   }
 
   func testBinding() {
@@ -159,28 +159,28 @@ final class DerivedTests: XCTestCase {
         
     XCTAssertEqual(slice.primitiveValue, 0)
     XCTAssertEqual(slice.value.version, 0)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.increment()
         
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.empty()
     
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1) // with memoized, version not changed
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.increment()
     
     XCTAssertEqual(slice.primitiveValue, 2)
     XCTAssertEqual(slice.value.version, 2)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
     XCTAssertNotNil(weakBaseSlice)
 
     slice = nil
