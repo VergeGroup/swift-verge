@@ -51,7 +51,7 @@ public struct UIState<State: Equatable>: Sendable {
 
   public var wrappedValue: State {
     get { store.primitiveState }
-    set {
+    nonmutating set {
       store.commit {
         $0.replace(with: newValue)
       }
@@ -59,6 +59,32 @@ public struct UIState<State: Equatable>: Sendable {
   }
 
   public var projectedValue: UIStateStore<State, Never> {
+    return store
+  }
+  
+}
+
+@propertyWrapper
+public struct AtomicState<State: Equatable>: Sendable {
+  
+  private let store: Store<State, Never>
+  
+  public nonisolated init(wrappedValue: State) {
+    self.store = .init(initialState: wrappedValue)
+  }
+  
+  // MARK: - PropertyWrapper
+  
+  public var wrappedValue: State {
+    get { store.primitiveState }
+    nonmutating set {
+      store.commit {
+        $0.replace(with: newValue)
+      }
+    }
+  }
+  
+  public var projectedValue: Store<State, Never> {
     return store
   }
   
