@@ -226,10 +226,10 @@ public enum StoreReaderComponents<StateType: Equatable> {
   }
 }
 
-
+@_spi(Internal)
 @available(iOS, deprecated: 14.0)
 @propertyWrapper
-private struct _StateObject<Wrapped>: DynamicProperty where Wrapped: ObservableObject {
+public struct _StateObject<Wrapped>: DynamicProperty where Wrapped: ObservableObject {
   
   private final class Wrapper: ObservableObject {
     
