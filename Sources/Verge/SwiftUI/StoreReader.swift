@@ -142,9 +142,9 @@ public enum StoreReaderComponents<StateType: Equatable> {
   }
   
   @MainActor
-  fileprivate final class Node: ObservableObject {
+  public final class Node: ObservableObject {
     
-    nonisolated var objectWillChange: ObservableObjectPublisher {
+    nonisolated public var objectWillChange: ObservableObjectPublisher {
       _publisher
     }
     
@@ -226,12 +226,14 @@ public enum StoreReaderComponents<StateType: Equatable> {
   }
 }
 
-
+@_spi(Internal)
 @available(iOS, deprecated: 14.0)
 @propertyWrapper
-private struct _StateObject<Wrapped>: DynamicProperty where Wrapped: ObservableObject {
+public struct _StateObject<Wrapped>: DynamicProperty where Wrapped: ObservableObject {
   
-  private final class Wrapper: ObservableObject {
+  /// keep internal due to vanishing symbol in -O compilation.
+  @_spi(Internal)
+  public final class Wrapper: ObservableObject {
     
     var value: Wrapped? {
       didSet {
