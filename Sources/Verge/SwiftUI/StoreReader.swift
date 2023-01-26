@@ -230,6 +230,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
 @propertyWrapper
 private struct _StateObject<Wrapped>: DynamicProperty where Wrapped: ObservableObject {
   
+  /// keep internal due to vanishing symbol in -O compilation.
   final class Wrapper: ObservableObject {
     
     var value: Wrapped? {
