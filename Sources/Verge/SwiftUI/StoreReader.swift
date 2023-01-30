@@ -100,7 +100,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
                 return true
               }
               
-              return changes.hasChanges({ $0.primitive[keyPath: keyPath] })
+              return changes.hasChanges({ $0[keyPath: keyPath] })
               
             case .indeterminate:
               return true

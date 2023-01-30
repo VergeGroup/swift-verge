@@ -89,7 +89,7 @@ public protocol ChangesType<Value>: AnyChangesType {
 /// This means Changes will return equals if different pointer but the value is the same.
 @dynamicMemberLookup
 public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
-  public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
+  public typealias ChangesKeyPath<T> = KeyPath<Value, T>
 
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
     lhs === rhs
@@ -270,7 +270,7 @@ extension Changes {
   /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed>(
-    _ compose: (Changes) throws -> Composed,
+    _ compose: (__shared Value) throws -> Composed,
     _ comparer: Comparer<Composed>
   ) rethrows -> Composed? {
     let signpost = VergeSignpostTransaction("Changes.takeIfChanged(compose:comparer:)")
@@ -278,13 +278,13 @@ extension Changes {
       signpost.end()
     }
 
-    let current = self
+    let current = self.primitive
 
     guard let previousValue = previous else {
       return try compose(current)
     }
 
-    let old = previousValue
+    let old = previousValue.primitive
     let compare = comparer.curried()
 
     let composedFromCurrent = try compose(current)
@@ -305,7 +305,7 @@ extension Changes {
   /// - Returns: An instance that returned from the perform closure if performed.
   @inline(__always)
   public func ifChanged<Composed, Result>(
-    _ compose: (Changes) -> Composed,
+    _ compose: (__shared Value) -> Composed,
     _ comparer: Comparer<Composed>,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
@@ -323,7 +323,7 @@ extension Changes {
   /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed: Equatable>(
-    _ compose: (Changes) throws -> Composed
+    _ compose: (__shared Value) throws -> Composed
   ) rethrows -> Composed? {
     try takeIfChanged(compose, .usingEquatable)
   }
@@ -346,7 +346,7 @@ extension Changes {
    Performs a closure if the selected value changed from the previous one.
    */
   public func ifChanged<Composed: Equatable, Result>(
-    _ compose: (Changes) -> Composed,
+    _ compose: (__shared Value) -> Composed,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     try ifChanged(compose, .usingEquatable, perform)
@@ -477,14 +477,14 @@ extension Changes {
 
   @inline(__always)
   public func hasChanges<Composed: Equatable>(
-    _ compose: (Changes) -> Composed
+    _ compose: (__shared Value) -> Composed
   ) -> Bool {
     hasChanges(compose, .usingEquatable)
   }
 
   @inline(__always)
   public func hasChanges<Composed>(
-    _ compose: (Changes) -> Composed,
+    _ compose: (__shared Value) -> Composed,
     _ comparer: Comparer<Composed>
   ) -> Bool {
     takeIfChanged(compose, comparer) != nil
@@ -563,7 +563,7 @@ extension Changes where Value: Equatable {
   }
 
   public func ifChanged(_ perform: (Value) throws -> Void) rethrows {
-    try ifChanged(\.root, perform)
+    try ifChanged(\.self, perform)
   }
 }
 
