@@ -151,7 +151,7 @@ final class DerivedTests: XCTestCase {
     
     weak var weakBaseSlice = baseSlice
             
-    var slice: Derived<Int>! = baseSlice.chain(.map { $0.root }, queue: .passthrough)
+    var slice: Derived<Int>! = baseSlice.chain(.map { $0.self }, queue: .passthrough)
     
     baseSlice = nil
     

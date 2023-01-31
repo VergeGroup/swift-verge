@@ -54,11 +54,11 @@ public enum Pipelines {
     
     public typealias Input = Changes<Source>
     
-    public let keyPath: KeyPath<Input, Output>
+    public let keyPath: KeyPath<Input.Value, Output>
     public let additionalDropCondition: ((Input) -> Bool)?
     
     public init(
-      keyPath: KeyPath<Input, Output>,
+      keyPath: KeyPath<Input.Value, Output>,
       additionalDropCondition: ((Input) -> Bool)?
     ) {
       self.keyPath = keyPath
@@ -82,16 +82,16 @@ public enum Pipelines {
 //      }
             
       guard let previous = input.previous else {
-        return .new(input[keyPath: keyPath])
+        return .new(input.primitive[keyPath: keyPath])
       }
       
       guard
         previous.primitive == input.primitive ||
-          previous[keyPath: keyPath] == input[keyPath: keyPath]
+          previous.primitive[keyPath: keyPath] == input.primitive[keyPath: keyPath]
       else {
         
         guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-          return .new(input[keyPath: keyPath])
+          return .new(input.primitive[keyPath: keyPath])
         }
         
         return .noUpdates
@@ -102,7 +102,7 @@ public enum Pipelines {
     }
     
     public func yield(_ input: Input) -> Output {
-      input[keyPath: keyPath]
+      input.primitive[keyPath: keyPath]
     }
     
     public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
@@ -125,12 +125,12 @@ public enum Pipelines {
     
     // MARK: - Properties
     
-    public let intermediate: (Input) -> PipelineIntermediate<Intermediate>
+    public let intermediate: (Input.Value) -> PipelineIntermediate<Intermediate>
     public let transform: (Intermediate) -> Output
     public let additionalDropCondition: ((Input) -> Bool)?
     
     public init(
-      @PipelineIntermediateBuilder intermediate: @escaping (Input) -> PipelineIntermediate<Intermediate>,
+      @PipelineIntermediateBuilder intermediate: @escaping (Input.Value) -> PipelineIntermediate<Intermediate>,
       transform: @escaping (Intermediate) -> Output,
       additionalDropCondition: ((Input) -> Bool)?
     ) {
@@ -149,8 +149,8 @@ public enum Pipelines {
       
       guard previous.primitive == input.primitive else {
         
-        let previousIntermediate = intermediate(previous)
-        let newIntermediate = intermediate(input)
+        let previousIntermediate = intermediate(previous.primitive)
+        let newIntermediate = intermediate(input.primitive)
         
         guard previousIntermediate == newIntermediate else {
           
@@ -177,7 +177,7 @@ public enum Pipelines {
     }
     
     public func yield(_ input: Input) -> Output {
-      transform(intermediate(input).value)
+      transform(intermediate(input.primitive).value)
     }
       
     public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
@@ -247,7 +247,7 @@ extension PipelineType {
    
    exactly same with ``PipelineType/select(_:)``
    */
-  public static func map<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
+  public static func map<Input, Output>(_ keyPath: KeyPath<Input, Output>) -> Self
   where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
     select(keyPath)
   }
@@ -258,7 +258,7 @@ extension PipelineType {
    
    exactly same with ``PipelineType/map(_:)-7xvom``
    */
-  public static func select<Input, Output>(_ keyPath: KeyPath<Changes<Input>, Output>) -> Self
+  public static func select<Input, Output>(_ keyPath: KeyPath<Input, Output>) -> Self
   where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
     self.init(keyPath: keyPath, additionalDropCondition: nil)
   }
@@ -282,7 +282,7 @@ extension PipelineType {
    
    */
   public static func map<Input, Intermediate, Output>(
-    @PipelineIntermediateBuilder using intermediate: @escaping (Changes<Input>) -> PipelineIntermediate<Intermediate>,
+    @PipelineIntermediateBuilder using intermediate: @escaping (Input) -> PipelineIntermediate<Intermediate>,
     transform: @escaping (Intermediate) -> Output
   ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesMapPipeline<Input, Intermediate, Output> {
     
@@ -299,7 +299,7 @@ extension PipelineType {
    Using Edge as intermediate, output value will be unwrapped value from the Edge.
    */
   public static func map<Input, EdgeIntermediate>(
-    @PipelineIntermediateBuilder using intermediate: @escaping (Changes<Input>) -> PipelineIntermediate<Edge<EdgeIntermediate>>
+    @PipelineIntermediateBuilder using intermediate: @escaping (Input) -> PipelineIntermediate<Edge<EdgeIntermediate>>
   ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesMapPipeline<Input, Edge<EdgeIntermediate>, EdgeIntermediate> {
     
     self.init(
@@ -317,8 +317,8 @@ extension PipelineType {
    Consider to use intermediate value with `using` parameter variant if `map` closure takes much higher cost.
    */
   public static func map<Input, Output>(
-    _ transform: @escaping (Changes<Input>) -> Output
-  ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesMapPipeline<Input, Changes<Input>, Output> {
+    _ transform: @escaping (Input) -> Output
+  ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesMapPipeline<Input, Input, Output> {
     
     self.init(
       intermediate: { $0 },
