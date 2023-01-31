@@ -424,7 +424,7 @@ extension Derived where Value == Never {
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
         
     return Derived<Edge<(Changes<S0>, Changes<S1>)>>(
-      get: .map(\.root),
+      get: .map(\.self),
       set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
@@ -486,7 +486,7 @@ extension Derived where Value == Never {
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
     
     return Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>>(
-      get: .map(\.root),
+      get: .map(\.self),
       set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in

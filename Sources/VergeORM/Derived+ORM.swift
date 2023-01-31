@@ -299,7 +299,7 @@ extension StoreType {
         ),
         queue: queue
       )
-      .chain(.map(\.root))
+      .chain(.map(\.self))
       
       _nonatomic_derivedObjectCache.set(underlyingDerived, entityID: entityID, keyPathToDatabase: keyPathToDatabase)
     }
@@ -338,7 +338,7 @@ extension StoreType {
         ),
         queue: queue
       )
-      .chain(.map(\.root))
+      .chain(.map(\.self))
       
       _nonatomic_nonnull_derivedObjectCache.set(underlyingDerived, entityID: entity.entityID, keyPathToDatabase: keyPathToDatabase)
     }
