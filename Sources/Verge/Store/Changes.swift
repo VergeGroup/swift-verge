@@ -164,7 +164,9 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   deinit {
     vergeSignpostEvent("Changes.deinit", label: "\(type(of: self))")
 
+    #if false
     changesDeallocationQueue.releaseObjectInBackground(object: innerBox)
+    #endif
   }
 
   @inline(__always)
