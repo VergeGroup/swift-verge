@@ -28,9 +28,6 @@ let package = Package(
       name: "VergeTaskManager",
       dependencies: [
 //        .product(name: "Atomics", package: "swift-atomics")
-      ],
-      swiftSettings: [
-        SwiftSetting.unsafeFlags(["-strict-concurrency=complete"])
       ]
     ),
     .target(name: "VergeTiny", dependencies: []),
