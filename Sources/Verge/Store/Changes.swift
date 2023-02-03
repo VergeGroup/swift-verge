@@ -270,7 +270,7 @@ extension Changes {
   /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed>(
-    _ compose: (__shared Value) throws -> Composed,
+    _ compose: (Value) throws -> Composed,
     _ comparer: Comparer<Composed>
   ) rethrows -> Composed? {
     let signpost = VergeSignpostTransaction("Changes.takeIfChanged(compose:comparer:)")
@@ -305,7 +305,7 @@ extension Changes {
   /// - Returns: An instance that returned from the perform closure if performed.
   @inline(__always)
   public func ifChanged<Composed, Result>(
-    _ compose: (__shared Value) -> Composed,
+    _ compose: (Value) -> Composed,
     _ comparer: Comparer<Composed>,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
@@ -323,7 +323,7 @@ extension Changes {
   /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed: Equatable>(
-    _ compose: (__shared Value) throws -> Composed
+    _ compose: (Value) throws -> Composed
   ) rethrows -> Composed? {
     try takeIfChanged(compose, .usingEquatable)
   }
@@ -346,7 +346,7 @@ extension Changes {
    Performs a closure if the selected value changed from the previous one.
    */
   public func ifChanged<Composed: Equatable, Result>(
-    _ compose: (__shared Value) -> Composed,
+    _ compose: (Value) -> Composed,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     try ifChanged(compose, .usingEquatable, perform)
@@ -477,14 +477,14 @@ extension Changes {
 
   @inline(__always)
   public func hasChanges<Composed: Equatable>(
-    _ compose: (__shared Value) -> Composed
+    _ compose: (Value) -> Composed
   ) -> Bool {
     hasChanges(compose, .usingEquatable)
   }
 
   @inline(__always)
   public func hasChanges<Composed>(
-    _ compose: (__shared Value) -> Composed,
+    _ compose: (Value) -> Composed,
     _ comparer: Comparer<Composed>
   ) -> Bool {
     takeIfChanged(compose, comparer) != nil

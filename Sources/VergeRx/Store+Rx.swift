@@ -155,7 +155,7 @@ extension ObservableType where Element : ChangesType {
   ///   - selector:
   ///   - compare:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S>(_ selector: @escaping (__shared Element.Value) -> S, _ compare: @escaping (S, S) -> Bool) -> Observable<S> {
+  public func changed<S>(_ selector: @escaping (Element.Value) -> S, _ compare: @escaping (S, S) -> Bool) -> Observable<S> {
     
     return flatMap { changes -> Observable<S> in
       let _r = changes.asChanges().ifChanged(selector, .init(compare)) { value in
@@ -173,7 +173,7 @@ extension ObservableType where Element : ChangesType {
   ///   - selector:
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S : Equatable>(_ selector: @escaping (__shared Element.Value) -> S) -> Observable<S> {
+  public func changed<S : Equatable>(_ selector: @escaping (Element.Value) -> S) -> Observable<S> {
     return changed(selector, ==)
   }
     
@@ -185,7 +185,7 @@ extension ObservableType where Element : ChangesType {
   ///   - selector:
   ///   - compare:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changedDriver<S>(_ selector: @escaping (__shared Element.Value) -> S, _ compare: @escaping (S, S) -> Bool) -> Driver<S> {
+  public func changedDriver<S>(_ selector: @escaping (Element.Value) -> S, _ compare: @escaping (S, S) -> Bool) -> Driver<S> {
     changed(selector, compare)
         .asDriver(onErrorRecover: { _ in .empty() })
   }
@@ -198,7 +198,7 @@ extension ObservableType where Element : ChangesType {
   ///   - selector:
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changedDriver<S : Equatable>(_ selector: @escaping (__shared Element.Value) -> S) -> Driver<S> {
+  public func changedDriver<S : Equatable>(_ selector: @escaping (Element.Value) -> S) -> Driver<S> {
     return changedDriver(selector, ==)
   }
   

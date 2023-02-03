@@ -48,7 +48,7 @@ extension OrderedIDIndex: BidirectionalCollection, RandomAccessCollection, Mutab
   public typealias Index = Int
   public typealias SubSequence = ArraySlice<Entity.EntityID>
   
-  public mutating func append(_ newElement: __owned Entity.EntityID) {
+  public mutating func append(_ newElement: Entity.EntityID) {
     backing.append(newElement.any)
   }
   
