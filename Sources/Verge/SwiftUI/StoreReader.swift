@@ -76,7 +76,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
     
     private(set) var detectors: Detectors = [:]
     
-    init(wrapped: __owned StateType) {
+    init(wrapped: StateType) {
       self.wrapped = wrapped
     }
     
