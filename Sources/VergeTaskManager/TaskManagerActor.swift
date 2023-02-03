@@ -85,9 +85,7 @@ public actor TaskManagerActor {
   deinit {
     for (_, task) in tasks {
       task.cancel()
-    }
-    
-    tasks.removeAll()
+    }    
   }
 
   // MARK: Public
