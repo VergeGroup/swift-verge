@@ -21,12 +21,6 @@
 <img alt="Tests" src="https://github.com/VergeGroup/Verge/workflows/Tests/badge.svg"/>
 </p>
 
-<p align="center">
-  <a href="https://spectrum.chat/verge-swift">
-    <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg" />
-  </a>
-</p>
-
 ## Requirements
 
 * Swift 5.7 +
