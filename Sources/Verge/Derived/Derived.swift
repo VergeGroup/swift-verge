@@ -26,7 +26,7 @@ import class Foundation.NSString
 import Combine
 #endif
 
-public protocol DerivedType {
+public protocol DerivedType: AnyObject {
   associatedtype Value: Equatable
 
   func asDerived() -> Derived<Value>
