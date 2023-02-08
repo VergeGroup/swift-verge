@@ -44,7 +44,7 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
     
     let store = store.asStore()
     
-    self.init(node: .init(store: store, debug: debug), content: content)
+    self.init(node: .init(store: store, retainValues: [], debug: debug), content: content)
     
   }
   
@@ -60,7 +60,7 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
     @ViewBuilder content: @escaping ContentMaker
   ) where StateType == Derived.Value {
     
-    self.init(node: .init(store: derived.asDerived().innerStore, debug: debug), content: content)
+    self.init(node: .init(store: derived.asDerived().innerStore, retainValues: [derived], debug: debug), content: content)
   }
 }
 
@@ -153,6 +153,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
     
     private let _publisher: ObservableObjectPublisher = .init()
     private var cancellable: VergeAnyCancellable?
+    private let retainValues: [AnyObject]
     
     private var currentValue: Changes<StateType>
     
@@ -160,10 +161,12 @@ public enum StoreReaderComponents<StateType: Equatable> {
     
     init<Activity>(
       store: Store<StateType, Activity>,
+      retainValues: [AnyObject],
       debug: Bool = false
     ) {
       
       self.debug = debug
+      self.retainValues = retainValues
       
       self.currentValue = store.state
       
