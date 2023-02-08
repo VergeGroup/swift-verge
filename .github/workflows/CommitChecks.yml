@@ -11,7 +11,7 @@ jobs:
         with:
           xcode-version: "14.2"
       - uses: actions/checkout@v2
-      - name:
+      - name: Run Test
         run: xcodebuild -scheme Verge-Package -resultBundlePath results/VergeTests.xcresult test -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' -derivedDataPath ./DerivedData | xcpretty
 
       - uses: kishikawakatsumi/xcresulttool@v1
@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: maxim-lobanov/setup-xcode@v1.1
         with:
-          xcode-version: "14.0"
+          xcode-version: "14.2"
       - uses: actions/checkout@v2
       - name: Build
         run: swift build -v
