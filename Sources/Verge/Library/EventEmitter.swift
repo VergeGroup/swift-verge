@@ -125,21 +125,17 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   }
   
   func remove(_ token: EventEmitterCancellable) {
-    var indexesToRemove = IndexSet()
-    subscribers.withValue {
-      $0.enumerated().forEach {
-        if $1.0 == token {
-          indexesToRemove.insert($0)
-        }
-      }
-    }
-
-    guard let firstIndex = indexesToRemove.first else { return }
-
-    let itemToRemove = subscribers.value[firstIndex]
-
+    var itemToRemove: (EventEmitterCancellable, (Event) -> Void)? = nil
     subscribers.modify {
-      $0.remove(atOffsets: indexesToRemove)
+      $0.removeAll {
+        if $0.0 == token {
+          if itemToRemove != nil {
+            itemToRemove = $0
+          }
+          return true
+        }
+        return false
+      }
     }
     
     // To avoid triggering deinit inside removing operation
