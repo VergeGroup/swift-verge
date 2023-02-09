@@ -126,9 +126,11 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   
   func remove(_ token: EventEmitterCancellable) {
     var indexesToRemove = IndexSet()
-    subscribers.value.enumerated().forEach {
-      if $1.0 == token {
-        indexesToRemove.insert($0)
+    subscribers.withValue {
+      $0.enumerated().forEach {
+        if $1.0 == token {
+          indexesToRemove.insert($0)
+        }
       }
     }
 
