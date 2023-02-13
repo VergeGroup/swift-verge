@@ -1,79 +1,76 @@
 import Foundation
 
 public protocol TaskKeyType {
-  
+
 }
 
+/**
+ 
+ ```swift
+ enum MyRequestTask: TaskKeyType {}
+ let key = TaskKey(MyRequestTask.self)
+ ```
+ 
+ */
 public struct TaskKey: Hashable {
-  
+
   private struct TypedKey: Hashable {
-    
+
     static func == (lhs: Self, rhs: Self) -> Bool {
       lhs.metatype == rhs.metatype
     }
-    
+
     func hash(into hasher: inout Hasher) {
       hasher.combine(ObjectIdentifier(metatype))
     }
-    
+
     let metatype: Any.Type
-    
+
     init<T>(base: T.Type) {
       self.metatype = base
     }
-    
+
   }
-  
+
   private enum Node: Hashable {
     case customString(String)
     case type(TypedKey)
   }
-  
+
   private let node: Node
-  
+
   public init<Key: TaskKeyType>(_ key: Key.Type) {
     self.node = .type(.init(base: Key.self))
   }
-  
+
   public init(_ customString: String) {
     self.node = .customString(customString)
   }
-  
+
+  /// Make with a new unique identifier
   public static func distinct() -> Self {
     .init(UUID().uuidString)
   }
-  
+
 }
 
+/**
+ An actor that manages tasks by specified keys.
+ It enqueues a given task into a separated queue by key.
+ Consumers can specify how to handle the current task as dropping it or waiting for it. 
+ */
 public actor TaskManagerActor {
-  
-  public struct Configuration {
-    
-    public init() {
-      
-    }
-  }
-  
-  private struct TaskID: Hashable {
-    var raw: String
-    
-    init(_ id: String) {
-      self.raw = id
-    }
-    
-    static func distinct() -> Self {
-      .init(UUID().uuidString)
-    }
-  }
 
-  private struct DistinctID: Hashable {
-    let key: TaskKey
-    let internalID: TaskID
+  public struct Configuration {
+
+    public init() {
+
+    }
   }
-  
+ 
   public enum Mode {
     case dropCurrent
-    //    case waitCurrent
+    case waitInCurrent
   }
 
   // MARK: Lifecycle
@@ -83,77 +80,102 @@ public actor TaskManagerActor {
   }
 
   deinit {
-    for (_, task) in tasks {
-      task.cancel()
-    }    
   }
 
   // MARK: Public
-  
-  public let configuration: Configuration
-  
-  /// Number of counts in current managing tasks
-  public var count: Int {
-    tasks.count
-  }
-  
-  public func isRunning(key: TaskKey) -> Bool {
-    return tasks.first(where: { $0.0.key == key }) != nil
-  }
 
-  public func task(
+  public let configuration: Configuration
+
+  /**
+   Performs given action as Task
+   */
+  @discardableResult
+  public func task<Return>(
     key: TaskKey,
     mode: Mode,
     priority: TaskPriority = .userInitiated,
-    _ action: @Sendable @escaping () async -> Void
-  ) {
-
-    let internalID = TaskID.distinct()
-
-    weak var weakSelf = self
-
-    let task = Task(priority: priority) { [weakSelf] in
-
-      await withTaskCancellationHandler {
-        await action()
-        await weakSelf?.unmanageTask(internalID: internalID)
-      } onCancel: {
-        Task {
-          await weakSelf?.unmanageTask(internalID: internalID)
+    _ action: @Sendable @escaping () async -> Return
+  ) async -> Task<Return, Never> {
+    
+    let targetQueue = prepareQueue(for: key)
+    
+    switch mode {
+    case .dropCurrent:
+      return await targetQueue.batch {
+        $0.cancelAllTasks()
+        return $0.addTask(priority: priority, operation: action)
+      }
+    case .waitInCurrent:
+      return await targetQueue.addTask(priority: priority, operation: action)
+    }
+    
+  }
+  
+  /**
+   Performs given action as Task
+   */
+  @discardableResult
+  public func task<Return>(
+    key: TaskKey,
+    mode: Mode,
+    priority: TaskPriority = .userInitiated,
+    _ action: @Sendable @escaping () async throws -> Return
+  ) async -> Task<Return, Error> {
+    
+    let targetQueue = prepareQueue(for: key)
+    
+    switch mode {
+    case .dropCurrent:
+      return await targetQueue.batch {
+        $0.cancelAllTasks()
+        return $0.addTask(priority: priority, operation: action)
+      }
+    case .waitInCurrent:
+      return await targetQueue.addTask(priority: priority, operation: action)
+    }
+    
+  }
+  
+  private func prepareQueue(for key: TaskKey) -> TaskQueueActor {
+    let targetQueue: TaskQueueActor
+    
+    if let currentQueue = queues[key] {
+      targetQueue = currentQueue
+    } else {
+      let newQueue = TaskQueueActor()
+      
+      Task { [weak self] in
+        await newQueue.waitUntilAllItemProcessed()
+        await self?.batch {
+          $0.queues.removeValue(forKey: key)
         }
       }
 
+      queues[key] = newQueue
+      targetQueue = newQueue
     }
-
-    let anyTask = task as _Verge_TaskType
-
-    if let item = tasks.first(where: { $0.0.key == key }) {
-      switch mode {
-      case .dropCurrent:
-        unmanageTask(internalID: item.0.internalID)
-        item.1.cancel()
-      }
-    }
-
-    tasks.append((.init(key: key, internalID: internalID), anyTask))
-
+    return targetQueue
+  }
+  
+  public func batch(_ closure: (isolated TaskManagerActor) -> Void) {
+    closure(self)
+  }
+  
+  public func batch(_ closure: (isolated TaskManagerActor) async -> Void) async {
+    await closure(self)
   }
 
-  public func cancelAll() {
-  
-    for (_, task) in tasks {
-      task.cancel()
+  public func cancelAll() async {
+
+    for queue in queues.values {
+      await queue.cancelAllTasks()
     }
 
-    tasks.removeAll()
+    queues.removeAll()
   }
 
   // MARK: Private
-
-  private var tasks: ContiguousArray<(DistinctID, any _Verge_TaskType)> = .init()
-
-  private func unmanageTask(internalID: TaskID) {
-    tasks.removeAll { $0.0.internalID == internalID }
-  }
-
+  
+  private var queues: [TaskKey : TaskQueueActor] = [:]
+  
 }

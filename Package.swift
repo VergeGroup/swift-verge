@@ -52,7 +52,7 @@ let package = Package(
       ]
     ),
     //    .testTarget(name: "AsyncVergeTests", dependencies: ["AsyncVerge"]),
-    .testTarget(name: "VergeTaskManagerTests", dependencies: ["VergeTaskManager"]),
+    .testTarget(name: "VergeTaskManagerTests", dependencies: ["VergeTaskManager", "Verge"]),
     .testTarget(name: "VergeClassicTests", dependencies: ["VergeClassic"]),
     .testTarget(name: "VergeORMTests", dependencies: ["VergeORM"]),
     .testTarget(name: "VergeRxTests", dependencies: ["VergeRx", "VergeClassic", "VergeORM"]),

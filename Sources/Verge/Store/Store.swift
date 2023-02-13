@@ -121,6 +121,14 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
   public let sanitizer: RuntimeSanitizer
   
   private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>) -> Void
+  
+  // MARK: - Deinit
+  
+  deinit {
+    Task { [taskManager] in
+      await taskManager.cancelAll()
+    }
+  }
     
   // MARK: - Initializers
   
