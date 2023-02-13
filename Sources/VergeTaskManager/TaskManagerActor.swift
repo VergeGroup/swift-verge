@@ -85,34 +85,11 @@ public actor TaskManagerActor {
   // MARK: Public
 
   public let configuration: Configuration
-
-  /**
-   Performs given action as Task
-   */
-  @discardableResult
-  public func task<Return>(
-    key: TaskKey,
-    mode: Mode,
-    priority: TaskPriority = .userInitiated,
-    _ action: @Sendable @escaping () async -> Return
-  ) async -> Task<Return, Never> {
-    
-    let targetQueue = prepareQueue(for: key)
-    
-    switch mode {
-    case .dropCurrent:
-      return await targetQueue.batch {
-        $0.cancelAllTasks()
-        return $0.addTask(priority: priority, operation: action)
-      }
-    case .waitInCurrent:
-      return await targetQueue.addTask(priority: priority, operation: action)
-    }
-    
-  }
   
   /**
    Performs given action as Task
+   
+   Task's Error may be ``CancellationError``
    */
   @discardableResult
   public func task<Return>(

@@ -17,7 +17,7 @@ final class TaskQueueTests: XCTestCase {
     }
 
     Task {
-      _ = await ref_1.value
+      _ = try await ref_1.value
       events.modify { $0.append("Completed-Ref-1") }
     }
 
@@ -27,7 +27,7 @@ final class TaskQueueTests: XCTestCase {
     }
 
     Task {
-      _ = await ref_2.value
+      _ = try await ref_2.value
       events.modify { $0.append("Completed-Ref-2") }
     }
 

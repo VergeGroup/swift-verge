@@ -103,36 +103,19 @@ public actor TaskQueueActor {
   @discardableResult
   public func addTask<Return>(
     priority: TaskPriority? = nil,
-    operation: @escaping @Sendable () async -> Return
-  ) -> Task<Return, Never> {
-
-    let ref = addTask(priority: priority) { () async throws -> Return in
-      await operation()
-    }
-
-    let mapped = Task {
-      do {
-        return try await ref.value
-      } catch {
-        fatalError("Never happen")
-      }
-    }
-
-    return mapped
-  }
-
-  @discardableResult
-  public func addTask<Return>(
-    priority: TaskPriority? = nil,
     operation: @escaping @Sendable () async throws -> Return
   ) -> Task<Return, Error> {
 
     let extendedContinuation: UnsafeBox<CheckedContinuation<Return, Error>?> = .init(nil)
 
     let referenceTask = Task {
-      return try await withCheckedThrowingContinuation {
-        (continuation: CheckedContinuation<Return, Error>) in
-        extendedContinuation.value = continuation
+      try await withTaskCancellationHandler {
+        return try await withCheckedThrowingContinuation {
+          (continuation: CheckedContinuation<Return, Error>) in
+          extendedContinuation.value = continuation
+        }
+      } onCancel: {
+        
       }
     }
 
@@ -141,10 +124,20 @@ public actor TaskQueueActor {
       await withTaskCancellationHandler {
         do {
           let result = try await operation()
-          guard Task.isCancelled == false else { return }
+
+          guard Task.isCancelled == false else {
+            extendedContinuation.value!.resume(throwing: CancellationError())
+            return
+          }
+          
           extendedContinuation.value!.resume(returning: result)
         } catch {
-          guard Task.isCancelled == false else { return }
+          
+          guard Task.isCancelled == false else {
+            extendedContinuation.value!.resume(throwing: CancellationError())
+            return
+          }
+          
           extendedContinuation.value!.resume(throwing: error)
         }
       } onCancel: {
