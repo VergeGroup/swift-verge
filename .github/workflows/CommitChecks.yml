@@ -11,6 +11,8 @@ jobs:
         with:
           xcode-version: "14.2"
       - uses: actions/checkout@v2
+      - name: Resolve Packages
+        run: xcodebuild -resolvePackageDependencies
       - name: Run Test
         run: xcodebuild -scheme Verge-Package -resultBundlePath results/VergeTests.xcresult test -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' -derivedDataPath ./DerivedData | xcpretty
 
