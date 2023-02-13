@@ -12,9 +12,9 @@ public protocol TaskKeyType {
  ```
  
  */
-public struct TaskKey: Hashable {
+public struct TaskKey: Hashable, Sendable {
 
-  private struct TypedKey: Hashable {
+  private struct TypedKey: Hashable, Sendable {
 
     static func == (lhs: Self, rhs: Self) -> Bool {
       lhs.metatype == rhs.metatype
@@ -32,7 +32,7 @@ public struct TaskKey: Hashable {
 
   }
 
-  private enum Node: Hashable {
+  private enum Node: Hashable, Sendable {
     case customString(String)
     case type(TypedKey)
   }
@@ -68,7 +68,7 @@ public actor TaskManagerActor {
     }
   }
  
-  public enum Mode {
+  public enum Mode: Sendable {
     case dropCurrent
     case waitInCurrent
   }
