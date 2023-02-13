@@ -97,6 +97,7 @@ public actor TaskQueueActor {
         $0.invalidate()
       }
     }
+    self.head = nil
   }
 
   @discardableResult
@@ -202,7 +203,7 @@ public actor TaskQueueActor {
       if let node {
         await node.wait()
       } else {
-        return
+        break
       }
     }
     

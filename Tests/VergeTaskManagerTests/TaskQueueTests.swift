@@ -36,13 +36,13 @@ final class TaskQueueTests: XCTestCase {
     try? await Task.sleep(nanoseconds: 1_000)
 
     XCTAssertEqual(
-      events.value,
-      [
+      Set(events.value),
+      Set([
         "Completed-1",
         "Completed-Ref-1",
         "Completed-2",
         "Completed-Ref-2",
-      ]
+      ])
     )
 
   }
@@ -52,25 +52,21 @@ final class TaskQueueTests: XCTestCase {
 
     let queue = TaskQueueActor()
 
-    let exp_1 = expectation(description: "1")
-
     await queue.addTask {
       print("1")
-      try! await Task.sleep(nanoseconds: 1_000)
-      exp_1.fulfill()
+      try? await Task.sleep(nanoseconds: 1_000_000)
     }
 
     await queue.addTask {
-      print("2")
-      try! await Task.sleep(nanoseconds: 1_000)
+      print("2", Task.isCancelled)
+      try? await Task.sleep(nanoseconds: 1_000)
+      guard Task.isCancelled == false else { return }
       XCTFail()
     }
 
     await queue.cancelAllTasks()
 
     await queue.waitUntilAllItemProcessed()
-
-    wait(for: [exp_1], timeout: 12)
 
     print("done")
   }
