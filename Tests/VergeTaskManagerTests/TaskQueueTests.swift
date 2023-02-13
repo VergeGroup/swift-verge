@@ -33,7 +33,7 @@ final class TaskQueueTests: XCTestCase {
 
     await queue.waitUntilAllItemProcessed()
 
-    try? await Task.sleep(nanoseconds: 1_000)
+    try? await Task.sleep(nanoseconds: 1_000_000)
 
     XCTAssertEqual(
       Set(events.value),
