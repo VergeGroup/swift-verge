@@ -93,6 +93,7 @@ public actor TaskManagerActor {
    */
   @discardableResult
   public func task<Return>(
+    label: String = "",
     key: TaskKey,
     mode: Mode,
     priority: TaskPriority = .userInitiated,
@@ -105,10 +106,10 @@ public actor TaskManagerActor {
     case .dropCurrent:
       return await targetQueue.batch {
         $0.cancelAllTasks()
-        return $0.addTask(priority: priority, operation: action)
+        return $0.addTask(label: label, priority: priority, operation: action)
       }
     case .waitInCurrent:
-      return await targetQueue.addTask(priority: priority, operation: action)
+      return await targetQueue.addTask(label: label, priority: priority, operation: action)
     }
     
   }

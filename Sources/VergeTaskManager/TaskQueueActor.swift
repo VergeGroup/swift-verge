@@ -14,12 +14,15 @@ private final class TaskNode {
   let taskFactory: (TaskNode) async -> Void
 
   private(set) var next: TaskNode?
+  let label: String
 
   @Published private var state: State = .init()
 
   init(
+    label: String = "",
     taskFactory: @escaping @Sendable (TaskNode) async -> Void
   ) {
+    self.label = label
     self.taskFactory = taskFactory
   }
 
@@ -72,6 +75,10 @@ private final class TaskNode {
     }
 
   }
+  
+  deinit {
+    Log.debug(.taskQueue, "Deinit TaskNode: \(label)")
+  }
 
 }
 
@@ -102,43 +109,41 @@ public actor TaskQueueActor {
 
   @discardableResult
   public func addTask<Return>(
+    label: String = "",
     priority: TaskPriority? = nil,
     operation: @escaping @Sendable () async throws -> Return
   ) -> Task<Return, Error> {
 
-    let extendedContinuation: UnsafeBox<CheckedContinuation<Return, Error>?> = .init(nil)
+    let extendedContinuation: AutoReleaseContinuationBox<Return> = .init(nil)
 
-    let referenceTask = Task {
-      try await withTaskCancellationHandler {
-        return try await withCheckedThrowingContinuation {
-          (continuation: CheckedContinuation<Return, Error>) in
-          extendedContinuation.value = continuation
-        }
-      } onCancel: {
-        
+    let referenceTask = Task { [weak extendedContinuation] in
+      return try await withUnsafeThrowingContinuation{ (continuation: UnsafeContinuation<Return, Error>) in
+        extendedContinuation?.continuation = continuation
       }
     }
-
-    let newNode = TaskNode { [weak self] node in
-
+    
+    let newNode = TaskNode(label: label) { [weak self] node in
+      
       await withTaskCancellationHandler {
         do {
           let result = try await operation()
 
           guard Task.isCancelled == false else {
-            extendedContinuation.value!.resume(throwing: CancellationError())
+            extendedContinuation.resume(throwing: CancellationError())
             return
           }
           
-          extendedContinuation.value!.resume(returning: result)
+          extendedContinuation.resume(returning: result)
+
         } catch {
           
           guard Task.isCancelled == false else {
-            extendedContinuation.value!.resume(throwing: CancellationError())
+            extendedContinuation.resume(throwing: CancellationError())
             return
           }
           
-          extendedContinuation.value!.resume(throwing: error)
+          extendedContinuation.resume(throwing: error)
+
         }
       } onCancel: {
         referenceTask.cancel()
@@ -154,7 +159,7 @@ public actor TaskQueueActor {
           $0.head = nil
         }
       }
-
+      
     }
 
     if let head {
@@ -212,11 +217,33 @@ public actor TaskQueueActor {
 
 }
 
-private final class UnsafeBox<T>: @unchecked Sendable {
+private final class AutoReleaseContinuationBox<T>: @unchecked Sendable {
 
-  var value: T
+  var continuation: UnsafeContinuation<T, Error>?
+  private var wasConsumed: Bool = false
 
-  init(_ value: T) {
-    self.value = value
+  init(_ value: UnsafeContinuation<T, Error>?) {
+    self.continuation = value
   }
+  
+  deinit {
+    resume(throwing: CancellationError())
+  }
+  
+  func resume(throwing error: Error) {
+    guard wasConsumed == false else {
+      return
+    }
+    wasConsumed = true
+    continuation?.resume(throwing: error)
+  }
+  
+  func resume(returning value: T) {
+    guard wasConsumed == false else {
+      return
+    }
+    wasConsumed = true
+    continuation?.resume(returning: value)
+  }
+    
 }
