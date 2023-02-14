@@ -678,5 +678,22 @@ Latest Version (%d): (%@)
       
 }
 
-
+extension Store {
+  
+  /// [Experimental]
+  public func stateStream() -> AsyncStream<Changes<State>> {
+    return .init(Changes<State>.self, bufferingPolicy: .unbounded) { continuation in
+      
+      let subscription = self.sinkState(queue: .passthrough) { state in
+        continuation.yield(state)
+      }
+      
+      continuation.onTermination = { termination in
+        subscription.cancel()
+      }
+      
+    }
+  }
+  
+}
 
