@@ -38,6 +38,7 @@ private final class TaskNode {
   }
 
   func invalidate() {
+    Log.debug(.taskQueue, "TaskNode invalidated \(label)")
     state.isInvalidated = true
     anyTask?.cancel()
   }

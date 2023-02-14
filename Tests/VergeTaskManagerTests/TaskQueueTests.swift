@@ -70,4 +70,57 @@ final class TaskQueueTests: XCTestCase {
 
     print("done")
   }
+  
+  func test_cancel_release_of_resources() {
+    
+    let e = expectation(description: "A")
+    e.assertForOverFulfill = true
+    e.expectedFulfillmentCount = 3
+    let events = Store<[String], Never>.init(initialState: .init())
+            
+    Task {
+            
+      func add(_ label: String) async {
+        let resource = VergeAnyCancellable {
+          print("Deinit", label)
+          e.fulfill()
+          events.commit { $0.wrapped.append("Deinit:\(label)") }
+        }
+        let ref = await queue.addTask(label: label) {
+          await networking(token: "1")
+        }
+        Task {
+          let _ = try await ref.value
+          withExtendedLifetime(resource) {}
+        }
+      }
+    
+      
+      let queue = TaskQueueActor()
+      
+      await add("1")
+      try? await Task.sleep(nanoseconds: 1_000_000_00)
+      await add("2")
+      try? await Task.sleep(nanoseconds: 1_000_000_00)
+      await add("3")
+            
+      try? await Task.sleep(nanoseconds: 1_000_000_00)
+      
+      await queue.cancelAllTasks()
+               
+    }
+    
+    wait(for: [e], timeout: 10)
+        
+  }
+}
+
+private func networking(token: String) async {
+  print("Start", token)
+  try? await Task.sleep(nanoseconds: 2_000_000_000)
+  if Task.isCancelled {
+    print("Cancelled", token)
+  } else {
+    print("Done", token)
+  }
 }
