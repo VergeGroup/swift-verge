@@ -125,19 +125,27 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   }
   
   func remove(_ token: EventEmitterCancellable) {
-    let itemsToRemove = subscribers.withValue {
-      $0.first { $0.0 == token }
-    }
-    
+    var itemToRemove: (EventEmitterCancellable, (Event) -> Void)? = nil
     subscribers.modify {
       $0.removeAll {
-        $0.0 == token
+        if $0.0 == token {
+          if itemToRemove == nil {
+            itemToRemove = $0
+          } else {
+            assertionFailure("found two or more values")
+          }
+          return true
+        }
+        return false
       }
     }
     
     // To avoid triggering deinit inside removing operation
     // At this point, deallocation will happen, then ``EventEmitterCancellable` runs operations.
-    withExtendedLifetime(itemsToRemove, {})
+    // subscribers is using unfair-lock means it's not recursive lock.
+    // if removes the item then deallocated inside locking, onDeinit handler runs then entering this method recursively potentially by some others.
+    // then unfair-lock raises runtime error.
+    withExtendedLifetime(itemToRemove, {})
   }
 
   public func onDeinit(_ onDeinit: @escaping () -> Void) {
