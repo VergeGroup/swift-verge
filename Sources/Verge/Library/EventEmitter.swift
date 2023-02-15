@@ -125,22 +125,19 @@ public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   }
   
   func remove(_ token: EventEmitterCancellable) {
-    var itemToRemove: (EventEmitterCancellable, (Event) -> Void)? = nil
+    let itemsToRemove = subscribers.withValue {
+      $0.first { $0.0 == token }
+    }
+    
     subscribers.modify {
       $0.removeAll {
-        if $0.0 == token {
-          if itemToRemove != nil {
-            itemToRemove = $0
-          }
-          return true
-        }
-        return false
+        $0.0 == token
       }
     }
     
     // To avoid triggering deinit inside removing operation
     // At this point, deallocation will happen, then ``EventEmitterCancellable` runs operations.
-    withExtendedLifetime(itemToRemove, {})
+    withExtendedLifetime(itemsToRemove, {})
   }
 
   public func onDeinit(_ onDeinit: @escaping () -> Void) {
