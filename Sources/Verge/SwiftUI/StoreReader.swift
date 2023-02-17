@@ -74,6 +74,13 @@ public enum StoreReaderComponents<StateType: Equatable> {
     
     private let wrapped: StateType
     
+    /// wrapped value itself
+    public var primitive: StateType {
+      mutating get {
+        self[dynamicMember: \.self]
+      }
+    }
+    
     private(set) var detectors: Detectors = [:]
     
     init(wrapped: StateType) {

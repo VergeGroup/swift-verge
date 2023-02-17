@@ -165,6 +165,147 @@ final class StoreReaderTests: XCTestCase {
   }
   
   @MainActor
+  func test_single_value() async throws {
+        
+    struct _Content: View {
+      
+      let store: Store<Int, Never>
+      let onUpdate: @MainActor () -> Void
+      
+      init(
+        store: Store<Int, Never>,
+        onUpdate: @escaping @MainActor () -> Void
+      ) {
+        self.store = store
+        self.onUpdate = onUpdate
+      }
+      
+      var body: some View {
+        VStack {
+          StoreReader(store) { state in
+            
+            let _: Void = {
+              onUpdate()
+            }()
+            
+            Text(state[dynamicMember: \.self].description)
+          }
+        }
+      }
+      
+    }
+    
+    let store = Store<Int, Never>(initialState: .init())
+    
+    var count = 0
+    
+    let view = _Content(store: store, onUpdate: {
+      count += 1
+    })
+    
+    ViewHosting.host(view: view)
+    
+    XCTAssertEqual(count, 1)
+    
+    try await Task.sleep(nanoseconds: 1)
+    
+    store.commit {
+      $0.wrapped += 1
+    }
+    
+    try await Task.sleep(nanoseconds: 1)
+    
+    XCTAssertEqual(count, 2)
+    
+    store.commit {
+      $0.wrapped += 1
+    }
+    
+    try await Task.sleep(nanoseconds: 1)
+    
+    XCTAssertEqual(count, 3)
+    
+    store.commit {
+      $0.wrapped += 1
+    }
+    
+    try await Task.sleep(nanoseconds: 1)
+    XCTAssertEqual(count, 4)
+    
+  }
+  
+  @MainActor
+  func test_enire_value() async throws {
+    
+    struct _Content: View {
+      
+      let store: Store<State, Never>
+      let onUpdate: @MainActor () -> Void
+      
+      init(
+        store: Store<State, Never>,
+        onUpdate: @escaping @MainActor () -> Void
+      ) {
+        self.store = store
+        self.onUpdate = onUpdate
+      }
+      
+      var body: some View {
+        VStack {
+          StoreReader(store) { state in
+            
+            let _: Void = {
+              onUpdate()
+            }()
+            
+            Text(String(describing: state[dynamicMember: \.self]))
+          }
+        }
+      }
+      
+    }
+    
+    let store = Store<State, Never>(initialState: .init())
+    
+    var count = 0
+    
+    let view = _Content(store: store, onUpdate: {
+      count += 1
+    })
+    
+    ViewHosting.host(view: view)
+    
+    XCTAssertEqual(count, 1)
+    
+    try await Task.sleep(nanoseconds: 1)
+    
+    store.commit {
+      $0.count_1 += 1
+    }
+    
+    try await Task.sleep(nanoseconds: 1)
+    
+    XCTAssertEqual(count, 2)
+    
+    store.commit {
+      $0.count_1 += 1
+    }
+    
+    try await Task.sleep(nanoseconds: 1)
+    
+    XCTAssertEqual(count, 3)
+    
+    store.commit {
+      $0.count_1 += 1
+    }
+    
+    try await Task.sleep(nanoseconds: 1)
+    XCTAssertEqual(count, 4)
+    
+  }
+  
+  
+  @MainActor
   func test_computed_property() async throws {
     
     let store = Store<State, Never>(initialState: .init())
