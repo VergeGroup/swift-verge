@@ -49,7 +49,7 @@ protocol EventEmitterType: AnyObject {
 }
 
 /// Instead of Combine
-public final class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
+open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   
   private var __publisher: Any?
   

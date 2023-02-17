@@ -54,7 +54,7 @@ private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.san
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
+open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
 
   // MARK: - Typealias
   public typealias Scope = State
@@ -62,13 +62,11 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
   public typealias ScopedDispatcher<Scope: Equatable> = ScopedDispatcherBase<State, Activity, Scope>
   public typealias Value = State
 
-  #if canImport(Combine)
   /// A Publisher to compatible SwiftUI
   @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-  public final override var objectWillChange: ObservableObjectPublisher {
+  public final var objectWillChange: ObservableObjectPublisher {
     _backingStorage.objectWillChange
   }
-  #endif
     
   public var scope: WritableKeyPath<State, State> = \State.self
   
@@ -156,8 +154,6 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
     self.externalOperation = { @Sendable _, _ in }
-
-    super.init()
        
   }
   
@@ -194,8 +190,6 @@ open class Store<State: Equatable, Activity>: _VergeObservableObjectBase, Custom
       State.reduce(modifying: &inoutRef, current: intermediate)
     }
     
-    super.init()
-
   }
   
   /// An initializer for preventing using the refence type as a state.

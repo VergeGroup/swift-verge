@@ -46,7 +46,7 @@ public protocol DerivedType: AnyObject {
 
  Conforms to Equatable that compares pointer personality.
  */
-public class Derived<Value: Equatable>: _VergeObservableObjectBase, DerivedType, @unchecked Sendable {
+public class Derived<Value: Equatable>: ObservableObject, DerivedType, @unchecked Sendable {
 
   /// Returns Derived object that provides constant value.
   ///
@@ -56,12 +56,10 @@ public class Derived<Value: Equatable>: _VergeObservableObjectBase, DerivedType,
     .init(constant: value)
   }
 
-  #if canImport(Combine)
   @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-  public final override var objectWillChange: ObservableObjectPublisher {
+  public final var objectWillChange: ObservableObjectPublisher {
     innerStore.objectWillChange
   }
-  #endif
   
   /// A current state.
   public var primitiveValue: Value {
