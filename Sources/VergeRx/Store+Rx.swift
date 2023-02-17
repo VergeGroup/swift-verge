@@ -2,7 +2,7 @@
 import Foundation
 
 #if !COCOAPODS
-import Verge
+@_spi(Package) import Verge
 #endif
 
 import RxSwift
@@ -16,11 +16,11 @@ extension Store: ReactiveCompatible {}
 extension Reactive where Base : StoreType {
   
   private var storage: StateStorage<Changes<Base.State>> {
-    unsafeBitCast(base.asStore().__backingStorage, to: StateStorage<Changes<Base.State>>.self)
+    base.asStore().__backingStorage
   }
   
   private var activityEmitter: EventEmitter<Base.Activity> {
-    unsafeBitCast(base.asStore().__activityEmitter, to: EventEmitter<Base.Activity>.self)
+    base.asStore().__activityEmitter
   }
   
   /// An observable that repeatedly emits the changes when state updated
