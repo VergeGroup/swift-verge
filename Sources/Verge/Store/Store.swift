@@ -94,12 +94,14 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     _backingStorage.value
   }
   
-  public var __backingStorage: UnsafeMutableRawPointer {    
-    Unmanaged.passUnretained(_backingStorage).toOpaque()
+  @_spi(Package)
+  public var __backingStorage: StateStorage<Changes<State>> {
+    _backingStorage
   }
   
-  public var __activityEmitter: UnsafeMutableRawPointer {
-    Unmanaged.passUnretained(_activityEmitter).toOpaque()
+  @_spi(Package)
+  public var __activityEmitter: EventEmitter<Activity> {
+    _activityEmitter
   }
 
   /// A backing storage that manages current state.
