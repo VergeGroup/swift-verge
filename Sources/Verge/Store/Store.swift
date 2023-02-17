@@ -56,71 +56,36 @@ private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.san
 ///
 open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
 
-  // MARK: - Typealias
-  public typealias Scope = State
-  public typealias Dispatcher = DispatcherBase<State, Activity>
-  public typealias ScopedDispatcher<Scope: Equatable> = ScopedDispatcherBase<State, Activity, Scope>
-  public typealias Value = State
-
-  /// A Publisher to compatible SwiftUI
-  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-  public final var objectWillChange: ObservableObjectPublisher {
-    _backingStorage.objectWillChange
-  }
-    
   public var scope: WritableKeyPath<State, State> = \State.self
-  
-  public var store: Store<State, Activity> { self }
-      
-  /// A current state.
-  ///
-  /// It causes locking and unlocking with a bit cost.
-  /// It may cause blocking if any other is doing mutation or reading.
-  public var primitiveState: State {
-    _backingStorage.value.primitive
-  }
-
-  /// Returns a current state with thread-safety.
-  ///
-  /// It causes locking and unlocking with a bit cost.
-  /// It may cause blocking if any other is doing mutation or reading.
-  public var state: Changes<State> {
-    _backingStorage.value
-  }
-  
-  /// A current changes state.
-  @available(*, deprecated, renamed: "state")
-  public var changes: Changes<State> {
-    _backingStorage.value
-  }
-  
-  @_spi(Package)
-  public var __backingStorage: StateStorage<Changes<State>> {
-    _backingStorage
-  }
-  
-  @_spi(Package)
-  public var __activityEmitter: EventEmitter<Activity> {
-    _activityEmitter
-  }
-
-  /// A backing storage that manages current state.
-  /// You shouldn't access this directly unless special case.
-  let _backingStorage: StateStorage<Changes<State>>
+          
+  private let eventEmitter = EventEmitter<Event>()
   let _activityEmitter: EventEmitter<Activity> = .init()
       
   private let tracker = VergeConcurrency.SynchronizationTracker()
   
   /// A name of the store.
   /// Specified or generated automatically from file and line.
-  let name: String
-  
-  private var middlewares: [AnyStoreMiddleware<State>] = []
+  public let name: String
   
   public let logger: StoreLogger?
+  
   public let sanitizer: RuntimeSanitizer
+  /// A Publisher to compatible SwiftUI
+  public let objectWillChange: ObservableObjectPublisher = .init()
+  
+  public var valuePublisher: AnyPublisher<Changes<State>, Never> {
+    return _valueSubject.eraseToAnyPublisher()
+  }
+    
+  private var middlewares: [AnyStoreMiddleware<State>] = []
   
   private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>) -> Void
+  
+  private var nonatomicValue: Changes<State>
+  
+  private let _lock: VergeAnyRecursiveLock
+      
+  private let _valueSubject: CurrentValueSubject<Changes<State>, Never>
   
   // MARK: - Deinit
   
@@ -128,8 +93,15 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     Task { [taskManager] in
       await taskManager.cancelAll()
     }
+  
+    eventEmitter.accept(.willDeinit)
   }
-    
+
+
+  // MARK: - Task
+  
+  public let taskManager: TaskManagerActor = .init()
+      
   // MARK: - Initializers
   
   /// An initializer
@@ -137,7 +109,7 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
   ///   - initialState: A state instance that will be modified by the first commit.
   ///   - backingStorageRecursiveLock: A lock instance for mutual exclusion.
   ///   - logger: You can also use `DefaultLogger.shared`.
-  public init(
+  public nonisolated init(
     name: String? = nil,
     initialState: State,
     backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
@@ -146,20 +118,21 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     _ file: StaticString = #file,
     _ line: UInt = #line
   ) {
-
-    self._backingStorage = .init(
-      .init(old: nil, new: initialState),
-      recursiveLock: backingStorageRecursiveLock ?? VergeConcurrency.RecursiveLock().asAny()
-    )
-
+    
+    self.nonatomicValue = .init(old: nil, new: initialState)
+    self._lock = backingStorageRecursiveLock ?? VergeConcurrency.RecursiveLock().asAny()
+    
+    // TODO: copying value
+    self._valueSubject = .init(nonatomicValue)
+    
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
     self.externalOperation = { @Sendable _, _ in }
-       
+    
   }
   
-  public init(
+  public nonisolated init(
     name: String? = nil,
     initialState: State,
     backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
@@ -174,11 +147,11 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     var inoutRef = InoutRef<State>.init(&_initialState)
     State.reduce(modifying: &inoutRef, current: .init(old: nil, new: initialState))
     let reduced = inoutRef.wrapped
-        
-    self._backingStorage = .init(
-      .init(old: nil, new: reduced),
-      recursiveLock: backingStorageRecursiveLock ?? VergeConcurrency.RecursiveLock().asAny()
-    )
+    
+    self.nonatomicValue = .init(old: nil, new: reduced)
+    self._lock = backingStorageRecursiveLock ?? VergeConcurrency.RecursiveLock().asAny()
+    // TODO: copying value
+    self._valueSubject = .init(nonatomicValue)
     
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
@@ -193,6 +166,66 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     }
     
   }
+}
+
+// MARK: - Typealias
+extension Store {
+  
+  public typealias Scope = State
+  public typealias Dispatcher = DispatcherBase<State, Activity>
+  public typealias ScopedDispatcher<Scope: Equatable> = ScopedDispatcherBase<State, Activity, Scope>
+  public typealias Value = State
+}
+
+fileprivate var _willChangeAssociated: Void?
+fileprivate var _didChangeAssociated: Void?
+
+// MARK: - Computed Properties
+extension Store {
+  
+  public var store: Store<State, Activity> { self }
+  
+  public var objectDidChange: AnyPublisher<Changes<State>, Never> {
+    valuePublisher.dropFirst().eraseToAnyPublisher()
+  }
+
+  
+  /// A current state.
+  ///
+  /// It causes locking and unlocking with a bit cost.
+  /// It may cause blocking if any other is doing mutation or reading.
+  public var primitiveState: State {
+    state.primitive
+  }
+  
+  /// Returns a current state with thread-safety.
+  ///
+  /// It causes locking and unlocking with a bit cost.
+  /// It may cause blocking if any other is doing mutation or reading.
+  public var state: Changes<State> {
+    _lock.lock()
+    defer {
+      _lock.unlock()
+    }
+    return nonatomicValue
+  }
+  
+  /// A current changes state.
+  @available(*, deprecated, renamed: "state")
+  public var changes: Changes<State> {
+    state
+  }
+  
+  @_spi(Package)
+  public var __activityEmitter: EventEmitter<Activity> {
+    _activityEmitter
+  }
+
+}
+
+// MARK: - Convenience Initializers
+extension Store {
+
   
   /// An initializer for preventing using the refence type as a state.
   @available(*, deprecated, message: "Using the reference type for the state is restricted. it must be a value type to run correctly.")
@@ -209,6 +242,11 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     
   }
 
+}
+
+extension Store {
+  
+  
   // MARK: - Middleware
   
   /// Registers a middleware.
@@ -216,11 +254,13 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
   ///
   public func add(middleware: some StoreMiddlewareType<State>) {
     // use lock
-    _backingStorage.update { _ in
-      middlewares.append(.init(modify: middleware.modify))
+    lock()
+    defer {
+      unlock()
     }
+    middlewares.append(.init(modify: middleware.modify))
   }
-
+  
   // MARK: - CustomReflectable
   public var customMirror: Mirror {
     return Mirror(
@@ -238,7 +278,7 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
   public func asStore() -> Store<State, Activity> {
     self
   }
-
+  
   // MARK: - Subscribings
   
   /// Subscribe the state changes
@@ -276,7 +316,7 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
       }
     }
   }
-
+  
   /// Subscribe the state changes
   ///
   /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
@@ -294,7 +334,7 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
   ) -> VergeAnyCancellable {
     _sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
-    
+  
   /// Subscribe the state changes
   ///
   /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
@@ -313,7 +353,7 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     _sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue) { changes, accumulated in
       thunkToMainActor {
         receive(changes, accumulated)
-      }     
+      }
     }
   }
   
@@ -329,7 +369,7 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
       }
     }
     return .init(cancellable)
-
+    
   }
   
   /// Subscribe the activity
@@ -340,10 +380,10 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
     
-   _sinkActivity(queue: queue, receive: receive)
+    _sinkActivity(queue: queue, receive: receive)
     
   }
-
+  
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
@@ -351,7 +391,7 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Activity) -> Void
   ) -> VergeAnyCancellable {
-   
+    
     _sinkActivity(queue: queue) { activity in
       thunkToMainActor {
         receive(activity)
@@ -359,10 +399,6 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     }
     
   }
-
-  // MARK: - Task
-  
-  public let taskManager: TaskManagerActor = .init()
   
   /**
    Adds an asynchronous task to perform.
@@ -394,9 +430,9 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     
     await taskManager.task(key: key, mode: mode, priority: priority, action)
   }
- 
+  
   // MARK: - Internal
-    
+  
   /// Receives mutation
   ///
   /// - Parameters:
@@ -431,7 +467,7 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     let __sanitizer__ = sanitizer
     
     /** a ciritical session */
-    try _backingStorage._update { (state) -> Storage<Changes<State>>.UpdateResult in
+    try _update { (state) -> UpdateResult in
       
       let startedTime = CFAbsoluteTimeGetCurrent()
       defer {
@@ -440,7 +476,7 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
       
       var current = state.primitive
       
-      let updateResult = try withUnsafeMutablePointer(to: &current) { (stateMutablePointer) -> Storage<Changes<State>>.UpdateResult in
+      let updateResult = try withUnsafeMutablePointer(to: &current) { (stateMutablePointer) -> UpdateResult in
         
         var inoutRef = InoutRef<State>.init(stateMutablePointer)
         
@@ -460,9 +496,9 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
          Step-2:
          Reduce modifying state with externalOperation
          */
-       
+        
         externalOperation(&inoutRef, state)
-              
+        
         /**
          Step-3
          Applying by middlewares
@@ -550,7 +586,7 @@ Mutation: (%@)
     
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
     /// To get recursive updates that comes from first call receive closure.
-    let cancellable = _backingStorage.sinkEvent { (event) in
+    let cancellable = _sinkEvent { (event) in
       switch event {
       case .willUpdate:
         break
@@ -641,7 +677,7 @@ Latest Version (%d): (%@)
     
     if !dropsFirst {
       
-      let value = _backingStorage.value.droppedPrevious()
+      let value = state.droppedPrevious()
       
       executor {
         lock.lock()
@@ -656,7 +692,7 @@ Latest Version (%d): (%@)
     return .init(cancellable)
     
   }
-    
+  
   func _sinkState<Accumulate>(
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
@@ -671,7 +707,95 @@ Latest Version (%d): (%@)
     }
     
   }
+}
+
+// MARK: - Storage Implementation
+extension Store {
+  
+  public enum Event {
+    case willUpdate
+    case didUpdate(Changes<State>)
+    case willDeinit
+  }
+  
+  public func lock() {
+    _lock.lock()
+  }
+  
+  public func unlock() {
+    _lock.unlock()
+  }
+  
+  final func _sinkEvent(subscriber: @escaping (Event) -> Void) -> EventEmitterCancellable {
+    eventEmitter.add { event in
+      subscriber(event)
+    }
+  }
+  
+  @inline(__always)
+  private func notifyWillUpdate(value: Changes<State>) {
+    eventEmitter.accept(.willUpdate)
+    if Thread.isMainThread {
+      objectWillChange.send()
+    } else {
+      DispatchQueue.main.async { [weak self] in
+        self?.objectWillChange.send()
+      }
+    }
+  }
+  
+  @inline(__always)
+  private func notifyDidUpdate(value: Changes<State>) {
+    eventEmitter.accept(.didUpdate(value))
+    // FIXME:
+    _valueSubject.send(value)
+  }
+  
+  enum UpdateResult {
+    case updated
+    case nothingUpdates
+  }
+  
+  @inline(__always)
+  final func _update(_ update: (inout Changes<State>) throws -> UpdateResult) rethrows {
+    
+    let signpost = VergeSignpostTransaction("Storage.update")
+    defer {
+      signpost.end()
+    }
+    
+    lock()
+    do {
       
+      let previousValue = nonatomicValue
+      
+      let result = try update(&nonatomicValue)
+      
+      switch result {
+      case .nothingUpdates:
+        unlock()
+      case .updated:
+        let afterValue = nonatomicValue
+        
+        /**
+         Unlocks lock before emitting event to avoid dead-locking.
+         But it causes cracking the order of event.
+         SeeAlso: testOrderOfEvents
+         */
+        unlock()
+        
+        // it's not actual `will` 👨🏻❓
+        notifyWillUpdate(value: previousValue)
+        notifyDidUpdate(value: afterValue)
+        
+      }
+      
+    } catch {
+      unlock()
+      throw error
+    }
+  }
+  
 }
 
 extension Store {

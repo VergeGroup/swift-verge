@@ -15,10 +15,6 @@ extension Store: ReactiveCompatible {}
 
 extension Reactive where Base : StoreType {
   
-  private var storage: StateStorage<Changes<Base.State>> {
-    base.asStore().__backingStorage
-  }
-  
   private var activityEmitter: EventEmitter<Base.Activity> {
     base.asStore().__activityEmitter
   }
@@ -31,12 +27,14 @@ extension Reactive where Base : StoreType {
   /// - Returns:
   public func stateObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.State>> {
     if startsFromInitial {
-      return storage
+      return base.asStore()
+        .valuePublisher
         .asObservable()
         .skip(1)
-        .startWith(storage.value.droppedPrevious())
+        .startWith(base.asStore().state.droppedPrevious())
     } else {
-      return storage
+      return base.asStore()
+        .valuePublisher
         .asObservable()
     }
   }
@@ -60,15 +58,7 @@ extension Reactive where Base : StoreType {
   /// - Returns:
   @available(*, deprecated, renamed: "stateObservable")
   public func changesObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.State>> {
-    if startsFromInitial {
-      return storage
-        .asObservable()
-        .skip(1)
-        .startWith(storage.value.droppedPrevious())
-    } else {
-      return storage
-        .asObservable()
-    }
+    return stateObservable(startsFromInitial: startsFromInitial)
   }
 
   public var activitySignal: Signal<Base.Activity> {
