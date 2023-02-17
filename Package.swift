@@ -23,7 +23,6 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
 
     /// for testing
-    .package(url: "https://github.com/apple/swift-async-algorithms", from: "0.0.4"),
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.9.3"),
   ],
   targets: [
@@ -62,7 +61,6 @@ let package = Package(
       dependencies: [
         "VergeTaskManager",
         "Verge",
-        .product(name: "AsyncAlgorithms", package: "swift-async-algorithms")
       ]
     ),
     .testTarget(
