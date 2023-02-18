@@ -19,26 +19,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+@_implementationOnly import Atomics
+import Combine
 import Foundation
 import os
-@_implementationOnly import Atomics
 
 public final class EventEmitterCancellable: Hashable, CancellableType {
-  
+
   public static func == (lhs: EventEmitterCancellable, rhs: EventEmitterCancellable) -> Bool {
     lhs === rhs
   }
-  
+
   private weak var owner: EventEmitterType?
-  
+
   fileprivate init(owner: EventEmitterType) {
     self.owner = owner
   }
-  
+
   public func hash(into hasher: inout Hasher) {
     ObjectIdentifier(self).hash(into: &hasher)
   }
-  
+
   public func cancel() {
     owner?.remove(self)
   }
@@ -50,22 +51,24 @@ protocol EventEmitterType: AnyObject {
 
 /// Instead of Combine
 open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
-  
-  private var __publisher: Any?
-  
+
+  public var publisher: Publisher {
+    return .init(eventEmitter: self)
+  }
+
   /**
    The reason why we use array against dictionary, the subscribers does not often remove.
    */
-  private var subscribers: VergeConcurrency.UnfairLockAtomic<[(EventEmitterCancellable, (Event) -> Void)]> = .init([])
-  
+  private var subscribers:
+    VergeConcurrency.UnfairLockAtomic<[(EventEmitterCancellable, (Event) -> Void)]> = .init([])
+
   private let queue: VergeConcurrency.UnfairLockAtomic<ContiguousArray<Event>> = .init(.init())
-        
+
   private let flag = ManagedAtomic<Bool>.init(false)
 
   private var deinitHandlers: VergeConcurrency.UnfairLockAtomic<[() -> Void]> = .init([])
-  
-  public init() {
 
+  public init() {
   }
 
   deinit {
@@ -73,24 +76,26 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
       $0()
     }
   }
-      
+
   public func accept(_ event: Event) {
-    
+
     /**
      https://github.com/VergeGroup/Verge/pull/220
      https://github.com/VergeGroup/Verge/issues/221
      https://github.com/VergeGroup/Verge/pull/222
      */
-        
+
     // delivers a given event for subscribers at this point.
     let capturedSubscribers = subscribers.value
-    
+
     queue.modify {
       $0.append(event)
     }
 
-    if flag.compareExchange(expected: false, desired: true, ordering: .sequentiallyConsistent).exchanged {
-            
+    if flag.compareExchange(expected: false, desired: true, ordering: .sequentiallyConsistent)
+      .exchanged
+    {
+
       while let event: Event = queue.modify({
         if $0.isEmpty == false {
           return $0.removeFirst()
@@ -102,19 +107,19 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
           subscriber.1(event)
         }
       }
-      
+
       /**
        might contain a bug in here?
        a conjunction of enqueue and dequeue
        */
-      
+
       _ = flag.compareExchange(expected: true, desired: false, ordering: .sequentiallyConsistent)
     } else {
       // enqueue only
     }
-              
+
   }
-  
+
   @discardableResult
   public func add(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterCancellable {
     let token = EventEmitterCancellable(owner: self)
@@ -123,7 +128,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
     }
     return token
   }
-  
+
   func remove(_ token: EventEmitterCancellable) {
     var itemToRemove: (EventEmitterCancellable, (Event) -> Void)? = nil
     subscribers.modify {
@@ -139,7 +144,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
         return false
       }
     }
-    
+
     // To avoid triggering deinit inside removing operation
     // At this point, deallocation will happen, then ``EventEmitterCancellable` runs operations.
     // subscribers is using unfair-lock means it's not recursive lock.
@@ -153,80 +158,61 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
       $0.append(onDeinit)
     }
   }
-  
+
 }
 
-#if canImport(Combine)
-
-import Combine
-
 extension EventEmitter {
-  
+
   @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
   public struct Publisher: Combine.Publisher {
-           
+
     public typealias Output = Event
-    
+
     public typealias Failure = Never
-    
+
     private let eventEmitter: EventEmitter<Event>
-    
+
     public init(eventEmitter: EventEmitter<Event>) {
       self.eventEmitter = eventEmitter
     }
 
-    public func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
-      
+    public func receive<S>(subscriber: S)
+    where S: Subscriber, Failure == S.Failure, Output == S.Input {
+
       let anySubscriber = AnySubscriber(subscriber)
       let subscription = Subscription(subscriber: anySubscriber, eventEmitter: eventEmitter)
-      subscriber.receive(subscription: subscription)      
+      subscriber.receive(subscription: subscription)
     }
-    
+
   }
-  
+
   @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
   public struct Subscription: Combine.Subscription {
-        
+
     public let combineIdentifier: CombineIdentifier = .init()
-    
+
     private let subscriber: AnySubscriber<Event, Never>
     private let eventEmitterSubscription: EventEmitterCancellable
     private weak var eventEmitter: EventEmitter<Event>?
-    
+
     init(subscriber: AnySubscriber<Event, Never>, eventEmitter: EventEmitter<Event>) {
-      
+
       self.subscriber = subscriber
       self.eventEmitter = eventEmitter
-      
+
       self.eventEmitterSubscription = eventEmitter.add { (event) in
         _ = subscriber.receive(event)
       }
     }
 
     public func request(_ demand: Subscribers.Demand) {
-      
+
     }
-    
+
     public func cancel() {
       eventEmitter?.remove(eventEmitterSubscription)
     }
-            
-  }
-  
-}
 
-extension EventEmitter {
-  
-  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-  public var publisher: Publisher {
-    if let publisher = __publisher as? Publisher {
-      return publisher
-    }
-    let newPublisher = Publisher(eventEmitter: self)
-    __publisher = newPublisher
-    return newPublisher
   }
-  
-}
 
-#endif
+}
