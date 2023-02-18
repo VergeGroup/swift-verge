@@ -712,7 +712,7 @@ Latest Version (%d): (%@)
 // MARK: - Storage Implementation
 extension Store {
   
-  public enum Event {
+  enum Event {
     case willUpdate
     case didUpdate(Changes<State>)
     case willDeinit
