@@ -144,7 +144,7 @@ open class ReadonlyStorage<Value>: @unchecked Sendable, CustomReflectable {
     self.upstreams = upstreams
 
     if _verge_signpost_enabled {
-      eventEmitter.add { event in
+      eventEmitter.addEventHandler { event in
         switch event {
         case .willUpdate:
           vergeSignpostEvent("Storage.willUpdate")
@@ -172,7 +172,7 @@ open class ReadonlyStorage<Value>: @unchecked Sendable, CustomReflectable {
 
   @discardableResult
   public final func sinkEvent(subscriber: @escaping (Event) -> Void) -> EventEmitterCancellable {
-    eventEmitter.add { event in
+    eventEmitter.addEventHandler { event in
       subscriber(event)
     }
   }

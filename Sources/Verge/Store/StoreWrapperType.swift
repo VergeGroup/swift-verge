@@ -197,7 +197,7 @@ extension StoreComponentType where State == WrappedStore.State, Activity == Wrap
     store.asStore().statePublisher(startsFromInitial: startsFromInitial)
   }
   
-  public var activityPublisher: EventEmitter<Activity>.Publisher {
+  public var activityPublisher: AnyPublisher<Activity, Never> {
     store.asStore().activityPublisher
   }
   

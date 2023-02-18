@@ -55,8 +55,15 @@ extension Store {
     return statePublisher(startsFromInitial: startsFromInitial)
   }
 
-  public var activityPublisher: EventEmitter<Activity>.Publisher {
-    _activityEmitter.publisher
+  public var activityPublisher: AnyPublisher<Activity, Never> {
+    publisher.flatMap { event in
+      guard case .activity(let a) = event else {
+        return Empty<Activity, Never>().eraseToAnyPublisher()
+      }
+      return Just(a).eraseToAnyPublisher()
+    }
+    .eraseToAnyPublisher()
+
   }
 
 }

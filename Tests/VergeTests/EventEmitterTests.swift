@@ -89,7 +89,7 @@ class EventEmitterTests: XCTestCase {
     let emitter = EventEmitter<Void>()
     measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       for _ in 0..<1000 {
-        emitter.add { _ in
+        emitter.addEventHandler { _ in
           
         }
       }

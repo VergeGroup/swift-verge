@@ -8,7 +8,7 @@ final class EmitterTests: XCTestCase {
     let emitter = EventEmitter<Int>()
     
     var results_1 = [Int]()
-    emitter.add { value in
+    emitter.addEventHandler { value in
       results_1.append(value)
       
       if value == 1 {
@@ -17,7 +17,7 @@ final class EmitterTests: XCTestCase {
     }
     
     var results_2 = [Int]()
-    emitter.add { value in
+    emitter.addEventHandler { value in
       results_2.append(value)
     }
     
@@ -32,11 +32,11 @@ final class EmitterTests: XCTestCase {
     
     let emitter = EventEmitter<Int>()
     
-    emitter.add { value in
+    emitter.addEventHandler { value in
     }
     
     let outputs = VergeConcurrency.UnfairLockAtomic.init([Int]())
-    emitter.add { value in
+    emitter.addEventHandler { value in
       outputs.modify({
         $0.append(value)
       })

@@ -41,6 +41,18 @@ public typealias NoActivityStoreBase<State: Equatable> = Store<State, Never>
 
 private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.sanitizer")
 
+public enum _StoreEvent<State: Equatable, Activity> {
+  
+  public enum StateEvent {
+    case willUpdate
+    case didUpdate(Changes<State>)
+    case willDeinit
+  }
+  
+  case state(StateEvent)
+  case activity(Activity)
+}
+
 /// An object that retains a latest state value and receives mutations that modify itself state.
 /// Those updates would be shared all of the subscribers these are sink(s), Derived(s)
 ///
@@ -54,13 +66,10 @@ private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.san
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
+open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, ObservableObject, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
 
   public var scope: WritableKeyPath<State, State> = \State.self
           
-  private let eventEmitter = EventEmitter<Event>()
-  let _activityEmitter: EventEmitter<Activity> = .init()
-      
   private let tracker = VergeConcurrency.SynchronizationTracker()
   
   /// A name of the store.
@@ -93,8 +102,8 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     Task { [taskManager] in
       await taskManager.cancelAll()
     }
-  
-    eventEmitter.accept(.willDeinit)
+    
+    accept(.state(.willDeinit))
   }
 
 
@@ -166,6 +175,30 @@ open class Store<State: Equatable, Activity>: ObservableObject, CustomReflectabl
     }
     
   }
+  
+  public final override func receiveEvent(_ event: _StoreEvent<State, Activity>) {
+    
+    switch event {
+    case .state(let stateEvent):
+      switch stateEvent {
+      case .willUpdate:
+        if Thread.isMainThread {
+          objectWillChange.send()
+        } else {
+          DispatchQueue.main.async { [weak self] in
+            self?.objectWillChange.send()
+          }
+        }
+      case .didUpdate(let state):
+        _valueSubject.send(state)
+      case .willDeinit:
+        break
+      }
+    case .activity:
+      break
+    }
+  }
+  
 }
 
 // MARK: - Typealias
@@ -215,12 +248,7 @@ extension Store {
   public var changes: Changes<State> {
     state
   }
-  
-  @_spi(Package)
-  public var __activityEmitter: EventEmitter<Activity> {
-    _activityEmitter
-  }
-
+ 
 }
 
 // MARK: - Convenience Initializers
@@ -244,11 +272,9 @@ extension Store {
 
 }
 
+// MARK: - Middleware
 extension Store {
-  
-  
-  // MARK: - Middleware
-  
+     
   /// Registers a middleware.
   /// MIddleware can execute additional operations unified with mutations.
   ///
@@ -260,7 +286,10 @@ extension Store {
     }
     middlewares.append(.init(modify: middleware.modify))
   }
-  
+}
+
+extension Store {
+    
   // MARK: - CustomReflectable
   public var customMirror: Mirror {
     return Mirror(
@@ -363,7 +392,7 @@ extension Store {
   ) -> VergeAnyCancellable {
     
     let execute = queue.executor()
-    let cancellable = _activityEmitter.add { (activity) in
+    let cancellable = self._sinkActivityEvent { activity in
       execute {
         receive(activity)
       }
@@ -564,7 +593,7 @@ Mutation: (%@)
     trace: ActivityTrace
   ) {
     
-    _activityEmitter.accept(activity)
+    accept(.activity(activity))
     
     let log = ActivityLog(storeName: self.name, trace: trace)
     logger?.didSendActivity(log: log, sender: self)
@@ -586,7 +615,7 @@ Mutation: (%@)
     
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
     /// To get recursive updates that comes from first call receive closure.
-    let cancellable = _sinkEvent { (event) in
+    let cancellable = _sinkStateEvent { (event) in
       switch event {
       case .willUpdate:
         break
@@ -711,13 +740,7 @@ Latest Version (%d): (%@)
 
 // MARK: - Storage Implementation
 extension Store {
-  
-  enum Event {
-    case willUpdate
-    case didUpdate(Changes<State>)
-    case willDeinit
-  }
-  
+    
   public func lock() {
     _lock.lock()
   }
@@ -726,29 +749,28 @@ extension Store {
     _lock.unlock()
   }
   
-  final func _sinkEvent(subscriber: @escaping (Event) -> Void) -> EventEmitterCancellable {
-    eventEmitter.add { event in
-      subscriber(event)
+  final func _sinkStateEvent(subscriber: @escaping (_StoreEvent<State, Activity>.StateEvent) -> Void) -> EventEmitterCancellable {
+    addEventHandler { event in
+      guard case .state(let stateEvent) = event else { return }
+      subscriber(stateEvent)
+    }
+  }
+  
+  final func _sinkActivityEvent(subscriber: @escaping (Activity) -> Void) -> EventEmitterCancellable {
+    addEventHandler { event in
+      guard case .activity(let activity) = event else { return }
+      subscriber(activity)
     }
   }
   
   @inline(__always)
   private func notifyWillUpdate(value: Changes<State>) {
-    eventEmitter.accept(.willUpdate)
-    if Thread.isMainThread {
-      objectWillChange.send()
-    } else {
-      DispatchQueue.main.async { [weak self] in
-        self?.objectWillChange.send()
-      }
-    }
+    accept(.state(.willUpdate))
   }
   
   @inline(__always)
   private func notifyDidUpdate(value: Changes<State>) {
-    eventEmitter.accept(.didUpdate(value))
-    // FIXME:
-    _valueSubject.send(value)
+    accept(.state(.didUpdate(value)))
   }
   
   enum UpdateResult {

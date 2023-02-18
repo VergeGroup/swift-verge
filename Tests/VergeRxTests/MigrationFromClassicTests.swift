@@ -102,7 +102,7 @@ enum MigrationExample {
       combine: do {
         if #available(iOS 13, *) {
           let _: AnyPublisher<Changes<ViewModel.State>, Never> = viewModel.statePublisher()
-          let _: EventEmitter<ViewModel.Activity>.Publisher = viewModel.activityPublisher
+          let _: AnyPublisher<ViewModel.Activity, Never> = viewModel.activityPublisher
         }
       }
     }

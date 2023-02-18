@@ -14,11 +14,7 @@ extension Storage: ReactiveCompatible {}
 extension Store: ReactiveCompatible {}
 
 extension Reactive where Base : StoreType {
-  
-  private var activityEmitter: EventEmitter<Base.Activity> {
-    base.asStore().__activityEmitter
-  }
-  
+    
   /// An observable that repeatedly emits the changes when state updated
   ///
   /// Guarantees to emit the first event on started subscribing.
@@ -62,7 +58,7 @@ extension Reactive where Base : StoreType {
   }
 
   public var activitySignal: Signal<Base.Activity> {
-    activityEmitter.asSignal()
+    base.asStore().activityPublisher.asObservable().asSignal(onErrorRecover: { _ in Signal.empty() })
   }
   
 }
@@ -268,7 +264,7 @@ extension EventEmitter {
         associated.onCompleted()
       }
       
-      add { (event) in
+      addEventHandler { (event) in
         lock.lock(); defer { lock.unlock() }
         associated.on(.next(event))
       }
