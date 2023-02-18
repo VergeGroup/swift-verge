@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import Verge
+@_spi(EventEmitter) import Verge
 
 #if canImport(Combine)
 import Combine

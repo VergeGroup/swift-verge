@@ -210,9 +210,6 @@ extension Store {
   public typealias Value = State
 }
 
-fileprivate var _willChangeAssociated: Void?
-fileprivate var _didChangeAssociated: Void?
-
 // MARK: - Computed Properties
 extension Store {
   
@@ -762,17 +759,7 @@ extension Store {
       subscriber(activity)
     }
   }
-  
-  @inline(__always)
-  private func notifyWillUpdate(value: Changes<State>) {
-    accept(.state(.willUpdate))
-  }
-  
-  @inline(__always)
-  private func notifyDidUpdate(value: Changes<State>) {
-    accept(.state(.didUpdate(value)))
-  }
-  
+    
   enum UpdateResult {
     case updated
     case nothingUpdates
@@ -807,8 +794,8 @@ extension Store {
         unlock()
         
         // it's not actual `will` 👨🏻❓
-        notifyWillUpdate(value: previousValue)
-        notifyDidUpdate(value: afterValue)
+        accept(.state(.willUpdate))
+        accept(.state(.didUpdate(afterValue)))
         
       }
       

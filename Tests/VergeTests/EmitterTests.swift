@@ -1,4 +1,4 @@
-import Verge
+@_spi(EventEmitter) import Verge
 import XCTest
 
 final class EmitterTests: XCTestCase {

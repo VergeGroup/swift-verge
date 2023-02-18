@@ -77,6 +77,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
     }
   }
 
+  @_spi(EventEmitter)
   public func accept(_ event: Event) {
 
     /**
@@ -128,6 +129,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
     
   }
 
+  @_spi(EventEmitter)
   @discardableResult
   public func addEventHandler(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterCancellable {
     let token = EventEmitterCancellable(owner: self)
@@ -160,7 +162,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
     // then unfair-lock raises runtime error.
     withExtendedLifetime(itemToRemove, {})
   }
-
+  
   public func onDeinit(_ onDeinit: @escaping () -> Void) {
     deinitHandlers.modify {
       $0.append(onDeinit)

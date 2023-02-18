@@ -3,6 +3,7 @@ import Foundation
 
 #if !COCOAPODS
 @_spi(Package) import Verge
+@_spi(EventEmitter) import Verge
 #endif
 
 import RxSwift
