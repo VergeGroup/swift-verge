@@ -27,14 +27,23 @@ extension Derived {
    - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
    */
   public func assign(
+    queue: TargetQueue = .passthrough,
     to binder: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
-        
-    sinkValue(queue: .passthrough) { c in
-      binder(c)
-    }
+    sinkValue(queue: queue, receive: binder)
   }
   
+  /**
+   Assigns a derived's value to a property of a store.
+   
+   - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
+   */
+  public func assign(
+    queue: MainActorTargetQueue,
+    to binder: @escaping (Changes<Value>) -> Void
+  ) -> VergeAnyCancellable {
+    sinkValue(queue: queue, receive: binder)
+  }
 }
 
 extension StoreType {
@@ -45,13 +54,24 @@ extension StoreType {
    - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
    */
   public func assign(
+    queue: TargetQueue = .passthrough,
     to binder: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
-    asStore().sinkState(queue: .passthrough) { c in
-      binder(c)
-    }
+    asStore().sinkState(queue: queue, receive: binder)
   }
 
+  /**
+   Assigns a Store's state to a property of a store.
+   
+   - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
+   */
+  public func assign(
+    queue: MainActorTargetQueue,
+    to binder: @escaping (Changes<State>) -> Void
+  ) -> VergeAnyCancellable {
+    asStore().sinkState(queue: queue, receive: binder)
+  }
+  
 }
 
 #if canImport(Combine)
