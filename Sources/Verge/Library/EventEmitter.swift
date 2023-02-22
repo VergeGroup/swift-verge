@@ -41,12 +41,12 @@ public final class EventEmitterCancellable: Hashable, CancellableType {
   }
 
   public func cancel() {
-    owner?.remove(self)
+    owner?.removeEventHandler(self)
   }
 }
 
 protocol EventEmitterType: AnyObject {
-  func remove(_ token: EventEmitterCancellable)
+  func removeEventHandler(_ token: EventEmitterCancellable)
 }
 
 /// Instead of Combine
@@ -77,6 +77,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
     }
   }
 
+  @_spi(EventEmitter)
   public func accept(_ event: Event) {
 
     /**
@@ -103,6 +104,10 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
           return nil
         }
       }) {
+        
+        // Emits
+        receiveEvent(event)
+        
         for subscriber in capturedSubscribers {
           subscriber.1(event)
         }
@@ -119,9 +124,14 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
     }
 
   }
+  
+  open func receiveEvent(_ event: Event) {
+    
+  }
 
+  @_spi(EventEmitter)
   @discardableResult
-  public func add(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterCancellable {
+  public func addEventHandler(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterCancellable {
     let token = EventEmitterCancellable(owner: self)
     subscribers.modify {
       $0.append((token, eventReceiver))
@@ -129,7 +139,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
     return token
   }
 
-  func remove(_ token: EventEmitterCancellable) {
+  func removeEventHandler(_ token: EventEmitterCancellable) {
     var itemToRemove: (EventEmitterCancellable, (Event) -> Void)? = nil
     subscribers.modify {
       $0.removeAll {
@@ -152,7 +162,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
     // then unfair-lock raises runtime error.
     withExtendedLifetime(itemToRemove, {})
   }
-
+  
   public func onDeinit(_ onDeinit: @escaping () -> Void) {
     deinitHandlers.modify {
       $0.append(onDeinit)
@@ -170,7 +180,7 @@ extension EventEmitter {
 
     public typealias Failure = Never
 
-    private let eventEmitter: EventEmitter<Event>
+    private weak var eventEmitter: EventEmitter<Event>?
 
     public init(eventEmitter: EventEmitter<Event>) {
       self.eventEmitter = eventEmitter
@@ -192,15 +202,19 @@ extension EventEmitter {
     public let combineIdentifier: CombineIdentifier = .init()
 
     private let subscriber: AnySubscriber<Event, Never>
-    private let eventEmitterSubscription: EventEmitterCancellable
+    private let eventEmitterSubscription: EventEmitterCancellable?
     private weak var eventEmitter: EventEmitter<Event>?
 
-    init(subscriber: AnySubscriber<Event, Never>, eventEmitter: EventEmitter<Event>) {
+    init(subscriber: AnySubscriber<Event, Never>, eventEmitter: EventEmitter<Event>?) {
 
       self.subscriber = subscriber
       self.eventEmitter = eventEmitter
+      
+      eventEmitter?.onDeinit {
+        subscriber.receive(completion: .finished)
+      }
 
-      self.eventEmitterSubscription = eventEmitter.add { (event) in
+      self.eventEmitterSubscription = eventEmitter?.addEventHandler { (event) in
         _ = subscriber.receive(event)
       }
     }
@@ -210,7 +224,8 @@ extension EventEmitter {
     }
 
     public func cancel() {
-      eventEmitter?.remove(eventEmitterSubscription)
+      guard let eventEmitterSubscription else { return }
+      eventEmitter?.removeEventHandler(eventEmitterSubscription)
     }
 
   }

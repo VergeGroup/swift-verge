@@ -36,11 +36,11 @@ extension Store {
   /// - Returns:
   public func statePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<Value>, Never> {
     if startsFromInitial {
-      return _backingStorage.valuePublisher.dropFirst()
-        .merge(with: Just(_backingStorage.value.droppedPrevious()))
+      return valuePublisher.dropFirst()
+        .merge(with: Just(state.droppedPrevious()))
         .eraseToAnyPublisher()
     } else {
-      return _backingStorage.valuePublisher
+      return valuePublisher
     }
   }
 
@@ -52,17 +52,18 @@ extension Store {
   /// - Returns:
   @available(*, deprecated, renamed: "statePublisher")
   public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<Value>, Never> {
-    if startsFromInitial {
-      return _backingStorage.valuePublisher.dropFirst()
-        .merge(with: Just(_backingStorage.value.droppedPrevious()))
-        .eraseToAnyPublisher()
-    } else {
-      return _backingStorage.valuePublisher
-    }
+    return statePublisher(startsFromInitial: startsFromInitial)
   }
 
-  public var activityPublisher: EventEmitter<Activity>.Publisher {
-    _activityEmitter.publisher
+  public var activityPublisher: AnyPublisher<Activity, Never> {
+    publisher.flatMap { event in
+      guard case .activity(let a) = event else {
+        return Empty<Activity, Never>().eraseToAnyPublisher()
+      }
+      return Just(a).eraseToAnyPublisher()
+    }
+    .eraseToAnyPublisher()
+
   }
 
 }
