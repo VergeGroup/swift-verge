@@ -102,7 +102,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     Task { [taskManager] in
       await taskManager.cancelAll()
     }
-    
+    _valueSubject.send(completion: .finished)
     accept(.state(.willDeinit))
   }
 
@@ -775,8 +775,6 @@ extension Store {
     
     lock()
     do {
-      
-      let previousValue = nonatomicValue
       
       let result = try update(&nonatomicValue)
       
