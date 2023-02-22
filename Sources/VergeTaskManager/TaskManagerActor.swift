@@ -69,7 +69,13 @@ public actor TaskManagerActor {
   }
  
   public enum Mode: Sendable {
+    /**
+     Cancels the current running task then start a new task.
+     */
     case dropCurrent
+    /**
+     Waits the current task finished then start a new task.
+     */
     case waitInCurrent
   }
 
@@ -85,6 +91,17 @@ public actor TaskManagerActor {
   // MARK: Public
 
   public let configuration: Configuration
+
+  /**
+   Returns a Boolean value that indicates whether the task for given key is currently running.
+   */
+  public func isRunning(for key: TaskKey) async -> Bool {
+    guard let queue = queues[key] else {
+      return false
+    }
+
+    return await queue.hasTask
+  }
   
   /**
    Performs given action as Task
@@ -143,6 +160,9 @@ public actor TaskManagerActor {
     await closure(self)
   }
 
+  /**
+   Cancells all tasks managed in this manager.
+   */
   public func cancelAll() async {
 
     for queue in queues.values {
