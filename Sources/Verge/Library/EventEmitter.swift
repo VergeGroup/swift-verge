@@ -189,23 +189,22 @@ extension EventEmitter {
     public func receive<S>(subscriber: S)
     where S: Subscriber, Failure == S.Failure, Output == S.Input {
 
-      let anySubscriber = AnySubscriber(subscriber)
-      let subscription = Subscription(subscriber: anySubscriber, eventEmitter: eventEmitter)
+      let subscription = Subscription<S>(subscriber: subscriber, eventEmitter: eventEmitter)
       subscriber.receive(subscription: subscription)
     }
 
   }
 
   @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-  public struct Subscription: Combine.Subscription {
+  public struct Subscription<S: Subscriber>: Combine.Subscription where S.Input == Event {
 
     public let combineIdentifier: CombineIdentifier = .init()
 
-    private let subscriber: AnySubscriber<Event, Never>
+    private let subscriber: S
     private let eventEmitterSubscription: EventEmitterCancellable?
     private weak var eventEmitter: EventEmitter<Event>?
 
-    init(subscriber: AnySubscriber<Event, Never>, eventEmitter: EventEmitter<Event>?) {
+    init(subscriber: S, eventEmitter: EventEmitter<Event>?) {
 
       self.subscriber = subscriber
       self.eventEmitter = eventEmitter
@@ -214,8 +213,9 @@ extension EventEmitter {
         subscriber.receive(completion: .finished)
       }
 
-      self.eventEmitterSubscription = eventEmitter?.addEventHandler { (event) in
-        _ = subscriber.receive(event)
+      self.eventEmitterSubscription = eventEmitter?
+        .addEventHandler { (event) in
+          _ = subscriber.receive(event)
       }
     }
 

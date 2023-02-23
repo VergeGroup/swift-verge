@@ -36,6 +36,7 @@ public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Se
   }
 
   private var actions: ContiguousArray<() -> Void>? = .init()
+  private var retainObjects: ContiguousArray<AnyObject> = .init()
 
   public init(onDeinit: @escaping () -> Void) {
     self.actions = [onDeinit]
@@ -62,9 +63,7 @@ public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Se
 
     assert(!wasCancelled)
 
-    actions?.append {
-      withExtendedLifetime(object) {}
-    }
+    retainObjects.append(object)
 
     return self
   }

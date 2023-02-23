@@ -32,28 +32,11 @@ extension Derived {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
-  public func valuePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<Value>, Never> {
-    innerStore.statePublisher(startsFromInitial: startsFromInitial)
-      .handleEvents(receiveCancel: {
-        withExtendedLifetime(self) {}
-      })
-      .eraseToAnyPublisher()
+  @available(*, deprecated, renamed: "statePublisher()")
+  public func valuePublisher() -> some Combine.Publisher<Changes<Value>, Never> {
+    statePublisher()
   }
 
-  /// A publisher that repeatedly emits the changes when state updated
-  ///
-  /// Guarantees to emit the first event on started subscribing.
-  ///
-  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
-  /// - Returns:
-  @available(*, deprecated, renamed: "valuePublisher")
-  public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<Value>, Never> {
-    innerStore.changesPublisher(startsFromInitial: startsFromInitial)
-      .handleEvents(receiveCancel: {
-        withExtendedLifetime(self) {}
-      })
-      .eraseToAnyPublisher()
-  }
 }
 
 #endif

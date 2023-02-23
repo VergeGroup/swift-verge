@@ -14,6 +14,27 @@ import XCTest
 
 final class SubjectCompletionTests: XCTestCase {
 
+  func testStateObsevableCompletion1() {
+
+    let disposeBag = DisposeBag()
+
+    var store: DemoStore? = DemoStore()
+    weak var weakStore: DemoStore? = store
+
+    store?.rx.stateObservable()
+      .do(onCompleted: {
+      })
+      .subscribe()
+      .disposed(by: disposeBag)
+
+    XCTAssertNotNil(weakStore)
+
+    store = nil
+
+    XCTAssertNil(weakStore)
+    withExtendedLifetime(disposeBag, {})
+  }
+
   func testStateObsevableCompletion() {
 
     let disposeBag = DisposeBag()
@@ -49,7 +70,7 @@ final class SubjectCompletionTests: XCTestCase {
 
     let exp = expectation(description: "onCompleted")
 
-    store?.rx.activitySignal
+    store?.rx.activitySignal()
       .do(onCompleted: {
         exp.fulfill()
       })

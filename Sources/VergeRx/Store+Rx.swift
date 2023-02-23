@@ -22,18 +22,8 @@ extension Reactive where Base : StoreType {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
-  public func stateObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.State>> {
-    if startsFromInitial {
-      return base.asStore()
-        .valuePublisher
-        .asObservable()
-        .skip(1)
-        .startWith(base.asStore().state.droppedPrevious())
-    } else {
-      return base.asStore()
-        .valuePublisher
-        .asObservable()
-    }
+  public func stateObservable() -> Observable<Changes<Base.State>> {
+    base.asStore().statePublisher().asObservable()
   }
   
   /// An observable that repeatedly emits the changes when state updated
@@ -43,23 +33,12 @@ extension Reactive where Base : StoreType {
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
   public func stateInfallible(startsFromInitial: Bool = true) -> Infallible<Changes<Base.State>> {
-    stateObservable(startsFromInitial: startsFromInitial)
+    stateObservable()
       .asInfallible(onErrorRecover: { _ in fatalError() })
   }
-  
-  /// An observable that repeatedly emits the changes when state updated
-  ///
-  /// Guarantees to emit the first event on started subscribing.
-  ///
-  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
-  /// - Returns:
-  @available(*, deprecated, renamed: "stateObservable")
-  public func changesObservable(startsFromInitial: Bool = true) -> Observable<Changes<Base.State>> {
-    return stateObservable(startsFromInitial: startsFromInitial)
-  }
 
-  public var activitySignal: Signal<Base.Activity> {
-    base.asStore().activityPublisher.asObservable().asSignal(onErrorRecover: { _ in Signal.empty() })
+  public func activitySignal() -> Signal<Base.Activity> {
+    base.asStore().activityPublisher().asObservable().asSignal(onErrorRecover: { _ in Signal.empty() })
   }
   
 }

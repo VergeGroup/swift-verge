@@ -82,8 +82,8 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   /// A Publisher to compatible SwiftUI
   public let objectWillChange: ObservableObjectPublisher = .init()
   
-  public var valuePublisher: AnyPublisher<Changes<State>, Never> {
-    return _valueSubject.eraseToAnyPublisher()
+  public var valuePublisher: some Combine.Publisher<Changes<State>, Never> {
+    return _valueSubject
   }
     
   private var middlewares: [AnyStoreMiddleware<State>] = []
@@ -102,7 +102,6 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     Task { [taskManager] in
       await taskManager.cancelAll()
     }
-    _valueSubject.send(completion: .finished)
     accept(.state(.willDeinit))
   }
 

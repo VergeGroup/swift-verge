@@ -382,7 +382,7 @@ final class VergeStoreTests: XCTestCase {
       
       let exp1 = expectation(description: "")
       
-      _ = store.statePublisher(startsFromInitial: true)
+      _ = store.statePublisher()
         .sink { changes in
           exp1.fulfill()
           XCTAssertEqual(changes.hasChanges(\.count), true)
@@ -393,22 +393,7 @@ final class VergeStoreTests: XCTestCase {
       wait(for: [exp1], timeout: 1)
       
     }
-    
-    XCTContext.runActivity(named: "startsFromInitial: false") { (activity) in
-      
-      let exp1 = expectation(description: "")
-      
-      _ = store.statePublisher(startsFromInitial: false)
-        .sink { changes in
-          exp1.fulfill()
-          XCTAssertEqual(changes.hasChanges(\.count), false)
-        }
-      
-      XCTAssertEqual(exp1.expectedFulfillmentCount, 1)
-      
-      wait(for: [exp1], timeout: 1)
-      
-    }
+     
   }
 
   func testAsigneeFromStore() {
