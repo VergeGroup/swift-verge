@@ -46,7 +46,6 @@ public enum _StoreEvent<State: Equatable, Activity> {
   public enum StateEvent {
     case willUpdate
     case didUpdate(Changes<State>)
-    case willDeinit
   }
   
   case state(StateEvent)
@@ -102,7 +101,6 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     Task { [taskManager] in
       await taskManager.cancelAll()
     }
-    accept(.state(.willDeinit))
   }
 
 
@@ -190,8 +188,6 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
         }
       case .didUpdate(let state):
         _valueSubject.send(state)
-      case .willDeinit:
-        break
       }
     case .activity:
       break
@@ -693,10 +689,7 @@ Latest Version (%d): (%@)
           lock.unlock()
           
           receive(resolvedReceivedState)
-        }
-        
-      case .willDeinit:
-        break
+        }        
       }
     }
     

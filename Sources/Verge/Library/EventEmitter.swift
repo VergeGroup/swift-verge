@@ -208,11 +208,7 @@ extension EventEmitter {
 
       self.subscriber = subscriber
       self.eventEmitter = eventEmitter
-      
-      eventEmitter?.onDeinit {
-        subscriber.receive(completion: .finished)
-      }
-
+          
       self.eventEmitterSubscription = eventEmitter?
         .addEventHandler { (event) in
           _ = subscriber.receive(event)
