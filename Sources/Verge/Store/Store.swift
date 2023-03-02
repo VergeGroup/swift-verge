@@ -331,11 +331,7 @@ extension Store {
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
-    _sinkState(dropsFirst: dropsFirst, queue: queue) { changes in
-      thunkToMainActor {
-        receive(changes)
-      }
-    }
+    _sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
   
   /// Subscribe the state changes
@@ -371,11 +367,7 @@ extension Store {
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
-    _sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue) { changes, accumulated in
-      thunkToMainActor {
-        receive(changes, accumulated)
-      }
-    }
+    _sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
   
   private func _sinkActivity(
@@ -708,6 +700,7 @@ Latest Version (%d): (%@)
     }
     
     return .init(cancellable)
+      .associate(self) // while subscribing its Store will be alive
     
   }
   

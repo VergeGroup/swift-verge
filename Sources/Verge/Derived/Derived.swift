@@ -192,7 +192,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     self.associatedObjects.append(object)
   }
   
-  private func _sinkValue(
+  private func _combined_sinkValue(
     dropsFirst: Bool = false,
     queue: TargetQueueType,
     receive: @escaping (Changes<Value>) -> Void
@@ -202,7 +202,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       queue: queue,
       receive: receive
     )
-    .associate(self)
   }
   
   /// Subscribe the state changes
@@ -213,6 +212,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   ///   - dropsFirst: Drops the latest value on start. if true, receive closure will be called next time state is updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkState")
   public func sinkValue(
     dropsFirst: Bool = false,
     queue: TargetQueue,
@@ -223,7 +223,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       queue: queue,
       receive: receive
     )
-    .associate(self)
   }
   
   /// Subscribe the state changes
@@ -234,6 +233,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   ///   - dropsFirst: Drops the latest value on start. if true, receive closure will be called next time state is updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkState")
   public func sinkValue(
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
@@ -244,7 +244,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       queue: queue,
       receive: receive
     )
-    .associate(self)
   }
 
   /// Subscribe the state changes
@@ -256,6 +255,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkState")
   public func sinkValue<Accumulate>(
     scan: Scan<Changes<Value>, Accumulate>,
     dropsFirst: Bool = false,
@@ -268,7 +268,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       queue: queue,
       receive: receive
     )
-    .associate(self)
   }
   
   /// Subscribe the state changes
@@ -280,6 +279,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @available(*, deprecated, renamed: "sinkState")
   public func sinkValue<Accumulate>(
     scan: Scan<Changes<Value>, Accumulate>,
     dropsFirst: Bool = false,
@@ -292,7 +292,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       queue: queue,
       receive: receive
     )
-    .associate(self)
   }
      
   /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
@@ -356,7 +355,7 @@ extension Derived where Value : Equatable {
     queue: TargetQueue,
     receive: @escaping (Value) -> Void
   ) -> VergeAnyCancellable {
-    sinkValue(dropsFirst: dropsFirst, queue: queue) { (changes) in
+    sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       changes.ifChanged { value in
         receive(value)
       }
@@ -373,7 +372,7 @@ extension Derived where Value : Equatable {
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Value) -> Void
   ) -> VergeAnyCancellable {
-    sinkValue(dropsFirst: dropsFirst, queue: queue) { (changes) in
+    sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       changes.ifChanged { value in
         receive(value)
       }
@@ -409,7 +408,7 @@ extension Derived where Value == Never {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
                 
-        let _s0 = s0._sinkValue(dropsFirst: true, queue: queue) { (s0) in
+        let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             let newValue = value.makeNextChanges(
               with: value.primitive.next((s0, value.primitive.1)),
@@ -421,7 +420,7 @@ extension Derived where Value == Never {
           }
         }
 
-        let _s1 = s1._sinkValue(dropsFirst: true, queue: queue) { (s1) in
+        let _s1 = s1._combined_sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
 
             let newValue = value.makeNextChanges(
@@ -471,7 +470,7 @@ extension Derived where Value == Never {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
         
-        let _s0 = s0._sinkValue(dropsFirst: true, queue: queue) { (s0) in
+        let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             let newValue = value.makeNextChanges(
               with: value.primitive.next((s0, value.primitive.1, value.primitive.2)),
@@ -483,7 +482,7 @@ extension Derived where Value == Never {
           }
         }
         
-        let _s1 = s1._sinkValue(dropsFirst: true, queue: queue) { (s1) in
+        let _s1 = s1._combined_sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
             
             let newValue = value.makeNextChanges(
@@ -496,7 +495,7 @@ extension Derived where Value == Never {
           }
         }
         
-        let _s2 = s2._sinkValue(dropsFirst: true, queue: queue) { (s2) in
+        let _s2 = s2._combined_sinkValue(dropsFirst: true, queue: queue) { (s2) in
           buffer.modify { value in
             
             let newValue = value.makeNextChanges(
