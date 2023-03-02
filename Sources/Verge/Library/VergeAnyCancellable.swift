@@ -107,6 +107,8 @@ public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Se
     guard !wasCancelled else { return }
     wasCancelled = true
 
+    retainObjects.removeAll()
+    
     actions?.forEach {
       $0()
     }
