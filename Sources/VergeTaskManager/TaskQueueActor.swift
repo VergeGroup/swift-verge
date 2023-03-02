@@ -85,6 +85,10 @@ private final class TaskNode {
 
 public actor TaskQueueActor {
 
+  public var hasTask: Bool {
+    head != nil
+  }
+
   @Published private var head: TaskNode?
 
   private var isTaskProcessing = false
