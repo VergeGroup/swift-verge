@@ -188,17 +188,12 @@ import Combine
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 extension StoreComponentType where State == WrappedStore.State, Activity == WrappedStore.Activity {
   
-  public func statePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
-    store.asStore().statePublisher(startsFromInitial: startsFromInitial)
+  public func statePublisher() -> some Combine.Publisher<Changes<State>, Never> {
+    store.asStore().statePublisher()
   }
   
-  @available(*, deprecated, renamed: "statePublisher")
-  public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
-    store.asStore().statePublisher(startsFromInitial: startsFromInitial)
-  }
-  
-  public var activityPublisher: AnyPublisher<Activity, Never> {
-    store.asStore().activityPublisher
+  public func activityPublisher() -> some Combine.Publisher<Activity, Never> {
+    store.asStore().activityPublisher()
   }
   
 }

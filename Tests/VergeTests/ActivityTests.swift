@@ -46,7 +46,7 @@ class ActivityTests: XCTestCase {
     let waiter = XCTestExpectation()
     
     store
-      .activityPublisher
+      .activityPublisher()
       .sink { event in
         XCTAssertEqual(event, .didSendMessage)
         waiter.fulfill()

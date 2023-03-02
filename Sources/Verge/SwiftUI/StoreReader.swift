@@ -47,21 +47,7 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
     self.init(node: .init(store: store, retainValues: [], debug: debug), content: content)
     
   }
-  
-  /// Creates an instance  from `Derived`
-  ///
-  /// - Complexity: 💡 It depends on how Derived does memoization.
-  /// - Parameters:
-  ///   - derived:
-  ///   - content:
-  public init<Derived: DerivedType>(
-    debug: Bool = false,
-    _ derived: Derived,
-    @ViewBuilder content: @escaping ContentMaker
-  ) where StateType == Derived.Value {
-    
-    self.init(node: .init(store: derived.asDerived().innerStore, retainValues: [derived], debug: debug), content: content)
-  }
+
 }
 
 public enum StoreReaderComponents<StateType: Equatable> {

@@ -109,6 +109,21 @@ final class DerivedTests: XCTestCase {
     XCTAssertEqual(wrapper.primitiveState.count, 2)
     
   }
+
+  /**
+   Store won't retain the Derived
+   */
+  func testRelease() {
+
+    let wrapper = DemoStore()
+
+    var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count }, queue: .passthrough)
+    weak var weakBaseSlice = baseSlice
+    baseSlice = nil
+
+    XCTAssertNil(weakBaseSlice)
+
+  }
   
   func testRetain() {
 
