@@ -37,7 +37,7 @@ extension StoreType {
       },
       initialUpstreamState: asStore().state,
       subscribeUpstreamState: { callback in
-        asStore()._sinkState(dropsFirst: true, queue: queue, receive: callback)
+        asStore()._primitive_sinkState(dropsFirst: true, queue: queue, receive: callback)
       },
       retainsUpstream: nil
     )

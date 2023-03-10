@@ -315,7 +315,7 @@ extension Store {
     queue: TargetQueue,
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
-    _sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
+    _primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
   
   /// Subscribe the state changes
@@ -331,7 +331,7 @@ extension Store {
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
-    _sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
+    _primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
   
   /// Subscribe the state changes
@@ -349,7 +349,7 @@ extension Store {
     queue: TargetQueue,
     receive: @escaping (Changes<State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
-    _sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+    _primitive_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
   
   /// Subscribe the state changes
@@ -368,7 +368,7 @@ extension Store {
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
-    _sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+    _primitive_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
   
   private func _sinkActivity(
@@ -582,7 +582,7 @@ Mutation: (%@)
     logger?.didSendActivity(log: log, sender: self)
   }
   
-  func _sinkState(
+  func _primitive_sinkState(
     dropsFirst: Bool = false,
     queue: TargetQueueType,
     receive: @escaping (Changes<State>) -> Void
@@ -703,14 +703,14 @@ Latest Version (%d): (%@)
     
   }
   
-  func _sinkState<Accumulate>(
+  func _primitive_scan_sinkState<Accumulate>(
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: TargetQueueType,
     receive: @escaping (Changes<State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     
-    _sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+    _primitive_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       
       let accumulate = scan.accumulate(changes)
       receive(changes, accumulate)

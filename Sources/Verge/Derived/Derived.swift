@@ -197,7 +197,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     queue: TargetQueueType,
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
-    _sinkState(
+    _primitive_sinkState(
       dropsFirst: dropsFirst,
       queue: queue,
       receive: receive
@@ -317,7 +317,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       set: { _ in },
       initialUpstreamState: value,
       subscribeUpstreamState: { callback in
-        self._sinkState(
+        self._primitive_sinkState(
           dropsFirst: true,
           queue: queue,
           receive: callback
