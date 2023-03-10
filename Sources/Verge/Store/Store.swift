@@ -420,30 +420,28 @@ extension Store {
    If this store is deallocated ealier than the given task finished, that asynchronous task will be cancelled.
    
    Carefully use this function - If the task retains this store, it will continue to live until the task is finished.
+
+   - Parameters:
+     - key:
+     - mode:
+     - priority:
+     - action
+   - Returns: A Task for tracking given async operation's completion.
    */
-  public func task(
+  public func task<Return>(
     key: VergeTaskManager.TaskKey = .distinct(),
     mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
     priority: TaskPriority = .userInitiated,
-    _ action: @Sendable @escaping () async -> Void
-  ) {
-    
+    _ action: @Sendable @escaping () async throws -> Return
+  ) -> Task<Return, Error> {
+
     Task {
-      await taskManager.task(key: key, mode: mode, priority: priority, action)
+      try await taskManager.task(key: key, mode: mode, priority: priority, action)
+        .value
     }
     
   }
-  
-  public func task(
-    key: VergeTaskManager.TaskKey = .distinct(),
-    mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
-    priority: TaskPriority = .userInitiated,
-    _ action: @Sendable @escaping () async -> Void
-  ) async {
-    
-    await taskManager.task(key: key, mode: mode, priority: priority, action)
-  }
-  
+
   // MARK: - Internal
   
   /// Receives mutation

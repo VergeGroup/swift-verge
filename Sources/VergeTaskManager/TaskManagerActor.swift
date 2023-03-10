@@ -103,11 +103,16 @@ public actor TaskManagerActor {
     return await queue.hasTask
   }
   
-  /**
-   Performs given action as Task
-   
-   Task's Error may be ``CancellationError``
-   */
+  /// Registers an asynchronous operation
+  ///
+  /// Task's Error may be ``CancellationError``
+  /// - Parameters:
+  ///   - label: String value for debugging
+  ///   - key: ``TaskKey`` value takes associated operations. It creates queues for each key.
+  ///   - mode: Mode tells the queue how controls the given new operation. to run immediately with drop all current operation or wait all them.
+  ///   - priority:
+  ///   - action:
+  /// - Returns: An Task to track the operation's completion.
   @discardableResult
   public func task<Return>(
     label: String = "",
