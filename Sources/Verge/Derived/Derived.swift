@@ -48,6 +48,8 @@ public protocol DerivedType: StoreType {
  */
 public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unchecked Sendable {
 
+  public override var keepsAliveForSubscribers: Bool { true }
+
   /// Returns Derived object that provides constant value.
   ///
   /// - Parameter value:

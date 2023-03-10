@@ -37,7 +37,7 @@ extension Store {
   public func statePublisher() -> some Combine.Publisher<Changes<Value>, Never> {
     valuePublisher
       .dropFirst()
-      .handleEvents(receiveCancel: {
+      .handleEvents(receiveCancel: {        
         // retain self until subscription finsihed
         withExtendedLifetime(self) {}
       })
@@ -46,10 +46,6 @@ extension Store {
 
   public func activityPublisher() -> some Combine.Publisher<Activity, Never> {
     publisher
-      .handleEvents(receiveCancel: {
-        // retain self until subscription finsihed
-        withExtendedLifetime(self) {}
-      })
       .flatMap { event in
         guard case .activity(let a) = event else {
           return Empty<Activity, Never>().eraseToAnyPublisher()

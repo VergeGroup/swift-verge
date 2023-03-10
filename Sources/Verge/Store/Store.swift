@@ -94,6 +94,8 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   private let _lock: VergeAnyRecursiveLock
       
   private let _valueSubject: CurrentValueSubject<Changes<State>, Never>
+
+  open var keepsAliveForSubscribers: Bool { false }
   
   // MARK: - Deinit
   
@@ -697,9 +699,13 @@ Latest Version (%d): (%@)
         receive(value)
       }
     }
-    
-    return .init(cancellable)
-      .associate(self) // while subscribing its Store will be alive
+
+    if keepsAliveForSubscribers {
+      return .init(cancellable)
+        .associate(self) // while subscribing its Store will be alive
+    } else {
+      return .init(cancellable)
+    }
     
   }
   
