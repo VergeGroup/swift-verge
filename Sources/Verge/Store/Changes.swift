@@ -133,8 +133,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   // MARK: - Initializers
 
   public convenience init(
-    old: Value?,
-    new: Value
+    old: __owned Value?,
+    new: __owned Value
   ) {
     self.init(
       previous: old.map { .init(old: nil, new: $0) },
@@ -257,7 +257,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     )
   }
 
-  public func _read(perform: (ReadRef<Value>) -> Void) {
+  @discardableResult
+  public func _read<Return>(perform: (__shared ReadRef<Value>) -> Return) -> Return {
     innerBox._read(perform: perform)
   }
 
@@ -533,7 +534,7 @@ extension Changes {
     var value: Value
 
     init(
-      value: Value
+      value: __owned Value
     ) {
       self.value = value
     }
@@ -546,12 +547,15 @@ extension Changes {
       )
     }
 
+    @discardableResult
     @inline(__always)
-    func _read(perform: (ReadRef<Value>) -> Void) {
-      withUnsafePointer(to: &value) { (pointer) -> Void in
+    func _read<Return>(perform: (__shared ReadRef<Value>) -> Return) -> Return {
+
+      withUnsafePointer(to: &value) { (pointer) -> Return in
         let ref = ReadRef<Value>.init(pointer)
-        perform(ref)
+        return perform(ref)
       }
+
     }
 
   }
