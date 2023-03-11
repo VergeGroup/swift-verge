@@ -745,9 +745,17 @@ struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: Database
   }
   
   func yield(_ input: Input) -> Output {
-    
-    let entity = input.primitive[keyPath: keyPathToDatabase].entities.table(Entity.self).find(by: entityID) /** Queries an entity */
-    
+
+    return input._read { inputRef in
+      _yield(inputRef)
+    }
+
+  }
+
+  private func _yield(_ inputRef: __shared ReadRef<Source>) -> Output {
+
+    let entity = inputRef[keyPath: keyPathToDatabase].entities.table(Entity.self).find(by: entityID) /** Queries an entity */
+
     if let entity {
       latestValue.swap(entity)
       return NonNullEntityWrapper.init(
@@ -760,23 +768,33 @@ struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: Database
         isFallBack: true
       )
     }
-    
+
   }
+
   
   func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
            
     guard let previous = input.previous else {
       return .new(yield(input))
     }
-    
-    let previousDB = previous.primitive[keyPath: keyPathToDatabase]
-    let newDB = input.primitive[keyPath: keyPathToDatabase]
-    
-    guard noChangesComparer.equals(previousDB, newDB) else {
-      return .new(yield(input))
+
+    return previous._read { previousRef -> ContinuousResult<Output> in
+
+      input._read { inputRef in
+
+        guard noChangesComparer.equals(
+          previousRef[keyPath: keyPathToDatabase],
+          inputRef[keyPath: keyPathToDatabase]
+        ) else {
+          return .new(_yield(inputRef))
+        }
+
+        return .noUpdates
+
+      }
+
     }
-    
-    return .noUpdates
+
   }
   
 }
