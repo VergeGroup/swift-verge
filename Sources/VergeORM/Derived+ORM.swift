@@ -571,7 +571,8 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
   let keyPathToDatabase: KeyPath<Source, Database>
   
   // TODO: write inline
-  private let noChangesComparer: Comparer<Database>
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseIndexComparison.Input, DatabaseComparisons<Database>.DatabaseIndexComparison, DatabaseComparisons<Database>.DatabaseComparison>
+
   private let index: (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>
   private let storage: InstancePool<Entity.EntityID, Entity.Derived> = .init(keySelector: \.raw)
   private let makeDerived: (Entity.EntityID) -> Entity.Derived
@@ -585,17 +586,14 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
     self.keyPathToDatabase = keyPathToDatabase
     self.index = index
     self.makeDerived = makeDerived
-    
-    self.noChangesComparer = Comparer<Database>(or: [
-      
+
+    self.noChangesComparer = OrComparison(
       /** Step 1 */
-      Comparer<Database>.indexNoUpdates(),
-      
+      DatabaseComparisons<Database>.DatabaseIndexComparison(),
       /** Step 2 */
-      Comparer<Database>.tableNoUpdates(Entity.self),
-      
-      /** And more we need */
-    ])
+      DatabaseComparisons<Database>.DatabaseComparison()
+    )
+
   }
   
   func yield(_ input: Changes<Source>) -> [Entity.Derived] {
@@ -627,7 +625,7 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
       
       return result
       
-    }, .init(==))
+    }, EqualityComparison())
     
     guard let derivedArray = _derivedArray else {
       return .noUpdates

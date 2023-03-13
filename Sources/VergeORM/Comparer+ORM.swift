@@ -24,6 +24,29 @@
 import Verge
 #endif
 
+public enum DatabaseComparisons<Database: DatabaseType> {
+
+  public struct DatabaseIndexComparison: Comparison {
+
+    public typealias Input = Database
+
+    public func callAsFunction(_ lhs: Database, _ rhs: Database) -> Bool {
+      lhs._backingStorage.indexUpdatedMarker == rhs._backingStorage.indexUpdatedMarker
+    }
+
+  }
+
+  public struct DatabaseComparison: Comparison {
+    public typealias Input = Database
+
+    public func callAsFunction(_ lhs: Database, _ rhs: Database) -> Bool {
+      (lhs._backingStorage.entityUpdatedMarker, lhs._backingStorage.indexUpdatedMarker) == (rhs._backingStorage.entityUpdatedMarker, rhs._backingStorage.indexUpdatedMarker)
+    }
+  }
+
+}
+
+
 extension Comparer where Input : DatabaseType {
 
   /// Returns true if Database has no changes.

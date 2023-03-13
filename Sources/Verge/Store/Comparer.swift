@@ -22,25 +22,45 @@
 import Foundation
 import os.log
 
-public protocol ComparisonType: Sendable {
+public protocol Comparison<Input>: Sendable {
   associatedtype Input
 
   @Sendable
   func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool
 }
 
-extension ComparisonType {
+extension Comparison {
 
-  public func and<C: ComparisonType>(_ otherExpression: C) -> AndComparison<Input, Self, C> {
-    .init(self, c2: otherExpression)
+  public static func equality<T>() -> Self where Self == EqualityComparison<T> {
+    .init()
   }
 
-  public func or<C: ComparisonType>(_ otherExpression: C) -> OrComparison<Input, Self, C> {
-    .init(self, c2: otherExpression)
+  public static func alwaysFalse<T>() -> Self where Self == FalseComparison<T> {
+    .init()
+  }
+
+}
+
+extension Comparison {
+
+  public func and<C: Comparison>(_ otherExpression: C) -> AndComparison<Input, Self, C> {
+    .init(self, otherExpression)
+  }
+
+  public func or<C: Comparison>(_ otherExpression: C) -> OrComparison<Input, Self, C> {
+    .init(self, otherExpression)
   }
 }
 
-public struct EqualityComparison<Input: Equatable>: ComparisonType {
+public struct FalseComparison<Input>: Comparison {
+  public init() {}
+
+  public func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool {
+    return false
+  }
+}
+
+public struct EqualityComparison<Input: Equatable>: Comparison {
 
   public init() {}
 
@@ -51,11 +71,11 @@ public struct EqualityComparison<Input: Equatable>: ComparisonType {
 
 }
 
-public struct AnyEqualityComparison<Input>: ComparisonType {
+public struct AnyEqualityComparison<Input>: Comparison {
 
   private let closure: @Sendable (Input, Input) -> Bool
 
-  public init(isEqual: @escaping @Sendable (Input, Input) -> Bool) {
+  public init(_ isEqual: @escaping @Sendable (Input, Input) -> Bool) {
     self.closure = isEqual
   }
 
@@ -65,12 +85,12 @@ public struct AnyEqualityComparison<Input>: ComparisonType {
 
 }
 
-public struct AndComparison<Input, C1: ComparisonType, C2: ComparisonType>: ComparisonType where C1.Input == Input, C2.Input == Input {
+public struct AndComparison<Input, C1: Comparison, C2: Comparison>: Comparison where C1.Input == Input, C2.Input == Input {
 
   public let c1: C1
   public let c2: C2
 
-  public init(_ c1: C1, c2: C2) {
+  public init(_ c1: C1, _ c2: C2) {
     self.c1 = c1
     self.c2 = c2
   }
@@ -80,11 +100,11 @@ public struct AndComparison<Input, C1: ComparisonType, C2: ComparisonType>: Comp
   }
 }
 
-public struct OrComparison<Input, C1: ComparisonType, C2: ComparisonType>: ComparisonType where C1.Input == Input, C2.Input == Input  {
+public struct OrComparison<Input, C1: Comparison, C2: Comparison>: Comparison where C1.Input == Input, C2.Input == Input  {
   public let c1: C1
   public let c2: C2
 
-  public init(_ c1: C1, c2: C2) {
+  public init(_ c1: C1, _ c2: C2) {
     self.c1 = c1
     self.c2 = c2
   }
