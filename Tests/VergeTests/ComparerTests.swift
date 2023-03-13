@@ -13,13 +13,26 @@ import XCTest
 @available(iOS 13, *)
 final class ComparerTests: XCTestCase {
   
-  func testPerfomance() {
+  func testPerfomance_old() {
     
     let base = Comparer<String> { $0 == $1 }
     
-    measure(metrics: [XCTMemoryMetric()]) {
-      _ = base.equals("A", "B")
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric()]) {
+      for _ in 0..<10000 {
+        _ = base.equals("A", "B")
+      }
     }
   }
-  
+
+  func testPerfomance_new() {
+
+    let base = EqualityComparison<String>()
+
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric()]) {
+      for _ in 0..<10000 {
+        _ = base("A", "B")
+      }
+    }
+  }
+
 }

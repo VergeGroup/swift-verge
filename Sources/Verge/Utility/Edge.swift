@@ -234,10 +234,21 @@ extension Edge where Value : Equatable {
   }
 }
 
-extension Comparer where Input : EdgeType {
+extension Edge {
 
-  public static func versionEquals() -> Comparer<Input> {
-    Comparer<Input>.init { $0.globalID == $1.globalID && $0.version == $1.version }
+  public struct VersionComparison: Comparison {
+
+    public func callAsFunction(_ lhs: Edge, _ rhs: Edge) -> Bool {
+      lhs.globalID == rhs.globalID && lhs.version == rhs.version
+    }
+  }
+
+}
+
+extension Comparison {
+
+  public static func versionEquals<T>() -> Self where Self == Edge<T>.VersionComparison {
+    .init()
   }
 }
 
