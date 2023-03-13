@@ -429,6 +429,7 @@ extension Store {
      - action
    - Returns: A Task for tracking given async operation's completion.
    */
+  @discardableResult
   public func task<Return>(
     key: VergeTaskManager.TaskKey = .distinct(),
     mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
