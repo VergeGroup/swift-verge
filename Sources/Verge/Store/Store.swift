@@ -434,7 +434,7 @@ extension Store {
     key: VergeTaskManager.TaskKey = .distinct(),
     mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
     priority: TaskPriority = .userInitiated,
-    _ action: @Sendable @escaping () async throws -> Return
+    @_inheritActorContext _ action: @Sendable @escaping () async throws -> Return
   ) -> Task<Return, Error> {
 
     Task {
@@ -442,6 +442,36 @@ extension Store {
         .value
     }
     
+  }
+
+  /**
+   Adds an asynchronous task to perform.
+
+   Use this function to perform an asynchronous task with a lifetime that matches that of this store.
+   If this store is deallocated ealier than the given task finished, that asynchronous task will be cancelled.
+
+   Carefully use this function - If the task retains this store, it will continue to live until the task is finished.
+
+   - Parameters:
+   - key:
+   - mode:
+   - priority:
+   - action
+   - Returns: A Task for tracking given async operation's completion.
+   */
+  @discardableResult
+  public func taskDetached<Return>(
+    key: VergeTaskManager.TaskKey = .distinct(),
+    mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
+    priority: TaskPriority = .userInitiated,
+    _ action: @Sendable @escaping () async throws -> Return
+  ) -> Task<Return, Error> {
+
+    Task {
+      try await taskManager.taskDetached(key: key, mode: mode, priority: priority, action)
+        .value
+    }
+
   }
 
   // MARK: - Internal
