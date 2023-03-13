@@ -22,6 +22,78 @@
 import Foundation
 import os.log
 
+public protocol ComparisonType: Sendable {
+  associatedtype Input
+
+  @Sendable
+  func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool
+}
+
+extension ComparisonType {
+
+  public func and<C: ComparisonType>(_ otherExpression: C) -> AndComparison<Input, Self, C> {
+    .init(self, c2: otherExpression)
+  }
+
+  public func or<C: ComparisonType>(_ otherExpression: C) -> OrComparison<Input, Self, C> {
+    .init(self, c2: otherExpression)
+  }
+}
+
+public struct EqualityComparison<Input: Equatable>: ComparisonType {
+
+  public init() {}
+
+  @Sendable
+  public func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool {
+    lhs == rhs
+  }
+
+}
+
+public struct AnyEqualityComparison<Input>: ComparisonType {
+
+  private let closure: @Sendable (Input, Input) -> Bool
+
+  public init(isEqual: @escaping @Sendable (Input, Input) -> Bool) {
+    self.closure = isEqual
+  }
+
+  public func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool {
+    closure(lhs, rhs)
+  }
+
+}
+
+public struct AndComparison<Input, C1: ComparisonType, C2: ComparisonType>: ComparisonType where C1.Input == Input, C2.Input == Input {
+
+  public let c1: C1
+  public let c2: C2
+
+  public init(_ c1: C1, c2: C2) {
+    self.c1 = c1
+    self.c2 = c2
+  }
+
+  public func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool {
+    c1(lhs, rhs) && c2(lhs, rhs)
+  }
+}
+
+public struct OrComparison<Input, C1: ComparisonType, C2: ComparisonType>: ComparisonType where C1.Input == Input, C2.Input == Input  {
+  public let c1: C1
+  public let c2: C2
+
+  public init(_ c1: C1, c2: C2) {
+    self.c1 = c1
+    self.c2 = c2
+  }
+
+  public func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool {
+    c1(lhs, rhs) || c2(lhs, rhs)
+  }
+}
+
 /// A component that compares an input value.
 /// It can be combined with other comparers.
 public struct Comparer<Input> {
