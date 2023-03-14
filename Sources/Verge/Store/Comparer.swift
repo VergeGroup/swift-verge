@@ -39,6 +39,12 @@ extension Comparison {
     .init(isEqual)
   }
 
+  public static func any<T, U: Equatable>(selector: @escaping @Sendable (T) -> U) -> Self where Self == AnyEqualityComparison<T> {
+    .init {
+      selector($0) == selector($1)
+    }
+  }
+
   public static func alwaysFalse<T>() -> Self where Self == FalseComparison<T> {
     .init()
   }
