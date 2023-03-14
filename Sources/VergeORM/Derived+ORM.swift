@@ -571,7 +571,8 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
   let keyPathToDatabase: KeyPath<Source, Database>
   
   // TODO: write inline
-  private let noChangesComparer: Comparer<Database>
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseIndexComparison.Input, DatabaseComparisons<Database>.DatabaseIndexComparison, DatabaseComparisons<Database>.DatabaseComparison>
+
   private let index: (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>
   private let storage: InstancePool<Entity.EntityID, Entity.Derived> = .init(keySelector: \.raw)
   private let makeDerived: (Entity.EntityID) -> Entity.Derived
@@ -585,17 +586,14 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
     self.keyPathToDatabase = keyPathToDatabase
     self.index = index
     self.makeDerived = makeDerived
-    
-    self.noChangesComparer = Comparer<Database>(or: [
-      
+
+    self.noChangesComparer = OrComparison(
       /** Step 1 */
-      Comparer<Database>.indexNoUpdates(),
-      
+      DatabaseComparisons<Database>.DatabaseIndexComparison(),
       /** Step 2 */
-      Comparer<Database>.tableNoUpdates(Entity.self),
-      
-      /** And more we need */
-    ])
+      DatabaseComparisons<Database>.DatabaseComparison()
+    )
+
   }
   
   func yield(_ input: Changes<Source>) -> [Entity.Derived] {
@@ -627,7 +625,7 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
       
       return result
       
-    }, .init(==))
+    }, EqualityComparison())
     
     guard let derivedArray = _derivedArray else {
       return .noUpdates
@@ -647,9 +645,8 @@ struct _DatabaseSingleEntityPipeline<Source: Equatable, Database: DatabaseType, 
   
   let keyPathToDatabase: KeyPath<Source, Database>
   let entityID: Entity.EntityID
-  
-  // TODO: write inline
-  private let noChangesComparer: Comparer<Database>
+
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, DatabaseComparisons<Database>.DatabaseComparison, DatabaseComparisons<Database>.TableComparison<Entity>>, DatabaseComparisons<Database>.UpdateComparison<Entity>>
   
   init(
     keyPathToDatabase: KeyPath<Source, Database>,
@@ -658,18 +655,14 @@ struct _DatabaseSingleEntityPipeline<Source: Equatable, Database: DatabaseType, 
     
     self.keyPathToDatabase = keyPathToDatabase
     self.entityID = entityID
-    self.noChangesComparer = Comparer<Database>(or: [
-      
-      /** Step 1 */
-      Comparer<Database>.databaseNoUpdates(),
-      
-      /** Step 2 */
-      Comparer<Database>.tableNoUpdates(Entity.self),
-      
-      /** Step 3 */
-      Comparer<Database>.changesNoContains(entityID),
-      
-    ])
+
+    /** Step 1 */
+    noChangesComparer = DatabaseComparisons<Database>.DatabaseComparison()
+    /** Step 2 */
+      .or(DatabaseComparisons<Database>.TableComparison<Entity>())
+    /** Step 3 */
+      .or(DatabaseComparisons<Database>.UpdateComparison(entityID: entityID))
+
   }
   
   func yield(_ input: Input) -> Output {
@@ -698,7 +691,7 @@ struct _DatabaseSingleEntityPipeline<Source: Equatable, Database: DatabaseType, 
     let previousDB = previous.primitive[keyPath: keyPathToDatabase]
     let newDB = input.primitive[keyPath: keyPathToDatabase]
     
-    guard noChangesComparer.equals(previousDB, newDB) else {
+    guard noChangesComparer(previousDB, newDB) else {
       return makeNew()
     }
         
@@ -715,10 +708,9 @@ struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: Database
   
   let keyPathToDatabase: KeyPath<Source, Database>
   let entityID: Entity.EntityID
-  
-  // TODO: write inline
-  private let noChangesComparer: Comparer<Database>
-  
+
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, DatabaseComparisons<Database>.DatabaseComparison, DatabaseComparisons<Database>.TableComparison<Entity>>, DatabaseComparisons<Database>.UpdateComparison<Entity>>
+
   private let latestValue: VergeConcurrency.RecursiveLockAtomic<Entity>
   
   init(
@@ -729,19 +721,14 @@ struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: Database
     self.keyPathToDatabase = keyPathToDatabase
     self.entityID = entity.entityID
     self.latestValue = .init(entity)
-    
-    self.noChangesComparer = Comparer<Database>(or: [
-      
-      /** Step 1 */
-      Comparer<Database>.databaseNoUpdates(),
-      
-      /** Step 2 */
-      Comparer<Database>.tableNoUpdates(Entity.self),
-      
-      /** Step 3 */
-      Comparer<Database>.changesNoContains(entityID),
-      
-    ])
+
+    /** Step 1 */
+    noChangesComparer = DatabaseComparisons<Database>.DatabaseComparison()
+    /** Step 2 */
+      .or(DatabaseComparisons<Database>.TableComparison<Entity>())
+    /** Step 3 */
+      .or(DatabaseComparisons<Database>.UpdateComparison(entityID: entityID))
+
   }
   
   func yield(_ input: Input) -> Output {
@@ -782,7 +769,7 @@ struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: Database
 
       input._read { inputRef in
 
-        guard noChangesComparer.equals(
+        guard noChangesComparer(
           previousRef[keyPath: keyPathToDatabase],
           inputRef[keyPath: keyPathToDatabase]
         ) else {
