@@ -46,24 +46,6 @@ public enum DatabaseComparisons<Database: DatabaseType> {
     }
   }
 
-  /// Returns true if the entity has no changes.
-  ///
-  /// - Complexity: O(1)
-  public struct EntityComparison<Entity: EntityType & Equatable>: Comparison {
-
-    public typealias Input = Database
-
-    public let entityID: Entity.EntityID
-
-    public init(entityID: Entity.EntityID) {
-      self.entityID = entityID
-    }
-
-    public func callAsFunction(_ lhs: Database, _ rhs: Database) -> Bool {
-      lhs.entities.table(Entity.self).find(by: entityID) == rhs.entities.table(Entity.self).find(by: entityID)
-    }
-  }
-
   /// Returns true if the table of the entity in database has no changes.
   ///
   /// - Complexity: O(1)
