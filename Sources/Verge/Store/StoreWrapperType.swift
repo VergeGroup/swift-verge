@@ -50,12 +50,11 @@ import Foundation
  }
  ``` 
  */
-public protocol StoreComponentType: StoreType, DispatcherType {
-  
-  associatedtype State = WrappedStore.State
-  associatedtype Activity = WrappedStore.Activity
-    
-  associatedtype Scope
+public protocol StoreComponentType: DispatcherType where Scope == WrappedStore.State {
+
+  typealias State = WrappedStore.State
+  typealias Activity = WrappedStore.Activity
+
   var store: WrappedStore { get }
 }
 
@@ -63,10 +62,6 @@ public protocol StoreComponentType: StoreType, DispatcherType {
 public typealias StoreWrapperType = StoreComponentType
 
 extension StoreComponentType {
-  public typealias DefaultStore = Store<State, Activity>
-}
-
-extension StoreComponentType where State == WrappedStore.State, Activity == WrappedStore.Activity {
   @inline(__always)
   public func asStore() -> Store<State, Activity> {
     store.asStore()
@@ -186,7 +181,7 @@ extension StoreComponentType {
 import Combine
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-extension StoreComponentType where State == WrappedStore.State, Activity == WrappedStore.Activity {
+extension StoreComponentType {
   
   public func statePublisher() -> some Combine.Publisher<Changes<State>, Never> {
     store.asStore().statePublisher()

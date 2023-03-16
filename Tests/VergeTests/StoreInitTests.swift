@@ -35,11 +35,11 @@ final class StoreInitTests: XCTestCase {
       init() {}
     }
     
-    let store: DefaultStore
+    let store: Store<State, Never>
     
     init() {
       
-      self.store = DefaultStore(initialState: .init())
+      self.store = .init(initialState: .init())
     }
   }
       

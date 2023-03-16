@@ -26,6 +26,9 @@ public protocol DispatcherType {
   associatedtype WrappedStore: StoreType
   associatedtype Scope: Equatable = WrappedStore.State
 
+  typealias State = WrappedStore.State
+  typealias Activity = WrappedStore.Activity
+
   var store: WrappedStore { get }
   var scope: WritableKeyPath<WrappedStore.State, Scope> { get }
 }
@@ -37,6 +40,7 @@ extension DispatcherType where Scope == WrappedStore.State {
 }
 
 extension DispatcherType {
+
   /**
     Subscribe the state that scoped
 
