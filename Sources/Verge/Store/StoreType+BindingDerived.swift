@@ -63,5 +63,23 @@ extension StoreType {
     return derived
   }
 
+  public func bindingDerived<Select>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    select: WritableKeyPath<State, Select>,
+    queue: TargetQueueType = .passthrough
+  ) -> BindingDerived<Select> {
+
+    bindingDerived(
+      name, file, function, line,
+      get: .select(select),
+      set: { state, newValue in
+        state[keyPath: select] = newValue
+      }
+    )
+  }
+
 }
 
