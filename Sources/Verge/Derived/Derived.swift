@@ -26,7 +26,7 @@ import class Foundation.NSString
 import Combine
 #endif
 
-public protocol DerivedType: StoreType {
+public protocol DerivedType<State>: StoreType {
   typealias Value = State
 
   func asDerived() -> Derived<Value>
@@ -203,7 +203,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       receive: receive
     )
   }
-  
+
   /// Subscribe the state changes
   ///
   /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.

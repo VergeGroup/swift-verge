@@ -28,7 +28,7 @@ import Combine
 #endif
 
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
-public protocol StoreType: AnyObject {
+public protocol StoreType<State>: AnyObject {
   associatedtype State: Equatable
   associatedtype Activity = Never
   
