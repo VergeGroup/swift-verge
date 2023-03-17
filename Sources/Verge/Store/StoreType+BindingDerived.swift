@@ -21,7 +21,7 @@
 
 import class Foundation.NSString
 
-extension StoreType {
+extension DispatcherType {
 
   /// Returns Binding Derived object
   ///
@@ -45,13 +45,13 @@ extension StoreType {
     let derived = BindingDerived<Pipeline.Output>.init(
       get: pipeline,
       set: { [weak self] state in
-        self?.asStore().commit(name, file, function, line) {
+        self?.store.asStore().commit(name, file, function, line) {
           set(&$0, state)
         }
       },
-      initialUpstreamState: asStore().state,
+      initialUpstreamState: store.asStore().state,
       subscribeUpstreamState: { callback in
-        asStore()._primitive_sinkState(
+        store.asStore()._primitive_sinkState(
           dropsFirst: true,
           queue: queue,
           receive: callback

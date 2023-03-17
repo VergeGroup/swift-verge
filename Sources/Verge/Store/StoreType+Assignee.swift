@@ -21,7 +21,7 @@
 
 import Foundation
 
-extension StoreType {
+extension DispatcherType {
 
   public typealias Assignee<Value> = (Value) -> Void
 
@@ -43,7 +43,7 @@ extension StoreType {
   ) -> Assignee<Changes<Value>> {
     return { [weak self] value in
       guard !dropsOutput(value) else { return }
-      self?.asStore().commit {
+      self?.store.asStore().commit {
         $0[keyPath: keyPath] = value.primitive
       }
     }
@@ -67,7 +67,7 @@ extension StoreType {
   ) -> Assignee<Changes<Value?>> {
     return { [weak self] value in
       guard !dropsOutput(value) else { return }
-      self?.asStore().commit {
+      self?.store.asStore().commit {
         $0[keyPath: keyPath] = value.primitive
       }
     }
@@ -92,7 +92,7 @@ extension StoreType {
     return { [weak self] value in
       let changes = value.map { Optional.some($0) }
       guard !dropsOutput(changes) else { return }
-      self?.asStore().commit {
+      self?.store.asStore().commit {
         $0[keyPath: keyPath] = .some(value.primitive)
       }
     }
@@ -105,7 +105,7 @@ extension StoreType {
     _ keyPath: WritableKeyPath<State, Value>
   ) -> Assignee<Value> {
     return { [weak self] value in
-      self?.asStore().commit {
+      self?.store.asStore().commit {
         $0[keyPath: keyPath] = value
       }
     }
@@ -118,7 +118,7 @@ extension StoreType {
     _ keyPath: WritableKeyPath<State, Value?>
   ) -> Assignee<Value?> {
     return { [weak self] value in
-      self?.asStore().commit {
+      self?.store.asStore().commit {
         $0[keyPath: keyPath] = value
       }
     }
@@ -131,7 +131,7 @@ extension StoreType {
     _ keyPath: WritableKeyPath<State, Value?>
   ) -> Assignee<Value> {
     return { [weak self] value in
-      self?.asStore().commit {
+      self?.store.asStore().commit {
         $0[keyPath: keyPath] = .some(value)
       }
     }
