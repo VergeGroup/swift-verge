@@ -14,7 +14,7 @@ fileprivate var storage_subject: Void?
 extension Storage: ReactiveCompatible {}
 extension Store: ReactiveCompatible {}
 
-extension Reactive where Base : StoreType {
+extension Reactive where Base : DispatcherType {
     
   /// An observable that repeatedly emits the changes when state updated
   ///
@@ -23,7 +23,7 @@ extension Reactive where Base : StoreType {
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
   public func stateObservable() -> Observable<Changes<Base.State>> {
-    base.asStore().statePublisher().asObservable()
+    base.store.asStore().statePublisher().asObservable()
   }
   
   /// An observable that repeatedly emits the changes when state updated
@@ -38,7 +38,7 @@ extension Reactive where Base : StoreType {
   }
 
   public func activitySignal() -> Signal<Base.Activity> {
-    base.asStore().activityPublisher().asObservable().asSignal(onErrorRecover: { _ in Signal.empty() })
+    base.store.asStore().activityPublisher().asObservable().asSignal(onErrorRecover: { _ in Signal.empty() })
   }
   
 }
