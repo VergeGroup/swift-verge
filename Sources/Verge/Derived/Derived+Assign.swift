@@ -30,7 +30,7 @@ extension Derived {
     queue: TargetQueue = .passthrough,
     to binder: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
-    sinkValue(queue: queue, receive: binder)
+    sinkState(queue: queue, receive: binder)
   }
   
   /**
@@ -42,11 +42,11 @@ extension Derived {
     queue: MainActorTargetQueue,
     to binder: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
-    sinkValue(queue: queue, receive: binder)
+    sinkState(queue: queue, receive: binder)
   }
 }
 
-extension StoreType {
+extension DispatcherType {
 
   /**
    Assigns a Store's state to a property of a store.
@@ -57,7 +57,7 @@ extension StoreType {
     queue: TargetQueue = .passthrough,
     to binder: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
-    asStore().sinkState(queue: queue, receive: binder)
+    store.asStore().sinkState(queue: queue, receive: binder)
   }
 
   /**
@@ -69,7 +69,7 @@ extension StoreType {
     queue: MainActorTargetQueue,
     to binder: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
-    asStore().sinkState(queue: queue, receive: binder)
+    store.asStore().sinkState(queue: queue, receive: binder)
   }
   
 }

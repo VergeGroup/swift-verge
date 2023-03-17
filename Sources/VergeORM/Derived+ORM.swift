@@ -169,7 +169,7 @@ public typealias NonNullDerivedResult<Entity: EntityType> = DerivedResult<Entity
 fileprivate var _derivedContainerAssociated: Void?
 fileprivate var _nonnull_derivedContainerAssociated: Void?
 
-extension StoreType {
+extension DispatcherType {
         
   private var _nonatomic_derivedObjectCache: _DerivedObjectCache {
     
@@ -241,7 +241,7 @@ public struct DatabaseContext<Store: StoreType, Database: DatabaseType> {
 }
 
 @dynamicMemberLookup
-public struct DatabaseDynamicMembers<Store: StoreType> {
+public struct DatabaseDynamicMembers<Store: DispatcherType> {
   
   unowned let store: Store
   
@@ -255,7 +255,7 @@ public struct DatabaseDynamicMembers<Store: StoreType> {
   
 }
 
-extension StoreType {
+extension DispatcherType {
   
   /**
    A cushion for databases. the return object has properties to databases.
@@ -368,7 +368,7 @@ extension DatabaseContext {
     from entityID: Entity.EntityID,
     queue: TargetQueueType = .passthrough
   ) -> Entity.Derived {
-    store.derivedEntity(entityID: entityID, from: keyPath)
+    store.asStore().derivedEntity(entityID: entityID, from: keyPath)
   }
   
   // MARK: - Convenience operators
@@ -378,7 +378,7 @@ extension DatabaseContext {
     from entity: Entity,
     queue: TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
-    store.derivedEntityPersistent(entity: entity, from: keyPath)
+    store.asStore().derivedEntityPersistent(entity: entity, from: keyPath)
   }
 
   /// Returns a derived object that provides a concrete entity according to the updating source state
@@ -548,7 +548,7 @@ extension DatabaseContext {
     queue: TargetQueueType = .passthrough
   ) -> Derived<[Entity.Derived]> {
     
-    return store.derived(
+    return store.asStore().derived(
       _DatabaseMultipleEntityPipeline(
         keyPathToDatabase: keyPath,
         index: ids,

@@ -21,7 +21,7 @@
 
 import class Foundation.NSString
 
-extension StoreType {
+extension DispatcherType {
   
   public func derived<Pipeline: PipelineType>(
     _ pipeline: Pipeline,
@@ -35,9 +35,9 @@ extension StoreType {
       set: { _ in
 
       },
-      initialUpstreamState: asStore().state,
+      initialUpstreamState: store.asStore().state,
       subscribeUpstreamState: { callback in
-        asStore()._primitive_sinkState(dropsFirst: true, queue: queue, receive: callback)
+        store.asStore()._primitive_sinkState(dropsFirst: true, queue: queue, receive: callback)
       },
       retainsUpstream: nil
     )

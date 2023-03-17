@@ -22,7 +22,7 @@
 import Foundation
 
 // It would be renamed as StoreContextType
-public protocol DispatcherType {
+public protocol DispatcherType: AnyObject {
   associatedtype WrappedStore: StoreType
   associatedtype Scope: Equatable = WrappedStore.State
 

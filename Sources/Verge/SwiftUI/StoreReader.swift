@@ -36,13 +36,13 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
   /// - Parameters:
   ///   - store:
   ///   - content:
-  public init<Store: StoreType>(
+  public init<Store: DispatcherType>(
     debug: Bool = false,
     _ store: Store,
     @ViewBuilder content: @escaping ContentMaker
   ) where StateType == Store.State {
     
-    let store = store.asStore()
+    let store = store.store.asStore()
     
     self.init(node: .init(store: store, retainValues: [], debug: debug), content: content)
     
