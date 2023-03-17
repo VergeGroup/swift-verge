@@ -120,7 +120,7 @@ final class MyViewModel: StoreComponentType {
   }
 
   /// 💡 This is basically a template statement. You might have something type of `Store`.
-  let store: DefaultStore = .init(initialState: .init())
+  let store: Store<State, Never> = .init(initialState: .init())
 
   // MARK: - ✅ These are actions as well as writing methods.
 
