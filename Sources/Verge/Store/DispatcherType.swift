@@ -51,7 +51,6 @@ extension DispatcherType where Scope == State {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @_disfavoredOverload
   public func sinkState(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
