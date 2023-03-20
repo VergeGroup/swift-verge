@@ -44,7 +44,7 @@ extension DispatcherType {
 
     let derived = BindingDerived<Pipeline.Output>.init(
       get: pipeline,
-      set: { [weak self] state in
+      set: { [weak self] state in       
         self?.store.asStore().commit(name, file, function, line) {
           set(&$0, state)
         }
