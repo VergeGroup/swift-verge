@@ -51,9 +51,10 @@ extension DispatcherType where Scope == State {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @_disfavoredOverload
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: TargetQueue,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
     store.asStore()._primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -84,10 +85,11 @@ extension DispatcherType where Scope == State {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @_disfavoredOverload
   public func sinkState<Accumulate>(
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     store.asStore()._primitive_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -115,8 +117,9 @@ extension DispatcherType where Scope == State {
   /// Subscribe the activity
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @_disfavoredOverload
   public func sinkActivity(
-    queue: TargetQueue,
+    queue: some TargetQueueType,
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
 
@@ -157,7 +160,7 @@ extension DispatcherType {
   @_disfavoredOverload
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: TargetQueue,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<Scope>) -> Void
   ) -> VergeAnyCancellable {
     let _scope = scope
@@ -203,7 +206,7 @@ extension DispatcherType {
   public func sinkState<Accumulate>(
     scan: Scan<Changes<Scope>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<Scope>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in

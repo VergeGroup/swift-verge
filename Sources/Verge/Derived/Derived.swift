@@ -194,7 +194,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   
   private func _combined_sinkValue(
     dropsFirst: Bool = false,
-    queue: TargetQueueType,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     _primitive_sinkState(
@@ -215,7 +215,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   @available(*, deprecated, renamed: "sinkState")
   public func sinkValue(
     dropsFirst: Bool = false,
-    queue: TargetQueue,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     sinkState(
@@ -259,7 +259,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   public func sinkValue<Accumulate>(
     scan: Scan<Changes<Value>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<Value>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     sinkState(
@@ -307,7 +307,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   ///     Returns the Derived that previously created with that combination.
   public func chain<Pipeline: PipelineType>(
     _ pipeline: Pipeline,
-    queue: TargetQueueType = TargetQueue.passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<Value> {
     
     vergeSignpostEvent("Derived.chain.new", label: "\(type(of: Value.self)) -> \(type(of: Pipeline.Output.self))")
@@ -352,7 +352,7 @@ extension Derived where Value : Equatable {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkChangedPrimitiveValue(
     dropsFirst: Bool = false,
-    queue: TargetQueue,
+    queue: some TargetQueueType,
     receive: @escaping (Value) -> Void
   ) -> VergeAnyCancellable {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
@@ -395,7 +395,7 @@ extension Derived where Value == Never {
   public static func combined<S0, S1>(
     _ s0: Derived<S0>,
     _ s1: Derived<S1>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Derived<Edge<(Changes<S0>, Changes<S1>)>> {
         
     let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.value, s1.value)))
@@ -457,7 +457,7 @@ extension Derived where Value == Never {
     _ s0: Derived<S0>,
     _ s1: Derived<S1>,
     _ s2: Derived<S2>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>> {
         
     let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.value, s1.value, s2.value)))

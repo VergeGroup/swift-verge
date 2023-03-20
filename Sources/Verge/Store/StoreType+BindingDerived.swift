@@ -39,7 +39,7 @@ extension DispatcherType {
     _ line: UInt = #line,
     get pipeline: Pipeline,
     set: @escaping (inout InoutRef<State>, Pipeline.Output) -> Void,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<State> {
 
     let derived = BindingDerived<Pipeline.Output>.init(
@@ -69,7 +69,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     select: WritableKeyPath<State, Select>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> BindingDerived<Select> {
 
     bindingDerived(

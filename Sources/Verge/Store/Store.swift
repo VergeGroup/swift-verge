@@ -301,11 +301,11 @@ extension Store {
   }
 
   func _primitive_sinkActivity(
-    queue: TargetQueueType,
+    queue: some TargetQueueType,
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
     
-    let execute = queue.executor()
+    let execute = queue.execute
     let cancellable = self._sinkActivityEvent { activity in
       execute {
         receive(activity)
@@ -516,11 +516,11 @@ Mutation: (%@)
   
   func _primitive_sinkState(
     dropsFirst: Bool = false,
-    queue: TargetQueueType,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
     
-    let executor = queue.executor()
+    let executor = queue.execute
     
     var latestStateWrapper: Changes<State>? = nil
     
@@ -638,7 +638,7 @@ Latest Version (%d): (%@)
   func _primitive_scan_sinkState<Accumulate>(
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueueType,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     

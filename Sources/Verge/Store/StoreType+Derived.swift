@@ -25,7 +25,7 @@ extension DispatcherType {
   
   public func derived<Pipeline: PipelineType>(
     _ pipeline: Pipeline,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State> {
     
     vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: Pipeline.Output.self))")
