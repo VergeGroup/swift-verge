@@ -23,40 +23,42 @@ import Foundation
 @_implementationOnly import Atomics
 
 public protocol TargetQueueType: AnyObject {
-  func executor() -> (@escaping () -> Void) -> Void
+  func execute(_ workItem: @escaping () -> Void)
 }
 
 /// Describes queue to dispatch event
 /// Currently light-weight impl
 /// A reason why class is to take an object identifier.
-public final class TargetQueue: TargetQueueType {
+public final class AnyTargetQueue: TargetQueueType {
 
-  private let schedule: (@escaping () -> Void) -> Void
+  private let _execute: (@escaping () -> Void) -> Void
 
   fileprivate init(
-    schedule: @escaping (@escaping () -> Void) -> Void
+    _execute: @escaping (@escaping () -> Void) -> Void
   ) {
-    self.schedule = schedule
+    self._execute = _execute
   }
 
-  public func executor() -> (@escaping () -> Void) -> Void {
-    schedule
+  public func execute(_ workItem: @escaping () -> Void) {
+    _execute(workItem)
   }
+
 }
 
 public final class MainActorTargetQueue: TargetQueueType {
 
-  private let schedule: (@escaping () -> Void) -> Void
+  private let _execute: (@escaping () -> Void) -> Void
 
   fileprivate init(
-    schedule: @escaping (@escaping () -> Void) -> Void
+    _execute: @escaping (@escaping () -> Void) -> Void
   ) {
-    self.schedule = schedule
+    self._execute = _execute
   }
 
-  public func executor() -> (@escaping () -> Void) -> Void {
-    schedule
+  public func execute(_ workItem: @escaping () -> Void) {
+    _execute(workItem)
   }
+
 }
 
 private enum StaticMember {
@@ -83,30 +85,30 @@ extension DispatchQueue {
   }
 }
 
-extension TargetQueueType where Self == TargetQueue {
+extension TargetQueueType where Self == AnyTargetQueue {
   /// Returns a instance that never dispatches.
   /// The Sink use this targetQueue performs in the queue which the upstream commit dispatched.
-  public static var passthrough: TargetQueue {
-    TargetQueue._passthrough
+  public static var passthrough: AnyTargetQueue {
+    AnyTargetQueue._passthrough
   }
 
   /// Use specified queue, always dispatches
-  public static func specific(_ targetQueue: DispatchQueue) -> TargetQueue {
+  public static func specific(_ targetQueue: DispatchQueue) -> AnyTargetQueue {
     return .init { workItem in
       targetQueue.async(execute: workItem)
     }
   }
   /// It dispatches to the serial background queue asynchronously.
-  public static var asyncSerialBackground: TargetQueue {
-    TargetQueue._asyncSerialBackground
+  public static var asyncSerialBackground: AnyTargetQueue {
+    AnyTargetQueue._asyncSerialBackground
   }
 
   /// Enqueue first item on current-thread(synchronously).
   /// From then, using specified queue.
-  public static func startsFromCurrentThread<Queue: TargetQueueType>(andUse queue: Queue) -> TargetQueue {
+  public static func startsFromCurrentThread<Queue: TargetQueueType>(andUse queue: Queue) -> AnyTargetQueue {
     let numberEnqueued = ManagedAtomic<Bool>.init(true)
     
-    let execute = queue.executor()
+    let execute = queue.execute
     
     return .init { workItem in
       
@@ -167,18 +169,17 @@ extension MainActorTargetQueue {
 
 }
 
-extension TargetQueue {
+extension AnyTargetQueue {
 
   /// Returns a instance that never dispatches.
   /// The Sink use this targetQueue performs in the queue which the upstream commit dispatched.
-  static let _passthrough: TargetQueue = .init { workItem in
+  static let _passthrough: AnyTargetQueue = .init { workItem in
     workItem()
   }
 
   /// It dispatches to the serial background queue asynchronously.
-  static let _asyncSerialBackground: TargetQueue = .init { workItem in
+  static let _asyncSerialBackground: AnyTargetQueue = .init { workItem in
     StaticMember.serialBackgroundDispatchQueue.async(execute: workItem)
   }
 
- 
 }

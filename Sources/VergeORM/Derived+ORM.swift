@@ -281,7 +281,7 @@ extension DispatcherType {
   public func derivedEntity<Entity: EntityType, Database: DatabaseType>(
     entityID: Entity.EntityID,
     from keyPathToDatabase: KeyPath<State, Database>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.Derived {
     
     objc_sync_enter(self); defer { objc_sync_exit(self) }
@@ -320,7 +320,7 @@ extension DispatcherType {
   public func derivedEntityPersistent<Entity: EntityType, Database: DatabaseType>(
     entity: Entity,
     from keyPathToDatabase: KeyPath<State, Database>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
     
     objc_sync_enter(self); defer { objc_sync_exit(self) }
@@ -366,7 +366,7 @@ extension DatabaseContext {
   @inline(__always)
   public func derived<Entity: EntityType>(
     from entityID: Entity.EntityID,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.Derived {
     store.asStore().derivedEntity(entityID: entityID, from: keyPath)
   }
@@ -376,7 +376,7 @@ extension DatabaseContext {
   @inline(__always)
   fileprivate func _primary_derivedNonNull<Entity: EntityType>(
     from entity: Entity,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
     store.asStore().derivedEntityPersistent(entity: entity, from: keyPath)
   }
@@ -397,7 +397,7 @@ extension DatabaseContext {
   public func derivedNonNull<Entity: EntityType>(
     from entity: Entity,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
 
     _primary_derivedNonNull(from: entity, queue: queue)
@@ -414,7 +414,7 @@ extension DatabaseContext {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entityID: Entity.EntityID,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) throws -> Entity.NonNullDerived {
           
     guard let initalValue = store.primitiveState[keyPath: keyPath].entities.table(Entity.self).find(by: entityID) else {
@@ -434,7 +434,7 @@ extension DatabaseContext {
   ///
   public func derivedNonNull<Entity: EntityType>(
     from entity: Entity,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
     _primary_derivedNonNull(from: entity, queue: queue)
   }
@@ -450,7 +450,7 @@ extension DatabaseContext {
   ///
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entityIDs: S,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity.EntityID {
     entityIDs.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
       do {
@@ -471,7 +471,7 @@ extension DatabaseContext {
   ///
   public func derivedNonNull<Entity: EntityType>(
     from entityIDs: Set<Entity.EntityID>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> {
     // TODO: Stop using AnySequence
     derivedNonNull(from: AnySequence.init(entityIDs.makeIterator), queue: queue)
@@ -487,7 +487,7 @@ extension DatabaseContext {
   ///
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entities: S,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
     entities.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
       r.append(derived: _primary_derivedNonNull(from: e, queue: queue), id: e.entityID)
@@ -504,7 +504,7 @@ extension DatabaseContext {
   ///
   public func derivedNonNull<Entity: EntityType>(
     from entities: Set<Entity>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: AnySequence.init(entities.makeIterator), queue: queue)
   }
@@ -520,7 +520,7 @@ extension DatabaseContext {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from insertionResult: EntityTable<Database.Schema, Entity>.InsertionResult,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
     _primary_derivedNonNull(from: insertionResult.entity, queue: queue)
   }
@@ -536,7 +536,7 @@ extension DatabaseContext {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from insertionResults: S,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<Database.Schema, Entity>.InsertionResult {
     derivedNonNull(from: insertionResults.map { $0.entity }, queue: queue)
   }
@@ -545,7 +545,7 @@ extension DatabaseContext {
   /// TODO: More performant
   public func _derivedQueriedEntities<Entity: EntityType>(
     ids: @escaping (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Derived<[Entity.Derived]> {
     
     return store.asStore().derived(
