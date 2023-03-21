@@ -21,17 +21,17 @@ final class FilterTests: XCTestCase {
       var b = 0
       var c = 0
     }
-        
-    let fragment = Comparer<Model>.init(or: [
-      Comparer<Model>.init { $0.a == 1 && $1.a == 1 },
-      Comparer<Model>.init { $0.b == 1 && $1.b == 1 },
-      Comparer<Model>.init { $0.c == 1 && $1.c == 1 },
-    ])
-        
+
+    let comparison = OrComparison<Model, _, _>(
+      .any { @Sendable in $0.a == 1 && $1.a == 1 },
+      .any { @Sendable in  $0.b == 1 && $1.b == 1 }
+    )
+    .or(.any { @Sendable in $0.c == 1 && $1.c == 1 })
+
     do {
       let pre = Model()
       let new = Model()
-      XCTAssertEqual(fragment.equals(pre, new), false)
+      XCTAssertEqual(comparison(pre, new), false)
     }
     
     do {
@@ -39,7 +39,7 @@ final class FilterTests: XCTestCase {
       pre.a = 1
       var new = Model()
       new.a = 1
-      XCTAssertEqual(fragment.equals(pre, new), true)
+      XCTAssertEqual(comparison(pre, new), true)
     }
     
     do {
@@ -47,7 +47,7 @@ final class FilterTests: XCTestCase {
       pre.c = 1
       var new = Model()
       new.c = 1
-      XCTAssertEqual(fragment.equals(pre, new), true)
+      XCTAssertEqual(comparison(pre, new), true)
     }
     
   }
@@ -59,17 +59,17 @@ final class FilterTests: XCTestCase {
       var b = 0
       var c = 0
     }
-    
-    let fragment = Comparer<Model>.init(and: [
-      Comparer<Model>.init { $0.a == 1 && $1.a == 1 },
-      Comparer<Model>.init { $0.b == 1 && $1.b == 1 },
-      Comparer<Model>.init { $0.c == 1 && $1.c == 1 },
-    ])
-    
+
+    let comparison = AndComparison<Model, _, _>(
+      .any { @Sendable in $0.a == 1 && $1.a == 1 },
+      .any { @Sendable in  $0.b == 1 && $1.b == 1 }
+    )
+      .and(.any { @Sendable in $0.c == 1 && $1.c == 1 })
+
     do {
       let pre = Model()
       let new = Model()
-      XCTAssertEqual(fragment.equals(pre, new), false)
+      XCTAssertEqual(comparison(pre, new), false)
     }
     
     do {
@@ -77,7 +77,7 @@ final class FilterTests: XCTestCase {
       pre.a = 1
       var new = Model()
       new.a = 1
-      XCTAssertEqual(fragment.equals(pre, new), false)
+      XCTAssertEqual(comparison(pre, new), false)
     }
     
     do {
@@ -87,7 +87,7 @@ final class FilterTests: XCTestCase {
       var new = Model()
       new.a = 1
       new.b = 1
-      XCTAssertEqual(fragment.equals(pre, new), false)
+      XCTAssertEqual(comparison(pre, new), false)
     }
     
     do {
@@ -99,7 +99,7 @@ final class FilterTests: XCTestCase {
       new.a = 1
       new.b = 1
       new.c = 1
-      XCTAssertEqual(fragment.equals(pre, new), true)
+      XCTAssertEqual(comparison(pre, new), true)
     }
     
   }

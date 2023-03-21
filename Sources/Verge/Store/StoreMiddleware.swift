@@ -21,36 +21,43 @@
 
 import Foundation
 
-/**
- Middleware enables us to do extra operations according to dispatched commits in Store.
- */
-open class StoreMiddleware<State> {
-  
-  open func mutate(state: inout InoutRef<State>) {
-    
+public protocol StoreMiddlewareType<State>: Sendable {
+
+  associatedtype State: Equatable
+
+  @Sendable
+  func modify(modifyingState: inout InoutRef<State>, current: Changes<State>)
+
+}
+
+public struct AnyStoreMiddleware<State: Equatable>: StoreMiddlewareType, Sendable {
+
+  private let closure:
+    @Sendable (_ modifyingState: inout InoutRef<State>, _ current: Changes<State>) -> Void
+
+  init(
+    modify: @escaping @Sendable (_ modifyingState: inout InoutRef<State>, _ current: Changes<State>)
+      -> Void
+  ) {
+    self.closure = modify
   }
-    
+
+  public func modify(modifyingState: inout InoutRef<State>, current: Changes<State>) {
+    self.closure(&modifyingState, current)
+  }
+
+}
+
+extension StoreMiddlewareType  {
+
   /**
    Creates an instance that commits mutations according to the original committing.
    */
-  public static func unifiedMutation(_ mutate: @escaping (inout InoutRef<State>) -> Void) -> AnonymousStoreMiddleware<State> {
-    return .init(mutate: mutate)
-  }
-  
-}
-
-/**
- A closure-based middleware. It enables us to create middleware without creating sub-class.
- */
-public final class AnonymousStoreMiddleware<State>: StoreMiddleware<State> {
-  
-  private let _mutate: (inout InoutRef<State>) -> Void
-  
-  public init(mutate: @escaping (inout InoutRef<State>) -> Void) {
-    self._mutate = mutate
+  public static func modify<State: Equatable>(
+    modify: @escaping @Sendable (_ modifyingState: inout InoutRef<State>, _ current: Changes<State>)
+      -> Void
+  ) -> Self where Self == AnyStoreMiddleware<State> {
+    return .init(modify: modify)
   }
 
-  public override func mutate(state: inout InoutRef<State>) {
-    _mutate(&state)
-  }
 }

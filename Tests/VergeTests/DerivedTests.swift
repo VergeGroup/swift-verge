@@ -11,41 +11,49 @@ import XCTest
 
 import Verge
 
+private protocol MyProtocol {
+  
+}
+
+private protocol MyEquatableProtocol: Equatable {
+  
+}
+
 final class DerivedTests: XCTestCase {
 
   func testSlice() {
 
     let localStore = DemoStore()
-                
-    let slice = localStore.derived(.map { $0.count }, queue: .passthrough)
+                    
+    let slice = localStore.derived(.map({ $0.count }), queue: .passthrough)      
 
     XCTAssertEqual(slice.primitiveValue, 0)
     XCTAssertEqual(slice.value.root, 0)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
     
     localStore.increment()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.root, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
       
     localStore.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     localStore.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     localStore.increment()
 
     XCTAssertEqual(slice.primitiveValue, 2)
     XCTAssertEqual(slice.value.version, 2)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
   }
 
   func testSlice2() {
@@ -53,45 +61,44 @@ final class DerivedTests: XCTestCase {
     let wrapper = DemoStore()
 
     let slice = wrapper.derived(
-      .map { $0.count },
-      dropsOutput: { $0.noChanges(\.root) },
+      .map { $0.count }.drop { $0.noChanges(\.self) },
       queue: .passthrough
     )
 
     XCTAssertEqual(slice.primitiveValue, 0)
     XCTAssertEqual(slice.value.root, 0)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     wrapper.increment()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.root, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     wrapper.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     wrapper.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
 
     wrapper.increment()
 
     XCTAssertEqual(slice.primitiveValue, 2)
     XCTAssertEqual(slice.value.version, 2)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
   }
 
   func testBinding() {
 
     let wrapper = DemoStore()
     
-    let slice = wrapper.binding(
+    let slice = wrapper.bindingDerived(
       get: .map { $0.count },
       set: { source, new in
         source.count = new
@@ -101,6 +108,21 @@ final class DerivedTests: XCTestCase {
         
     XCTAssertEqual(wrapper.primitiveState.count, 2)
     
+  }
+
+  /**
+   Store won't retain the Derived
+   */
+  func testRelease() {
+
+    let wrapper = DemoStore()
+
+    var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count }, queue: .passthrough)
+    weak var weakBaseSlice = baseSlice
+    baseSlice = nil
+
+    XCTAssertNil(weakBaseSlice)
+
   }
   
   func testRetain() {
@@ -144,7 +166,7 @@ final class DerivedTests: XCTestCase {
     
     weak var weakBaseSlice = baseSlice
             
-    var slice: Derived<Int>! = baseSlice.chain(.map { $0.root }, queue: .passthrough)
+    var slice: Derived<Int>! = baseSlice.chain(.map { $0.self }, queue: .passthrough)
     
     baseSlice = nil
     
@@ -152,28 +174,28 @@ final class DerivedTests: XCTestCase {
         
     XCTAssertEqual(slice.primitiveValue, 0)
     XCTAssertEqual(slice.value.version, 0)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.increment()
         
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.empty()
     
     XCTAssertEqual(slice.primitiveValue, 1)
     XCTAssertEqual(slice.value.version, 1) // with memoized, version not changed
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
     XCTAssertNotNil(weakBaseSlice)
     
     wrapper.increment()
     
     XCTAssertEqual(slice.primitiveValue, 2)
     XCTAssertEqual(slice.value.version, 2)
-    XCTAssertEqual(slice.value.hasChanges(\.root), true)
+    XCTAssertEqual(slice.value.hasChanges(\.self), true)
     XCTAssertNotNil(weakBaseSlice)
 
     slice = nil
@@ -202,12 +224,12 @@ final class DerivedTests: XCTestCase {
     let update1 = expectation(description: "")
     update1.assertForOverFulfill = true
     update1.expectedFulfillmentCount = 2
-    
-    let d = Derived.combined(s0, s1, queue: .passthrough)
-    
-    XCTAssert(d.primitiveValue == (0, ""))
         
-    let sub = d.sinkValue { (changes) in
+    let combined = Derived.combined(s0, s1, queue: .passthrough)
+    
+    XCTAssert((combined.primitiveValue.0.primitive, combined.primitiveValue.1.primitive) == (0, ""))
+        
+    let sub = combined.sinkValue { (changes) in
       
       updateCount.fulfill()
       
@@ -225,72 +247,18 @@ final class DerivedTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssert(d.primitiveValue == (1, ""))
+    XCTAssert((combined.primitiveValue.0.primitive, combined.primitiveValue.1.primitive) == (1, ""))
     
     wrapper.commit {
       $0.name = "next"
     }
     
-    XCTAssert(d.primitiveValue == (1, "next"))
+    XCTAssert((combined.primitiveValue.0.primitive, combined.primitiveValue.1.primitive) == (1, "next"))
     
     wait(for: [updateCount, update1, update0], timeout: 10)
     withExtendedLifetime(sub) {}
   }
-    
-  /// combine 1 Stored and 1 Computed
-  func testCombine2computed() {
-
-    let wrapper = DemoStore()
-    
-    let s0 = wrapper.derived(.map { $0.count }, queue: .passthrough)
-    let s1 = wrapper.derived(.map { $0.computed.nameCount }, queue: .passthrough)
-    
-    let updateCount = expectation(description: "updatecount")
-    updateCount.assertForOverFulfill = true
-    updateCount.expectedFulfillmentCount = 3
-    
-    let update0 = expectation(description: "")
-    update0.assertForOverFulfill = true
-    update0.expectedFulfillmentCount = 2
-    
-    let update1 = expectation(description: "")
-    update1.assertForOverFulfill = true
-    update1.expectedFulfillmentCount = 2
-    
-    let d = Derived.combined(s0, s1, queue: .passthrough)
-    
-    XCTAssert(d.primitiveValue == (0, 0))
-    
-    let sub = d.sinkValue { (changes) in
-      
-      updateCount.fulfill()
-      
-      changes.ifChanged(\.0) { _0 in
-        update0.fulfill()
-      }
-      
-      changes.ifChanged(\.1) { _1 in
-        update1.fulfill()
-      }
-      
-    }
-    
-    wrapper.commit {
-      $0.count += 1
-    }
-    
-    XCTAssert(d.primitiveValue == (1, 0))
-    
-    wrapper.commit {
-      $0.name = "next"
-    }
-    
-    XCTAssert(d.primitiveValue == (1, 4))
-    
-    wait(for: [updateCount, update1, update0], timeout: 10)
-    withExtendedLifetime(sub) {}
-  }
-      
+          
 }
 
 final class DerivedCacheTests: XCTestCase {
@@ -300,7 +268,7 @@ final class DerivedCacheTests: XCTestCase {
     let store1 = DemoStore()
     let store2 = DemoStore()
     
-    XCTAssert(store1.derived(.map(\.count)) === store1.derived(.map(\.count)))
+    XCTAssert(store1.derived(.map(\.count)) !== store1.derived(.map(\.count)))
     
     /// Stored in each store
     XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
@@ -313,12 +281,12 @@ final class DerivedCacheTests: XCTestCase {
     let store2 = DemoStore()
 
     XCTAssert(
-      store1.derived(.map(\.count), queue: .asyncMain) ===
+      store1.derived(.map(\.count), queue: .asyncMain) !==
         store1.derived(.map(\.count), queue: .asyncMain)
     )
     
     XCTAssert(
-      store1.derived(.map(\.count), queue: .main) ===
+      store1.derived(.map(\.count), queue: .main) !==
         store1.derived(.map(\.count), queue: .main)
     )
 
@@ -339,10 +307,10 @@ final class DerivedCacheTests: XCTestCase {
     let store1 = DemoStore()
     let store2 = DemoStore()
     
-    let queue = TargetQueue.specific(DispatchQueue(label: "test"))
-    let queue2 = TargetQueue.specific(DispatchQueue(label: "test"))
+    let queue = AnyTargetQueue.specific(DispatchQueue(label: "test"))
+    let queue2 = AnyTargetQueue.specific(DispatchQueue(label: "test"))
     
-    XCTAssert(store1.derived(.map(\.count), queue: queue) === store1.derived(.map(\.count), queue: queue))
+    XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: queue))
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: queue2))
     XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
@@ -354,34 +322,12 @@ final class DerivedCacheTests: XCTestCase {
     let store1 = DemoStore()
     let store2 = DemoStore()
     
-    let queue = TargetQueue.specific(DispatchQueue.global())
+    let queue = AnyTargetQueue.specific(DispatchQueue.global())
     
-    XCTAssert(store1.derived(.map(\.count), queue: queue) === store1.derived(.map(\.count), queue: queue))
+    XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: queue))
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))
     XCTAssert(store1.derived(.map(\.count)) !== store2.derived(.map(\.count)))
     
   }
-  
-  func test_identify_by_instance() {
-    
-    let store1 = DemoStore()
-    
-    XCTAssert(store1.derived(.map { $0.count }) !== store1.derived(.map { $0.count }))
-   
-    let map = Pipeline<Changes<DemoState>, Int>.map { $0.count }
-    
-    XCTAssert(store1.derived(map) === store1.derived(map))
-
-  }
-  
-  func test_cachingDerived_concurrent() {
-    
-    let store1 = DemoStore()
-    
-    DispatchQueue.concurrentPerform(iterations: 10000) { _ in
-      XCTAssert(store1.derived(.map(\.count)) === store1.derived(.map(\.count)))
-    }
-    
-  }
-  
+     
 }

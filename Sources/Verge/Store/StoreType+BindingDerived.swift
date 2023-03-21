@@ -21,7 +21,7 @@
 
 import class Foundation.NSString
 
-extension StoreType {
+extension DispatcherType {
 
   /// Returns Binding Derived object
   ///
@@ -32,65 +32,52 @@ extension StoreType {
   ///   - dropsOutput: Predicate to drops object if found a duplicated output
   ///   - set:
   /// - Returns:
-  public func binding<NewState>(
+  public func bindingDerived<Pipeline: PipelineType>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    get: Pipeline<Changes<State>, NewState>,
-    dropsOutput: @escaping (Changes<NewState>) -> Bool = { _ in false },
-    set: @escaping (inout InoutRef<State>, NewState) -> Void,
-    queue: TargetQueue = .passthrough
-  ) -> BindingDerived<NewState> {
+    get pipeline: Pipeline,
+    set: @escaping (inout InoutRef<State>, Pipeline.Output) -> Void,
+    queue: some TargetQueueType = .passthrough
+  ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<State> {
 
-    let derived = BindingDerived<NewState>.init(
-      get: get,
+    let derived = BindingDerived<Pipeline.Output>.init(
+      get: pipeline,
       set: { [weak self] state in
-        self?.asStore().commit(name, file, function, line) {
+        self?.store.asStore().commit(name, file, function, line) {
           set(&$0, state)
         }
       },
-      initialUpstreamState: asStore().state,
+      initialUpstreamState: store.asStore().state,
       subscribeUpstreamState: { callback in
-        asStore().sinkState(
+        store.asStore()._primitive_sinkState(
           dropsFirst: true,
           queue: queue,
           receive: callback
         )
-      }, retainsUpstream: nil)
-
-    derived.setDropsOutput(dropsOutput)
+      },
+      retainsUpstream: nil
+    )
 
     return derived
   }
 
-  /// Returns Binding Derived object
-  ///
-  /// - Complexity: ✅ Drops duplicated the output with Equatable comparison.
-  /// - Parameters:
-  ///   - name:
-  ///   - get:
-  ///   - set:
-  /// - Returns:
-  public func binding<NewState>(
+  public func bindingDerived<Select>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    get: Pipeline<Changes<State>, NewState>,
-    set: @escaping (inout InoutRef<State>, NewState) -> Void,
-    queue: TargetQueue = .passthrough
-  ) -> BindingDerived<NewState> where NewState : Equatable {
+    select: WritableKeyPath<State, Select>,
+    queue: some TargetQueueType = .passthrough
+  ) -> BindingDerived<Select> {
 
-    binding(
-      name,
-      file,
-      function,
-      line,
-      get: get,
-      dropsOutput: { $0.asChanges().noChanges(\.root) },
-      set: set,
-      queue: queue
+    bindingDerived(
+      name, file, function, line,
+      get: .select(select),
+      set: { state, newValue in
+        state[keyPath: select] = newValue
+      }
     )
   }
 

@@ -10,22 +10,22 @@ import Foundation
 
 import XCTest
 
-class CollectionPerformance: XCTestCase {
+class CollectionPerformance: XCTestCase {  
   
   func testMakeCollection() {
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = AnyCollection((0..<100000).map { $0 })
     }
   }
   
   func testMakeLazySequence() {
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = (0..<100000).lazy.map { $0 }
     }
   }
   
   func testMakeLazyCollection() {
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = AnyCollection((0..<100000).lazy.map { $0 })
     }
   }
@@ -34,7 +34,7 @@ class CollectionPerformance: XCTestCase {
     
     let a = (0..<10000).map { Int($0) }
     
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = a as [Any]
     }
     
@@ -46,7 +46,7 @@ class CollectionPerformance: XCTestCase {
       d[n] = n
     }
     
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = a as [Int : Any]
     }
     
@@ -58,7 +58,7 @@ class CollectionPerformance: XCTestCase {
       d[n] = n
     }
     
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = a as! [Int : Int]
     }
     

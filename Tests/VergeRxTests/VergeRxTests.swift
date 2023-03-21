@@ -26,11 +26,11 @@ class VergeRxTests: XCTestCase {
       
     }
     
-    XCTContext.runActivity(named: "startsFromInitial: true") { (activity) in
+    XCTContext.runActivity(named: "") { (activity) in
       
       let exp1 = expectation(description: "")
       
-      _ = store.rx.stateObservable(startsFromInitial: true)
+      _ = store.rx.stateObservable()
         .subscribe(onNext: { changes in
           exp1.fulfill()
           XCTAssertEqual(changes.hasChanges(\.count), true)
@@ -41,21 +41,6 @@ class VergeRxTests: XCTestCase {
       wait(for: [exp1], timeout: 1)
       
     }
-    
-    XCTContext.runActivity(named: "startsFromInitial: false") { (activity) in
-      
-      let exp1 = expectation(description: "")
-      
-      _ = store.rx.stateObservable(startsFromInitial: false)
-        .subscribe(onNext: { changes in
-          exp1.fulfill()
-          XCTAssertEqual(changes.hasChanges(\.count), false)
-        })
-      
-      XCTAssertEqual(exp1.expectedFulfillmentCount, 1)
-      
-      wait(for: [exp1], timeout: 1)
-      
-    }
+
   }
 }

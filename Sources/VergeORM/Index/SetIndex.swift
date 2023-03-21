@@ -46,19 +46,19 @@ public struct SetIndex<Schema: EntitySchemaType, Entity: EntityType>: IndexType,
 
 extension SetIndex {
   
-  @inlinable public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element] {
+  public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element] {
     try backing.sorted(by: {
       try areInIncreasingOrder(Element($0), Element($1))
     }).map(Element.init)
   }
   
-  @inlinable public func map<T>(_ transform: (Element) throws -> T) rethrows -> [T] {
+  public func map<T>(_ transform: (Element) throws -> T) rethrows -> [T] {
     try backing.map {
       try transform(.init($0))
     }
   }
   
-  @inlinable public func compactMap<ElementOfResult>(_ transform: (Element) throws -> ElementOfResult?) rethrows -> [ElementOfResult] {
+  public func compactMap<ElementOfResult>(_ transform: (Element) throws -> ElementOfResult?) rethrows -> [ElementOfResult] {
     try backing.compactMap {
       try transform(.init($0))
     }

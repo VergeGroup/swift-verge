@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "Verge"
-  s.version = "8.9.1"
+  s.version = "9.0.0"
   s.summary = "Verge is a state management tools"
   s.description = <<-DESC
   Verge is a state management tools (Store, ViewModel, ORM, Reactive) on iOS App (UIKit / SwiftUI)
@@ -9,15 +9,15 @@ Pod::Spec.new do |s|
   s.author = { "Muukii" => "muukii.app@gmail.com" }
   s.social_media_url = "http://twitter.com/muukii_app"
 
-  s.ios.deployment_target = "10.0"
-  s.osx.deployment_target = "10.13"
-  s.tvos.deployment_target = "10.0"
-  s.watchos.deployment_target = "3.0"
+  s.ios.deployment_target = "13.0"
+  s.osx.deployment_target = "10.15"
+  s.tvos.deployment_target = "13.0"
+  s.watchos.deployment_target = "6.0"
 
   s.source = { :git => "https://github.com/muukii/Verge.git", :tag => s.version }
   s.homepage = "https://github.com/muukii/Verge"
 
-  s.swift_version = "5.3"
+  s.swift_versions = ["5.3", "5.4", "5.5"]
 
   s.default_subspec = "Store"
 
@@ -32,6 +32,10 @@ Pod::Spec.new do |s|
     ss.dependency "Verge/Rx"
   end
 
+  s.subspec "Tiny" do |ss|
+    ss.source_files = "Sources/VergeTiny/**/*.swift"
+  end
+
   s.subspec "ObjcBridge" do |ss|
     ss.source_files = "Sources/VergeObjcBridge/**/*.{h,m}"
   end
@@ -40,6 +44,12 @@ Pod::Spec.new do |s|
     ss.source_files = "Sources/Verge/**/*.swift"
     ss.dependency "Verge/ObjcBridge"
   end
+
+#  s.subspec "Async" do |ss|
+#    ss.source_files = "Sources/AsyncVerge/**/*.swift"
+#    ss.dependency "Verge/Store"
+#    ss.ios.deployment_target = "13.0"
+#  end
 
   s.subspec "Rx" do |ss|
     ss.dependency "Verge/ORM"

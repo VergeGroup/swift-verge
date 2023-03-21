@@ -1,45 +1,28 @@
 name: CommitChecks
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: macos-12
 
     steps:
       - uses: maxim-lobanov/setup-xcode@v1.1
         with:
-          xcode-version: "12.3"
+          xcode-version: "14.2"
       - uses: actions/checkout@v2
-      - name: webfactory/ssh-agent
-        uses: webfactory/ssh-agent@v0.4.1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Preparation for SwiftPM
-        run: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
-      - name: Run test
-        run: fastlane test_light
-  lint:
-    runs-on: macos-latest
+      - name: Resolve Packages
+        run: xcodebuild -resolvePackageDependencies      
+      - name: Run Test
+        run: xcodebuild -scheme Verge-Package -resultBundlePath results/VergeTests.xcresult test -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' -derivedDataPath ./DerivedData | xcpretty
+
+  build-package-on-swiftpm:
+    runs-on: macos-12
 
     steps:
       - uses: maxim-lobanov/setup-xcode@v1.1
         with:
-          xcode-version: "12.3"
-      - uses: actions/checkout@v2
-      - name: webfactory/ssh-agent
-        uses: webfactory/ssh-agent@v0.4.1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Lint Cocoapods
-        run: pod lib lint --allow-warnings
-  build-with-swiftpm:
-    runs-on: macOS-latest
-
-    steps:
-      - uses: maxim-lobanov/setup-xcode@v1.1
-        with:
-          xcode-version: "12.3"
+          xcode-version: "14.2"
       - uses: actions/checkout@v2
       - name: Build
         run: swift build -v

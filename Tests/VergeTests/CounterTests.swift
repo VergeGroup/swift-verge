@@ -16,21 +16,21 @@ final class CounterTests: XCTestCase {
     
   func testCounter() {
     
-    var counter = NonAtomicVersionCounter()
+    var counter = NonAtomicCounter()
     
     for _ in 0..<100 {
       
-      counter.markAsUpdated()
+      counter.increment()
     }
     
-    XCTAssertEqual(counter.version, 100)
+    XCTAssertEqual(counter.value, 100)
   }
   
   func testCounterPerformance() {
-    var counter = NonAtomicVersionCounter()
+    var counter = NonAtomicCounter()
     if #available(iOS 13.0, *) {
       measure(metrics: [XCTCPUMetric()]) {
-        counter.markAsUpdated()
+        counter.increment()
       }
     } else {
       // Fallback on earlier versions
@@ -39,14 +39,14 @@ final class CounterTests: XCTestCase {
   
   func testGenDatePerformance() {
     
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = Date()
     }
   }
   
   func testGenCFDatePerformance() {
     
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       _ = CFAbsoluteTimeGetCurrent()
     }
   }

@@ -20,7 +20,7 @@ class ReflectingTests: XCTestCase {
   
   func testGettingTypeName_typeof() {
     
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       for _ in 0..<10000 {
         _ = type(of: A.B.A.self)
       }
@@ -29,7 +29,7 @@ class ReflectingTests: XCTestCase {
   
   func testGettingTypeName_typeName_metatype() {
     
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       for _ in 0..<10000 {
         _ = _typeName(type(of: A.B.A.self))
       }
@@ -38,7 +38,7 @@ class ReflectingTests: XCTestCase {
   
   func testGettingTypeName_string_reflecting_metatype() {
     
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       for _ in 0..<10000 {
         _ = String(reflecting: type(of: A.B.A.self))
       }
@@ -47,7 +47,7 @@ class ReflectingTests: XCTestCase {
   
   func testGettingTypeName_string_reflecting() {
     
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       for _ in 0..<10000 {
         _ = String(reflecting: A.B.A.self)
       }
@@ -56,7 +56,7 @@ class ReflectingTests: XCTestCase {
 
   func testObjectIdentifier_string_reflecting() {
 
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       for _ in 0..<10000 {
         _ = ObjectIdentifier(A.B.A.self)
       }

@@ -21,14 +21,15 @@
 
 import Foundation
 import os.log
+import VergeTaskManager
 
 #if canImport(Combine)
 import Combine
 #endif
 
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
-public protocol StoreType: AnyObject {
-  associatedtype State
+public protocol StoreType<State>: AnyObject {
+  associatedtype State: Equatable
   associatedtype Activity = Never
   
   func asStore() -> Store<State, Activity>
@@ -36,12 +37,20 @@ public protocol StoreType: AnyObject {
   var primitiveState: State { get }
 }
 
-public typealias NoActivityStoreBase<State: StateType> = Store<State, Never>
+public typealias NoActivityStoreBase<State: Equatable> = Store<State, Never>
 
 private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.sanitizer")
 
-@available(*, deprecated, renamed: "Store")
-public typealias StoreBase<State, Activity> = Store<State, Activity>
+public enum _StoreEvent<State: Equatable, Activity> {
+  
+  public enum StateEvent {
+    case willUpdate
+    case didUpdate(Changes<State>)
+  }
+  
+  case state(StateEvent)
+  case activity(Activity)
+}
 
 /// An object that retains a latest state value and receives mutations that modify itself state.
 /// Those updates would be shared all of the subscribers these are sink(s), Derived(s)
@@ -56,111 +65,194 @@ public typealias StoreBase<State, Activity> = Store<State, Activity>
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable, StoreType, DispatcherType {
+open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, ObservableObject, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
 
-  public typealias Scope = State
-  public typealias Dispatcher = DispatcherBase<State, Activity>
-  public typealias ScopedDispatcher<Scope> = ScopedDispatcherBase<State, Activity, Scope>
-  public typealias Value = State
-
-  #if canImport(Combine)
-  /// A Publisher to compatible SwiftUI
-  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-  public final override var objectWillChange: ObservableObjectPublisher {
-    _backingStorage.objectWillChange
-  }
-  #endif
-    
   public var scope: WritableKeyPath<State, State> = \State.self
-  
-  public var store: Store<State, Activity> { self }
-      
-  /// A current state.
-  ///
-  /// It causes locking and unlocking with a bit cost.
-  /// It may cause blocking if any other is doing mutation or reading.
-  public var primitiveState: State {
-    _backingStorage.value.primitive
-  }
-
-  /// Returns a current state with thread-safety.
-  ///
-  /// It causes locking and unlocking with a bit cost.
-  /// It may cause blocking if any other is doing mutation or reading.
-  public var state: Changes<State> {
-    _backingStorage.value
-  }
-  
-  /// A current changes state.
-  @available(*, deprecated, renamed: "state")
-  public var changes: Changes<State> {
-    _backingStorage.value
-  }
-  
-  public var __backingStorage: UnsafeMutableRawPointer {    
-    Unmanaged.passUnretained(_backingStorage).toOpaque()
-  }
-  
-  public var __activityEmitter: UnsafeMutableRawPointer {
-    Unmanaged.passUnretained(_activityEmitter).toOpaque()
-  }
-
-  /// A backing storage that manages current state.
-  /// You shouldn't access this directly unless special case.
-  let _backingStorage: StateStorage<Changes<State>>
-  let _activityEmitter: EventEmitter<Activity> = .init()
-    
-  /// Cache for derived object each method. Don't share it with between methods.
-  let derivedCache1 = VergeConcurrency.RecursiveLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
-  
-  /// Cache for derived object each method. Don't share it with between methods.
-  let derivedCache2 = VergeConcurrency.RecursiveLockAtomic(NSMapTable<NSString, AnyObject>.strongToWeakObjects())
-  
+          
   private let tracker = VergeConcurrency.SynchronizationTracker()
   
   /// A name of the store.
   /// Specified or generated automatically from file and line.
-  let name: String
-  
-  private var middlewares: [StoreMiddleware<State>] = []
+  public let name: String
   
   public let logger: StoreLogger?
+  
   public let sanitizer: RuntimeSanitizer
+  /// A Publisher to compatible SwiftUI
+  public let objectWillChange: ObservableObjectPublisher = .init()
+  
+  public var valuePublisher: some Combine.Publisher<Changes<State>, Never> {
+    return _valueSubject
+  }
     
+  private var middlewares: [AnyStoreMiddleware<State>] = []
+  
+  private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>) -> Void
+  
+  private var nonatomicValue: Changes<State>
+  
+  private let _lock: StoreOperation
+      
+  private let _valueSubject: CurrentValueSubject<Changes<State>, Never>
+  
+  // MARK: - Deinit
+  
+  deinit {
+    Task { [taskManager] in
+      await taskManager.cancelAll()
+    }
+  }
+
+
+  // MARK: - Task
+  
+  public let taskManager: TaskManagerActor = .init()
+      
+  // MARK: - Initializers
+  
   /// An initializer
   /// - Parameters:
   ///   - initialState: A state instance that will be modified by the first commit.
   ///   - backingStorageRecursiveLock: A lock instance for mutual exclusion.
   ///   - logger: You can also use `DefaultLogger.shared`.
-  public init(
+  public nonisolated init(
     name: String? = nil,
     initialState: State,
-    backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
+    storeOperation: StoreOperation = .atomic,
     logger: StoreLogger? = nil,
     sanitizer: RuntimeSanitizer? = nil,
     _ file: StaticString = #file,
     _ line: UInt = #line
   ) {
-
-    self._backingStorage = .init(
-      .init(old: nil, new: initialState),
-      recursiveLock: backingStorageRecursiveLock ?? NSRecursiveLock().asAny()
-    )
-
+    
+    self.nonatomicValue = .init(old: nil, new: initialState)
+    self._lock = storeOperation
+    
+    // TODO: copying value
+    self._valueSubject = .init(nonatomicValue)
+    
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
-
-    super.init()
-       
+    self.externalOperation = { @Sendable _, _ in }
+    
   }
+  
+  public nonisolated init(
+    name: String? = nil,
+    initialState: State,
+    storeOperation: StoreOperation = .atomic,
+    logger: StoreLogger? = nil,
+    sanitizer: RuntimeSanitizer? = nil,
+    _ file: StaticString = #file,
+    _ line: UInt = #line
+  ) where State : StateType {
+    
+    // making reduced state
+    var _initialState = initialState
+    var inoutRef = InoutRef<State>.init(&_initialState)
+    State.reduce(modifying: &inoutRef, current: .init(old: nil, new: initialState))
+    let reduced = inoutRef.wrapped
+    
+    self.nonatomicValue = .init(old: nil, new: reduced)
+    self._lock = storeOperation
+    // TODO: copying value
+    self._valueSubject = .init(nonatomicValue)
+    
+    self.logger = logger
+    self.sanitizer = sanitizer ?? RuntimeSanitizer.global
+    self.name = name ?? "\(file):\(line)"
+    self.externalOperation = { @Sendable inoutRef, state in
+      let intermediate = state.makeNextChanges(
+        with: inoutRef.wrapped,
+        from: inoutRef.traces,
+        modification: inoutRef.modification ?? .indeterminate
+      )
+      State.reduce(modifying: &inoutRef, current: intermediate)
+    }
+    
+  }
+  
+  public final override func receiveEvent(_ event: _StoreEvent<State, Activity>) {
+    
+    switch event {
+    case .state(let stateEvent):
+      switch stateEvent {
+      case .willUpdate:
+        if Thread.isMainThread {
+          objectWillChange.send()
+        } else {
+          DispatchQueue.main.async { [weak self] in
+            self?.objectWillChange.send()
+          }
+        }
+      case .didUpdate(let state):
+        _valueSubject.send(state)
+      }
+    case .activity:
+      break
+    }
+  }
+  
+}
+
+// MARK: - Typealias
+extension Store {
+  
+  public typealias Scope = State
+  public typealias Dispatcher = DispatcherBase<State, Activity>
+  public typealias ScopedDispatcher<Scope: Equatable> = ScopedDispatcherBase<State, Activity, Scope>
+  public typealias Value = State
+}
+
+// MARK: - Computed Properties
+extension Store {
+  
+  public var store: Store<State, Activity> { self }
+  
+  public var objectDidChange: AnyPublisher<Changes<State>, Never> {
+    valuePublisher.dropFirst().eraseToAnyPublisher()
+  }
+
+  
+  /// A current state.
+  ///
+  /// It causes locking and unlocking with a bit cost.
+  /// It may cause blocking if any other is doing mutation or reading.
+  public var primitiveState: State {
+    state.primitive
+  }
+  
+  /// Returns a current state with thread-safety.
+  ///
+  /// It causes locking and unlocking with a bit cost.
+  /// It may cause blocking if any other is doing mutation or reading.
+  public var state: Changes<State> {
+    _lock.lock()
+    defer {
+      _lock.unlock()
+    }
+    return nonatomicValue
+  }
+  
+  /// A current changes state.
+  @available(*, deprecated, renamed: "state")
+  public var changes: Changes<State> {
+    state
+  }
+ 
+}
+
+// MARK: - Convenience Initializers
+extension Store {
+
   
   /// An initializer for preventing using the refence type as a state.
   @available(*, deprecated, message: "Using the reference type for the state is restricted. it must be a value type to run correctly.")
   public convenience init(
     name: String? = nil,
     initialState: State,
-    backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
+    storeOperation: StoreOperation = .atomic,
     logger: StoreLogger? = nil,
     _ file: StaticString = #file,
     _ line: UInt = #line
@@ -169,17 +261,122 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     preconditionFailure("Using the reference type for the state is restricted. it must be a value type to run correctly.")
     
   }
-  
+
+}
+
+// MARK: - Middleware
+extension Store {
+     
   /// Registers a middleware.
   /// MIddleware can execute additional operations unified with mutations.
   ///
-  public func add(middleware: StoreMiddleware<State>) {
+  public func add(middleware: some StoreMiddlewareType<State>) {
     // use lock
-    _backingStorage.update { _ in
-      middlewares.append(middleware)
+    lock()
+    defer {
+      unlock()
     }
+    middlewares.append(.init(modify: middleware.modify))
+  }
+}
+
+extension Store {
+    
+  // MARK: - CustomReflectable
+  public var customMirror: Mirror {
+    return Mirror(
+      self,
+      children: KeyValuePairs.init(
+        dictionaryLiteral:
+          ("stateVersion", state.version),
+        ("middlewares", middlewares)
+      ),
+      displayStyle: .class
+    )
+  }
+  
+  @inline(__always)
+  public func asStore() -> Store<State, Activity> {
+    self
   }
 
+  func _primitive_sinkActivity(
+    queue: some TargetQueueType,
+    receive: @escaping (Activity) -> Void
+  ) -> VergeAnyCancellable {
+    
+    let execute = queue.execute
+    let cancellable = self._sinkActivityEvent { activity in
+      execute {
+        receive(activity)
+      }
+    }
+    return .init(cancellable)
+    
+  }
+
+  /**
+   Adds an asynchronous task to perform.
+   
+   Use this function to perform an asynchronous task with a lifetime that matches that of this store.
+   If this store is deallocated ealier than the given task finished, that asynchronous task will be cancelled.
+   
+   Carefully use this function - If the task retains this store, it will continue to live until the task is finished.
+
+   - Parameters:
+     - key:
+     - mode:
+     - priority:
+     - action
+   - Returns: A Task for tracking given async operation's completion.
+   */
+  @discardableResult
+  public func task<Return>(
+    key: VergeTaskManager.TaskKey = .distinct(),
+    mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
+    priority: TaskPriority = .userInitiated,
+    @_inheritActorContext _ action: @Sendable @escaping () async throws -> Return
+  ) -> Task<Return, Error> {
+
+    Task {
+      try await taskManager.task(key: key, mode: mode, priority: priority, action)
+        .value
+    }
+    
+  }
+
+  /**
+   Adds an asynchronous task to perform.
+
+   Use this function to perform an asynchronous task with a lifetime that matches that of this store.
+   If this store is deallocated ealier than the given task finished, that asynchronous task will be cancelled.
+
+   Carefully use this function - If the task retains this store, it will continue to live until the task is finished.
+
+   - Parameters:
+   - key:
+   - mode:
+   - priority:
+   - action
+   - Returns: A Task for tracking given async operation's completion.
+   */
+  @discardableResult
+  public func taskDetached<Return>(
+    key: VergeTaskManager.TaskKey = .distinct(),
+    mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
+    priority: TaskPriority = .userInitiated,
+    _ action: @Sendable @escaping () async throws -> Return
+  ) -> Task<Return, Error> {
+
+    Task {
+      try await taskManager.taskDetached(key: key, mode: mode, priority: priority, action)
+        .value
+    }
+
+  }
+
+  // MARK: - Internal
+  
   /// Receives mutation
   ///
   /// - Parameters:
@@ -188,12 +385,12 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
   func _receive<Result>(
     mutation: (inout InoutRef<State>) throws -> Result
   ) rethrows -> Result {
-                
+    
     let signpost = VergeSignpostTransaction("Store.commit")
     defer {
       signpost.end()
     }
-       
+    
     let warnings: Set<VergeConcurrency.SynchronizationTracker.Warning>
     if RuntimeSanitizer.global.isRecursivelyCommitDetectionEnabled {
       warnings = tracker.register()
@@ -214,23 +411,24 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
     let __sanitizer__ = sanitizer
     
     /** a ciritical session */
-    try _backingStorage._update { (state) -> Storage<Changes<State>>.UpdateResult in
-            
+    try _update { (state) -> UpdateResult in
+      
       let startedTime = CFAbsoluteTimeGetCurrent()
       defer {
         elapsed = CFAbsoluteTimeGetCurrent() - startedTime
       }
-
+      
       var current = state.primitive
-
-      let updateResult = try withUnsafeMutablePointer(to: &current) { (pointer) -> Storage<Changes<State>>.UpdateResult in
-
-        var inoutRef = InoutRef<State>.init(pointer)
-
+      
+      let updateResult = try withUnsafeMutablePointer(to: &current) { (stateMutablePointer) -> UpdateResult in
+        
+        var inoutRef = InoutRef<State>.init(stateMutablePointer)
+        
         let result = try mutation(&inoutRef)
         valueFromMutation = result
-
+        
         /**
+         Step-1:
          Checks if the state has been modified
          */
         guard inoutRef.nonatomic_hasModified else {
@@ -239,17 +437,31 @@ open class Store<State, Activity>: _VergeObservableObjectBase, CustomReflectable
         }
         
         /**
+         Step-2:
+         Reduce modifying state with externalOperation
+         */
+        
+        externalOperation(&inoutRef, state)
+        
+        /**
+         Step-3
          Applying by middlewares
          */
         self.middlewares.forEach { middleware in
-          middleware.mutate(state: &inoutRef)
+          
+          let intermediate = state.makeNextChanges(
+            with: stateMutablePointer.pointee,
+            from: inoutRef.traces,
+            modification: inoutRef.modification ?? .indeterminate
+          )
+          middleware.modify(modifyingState: &inoutRef, current: intermediate)
         }
-                
+        
         /**
          Make a new state
          */
         state = state.makeNextChanges(
-          with: pointer.pointee,
+          with: stateMutablePointer.pointee,
           from: inoutRef.traces,
           modification: inoutRef.modification ?? .indeterminate,
           transaction: inoutRef.transaction
@@ -276,95 +488,72 @@ Mutation: (%@)
         }
         
         commitLog = CommitLog(storeName: self.name, traces: inoutRef.traces, time: elapsed)
-
+        
         return .updated
       }
-
+      
       return updateResult
-
+      
     }
-       
+    
     if let logger = logger, let _commitLog = commitLog {
       logger.didCommit(log: _commitLog, sender: self)
     }
     
     return valueFromMutation
   }
- 
+  
   @inline(__always)
   func _send(
     activity: Activity,
     trace: ActivityTrace
   ) {
     
-    _activityEmitter.accept(activity)
+    accept(.activity(activity))
     
     let log = ActivityLog(storeName: self.name, trace: trace)
     logger?.didSendActivity(log: log, sender: self)
   }
   
-  func setNotificationFilter(_ filter: @escaping (Changes<State>) -> Bool) {
-    self._backingStorage.setNotificationFilter(filter)
-  }
-     
-  public var customMirror: Mirror {
-    return Mirror(
-      self,
-      children: KeyValuePairs.init(
-        dictionaryLiteral:
-          ("stateVersion", state.version),
-        ("middlewares", middlewares)
-      ),
-      displayStyle: .class
-    )
-  }
-  
-  @inline(__always)
-  public func asStore() -> Store<State, Activity> {
-    self
-  }
-  
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkState(
+  func _primitive_sinkState(
     dropsFirst: Bool = false,
-    queue: TargetQueue = .mainIsolated(),
+    queue: some TargetQueueType,
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
     
-    let serialExecutor = queue.serialExecutor()
+    let executor = queue.execute
     
     var latestStateWrapper: Changes<State>? = nil
     
     let __sanitizer__ = sanitizer
-        
+    
+    let lock = VergeConcurrency.UnfairLock()
+    
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
-    let cancellable = _backingStorage.sinkEvent { (event) in
+    /// To get recursive updates that comes from first call receive closure.
+    let cancellable = _sinkStateEvent { (event) in
       switch event {
       case .willUpdate:
         break
       case .didUpdate(let receivedState):
         
-        serialExecutor {
+        executor {
+          
+          lock.lock()
           
           var resolvedReceivedState = receivedState
           
+          // To escaping from critical issue
           if let latestState = latestStateWrapper {
             if latestState.version <= receivedState.version {
-              /**
+              /*
                No issues case:
                It has received newer version than previous version
                */
               latestStateWrapper = receivedState
             } else {
               
-              /**
+              /*
                Serious problem case:
                Received an older version than the state received before.
                To recover this case, send latest version state with dropping previous value in order to make `ifChanged` returns always true.
@@ -421,71 +610,134 @@ Latest Version (%d): (%@)
             latestStateWrapper = receivedState
           }
           
+          lock.unlock()
+          
           receive(resolvedReceivedState)
-        }
-              
-      case .willDeinit:
-        break
+        }        
       }
     }
-
+    
     if !dropsFirst {
       
-      let value = _backingStorage.value.droppedPrevious()
+      let value = state.droppedPrevious()
       
-      latestStateWrapper = value
-    
-      serialExecutor {
-        /// this closure might contains some mutations.
-        /// It depends outside usages.
+      executor {
+        lock.lock()
+        latestStateWrapper = value
+        lock.unlock()
+        // this closure might contains some mutations.
+        // It depends outside usages.
         receive(value)
       }
     }
-
+    
     return .init(cancellable)
-
+      .associate(self) // while subscribing its Store will be alive
+    
   }
-
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - scan: Accumulates a specified type of value over receiving updates.
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkState<Accumulate>(
+  
+  func _primitive_scan_sinkState<Accumulate>(
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue = .mainIsolated(),
+    queue: some TargetQueueType,
     receive: @escaping (Changes<State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
-
-    sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
-
+    
+    _primitive_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+      
       let accumulate = scan.accumulate(changes)
       receive(changes, accumulate)
     }
-
-  }
-
-  /// Subscribe the activity
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkActivity(
-    queue: TargetQueue = .mainIsolated(),
-    receive: @escaping (Activity) -> Void
-  ) -> VergeAnyCancellable {
     
-    let execute = queue.serialExecutor()
-    let cancellable = _activityEmitter.add { (activity) in
-      execute {
-        receive(activity)
-      }
-    }
-    return .init(cancellable)
-
   }
-
 }
+
+// MARK: - Storage Implementation
+extension Store {
+    
+  public func lock() {
+    _lock.lock()
+  }
+  
+  public func unlock() {
+    _lock.unlock()
+  }
+  
+  final func _sinkStateEvent(subscriber: @escaping (_StoreEvent<State, Activity>.StateEvent) -> Void) -> EventEmitterCancellable {
+    addEventHandler { event in
+      guard case .state(let stateEvent) = event else { return }
+      subscriber(stateEvent)
+    }
+  }
+  
+  final func _sinkActivityEvent(subscriber: @escaping (Activity) -> Void) -> EventEmitterCancellable {
+    addEventHandler { event in
+      guard case .activity(let activity) = event else { return }
+      subscriber(activity)
+    }
+  }
+    
+  enum UpdateResult {
+    case updated
+    case nothingUpdates
+  }
+  
+  @inline(__always)
+  final func _update(_ update: (inout Changes<State>) throws -> UpdateResult) rethrows {
+    
+    let signpost = VergeSignpostTransaction("Storage.update")
+    defer {
+      signpost.end()
+    }
+    
+    lock()
+    do {
+      
+      let result = try update(&nonatomicValue)
+      
+      switch result {
+      case .nothingUpdates:
+        unlock()
+      case .updated:
+        let afterValue = nonatomicValue
+        
+        /**
+         Unlocks lock before emitting event to avoid dead-locking.
+         But it causes cracking the order of event.
+         SeeAlso: testOrderOfEvents
+         */
+        unlock()
+        
+        // it's not actual `will` 👨🏻❓
+        accept(.state(.willUpdate))
+        accept(.state(.didUpdate(afterValue)))
+        
+      }
+      
+    } catch {
+      unlock()
+      throw error
+    }
+  }
+  
+}
+
+extension Store {
+  
+  /// [Experimental]
+  public func stateStream() -> AsyncStream<Changes<State>> {
+    return .init(Changes<State>.self, bufferingPolicy: .unbounded) { continuation in
+      
+      let subscription = self.sinkState(queue: .passthrough) { state in
+        continuation.yield(state)
+      }
+      
+      continuation.onTermination = { termination in
+        subscription.cancel()
+      }
+      
+    }
+  }
+  
+}
+

@@ -23,7 +23,11 @@ import Foundation
 
 public enum VergeConcurrency {
   
-  public final class UnfairLock {
+  public final class RecursiveLock: NSRecursiveLock {
+    
+  }
+  
+  public final class UnfairLock: Sendable {
     private let _lock: os_unfair_lock_t
    
     public init() {
@@ -50,13 +54,13 @@ public enum VergeConcurrency {
   }
   
   /// An atomic variable.
-  public final class RecursiveLockAtomic<Value> {
+  public final class RecursiveLockAtomic<Value>: @unchecked Sendable {
     
     public var unsafelyWrappedValue: Value {
       _read { yield _value }
     }
     
-    private let lock: NSRecursiveLock
+    private let lock: RecursiveLock
     private var _value: Value
     
     /// Atomically get or set the value of the variable.
@@ -125,7 +129,7 @@ public enum VergeConcurrency {
   }
     
   /// An atomic variable.
-  public final class UnfairLockAtomic<Value> {
+  public final class UnfairLockAtomic<Value>: @unchecked Sendable {
     
     public var unsafelyWrappedValue: Value {
       _read { yield _value }

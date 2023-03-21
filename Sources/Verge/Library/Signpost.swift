@@ -1,6 +1,7 @@
 import os
+import Foundation
 
-public var _verge_signpost_enabled = false
+public var _verge_signpost_enabled = ProcessInfo.processInfo.environment["VERGE_SIGNPOST_ENABLED"] != nil
 
 @available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *)
 @usableFromInline
@@ -46,8 +47,6 @@ public struct VergeSignpostTransaction {
   public let rawID: os_signpost_id_t
   #endif
   
-  @inlinable
-  @inline(__always)
   public init(_ name: StaticString) {
     #if DEBUG
     if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *), _verge_signpost_enabled {
@@ -65,8 +64,6 @@ public struct VergeSignpostTransaction {
     #endif
   }
   
-  @inlinable
-  @inline(__always)
   public init(_ name: StaticString, label: @autoclosure () -> String) {
     #if DEBUG
     if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *), _verge_signpost_enabled {
@@ -85,8 +82,6 @@ public struct VergeSignpostTransaction {
     #endif
   }
   
-  @inlinable
-  @inline(__always)
   public func event(name: StaticString, label: @autoclosure () -> String) {
     #if DEBUG
     if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *), _verge_signpost_enabled {

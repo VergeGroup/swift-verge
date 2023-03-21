@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import Verge
+@_spi(EventEmitter) import Verge
 
 #if canImport(Combine)
 import Combine
@@ -87,9 +87,9 @@ class EventEmitterTests: XCTestCase {
   func testRegistrationPerformance() {
     
     let emitter = EventEmitter<Void>()
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       for _ in 0..<1000 {
-        emitter.add { _ in
+        emitter.addEventHandler { _ in
           
         }
       }

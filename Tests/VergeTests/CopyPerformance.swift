@@ -16,7 +16,7 @@ final class CopyPerformance: XCTestCase {
   
   func testCopy() {
     
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       run(with: source)
     }
   }
@@ -24,20 +24,20 @@ final class CopyPerformance: XCTestCase {
   func testCopyWithShared() {
     
     let huge = Shared(source)
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       run(with: huge)
     }
   }
   
   func testAny() {
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       run(any: source)
     }
   }
   
   func testAnyWithShared() {
     let huge = Shared(source)
-    measure {
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       run(anyObject: huge)
     }
   }

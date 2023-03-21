@@ -16,7 +16,7 @@ final class ViewModel: StoreComponentType, ObservableObject {
     var dummyCount = 0
   }
 
-  let store = DefaultStore(initialState: .init())
+  let store = DefaultStore(initialState: .init(), logger: DefaultStoreLogger())
 
   init() {
     print("init")
@@ -37,7 +37,8 @@ struct ContentView: View {
   }
 
   var body: some View {
-    RootView(viewModel: viewModel)
+    DemoStateReader2()
+//    RootView(viewModel: viewModel)
   }
 }
 
@@ -67,17 +68,38 @@ struct RootView: View {
         }
       }
       Text("Local count outer \(localCountOuter)")
+      
+      StateReader(viewModel.derived(.map(\.count))) { state in
+        VStack {
+          Text("Store count \(state.primitive)")
+          Text("Local count inner \(localCountInner)")
+        }
+      }
+      
+      StateReader(viewModel.store) { state in
+        VStack {
+          Text("Store count \(state.count)")
+          Text("Local count inner \(localCountInner)")
+        }
+      }
 
-      StateReader(viewModel.derived(.map(\.count))).content { state in
+      StateReader(viewModel.derived(.map(\.count))) { state in
         VStack {
           Text("Store count \(state.primitive)")
           Text("Local count inner \(localCountInner)")
         }
       }
 
-      StateReader(viewModel.store).content { state in
+      StateReader(viewModel.store) { state in
         VStack {
           Text("Store count \(state.count)")
+          Text("Local count inner \(localCountInner)")
+        }
+      }
+      
+      StateReader(viewModel.store, .map(\.count)) { count in
+        VStack {
+          Text("Store count \(count.root)")
           Text("Local count inner \(localCountInner)")
         }
       }

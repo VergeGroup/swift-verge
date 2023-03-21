@@ -22,7 +22,7 @@ class ChangedOperatorTests: XCTestCase {
   func testChanged() {
     
 
-    let count = store.derived(.init(map: \.count))
+    let count = store.derived(.map(\.count))
     
     let exp = expectation(description: "")
     exp.assertForOverFulfill = true

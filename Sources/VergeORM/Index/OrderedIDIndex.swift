@@ -42,13 +42,13 @@ public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: Inde
      
 }
 
-extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplaceableCollection {
+extension OrderedIDIndex: BidirectionalCollection, RandomAccessCollection, MutableCollection, RangeReplaceableCollection {
   
   public typealias Element = Entity.EntityID
   public typealias Index = Int
   public typealias SubSequence = ArraySlice<Entity.EntityID>
   
-  public mutating func append(_ newElement: __owned Entity.EntityID) {
+  public mutating func append(_ newElement: Entity.EntityID) {
     backing.append(newElement.any)
   }
   
@@ -61,8 +61,17 @@ extension OrderedIDIndex: RandomAccessCollection, MutableCollection, RangeReplac
     }
   }
 
+  public mutating func replaceSubrange<C>(_ subrange: Range<Int>, with newElements: C) where C : Collection, C.Element == Entity.EntityID {
+    backing.replaceSubrange(subrange, with: newElements.map { $0.any })
+  }
+
   public subscript(bounds: Range<Int>) -> ArraySlice<Entity.EntityID> {
-    ArraySlice<Entity.EntityID>(AnySequence(backing[bounds].lazy.map { Entity.EntityID($0) }))
+    get {
+      ArraySlice<Entity.EntityID>(AnySequence(backing[bounds].lazy.map { Entity.EntityID($0) }))
+    }
+    set {
+      backing[bounds] = ArraySlice<AnyEntityIdentifier>(newValue.map { $0.any })
+    }
   }
   
   public mutating func removeAll(keepingCapacity keepCapacity: Bool = false) {

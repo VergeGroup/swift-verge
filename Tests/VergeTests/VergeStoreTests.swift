@@ -15,7 +15,7 @@ import Combine
 @available(iOS 13.0, *)
 final class VergeStoreTests: XCTestCase {
       
-  struct State: StateType {
+  struct State: Equatable, StateType {
     
     struct TreeA {
       
@@ -29,12 +29,12 @@ final class VergeStoreTests: XCTestCase {
       
     }
     
-    struct NestedState {
+    struct NestedState: Equatable {
       
       var myName: String = ""
     }
     
-    struct OptionalNestedState {
+    struct OptionalNestedState: Equatable {
       
       var myName: String = ""
     }
@@ -128,30 +128,33 @@ final class VergeStoreTests: XCTestCase {
     
   }
   
-  final class TreeADispatcher: Store.ScopedDispatcher<State.TreeA> {
+  /**
+   Use Edge due to TreeA does not have Equatable.
+   */
+  final class TreeADispatcher: Store.ScopedDispatcher<Edge<State.TreeA>> {
     
     init(store: Store) {
-      super.init(targetStore: store, scope: \.treeA)
+      super.init(targetStore: store, scope: \.$treeA)
     }
     
     func operation() {
       
-      let _: Changes<State.TreeA> = state
+      let _: Changes<Edge<State.TreeA>> = state
       
       commit { state in
-        let _: InoutRef<State.TreeA> = state
+        let _: InoutRef<Edge<State.TreeA>> = state
       }
       
       commit(scope: \.treeB) { state in
         let _: InoutRef<State.TreeB> = state
       }
       
-      let treeB = detached(from: \.treeB)
+      let treeB = detached(from: \.$treeB)
       
-      let _: Changes<State.TreeB> = treeB.state
+      let _: Changes<Edge<State.TreeB>> = treeB.state
                          
       treeB.commit { state in
-        let _: InoutRef<State.TreeB> = state
+        let _: InoutRef<Edge<State.TreeB>> = state
       }
          
     }
@@ -379,7 +382,7 @@ final class VergeStoreTests: XCTestCase {
       
       let exp1 = expectation(description: "")
       
-      _ = store.statePublisher(startsFromInitial: true)
+      _ = store.statePublisher()
         .sink { changes in
           exp1.fulfill()
           XCTAssertEqual(changes.hasChanges(\.count), true)
@@ -390,22 +393,7 @@ final class VergeStoreTests: XCTestCase {
       wait(for: [exp1], timeout: 1)
       
     }
-    
-    XCTContext.runActivity(named: "startsFromInitial: false") { (activity) in
-      
-      let exp1 = expectation(description: "")
-      
-      _ = store.statePublisher(startsFromInitial: false)
-        .sink { changes in
-          exp1.fulfill()
-          XCTAssertEqual(changes.hasChanges(\.count), false)
-        }
-      
-      XCTAssertEqual(exp1.expectedFulfillmentCount, 1)
-      
-      wait(for: [exp1], timeout: 1)
-      
-    }
+     
   }
 
   func testAsigneeFromStore() {
@@ -460,11 +448,11 @@ final class VergeStoreTests: XCTestCase {
 
   final class DemoStoreWrapper2: StoreWrapperType {
 
-    struct State {
+    struct State: Equatable {
       var source: Changes<Int>
     }
 
-    let store: DefaultStore
+    let store: Verge.Store<State, Never>
     var sub: VergeAnyCancellable? = nil
 
     init(sourceStore: DemoStore) {
@@ -474,7 +462,7 @@ final class VergeStoreTests: XCTestCase {
 
       self.store = .init(initialState: .init(source: d.value), logger: nil)
 
-      sub = d.assign(to: assignee(\.source))
+      sub = d.assign(to: store.assignee(\.source))
 
     }
 
@@ -513,42 +501,8 @@ final class VergeStoreTests: XCTestCase {
     withExtendedLifetime(subscription) {}
     wait(for: [expect], timeout: 1)
   }
-
-  func testBatchCommits() {
-
-    let store1 = DemoStore()
-
-    XCTAssertEqual(store1.state.version, 0)
-
-    store1.batchCommit { (context) in
-      context.commit {
-        $0.count += 1
-      }
-    }
-
-    XCTAssertEqual(store1.state.version, 1)
-
-  }
-
-  func testBatchCommitsNoCommits() {
-
-    let store1 = DemoStore()
-
-    XCTAssertEqual(store1.state.version, 0)
-
-    store1.batchCommit { (context) in
-      if false {
-        context.commit {
-          $0.count += 1
-        }
-      }
-    }
-
-    XCTAssertEqual(store1.state.version, 0)
-
-  }
-  
-  func testChangesBetaMap() {
+   
+  func testMapIfPresent() {
     
     let store = Store()
     
@@ -558,7 +512,7 @@ final class VergeStoreTests: XCTestCase {
       
       let state = store.state
       
-      if let _ = state._beta_map(\.optionalNested) {
+      if let _ = state.mapIfPresent(\.optionalNested) {
         XCTFail()
       }
       
@@ -572,7 +526,7 @@ final class VergeStoreTests: XCTestCase {
       
       let state = store.state
       
-      if let nested = state._beta_map(\.optionalNested) {
+      if let nested = state.mapIfPresent(\.optionalNested) {
         XCTAssert(nested.previous == nil)
       } else {
         XCTFail()
@@ -588,13 +542,26 @@ final class VergeStoreTests: XCTestCase {
       
       let state = store.state
       
-      if let nested = state._beta_map(\.optionalNested) {
+      if let nested = state.mapIfPresent(\.optionalNested) {
         XCTAssert(nested.previous != nil)
       } else {
         XCTFail()
       }
       
     }
+  }
+
+  func testChangesSwiftUIBinding() {
+    let store = Store()
+    let binding = store.binding(\.count)
+
+    binding.wrappedValue = 5
+    XCTAssertEqual(store.state.count, 5)
+
+    store.commit {
+      $0.count = 10
+    }
+    XCTAssertEqual(binding.wrappedValue, 10)
   }
 
 }

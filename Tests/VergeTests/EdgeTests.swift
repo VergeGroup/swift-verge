@@ -47,4 +47,22 @@ final class EdgeTests: XCTestCase {
     XCTAssertTrue(edge == edge2)
     wait(for: [exp], timeout: 1)
   }
+  
+  func testTuple() {
+    
+    let a = Edge.init(wrappedValue: (1, 2))
+    let b = Edge.init(wrappedValue: (1, 2))
+    
+    XCTAssertEqual(a, b)
+    
+  }
+  
+  func testTuple_NoSupports_Equtable() {
+    
+    let a = Edge.init(wrappedValue: (1, 2, 3, 4, 5, 6, 7))
+    let b = Edge.init(wrappedValue: (1, 2, 3, 4, 5, 6, 7))
+    
+    XCTAssertNotEqual(a, b)
+    
+  }
 }

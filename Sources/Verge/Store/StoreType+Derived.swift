@@ -21,104 +21,29 @@
 
 import class Foundation.NSString
 
-extension StoreType {
+extension DispatcherType {
+  
+  public func derived<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: some TargetQueueType = .passthrough
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State> {
+    
+    vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: Pipeline.Output.self))")
 
-  /// Creates an instance of Derived
-  private func _makeDerived<NewState>(
-    _ pipeline: Pipeline<Changes<State>, NewState>,
-    queue: TargetQueue
-  ) -> Derived<NewState> {
-
-    vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
-    let derived = Derived<NewState>(
+    let derived = Derived<Pipeline.Output>(
       get: pipeline,
       set: { _ in
 
       },
-      initialUpstreamState: asStore().state,
+      initialUpstreamState: store.asStore().state,
       subscribeUpstreamState: { callback in
-        asStore().sinkState(dropsFirst: true, queue: queue, receive: callback)
+        store.asStore()._primitive_sinkState(dropsFirst: true, queue: queue, receive: callback)
       },
       retainsUpstream: nil
     )
+
     return derived
   }
 
-  /// Returns a Dervived object with making
-  ///
-  /// The returned instance might be a cached object which might be already subscribed by others.
-  /// Which means it helps to be better performance in creating the same derived objects.
-  ///
-  /// - Complexity: 💡 It's better to set `dropsOutput` predicate.
-  /// - Parameter
-  ///   - pipeline:
-  ///   - dropsOutput: Predicate to drops object if found a duplicated output
-  /// - Returns: Derived object that cached depends on the specified parameters
-  public func derived<NewState>(
-    _ pipeline: Pipeline<Changes<State>, NewState>,
-    dropsOutput: ((Changes<NewState>) -> Bool)? = nil,
-    queue: TargetQueue = .passthrough
-  ) -> Derived<NewState> {
-
-    let derived = asStore().derivedCache2.withValue { cache -> Derived<NewState> in
-
-      let identifier = "\(pipeline.identifier)\(ObjectIdentifier(queue))" as NSString
-
-      guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
-        let instance = _makeDerived(pipeline, queue: queue)
-        instance.attributes.insert(.cached)
-        cache.setObject(instance, forKey: identifier)
-        return instance
-      }
-
-      vergeSignpostEvent("Store.derived.reuse", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
-
-      return cached
-
-    }
-
-    if let dropsOutput = dropsOutput {
-      return derived.makeRemovingDuplicates(by: dropsOutput)
-    } else {
-      return derived
-    }
-
-  }
-
-  /// Returns a Dervived object with making
-  ///
-  /// The returned instance might be a cached object which might be already subscribed by others.
-  /// Which means it helps to be better performance in creating the same derived objects.
-  ///
-  /// - Complexity: ✅ Drops duplicated the output with Equatable comparison.
-  ///
-  /// - Parameter pipeline:
-  /// - Returns: Derived object that cached depends on the specified parameters
-  public func derived<NewState: Equatable>(
-    _ pipeline: Pipeline<Changes<State>, NewState>,
-    queue: TargetQueue = .passthrough
-  ) -> Derived<NewState> {
-
-    return asStore().derivedCache1.withValue { cache in
-
-      let identifier = "\(pipeline.identifier)\(ObjectIdentifier(queue))" as NSString
-
-      guard let cached = cache.object(forKey: identifier) as? Derived<NewState> else {
-        let instance = _makeDerived(pipeline, queue: queue)
-          .makeRemovingDuplicates(by: {
-            $0.asChanges().noChanges(\.root)
-          })
-        instance.attributes.insert(.cached)
-        cache.setObject(instance, forKey: identifier)
-        return instance
-      }
-
-      vergeSignpostEvent("Store.derived.reuse", label: "\(type(of: State.self)) -> \(type(of: NewState.self))")
-
-      return cached
-
-    }
-
-  }
 
 }

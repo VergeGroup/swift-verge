@@ -26,68 +26,70 @@ import Foundation
 
 private let changesDeallocationQueue = BackgroundDeallocationQueue()
 
-public protocol AnyChangesType: AnyObject {
-  
+public protocol AnyChangesType: AnyObject, Sendable {
+
   var traces: [MutationTrace] { get }
   var version: UInt64 { get }
 }
 
-public protocol ChangesType: AnyChangesType {
-  associatedtype Value
+public protocol ChangesType<Value>: AnyChangesType {
+  
+  associatedtype Value: Equatable
+  
   var previousPrimitive: Value? { get }
   var primitive: Value { get }
 
   var previous: Self? { get }
+  
+  var modification: InoutRef<Value>.Modification? { get }
 
   func asChanges() -> Changes<Value>
 }
 
-/**
- An immutable data object to achieve followings:
- - To know a property has been modified. (It contains 2 instances (old, new))
- - To avoid copying cost with wrapping reference type - So, you can embed this object on the other state.
-
- ```
- struct MyState {
-   var name: String
-   var age: String
-   var height: String
- }
- ```
-
- ```
- let changes: Changes<MyState>
- ```
-
- It can be accessed with properties of MyState by dynamicMemberLookup
- ```
- changes.name
- ```
-
- It would be helpful to update UI partially
- ```
- func updateUI(changes: Changes<MyState>) {
-
-   changes.ifChanged(\.name) { name in
-   // update UI
-   }
-
-   changes.ifChanged(\.age) { age in
-   // update UI
-   }
-
-   changes.ifChanged(\.height) { height in
-   // update UI
-   }
- }
- ```
-
- - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
- This means Changes will return equals if different pointer but the value is the same.
- */
+/// An immutable data object to achieve followings:
+/// - To know a property has been modified. (It contains 2 instances (old, new))
+/// - To avoid copying cost with wrapping reference type - So, you can embed this object on the other state.
+///
+/// ```swift
+/// struct MyState: Equatable {
+///   var name: String
+///   var age: String
+///   var height: String
+/// }
+/// ```
+///
+/// ```swift
+/// let changes: Changes<MyState>
+/// ```
+///
+/// It can be accessed with properties of MyState by dynamicMemberLookup
+/// ```swift
+/// changes.name
+/// ```
+///
+/// It would be helpful to update UI partially
+/// ```swift
+/// func updateUI(changes: Changes<MyState>) {
+///
+///   changes.ifChanged(\.name) { name in
+///   // update UI
+///   }
+///
+///   changes.ifChanged(\.age) { age in
+///   // update UI
+///   }
+///
+///   changes.ifChanged(\.height) { height in
+///   // update UI
+///   }
+/// }
+/// ```
+///
+/// - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
+/// This means Changes will return equals if different pointer but the value is the same.
 @dynamicMemberLookup
-public final class Changes<Value>: ChangesType, Equatable, HasTraces {
-  public typealias ChangesKeyPath<T> = KeyPath<Changes, T>
+public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
+  public typealias ChangesKeyPath<T> = KeyPath<Value, T>
 
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
     lhs === rhs
@@ -133,8 +135,8 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
   // MARK: - Initializers
 
   public convenience init(
-    old: Value?,
-    new: Value
+    old: __owned Value?,
+    new: __owned Value
   ) {
     self.init(
       previous: old.map { .init(old: nil, new: $0) },
@@ -199,7 +201,7 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       yield primitive[keyPath: keyPath]
     }
   }
-  
+
   /// Returns a new instance that projects value by transform closure.
   ///
   /// - Warning: modification would be dropped.
@@ -218,22 +220,33 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       transaction: transaction
     )
   }
-  
-  public func _beta_map<U>(_ keyPath: KeyPath<Value, U?>) -> Changes<U>? {
-    
+
+  /**
+   Returns an ``Changes`` containing the value of mapping the given key path over the root value if value present.
+   */
+  public func mapIfPresent<U>(_ keyPath: KeyPath<Value, U?>) -> Changes<U>? {
+
     guard self[dynamicMember: keyPath] != nil else {
       return nil
     }
-           
+
     return Changes<U>(
-      previous: previous.flatMap { $0._beta_map(keyPath) },
+      previous: previous.flatMap { $0.mapIfPresent(keyPath) },
       innerBox: innerBox.map { $0[keyPath: keyPath]! },
       version: version,
       traces: traces,
       modification: nil,
       transaction: transaction
     )
-    
+
+  }
+
+  /**
+   Returns an ``Changes`` containing the value of mapping the given key path over the root value if value present.
+   */
+  @available(*, deprecated, renamed: "mapIfPresent")
+  public func _beta_map<U>(_ keyPath: KeyPath<Value, U?>) -> Changes<U>? {
+    mapIfPresent(keyPath)
   }
 
   public func makeNextChanges(
@@ -253,11 +266,12 @@ public final class Changes<Value>: ChangesType, Equatable, HasTraces {
       transaction: transaction
     )
   }
-  
-  public func _read(perform: (ReadRef<Value>) -> Void) {
+
+  @discardableResult
+  public func _read<Return>(perform: (__shared ReadRef<Value>) -> Return) -> Return {
     innerBox._read(perform: perform)
   }
-  
+
 }
 
 // MARK: - Primitive methods
@@ -267,25 +281,24 @@ extension Changes {
   /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed>(
-    _ compose: (Changes) throws -> Composed,
-    _ comparer: Comparer<Composed>
+    _ compose: (Value) throws -> Composed,
+    _ comparer: some Comparison<Composed>
   ) rethrows -> Composed? {
     let signpost = VergeSignpostTransaction("Changes.takeIfChanged(compose:comparer:)")
     defer {
       signpost.end()
     }
 
-    let current = self
+    let current = self.primitive
 
     guard let previousValue = previous else {
       return try compose(current)
     }
 
-    let old = previousValue
-    let compare = comparer.curried()
+    let old = previousValue.primitive
 
     let composedFromCurrent = try compose(current)
-    guard !compare(try compose(old), composedFromCurrent) else {
+    guard !comparer(try compose(old), composedFromCurrent) else {
       return nil
     }
 
@@ -302,8 +315,8 @@ extension Changes {
   /// - Returns: An instance that returned from the perform closure if performed.
   @inline(__always)
   public func ifChanged<Composed, Result>(
-    _ compose: (Changes) -> Composed,
-    _ comparer: Comparer<Composed>,
+    _ compose: (Value) -> Composed,
+    _ comparer: some Comparison<Composed>,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     guard let result = takeIfChanged(compose, comparer) else {
@@ -320,9 +333,9 @@ extension Changes {
   /// Takes a composed value if it's changed from old value.
   @inline(__always)
   public func takeIfChanged<Composed: Equatable>(
-    _ compose: (Changes) throws -> Composed
+    _ compose: (Value) throws -> Composed
   ) rethrows -> Composed? {
-    try takeIfChanged(compose, .usingEquatable)
+    try takeIfChanged(compose, .equality())
   }
 
   /**
@@ -330,7 +343,7 @@ extension Changes {
    */
   public func ifChanged<T, Result>(
     _ selector: ChangesKeyPath<T>,
-    _ comparer: Comparer<T>,
+    _ comparer: some Comparison<T>,
     _ perform: (T) throws -> Result
   ) rethrows -> Result? {
     guard let value = takeIfChanged({ $0[keyPath: selector] }, comparer) else {
@@ -343,10 +356,10 @@ extension Changes {
    Performs a closure if the selected value changed from the previous one.
    */
   public func ifChanged<Composed: Equatable, Result>(
-    _ compose: (Changes) -> Composed,
+    _ compose: (Value) -> Composed,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged(compose, .usingEquatable, perform)
+    try ifChanged(compose, .equality(), perform)
   }
 
   /**
@@ -357,7 +370,7 @@ extension Changes {
     _ keyPath: ChangesKeyPath<T>,
     _ perform: (T) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged(keyPath, .usingEquatable, perform)
+    try ifChanged(keyPath, .equality(), perform)
   }
 
   /**
@@ -370,7 +383,7 @@ extension Changes {
     _ keyPath1: ChangesKeyPath<T1>,
     _ perform: ((T0, T1)) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) }, .init(==), perform)
+    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) as (T0, T1) }, AnyEqualityComparison(==), perform)
   }
 
   /**
@@ -385,8 +398,8 @@ extension Changes {
     _ perform: ((T0, T1, T2)) throws -> Result
   ) rethrows -> Result? {
     try ifChanged(
-      { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) },
-      .init(==),
+      { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) as (T0, T1, T2) },
+      AnyEqualityComparison(==),
       perform
     )
   }
@@ -410,8 +423,9 @@ extension Changes {
           $0[keyPath: keyPath1],
           $0[keyPath: keyPath2],
           $0[keyPath: keyPath3]
-        ) },
-      .init(==),
+        ) as (T0, T1, T2, T3)
+      },
+      AnyEqualityComparison(==),
       perform
     )
   }
@@ -437,14 +451,17 @@ extension Changes {
     _ perform: ((T0, T1, T2, T3, T4)) throws -> Result
   ) rethrows -> Result? {
     try ifChanged(
-      { (
-        $0[keyPath: keyPath0],
-        $0[keyPath: keyPath1],
-        $0[keyPath: keyPath2],
-        $0[keyPath: keyPath3],
-        $0[keyPath: keyPath4]
-      ) },
-      .init(==),
+      {
+        (
+          $0[keyPath: keyPath0],
+          $0[keyPath: keyPath1],
+          $0[keyPath: keyPath2],
+          $0[keyPath: keyPath3],
+          $0[keyPath: keyPath4]
+        ) as (T0, T1, T2, T3, T4)
+
+      },
+      AnyEqualityComparison(==),
       perform
     )
   }
@@ -456,29 +473,29 @@ extension Changes {
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   @inline(__always)
   public func hasChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
-    hasChanges(keyPath, .usingEquatable)
+    hasChanges(keyPath, EqualityComparison())
   }
 
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   @inline(__always)
   public func hasChanges<T>(
     _ keyPath: ChangesKeyPath<T>,
-    _ comparer: Comparer<T>
+    _ comparer: some Comparison<T>
   ) -> Bool {
     hasChanges({ $0[keyPath: keyPath] }, comparer)
   }
 
   @inline(__always)
   public func hasChanges<Composed: Equatable>(
-    _ compose: (Changes) -> Composed
+    _ compose: (Value) -> Composed
   ) -> Bool {
-    hasChanges(compose, .usingEquatable)
+    hasChanges(compose, EqualityComparison())
   }
 
   @inline(__always)
   public func hasChanges<Composed>(
-    _ compose: (Changes) -> Composed,
-    _ comparer: Comparer<Composed>
+    _ compose: (Value) -> Composed,
+    _ comparer: some Comparison<Composed>
   ) -> Bool {
     takeIfChanged(compose, comparer) != nil
   }
@@ -491,12 +508,12 @@ extension Changes {
   /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
   @inline(__always)
   public func noChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
-    !hasChanges(keyPath, .usingEquatable)
+    !hasChanges(keyPath, EqualityComparison())
   }
 
   /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
   @inline(__always)
-  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: Comparer<T>) -> Bool {
+  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: some Comparison<T>) -> Bool {
     !hasChanges(keyPath, comparer)
   }
 }
@@ -522,155 +539,34 @@ extension Changes: CustomReflectable {
 
 extension Changes {
   private final class InnerBox {
-    
+
     var value: Value
 
-    let cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath: Any]>
-
-    init(value: Value) {
-      self.value = value
-      cachedComputedValueStorage = .init([:])
-    }
-
-    private init(
-      value: Value,
-      cachedComputedValueStorage: VergeConcurrency.RecursiveLockAtomic<[AnyKeyPath: Any]>
+    init(
+      value: __owned Value
     ) {
       self.value = value
-      self.cachedComputedValueStorage = cachedComputedValueStorage
     }
-
+ 
     deinit {}
 
     func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerBox {
       return .init(
-        value: try transform(value),
-        cachedComputedValueStorage: cachedComputedValueStorage
+        value: try transform(value)
       )
     }
-     
+
+    @discardableResult
     @inline(__always)
-    func _read(perform: (ReadRef<Value>) -> Void) {
-      withUnsafePointer(to: &value) { (pointer) -> Void in
+    func _read<Return>(perform: (__shared ReadRef<Value>) -> Return) -> Return {
+
+      withUnsafePointer(to: &value) { (pointer) -> Return in
         let ref = ReadRef<Value>.init(pointer)
-        perform(ref)
-      }
-    }
-    
-  }
-}
-
-extension Changes where Value: ExtendedStateType {
-  @dynamicMemberLookup
-  public struct ComputedProxy {
-    let source: Changes<Value>
-
-    public subscript<Output>(dynamicMember keyPath: KeyPath<
-      Value.Extended,
-      Value.Field.Computed<Output>
-    >) -> Output {
-      take(with: keyPath)
-    }
-
-    @inline(__always)
-    private func take<Output>(with keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>)
-    -> Output {
-      return source._synchronized_takeFromCacheOrCreate(keyPath: keyPath)
-    }
-  }
-
-  public var computed: ComputedProxy {
-    .init(source: self)
-  }
-
-  @inline(__always)
-  private func _synchronized_takeFromCacheOrCreate<Output>(
-    keyPath: KeyPath<Value.Extended, Value.Field.Computed<Output>>
-  ) -> Output {
-    let components = Value.Extended.instance[keyPath: keyPath]
-
-    components._onRead()
-
-    // TODO: tune-up concurrency performance
-
-    /**
-     Start locking inner-box's caching container to calculate a computed value and stores as a cache.
-     */
-    return innerBox.cachedComputedValueStorage.modify { cache -> Output in
-
-      if let computed = cache[keyPath] as? Output {
-        /**
-         Which means, previously accessed this property, then we can return the cached value.
-         */
-        components._onHitCache()
-        return computed
+        return perform(ref)
       }
 
-      /**
-       We couldn't find a cached value, then continue to next step.
-       */
-
-      if let previous = previous {
-        /**
-         Itself has the previous instance, we start locking in that instance.
-         */
-
-        return previous.innerBox.cachedComputedValueStorage.modify { previousCache -> Output in
-
-          /**
-           - Warnings: DO NOT MODIFY PreviousCache.
-           */
-
-          if let previousCachedValue = previousCache[keyPath] as? Output {
-            /**
-             We found a cached value from the previous instance.
-             Now we check if that value is reusable.
-             */
-
-            components._onHitPreviousCache()
-
-            switch components.pipeline.makeResult(self) {
-            case .noUpdates:
-
-              // No changes
-              components._onHitPreFilter()
-              cache[keyPath] = previousCachedValue
-              return previousCachedValue
-
-            case let .new(newValue):
-
-              // Update
-              components._onTransform()
-              cache[keyPath] = newValue
-              return newValue
-            }
-          } else {
-            /**
-             We don't have a cached value even from the previous instance.
-             We need to create a new value from scratch.
-             */
-
-            components._onTransform()
-
-            let initialValue = components.pipeline.makeInitial(self)
-            cache[keyPath] = initialValue
-            return initialValue
-          }
-        }
-
-      } else {
-        /**
-         We don't have previous instance.
-         We need to create a new value from scratch.
-         */
-
-        components._onTransform()
-
-        let initialValue = components.pipeline.makeInitial(self)
-        cache[keyPath] = initialValue
-        return initialValue
-      }
     }
+
   }
 }
 
@@ -680,244 +576,6 @@ extension Changes where Value: Equatable {
   }
 
   public func ifChanged(_ perform: (Value) throws -> Void) rethrows {
-    try ifChanged(\.root, perform)
-  }
-}
-
-extension Changes: Sequence where Value: Sequence {
-  public __consuming func makeIterator() -> Value.Iterator {
-    root.makeIterator()
-  }
-
-  public typealias Element = Value.Element
-  public typealias Iterator = Value.Iterator
-}
-
-extension Changes: Collection where Value: Collection {
-  public subscript(position: Value.Index) -> Value.Element {
-    _read {
-      yield root[position]
-    }
-  }
-
-  public var startIndex: Value.Index {
-    root.startIndex
-  }
-
-  public var endIndex: Value.Index {
-    root.endIndex
-  }
-
-  public func index(after i: Value.Index) -> Value.Index {
-    root.index(after: i)
-  }
-
-  public typealias Index = Value.Index
-}
-
-extension Changes: BidirectionalCollection where Value: BidirectionalCollection {
-  public func index(before i: Value.Index) -> Value.Index {
-    root.index(before: i)
-  }
-}
-
-extension Changes: RandomAccessCollection where Value: RandomAccessCollection {
-  public func index(before i: Value.Index) -> Value.Index {
-    root.index(before: i)
-  }
-}
-
-extension _StateTypeContainer {
-  /**
-   A declaration to add a computed-property into the state.
-   It helps to add a property that does not need to be stored-property.
-   It's like Swift's computed property like following:
-
-   ```swift
-   struct State {
-     var items: [Item] = [] {
-
-     var itemsCount: Int {
-       items.count
-     }
-   }
-   ```
-   However, this Swift's computed-property will compute the value every state changed. It might become a serious issue on performance.
-
-   Compared with Swift's computed property and this,  this does not compute the value every state changes, It does compute depend on specified rules.
-   That rules mainly come from the concept of Memoization.
-
-   Example code:
-
-   ```swift
-   struct State: ExtendedStateType {
-
-     var name: String = ...
-     var items: [Int] = []
-
-     struct Extended: ExtendedType {
-
-       static let instance = Extended()
-
-       let filteredArray = Field.Computed<[Int]> {
-         $0.items.filter { $0 > 300 }
-       }
-       .dropsInput {
-         $0.noChanges(\.items)
-       }
-     }
-   }
-   ```
-
-   ```swift
-   let store: MyStore<State, Never> = ...
-
-   let state = store.state
-
-   let result: [Int] = state.computed.filteredArray
-   ```
-   */
-  public struct Computed<Output> {
-    public typealias Input = Changes<State>
-
-    @usableFromInline
-    fileprivate(set) var _onRead: () -> Void = {}
-
-    @usableFromInline
-    fileprivate(set) var _onHitCache: () -> Void = {}
-
-    @usableFromInline
-    fileprivate(set) var _onHitPreviousCache: () -> Void = {}
-
-    @usableFromInline
-    fileprivate(set) var _onHitPreFilter: () -> Void = {}
-
-    @usableFromInline
-    fileprivate(set) var _onTransform: () -> Void = {}
-
-    @usableFromInline
-    let pipeline: Pipeline<Input, Output>
-
-    @usableFromInline
-    init(_ pipeline: Pipeline<Input, Output>) {
-      self.pipeline = pipeline
-    }
-
-    public init(
-      makeInitial: @escaping (Input) -> Output,
-      update: @escaping (Input) -> Pipeline<Input, Output>.ContinuousResult
-    ) {
-      self.init(Pipeline<Input, Output>.init(makeInitial: makeInitial, update: update))
-    }
-
-    public init(_ compute: @escaping (Input) -> Output) {
-      self.init(.map(compute))
-    }
-
-    /// Initialize Computed property that computes value from derived value
-    /// Drops duplicated derived value with Equatable of Derived type.
-    ///
-    /// - Complexity: ✅ Drops duplicated derived values.
-    /// - Parameters:
-    ///   - derive: A closure to create value from the state to put into the compute closure.
-    ///   - compute: A closure to compose a computed value from the derived value.
-    public init<Derived: Equatable>(
-      derive: @escaping (Input) -> Derived,
-      compute: @escaping (Derived) -> Output
-    ) {
-      self.init(derive: derive, dropsDerived: ==, compute: compute)
-    }
-
-    /// Initialize Computed property that computes value from derived value
-    ///
-    /// - Complexity:
-    ///   - ✅ Drops duplicated derived values
-    ///   - 💡 depends on dropsDerived closure
-    /// - Parameters:
-    ///   - derive: A closure to create value from the state to put into the compute closure.
-    ///   - dropsDerived:
-    ///     A predicate to drop a duplicated value, closure gets an old value and a new value.
-    ///     If return true, drops the value.
-    ///   - compute: A closure to compose a computed value from the derived value.
-    public init<Derived>(
-      derive: @escaping (Input) -> Derived,
-      dropsDerived: @escaping (Derived, Derived) -> Bool,
-      compute: @escaping (Derived) -> Output
-    ) {
-      self.init(.map(derive: derive, dropsDerived: dropsDerived, compute: compute))
-    }
-
-    /**
-     Adds a rule to drop input value from the root state changed.
-     */
-    @inlinable
-    @inline(__always)
-    public func dropsInput(while predicate: @escaping (Input) -> Bool) -> Self {
-      modified {
-        $0.dropsInput(while: predicate)
-      }
-    }
-
-    @inlinable
-    @inline(__always)
-    public func modified(_ modifier: (Pipeline<Input, Output>) -> Pipeline<Input, Output>)
-    -> Self {
-      .init(modifier(pipeline))
-    }
-
-    /**
-     Registers callback-closure that will call when accessed the computed property
-     */
-    @inlinable
-    @inline(__always)
-    public func onRead(_ clsoure: @escaping () -> Void) -> Self {
-      var _self = self
-      _self._onRead = clsoure
-      return _self
-    }
-
-    /**
-     Registers callback-closure that will call when compute the value
-     */
-    @inlinable
-    @inline(__always)
-    public func onTransform(_ closure: @escaping () -> Void) -> Self {
-      var _self = self
-      _self._onTransform = closure
-      return _self
-    }
-
-    /**
-     Registers callback-closure that will call when hit the pre-filter
-     */
-    @inlinable
-    @inline(__always)
-    public func onHitPreFilter(_ closure: @escaping () -> Void) -> Self {
-      var _self = self
-      _self._onHitPreFilter = closure
-      return _self
-    }
-
-    /**
-     Registers callback-closure that will call when hit the cached value
-     */
-    @inlinable
-    @inline(__always)
-    public func onHitCache(_ closure: @escaping () -> Void) -> Self {
-      var _self = self
-      _self._onHitCache = closure
-      return _self
-    }
-
-    /**
-     Registers callback-closure that will call when hit the cached value
-     */
-    @inlinable
-    @inline(__always)
-    public func onHitPreviousCache(_ closure: @escaping () -> Void) -> Self {
-      var _self = self
-      _self._onHitPreviousCache = closure
-      return _self
-    }
+    try ifChanged(\.self, perform)
   }
 }

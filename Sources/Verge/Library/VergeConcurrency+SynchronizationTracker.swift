@@ -25,14 +25,14 @@ extension VergeConcurrency {
   ///
   ///
   /// Modified based on RxSwift's original implementations.
-  public final class SynchronizationTracker {
+  public final class SynchronizationTracker: @unchecked Sendable {
     
     public enum Warning: Hashable {
       case reentrancyAnomaly
       case synchronizationAnomaly
     }
     
-    private let _lock = NSRecursiveLock()
+    private let _lock = VergeConcurrency.RecursiveLock()
     
     private var _threads = [UnsafeMutableRawPointer: Int]()
     

@@ -242,4 +242,41 @@ class VergeORMTests: XCTestCase {
     
   }
   
+  func testDeletionAndInsertionInTransaction() {
+        
+    var state = RootState()
+    
+    let record = Author(rawID: "1", name: "1")
+    
+    state.db.performBatchUpdates { (context) -> Void in
+      context.entities.author.insert(record)
+    }
+    
+    XCTAssertEqual(
+      state.db.entities.author.allEntities().count,
+      1
+    )
+    
+    state.db.performBatchUpdates { (context) -> Void in
+      context.entities.author.deleteAll()
+      context.entities.author.insert(record)
+    }
+    
+    XCTAssertEqual(
+      state.db.entities.author.allEntities().count,
+      1
+    )
+      
+    state.db.performBatchUpdates { (context) -> Void in
+      context.entities.author.deleteAll()
+      context.entities.author.insert([record])
+    }
+    
+    XCTAssertEqual(
+      state.db.entities.author.allEntities().count,
+      1
+    )
+    
+  }
+  
 }

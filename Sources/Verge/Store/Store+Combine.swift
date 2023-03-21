@@ -34,35 +34,28 @@ extension Store {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
-  public func statePublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
-    if startsFromInitial {
-      return _backingStorage.valuePublisher.dropFirst()
-        .merge(with: Just(_backingStorage.value.droppedPrevious()))
-        .eraseToAnyPublisher()
-    } else {
-      return _backingStorage.valuePublisher
-    }
+  public func statePublisher() -> some Combine.Publisher<Changes<Value>, Never> {
+    valuePublisher
+      .dropFirst()
+      .handleEvents(receiveCancel: {
+        // retain self until subscription finsihed
+        withExtendedLifetime(self) {}
+      })
+      .merge(with: Just(state.droppedPrevious()))
   }
 
-  /// A publisher that repeatedly emits the changes when state updated
-  ///
-  /// Guarantees to emit the first event on started subscribing.
-  ///
-  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
-  /// - Returns:
-  @available(*, deprecated, renamed: "statePublisher")
-  public func changesPublisher(startsFromInitial: Bool = true) -> AnyPublisher<Changes<State>, Never> {
-    if startsFromInitial {
-      return _backingStorage.valuePublisher.dropFirst()
-        .merge(with: Just(_backingStorage.value.droppedPrevious()))
-        .eraseToAnyPublisher()
-    } else {
-      return _backingStorage.valuePublisher
-    }
-  }
-
-  public var activityPublisher: EventEmitter<Activity>.Publisher {
-    _activityEmitter.publisher
+  public func activityPublisher() -> some Combine.Publisher<Activity, Never> {
+    publisher
+      .handleEvents(receiveCancel: {
+        // retain self until subscription finsihed
+        withExtendedLifetime(self) {}
+      })
+      .flatMap { event in
+        guard case .activity(let a) = event else {
+          return Empty<Activity, Never>().eraseToAnyPublisher()
+        }
+        return Just(a).eraseToAnyPublisher()
+      }
   }
 
 }

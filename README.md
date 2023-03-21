@@ -1,5 +1,3 @@
-> Verge is giving the power of state-management in [muukii/Pixel](https://github.com/muukii/Pixel/pull/53) v2 development!
-
 <p align="center">
   <a href="https://vergegroup.org">
 <img width="128" alt="VergeIcon" src="https://user-images.githubusercontent.com/1888355/85241314-5ac19c80-b476-11ea-9be6-e04ed3bc6994.png">
@@ -9,41 +7,41 @@
 
 <h1 align="center">Verge.swift</h1>
 <p align="center">
-  <b>📍An effective state management architecture for iOS - SwiftUI and UIKit📍</b><br/>
+  <b>📍An effective state management architecture for iOS - UIKit, SwiftUI📍</b><br/>
 <sub>_ An easier way to get unidirectional data flow _</sub><br/>
 <sub>_ Supports concurrent processing _</sub><br/>
 </p>
 
-<p align="center">
- <a href="https://vergegroup.org">
-   <b>📖 Docs and tips</b>
-  </a>
-  </p>
+- [Verge Docs](https://vergegroup.github.io/swift-Verge/Verge/documentation/verge/)
+- [VergeORM Docs](https://vergegroup.github.io/swift-Verge/VergeORM/documentation/vergeorm/)
+
 
 <p align="center">
-<img alt="swift5.3" src="https://img.shields.io/badge/swift-5.3-ED523F.svg?style=flat"/>
+<img alt="swift5.5" src="https://img.shields.io/badge/swift-5.5-ED523F.svg?style=flat"/>
 <img alt="Tests" src="https://github.com/VergeGroup/Verge/workflows/Tests/badge.svg"/>
-<img alt="cocoapods" src="https://img.shields.io/cocoapods/v/Verge" />
 </p>
 
-<p align="center">
-  <a href="https://spectrum.chat/verge-swift">
-    <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg" />
-  </a>
-</p>
+# Support this projects
+<a href="https://www.buymeacoffee.com/muukii">
+<img width="160" alt="yellow-button" src="https://user-images.githubusercontent.com/1888355/146226808-eb2e9ee0-c6bd-44a2-a330-3bbc8a6244cf.png">
+</a>
+
 
 ## Requirements
 
-* Swift 5.3 +
-* @available(iOS 10, macOS 10.13, tvOS 10, watchOS 3)
+* Swift 5.7 +
+* @available(iOS 13, macOS 10.13, tvOS 10, watchOS 3)
 * UIKit
 * SwiftUI
+
+## Disclaimer
+
+Verge might be updated without migration guide as we are not sure how many projects are using this library.
+Please feel free to ask us about how to use and how to migrate.  
 
 ## Verge is not Flux, it's store-pattern and super powerful.
 
 Verge is a performant store-pattern based state management library for iOS.
-
-Please see the website: https://vergegroup.org
 
 [And the article about store-pattern](https://medium.com/eureka-engineering/verge-start-store-pattern-state-management-before-beginning-flux-in-uikit-ios-app-development-6c74d4413829)
 
@@ -61,7 +59,7 @@ The word 'store-pattern' is used on [Vue.js documentation](https://vuejs.org/v2/
 **We're welcome to publish here your application which powered by Verge!**  
 Please Submit from Pull requests
 
-## Mininal usage exmaple - In UIView - UIViewController
+## Minimal usage example - In UIView - UIViewController
 
 State-management is everywhere, you can put a store and start state-management.
 
@@ -126,7 +124,7 @@ final class MyViewModel: StoreComponentType {
   }
 
   /// 💡 This is basically a template statement. You might have something type of `Store`.
-  let store: DefaultStore = .init(initialState: .init())
+  let store: Store<State, Never> = .init(initialState: .init())
 
   // MARK: - ✅ These are actions as well as writing methods.
 
@@ -155,6 +153,10 @@ final class MyViewModel: StoreComponentType {
 
 ### In SwiftUI
 
+Use **StoreReader** to read a state of the store.  
+It optimizes frequency of update its content for performance wise.
+The content closure runs when reading properties have changed or parent tree updated.
+
 ```swift
 struct MyView: View {
 
@@ -162,7 +164,7 @@ struct MyView: View {
 
   var body: some View {
     // ✅ Uses `StateReader` to read the state this clarifies where components need the state.
-    StateReader(store).content { state in
+    StoreReader(store) { state in
       Text(state.name)
       Button(action: {
         self.store.myAction()
@@ -173,17 +175,6 @@ struct MyView: View {
   }
 }
 ```
-
-`StateReader` supports to derive a part of the state like below.
-
-```swift
-StateReader(store.derived(.map(\.nested))).content { state in
-  ...
-}
-```
-
-> 🤲 Verge has not gathered enough experience in SwiftUI. Please let us know your ideas that improve Verge using in SwiftUI! (in Discussions or Issues)
-
 
 ### In UIKit
 
@@ -260,7 +251,7 @@ Flux works with the multiple restricted rules top of the 'store-pattern'.
 
 ![store-pattern](https://user-images.githubusercontent.com/1888355/100537431-07951680-326c-11eb-93bd-4b9246fbeb96.png)
 
-This means we can start using like Flux without using Action, Muation payload values.  
+This means we can start using like Flux without using Action, Mutation payload values.  
 
 ```swift
 // ✌️ no needs to use.
@@ -288,7 +279,7 @@ store.increment()
 ```
 
 It can be easy start.  
-Of cource, we can create the layer to manage strict action and mutation payload on top of the Verge primitive layer.  
+Of course, we can create the layer to manage strict action and mutation payload on top of the Verge primitive layer.  
 Because 'store-pattern' is core-concept of Flux.
 
 --
@@ -329,35 +320,6 @@ This concept would help us to describe something that is not easy to describe as
 <img width=513 src="https://user-images.githubusercontent.com/1888355/85392055-fc83df00-b585-11ea-866d-7ab11dfa823a.png" />
 
 ## Installation
-
-### CocoaPods
-
-**Verge** (core module)
-
-```ruby
-pod 'Verge/Store'
-```
-
-**VergeORM**
-
-```ruby
-pod 'Verge/ORM'
-```
-
-**VergeRx**
-
-```ruby
-pod 'Verge/Rx'
-```
-
-These are separated with subspecs in Podspec.<br>
-After installed, these are merged into single module as `Verge`.
-
-To use Verge in your code, define import decralation following.
-
-```swift
-import Verge
-```
 
 ## SwiftPM
 

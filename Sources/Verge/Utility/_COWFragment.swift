@@ -20,6 +20,9 @@
 // THE SOFTWARE.
 
 import Foundation
+@_implementationOnly import Atomics
+
+private let _edge_global_counter =  ManagedAtomic<UInt64>.init(0)
 
 /**
  A structure that manages sub-state-tree from root-state-tree.
@@ -55,15 +58,18 @@ public struct _COWFragment<State>: EdgeType {
     lhs.storage === rhs.storage || lhs.version == rhs.version
   }
 
+  public let globalID: UInt64
+  
   public var version: UInt64 {
     _read {
-      yield counter.version
+      yield counter.value
     }
   }
 
-  private(set) public var counter: NonAtomicVersionCounter = .init()
+  private(set) public var counter: NonAtomicCounter = .init()
 
   public init(wrappedValue: State) {
+    self.globalID = _edge_global_counter.loadThenWrappingIncrement(ordering: .relaxed)
     self.storage = Storage(wrappedValue)
   }
 
@@ -74,7 +80,7 @@ public struct _COWFragment<State>: EdgeType {
       yield storage.value
     }
     _modify {
-      counter.markAsUpdated()
+      counter.increment()
       let oldValue = storage.value
       if isKnownUniquelyReferenced(&storage) {
         yield &storage.value

@@ -10,7 +10,7 @@ import Foundation
 
 import XCTest
 
-@testable import Verge
+import Verge
 
 fileprivate struct _COWBox<State> {
 
@@ -244,6 +244,21 @@ final class InoutTests: XCTestCase {
       XCTFail()
     }
 
+  }
+  
+  func testModification_dynamicMemberLookup() {
+    
+    var value = DemoState()
+    
+    let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
+      let proxy = InoutRef.init(pointer)
+      proxy.modify {
+        $0.count += 1
+      }
+      return proxy.modification
+    }
+    
+    XCTAssertEqual(modification?.count, true)
   }
 
   func testModification_modifying_wrapped_directly() {

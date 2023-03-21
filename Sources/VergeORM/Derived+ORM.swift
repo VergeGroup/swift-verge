@@ -92,210 +92,113 @@ public struct NonNullEntityWrapper<Entity: EntityType> {
   
 }
 
-extension NonNullEntityWrapper: Equatable where Entity: Equatable {
+extension NonNullEntityWrapper: Equatable where Entity: Equatable {}
+
+extension NonNullEntityWrapper: Hashable where Entity: Hashable {}
+
+
+private final class DerivedCacheKey: NSObject {
   
-}
-
-extension NonNullEntityWrapper: Hashable where Entity: Hashable {
+  let entityType: ObjectIdentifier
+  let entityID: AnyEntityIdentifier
+  let keyPathToDatabase: AnyKeyPath
   
-}
-
-extension Pipeline where Input : ChangesType, Input.Value : DatabaseEmbedding {
-
-  /// Returns a MemoizeMap value that optimized for looking entity up from the database.
-  @inline(__always)
-  fileprivate static func _makeEntityQuery<Entity: EntityType>(entityID: Entity.EntityID) -> Pipeline<Input, EntityWrapper<Entity>> {
+  init(entityType: ObjectIdentifier, entityID: AnyEntityIdentifier, keyPathToDatabase: AnyKeyPath) {
+    self.entityType = entityType
+    self.entityID = entityID
+    self.keyPathToDatabase = keyPathToDatabase
+  }
+  
+  override func isEqual(_ object: Any?) -> Bool {
     
-    let path = Input.Value.getterToDatabase
+    guard let other = object as? DerivedCacheKey else {
+      return false
+    }
     
-    let noChangesComparer = Comparer<Input.Value.Database>(or: [
-
-      /** Step 1 */
-      Comparer<Input.Value.Database>.databaseNoUpdates(),
-
-      /** Step 2 */
-      Comparer<Input.Value.Database>.tableNoUpdates(Entity.self),
-
-      /** Step 3 */
-      Comparer<Input.Value.Database>.changesNoContains(entityID),
-    ])
-      
-    return Pipeline<Input, EntityWrapper<Entity>>(
-      makeInitial: { state in
-        EntityWrapper<Entity>(
-          id: entityID,
-          entity: path(state.primitive).entities.table(Entity.self).find(by: entityID) /** Queries an entity */
-        )
-    },
-      update: { state in
-                
-        let hasChanges = state.asChanges().hasChanges(
-          { (composing) -> Input.Value.Database in
-            // TODO: causing copy in some-cases
-            // `initializeWithCopy`
-            let db = path(composing.root)
-            return db
-        }, noChangesComparer
-        )
-        
-        guard hasChanges else {
-          return .noUpdates
-        }
-
-        /** Queries an entity */
-        let entity = path(state.primitive).entities.table(Entity.self).find(by: entityID)
-        return .new(EntityWrapper<Entity>(id: entityID, entity: entity))
-    })
+    guard entityType == other.entityType else { return false }
+    guard entityID == other.entityID else { return false }
+    guard keyPathToDatabase == other.keyPathToDatabase else { return false }
+    
+    return true
   }
   
 }
 
 fileprivate final class _DerivedObjectCache {
-  
-  private let _cache = NSCache<NSString, AnyObject>()
+    
+  private let _cache = NSCache<DerivedCacheKey, AnyObject>()
   
   @inline(__always)
-  private func key<E: EntityType>(entityID: E.EntityID) -> NSString {
-    "\(ObjectIdentifier(E.self))_\(entityID)" as NSString
+  private func key<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> DerivedCacheKey {
+    return .init(entityType: ObjectIdentifier(E.self), entityID: entityID.any, keyPathToDatabase: keyPathToDatabase)
   }
   
-  func get<E: EntityType>(entityID: E.EntityID) -> E.Derived? {
-    _cache.object(forKey: key(entityID: entityID)) as? E.Derived
+  func get<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> E.Derived? {
+    _cache.object(forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase)) as? E.Derived
   }
   
-  func set<E: EntityType>(_ getter: E.Derived, entityID: E.EntityID) {
-    _cache.setObject(getter, forKey: key(entityID: entityID))
+  func set<E: EntityType>(_ getter: E.Derived, entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) {
+    _cache.setObject(getter, forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase))
   }
   
 }
 
+fileprivate final class _NonNullDerivedObjectCache {
+  
+  private let _cache = NSCache<DerivedCacheKey, AnyObject>()
+  
+  @inline(__always)
+  private func key<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> DerivedCacheKey {
+    return .init(entityType: ObjectIdentifier(E.self), entityID: entityID.any, keyPathToDatabase: keyPathToDatabase)
+  }
+  
+  func get<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> E.NonNullDerived? {
+    _cache.object(forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase)) as? E.NonNullDerived
+  }
+  
+  func set<E: EntityType>(_ getter: E.NonNullDerived, entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) {
+    _cache.setObject(getter, forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase))
+  }
+  
+}
+
+public typealias NonNullDerivedResult<Entity: EntityType> = DerivedResult<Entity, Entity.NonNullDerived>
+
 // MARK: - Primitive operators
 
-fileprivate var _valueContainerAssociated: Void?
+fileprivate var _derivedContainerAssociated: Void?
+fileprivate var _nonnull_derivedContainerAssociated: Void?
 
-extension StoreType where State : DatabaseEmbedding {
-  
+extension DispatcherType {
+        
   private var _nonatomic_derivedObjectCache: _DerivedObjectCache {
-
-    if let associated = objc_getAssociatedObject(self, &_valueContainerAssociated) as? _DerivedObjectCache {
+    
+    if let associated = objc_getAssociatedObject(self, &_derivedContainerAssociated) as? _DerivedObjectCache {
       
       return associated
       
     } else {
       
       let associated = _DerivedObjectCache()
-      objc_setAssociatedObject(self, &_valueContainerAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
+      objc_setAssociatedObject(self, &_derivedContainerAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
       return associated
     }
   }
   
-  /**
-   Returns Derived object that projects fetched Entity object by the entity identifier.
-   
-   The Derived object is constructed from multiple Derived.
-   Underlying-Derived: Fetch the entity from id
-   DropsOutput-Derived: Drops the duplicated object
-   
-   Underlying-Derived would be cached by the id.
-   If the cached object found, it will be used to construct Derived with DropsOutput-Derived.
-   
-   - Parameters:
-     - entityID: an identifier of the entity
-     - dropsOutput: Used for Derived. the condition to drop duplicated object.
-   */
-  @inline(__always)
-  public func derived<Entity: EntityType>(
-    from entityID: Entity.EntityID,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .passthrough
-  ) -> Entity.Derived {
+  private var _nonatomic_nonnull_derivedObjectCache: _NonNullDerivedObjectCache {
     
-    objc_sync_enter(self); defer { objc_sync_exit(self) }
-    
-    let underlyingDerived: Derived<EntityWrapper<Entity>>
-    
-    if let cached = _nonatomic_derivedObjectCache.get(entityID: entityID) {
-      underlyingDerived = cached
+    if let associated = objc_getAssociatedObject(self, &_nonnull_derivedContainerAssociated) as? _NonNullDerivedObjectCache {
+      
+      return associated
+      
     } else {
-      /// creates a new underlying derived object
-      underlyingDerived = derived(
-        ._makeEntityQuery(entityID: entityID),
-        queue: queue
-      )
-      _nonatomic_derivedObjectCache.set(underlyingDerived, entityID: entityID)
+      
+      let associated = _NonNullDerivedObjectCache()
+      objc_setAssociatedObject(self, &_nonnull_derivedContainerAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
+      return associated
     }
-        
-    let d = underlyingDerived.chain(
-      .init(map: { $0.root }),
-      dropsOutput: { changes in
-        changes.noChanges(\.root, .init {
-          dropsOutput($0.wrapped, $1.wrapped)
-        })
-      },
-      queue: queue
-    )
-
-    return d
   }
-  
-}
-
-// MARK: - Convenience operators
-
-extension StoreType where State : DatabaseEmbedding {
-  
-  @inline(__always)
-  fileprivate func _primary_derivedNonNull<Entity: EntityType>(
-    from entity: Entity,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .passthrough
-  ) -> Entity.NonNullDerived {
     
-    let fallingBackValue = VergeConcurrency.RecursiveLockAtomic<Entity>.init(entity)
-    
-    #if DEBUG
-    let checker = VergeConcurrency.SynchronizationTracker()
-    #endif
-    
-    return derived(from: entity.entityID, dropsOutput: dropsOutput, queue: queue)
-      .chain(
-        .init(map: {
-          #if DEBUG
-          checker.register(); defer { checker.unregister() }
-          #endif
-          if let wrapped = $0.root.wrapped {
-            fallingBackValue.swap(wrapped)
-            return .init(entity: wrapped, isFallBack: false)
-          }
-          return .init(entity: fallingBackValue.value, isFallBack: true)
-        }),
-        queue: queue
-      )
-    
-  }
-
-  /// Returns a derived object that provides a concrete entity according to the updating source state
-  /// It uses the last value if the entity has been removed source.
-  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
-  ///
-  /// If you call this method in many time, it's not so big issue.
-  /// Because, the backing derived-object to construct itself would be cached.
-  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
-  ///
-  /// - Parameters:
-  ///   - entity:
-  ///   - dropsOutput:
-  /// - Returns: A derived object
-  @inline(__always)
-  public func derivedNonNull<Entity: EntityType>(
-    from entity: Entity,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .passthrough
-  ) -> Entity.NonNullDerived {
-
-    _primary_derivedNonNull(from: entity, dropsOutput: dropsOutput, queue: queue)
-  }
-  
 }
 
 /// A result instance that contains created Derived object
@@ -322,31 +225,184 @@ public struct DerivedResult<Entity: EntityType, Derived: AnyObject> {
   
 }
 
-extension StoreType where State : DatabaseEmbedding {
+/**
+ Do not retain, use as just method-chain
+ */
+public struct DatabaseContext<Store: StoreType, Database: DatabaseType> {
+  
+  let keyPath: KeyPath<Store.State, Database>
+  unowned let store: Store
+  
+  init(keyPath: KeyPath<Store.State, Database>, store: Store) {
+    self.keyPath = keyPath
+    self.store = store
+  }
+    
+}
 
+@dynamicMemberLookup
+public struct DatabaseDynamicMembers<Store: DispatcherType> {
+  
+  unowned let store: Store
+  
+  init(store: Store) {
+    self.store = store
+  }
+
+  public subscript<Database: DatabaseType>(dynamicMember keyPath: KeyPath<Store.State, Database>) -> DatabaseContext<Store, Database> {
+    .init(keyPath: keyPath, store: store)
+  }
+  
+}
+
+extension DispatcherType {
+  
   /**
-   Returns Derived object that projects fetched Entity object by the entity identifier.
-
+   A cushion for databases. the return object has properties to databases.
+   
+   ```
+   yourStore.databases.yourDatabase.derived(...)
+   ```
+   */
+  public var databases: DatabaseDynamicMembers<Self> {
+    .init(store: self)
+  }
+  
+  /**
+   Returns a ``Verge/Derived`` object that projects fetched Entity object by the entity identifier.
+   
    The Derived object is constructed from multiple Derived.
    Underlying-Derived: Fetch the entity from id
    DropsOutput-Derived: Drops the duplicated object
-
+   
    Underlying-Derived would be cached by the id.
-   If the cached object found, it will be used to construct Derived with DropsOutput-Derived.
-
-   - Parameters:
-   - entityID: an identifier of the entity
-   - dropsOutput: Used for Derived. the condition to drop duplicated object.
    */
   @inline(__always)
-  public func derived<Entity: EntityType & Equatable>(
-    from entityID: Entity.EntityID,
-    queue: TargetQueue = .passthrough
+  public func derivedEntity<Entity: EntityType, Database: DatabaseType>(
+    entityID: Entity.EntityID,
+    from keyPathToDatabase: KeyPath<State, Database>,
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.Derived {
     
-    derived(from: entityID, dropsOutput: ==, queue: queue)
+    objc_sync_enter(self); defer { objc_sync_exit(self) }
+    
+    let underlyingDerived: Derived<EntityWrapper<Entity>>
+    
+    if let cached = _nonatomic_derivedObjectCache.get(entityID: entityID, keyPathToDatabase: keyPathToDatabase) {
+      underlyingDerived = cached
+    } else {
+      /// creates a new underlying derived object
+      underlyingDerived = derived(
+        _DatabaseSingleEntityPipeline(
+          keyPathToDatabase: keyPathToDatabase,
+          entityID: entityID
+        ),
+        queue: queue
+      )
+      .chain(.map(\.self))
+      
+      _nonatomic_derivedObjectCache.set(underlyingDerived, entityID: entityID, keyPathToDatabase: keyPathToDatabase)
+    }
+    
+    return underlyingDerived
+  }
+  
+  /**
+   Returns a ``Verge/Derived`` object that projects fetched Entity object by the entity identifier.
+   
+   The Derived object is constructed from multiple Derived.
+   Underlying-Derived: Fetch the entity from id
+   DropsOutput-Derived: Drops the duplicated object
+   
+   Underlying-Derived would be cached by the id.
+   */
+  @inline(__always)
+  public func derivedEntityPersistent<Entity: EntityType, Database: DatabaseType>(
+    entity: Entity,
+    from keyPathToDatabase: KeyPath<State, Database>,
+    queue: some TargetQueueType = .passthrough
+  ) -> Entity.NonNullDerived {
+    
+    objc_sync_enter(self); defer { objc_sync_exit(self) }
+    
+    let underlyingDerived: Derived<NonNullEntityWrapper<Entity>>
+    
+    if let cached = _nonatomic_nonnull_derivedObjectCache.get(entityID: entity.entityID, keyPathToDatabase: keyPathToDatabase) {
+      underlyingDerived = cached
+    } else {
+      /// creates a new underlying derived object
+      underlyingDerived = derived(
+        _DatabaseCachedSingleEntityPipeline(
+          keyPathToDatabase: keyPathToDatabase,
+          entity: entity
+        ),
+        queue: queue
+      )
+      .chain(.map(\.self))
+      
+      _nonatomic_nonnull_derivedObjectCache.set(underlyingDerived, entityID: entity.entityID, keyPathToDatabase: keyPathToDatabase)
+    }
+    
+    return underlyingDerived
+  }
+}
+
+extension DatabaseContext {
+     
+  /**
+   Returns Derived object that projects fetched Entity object by the entity identifier.
+   
+   The Derived object is constructed from multiple Derived.
+   Underlying-Derived: Fetch the entity from id
+   DropsOutput-Derived: Drops the duplicated object
+   
+   Underlying-Derived would be cached by the id.
+   If the cached object found, it will be used to construct Derived with DropsOutput-Derived.
+   
+   - Parameters:
+     - entityID: an identifier of the entity
+     - dropsOutput: Used for Derived. the condition to drop duplicated object.
+   */
+  @inline(__always)
+  public func derived<Entity: EntityType>(
+    from entityID: Entity.EntityID,
+    queue: some TargetQueueType = .passthrough
+  ) -> Entity.Derived {
+    store.asStore().derivedEntity(entityID: entityID, from: keyPath)
+  }
+  
+  // MARK: - Convenience operators
+  
+  @inline(__always)
+  fileprivate func _primary_derivedNonNull<Entity: EntityType>(
+    from entity: Entity,
+    queue: some TargetQueueType = .passthrough
+  ) -> Entity.NonNullDerived {
+    store.asStore().derivedEntityPersistent(entity: entity, from: keyPath)
   }
 
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
+  /// - Parameters:
+  ///   - entity:
+  ///   - dropsOutput:
+  /// - Returns: A derived object
+  @inline(__always)
+  public func derivedNonNull<Entity: EntityType>(
+    from entity: Entity,
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
+    queue: some TargetQueueType = .passthrough
+  ) -> Entity.NonNullDerived {
+
+    _primary_derivedNonNull(from: entity, queue: queue)
+  }
+  
   /// Returns a derived object that provides a concrete entity according to the updating source state
   /// It uses the last value if the entity has been removed source.
   /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
@@ -358,17 +414,14 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entityID: Entity.EntityID,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) throws -> Entity.NonNullDerived {
-    
-    let path = State.getterToDatabase
-    
-    guard let initalValue = path(primitiveState).entities.table(Entity.self).find(by: entityID) else {
+          
+    guard let initalValue = store.primitiveState[keyPath: keyPath].entities.table(Entity.self).find(by: entityID) else {
       throw VergeORMError.notFoundEntityFromDatabase
     }
    
-    return _primary_derivedNonNull(from: initalValue, dropsOutput: dropsOutput, queue: queue)
+    return _primary_derivedNonNull(from: initalValue, queue: queue)
   }
 
   /// Returns a derived object that provides a concrete entity according to the updating source state
@@ -379,31 +432,13 @@ extension StoreType where State : DatabaseEmbedding {
   /// Because, the backing derived-object to construct itself would be cached.
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
-  @inline(__always)
-  public func derivedNonNull<Entity: EntityType & Equatable>(
-    from entityID: Entity.EntityID,
-    queue: TargetQueue = .passthrough
-  ) throws -> Entity.NonNullDerived {
-    try derivedNonNull(from: entityID, dropsOutput: ==, queue: queue)
-  }
-
-  /// Returns a derived object that provides a concrete entity according to the updating source state
-  /// It uses the last value if the entity has been removed source.
-  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
-  ///
-  /// If you call this method in many time, it's not so big issue.
-  /// Because, the backing derived-object to construct itself would be cached.
-  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
-  ///
-  @inline(__always)
-  public func derivedNonNull<Entity: EntityType & Equatable>(
+  public func derivedNonNull<Entity: EntityType>(
     from entity: Entity,
-    queue: TargetQueue = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
-    _primary_derivedNonNull(from: entity, dropsOutput: ==, queue: queue)
+    _primary_derivedNonNull(from: entity, queue: queue)
   }
   
-  public typealias NonNullDerivedResult<Entity: EntityType> = DerivedResult<Entity, Entity.NonNullDerived>
 
   /// Returns a derived object that provides a concrete entity according to the updating source state
   /// It uses the last value if the entity has been removed source.
@@ -413,15 +448,13 @@ extension StoreType where State : DatabaseEmbedding {
   /// Because, the backing derived-object to construct itself would be cached.
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
-  @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entityIDs: S,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity.EntityID {
     entityIDs.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
       do {
-        r.append(derived: try derivedNonNull(from: e, dropsOutput: dropsOutput, queue: queue), id: e)
+        r.append(derived: try derivedNonNull(from: e, queue: queue), id: e)
       } catch {
         //
       }
@@ -436,31 +469,14 @@ extension StoreType where State : DatabaseEmbedding {
   /// Because, the backing derived-object to construct itself would be cached.
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
-  @inline(__always)
-  public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
-    from entityIDs: S,
-    queue: TargetQueue = .passthrough
-  ) -> NonNullDerivedResult<Entity> where S.Element == Entity.EntityID {
-    derivedNonNull(from: entityIDs, dropsOutput: ==, queue: queue)
-  }
-
-  /// Returns a derived object that provides a concrete entity according to the updating source state
-  /// It uses the last value if the entity has been removed source.
-  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
-  ///
-  /// If you call this method in many time, it's not so big issue.
-  /// Because, the backing derived-object to construct itself would be cached.
-  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
-  ///
-  @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entityIDs: Set<Entity.EntityID>,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> {
-    derivedNonNull(from: AnySequence.init(entityIDs.makeIterator), dropsOutput: dropsOutput, queue: queue)
+    // TODO: Stop using AnySequence
+    derivedNonNull(from: AnySequence.init(entityIDs.makeIterator), queue: queue)
   }
-
+ 
   /// Returns a derived object that provides a concrete entity according to the updating source state
   /// It uses the last value if the entity has been removed source.
   /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
@@ -469,30 +485,12 @@ extension StoreType where State : DatabaseEmbedding {
   /// Because, the backing derived-object to construct itself would be cached.
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
-  @inline(__always)
-  public func derivedNonNull<Entity: EntityType & Equatable>(
-    from entityIDs: Set<Entity.EntityID>,
-    queue: TargetQueue = .passthrough
-  ) -> NonNullDerivedResult<Entity> {
-    derivedNonNull(from: entityIDs, dropsOutput: ==, queue: queue)
-  }
-
-  /// Returns a derived object that provides a concrete entity according to the updating source state
-  /// It uses the last value if the entity has been removed source.
-  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
-  ///
-  /// If you call this method in many time, it's not so big issue.
-  /// Because, the backing derived-object to construct itself would be cached.
-  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
-  ///
-  @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entities: S,
-    dropsOutput: @escaping (S.Element?, S.Element?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
     entities.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
-      r.append(derived: _primary_derivedNonNull(from: e, dropsOutput: dropsOutput, queue: queue), id: e.entityID)
+      r.append(derived: _primary_derivedNonNull(from: e, queue: queue), id: e.entityID)
     }
   }
 
@@ -504,27 +502,9 @@ extension StoreType where State : DatabaseEmbedding {
   /// Because, the backing derived-object to construct itself would be cached.
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
-  @inline(__always)
-  public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
-    from entities: S,
-    queue: TargetQueue = .passthrough
-  ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
-    derivedNonNull(from: entities, dropsOutput: ==, queue: queue)
-  }
-
-  /// Returns a derived object that provides a concrete entity according to the updating source state
-  /// It uses the last value if the entity has been removed source.
-  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
-  ///
-  /// If you call this method in many time, it's not so big issue.
-  /// Because, the backing derived-object to construct itself would be cached.
-  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
-  ///
-  @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entities: Set<Entity>,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: AnySequence.init(entities.makeIterator), queue: queue)
   }
@@ -538,44 +518,11 @@ extension StoreType where State : DatabaseEmbedding {
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
   @inline(__always)
-  public func derivedNonNull<Entity: EntityType & Equatable>(
-    from entities: Set<Entity>,
-    queue: TargetQueue = .passthrough
-  ) -> NonNullDerivedResult<Entity> {
-    derivedNonNull(from: entities, dropsOutput: ==, queue: queue)
-  }
-
-  /// Returns a derived object that provides a concrete entity according to the updating source state
-  /// It uses the last value if the entity has been removed source.
-  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
-  ///
-  /// If you call this method in many time, it's not so big issue.
-  /// Because, the backing derived-object to construct itself would be cached.
-  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
-  ///
-  @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
-    from insertionResult: EntityTable<State.Database.Schema, Entity>.InsertionResult,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .passthrough
+    from insertionResult: EntityTable<Database.Schema, Entity>.InsertionResult,
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
-    _primary_derivedNonNull(from: insertionResult.entity, dropsOutput: dropsOutput, queue: queue)
-  }
-
-  /// Returns a derived object that provides a concrete entity according to the updating source state
-  /// It uses the last value if the entity has been removed source.
-  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
-  ///
-  /// If you call this method in many time, it's not so big issue.
-  /// Because, the backing derived-object to construct itself would be cached.
-  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
-  ///
-  @inline(__always)
-  public func derivedNonNull<Entity: EntityType & Equatable>(
-    from insertionResult: EntityTable<State.Database.Schema, Entity>.InsertionResult,
-    queue: TargetQueue = .passthrough
-  ) -> Entity.NonNullDerived {
-    derivedNonNull(from: insertionResult, dropsOutput: ==, queue: queue)
+    _primary_derivedNonNull(from: insertionResult.entity, queue: queue)
   }
 
   /// Returns a derived object that provides a concrete entity according to the updating source state
@@ -589,102 +536,252 @@ extension StoreType where State : DatabaseEmbedding {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from insertionResults: S,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueue = .passthrough
-  ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
+    queue: some TargetQueueType = .passthrough
+  ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<Database.Schema, Entity>.InsertionResult {
     derivedNonNull(from: insertionResults.map { $0.entity }, queue: queue)
   }
-
-  /// Returns a derived object that provides a concrete entity according to the updating source state
-  /// It uses the last value if the entity has been removed source.
-  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
-  ///
-  /// If you call this method in many time, it's not so big issue.
-  /// Because, the backing derived-object to construct itself would be cached.
-  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
-  ///
-  @inline(__always)
-  public func derivedNonNull<Entity: EntityType & Equatable, S: Sequence>(
-    from insertionResults: S,
-    queue: TargetQueue = .passthrough
-  ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<State.Database.Schema, Entity>.InsertionResult {
-    
-    derivedNonNull(from: insertionResults, dropsOutput: ==, queue: queue)
-  }
-     
-}
-
-// MARK: - Collection
-
-extension StoreType where State : DatabaseEmbedding {
 
   /// Experimental
   /// TODO: More performant
   public func _derivedQueriedEntities<Entity: EntityType>(
-    update: @escaping (IndexesPropertyAdapter<State.Database>) -> AnyCollection<Entity.EntityID>,
-    queue: TargetQueue = .passthrough
+    ids: @escaping (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>,
+    queue: some TargetQueueType = .passthrough
   ) -> Derived<[Entity.Derived]> {
     
-    let path = State.getterToDatabase
-    let storage: CachedMapStorage<Entity.EntityID, Derived<EntityWrapper<Entity>>> = .init(keySelector: \.raw)
-    
-    let noChangesComparer = Comparer<State.Database>(or: [
-
-      /** Step 1 */
-      Comparer<State.Database>.indexNoUpdates(),
-
-      /** Step 2 */
-      Comparer<State.Database>.tableNoUpdates(Entity.self),
-
-      /** And more we need */
-    ])
-
-    let pipeline = Pipeline<Changes<State>, [Entity.Derived]>(
-      makeInitial: { (state: Changes<State>) in
-        
-        let db = path(state.primitive)
-        let ids = update(db.indexes)
-
-        // TODO: O(n)
-        let result = ids.cachedMap(using: storage) {
+    return store.asStore().derived(
+      _DatabaseMultipleEntityPipeline(
+        keyPathToDatabase: keyPath,
+        index: ids,
+        makeDerived: {
           self.derived(from: $0)
         }
-        
-        return result
-      },
-      update: { state in
-
-        let changes = state.asChanges()
-
-        guard changes.hasChanges({ path($0.primitive) }, noChangesComparer) else {
-          return .noUpdates
-        }
-
-        let _derivedArray = changes.takeIfChanged({ state -> [Entity.Derived] in
-
-          let ids = update(path(state.primitive).indexes)
-
-          // TODO: O(n)
-          let result = ids.cachedMap(using: storage) {
-            self.derived(from: $0)
-          }
-
-          return result
-
-        }, .init(==))
-
-        guard let derivedArray = _derivedArray else {
-          return .noUpdates
-        }
-
-        return .new(derivedArray)
-
-      }
+      )
     )
-    
-    let d = derived(pipeline)
-    d.associate(storage)
-    return d
+       
   }
 
+}
+
+struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType, Entity: EntityType>: PipelineType {
+  
+  typealias Input = Changes<Source>
+  
+  typealias Output = [Entity.Derived]
+  
+  let keyPathToDatabase: KeyPath<Source, Database>
+  
+  // TODO: write inline
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseIndexComparison.Input, DatabaseComparisons<Database>.DatabaseIndexComparison, DatabaseComparisons<Database>.DatabaseComparison>
+
+  private let index: (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>
+  private let storage: InstancePool<Entity.EntityID, Entity.Derived> = .init(keySelector: \.raw)
+  private let makeDerived: (Entity.EntityID) -> Entity.Derived
+  
+  init(
+    keyPathToDatabase: KeyPath<Source, Database>,
+    index: @escaping (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>,
+    makeDerived: @escaping (Entity.EntityID) -> Entity.Derived
+  ) {
+    
+    self.keyPathToDatabase = keyPathToDatabase
+    self.index = index
+    self.makeDerived = makeDerived
+
+    self.noChangesComparer = OrComparison(
+      /** Step 1 */
+      DatabaseComparisons<Database>.DatabaseIndexComparison(),
+      /** Step 2 */
+      DatabaseComparisons<Database>.DatabaseComparison()
+    )
+
+  }
+  
+  func yield(_ input: Changes<Source>) -> [Entity.Derived] {
+    
+    let db = input.primitive[keyPath: keyPathToDatabase]
+    let ids = index(db.indexes)
+    
+    // Complexity: O(n)
+    let result = ids.cachedMap(using: storage, sweepsUnused: true, makeNew: makeDerived)
+    
+    return result
+    
+  }
+  
+  func yieldContinuously(_ input: Changes<Source>) -> ContinuousResult<[Entity.Derived]> {
+    
+    let changes = input
+    
+    guard changes.hasChanges({ $0[keyPath: keyPathToDatabase] }, noChangesComparer) else {
+      return .noUpdates
+    }
+    
+    let _derivedArray = changes.takeIfChanged({ state -> [Entity.Derived] in
+      
+      let ids = index(state[keyPath: keyPathToDatabase].indexes)
+      
+      // Complexity: O(n)
+      let result = ids.cachedMap(using: storage, sweepsUnused: true, makeNew: makeDerived)
+      
+      return result
+      
+    }, EqualityComparison())
+    
+    guard let derivedArray = _derivedArray else {
+      return .noUpdates
+    }
+    
+    return .new(derivedArray)
+
+    
+  }
+}
+
+struct _DatabaseSingleEntityPipeline<Source: Equatable, Database: DatabaseType, Entity: EntityType>: PipelineType {
+  
+  typealias Input = Changes<Source>
+  
+  typealias Output = EntityWrapper<Entity>
+  
+  let keyPathToDatabase: KeyPath<Source, Database>
+  let entityID: Entity.EntityID
+
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, DatabaseComparisons<Database>.DatabaseComparison, DatabaseComparisons<Database>.TableComparison<Entity>>, DatabaseComparisons<Database>.UpdateComparison<Entity>>
+  
+  init(
+    keyPathToDatabase: KeyPath<Source, Database>,
+    entityID: Entity.EntityID
+  ) {
+    
+    self.keyPathToDatabase = keyPathToDatabase
+    self.entityID = entityID
+
+    /** Step 1 */
+    noChangesComparer = DatabaseComparisons<Database>.DatabaseComparison()
+    /** Step 2 */
+      .or(DatabaseComparisons<Database>.TableComparison<Entity>())
+    /** Step 3 */
+      .or(DatabaseComparisons<Database>.UpdateComparison(entityID: entityID))
+
+  }
+  
+  func yield(_ input: Input) -> Output {
+    
+    EntityWrapper<Entity>(
+      id: entityID,
+      entity: input.primitive[keyPath: keyPathToDatabase].entities.table(Entity.self).find(by: entityID) /** Queries an entity */
+    )
+    
+  }
+  
+  func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    
+    func makeNew() -> ContinuousResult<Output> {
+      let wrapper =  EntityWrapper<Entity>(
+        id: entityID,
+        entity: input.primitive[keyPath: keyPathToDatabase].entities.table(Entity.self).find(by: entityID) /** Queries an entity */
+      )
+      return .new(wrapper)
+    }
+    
+    guard let previous = input.previous else {
+      return makeNew()
+    }
+    
+    let previousDB = previous.primitive[keyPath: keyPathToDatabase]
+    let newDB = input.primitive[keyPath: keyPathToDatabase]
+    
+    guard noChangesComparer(previousDB, newDB) else {
+      return makeNew()
+    }
+        
+    return .noUpdates
+  }
+  
+}
+
+struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: DatabaseType, Entity: EntityType>: PipelineType {
+  
+  typealias Input = Changes<Source>
+  
+  typealias Output = NonNullEntityWrapper<Entity>
+  
+  let keyPathToDatabase: KeyPath<Source, Database>
+  let entityID: Entity.EntityID
+
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, DatabaseComparisons<Database>.DatabaseComparison, DatabaseComparisons<Database>.TableComparison<Entity>>, DatabaseComparisons<Database>.UpdateComparison<Entity>>
+
+  private let latestValue: VergeConcurrency.RecursiveLockAtomic<Entity>
+  
+  init(
+    keyPathToDatabase: KeyPath<Source, Database>,
+    entity: Entity
+  ) {
+    
+    self.keyPathToDatabase = keyPathToDatabase
+    self.entityID = entity.entityID
+    self.latestValue = .init(entity)
+
+    /** Step 1 */
+    noChangesComparer = DatabaseComparisons<Database>.DatabaseComparison()
+    /** Step 2 */
+      .or(DatabaseComparisons<Database>.TableComparison<Entity>())
+    /** Step 3 */
+      .or(DatabaseComparisons<Database>.UpdateComparison(entityID: entityID))
+
+  }
+  
+  func yield(_ input: Input) -> Output {
+
+    return input._read { inputRef in
+      _yield(inputRef)
+    }
+
+  }
+
+  private func _yield(_ inputRef: __shared ReadRef<Source>) -> Output {
+
+    let entity = inputRef[keyPath: keyPathToDatabase].entities.table(Entity.self).find(by: entityID) /** Queries an entity */
+
+    if let entity {
+      latestValue.swap(entity)
+      return NonNullEntityWrapper.init(
+        entity: entity,
+        isFallBack: false
+      )
+    } else {
+      return NonNullEntityWrapper.init(
+        entity: latestValue.value,
+        isFallBack: true
+      )
+    }
+
+  }
+
+  
+  func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+           
+    guard let previous = input.previous else {
+      return .new(yield(input))
+    }
+
+    return previous._read { previousRef -> ContinuousResult<Output> in
+
+      input._read { inputRef in
+
+        guard noChangesComparer(
+          previousRef[keyPath: keyPathToDatabase],
+          inputRef[keyPath: keyPathToDatabase]
+        ) else {
+          return .new(_yield(inputRef))
+        }
+
+        return .noUpdates
+
+      }
+
+    }
+
+  }
+  
 }

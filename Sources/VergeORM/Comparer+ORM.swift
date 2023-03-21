@@ -24,50 +24,56 @@
 import Verge
 #endif
 
-extension Comparer where Input : DatabaseType {
+public enum DatabaseComparisons<Database: DatabaseType> {
 
-  /// Returns true if Database has no changes.
-  ///
-  /// - Complexity: O(1)
-  public static func databaseNoUpdates() -> Self {
-    return .init { pre, new in
-      (pre._backingStorage.entityUpdatedMarker, pre._backingStorage.indexUpdatedMarker) == (new._backingStorage.entityUpdatedMarker, new._backingStorage.indexUpdatedMarker)
+  /// True indicates index storage is not changed
+  public struct DatabaseIndexComparison: Comparison {
+
+    public typealias Input = Database
+
+    public func callAsFunction(_ lhs: Database, _ rhs: Database) -> Bool {
+      lhs._backingStorage.indexUpdatedMarker == rhs._backingStorage.indexUpdatedMarker
     }
+
   }
-  
-  public static func indexNoUpdates() -> Self {
-    return .init { pre, new in
-      pre._backingStorage.indexUpdatedMarker == new._backingStorage.indexUpdatedMarker
+
+  /// True indicates database is not changed
+  public struct DatabaseComparison: Comparison {
+    public typealias Input = Database
+
+    public func callAsFunction(_ lhs: Database, _ rhs: Database) -> Bool {
+      (lhs._backingStorage.entityUpdatedMarker, lhs._backingStorage.indexUpdatedMarker) == (rhs._backingStorage.entityUpdatedMarker, rhs._backingStorage.indexUpdatedMarker)
     }
   }
 
   /// Returns true if the table of the entity in database has no changes.
   ///
   /// - Complexity: O(1)
-  public static func tableNoUpdates<E: EntityType>(_ entityType: E.Type) -> Self {
-    Comparer.init(selector: {
-      $0._backingStorage.entityBackingStorage.table(E.self).updatedMarker      
-    })
-  }
+  public struct TableComparison<Entity: EntityType>: Comparison {
 
-  /// Returns true if the table of the entity in database has no changes.
-  ///
-  /// - Complexity: O(1)
-  public static func tableNoUpdates<E: EntityType>(_ keyPath: KeyPath<Input.Schema, EntityTableKey<E>>) -> Self {
-    tableNoUpdates(E.self)
-  }
+    public typealias Input = Database
 
-  /// Returns true if the entity has no changes.
-  ///
-  /// - Complexity: O(1)
-  public static func entityNoUpdates<E: EntityType & Equatable>(_ entityID: E.EntityID) -> Self {
-    return .init(selector: { $0.entities.table(E.self).find(by: entityID) })
+    public func callAsFunction(_ lhs: Database, _ rhs: Database) -> Bool {
+      lhs._backingStorage.entityBackingStorage.table(Entity.self).updatedMarker == rhs._backingStorage.entityBackingStorage.table(Entity.self).updatedMarker
+    }
+
   }
 
   /// Returns true if the updates result does not contain the entity.
-  public static func changesNoContains<E: EntityType>(_ entityID: E.EntityID) -> Self {
-    return .init { _, new in
-      guard let result = new._backingStorage.lastUpdatesResult else {
+  public struct UpdateComparison<Entity: EntityType>: Comparison {
+
+    public typealias Input = Database
+
+
+    public let entityID: Entity.EntityID
+
+    public init(entityID: Entity.EntityID) {
+      self.entityID = entityID
+    }
+
+    public func callAsFunction(_ lhs: Database, _ rhs: Database) -> Bool {
+
+      guard let result = rhs._backingStorage.lastUpdatesResult else {
         return false
       }
       guard !result.wasUpdated(entityID) else {
@@ -77,7 +83,9 @@ extension Comparer where Input : DatabaseType {
         return false
       }
       return true
+
     }
   }
-  
+
 }
+
