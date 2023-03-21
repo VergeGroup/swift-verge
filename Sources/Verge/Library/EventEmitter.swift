@@ -23,6 +23,7 @@
 import Combine
 import Foundation
 import os
+import DequeModule
 
 public final class EventEmitterCancellable: Hashable, CancellableType {
 
@@ -62,7 +63,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   private var subscribers:
     VergeConcurrency.UnfairLockAtomic<[(EventEmitterCancellable, (Event) -> Void)]> = .init([])
 
-  private let queue: VergeConcurrency.UnfairLockAtomic<LinkedList<Event>> = .init(.init())
+  private let queue: VergeConcurrency.UnfairLockAtomic<Deque<Event>> = .init(.init())
 
   private let flag = ManagedAtomic<Bool>.init(false)
 
