@@ -21,6 +21,46 @@
 
 import class Foundation.NSString
 
+private enum CommitFromBindingDerived: TransactionKey {
+  static var defaultValue: Bool { false }
+}
+
+extension Transaction {
+
+  var isFromBindingDerived: Bool {
+    get {
+      self[CommitFromBindingDerived.self]
+    }
+    set {
+      self[CommitFromBindingDerived.self] = newValue
+    }
+  }
+
+}
+
+private struct BindingDerivedPipeline<Source: Equatable, Output: Equatable, BackingPipeline: PipelineType>: PipelineType where BackingPipeline.Input == Changes<Source>, BackingPipeline.Output == Output {
+
+  typealias Input = Changes<Source>
+
+  private let backingPipeline: BackingPipeline
+
+  init(backingPipeline: BackingPipeline) {
+    self.backingPipeline = backingPipeline
+  }
+
+  func yield(_ input: Changes<Source>) -> Output {
+    backingPipeline.yield(input)
+  }
+
+  func yieldContinuously(_ input: Changes<Source>) -> ContinuousResult<Output> {
+    if input.transaction.isFromBindingDerived {
+      return .noUpdates
+    }
+    return backingPipeline.yieldContinuously(input)
+  }
+
+}
+
 extension DispatcherType {
 
   /// Returns Binding Derived object
@@ -43,9 +83,10 @@ extension DispatcherType {
   ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<State> {
 
     let derived = BindingDerived<Pipeline.Output>.init(
-      get: pipeline,
+      get: BindingDerivedPipeline(backingPipeline: pipeline),
       set: { [weak self] state in       
         self?.store.asStore().commit(name, file, function, line) {
+          $0.transaction.isFromBindingDerived = true
           set(&$0, state)
         }
       },

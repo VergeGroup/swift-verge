@@ -69,7 +69,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
 
   fileprivate var _set: ((Value) -> Void)?
   
-  private let upstreamSubscription: VergeAnyCancellable
+  private let upstreamSubscription: (any CancellableType)?
   private let retainsUpstream: Any?
   private var associatedObjects: ContiguousArray<AnyObject> = .init()
   
@@ -77,7 +77,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
 
   private init(constant: Value) {
     self._set = { _ in }
-    self.upstreamSubscription = .init(onDeinit: {})
+    self.upstreamSubscription = nil
     self.retainsUpstream = nil
     super.init(
       name: nil,
@@ -115,13 +115,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
           return
         }
 
-        // TODO: Make this better, avoid using comparing filter.
-        // here is to avoid making previous value with the same value.
-        // as commit from BindingDerived triggers upstreams publish.
-        guard newState != indirectSelf.primitiveState else {
-          return
-        }
-
         // TODO: Take over state.modification & state.mutation
         indirectSelf.commit("Derived") {
           $0.transaction.isDerivedFromUpstream = true
@@ -133,7 +126,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     }
         
     self.retainsUpstream = retainsUpstream
-    self.upstreamSubscription = VergeAnyCancellable(s)
+    self.upstreamSubscription = s
     self._set = set
     super.init(
       name: nil,
@@ -147,7 +140,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   }
 
   deinit {
-
+    self.upstreamSubscription?.cancel()
   }
   
   // MARK: - Functions
