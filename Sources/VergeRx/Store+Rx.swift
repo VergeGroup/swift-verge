@@ -73,7 +73,7 @@ extension ObservableType where Element : Equatable {
       if pre == nil {
         pre = Changes<Element>.init(old: nil, new: element)
       } else {
-        pre = pre!.makeNextChanges(with: element, from: [trace], modification: .indeterminate)
+        pre = pre!.makeNextChanges(with: element, from: [trace], modification: .indeterminate, transaction: .init())
       }
     })
     .map { $0! }

@@ -129,6 +129,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
 
   public let traces: [MutationTrace]
   public let modification: InoutRef<Value>.Modification?
+  
+  public let transaction: Transaction
 
   // MARK: - Initializers
 
@@ -141,7 +143,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       innerBox: .init(value: new),
       version: 0,
       traces: [],
-      modification: nil
+      modification: nil,
+      transaction: .init()
     )
   }
 
@@ -150,13 +153,15 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     innerBox: InnerBox,
     version: UInt64,
     traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification?
+    modification: InoutRef<Value>.Modification?,
+    transaction: Transaction
   ) {
     self.previous = previous
     self.innerBox = innerBox
     self.version = version
     self.traces = traces
     self.modification = modification
+    self.transaction = transaction
 
     vergeSignpostEvent("Changes.init", label: "\(type(of: self))")
   }
@@ -174,7 +179,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       innerBox: innerBox,
       version: version,
       traces: traces,
-      modification: nil
+      modification: nil,
+      transaction: transaction
     )
   }
 
@@ -210,7 +216,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       innerBox: try innerBox.map(transform),
       version: version,
       traces: traces,
-      modification: nil
+      modification: nil,
+      transaction: transaction
     )
   }
 
@@ -228,7 +235,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       innerBox: innerBox.map { $0[keyPath: keyPath]! },
       version: version,
       traces: traces,
-      modification: nil
+      modification: nil,
+      transaction: transaction
     )
 
   }
@@ -244,7 +252,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   public func makeNextChanges(
     with nextNewValue: Value,
     from traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification
+    modification: InoutRef<Value>.Modification,
+    transaction: Transaction
   ) -> Changes<Value> {
     let previous = cloneWithDropsPrevious()
     let nextVersion = previous.version &+ 1
@@ -253,7 +262,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       innerBox: .init(value: nextNewValue),
       version: nextVersion,
       traces: traces,
-      modification: modification
+      modification: modification,
+      transaction: transaction
     )
   }
 
@@ -516,6 +526,7 @@ extension Changes: CustomReflectable {
         "version": version,
         "previous": previous as Any,
         "primitive": primitive,
+        "transaction": transaction,
         "traces": traces,
         "modification": modification as Any,
       ],
