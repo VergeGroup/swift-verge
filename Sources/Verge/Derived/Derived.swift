@@ -67,7 +67,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     state
   }
 
-  fileprivate let _set: ((Value) -> Void)?
+  fileprivate var _set: ((Value) -> Void)?
   
   private let upstreamSubscription: VergeAnyCancellable
   private let retainsUpstream: Any?
@@ -95,53 +95,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   ///   - initialUpstreamState: Initial value of the `UpstreamState`
   ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
   ///   - retainsUpstream: Any instances to retain in this instance.
-  public init<UpstreamState, Pipeline: PipelineType>(
-    get pipeline: Pipeline,
-    set: ((Value) -> Void)?,
-    initialUpstreamState: UpstreamState,
-    subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
-    retainsUpstream: Any?
-  ) where Pipeline.Input == UpstreamState, Value == Pipeline.Output {
-
-    weak var indirectSelf: Derived<Value>?
-
-    let s = subscribeUpstreamState { value in
-      let update = pipeline.yieldContinuously(value)
-      switch update {
-      case .noUpdates:
-        break
-      case .new(let newState):
-        guard newState != indirectSelf?.primitiveState else {
-          return
-        }
-        // TODO: Take over state.modification & state.mutation
-        indirectSelf?.commit {
-          $0.replace(with: newState)
-        }
-      }
-    }
-
-    self.retainsUpstream = retainsUpstream
-    self.upstreamSubscription = VergeAnyCancellable.init(s)
-    self._set = set
-
-    super.init(
-      name: nil,
-      initialState: pipeline.yield(initialUpstreamState),
-      logger: nil,
-      sanitizer: nil
-    )
-
-    indirectSelf = self
-  }
-  
-  /// Low-level initializer
-  /// - Parameters:
-  ///   - get: MemoizeMap to make a `Value` from `UpstreamState`
-  ///   - set: A closure to apply new-value to `UpstreamState`, it will need in creating `BindingDerived`.
-  ///   - initialUpstreamState: Initial value of the `UpstreamState`
-  ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
-  ///   - retainsUpstream: Any instances to retain in this instance.
   public init<UpstreamState: HasTraces, Pipeline: PipelineType>(
     get pipeline: Pipeline,
     set: ((Value) -> Void)?,
@@ -158,14 +111,21 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       case .noUpdates:
         break
       case .new(let newState):
-        guard newState != indirectSelf?.primitiveState else {
+        guard let indirectSelf = indirectSelf else {
           return
         }
+
+        guard newState != indirectSelf.primitiveState else {
+          return
+        }
+
         // TODO: Take over state.modification & state.mutation
-        indirectSelf?.commit("Derived") {
+        indirectSelf.commit("Derived") {
+          $0.transaction.isDerivedFromUpstream = true
           $0.append(traces: value.traces)
           $0.replace(with: newState)
         }
+
       }
     }
         
@@ -191,7 +151,9 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
 
   public final override func stateDidUpdate(newState: Changes<Value>) {
     // projects this update into upstream state
-    _set?(newState.primitive)
+    if let _set, newState.transaction.isDerivedFromUpstream == false {
+      _set(newState.primitive)
+    }
   }
   
   public func asDerived() -> Derived<Value> {
@@ -485,5 +447,18 @@ public final class BindingDerived<Value: Equatable>: Derived<Value> {
   public var projectedValue: BindingDerived<Value> {
     self
   }
+
+}
+
+fileprivate enum DerivedFromUpstream: TransactionKey {
+  static var defaultValue: Bool { false }
+}
+
+extension Transaction {
+
+    var isDerivedFromUpstream: Bool {
+      get { self[DerivedFromUpstream.self] }
+      set { self[DerivedFromUpstream.self] = newValue }
+    }
 
 }

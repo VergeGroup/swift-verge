@@ -46,6 +46,35 @@ final class BindingDerivedTests: XCTestCase {
 
     XCTAssertEqual(source.primitiveState.count, 2)
 
+    source.commit {
+      $0.count += 1
+    }
+
+    XCTAssertEqual(binding.state.previous?.primitive, 2)
+    XCTAssertEqual(binding.state.primitive, 3)
+
+  }
+
+  func testBinding_upstreamChanged() {
+    let source = DemoStore()
+
+    let binding = source.bindingDerived(
+      get: .map { $0.count },
+      set: { source, new in
+        source.count = new
+      })
+
+    source.commit {
+      $0.count += 1
+    }
+
+    XCTAssertEqual(source.state.count, 1)
+    XCTAssertEqual(source.state.previous?.count, 0)
+
+    XCTAssertEqual(binding.state.previous?.primitive, 0)
+    XCTAssertEqual(binding.state.primitive, 1)
+
+
   }
 
 }
