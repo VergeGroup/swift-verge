@@ -30,7 +30,7 @@ public final class UIStateStore<State: Equatable, Activity>: Store<State, Activi
   ) {
     super.init(
       initialState: initialState,
-      backingStorageRecursiveLock: VergeNoLock().asAny(),
+      storeOperation: .nonAtomic,
       logger: logger
     )
   }
