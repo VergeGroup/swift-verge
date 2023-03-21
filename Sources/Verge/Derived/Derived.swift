@@ -117,7 +117,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
 
         // TODO: Take over state.modification & state.mutation
         indirectSelf.commit("Derived") {
-          $0.transaction.isDerivedFromUpstream = true
+          $0._transaction.isDerivedFromUpstream = true
           $0.append(traces: value.traces)
           $0.replace(with: newState)
         }
@@ -147,7 +147,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
 
   public final override func stateDidUpdate(newState: Changes<Value>) {
     // projects this update into upstream state
-    if let _set, newState.transaction.isDerivedFromUpstream == false {
+    if let _set, newState._transaction.isDerivedFromUpstream == false {
       _set(newState.primitive)
     }
   }

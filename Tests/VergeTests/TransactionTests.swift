@@ -14,11 +14,11 @@ final class TransactionTests: XCTestCase {
     let store = DemoStore()
 
     store.commit {
-      $0.transaction[MyKey.self] = "first commit"
+      $0._transaction[MyKey.self] = "first commit"
       $0.markAsModified()
     }
 
-    XCTAssertEqual(store.state.transaction[MyKey.self], "first commit")
+    XCTAssertEqual(store.state._transaction[MyKey.self], "first commit")
   }
 
 }

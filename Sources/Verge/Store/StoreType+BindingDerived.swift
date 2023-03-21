@@ -53,7 +53,7 @@ private struct BindingDerivedPipeline<Source: Equatable, Output: Equatable, Back
   }
 
   func yieldContinuously(_ input: Changes<Source>) -> ContinuousResult<Output> {
-    if input.transaction.isFromBindingDerived {
+    if input._transaction.isFromBindingDerived {
       return .noUpdates
     }
     return backingPipeline.yieldContinuously(input)
@@ -86,7 +86,7 @@ extension DispatcherType {
       get: BindingDerivedPipeline(backingPipeline: pipeline),
       set: { [weak self] state in       
         self?.store.asStore().commit(name, file, function, line) {
-          $0.transaction.isFromBindingDerived = true
+          $0._transaction.isFromBindingDerived = true
           set(&$0, state)
         }
       },

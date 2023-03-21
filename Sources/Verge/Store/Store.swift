@@ -460,7 +460,7 @@ extension Store {
             with: stateMutablePointer.pointee,
             from: inoutRef.traces,
             modification: inoutRef.modification ?? .indeterminate,
-            transaction: inoutRef.transaction
+            transaction: inoutRef._transaction
           )
           middleware.modify(modifyingState: &inoutRef, current: intermediate)
         }
@@ -472,7 +472,7 @@ extension Store {
           with: stateMutablePointer.pointee,
           from: inoutRef.traces,
           modification: inoutRef.modification ?? .indeterminate,
-          transaction: inoutRef.transaction
+          transaction: inoutRef._transaction
         )
         
         if __sanitizer__.isRecursivelyCommitDetectionEnabled {
