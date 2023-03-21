@@ -115,6 +115,9 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
           return
         }
 
+        // TODO: Make this better, avoid using comparing filter.
+        // here is to avoid making previous value with the same value.
+        // as commit from BindingDerived triggers upstreams publish.
         guard newState != indirectSelf.primitiveState else {
           return
         }
