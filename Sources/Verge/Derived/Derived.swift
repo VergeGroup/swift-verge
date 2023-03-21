@@ -190,6 +190,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   // MARK: - Functions
 
   public final override func stateDidUpdate(newState: Changes<Value>) {
+    // projects this update into upstream state
     _set?(newState.primitive)
   }
   
