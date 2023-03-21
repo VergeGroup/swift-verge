@@ -62,7 +62,7 @@ final class ViewModel: StoreComponentType {
 
 // MARK: - Abstraction
 
-protocol MyViewModelType: StoreComponentType where WrappedStore.State == String, WrappedStore.Activity == Int {
+protocol MyViewModelType: StoreComponentType where State == String, Activity == Int {
 
 }
 

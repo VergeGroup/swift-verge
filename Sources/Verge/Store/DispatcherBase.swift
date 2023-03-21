@@ -29,11 +29,6 @@ open class ScopedDispatcherBase<State: Equatable, Activity, Scope: Equatable>: D
 
   /// A target store which Dispatcher uses.
   public let store: Store<State, Activity>
-
-  /// A state that cut out from root-state with the scope key path.
-  public var state: Changes<Scope> {
-    store.state.map { $0[keyPath: scope] }
-  }
   
   /// Returns current state from target store
   public var rootState: Changes<State> {

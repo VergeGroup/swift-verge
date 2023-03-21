@@ -148,7 +148,7 @@ class DerivedCollectionTests: XCTestCase {
         .init(index.allAuthros.filter { _ in return true })
     })
 
-    d.sinkValue { _ in
+    d.sinkState { _ in
       updateCount += 1
     }
     .store(in: &subscriptions)
