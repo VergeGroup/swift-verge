@@ -166,7 +166,8 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
       let intermediate = state.makeNextChanges(
         with: inoutRef.wrapped,
         from: inoutRef.traces,
-        modification: inoutRef.modification ?? .indeterminate
+        modification: inoutRef.modification ?? .indeterminate,
+        transaction: .init()
       )
       State.reduce(modifying: &inoutRef, current: intermediate)
     }
@@ -452,7 +453,8 @@ extension Store {
           let intermediate = state.makeNextChanges(
             with: stateMutablePointer.pointee,
             from: inoutRef.traces,
-            modification: inoutRef.modification ?? .indeterminate
+            modification: inoutRef.modification ?? .indeterminate,
+            transaction: inoutRef.transaction
           )
           middleware.modify(modifyingState: &inoutRef, current: intermediate)
         }

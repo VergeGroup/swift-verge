@@ -21,8 +21,61 @@
 
 import Foundation
 
-public final class Transaction {
+/**
+ Value storage for commit operation.
+ The commit operation accepts adding context about its operation.
+ It brings contextual operation into state-driven.
+ For instance, same value changes but it's not the same meaning actually.
+
+ ``Changes`` has ``Changes/transaction`` property.
+ */
+public struct Transaction {
   
-  public var userInfo: [String : Any] = [:]
-  
+  private var values: [ObjectIdentifier : Any] = [:]
+
+  public subscript<K>(key: K.Type) -> K.Value where K : TransactionKey {
+    get {
+      values[ObjectIdentifier(K.self)] as? K.Value ?? K.defaultValue
+    }
+    mutating set {
+      values[ObjectIdentifier(K.self)] = newValue
+    }
+  }
+
+  public init() {
+  }
+
+}
+
+/**
+ A type based key for transaction.
+ It's like SwiftUI's EnvironmentValue.
+ Making a new type as key, gat and set values over the key.
+ It's much safer than using string directly as avoiding conflict by using same value.
+
+ ```
+ enum MyKey: TransactionKey {
+   static var defaultValue: String? { nil }
+ }
+ ```
+
+ ```
+ extension Transaction {
+   var myValue: String? {
+     get {
+       self[MyKey.self]
+     }
+     set {
+       self[MyKey.self] = newValue
+     }
+   }
+ }
+ ```
+ */
+public protocol TransactionKey {
+
+  associatedtype Value
+
+  static var defaultValue: Value { get }
+
 }

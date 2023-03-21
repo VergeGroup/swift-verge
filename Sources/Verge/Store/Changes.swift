@@ -130,7 +130,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   public let traces: [MutationTrace]
   public let modification: InoutRef<Value>.Modification?
   
-  public let transaction: Transaction?
+  public let transaction: Transaction
 
   // MARK: - Initializers
 
@@ -144,7 +144,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       version: 0,
       traces: [],
       modification: nil,
-      transaction: nil
+      transaction: .init()
     )
   }
 
@@ -154,7 +154,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     version: UInt64,
     traces: [MutationTrace],
     modification: InoutRef<Value>.Modification?,
-    transaction: Transaction?
+    transaction: Transaction
   ) {
     self.previous = previous
     self.innerBox = innerBox
@@ -253,7 +253,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     with nextNewValue: Value,
     from traces: [MutationTrace],
     modification: InoutRef<Value>.Modification,
-    transaction: Transaction?
+    transaction: Transaction
   ) -> Changes<Value> {
     let previous = cloneWithDropsPrevious()
     let nextVersion = previous.version &+ 1
@@ -526,6 +526,7 @@ extension Changes: CustomReflectable {
         "version": version,
         "previous": previous as Any,
         "primitive": primitive,
+        "transaction": transaction,
         "traces": traces,
         "modification": modification as Any,
       ],

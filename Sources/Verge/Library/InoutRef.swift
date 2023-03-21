@@ -117,7 +117,7 @@ public final class InoutRef<Wrapped> {
     }
   }
   
-  public let transaction: Transaction = .init()
+  public var transaction: Transaction = .init()
 
   // MARK: - Initializers
 
