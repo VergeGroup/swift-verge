@@ -169,7 +169,7 @@ public typealias NonNullDerivedResult<Entity: EntityType> = DerivedResult<Entity
 fileprivate var _derivedContainerAssociated: Void?
 fileprivate var _nonnull_derivedContainerAssociated: Void?
 
-extension StoreType {
+extension DispatcherType {
         
   private var _nonatomic_derivedObjectCache: _DerivedObjectCache {
     
@@ -241,7 +241,7 @@ public struct DatabaseContext<Store: StoreType, Database: DatabaseType> {
 }
 
 @dynamicMemberLookup
-public struct DatabaseDynamicMembers<Store: StoreType> {
+public struct DatabaseDynamicMembers<Store: DispatcherType> {
   
   unowned let store: Store
   
@@ -255,7 +255,7 @@ public struct DatabaseDynamicMembers<Store: StoreType> {
   
 }
 
-extension StoreType {
+extension DispatcherType {
   
   /**
    A cushion for databases. the return object has properties to databases.
@@ -281,7 +281,7 @@ extension StoreType {
   public func derivedEntity<Entity: EntityType, Database: DatabaseType>(
     entityID: Entity.EntityID,
     from keyPathToDatabase: KeyPath<State, Database>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.Derived {
     
     objc_sync_enter(self); defer { objc_sync_exit(self) }
@@ -320,7 +320,7 @@ extension StoreType {
   public func derivedEntityPersistent<Entity: EntityType, Database: DatabaseType>(
     entity: Entity,
     from keyPathToDatabase: KeyPath<State, Database>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
     
     objc_sync_enter(self); defer { objc_sync_exit(self) }
@@ -366,9 +366,9 @@ extension DatabaseContext {
   @inline(__always)
   public func derived<Entity: EntityType>(
     from entityID: Entity.EntityID,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.Derived {
-    store.derivedEntity(entityID: entityID, from: keyPath)
+    store.asStore().derivedEntity(entityID: entityID, from: keyPath)
   }
   
   // MARK: - Convenience operators
@@ -376,9 +376,9 @@ extension DatabaseContext {
   @inline(__always)
   fileprivate func _primary_derivedNonNull<Entity: EntityType>(
     from entity: Entity,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
-    store.derivedEntityPersistent(entity: entity, from: keyPath)
+    store.asStore().derivedEntityPersistent(entity: entity, from: keyPath)
   }
 
   /// Returns a derived object that provides a concrete entity according to the updating source state
@@ -397,7 +397,7 @@ extension DatabaseContext {
   public func derivedNonNull<Entity: EntityType>(
     from entity: Entity,
     dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
 
     _primary_derivedNonNull(from: entity, queue: queue)
@@ -414,7 +414,7 @@ extension DatabaseContext {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entityID: Entity.EntityID,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) throws -> Entity.NonNullDerived {
           
     guard let initalValue = store.primitiveState[keyPath: keyPath].entities.table(Entity.self).find(by: entityID) else {
@@ -434,7 +434,7 @@ extension DatabaseContext {
   ///
   public func derivedNonNull<Entity: EntityType>(
     from entity: Entity,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
     _primary_derivedNonNull(from: entity, queue: queue)
   }
@@ -450,7 +450,7 @@ extension DatabaseContext {
   ///
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entityIDs: S,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity.EntityID {
     entityIDs.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
       do {
@@ -471,7 +471,7 @@ extension DatabaseContext {
   ///
   public func derivedNonNull<Entity: EntityType>(
     from entityIDs: Set<Entity.EntityID>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> {
     // TODO: Stop using AnySequence
     derivedNonNull(from: AnySequence.init(entityIDs.makeIterator), queue: queue)
@@ -487,7 +487,7 @@ extension DatabaseContext {
   ///
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from entities: S,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
     entities.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
       r.append(derived: _primary_derivedNonNull(from: e, queue: queue), id: e.entityID)
@@ -504,7 +504,7 @@ extension DatabaseContext {
   ///
   public func derivedNonNull<Entity: EntityType>(
     from entities: Set<Entity>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> {
     derivedNonNull(from: AnySequence.init(entities.makeIterator), queue: queue)
   }
@@ -520,7 +520,7 @@ extension DatabaseContext {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from insertionResult: EntityTable<Database.Schema, Entity>.InsertionResult,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Entity.NonNullDerived {
     _primary_derivedNonNull(from: insertionResult.entity, queue: queue)
   }
@@ -536,7 +536,7 @@ extension DatabaseContext {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
     from insertionResults: S,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<Database.Schema, Entity>.InsertionResult {
     derivedNonNull(from: insertionResults.map { $0.entity }, queue: queue)
   }
@@ -545,10 +545,10 @@ extension DatabaseContext {
   /// TODO: More performant
   public func _derivedQueriedEntities<Entity: EntityType>(
     ids: @escaping (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Derived<[Entity.Derived]> {
     
-    return store.derived(
+    return store.asStore().derived(
       _DatabaseMultipleEntityPipeline(
         keyPathToDatabase: keyPath,
         index: ids,
@@ -571,7 +571,8 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
   let keyPathToDatabase: KeyPath<Source, Database>
   
   // TODO: write inline
-  private let noChangesComparer: Comparer<Database>
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseIndexComparison.Input, DatabaseComparisons<Database>.DatabaseIndexComparison, DatabaseComparisons<Database>.DatabaseComparison>
+
   private let index: (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>
   private let storage: InstancePool<Entity.EntityID, Entity.Derived> = .init(keySelector: \.raw)
   private let makeDerived: (Entity.EntityID) -> Entity.Derived
@@ -585,17 +586,14 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
     self.keyPathToDatabase = keyPathToDatabase
     self.index = index
     self.makeDerived = makeDerived
-    
-    self.noChangesComparer = Comparer<Database>(or: [
-      
+
+    self.noChangesComparer = OrComparison(
       /** Step 1 */
-      Comparer<Database>.indexNoUpdates(),
-      
+      DatabaseComparisons<Database>.DatabaseIndexComparison(),
       /** Step 2 */
-      Comparer<Database>.tableNoUpdates(Entity.self),
-      
-      /** And more we need */
-    ])
+      DatabaseComparisons<Database>.DatabaseComparison()
+    )
+
   }
   
   func yield(_ input: Changes<Source>) -> [Entity.Derived] {
@@ -627,7 +625,7 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
       
       return result
       
-    }, .init(==))
+    }, EqualityComparison())
     
     guard let derivedArray = _derivedArray else {
       return .noUpdates
@@ -647,9 +645,8 @@ struct _DatabaseSingleEntityPipeline<Source: Equatable, Database: DatabaseType, 
   
   let keyPathToDatabase: KeyPath<Source, Database>
   let entityID: Entity.EntityID
-  
-  // TODO: write inline
-  private let noChangesComparer: Comparer<Database>
+
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, DatabaseComparisons<Database>.DatabaseComparison, DatabaseComparisons<Database>.TableComparison<Entity>>, DatabaseComparisons<Database>.UpdateComparison<Entity>>
   
   init(
     keyPathToDatabase: KeyPath<Source, Database>,
@@ -658,18 +655,14 @@ struct _DatabaseSingleEntityPipeline<Source: Equatable, Database: DatabaseType, 
     
     self.keyPathToDatabase = keyPathToDatabase
     self.entityID = entityID
-    self.noChangesComparer = Comparer<Database>(or: [
-      
-      /** Step 1 */
-      Comparer<Database>.databaseNoUpdates(),
-      
-      /** Step 2 */
-      Comparer<Database>.tableNoUpdates(Entity.self),
-      
-      /** Step 3 */
-      Comparer<Database>.changesNoContains(entityID),
-      
-    ])
+
+    /** Step 1 */
+    noChangesComparer = DatabaseComparisons<Database>.DatabaseComparison()
+    /** Step 2 */
+      .or(DatabaseComparisons<Database>.TableComparison<Entity>())
+    /** Step 3 */
+      .or(DatabaseComparisons<Database>.UpdateComparison(entityID: entityID))
+
   }
   
   func yield(_ input: Input) -> Output {
@@ -698,7 +691,7 @@ struct _DatabaseSingleEntityPipeline<Source: Equatable, Database: DatabaseType, 
     let previousDB = previous.primitive[keyPath: keyPathToDatabase]
     let newDB = input.primitive[keyPath: keyPathToDatabase]
     
-    guard noChangesComparer.equals(previousDB, newDB) else {
+    guard noChangesComparer(previousDB, newDB) else {
       return makeNew()
     }
         
@@ -715,10 +708,9 @@ struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: Database
   
   let keyPathToDatabase: KeyPath<Source, Database>
   let entityID: Entity.EntityID
-  
-  // TODO: write inline
-  private let noChangesComparer: Comparer<Database>
-  
+
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, DatabaseComparisons<Database>.DatabaseComparison, DatabaseComparisons<Database>.TableComparison<Entity>>, DatabaseComparisons<Database>.UpdateComparison<Entity>>
+
   private let latestValue: VergeConcurrency.RecursiveLockAtomic<Entity>
   
   init(
@@ -729,25 +721,28 @@ struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: Database
     self.keyPathToDatabase = keyPathToDatabase
     self.entityID = entity.entityID
     self.latestValue = .init(entity)
-    
-    self.noChangesComparer = Comparer<Database>(or: [
-      
-      /** Step 1 */
-      Comparer<Database>.databaseNoUpdates(),
-      
-      /** Step 2 */
-      Comparer<Database>.tableNoUpdates(Entity.self),
-      
-      /** Step 3 */
-      Comparer<Database>.changesNoContains(entityID),
-      
-    ])
+
+    /** Step 1 */
+    noChangesComparer = DatabaseComparisons<Database>.DatabaseComparison()
+    /** Step 2 */
+      .or(DatabaseComparisons<Database>.TableComparison<Entity>())
+    /** Step 3 */
+      .or(DatabaseComparisons<Database>.UpdateComparison(entityID: entityID))
+
   }
   
   func yield(_ input: Input) -> Output {
-    
-    let entity = input.primitive[keyPath: keyPathToDatabase].entities.table(Entity.self).find(by: entityID) /** Queries an entity */
-    
+
+    return input._read { inputRef in
+      _yield(inputRef)
+    }
+
+  }
+
+  private func _yield(_ inputRef: __shared ReadRef<Source>) -> Output {
+
+    let entity = inputRef[keyPath: keyPathToDatabase].entities.table(Entity.self).find(by: entityID) /** Queries an entity */
+
     if let entity {
       latestValue.swap(entity)
       return NonNullEntityWrapper.init(
@@ -760,23 +755,33 @@ struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: Database
         isFallBack: true
       )
     }
-    
+
   }
+
   
   func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
            
     guard let previous = input.previous else {
       return .new(yield(input))
     }
-    
-    let previousDB = previous.primitive[keyPath: keyPathToDatabase]
-    let newDB = input.primitive[keyPath: keyPathToDatabase]
-    
-    guard noChangesComparer.equals(previousDB, newDB) else {
-      return .new(yield(input))
+
+    return previous._read { previousRef -> ContinuousResult<Output> in
+
+      input._read { inputRef in
+
+        guard noChangesComparer(
+          previousRef[keyPath: keyPathToDatabase],
+          inputRef[keyPath: keyPathToDatabase]
+        ) else {
+          return .new(_yield(inputRef))
+        }
+
+        return .noUpdates
+
+      }
+
     }
-    
-    return .noUpdates
+
   }
   
 }

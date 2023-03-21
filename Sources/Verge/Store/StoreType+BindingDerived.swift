@@ -21,7 +21,47 @@
 
 import class Foundation.NSString
 
-extension StoreType {
+private enum CommitFromBindingDerived: TransactionKey {
+  static var defaultValue: Bool { false }
+}
+
+extension Transaction {
+
+  var isFromBindingDerived: Bool {
+    get {
+      self[CommitFromBindingDerived.self]
+    }
+    set {
+      self[CommitFromBindingDerived.self] = newValue
+    }
+  }
+
+}
+
+private struct BindingDerivedPipeline<Source: Equatable, Output: Equatable, BackingPipeline: PipelineType>: PipelineType where BackingPipeline.Input == Changes<Source>, BackingPipeline.Output == Output {
+
+  typealias Input = Changes<Source>
+
+  private let backingPipeline: BackingPipeline
+
+  init(backingPipeline: BackingPipeline) {
+    self.backingPipeline = backingPipeline
+  }
+
+  func yield(_ input: Changes<Source>) -> Output {
+    backingPipeline.yield(input)
+  }
+
+  func yieldContinuously(_ input: Changes<Source>) -> ContinuousResult<Output> {
+    if input._transaction.isFromBindingDerived {
+      return .noUpdates
+    }
+    return backingPipeline.yieldContinuously(input)
+  }
+
+}
+
+extension DispatcherType {
 
   /// Returns Binding Derived object
   ///
@@ -39,19 +79,20 @@ extension StoreType {
     _ line: UInt = #line,
     get pipeline: Pipeline,
     set: @escaping (inout InoutRef<State>, Pipeline.Output) -> Void,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<State> {
 
     let derived = BindingDerived<Pipeline.Output>.init(
-      get: pipeline,
-      set: { [weak self] state in
-        self?.asStore().commit(name, file, function, line) {
+      get: BindingDerivedPipeline(backingPipeline: pipeline),
+      set: { [weak self] state in       
+        self?.store.asStore().commit(name, file, function, line) {
+          $0._transaction.isFromBindingDerived = true
           set(&$0, state)
         }
       },
-      initialUpstreamState: asStore().state,
+      initialUpstreamState: store.asStore().state,
       subscribeUpstreamState: { callback in
-        asStore()._primitive_sinkState(
+        store.asStore()._primitive_sinkState(
           dropsFirst: true,
           queue: queue,
           receive: callback
@@ -61,6 +102,24 @@ extension StoreType {
     )
 
     return derived
+  }
+
+  public func bindingDerived<Select>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    select: WritableKeyPath<State, Select>,
+    queue: some TargetQueueType = .passthrough
+  ) -> BindingDerived<Select> {
+
+    bindingDerived(
+      name, file, function, line,
+      get: .select(select),
+      set: { state, newValue in
+        state[keyPath: select] = newValue
+      }
+    )
   }
 
 }

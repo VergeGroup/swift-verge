@@ -9,12 +9,10 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-fileprivate var storage_subject: Void?
 
-extension Storage: ReactiveCompatible {}
 extension Store: ReactiveCompatible {}
 
-extension Reactive where Base : StoreType {
+extension Reactive where Base : DispatcherType {
     
   /// An observable that repeatedly emits the changes when state updated
   ///
@@ -23,7 +21,7 @@ extension Reactive where Base : StoreType {
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
   public func stateObservable() -> Observable<Changes<Base.State>> {
-    base.asStore().statePublisher().asObservable()
+    base.store.asStore().statePublisher().asObservable()
   }
   
   /// An observable that repeatedly emits the changes when state updated
@@ -38,7 +36,7 @@ extension Reactive where Base : StoreType {
   }
 
   public func activitySignal() -> Signal<Base.Activity> {
-    base.asStore().activityPublisher().asObservable().asSignal(onErrorRecover: { _ in Signal.empty() })
+    base.store.asStore().activityPublisher().asObservable().asSignal(onErrorRecover: { _ in Signal.empty() })
   }
   
 }
@@ -75,7 +73,7 @@ extension ObservableType where Element : Equatable {
       if pre == nil {
         pre = Changes<Element>.init(old: nil, new: element)
       } else {
-        pre = pre!.makeNextChanges(with: element, from: [trace], modification: .indeterminate)
+        pre = pre!.makeNextChanges(with: element, from: [trace], modification: .indeterminate, transaction: .init())
       }
     })
     .map { $0! }
@@ -121,10 +119,10 @@ extension ObservableType where Element : ChangesType {
   ///   - selector:
   ///   - compare:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S>(_ selector: @escaping (Element.Value) -> S, _ compare: @escaping (S, S) -> Bool) -> Observable<S> {
+  public func changed<S>(_ selector: @escaping (Element.Value) -> S, _ comparer: some Comparison<S>) -> Observable<S> {
     
     return flatMap { changes -> Observable<S> in
-      let _r = changes.asChanges().ifChanged(selector, .init(compare)) { value in
+      let _r = changes.asChanges().ifChanged(selector, comparer) { value in
         return value
       }
       return _r.map { .just($0) } ?? .empty()
@@ -140,7 +138,7 @@ extension ObservableType where Element : ChangesType {
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
   public func changed<S : Equatable>(_ selector: @escaping (Element.Value) -> S) -> Observable<S> {
-    return changed(selector, ==)
+    return changed(selector, EqualityComparison())
   }
     
   /// Returns an observable sequence that contains only changed elements according to the `comparer`.
@@ -151,8 +149,8 @@ extension ObservableType where Element : ChangesType {
   ///   - selector:
   ///   - compare:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changedDriver<S>(_ selector: @escaping (Element.Value) -> S, _ compare: @escaping (S, S) -> Bool) -> Driver<S> {
-    changed(selector, compare)
+  public func changedDriver<S>(_ selector: @escaping (Element.Value) -> S, _ comparer: some Comparison<S>) -> Driver<S> {
+    changed(selector, comparer)
         .asDriver(onErrorRecover: { _ in .empty() })
   }
   
@@ -165,7 +163,7 @@ extension ObservableType where Element : ChangesType {
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
   public func changedDriver<S : Equatable>(_ selector: @escaping (Element.Value) -> S) -> Driver<S> {
-    return changedDriver(selector, ==)
+    return changedDriver(selector, EqualityComparison())
   }
   
 }
@@ -228,78 +226,7 @@ extension EventEmitter {
   
 }
 
-extension ReadonlyStorage {
-  
-  private var subject: BehaviorSubject<Value> {
-
-    objc_sync_enter(self)
-    defer {
-      objc_sync_exit(self)
-    }
-
-    if let associated = objc_getAssociatedObject(self, &storage_subject) as? BehaviorSubject<Value> {
-
-      return associated
-
-    } else {
-
-      let associated = BehaviorSubject<Value>.init(value: value)
-      objc_setAssociatedObject(self, &storage_subject, associated, .OBJC_ASSOCIATION_RETAIN)
-      
-      let lock = VergeConcurrency.RecursiveLock()
-
-      sinkEvent { (event) in
-        switch event {
-        case .willUpdate:
-          break
-        case .didUpdate(let newValue):
-          lock.lock(); defer { lock.unlock() }
-          associated.onNext(newValue)
-        case .willDeinit:
-          lock.lock(); defer { lock.unlock() }
-          associated.onCompleted()
-        }
-      }
-    
-      return associated
-    }
-  }
-  
-  /// Returns an observable sequence
-  ///
-  /// - Returns: Returns an observable sequence
-  public func asObservable() -> Observable<Value> {
-    subject.asObservable()
-  }
-  
-  /// Returns an infallible sequence
-  public func asInfallible() -> Infallible<Value> {
-    subject.asInfallible(onErrorRecover: { _ in fatalError() })
-  }
-  
-  public func asObservable<S>(keyPath: KeyPath<Value, S>) -> Observable<S> {
-    asObservable()
-      .map { $0[keyPath: keyPath] }
-  }
-  
-  /// Returns an infallible sequence
-  public func asInfallible<S>(keyPath: KeyPath<Value, S>) -> Infallible<S> {
-    subject.asInfallible(onErrorRecover: { _ in fatalError() })
-      .map { $0[keyPath: keyPath] }
-  }
-  
-  public func asDriver() -> Driver<Value> {
-    subject.asDriver(onErrorDriveWith: .empty())
-  }
-  
-  public func asDriver<S>(keyPath: KeyPath<Value, S>) -> Driver<S> {
-    return asDriver()
-      .map { $0[keyPath: keyPath] }
-  }
-
-}
-
-extension Reactive where Base : StoreType {
+extension Reactive where Base : DispatcherType {
 
   public func commitBinder<S>(
     scheduler: ImmediateSchedulerType = MainScheduler(),
@@ -307,7 +234,7 @@ extension Reactive where Base : StoreType {
   ) -> Binder<S> {
 
     return Binder<S>(base, scheduler: scheduler) { t, e in
-      t.asStore().commit { s in
+      t.store.asStore().commit { s in
         mutate(&s, e)
       }
     }
@@ -320,7 +247,7 @@ extension Reactive where Base : StoreType {
   ) -> Binder<S?> {
 
     return Binder<S?>(base, scheduler: scheduler) { t, e in
-      t.asStore().commit { s in
+      t.store.asStore().commit { s in
         mutate(&s, e)
       }
     }
@@ -333,7 +260,7 @@ extension Reactive where Base : StoreType {
   ) -> Binder<S> {
 
     return Binder<S>(base, scheduler: scheduler) { t, e in
-      t.asStore().commit { s in
+      t.store.asStore().commit { s in
         s[keyPath: target] = e
       }
     }
@@ -346,7 +273,7 @@ extension Reactive where Base : StoreType {
   ) -> Binder<S?> {
 
     return Binder<S?>(base, scheduler: scheduler) { t, e in
-      t.asStore().commit { s in
+      t.store.asStore().commit { s in
         s[keyPath: target] = e
       }
     }

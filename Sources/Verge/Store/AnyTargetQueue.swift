@@ -22,41 +22,74 @@
 import Foundation
 @_implementationOnly import Atomics
 
-public protocol TargetQueueType: AnyObject {
-  func executor() -> (@escaping () -> Void) -> Void
+public protocol TargetQueueType {
+  func execute(_ workItem: @escaping () -> Void)
 }
 
 /// Describes queue to dispatch event
 /// Currently light-weight impl
 /// A reason why class is to take an object identifier.
-public final class TargetQueue: TargetQueueType {
+public final class AnyTargetQueue: TargetQueueType {
 
-  private let schedule: (@escaping () -> Void) -> Void
+  private let _execute: (@escaping () -> Void) -> Void
 
   fileprivate init(
-    schedule: @escaping (@escaping () -> Void) -> Void
+    _execute: @escaping (@escaping () -> Void) -> Void
   ) {
-    self.schedule = schedule
+    self._execute = _execute
   }
 
-  public func executor() -> (@escaping () -> Void) -> Void {
-    schedule
+  public func execute(_ workItem: @escaping () -> Void) {
+    _execute(workItem)
   }
+
 }
 
 public final class MainActorTargetQueue: TargetQueueType {
 
-  private let schedule: (@escaping () -> Void) -> Void
+  public static let sharedImmediacy = MainActorTargetQueue(mode: .immediacy)
 
-  fileprivate init(
-    schedule: @escaping (@escaping () -> Void) -> Void
-  ) {
-    self.schedule = schedule
+  public enum Mode {
+    /// Always execuses work item with dispatch(hop) to main queue.
+    case alwaysDispatch
+
+    /// Execuses work item immediately if receives it on main context and main queue is empty.
+    case immediacy
   }
 
-  public func executor() -> (@escaping () -> Void) -> Void {
-    schedule
+  public let mode: Mode
+  private let numberEnqueued = ManagedAtomic<UInt64>.init(0)
+
+  init(mode: Mode) {
+    self.mode = mode
   }
+
+  public func execute(_ workItem: @escaping () -> Void) {
+
+    switch mode {
+    case .alwaysDispatch:
+
+      DispatchQueue.main.async {
+        workItem()
+      }
+
+    case .immediacy:
+
+      let previousNumberEnqueued = numberEnqueued.loadThenWrappingIncrement(ordering: .sequentiallyConsistent)
+
+      if DispatchQueue.isMain && previousNumberEnqueued == 0 {
+        workItem()
+        numberEnqueued.wrappingDecrement(ordering: .sequentiallyConsistent)
+      } else {
+        DispatchQueue.main.async {
+          workItem()
+          self.numberEnqueued.wrappingDecrement(ordering: .sequentiallyConsistent)
+        }
+      }
+
+    }
+  }
+
 }
 
 private enum StaticMember {
@@ -83,41 +116,47 @@ extension DispatchQueue {
   }
 }
 
-extension TargetQueueType where Self == TargetQueue {
+extension TargetQueueType where Self == Queues.Passthrough  {
+
   /// Returns a instance that never dispatches.
   /// The Sink use this targetQueue performs in the queue which the upstream commit dispatched.
-  public static var passthrough: TargetQueue {
-    TargetQueue._passthrough
+  public static var passthrough: Queues.Passthrough {
+    .init()
   }
 
+}
+
+extension TargetQueueType where Self == AnyTargetQueue {
+
+
   /// Use specified queue, always dispatches
-  public static func specific(_ targetQueue: DispatchQueue) -> TargetQueue {
+  public static func specific(_ targetQueue: DispatchQueue) -> AnyTargetQueue {
     return .init { workItem in
       targetQueue.async(execute: workItem)
     }
   }
   /// It dispatches to the serial background queue asynchronously.
-  public static var asyncSerialBackground: TargetQueue {
-    TargetQueue._asyncSerialBackground
+  public static var asyncSerialBackground: AnyTargetQueue {
+    AnyTargetQueue._asyncSerialBackground
   }
 
   /// Enqueue first item on current-thread(synchronously).
   /// From then, using specified queue.
-  public static func startsFromCurrentThread<Queue: TargetQueueType>(andUse queue: Queue) -> TargetQueue {
+  public static func startsFromCurrentThread<Queue: TargetQueueType>(andUse queue: Queue) -> AnyTargetQueue {
     let numberEnqueued = ManagedAtomic<Bool>.init(true)
-    
-    let execute = queue.executor()
-    
+
+    let execute = queue.execute
+
     return .init { workItem in
-      
+
       let isFirst = numberEnqueued.loadThenLogicalAnd(with: false, ordering: .relaxed)
-      
+
       if isFirst {
         workItem()
       } else {
         execute(workItem)
       }
-      
+
     }
   }
 }
@@ -126,59 +165,44 @@ extension TargetQueueType where Self == MainActorTargetQueue {
 
   /// It dispatches to main-queue asynchronously always.
   public static var asyncMain: MainActorTargetQueue {
-    MainActorTargetQueue._asyncMain
+    MainActorTargetQueue.init(mode: .alwaysDispatch)
   }
 
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
   public static var main: MainActorTargetQueue {
-    MainActorTargetQueue._main
+    MainActorTargetQueue.sharedImmediacy
   }
 
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
   /// This create isolated queue against using `.main`.
   public static func mainIsolated() -> MainActorTargetQueue {
-    let numberEnqueued = ManagedAtomic<UInt64>.init(0)
-    
-    return .init { workItem in
-      
-      let previousNumberEnqueued = numberEnqueued.loadThenWrappingIncrement(ordering: .sequentiallyConsistent)
-      
-      if DispatchQueue.isMain && previousNumberEnqueued == 0 {
-        workItem()
-        numberEnqueued.wrappingDecrement(ordering: .sequentiallyConsistent)
-      } else {
-        DispatchQueue.main.async {
-          workItem()
-          numberEnqueued.wrappingDecrement(ordering: .sequentiallyConsistent)
-        }
-      }
-    }
+    return .init(mode: .immediacy)
   }
 }
 
-extension MainActorTargetQueue {
-  /// It dispatches to main-queue asynchronously always.
-  static let _asyncMain: MainActorTargetQueue = .init { workItem in
-    DispatchQueue.main.async(execute: workItem)
-  }
-
-  /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
-  static let _main: MainActorTargetQueue = mainIsolated()
-
-}
-
-extension TargetQueue {
+extension AnyTargetQueue {
 
   /// Returns a instance that never dispatches.
   /// The Sink use this targetQueue performs in the queue which the upstream commit dispatched.
-  static let _passthrough: TargetQueue = .init { workItem in
+  static let _passthrough: AnyTargetQueue = .init { workItem in
     workItem()
   }
 
   /// It dispatches to the serial background queue asynchronously.
-  static let _asyncSerialBackground: TargetQueue = .init { workItem in
+  static let _asyncSerialBackground: AnyTargetQueue = .init { workItem in
     StaticMember.serialBackgroundDispatchQueue.async(execute: workItem)
   }
 
- 
+}
+
+public enum Queues {
+
+  public struct Passthrough: TargetQueueType {
+
+    public func execute(_ workItem: @escaping () -> Void) {
+      workItem()
+    }
+
+  }
+
 }

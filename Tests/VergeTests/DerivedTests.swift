@@ -94,22 +94,6 @@ final class DerivedTests: XCTestCase {
     XCTAssertEqual(slice.value.hasChanges(\.self), true)
   }
 
-  func testBinding() {
-
-    let wrapper = DemoStore()
-    
-    let slice = wrapper.bindingDerived(
-      get: .map { $0.count },
-      set: { source, new in
-        source.count = new
-    })
-    
-    slice.primitiveValue = 2
-        
-    XCTAssertEqual(wrapper.primitiveState.count, 2)
-    
-  }
-
   /**
    Store won't retain the Derived
    */
@@ -136,7 +120,7 @@ final class DerivedTests: XCTestCase {
     expectation.expectedFulfillmentCount = 1
     expectation.assertForOverFulfill = true
     
-    let subscription = baseSlice.sinkValue(dropsFirst: true, queue: .passthrough) { (changes) in
+    let subscription = baseSlice.sinkState(dropsFirst: true, queue: .passthrough) { (changes) in
       expectation.fulfill()
     }
 
@@ -229,7 +213,7 @@ final class DerivedTests: XCTestCase {
     
     XCTAssert((combined.primitiveValue.0.primitive, combined.primitiveValue.1.primitive) == (0, ""))
         
-    let sub = combined.sinkValue { (changes) in
+    let sub = combined.sinkState { (changes) in
       
       updateCount.fulfill()
       
@@ -307,8 +291,8 @@ final class DerivedCacheTests: XCTestCase {
     let store1 = DemoStore()
     let store2 = DemoStore()
     
-    let queue = TargetQueue.specific(DispatchQueue(label: "test"))
-    let queue2 = TargetQueue.specific(DispatchQueue(label: "test"))
+    let queue = AnyTargetQueue.specific(DispatchQueue(label: "test"))
+    let queue2 = AnyTargetQueue.specific(DispatchQueue(label: "test"))
     
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: queue))
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))
@@ -322,7 +306,7 @@ final class DerivedCacheTests: XCTestCase {
     let store1 = DemoStore()
     let store2 = DemoStore()
     
-    let queue = TargetQueue.specific(DispatchQueue.global())
+    let queue = AnyTargetQueue.specific(DispatchQueue.global())
     
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: queue))
     XCTAssert(store1.derived(.map(\.count), queue: queue) !== store1.derived(.map(\.count), queue: .main))

@@ -22,21 +22,138 @@
 import Foundation
 
 // It would be renamed as StoreContextType
-public protocol DispatcherType {
+public protocol DispatcherType<Scope>: AnyObject where State == WrappedStore.State, Activity == WrappedStore.Activity {
+
   associatedtype WrappedStore: StoreType
   associatedtype Scope: Equatable = WrappedStore.State
+
+  associatedtype State = WrappedStore.State
+  associatedtype Activity = WrappedStore.Activity
 
   var store: WrappedStore { get }
   var scope: WritableKeyPath<WrappedStore.State, Scope> { get }
 }
 
-extension DispatcherType where Scope == WrappedStore.State {
+extension DispatcherType {
+  /// A state that cut out from root-state with the scope key path.
+  public var state: Changes<Scope> {
+    store.asStore().state.map { $0[keyPath: scope] }
+  }
+}
+
+extension DispatcherType where Scope == State {
   public var scope: WritableKeyPath<WrappedStore.State, WrappedStore.State> {
     \WrappedStore.State.self
   }
 }
 
+extension DispatcherType where Scope == State {
+
+  // MARK: - Subscribings
+
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkState(
+    dropsFirst: Bool = false,
+    queue: some TargetQueueType,
+    receive: @escaping (Changes<State>) -> Void
+  ) -> VergeAnyCancellable {
+    store.asStore()._primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkState(
+    dropsFirst: Bool = false,
+    queue: MainActorTargetQueue = .mainIsolated(),
+    receive: @escaping @MainActor (Changes<State>) -> Void
+  ) -> VergeAnyCancellable {
+    store.asStore()._primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - scan: Accumulates a specified type of value over receiving updates.
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @_disfavoredOverload
+  public func sinkState<Accumulate>(
+    scan: Scan<Changes<State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: some TargetQueueType,
+    receive: @escaping (Changes<State>, Accumulate) -> Void
+  ) -> VergeAnyCancellable {
+    store.asStore()._primitive_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - scan: Accumulates a specified type of value over receiving updates.
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @discardableResult
+  public func sinkState<Accumulate>(
+    scan: Scan<Changes<State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: MainActorTargetQueue = .mainIsolated(),
+    receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
+  ) -> VergeAnyCancellable {
+    store.asStore()._primitive_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+
+  /// Subscribe the activity
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @_disfavoredOverload
+  public func sinkActivity(
+    queue: some TargetQueueType,
+    receive: @escaping (Activity) -> Void
+  ) -> VergeAnyCancellable {
+
+    store.asStore()._primitive_sinkActivity(queue: queue, receive: receive)
+
+  }
+
+  /// Subscribe the activity
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  public func sinkActivity(
+    queue: MainActorTargetQueue = .mainIsolated(),
+    receive: @escaping @MainActor (Activity) -> Void
+  ) -> VergeAnyCancellable {
+
+    store.asStore()._primitive_sinkActivity(queue: queue) { activity in
+      thunkToMainActor {
+        receive(activity)
+      }
+    }
+
+  }
+
+}
+
 extension DispatcherType {
+
   /**
     Subscribe the state that scoped
 
@@ -47,9 +164,10 @@ extension DispatcherType {
       - queue: Specify a queue to receive changes object.
     - Returns: A subscriber that performs the provided closure upon receiving values.
    */
+  @_disfavoredOverload
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: TargetQueue,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<Scope>) -> Void
   ) -> VergeAnyCancellable {
     let _scope = scope
@@ -69,6 +187,7 @@ extension DispatcherType {
       - queue: Specify a queue to receive changes object.
     - Returns: A subscriber that performs the provided closure upon receiving values.
    */
+  @_disfavoredOverload
   public func sinkState(
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
@@ -90,10 +209,11 @@ extension DispatcherType {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @_disfavoredOverload
   public func sinkState<Accumulate>(
     scan: Scan<Changes<Scope>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueue,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<Scope>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
@@ -111,6 +231,7 @@ extension DispatcherType {
   ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
   ///   - queue: Specify a queue to receive changes object.
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @_disfavoredOverload
   public func sinkState<Accumulate>(
     scan: Scan<Changes<Scope>, Accumulate>,
     dropsFirst: Bool = false,

@@ -116,6 +116,8 @@ public final class InoutRef<Wrapped> {
       yield &pointer.pointee
     }
   }
+  
+  public var _transaction: Transaction = .init()
 
   // MARK: - Initializers
 

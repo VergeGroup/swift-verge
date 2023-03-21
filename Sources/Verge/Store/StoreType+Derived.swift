@@ -21,11 +21,11 @@
 
 import class Foundation.NSString
 
-extension StoreType {
+extension DispatcherType {
   
   public func derived<Pipeline: PipelineType>(
     _ pipeline: Pipeline,
-    queue: TargetQueueType = .passthrough
+    queue: some TargetQueueType = .passthrough
   ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State> {
     
     vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: Pipeline.Output.self))")
@@ -35,9 +35,9 @@ extension StoreType {
       set: { _ in
 
       },
-      initialUpstreamState: asStore().state,
+      initialUpstreamState: store.asStore().state,
       subscribeUpstreamState: { callback in
-        asStore()._primitive_sinkState(dropsFirst: true, queue: queue, receive: callback)
+        store.asStore()._primitive_sinkState(dropsFirst: true, queue: queue, receive: callback)
       },
       retainsUpstream: nil
     )

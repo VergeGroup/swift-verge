@@ -19,34 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-extension Derived {
-  
-  /**
-   Assigns a derived's value to a property of a store.
-
-   - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
-   */
-  public func assign(
-    queue: TargetQueue = .passthrough,
-    to binder: @escaping (Changes<Value>) -> Void
-  ) -> VergeAnyCancellable {
-    sinkValue(queue: queue, receive: binder)
-  }
-  
-  /**
-   Assigns a derived's value to a property of a store.
-   
-   - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
-   */
-  public func assign(
-    queue: MainActorTargetQueue,
-    to binder: @escaping (Changes<Value>) -> Void
-  ) -> VergeAnyCancellable {
-    sinkValue(queue: queue, receive: binder)
-  }
-}
-
-extension StoreType {
+extension DispatcherType {
 
   /**
    Assigns a Store's state to a property of a store.
@@ -54,10 +27,10 @@ extension StoreType {
    - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
    */
   public func assign(
-    queue: TargetQueue = .passthrough,
+    queue: some TargetQueueType = .passthrough,
     to binder: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
-    asStore().sinkState(queue: queue, receive: binder)
+    store.asStore().sinkState(queue: queue, receive: binder)
   }
 
   /**
@@ -69,7 +42,7 @@ extension StoreType {
     queue: MainActorTargetQueue,
     to binder: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
-    asStore().sinkState(queue: queue, receive: binder)
+    store.asStore().sinkState(queue: queue, receive: binder)
   }
   
 }

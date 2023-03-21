@@ -129,19 +129,22 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
 
   public let traces: [MutationTrace]
   public let modification: InoutRef<Value>.Modification?
+  
+  public let _transaction: Transaction
 
   // MARK: - Initializers
 
   public convenience init(
-    old: Value?,
-    new: Value
+    old: __owned Value?,
+    new: __owned Value
   ) {
     self.init(
       previous: old.map { .init(old: nil, new: $0) },
       innerBox: .init(value: new),
       version: 0,
       traces: [],
-      modification: nil
+      modification: nil,
+      transaction: .init()
     )
   }
 
@@ -150,13 +153,15 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     innerBox: InnerBox,
     version: UInt64,
     traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification?
+    modification: InoutRef<Value>.Modification?,
+    transaction: Transaction
   ) {
     self.previous = previous
     self.innerBox = innerBox
     self.version = version
     self.traces = traces
     self.modification = modification
+    self._transaction = transaction
 
     vergeSignpostEvent("Changes.init", label: "\(type(of: self))")
   }
@@ -174,7 +179,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       innerBox: innerBox,
       version: version,
       traces: traces,
-      modification: nil
+      modification: nil,
+      transaction: _transaction
     )
   }
 
@@ -210,7 +216,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       innerBox: try innerBox.map(transform),
       version: version,
       traces: traces,
-      modification: nil
+      modification: nil,
+      transaction: _transaction
     )
   }
 
@@ -228,7 +235,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       innerBox: innerBox.map { $0[keyPath: keyPath]! },
       version: version,
       traces: traces,
-      modification: nil
+      modification: nil,
+      transaction: _transaction
     )
 
   }
@@ -244,7 +252,8 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   public func makeNextChanges(
     with nextNewValue: Value,
     from traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification
+    modification: InoutRef<Value>.Modification,
+    transaction: Transaction
   ) -> Changes<Value> {
     let previous = cloneWithDropsPrevious()
     let nextVersion = previous.version &+ 1
@@ -253,11 +262,13 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       innerBox: .init(value: nextNewValue),
       version: nextVersion,
       traces: traces,
-      modification: modification
+      modification: modification,
+      transaction: transaction
     )
   }
 
-  public func _read(perform: (ReadRef<Value>) -> Void) {
+  @discardableResult
+  public func _read<Return>(perform: (__shared ReadRef<Value>) -> Return) -> Return {
     innerBox._read(perform: perform)
   }
 
@@ -271,7 +282,7 @@ extension Changes {
   @inline(__always)
   public func takeIfChanged<Composed>(
     _ compose: (Value) throws -> Composed,
-    _ comparer: Comparer<Composed>
+    _ comparer: some Comparison<Composed>
   ) rethrows -> Composed? {
     let signpost = VergeSignpostTransaction("Changes.takeIfChanged(compose:comparer:)")
     defer {
@@ -285,10 +296,9 @@ extension Changes {
     }
 
     let old = previousValue.primitive
-    let compare = comparer.curried()
 
     let composedFromCurrent = try compose(current)
-    guard !compare(try compose(old), composedFromCurrent) else {
+    guard !comparer(try compose(old), composedFromCurrent) else {
       return nil
     }
 
@@ -306,7 +316,7 @@ extension Changes {
   @inline(__always)
   public func ifChanged<Composed, Result>(
     _ compose: (Value) -> Composed,
-    _ comparer: Comparer<Composed>,
+    _ comparer: some Comparison<Composed>,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     guard let result = takeIfChanged(compose, comparer) else {
@@ -325,7 +335,7 @@ extension Changes {
   public func takeIfChanged<Composed: Equatable>(
     _ compose: (Value) throws -> Composed
   ) rethrows -> Composed? {
-    try takeIfChanged(compose, .usingEquatable)
+    try takeIfChanged(compose, .equality())
   }
 
   /**
@@ -333,7 +343,7 @@ extension Changes {
    */
   public func ifChanged<T, Result>(
     _ selector: ChangesKeyPath<T>,
-    _ comparer: Comparer<T>,
+    _ comparer: some Comparison<T>,
     _ perform: (T) throws -> Result
   ) rethrows -> Result? {
     guard let value = takeIfChanged({ $0[keyPath: selector] }, comparer) else {
@@ -349,7 +359,7 @@ extension Changes {
     _ compose: (Value) -> Composed,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged(compose, .usingEquatable, perform)
+    try ifChanged(compose, .equality(), perform)
   }
 
   /**
@@ -360,7 +370,7 @@ extension Changes {
     _ keyPath: ChangesKeyPath<T>,
     _ perform: (T) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged(keyPath, .usingEquatable, perform)
+    try ifChanged(keyPath, .equality(), perform)
   }
 
   /**
@@ -373,7 +383,7 @@ extension Changes {
     _ keyPath1: ChangesKeyPath<T1>,
     _ perform: ((T0, T1)) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) as (T0, T1) }, .init(==), perform)
+    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) as (T0, T1) }, AnyEqualityComparison(==), perform)
   }
 
   /**
@@ -389,7 +399,7 @@ extension Changes {
   ) rethrows -> Result? {
     try ifChanged(
       { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) as (T0, T1, T2) },
-      .init(==),
+      AnyEqualityComparison(==),
       perform
     )
   }
@@ -415,7 +425,7 @@ extension Changes {
           $0[keyPath: keyPath3]
         ) as (T0, T1, T2, T3)
       },
-      .init(==),
+      AnyEqualityComparison(==),
       perform
     )
   }
@@ -451,7 +461,7 @@ extension Changes {
         ) as (T0, T1, T2, T3, T4)
 
       },
-      .init(==),
+      AnyEqualityComparison(==),
       perform
     )
   }
@@ -463,14 +473,14 @@ extension Changes {
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   @inline(__always)
   public func hasChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
-    hasChanges(keyPath, .usingEquatable)
+    hasChanges(keyPath, EqualityComparison())
   }
 
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   @inline(__always)
   public func hasChanges<T>(
     _ keyPath: ChangesKeyPath<T>,
-    _ comparer: Comparer<T>
+    _ comparer: some Comparison<T>
   ) -> Bool {
     hasChanges({ $0[keyPath: keyPath] }, comparer)
   }
@@ -479,13 +489,13 @@ extension Changes {
   public func hasChanges<Composed: Equatable>(
     _ compose: (Value) -> Composed
   ) -> Bool {
-    hasChanges(compose, .usingEquatable)
+    hasChanges(compose, EqualityComparison())
   }
 
   @inline(__always)
   public func hasChanges<Composed>(
     _ compose: (Value) -> Composed,
-    _ comparer: Comparer<Composed>
+    _ comparer: some Comparison<Composed>
   ) -> Bool {
     takeIfChanged(compose, comparer) != nil
   }
@@ -498,12 +508,12 @@ extension Changes {
   /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
   @inline(__always)
   public func noChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
-    !hasChanges(keyPath, .usingEquatable)
+    !hasChanges(keyPath, EqualityComparison())
   }
 
   /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
   @inline(__always)
-  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: Comparer<T>) -> Bool {
+  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: some Comparison<T>) -> Bool {
     !hasChanges(keyPath, comparer)
   }
 }
@@ -516,6 +526,7 @@ extension Changes: CustomReflectable {
         "version": version,
         "previous": previous as Any,
         "primitive": primitive,
+        "transaction": _transaction,
         "traces": traces,
         "modification": modification as Any,
       ],
@@ -533,7 +544,7 @@ extension Changes {
     var value: Value
 
     init(
-      value: Value
+      value: __owned Value
     ) {
       self.value = value
     }
@@ -546,12 +557,15 @@ extension Changes {
       )
     }
 
+    @discardableResult
     @inline(__always)
-    func _read(perform: (ReadRef<Value>) -> Void) {
-      withUnsafePointer(to: &value) { (pointer) -> Void in
+    func _read<Return>(perform: (__shared ReadRef<Value>) -> Return) -> Return {
+
+      withUnsafePointer(to: &value) { (pointer) -> Return in
         let ref = ReadRef<Value>.init(pointer)
-        perform(ref)
+        return perform(ref)
       }
+
     }
 
   }

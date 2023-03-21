@@ -119,7 +119,7 @@ public actor TaskManagerActor {
     key: TaskKey,
     mode: Mode,
     priority: TaskPriority = .userInitiated,
-    _ action: @Sendable @escaping () async throws -> Return
+    @_inheritActorContext _ action: @Sendable @escaping () async throws -> Return
   ) async -> Task<Return, Error> {
     
     let targetQueue = prepareQueue(for: key)
@@ -134,6 +134,16 @@ public actor TaskManagerActor {
       return await targetQueue.addTask(label: label, priority: priority, operation: action)
     }
     
+  }
+
+  public func taskDetached<Return>(
+    label: String = "",
+    key: TaskKey,
+    mode: Mode,
+    priority: TaskPriority = .userInitiated,
+    _ action: @Sendable @escaping () async throws -> Return
+  ) async -> Task<Return, Error> {
+    await task(label: label, key: key, mode: mode, priority: priority, action)
   }
   
   private func prepareQueue(for key: TaskKey) -> TaskQueueActor {

@@ -15,13 +15,15 @@ import VergeRx
 class ReproduceDeadlockTests: XCTestCase {
   
   class StoreWrapper: StoreWrapperType {
-        
+
     struct State: Equatable {
       var count = 0
     }
         
-    let store = DefaultStore.init(initialState: .init(), logger: nil)
-    
+    let store = Store<State, Never>.init(initialState: .init(), logger: nil)
+
+    init() {
+    }
   }
   
   func testReproduceDeadlock() {

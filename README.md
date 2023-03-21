@@ -21,6 +21,12 @@
 <img alt="Tests" src="https://github.com/VergeGroup/Verge/workflows/Tests/badge.svg"/>
 </p>
 
+# Support this projects
+<a href="https://www.buymeacoffee.com/muukii">
+<img width="160" alt="yellow-button" src="https://user-images.githubusercontent.com/1888355/146226808-eb2e9ee0-c6bd-44a2-a330-3bbc8a6244cf.png">
+</a>
+
+
 ## Requirements
 
 * Swift 5.7 +
@@ -36,8 +42,6 @@ Please feel free to ask us about how to use and how to migrate.
 ## Verge is not Flux, it's store-pattern and super powerful.
 
 Verge is a performant store-pattern based state management library for iOS.
-
-Please see the website: https://vergegroup.org
 
 [And the article about store-pattern](https://medium.com/eureka-engineering/verge-start-store-pattern-state-management-before-beginning-flux-in-uikit-ios-app-development-6c74d4413829)
 
@@ -120,7 +124,7 @@ final class MyViewModel: StoreComponentType {
   }
 
   /// 💡 This is basically a template statement. You might have something type of `Store`.
-  let store: DefaultStore = .init(initialState: .init())
+  let store: Store<State, Never> = .init(initialState: .init())
 
   // MARK: - ✅ These are actions as well as writing methods.
 

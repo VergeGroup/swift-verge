@@ -452,7 +452,7 @@ final class VergeStoreTests: XCTestCase {
       var source: Changes<Int>
     }
 
-    let store: DefaultStore
+    let store: Verge.Store<State, Never>
     var sub: VergeAnyCancellable? = nil
 
     init(sourceStore: DemoStore) {
@@ -462,7 +462,7 @@ final class VergeStoreTests: XCTestCase {
 
       self.store = .init(initialState: .init(source: d.value), logger: nil)
 
-      sub = d.assign(to: assignee(\.source))
+      sub = d.assign(to: store.assignee(\.source))
 
     }
 

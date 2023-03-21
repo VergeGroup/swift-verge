@@ -28,7 +28,7 @@ import Combine
 #endif
 
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
-public protocol StoreType: AnyObject {
+public protocol StoreType<State>: AnyObject {
   associatedtype State: Equatable
   associatedtype Activity = Never
   
@@ -91,7 +91,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   
   private var nonatomicValue: Changes<State>
   
-  private let _lock: VergeAnyRecursiveLock
+  private let _lock: StoreOperation
       
   private let _valueSubject: CurrentValueSubject<Changes<State>, Never>
 
@@ -120,7 +120,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   public nonisolated init(
     name: String? = nil,
     initialState: State,
-    backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
+    storeOperation: StoreOperation = .atomic,
     logger: StoreLogger? = nil,
     sanitizer: RuntimeSanitizer? = nil,
     _ file: StaticString = #file,
@@ -128,7 +128,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   ) {
     
     self.nonatomicValue = .init(old: nil, new: initialState)
-    self._lock = backingStorageRecursiveLock ?? VergeConcurrency.RecursiveLock().asAny()
+    self._lock = storeOperation
     
     // TODO: copying value
     self._valueSubject = .init(nonatomicValue)
@@ -143,7 +143,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   public nonisolated init(
     name: String? = nil,
     initialState: State,
-    backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
+    storeOperation: StoreOperation = .atomic,
     logger: StoreLogger? = nil,
     sanitizer: RuntimeSanitizer? = nil,
     _ file: StaticString = #file,
@@ -157,7 +157,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     let reduced = inoutRef.wrapped
     
     self.nonatomicValue = .init(old: nil, new: reduced)
-    self._lock = backingStorageRecursiveLock ?? VergeConcurrency.RecursiveLock().asAny()
+    self._lock = storeOperation
     // TODO: copying value
     self._valueSubject = .init(nonatomicValue)
     
@@ -168,13 +168,15 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
       let intermediate = state.makeNextChanges(
         with: inoutRef.wrapped,
         from: inoutRef.traces,
-        modification: inoutRef.modification ?? .indeterminate
+        modification: inoutRef.modification ?? .indeterminate,
+        transaction: .init()
       )
       State.reduce(modifying: &inoutRef, current: intermediate)
     }
     
   }
-  
+
+  @_spi(Internal)
   public final override func receiveEvent(_ event: _StoreEvent<State, Activity>) {
     
     switch event {
@@ -190,12 +192,17 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
         }
       case .didUpdate(let state):
         _valueSubject.send(state)
+        stateDidUpdate(newState: state)
       }
     case .activity:
       break
     }
   }
-  
+
+  open func stateDidUpdate(newState: Changes<State>) {
+
+  }
+
 }
 
 // MARK: - Typealias
@@ -254,7 +261,7 @@ extension Store {
   public convenience init(
     name: String? = nil,
     initialState: State,
-    backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
+    storeOperation: StoreOperation = .atomic,
     logger: StoreLogger? = nil,
     _ file: StaticString = #file,
     _ line: UInt = #line
@@ -301,84 +308,13 @@ extension Store {
   public func asStore() -> Store<State, Activity> {
     self
   }
-  
-  // MARK: - Subscribings
-  
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkState(
-    dropsFirst: Bool = false,
-    queue: TargetQueue,
-    receive: @escaping (Changes<State>) -> Void
-  ) -> VergeAnyCancellable {
-    _primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkState(
-    dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (Changes<State>) -> Void
-  ) -> VergeAnyCancellable {
-    _primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - scan: Accumulates a specified type of value over receiving updates.
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkState<Accumulate>(
-    scan: Scan<Changes<State>, Accumulate>,
-    dropsFirst: Bool = false,
-    queue: TargetQueue,
-    receive: @escaping (Changes<State>, Accumulate) -> Void
-  ) -> VergeAnyCancellable {
-    _primitive_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - scan: Accumulates a specified type of value over receiving updates.
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @discardableResult
-  public func sinkState<Accumulate>(
-    scan: Scan<Changes<State>, Accumulate>,
-    dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
-  ) -> VergeAnyCancellable {
-    _primitive_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
-  private func _sinkActivity(
-    queue: TargetQueueType,
+
+  func _primitive_sinkActivity(
+    queue: some TargetQueueType,
     receive: @escaping (Activity) -> Void
   ) -> VergeAnyCancellable {
     
-    let execute = queue.executor()
+    let execute = queue.execute
     let cancellable = self._sinkActivityEvent { activity in
       execute {
         receive(activity)
@@ -387,35 +323,7 @@ extension Store {
     return .init(cancellable)
     
   }
-  
-  /// Subscribe the activity
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkActivity(
-    queue: TargetQueue,
-    receive: @escaping (Activity) -> Void
-  ) -> VergeAnyCancellable {
-    
-    _sinkActivity(queue: queue, receive: receive)
-    
-  }
-  
-  /// Subscribe the activity
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public func sinkActivity(
-    queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (Activity) -> Void
-  ) -> VergeAnyCancellable {
-    
-    _sinkActivity(queue: queue) { activity in
-      thunkToMainActor {
-        receive(activity)
-      }
-    }
-    
-  }
-  
+
   /**
    Adds an asynchronous task to perform.
    
@@ -431,11 +339,12 @@ extension Store {
      - action
    - Returns: A Task for tracking given async operation's completion.
    */
+  @discardableResult
   public func task<Return>(
     key: VergeTaskManager.TaskKey = .distinct(),
     mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
     priority: TaskPriority = .userInitiated,
-    _ action: @Sendable @escaping () async throws -> Return
+    @_inheritActorContext _ action: @Sendable @escaping () async throws -> Return
   ) -> Task<Return, Error> {
 
     Task {
@@ -443,6 +352,36 @@ extension Store {
         .value
     }
     
+  }
+
+  /**
+   Adds an asynchronous task to perform.
+
+   Use this function to perform an asynchronous task with a lifetime that matches that of this store.
+   If this store is deallocated ealier than the given task finished, that asynchronous task will be cancelled.
+
+   Carefully use this function - If the task retains this store, it will continue to live until the task is finished.
+
+   - Parameters:
+   - key:
+   - mode:
+   - priority:
+   - action
+   - Returns: A Task for tracking given async operation's completion.
+   */
+  @discardableResult
+  public func taskDetached<Return>(
+    key: VergeTaskManager.TaskKey = .distinct(),
+    mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
+    priority: TaskPriority = .userInitiated,
+    _ action: @Sendable @escaping () async throws -> Return
+  ) -> Task<Return, Error> {
+
+    Task {
+      try await taskManager.taskDetached(key: key, mode: mode, priority: priority, action)
+        .value
+    }
+
   }
 
   // MARK: - Internal
@@ -522,7 +461,8 @@ extension Store {
           let intermediate = state.makeNextChanges(
             with: stateMutablePointer.pointee,
             from: inoutRef.traces,
-            modification: inoutRef.modification ?? .indeterminate
+            modification: inoutRef.modification ?? .indeterminate,
+            transaction: inoutRef._transaction
           )
           middleware.modify(modifyingState: &inoutRef, current: intermediate)
         }
@@ -533,7 +473,8 @@ extension Store {
         state = state.makeNextChanges(
           with: stateMutablePointer.pointee,
           from: inoutRef.traces,
-          modification: inoutRef.modification ?? .indeterminate
+          modification: inoutRef.modification ?? .indeterminate,
+          transaction: inoutRef._transaction
         )
         
         if __sanitizer__.isRecursivelyCommitDetectionEnabled {
@@ -586,11 +527,11 @@ Mutation: (%@)
   
   func _primitive_sinkState(
     dropsFirst: Bool = false,
-    queue: TargetQueueType,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<State>) -> Void
   ) -> VergeAnyCancellable {
     
-    let executor = queue.executor()
+    let executor = queue.execute
     
     var latestStateWrapper: Changes<State>? = nil
     
@@ -712,7 +653,7 @@ Latest Version (%d): (%@)
   func _primitive_scan_sinkState<Accumulate>(
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: TargetQueueType,
+    queue: some TargetQueueType,
     receive: @escaping (Changes<State>, Accumulate) -> Void
   ) -> VergeAnyCancellable {
     

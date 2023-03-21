@@ -12,7 +12,7 @@ import RxSwift
 import VergeClassic
 import Verge
 
-class VergeTests: XCTestCase {
+final class VergeClassicTests: XCTestCase {
 
   override func setUp() {
     super.setUp()
@@ -137,7 +137,7 @@ class VergeTests: XCTestCase {
 
 }
 
-extension VergeTests {
+extension VergeClassicTests {
 
   final class ViewModel : VergeType {
 

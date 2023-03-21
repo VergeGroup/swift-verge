@@ -50,28 +50,16 @@ import Foundation
  }
  ``` 
  */
-public protocol StoreComponentType: StoreType, DispatcherType {
-  
-  associatedtype State = WrappedStore.State
-  associatedtype Activity = WrappedStore.Activity
-    
-  associatedtype Scope
+public protocol StoreComponentType: DispatcherType where Scope == WrappedStore.State {
+
+  typealias State = WrappedStore.State
+  typealias Activity = WrappedStore.Activity
+
   var store: WrappedStore { get }
 }
 
 /// It would be deprecated in the future.
 public typealias StoreWrapperType = StoreComponentType
-
-extension StoreComponentType {
-  public typealias DefaultStore = Store<State, Activity>
-}
-
-extension StoreComponentType where State == WrappedStore.State, Activity == WrappedStore.Activity {
-  @inline(__always)
-  public func asStore() -> Store<State, Activity> {
-    store.asStore()
-  }
-}
 
 extension StoreComponentType {
 
@@ -91,94 +79,7 @@ extension StoreComponentType {
   public nonisolated var primitiveState: WrappedStore.State {
     store.primitiveState
   }
-  
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkState(
-    dropsFirst: Bool = false,
-    queue: TargetQueue,
-    receive: @escaping (Changes<WrappedStore.State>) -> Void
-  ) -> VergeAnyCancellable {
-    store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkState(
-    dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (Changes<WrappedStore.State>) -> Void
-  ) -> VergeAnyCancellable {
-    store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - scan: Accumulates a specified type of value over receiving updates.
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkState<Accumulate>(
-    scan: Scan<Changes<WrappedStore.State>, Accumulate>,
-    dropsFirst: Bool = false,
-    queue: TargetQueue,
-    receive: @escaping (Changes<WrappedStore.State>, Accumulate) -> Void
-  ) -> VergeAnyCancellable {
-    store.asStore().sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - scan: Accumulates a specified type of value over receiving updates.
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkState<Accumulate>(
-    scan: Scan<Changes<WrappedStore.State>, Accumulate>,
-    dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (Changes<WrappedStore.State>, Accumulate) -> Void
-  ) -> VergeAnyCancellable {
-    store.asStore().sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
-  }
-  
-  /// Subscribe the activity
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkActivity(
-    queue: TargetQueue,
-    receive: @escaping (WrappedStore.Activity) -> Void
-  ) -> VergeAnyCancellable  {
-    store.asStore().sinkActivity(queue: queue, receive: receive)
-  }
  
-  /// Subscribe the activity
-  ///
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  public nonisolated func sinkActivity(
-    queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (WrappedStore.Activity) -> Void
-  ) -> VergeAnyCancellable  {
-    store.asStore().sinkActivity(queue: queue, receive: receive)
-  }
 }
 
 #if canImport(Combine)
@@ -186,7 +87,7 @@ extension StoreComponentType {
 import Combine
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-extension StoreComponentType where State == WrappedStore.State, Activity == WrappedStore.Activity {
+extension StoreComponentType {
   
   public func statePublisher() -> some Combine.Publisher<Changes<State>, Never> {
     store.asStore().statePublisher()
