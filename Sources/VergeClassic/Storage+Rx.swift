@@ -9,6 +9,8 @@ import Verge
 import VergeRx
 #endif
 
+extension Storage: ReactiveCompatible {}
+
 private var storage_subject: Void?
 private var storage_diposeBag: Void?
 

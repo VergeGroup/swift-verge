@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 
 import Foundation
+@_spi(EventEmitter) import Verge
 
 open class ReadonlyStorage<Value>: @unchecked Sendable, CustomReflectable {
 
@@ -251,7 +252,7 @@ fileprivate var _didChangeAssociated: Void?
 extension ReadonlyStorage: ObservableObject {
   
   public var objectWillChange: ObservableObjectPublisher {
-    assert(DispatchQueue.isMain)
+    assert(Thread.isMainThread)
     if let associated = objc_getAssociatedObject(self, &_willChangeAssociated) as? ObservableObjectPublisher {
       return associated
     } else {
