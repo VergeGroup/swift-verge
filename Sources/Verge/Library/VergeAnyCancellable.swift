@@ -1,3 +1,5 @@
+import Combine
+
 /// A typealias to `Set<VergeAnyCancellable>`.
 public typealias VergeAnyCancellables = Set<VergeAnyCancellable>
 
@@ -21,7 +23,7 @@ public typealias VergeAnyCancellables = Set<VergeAnyCancellable>
 ///
 /// }
 /// ```
-public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Sendable {
+public final class VergeAnyCancellable: Hashable, Cancellable, @unchecked Sendable {
 
   private let lock = VergeConcurrency.UnfairLock()
 
@@ -38,7 +40,11 @@ public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Se
   private var actions: ContiguousArray<() -> Void>? = .init()
   private var retainObjects: ContiguousArray<AnyObject> = .init()
 
-  public init(onDeinit: @escaping () -> Void) {
+  public init() {
+  }
+
+  public convenience init(onDeinit: @escaping () -> Void) {
+    self.init()
     self.actions = [onDeinit]
   }
 
@@ -54,6 +60,7 @@ public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Se
     }
   }
 
+  @discardableResult
   public func associate(_ object: AnyObject) -> VergeAnyCancellable {
 
     lock.lock()
@@ -140,51 +147,35 @@ public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Se
 /// }
 /// ```
 ///
-public protocol CancellableType {
+public typealias CancellableType = Cancellable
 
-  func cancel()
-}
+public final class StoreSubscription: CancellableType {
 
-extension CancellableType {
+  private let source: EventEmitterCancellable
+  private weak var storeCancellable: VergeAnyCancellable?
+  private var associatedStore: (any StoreType)?
 
-  public func asAutoCancellable() -> VergeAnyCancellable {
-    .init(self)
-  }
-}
-
-extension CancellableType {
-
-  /// Stores this cancellable instance in the specified collection.
-  ///
-  /// According to Combine.framework API Design.
-  public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == VergeAnyCancellable {
-    collection.append(.init(self))
+  init(_ eventEmitterCancellable: EventEmitterCancellable) {
+    self.source = eventEmitterCancellable
   }
 
-  /// Stores this cancellable instance in the specified set.
-  ///
-  /// According to Combine.framework API Design.
-  public func store(in set: inout Set<VergeAnyCancellable>) {
-    set.insert(.init(self))
+  public func cancel() {
+    source.cancel()
   }
 
-}
-
-#if canImport(Combine)
-
-import Combine
-
-extension CancellableType {
-
-  /// Interop with Combine
-  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-  public func store(in set: inout Set<AnyCancellable>) {
-    set.insert(AnyCancellable.init {
-      self.cancel()
-    })
+  func associate(store: some StoreType) -> StoreSubscription {
+    associatedStore = store
+    return self
   }
 
-}
+  @discardableResult
+  public func withSource() -> StoreSubscription {
+    storeCancellable?.associate(self)
+    return self
+  }
 
-#endif
+  deinit {
+    self.cancel()
+  }
+}
 

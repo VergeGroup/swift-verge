@@ -24,24 +24,24 @@ extension DispatcherType {
   /**
    Assigns a Store's state to a property of a store.
 
-   - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
+   - Returns: a cancellable. See detail of handling cancellable from ``StoreSubscription``'s docs
    */
   public func assign(
     queue: some TargetQueueType = .passthrough,
     to binder: @escaping (Changes<State>) -> Void
-  ) -> VergeAnyCancellable {
+  ) -> StoreSubscription {
     store.asStore().sinkState(queue: queue, receive: binder)
   }
 
   /**
    Assigns a Store's state to a property of a store.
    
-   - Returns: a cancellable. See detail of handling cancellable from `VergeAnyCancellable`'s docs
+   - Returns: a cancellable. See detail of handling cancellable from ``StoreSubscription``'s docs
    */
   public func assign(
     queue: MainActorTargetQueue,
     to binder: @escaping (Changes<State>) -> Void
-  ) -> VergeAnyCancellable {
+  ) -> StoreSubscription {
     store.asStore().sinkState(queue: queue, receive: binder)
   }
   

@@ -164,7 +164,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<Value>) -> Void
-  ) -> VergeAnyCancellable {
+  ) -> StoreSubscription {
     _primitive_sinkState(
       dropsFirst: dropsFirst,
       queue: queue,
@@ -232,7 +232,7 @@ extension Derived where Value : Equatable {
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Value) -> Void
-  ) -> VergeAnyCancellable {
+  ) -> StoreSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       changes.ifChanged { value in
         receive(value)
@@ -249,7 +249,7 @@ extension Derived where Value : Equatable {
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Value) -> Void
-  ) -> VergeAnyCancellable {
+  ) -> StoreSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       changes.ifChanged { value in
         receive(value)
