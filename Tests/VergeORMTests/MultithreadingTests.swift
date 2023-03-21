@@ -14,10 +14,12 @@ import Verge
 import VergeORM
 
 class MultithreadingTests: XCTestCase {
+
+  typealias _Store = Store<RootState, Never>
         
   func testUpdateFromThreads() {
     
-    let store = Storage(RootState())
+    let store = _Store(initialState: RootState())
     
     let exp = expectation(description: "")
     
@@ -28,7 +30,7 @@ class MultithreadingTests: XCTestCase {
             
       g.enter()
       DispatchQueue.global().async {
-        store.update { state in
+        store.commit { state in
           state.db.performBatchUpdates { (context) in
             
             let authors = (0..<1000).map { i in
@@ -37,14 +39,14 @@ class MultithreadingTests: XCTestCase {
             context.entities.author.insert(authors)
           }
         }
-        print(store.value.db.entities.author.count)
+        print(store.state.db.entities.author.count)
         g.leave()
       }
     }
     g.leave()
     
     g.notify(queue: .main) {
-      print(store.value.db.entities.author.count)
+      print(store.state.db.entities.author.count)
       exp.fulfill()
     }
     
@@ -55,11 +57,11 @@ class MultithreadingTests: XCTestCase {
   
   func testUpdateFromThreads2() {
     
-    let store = Storage(RootState())
+    let store = _Store(initialState: RootState())
     
     measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       DispatchQueue.concurrentPerform(iterations: 1000) { (i) in
-        store.update { state in
+        store.commit { state in
           state.other.count += 1
         }
       }
@@ -69,22 +71,21 @@ class MultithreadingTests: XCTestCase {
   
   func testUpdateFromThreads3() {
     
-    let store = Storage(RootState())
+    let store = _Store(initialState: RootState())
+
     var count = 0
-    
-    store.sinkEvent { (s) in
-      if case .didUpdate = s {
-        count += 1
-      }
+
+    let sub = store.sinkState(dropsFirst: true, queue: .passthrough) { s in
+      count += 1
     }
-    
+
     measure {
       /**
        Checking if there is no conflicted processing.
        Performance is worse because performing critical-session concurrently.
        */
       DispatchQueue.concurrentPerform(iterations: 200) { (i) in
-        store.update { state in
+        store.commit { state in
           state.db.performBatchUpdates { (context) in
             
             let authors = (0..<40).map { i in
@@ -97,6 +98,8 @@ class MultithreadingTests: XCTestCase {
     }
     
     XCTAssertEqual(count, 200 * 10)
+
+    withExtendedLifetime(sub) {}
     
   }
 }
