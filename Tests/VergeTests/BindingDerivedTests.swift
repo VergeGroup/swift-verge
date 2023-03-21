@@ -13,8 +13,12 @@ final class BindingDerivedTests: XCTestCase {
         source.count = new
       })
 
+    XCTAssertEqual(binding.state.previous?.primitive, nil)
+    XCTAssertEqual(binding.state.primitive, 0)
+    
     binding.primitiveValue = 2
 
+    XCTAssertEqual(binding.state.previous?.primitive, 0)
     XCTAssertEqual(binding.state.primitive, 2)
     XCTAssertEqual(source.primitiveState.count, 2)
 

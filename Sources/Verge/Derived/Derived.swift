@@ -111,6 +111,9 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       case .noUpdates:
         break
       case .new(let newState):
+        guard newState != indirectSelf?.primitiveState else {
+          return
+        }
         // TODO: Take over state.modification & state.mutation
         indirectSelf?.commit {
           $0.replace(with: newState)
@@ -155,6 +158,9 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       case .noUpdates:
         break
       case .new(let newState):
+        guard newState != indirectSelf?.primitiveState else {
+          return
+        }
         // TODO: Take over state.modification & state.mutation
         indirectSelf?.commit("Derived") {
           $0.append(traces: value.traces)
