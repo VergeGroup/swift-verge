@@ -81,7 +81,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     super.init(
       name: nil,
       initialState: constant,
-      backingStorageRecursiveLock: nil,
+      storeOperation: .nonAtomic,
       logger: nil,
       sanitizer: nil
     )
@@ -124,7 +124,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     super.init(
       name: nil,
       initialState: pipeline.yield(initialUpstreamState),
-      backingStorageRecursiveLock: nil,
       logger: nil,
       sanitizer: nil
     )
@@ -169,7 +168,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     super.init(
       name: nil,
       initialState: pipeline.yield(initialUpstreamState),
-      backingStorageRecursiveLock: nil,
       logger: nil,
       sanitizer: nil
     )

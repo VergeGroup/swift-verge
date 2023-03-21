@@ -91,7 +91,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   
   private var nonatomicValue: Changes<State>
   
-  private let _lock: VergeAnyRecursiveLock
+  private let _lock: StoreOperation
       
   private let _valueSubject: CurrentValueSubject<Changes<State>, Never>
   
@@ -118,7 +118,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   public nonisolated init(
     name: String? = nil,
     initialState: State,
-    backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
+    storeOperation: StoreOperation = .atomic,
     logger: StoreLogger? = nil,
     sanitizer: RuntimeSanitizer? = nil,
     _ file: StaticString = #file,
@@ -126,7 +126,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   ) {
     
     self.nonatomicValue = .init(old: nil, new: initialState)
-    self._lock = backingStorageRecursiveLock ?? VergeConcurrency.RecursiveLock().asAny()
+    self._lock = storeOperation
     
     // TODO: copying value
     self._valueSubject = .init(nonatomicValue)
@@ -141,7 +141,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   public nonisolated init(
     name: String? = nil,
     initialState: State,
-    backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
+    storeOperation: StoreOperation = .atomic,
     logger: StoreLogger? = nil,
     sanitizer: RuntimeSanitizer? = nil,
     _ file: StaticString = #file,
@@ -155,7 +155,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     let reduced = inoutRef.wrapped
     
     self.nonatomicValue = .init(old: nil, new: reduced)
-    self._lock = backingStorageRecursiveLock ?? VergeConcurrency.RecursiveLock().asAny()
+    self._lock = storeOperation
     // TODO: copying value
     self._valueSubject = .init(nonatomicValue)
     
@@ -252,7 +252,7 @@ extension Store {
   public convenience init(
     name: String? = nil,
     initialState: State,
-    backingStorageRecursiveLock: VergeAnyRecursiveLock? = nil,
+    storeOperation: StoreOperation = .atomic,
     logger: StoreLogger? = nil,
     _ file: StaticString = #file,
     _ line: UInt = #line
