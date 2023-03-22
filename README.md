@@ -39,7 +39,7 @@
 Verge might be updated without migration guide as we are not sure how many projects are using this library.
 Please feel free to ask us about how to use and how to migrate.  
 
-## Verge is not Flux, it's store-pattern and super powerful.
+## Verge is a framework for store-pattern software development
 
 Verge is a performant store-pattern based state management library for iOS.
 
