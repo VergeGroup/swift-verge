@@ -311,28 +311,32 @@ For example, Verge provides these stuff to tune performance up.
 - Derived (Similar to [facebookexperimental/Recoil](https://github.com/facebookexperimental/Recoil)'s Selector)
 - ORM
 
-### Supports volatile events
+### Sending volatile events instead of using state
 
-We use an event as `Activity` that won't be stored in the state.  
-This concept would help us to describe something that is not easy to describe as a state in the client application.
+In certain scenarios, event-driven programming is essential for creating responsive and efficient applications. The Verge library's Activity of Store feature is designed to cater to this need, allowing developers to handle events seamlessly within their projects.
 
-<img width=513 src="https://user-images.githubusercontent.com/1888355/85392055-fc83df00-b585-11ea-866d-7ab11dfa823a.png" />
+The Activity of Store comes into play when your application requires event-driven programming. It enables you to manage events and associated logic independently from the main store management, promoting a clean and organized code structure. This separation of concerns simplifies the overall development process and makes it easier to maintain and extend your application over time.
+
+By leveraging the Activity of Store functionality, you can efficiently handle events within your application while keeping the store management intact. This ensures that your application remains performant and scalable, enabling you to build robust and reliable Swift applications using the Verge library.
+
+```swift
+let store: Store<MyState, MyActivity>
+
+store.send(MyActivity.somethingHappend)
+```
+
+```swift
+store.sinkActivity { (activity: MyActivity) in
+  // handle activities.
+}
+.storeWhileSourceActive()
+```
 
 ## Installation
 
 ## SwiftPM
 
-Verge supports also SwiftPM.
-
-## Questions
-
-Please feel free to ask something about this library!  
-I can reply to you faster in Twitter.
-
-日本語での質問も全然オーケーです😆  
-Twitterからだと早く回答できます⛱
-
-[Twitter](https://twitter.com/muukii_app)
+Verge supports SwiftPM.
 
 ## Demo applications
 
