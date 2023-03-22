@@ -96,11 +96,17 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   private let _valueSubject: CurrentValueSubject<Changes<State>, Never>
 
   private let cancellables: VergeAnyCancellable = .init()
+
+  open var keepsAliveForSubscribers: Bool { false }
   
   // MARK: - Deinit
   
   deinit {
-    Task { [taskManager] in
+    Task { [taskManager, _valueSubject] in
+      // send completion in hop as Combine is using unfair lock (non-recursive). Avoid crash.
+      // It happens if the stream ratains this store, canceled that stream triggers this deinit operation.
+      // that deinit operation will be inside of locking session.
+      _valueSubject.send(completion: .finished)
       await taskManager.cancelAll()
     }
   }
@@ -526,6 +532,7 @@ Mutation: (%@)
   }
   
   func _primitive_sinkState(
+    keepsAliveSource: Bool? = nil,
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<State>) -> Void
@@ -640,9 +647,13 @@ Latest Version (%d): (%@)
         receive(value)
       }
     }
-    
-    return .init(cancellable)
-      .associate(store: self) // while subscribing its Store will be alive
+
+    if keepsAliveSource ?? keepsAliveForSubscribers {
+      return .init(cancellable)
+        .associate(store: self) // while subscribing its Store will be alive
+    } else {
+      return .init(cancellable)
+    }
     
   }
   

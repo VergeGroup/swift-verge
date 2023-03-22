@@ -97,6 +97,18 @@ class EventEmitterTests: XCTestCase {
     
   }
 
+  func testEmittingPerformance() {
+
+    let emitter = EventEmitter<Void>()
+
+    measure(metrics: [XCTMemoryMetric(), XCTCPUMetric()]) {
+      for _ in 0..<10000 {
+        emitter.accept(())
+      }
+    }
+
+  }
+
   func testOrder() {
 
     let emitter = EventEmitter<Int>()
