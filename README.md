@@ -60,6 +60,63 @@ Please feel free to ask us about how to use and how to migrate.
 
 - [Pairs for JP](https://apps.apple.com/app/id583376064)
 
+## Usage
+
+**Creating a Store**
+To create a Verge store, you need to define your state and initialize the store with an initial state. Here's an example of how to create a store with a CounterState:
+
+```swift
+// Define your state
+struct CounterState {
+    var count: Int = 0
+}
+
+// Initialize the store
+let store = Store<_, Never>(initialState: CounterState())
+In this example, we defined a CounterState struct that has a count property, and initialized the store with an initial state of CounterState().
+```
+
+**Updating the State**
+To update the state in Verge, you use the commit function on the store. The commit function takes a closure that describes how to modify the state. Here's an example of how to update the state by incrementing the count:
+
+```swift
+store.commit {
+  $0.count += 1
+}
+```
+In this example, we used the commit function to update the count property of the state. The closure passed to commit is called with a mutable reference to the current state, which is modified directly.
+
+That's it! With Verge, you can create stores and update your state with ease.
+
+**Subscribing Store**
+
+To subscribe to the state updates of the store, you can use the sink method provided by the Store instance. The sink method allows you to listen to the state changes and execute a closure whenever the state is updated.
+
+Here's an example of how to use sink:
+
+```swift
+let store = Store<CounterState, Never>(initialState: CounterState())
+
+store.sinkState { newState in
+    print("The new count is \(newState.count)")
+}
+.storeWhileSourceActive()
+
+// Output: The current count is 0
+
+store.commit {
+  $0.count += 1
+}
+
+// Output: The new count is 1
+
+store.commit {
+  $0.count += 1
+}
+
+// Output: The new count is 2
+```
+
 ## Minimal usage example - In UIView - UIViewController
 
 State-management is everywhere, you can put a store and start state-management.
