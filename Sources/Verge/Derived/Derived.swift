@@ -76,7 +76,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   private let upstreamSubscription: (any CancellableType)?
   private let retainsUpstream: Any?
   private var associatedObjects: ContiguousArray<AnyObject> = .init()
-  
+
   // MARK: - Initializers
 
   private init(constant: Value) {
@@ -144,10 +144,15 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   }
 
   deinit {
-    self.upstreamSubscription?.cancel()
+    
   }
   
   // MARK: - Functions
+
+  override func performInvalidation() {
+    super.performInvalidation()
+    self.upstreamSubscription?.cancel()
+  }
 
   public final override func stateDidUpdate(newState: Changes<Value>) {
     // projects this update into upstream state

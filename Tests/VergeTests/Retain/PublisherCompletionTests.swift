@@ -166,11 +166,13 @@ final class SubjectCompletionTests: XCTestCase {
     storeRef.release()
     XCTAssertNil(storeRef.value)
 
+    let onComplete = expectation(description: "onComplete")
+
     c = derivedRef.value!
       .statePublisher()
       .sink(
         receiveCompletion: { _ in
-          XCTFail()
+          onComplete.fulfill()
         },
         receiveValue: { _ in
 
@@ -178,9 +180,12 @@ final class SubjectCompletionTests: XCTestCase {
       )
 
     derivedRef.release()
-    XCTAssertNotNil(derivedRef.value)
+    XCTAssertNil(derivedRef.value)
 
     XCTAssertNil(storeRef.value)
+
+    wait(for: [onComplete], timeout: 10)
+    c?.cancel()
 
   }
 

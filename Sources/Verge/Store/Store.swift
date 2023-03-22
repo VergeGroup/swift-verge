@@ -23,6 +23,8 @@ import Foundation
 import os.log
 import VergeTaskManager
 
+@_implementationOnly import Atomics
+
 #if canImport(Combine)
 import Combine
 #endif
@@ -95,20 +97,19 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
       
   private let _valueSubject: CurrentValueSubject<Changes<State>, Never>
 
-  private let cancellables: VergeAnyCancellable = .init()
+  /**
+   Holds subscriptions for sink State and Activity to finish them with its store life-cycle.
+   */
+  private let storeLifeCycleCancellable: VergeAnyCancellable = .init()
 
   open var keepsAliveForSubscribers: Bool { false }
-  
+
+  private let wasInvalidated = Atomics.ManagedAtomic(false)
+
   // MARK: - Deinit
   
   deinit {
-    Task { [taskManager, _valueSubject] in
-      // send completion in hop as Combine is using unfair lock (non-recursive). Avoid crash.
-      // It happens if the stream ratains this store, canceled that stream triggers this deinit operation.
-      // that deinit operation will be inside of locking session.
-      _valueSubject.send(completion: .finished)
-      await taskManager.cancelAll()
-    }
+    invalidate()
   }
 
 
@@ -209,6 +210,26 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
 
   }
 
+  final func invalidate() {
+    guard wasInvalidated.compareExchange(expected: false, desired: true, ordering: .relaxed).exchanged else {
+      // already invalidated
+      return
+    }
+    performInvalidation()
+  }
+
+  func performInvalidation() {
+
+    storeLifeCycleCancellable.cancel()
+
+    Task { [taskManager, _valueSubject] in
+      // send completion in hop as Combine is using unfair lock (non-recursive). Avoid crash.
+      // It happens if the stream ratains this store, canceled that stream triggers this deinit operation.
+      // that deinit operation will be inside of locking session.
+      _valueSubject.send(completion: .finished)
+      await taskManager.cancelAll()
+    }
+  }
 }
 
 // MARK: - Typealias
@@ -326,7 +347,7 @@ extension Store {
         receive(activity)
       }
     }
-    return .init(cancellable)
+    return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
     
   }
 
@@ -649,10 +670,10 @@ Latest Version (%d): (%@)
     }
 
     if keepsAliveSource ?? keepsAliveForSubscribers {
-      return .init(cancellable)
+      return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
         .associate(store: self) // while subscribing its Store will be alive
     } else {
-      return .init(cancellable)
+      return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
     }
     
   }

@@ -47,6 +47,10 @@ extension DispatcherType {
       retainsUpstream: nil
     )
 
+    store.asStore().onDeinit { [weak derived] in
+      derived?.invalidate()
+    }
+
     return derived
   }
 
