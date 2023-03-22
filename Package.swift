@@ -57,7 +57,6 @@ let package = Package(
         .product(name: "RxCocoa", package: "RxSwift"),
       ]
     ),
-    //    .testTarget(name: "AsyncVergeTests", dependencies: ["AsyncVerge"]),
     .testTarget(
       name: "VergeTaskManagerTests",
       dependencies: [
