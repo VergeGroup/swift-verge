@@ -96,7 +96,7 @@ final class ConcurrencyTests: XCTestCase {
   func testEventOrder() {
     let store = DemoStore()
 
-    var bag = Set<VergeAnyCancellable>()
+    var bag = Set<AnyCancellable>()
 
     for i in 0 ..< 100 {
       do {

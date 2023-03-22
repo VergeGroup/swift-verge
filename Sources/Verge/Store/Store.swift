@@ -95,6 +95,8 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
       
   private let _valueSubject: CurrentValueSubject<Changes<State>, Never>
 
+  private let cancellables: VergeAnyCancellable = .init()
+
   open var keepsAliveForSubscribers: Bool { false }
   
   // MARK: - Deinit
@@ -316,7 +318,7 @@ extension Store {
   func _primitive_sinkActivity(
     queue: some TargetQueueType,
     receive: @escaping (Activity) -> Void
-  ) -> VergeAnyCancellable {
+  ) -> StoreSubscription {
     
     let execute = queue.execute
     let cancellable = self._sinkActivityEvent { activity in
@@ -534,7 +536,7 @@ Mutation: (%@)
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<State>) -> Void
-  ) -> VergeAnyCancellable {
+  ) -> StoreSubscription {
     
     let executor = queue.execute
     
@@ -648,7 +650,7 @@ Latest Version (%d): (%@)
 
     if keepsAliveSource ?? keepsAliveForSubscribers {
       return .init(cancellable)
-        .associate(self) // while subscribing its Store will be alive
+        .associate(store: self) // while subscribing its Store will be alive
     } else {
       return .init(cancellable)
     }
@@ -660,7 +662,7 @@ Latest Version (%d): (%@)
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<State>, Accumulate) -> Void
-  ) -> VergeAnyCancellable {
+  ) -> StoreSubscription {
     
     _primitive_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       
@@ -759,4 +761,3 @@ extension Store {
   }
   
 }
-

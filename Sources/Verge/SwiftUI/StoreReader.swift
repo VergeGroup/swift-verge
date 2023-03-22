@@ -145,7 +145,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
     private var detectors: ReadTracker.Detectors?
     
     private let _publisher: ObservableObjectPublisher = .init()
-    private var cancellable: VergeAnyCancellable?
+    private var cancellable: StoreSubscription?
     private let retainValues: [AnyObject]
     
     private var currentValue: Changes<StateType>
