@@ -21,11 +21,28 @@
 <img alt="Tests" src="https://github.com/VergeGroup/Verge/workflows/Tests/badge.svg"/>
 </p>
 
-# Support this projects
+## Support this projects
 <a href="https://www.buymeacoffee.com/muukii">
 <img width="160" alt="yellow-button" src="https://user-images.githubusercontent.com/1888355/146226808-eb2e9ee0-c6bd-44a2-a330-3bbc8a6244cf.png">
 </a>
 
+## Introduction
+
+Verge is a library that provides a store-pattern, which is a primitive concept of flux and redux, but with a stronger focus on it.  
+The store-pattern doesn't specify how to manage actions to modify the state. It just focuses on sharing the state between components using a single source of truth.
+
+Verge provides only a commit function to modify the state, which accepts a closure to describe how to change it.  
+If you prefer a more strict way, such as using an enum-based action to indicate how to modify the state, you can create a layer on top of Verge.
+
+One of the notable features of Verge is that it can work with multi-threading, making it faster, safer, and more efficient.  
+It supports both UIKit and SwiftUI, making it versatile for different application types.
+
+Verge also provides tool APIs to handle real-world application development use cases, such as managing asynchronous operations.  
+Additionally, it focuses on the hardest things to use the store-pattern in large and complex applications, such as the cost of updating the state in complex applications, where the state structure will be large and take a lot of computing resources to make a copy.
+
+Another important feature of Verge is providing an ORM to manage a lot of entities in an efficient way. When using this kind of design pattern, it's essential to use normalizing techniques to store entities into the state.
+
+Overall, Verge is a framework that works best for business-focused applications.
 
 ## Requirements
 
@@ -311,7 +328,7 @@ For example, Verge provides these stuff to tune performance up.
 - Derived (Similar to [facebookexperimental/Recoil](https://github.com/facebookexperimental/Recoil)'s Selector)
 - ORM
 
-### Sending volatile events instead of using state
+## Sending volatile events instead of using state
 
 In certain scenarios, event-driven programming is essential for creating responsive and efficient applications. The Verge library's Activity of Store feature is designed to cater to this need, allowing developers to handle events seamlessly within their projects.
 
