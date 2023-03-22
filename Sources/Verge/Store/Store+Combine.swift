@@ -35,17 +35,17 @@ extension Store {
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
   public func statePublisher() -> some Combine.Publisher<Changes<Value>, Never> {
-    valuePublisher
+
+    return valuePublisher
       .dropFirst()
-      .handleEvents(receiveCancel: {        
-        // retain self until subscription finsihed
-        withExtendedLifetime(self) {}
-      })
+      .associate(resource: self, retains: keepsAliveForSubscribers)
       .merge(with: Just(state.droppedPrevious()))
   }
 
   public func activityPublisher() -> some Combine.Publisher<Activity, Never> {
-    publisher
+
+    return publisher
+      .associate(resource: self, retains: keepsAliveForSubscribers)
       .flatMap { event in
         guard case .activity(let a) = event else {
           return Empty<Activity, Never>().eraseToAnyPublisher()
@@ -59,6 +59,33 @@ extension Store {
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 extension DispatcherBase: ObservableObject {
 
+}
+
+extension Publisher {
+
+  func associate(resource: AnyObject, retains: Bool) -> some Publisher<Output, Failure> {
+
+    let box = ResourceBox(object: resource, retains: retains)
+
+    return handleEvents(receiveCancel: {
+      // retain self until subscription finsihed
+      withExtendedLifetime(box) {}
+    })
+  }
+
+}
+
+fileprivate final class ResourceBox {
+
+  private let object: AnyObject?
+
+  init(object: AnyObject, retains: Bool) {
+    if retains {
+      self.object = object
+    } else {
+      self.object = nil
+    }
+  }
 }
 
 #endif

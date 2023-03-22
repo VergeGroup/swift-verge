@@ -221,7 +221,7 @@ extension EventEmitter {
     }
 
     public func request(_ demand: Subscribers.Demand) {
-
+      // TODO: implement
     }
 
     public func cancel() {
