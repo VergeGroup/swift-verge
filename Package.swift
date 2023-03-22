@@ -21,6 +21,7 @@ let package = Package(
     .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.0.0"),
     .package(url: "https://github.com/apple/swift-docc-plugin.git", branch: "main"),
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
+    .package(url: "https://github.com/apple/swift-collections", from: "1.0.4"),
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.9.3"),
@@ -37,6 +38,7 @@ let package = Package(
       name: "Verge",
       dependencies: [
         .product(name: "Atomics", package: "swift-atomics"),
+        .product(name: "DequeModule", package: "swift-collections"),
         "VergeTaskManager",
       ]
     ),
