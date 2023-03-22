@@ -207,6 +207,15 @@ public final class StoreSubscription: Hashable, Cancellable {
     assert(wasCancelled.load(ordering: .relaxed) == false)
   }
 
+  /**
+   Converts to Combine.AnyCancellable to make it auto cancellable.
+   */
+  public func asAny() -> AnyCancellable {
+    return .init { [self] in
+      self.cancel()
+    }
+  }
+
   deinit {
     cancel()
   }

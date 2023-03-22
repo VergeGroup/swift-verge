@@ -28,6 +28,32 @@ final class StoreSinkSubscriptionTests: XCTestCase {
 
   }
 
+  func test_Store_sinkState_canceled_by_others() {
+
+    var cancellable: StoreSubscription?
+
+    let storeRef = withReference(DemoStore())
+    let resourceRef = withReference(Resource())
+
+    cancellable = storeRef.value!
+      .sinkState { [ref = resourceRef.value!] _ in
+
+        withExtendedLifetime(ref) {}
+      }
+      .storeWhileSourceActive()
+
+    resourceRef.release()
+
+    XCTAssertNotNil(storeRef.value)
+    XCTAssertNotNil(resourceRef.value)
+
+    cancellable?.cancel()
+
+    XCTAssertNotNil(storeRef.value)
+    XCTAssertNil(resourceRef.value)
+
+  }
+
   func test_Store_sinkActivity_stops_on_store_deallocated() {
 
     let storeRef = withReference(DemoStore())
