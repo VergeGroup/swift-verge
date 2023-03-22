@@ -63,6 +63,7 @@ Please feel free to ask us about how to use and how to migrate.
 ## Usage
 
 **Creating a Store**
+
 To create a Verge store, you need to define your state and initialize the store with an initial state. Here's an example of how to create a store with a CounterState:
 
 ```swift
@@ -77,6 +78,7 @@ In this example, we defined a CounterState struct that has a count property, and
 ```
 
 **Updating the State**
+
 To update the state in Verge, you use the commit function on the store. The commit function takes a closure that describes how to modify the state. Here's an example of how to update the state by incrementing the count:
 
 ```swift
