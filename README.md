@@ -72,8 +72,6 @@ final class CropViewController: UIViewController {
   
   private let store: Store<State, Never> = .init(initialState: .init())
 
-  private var subscriptions = Set<VergeAnyCancellable>()
-
   override public func viewDidLoad() {
     
     store.sinkState { [weak self] state in 
@@ -84,7 +82,8 @@ final class CropViewController: UIViewController {
       }
 
     }
-    .store(in: &subscriptions)
+    .storeWhileSourceActive()
+    
   }
 
   func showAspectRatioSelection() {
