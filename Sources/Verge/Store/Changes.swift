@@ -130,7 +130,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   public let traces: [MutationTrace]
   public let modification: InoutRef<Value>.Modification?
   
-  public let transaction: Transaction
+  public let _transaction: Transaction
 
   // MARK: - Initializers
 
@@ -161,7 +161,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     self.version = version
     self.traces = traces
     self.modification = modification
-    self.transaction = transaction
+    self._transaction = transaction
 
     vergeSignpostEvent("Changes.init", label: "\(type(of: self))")
   }
@@ -180,7 +180,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       version: version,
       traces: traces,
       modification: nil,
-      transaction: transaction
+      transaction: _transaction
     )
   }
 
@@ -217,7 +217,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       version: version,
       traces: traces,
       modification: nil,
-      transaction: transaction
+      transaction: _transaction
     )
   }
 
@@ -236,7 +236,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
       version: version,
       traces: traces,
       modification: nil,
-      transaction: transaction
+      transaction: _transaction
     )
 
   }
@@ -526,7 +526,7 @@ extension Changes: CustomReflectable {
         "version": version,
         "previous": previous as Any,
         "primitive": primitive,
-        "transaction": transaction,
+        "transaction": _transaction,
         "traces": traces,
         "modification": modification as Any,
       ],

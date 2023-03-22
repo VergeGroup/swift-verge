@@ -22,15 +22,23 @@
 import Foundation
 
 // It would be renamed as StoreContextType
-public protocol DispatcherType: AnyObject {
+public protocol DispatcherType<Scope>: AnyObject where State == WrappedStore.State, Activity == WrappedStore.Activity {
+
   associatedtype WrappedStore: StoreType
   associatedtype Scope: Equatable = WrappedStore.State
 
-  typealias State = WrappedStore.State
-  typealias Activity = WrappedStore.Activity
+  associatedtype State = WrappedStore.State
+  associatedtype Activity = WrappedStore.Activity
 
   var store: WrappedStore { get }
   var scope: WritableKeyPath<WrappedStore.State, Scope> { get }
+}
+
+extension DispatcherType {
+  /// A state that cut out from root-state with the scope key path.
+  public var state: Changes<Scope> {
+    store.asStore().state.map { $0[keyPath: scope] }
+  }
 }
 
 extension DispatcherType where Scope == State {

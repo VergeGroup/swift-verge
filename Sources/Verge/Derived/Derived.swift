@@ -62,13 +62,14 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   }
   
   /// A current changes state.
+  @available(*, deprecated, renamed: "state")
   public var value: Changes<Value> {
     state
   }
 
-  fileprivate let _set: ((Value) -> Void)?
+  fileprivate var _set: ((Value) -> Void)?
   
-  private let upstreamSubscription: VergeAnyCancellable
+  private let upstreamSubscription: (any CancellableType)?
   private let retainsUpstream: Any?
   private var associatedObjects: ContiguousArray<AnyObject> = .init()
   
@@ -76,7 +77,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
 
   private init(constant: Value) {
     self._set = { _ in }
-    self.upstreamSubscription = .init(onDeinit: {})
+    self.upstreamSubscription = nil
     self.retainsUpstream = nil
     super.init(
       name: nil,
@@ -94,53 +95,9 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   ///   - initialUpstreamState: Initial value of the `UpstreamState`
   ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
   ///   - retainsUpstream: Any instances to retain in this instance.
-  public init<UpstreamState, Pipeline: PipelineType>(
-    get pipeline: Pipeline,
-    set: ((Pipeline.Output) -> Void)?,
-    initialUpstreamState: UpstreamState,
-    subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
-    retainsUpstream: Any?
-  ) where Pipeline.Input == UpstreamState, Value == Pipeline.Output {
-
-    weak var indirectSelf: Derived<Value>?
-
-    let s = subscribeUpstreamState { value in
-      let update = pipeline.yieldContinuously(value)
-      switch update {
-      case .noUpdates:
-        break
-      case .new(let newState):
-        // TODO: Take over state.modification & state.mutation
-        indirectSelf?.commit {
-          $0.replace(with: newState)
-        }
-      }
-    }
-
-    self.retainsUpstream = retainsUpstream
-    self.upstreamSubscription = VergeAnyCancellable.init(s)
-    self._set = set
-
-    super.init(
-      name: nil,
-      initialState: pipeline.yield(initialUpstreamState),
-      logger: nil,
-      sanitizer: nil
-    )
-
-    indirectSelf = self
-  }
-  
-  /// Low-level initializer
-  /// - Parameters:
-  ///   - get: MemoizeMap to make a `Value` from `UpstreamState`
-  ///   - set: A closure to apply new-value to `UpstreamState`, it will need in creating `BindingDerived`.
-  ///   - initialUpstreamState: Initial value of the `UpstreamState`
-  ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
-  ///   - retainsUpstream: Any instances to retain in this instance.
   public init<UpstreamState: HasTraces, Pipeline: PipelineType>(
     get pipeline: Pipeline,
-    set: ((Pipeline.Output) -> Void)?,
+    set: ((Value) -> Void)?,
     initialUpstreamState: UpstreamState,
     subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
     retainsUpstream: Any?
@@ -154,16 +111,22 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       case .noUpdates:
         break
       case .new(let newState):
+        guard let indirectSelf = indirectSelf else {
+          return
+        }
+
         // TODO: Take over state.modification & state.mutation
-        indirectSelf?.commit("Derived") {
+        indirectSelf.commit("Derived") {
+          $0._transaction.isDerivedFromUpstream = true
           $0.append(traces: value.traces)
           $0.replace(with: newState)
         }
+
       }
     }
         
     self.retainsUpstream = retainsUpstream
-    self.upstreamSubscription = VergeAnyCancellable(s)
+    self.upstreamSubscription = s
     self._set = set
     super.init(
       name: nil,
@@ -177,10 +140,17 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   }
 
   deinit {
-
+    self.upstreamSubscription?.cancel()
   }
   
   // MARK: - Functions
+
+  public final override func stateDidUpdate(newState: Changes<Value>) {
+    // projects this update into upstream state
+    if let _set, newState._transaction.isDerivedFromUpstream == false {
+      _set(newState.primitive)
+    }
+  }
   
   public func asDerived() -> Derived<Value> {
     self
@@ -196,96 +166,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     receive: @escaping (Changes<Value>) -> Void
   ) -> VergeAnyCancellable {
     _primitive_sinkState(
-      dropsFirst: dropsFirst,
-      queue: queue,
-      receive: receive
-    )
-  }
-
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - dropsFirst: Drops the latest value on start. if true, receive closure will be called next time state is updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkState")
-  public func sinkValue(
-    dropsFirst: Bool = false,
-    queue: some TargetQueueType,
-    receive: @escaping (Changes<Value>) -> Void
-  ) -> VergeAnyCancellable {
-    sinkState(
-      dropsFirst: dropsFirst,
-      queue: queue,
-      receive: receive
-    )
-  }
-  
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - dropsFirst: Drops the latest value on start. if true, receive closure will be called next time state is updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkState")
-  public func sinkValue(
-    dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (Changes<Value>) -> Void
-  ) -> VergeAnyCancellable {
-    sinkState(
-      dropsFirst: dropsFirst,
-      queue: queue,
-      receive: receive
-    )
-  }
-
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - scan: Accumulates a specified type of value over receiving updates.
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkState")
-  public func sinkValue<Accumulate>(
-    scan: Scan<Changes<Value>, Accumulate>,
-    dropsFirst: Bool = false,
-    queue: some TargetQueueType,
-    receive: @escaping (Changes<Value>, Accumulate) -> Void
-  ) -> VergeAnyCancellable {
-    sinkState(
-      scan: scan,
-      dropsFirst: dropsFirst,
-      queue: queue,
-      receive: receive
-    )
-  }
-  
-  /// Subscribe the state changes
-  ///
-  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
-  ///
-  /// - Parameters:
-  ///   - scan: Accumulates a specified type of value over receiving updates.
-  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
-  ///   - queue: Specify a queue to receive changes object.
-  /// - Returns: A subscriber that performs the provided closure upon receiving values.
-  @available(*, deprecated, renamed: "sinkState")
-  public func sinkValue<Accumulate>(
-    scan: Scan<Changes<Value>, Accumulate>,
-    dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (Changes<Value>, Accumulate) -> Void
-  ) -> VergeAnyCancellable {
-    sinkState(
-      scan: scan,
       dropsFirst: dropsFirst,
       queue: queue,
       receive: receive
@@ -313,7 +193,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     let d = Derived<Pipeline.Output>(
       get: pipeline,
       set: { _ in },
-      initialUpstreamState: value,
+      initialUpstreamState: state,
       subscribeUpstreamState: { callback in
         self._primitive_sinkState(
           dropsFirst: true,
@@ -396,7 +276,7 @@ extension Derived where Value == Never {
     queue: some TargetQueueType = .passthrough
   ) -> Derived<Edge<(Changes<S0>, Changes<S1>)>> {
         
-    let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.value, s1.value)))
+    let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.state, s1.state)))
     
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
         
@@ -460,7 +340,7 @@ extension Derived where Value == Never {
     queue: some TargetQueueType = .passthrough
   ) -> Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>> {
         
-    let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.value, s1.value, s2.value)))
+    let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.state, s1.state, s2.state)))
     
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
     
@@ -543,11 +423,9 @@ public final class BindingDerived<Value: Equatable>: Derived<Value> {
   public override var primitiveValue: Value {
     get { primitiveState }
     set {
-      guard let set = _set else {
-        assertionFailure("Setter closure is unset. NewValue won't be applied. \(newValue)")
-        return
+      commit {
+        $0.replace(with: newValue)
       }
-      set(newValue)
     }
   }
 
@@ -565,5 +443,18 @@ public final class BindingDerived<Value: Equatable>: Derived<Value> {
   public var projectedValue: BindingDerived<Value> {
     self
   }
+
+}
+
+fileprivate enum DerivedFromUpstream: TransactionKey {
+  static var defaultValue: Bool { false }
+}
+
+extension Transaction {
+
+    var isDerivedFromUpstream: Bool {
+      get { self[DerivedFromUpstream.self] }
+      set { self[DerivedFromUpstream.self] = newValue }
+    }
 
 }

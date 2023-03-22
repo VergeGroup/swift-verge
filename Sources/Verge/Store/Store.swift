@@ -173,7 +173,8 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     }
     
   }
-  
+
+  @_spi(Internal)
   public final override func receiveEvent(_ event: _StoreEvent<State, Activity>) {
     
     switch event {
@@ -189,12 +190,17 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
         }
       case .didUpdate(let state):
         _valueSubject.send(state)
+        stateDidUpdate(newState: state)
       }
     case .activity:
       break
     }
   }
-  
+
+  open func stateDidUpdate(newState: Changes<State>) {
+
+  }
+
 }
 
 // MARK: - Typealias
@@ -454,7 +460,7 @@ extension Store {
             with: stateMutablePointer.pointee,
             from: inoutRef.traces,
             modification: inoutRef.modification ?? .indeterminate,
-            transaction: inoutRef.transaction
+            transaction: inoutRef._transaction
           )
           middleware.modify(modifyingState: &inoutRef, current: intermediate)
         }
@@ -466,7 +472,7 @@ extension Store {
           with: stateMutablePointer.pointee,
           from: inoutRef.traces,
           modification: inoutRef.modification ?? .indeterminate,
-          transaction: inoutRef.transaction
+          transaction: inoutRef._transaction
         )
         
         if __sanitizer__.isRecursivelyCommitDetectionEnabled {
