@@ -209,6 +209,10 @@ extension EventEmitter {
 
       self.subscriber = subscriber
       self.eventEmitter = eventEmitter
+
+      eventEmitter?.onDeinit {
+        subscriber.receive(completion: .finished)
+      }
           
       self.eventEmitterSubscription = eventEmitter?
         .addEventHandler { (event) in
@@ -217,7 +221,7 @@ extension EventEmitter {
     }
 
     public func request(_ demand: Subscribers.Demand) {
-
+      // TODO: implement
     }
 
     public func cancel() {

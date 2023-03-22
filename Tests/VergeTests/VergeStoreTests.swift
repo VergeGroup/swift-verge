@@ -339,7 +339,7 @@ final class VergeStoreTests: XCTestCase {
   
   func testSubscription() {
     
-    var subscriptions = Set<VergeAnyCancellable>()
+    var subscriptions = Set<AnyCancellable>()
     var count = 0
     
     store.sinkState(queue: .passthrough) { (changes) in
@@ -453,7 +453,7 @@ final class VergeStoreTests: XCTestCase {
     }
 
     let store: Verge.Store<State, Never>
-    var sub: VergeAnyCancellable? = nil
+    var sub: StoreSubscription? = nil
 
     init(sourceStore: DemoStore) {
 

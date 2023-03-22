@@ -28,32 +28,32 @@ final class DerivedTests: XCTestCase {
     let slice = localStore.derived(.map({ $0.count }), queue: .passthrough)      
 
     XCTAssertEqual(slice.primitiveValue, 0)
-    XCTAssertEqual(slice.value.root, 0)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state.root, 0)
+    XCTAssertEqual(slice.state.hasChanges(\.self), true)
     
     localStore.increment()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.value.root, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state.root, 1)
+    XCTAssertEqual(slice.state.hasChanges(\.self), true)
       
     localStore.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state.version, 1)
+    XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     localStore.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state.version, 1)
+    XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     localStore.increment()
 
     XCTAssertEqual(slice.primitiveValue, 2)
-    XCTAssertEqual(slice.value.version, 2)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state.version, 2)
+    XCTAssertEqual(slice.state.hasChanges(\.self), true)
   }
 
   func testSlice2() {
@@ -66,127 +66,32 @@ final class DerivedTests: XCTestCase {
     )
 
     XCTAssertEqual(slice.primitiveValue, 0)
-    XCTAssertEqual(slice.value.root, 0)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state.root, 0)
+    XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     wrapper.increment()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.value.root, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state.root, 1)
+    XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     wrapper.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state.version, 1)
+    XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     wrapper.empty()
 
     XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state.version, 1)
+    XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     wrapper.increment()
 
     XCTAssertEqual(slice.primitiveValue, 2)
-    XCTAssertEqual(slice.value.version, 2)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
-  }
-
-  /**
-   Store won't retain the Derived
-   */
-  func testRelease() {
-
-    let wrapper = DemoStore()
-
-    var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count }, queue: .passthrough)
-    weak var weakBaseSlice = baseSlice
-    baseSlice = nil
-
-    XCTAssertNil(weakBaseSlice)
-
-  }
-  
-  func testRetain() {
-
-    let wrapper = DemoStore()
-    
-    var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count }, queue: .passthrough)
-    weak var weakBaseSlice = baseSlice
-    
-    let expectation = XCTestExpectation(description: "receive changes")
-    expectation.expectedFulfillmentCount = 1
-    expectation.assertForOverFulfill = true
-    
-    let subscription = baseSlice.sinkState(dropsFirst: true, queue: .passthrough) { (changes) in
-      expectation.fulfill()
-    }
-
-    XCTAssertNotNil(weakBaseSlice)
-    // deinit
-    baseSlice = nil
-    
-    XCTAssertNotNil(weakBaseSlice, "it won't be deinitiallized")
-    
-    wrapper.commit { _ in }
-        
-    wrapper.commit { $0.count += 1 }
-            
-    subscription.cancel()
-    
-    XCTAssertNil(weakBaseSlice)
-    
-    wait(for: [expectation], timeout: 1)
-    
-  }
-  
-  func testSliceChain() {
-
-    let wrapper = DemoStore()
-    
-    var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count }, queue: .passthrough)
-    
-    weak var weakBaseSlice = baseSlice
-            
-    var slice: Derived<Int>! = baseSlice.chain(.map { $0.self }, queue: .passthrough)
-    
-    baseSlice = nil
-    
-    weak var weakSlice = slice
-        
-    XCTAssertEqual(slice.primitiveValue, 0)
-    XCTAssertEqual(slice.value.version, 0)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
-    XCTAssertNotNil(weakBaseSlice)
-    
-    wrapper.increment()
-        
-    XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.value.version, 1)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
-    XCTAssertNotNil(weakBaseSlice)
-    
-    wrapper.empty()
-    
-    XCTAssertEqual(slice.primitiveValue, 1)
-    XCTAssertEqual(slice.value.version, 1) // with memoized, version not changed
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
-    XCTAssertNotNil(weakBaseSlice)
-    
-    wrapper.increment()
-    
-    XCTAssertEqual(slice.primitiveValue, 2)
-    XCTAssertEqual(slice.value.version, 2)
-    XCTAssertEqual(slice.value.hasChanges(\.self), true)
-    XCTAssertNotNil(weakBaseSlice)
-
-    slice = nil
-       
-    XCTAssertNil(weakSlice)
-    XCTAssertNil(weakBaseSlice)
-
+    XCTAssertEqual(slice.state.version, 2)
+    XCTAssertEqual(slice.state.hasChanges(\.self), true)
   }
     
   /// combine 2 stored

@@ -93,6 +93,7 @@ extension DispatcherType {
       initialUpstreamState: store.asStore().state,
       subscribeUpstreamState: { callback in
         store.asStore()._primitive_sinkState(
+          keepsAliveSource: false,
           dropsFirst: true,
           queue: queue,
           receive: callback
@@ -100,6 +101,10 @@ extension DispatcherType {
       },
       retainsUpstream: nil
     )
+
+    store.asStore().onDeinit { [weak derived] in
+      derived?.invalidate()
+    }
 
     return derived
   }

@@ -1,5 +1,8 @@
-/// A typealias to `Set<VergeAnyCancellable>`.
-public typealias VergeAnyCancellables = Set<VergeAnyCancellable>
+import Combine
+@_implementationOnly import Atomics
+
+/// A typealias to `Set<AnyCancellable>`.
+public typealias VergeAnyCancellables = Set<AnyCancellable>
 
 /// A type-erasing cancellable object that executes a provided closure when canceled.
 /// An AnyCancellable instance automatically calls cancel() when deinitialized.
@@ -21,7 +24,7 @@ public typealias VergeAnyCancellables = Set<VergeAnyCancellable>
 ///
 /// }
 /// ```
-public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Sendable {
+public final class VergeAnyCancellable: Hashable, Cancellable, @unchecked Sendable {
 
   private let lock = VergeConcurrency.UnfairLock()
 
@@ -38,22 +41,21 @@ public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Se
   private var actions: ContiguousArray<() -> Void>? = .init()
   private var retainObjects: ContiguousArray<AnyObject> = .init()
 
-  public init(onDeinit: @escaping () -> Void) {
+  public init() {
+  }
+
+  public convenience init(onDeinit: @escaping () -> Void) {
+    self.init()
     self.actions = [onDeinit]
   }
 
-  public convenience init<C>(_ cancellable: C) where C : CancellableType {
+  public convenience init<C>(_ cancellable: C) where C : Cancellable {
     self.init {
       cancellable.cancel()
     }
   }
 
-  public convenience init(_ cancellable: CancellableType) {
-    self.init {
-      cancellable.cancel()
-    }
-  }
-
+  @discardableResult
   public func associate(_ object: AnyObject) -> VergeAnyCancellable {
 
     lock.lock()
@@ -68,7 +70,7 @@ public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Se
     return self
   }
 
-  public func insert(_ cancellable: CancellableType) {
+  public func insert(_ cancellable: Cancellable) {
 
     lock.lock()
     defer {
@@ -140,51 +142,61 @@ public final class VergeAnyCancellable: Hashable, CancellableType, @unchecked Se
 /// }
 /// ```
 ///
-public protocol CancellableType {
+@available(*, deprecated, renamed: "Cancellable", message: "Integrated with Combine")
+public typealias CancellableType = Cancellable
 
-  func cancel()
-}
+public final class StoreSubscription: Cancellable {
 
-extension CancellableType {
+  private let wasCancelled = ManagedAtomic(false)
 
-  public func asAutoCancellable() -> VergeAnyCancellable {
-    .init(self)
-  }
-}
+  private let source: EventEmitterCancellable
+  private weak var storeCancellable: VergeAnyCancellable?
+  private var associatedStore: (any StoreType)?
 
-extension CancellableType {
-
-  /// Stores this cancellable instance in the specified collection.
-  ///
-  /// According to Combine.framework API Design.
-  public func store<C>(in collection: inout C) where C : RangeReplaceableCollection, C.Element == VergeAnyCancellable {
-    collection.append(.init(self))
+  init(
+    _ eventEmitterCancellable: EventEmitterCancellable,
+    storeCancellable: VergeAnyCancellable
+  ) {
+    self.source = eventEmitterCancellable
+    self.storeCancellable = storeCancellable
   }
 
-  /// Stores this cancellable instance in the specified set.
-  ///
-  /// According to Combine.framework API Design.
-  public func store(in set: inout Set<VergeAnyCancellable>) {
-    set.insert(.init(self))
+  public func cancel() {
+
+    guard wasCancelled.compareExchange(expected: false, desired: true, ordering: .relaxed).exchanged else { return }
+
+    source.cancel()
+    associatedStore = nil
   }
 
-}
-
-#if canImport(Combine)
-
-import Combine
-
-extension CancellableType {
-
-  /// Interop with Combine
-  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-  public func store(in set: inout Set<AnyCancellable>) {
-    set.insert(AnyCancellable.init {
-      self.cancel()
-    })
+  func associate(store: some StoreType) -> StoreSubscription {
+    ensureAlive()
+    associatedStore = store
+    return self
   }
 
-}
+  /**
+   Make this subscription alive while the source is active.
+   the source means a root data store which is Store.
 
-#endif
+   In case of Derived, the source will be Derived's upstream.
+   If the upstream invalidated, this subscription will stop.
+   */
+  @discardableResult
+  public func storeWhileSourceActive() -> StoreSubscription {
+    ensureAlive()
+    assert(storeCancellable != nil)
+    storeCancellable?.associate(self)
+    return self
+  }
+
+  @inline(__always)
+  private func ensureAlive() {
+    assert(wasCancelled.load(ordering: .relaxed) == false)
+  }
+
+  deinit {
+    cancel()
+  }
+}
 

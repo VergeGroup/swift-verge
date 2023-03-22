@@ -22,7 +22,16 @@
 import class Foundation.NSString
 
 extension DispatcherType {
-  
+
+  /**
+   Creates a derived state object from a given pipeline.
+
+   This function can be used to create a Derived object that contains only a selected part of the state. The selected part is determined by a pipeline that is passed in as an argument.
+
+   - Parameters:
+     - pipeline: The pipeline object that selects a part of the state to be passed to other components.
+     - queue: The target queue for dispatching events.
+   */
   public func derived<Pipeline: PipelineType>(
     _ pipeline: Pipeline,
     queue: some TargetQueueType = .passthrough
@@ -37,10 +46,19 @@ extension DispatcherType {
       },
       initialUpstreamState: store.asStore().state,
       subscribeUpstreamState: { callback in
-        store.asStore()._primitive_sinkState(dropsFirst: true, queue: queue, receive: callback)
+        store.asStore()._primitive_sinkState(
+          keepsAliveSource: false,
+          dropsFirst: true,
+          queue: queue,
+          receive: callback
+        )
       },
       retainsUpstream: nil
     )
+
+    store.asStore().onDeinit { [weak derived] in
+      derived?.invalidate()
+    }
 
     return derived
   }

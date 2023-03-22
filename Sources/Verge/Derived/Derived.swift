@@ -48,6 +48,10 @@ public protocol DerivedType<State>: StoreType {
  */
 public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unchecked Sendable {
 
+  public override var keepsAliveForSubscribers: Bool {
+    true    
+  }
+
   /// Returns Derived object that provides constant value.
   ///
   /// - Parameter value:
@@ -72,7 +76,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   private let upstreamSubscription: (any CancellableType)?
   private let retainsUpstream: Any?
   private var associatedObjects: ContiguousArray<AnyObject> = .init()
-  
+
   // MARK: - Initializers
 
   private init(constant: Value) {
@@ -140,10 +144,15 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   }
 
   deinit {
-    self.upstreamSubscription?.cancel()
+    
   }
   
   // MARK: - Functions
+
+  override func performInvalidation() {
+    super.performInvalidation()
+    self.upstreamSubscription?.cancel()
+  }
 
   public final override func stateDidUpdate(newState: Changes<Value>) {
     // projects this update into upstream state
@@ -164,7 +173,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<Value>) -> Void
-  ) -> VergeAnyCancellable {
+  ) -> StoreSubscription {
     _primitive_sinkState(
       dropsFirst: dropsFirst,
       queue: queue,
@@ -232,7 +241,7 @@ extension Derived where Value : Equatable {
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Value) -> Void
-  ) -> VergeAnyCancellable {
+  ) -> StoreSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       changes.ifChanged { value in
         receive(value)
@@ -249,7 +258,7 @@ extension Derived where Value : Equatable {
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Value) -> Void
-  ) -> VergeAnyCancellable {
+  ) -> StoreSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       changes.ifChanged { value in
         receive(value)

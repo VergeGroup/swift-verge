@@ -38,11 +38,15 @@ struct DemoState: Equatable, Sendable {
 
 }
 
+enum DemoActivity {
+  case something
+}
+
 #if canImport(Verge)
 
 import Verge
 
-final class DemoStore: Verge.Store<DemoState, Never> {
+final class DemoStore: Verge.Store<DemoState, DemoActivity> {
 
   init() {
     super.init(initialState: .init(), logger: nil)
