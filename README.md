@@ -56,25 +56,9 @@ Overall, Verge is a framework that works best for business-focused applications.
 Verge might be updated without migration guide as we are not sure how many projects are using this library.
 Please feel free to ask us about how to use and how to migrate.  
 
-## Verge is a framework for store-pattern software development
-
-Verge is a performant store-pattern based state management library for iOS.
-
-[And the article about store-pattern](https://medium.com/eureka-engineering/verge-start-store-pattern-state-management-before-beginning-flux-in-uikit-ios-app-development-6c74d4413829)
-
-### What store-pattern is
-
-The word 'store-pattern' is used on [Vue.js documentation](https://vuejs.org/v2/guide/state-management.html#Simple-State-Management-from-Scratch) that about how we manage the state between multiple components.
-
 ## Projects which use Verge
 
 - [Pairs for JP](https://apps.apple.com/app/id583376064)
-- [Pairs for TW/KR](https://apps.apple.com/app/id825433065)
-- [Pairs Engage](https://apps.apple.com/app/id1456982763)
-- 👉 YOUR APP or PROJECT!
-
-**We're welcome to publish here your application which powered by Verge!**  
-Please Submit from Pull requests
 
 ## Minimal usage example - In UIView - UIViewController
 
