@@ -16,7 +16,7 @@ final class StoreSinkTests: XCTestCase {
       UI()
     }
 
-    _ = store.sinkState(queue: .main) { _ in
+    _ = store.sinkState(queue: .main) { @MainActor _ in
       UI()
     }
 

@@ -259,7 +259,7 @@ extension Derived where Value : Equatable {
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Value) -> Void
   ) -> StoreSubscription {
-    sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+    sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor changes in
       changes.ifChanged { value in
         receive(value)
       }

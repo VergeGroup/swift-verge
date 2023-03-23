@@ -195,7 +195,7 @@ extension DispatcherType {
   ) -> StoreSubscription {
     let _scope = scope
 
-    return store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue) { state in
+    return store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor state in
       receive(state.map { $0[keyPath: _scope] })
     }
   }
@@ -238,7 +238,7 @@ extension DispatcherType {
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<Scope>, Accumulate) -> Void
   ) -> StoreSubscription {
-    sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+    sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor changes in
       let accumulate = scan.accumulate(changes)
       receive(changes, accumulate)
     }
