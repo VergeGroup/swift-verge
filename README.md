@@ -26,203 +26,124 @@
 <img width="160" alt="yellow-button" src="https://user-images.githubusercontent.com/1888355/146226808-eb2e9ee0-c6bd-44a2-a330-3bbc8a6244cf.png">
 </a>
 
-## Introduction
+# Verge: A High-Performance, Scalable State Management Library for Swift
 
-Verge is a library that provides a store-pattern, which is a primitive concept of flux and redux, but with a stronger focus on it.  
-The store-pattern doesn't specify how to manage actions to modify the state. It just focuses on sharing the state between components using a single source of truth.
+Verge is a high-performance, scalable state management library for Swift, designed with real-world use cases in mind. It offers a lightweight and easy-to-use approach to managing your application state without the need for complex actions and reducers. This guide will walk you through the basics of using Verge in your Swift projects.
 
-Verge provides only a commit function to modify the state, which accepts a closure to describe how to change it.  
-If you prefer a more strict way, such as using an enum-based action to indicate how to modify the state, you can create a layer on top of Verge.
+## Key Concepts and Motivations
 
-One of the notable features of Verge is that it can work with multi-threading, making it faster, safer, and more efficient.  
-It supports both UIKit and SwiftUI, making it versatile for different application types.
+Verge was designed with the following concepts in mind:
 
-Verge also provides tool APIs to handle real-world application development use cases, such as managing asynchronous operations.  
-Additionally, it focuses on the hardest things to use the store-pattern in large and complex applications, such as the cost of updating the state in complex applications, where the state structure will be large and take a lot of computing resources to make a copy.
+- Inspired by the Flux library, but with a focus on providing a store-pattern as the core concept.
+- The store-pattern is a primitive concept found in Flux and Redux, focusing on sharing state between components using a single source of truth.
+- Verge does not dictate how to manage actions to modify the state. Instead, it provides a simple `commit` function that accepts a closure describing how to change the state.
+- Users can build additional layers on top of Verge, such as implementing enum-based actions for more structured state management.
+- Verge supports multi-threading, ensuring fast, safe, and efficient operation.
+- Compatible with both UIKit and SwiftUI.
+- Includes APIs for handling real-world application development use cases, such as managing asynchronous operations.
+- Addresses the complexity of updating state in large and complex applications.
+- Provides an ORM for efficient management of a large number of entities.
+- Designed for use in business-focused applications.
 
-Another important feature of Verge is providing an ORM to manage a lot of entities in an efficient way. When using this kind of design pattern, it's essential to use normalizing techniques to store entities into the state.
+### Getting Started
 
-Overall, Verge is a framework that works best for business-focused applications.
+## Getting Started
 
-## Requirements
+To use Verge, follow these steps:
 
-* Swift 5.7 +
-* @available(iOS 13, macOS 10.13, tvOS 10, watchOS 3)
-* UIKit
-* SwiftUI
+1. Define a state struct that conforms to the `Equatable` protocol.
+2. Instantiate a `Store` with your initial state.
+3. Update the state using the `commit` method on the store instance.
+4. Subscribe to state updates using the `sinkState` method.
 
-## Disclaimer
+## Defining Your State
 
-Verge might be updated without migration guide as we are not sure how many projects are using this library.
-Please feel free to ask us about how to use and how to migrate.  
+Create a state struct that represents the state of your application. Your state struct should conform to the `Equatable` protocol. This allows Verge to detect changes in your state and trigger updates as necessary.
 
-## Projects which use Verge
-
-- [Pairs for JP](https://apps.apple.com/app/id583376064)
-
-## Usage
-
-**Creating a Store**
-
-To create a Verge store, you need to define your state and initialize the store with an initial state. Here's an example of how to create a store with a CounterState:
+Example:
 
 ```swift
-// Define your state
-struct CounterState {
-    var count: Int = 0
-}
-
-// Initialize the store
-let store = Store<_, Never>(initialState: CounterState())
-In this example, we defined a CounterState struct that has a count property, and initialized the store with an initial state of CounterState().
-```
-
-**Updating the State**
-
-To update the state in Verge, you use the commit function on the store. The commit function takes a closure that describes how to modify the state. Here's an example of how to update the state by incrementing the count:
-
-```swift
-store.commit {
-  $0.count += 1
+struct MyState: Equatable {
+ var count: Int = 0 
 }
 ```
-In this example, we used the commit function to update the count property of the state. The closure passed to commit is called with a mutable reference to the current state, which is modified directly.
 
-That's it! With Verge, you can create stores and update your state with ease.
+## Instantiating a Store
 
-**Subscribing Store**
+Create a `Store` instance with the initial state of your application. The `Store` class takes two type parameters:
 
-To subscribe to the state updates of the store, you can use the sink method provided by the Store instance. The sink method allows you to listen to the state changes and execute a closure whenever the state is updated.
+- The first type parameter represents the state of your application.
+- The second type parameter represents any middleware you want to use with your store. If you don't need any middleware, use `Never`.
 
-Here's an example of how to use sink:
+Example:
 
 ```swift
-let store = Store<CounterState, Never>(initialState: CounterState())
+let store = Store<_, Never>(initialState: MyState())
+```
 
-store.sinkState { newState in
-    print("The new count is \(newState.count)")
+## Updating the State
+
+To update your application state, use the `commit` method on your `Store` instance. The `commit` method takes a closure with a single parameter, which is a mutable reference to your state. Inside the closure, modify the state as needed.
+
+Example:
+
+```swift
+store.commit {   
+  $0.count += 1 
+}
+```
+
+## Subscribing to State Updates
+
+To receive updates when the state changes, use the `sinkState` method on your `Store` instance. This method takes a closure that receives the updated state as its parameter. The closure will be called whenever the state changes.
+
+Example:
+
+```swift
+store.sinkState { state in
+  // Receives updates of the state
 }
 .storeWhileSourceActive()
-
-// Output: The current count is 0
-
-store.commit {
-  $0.count += 1
-}
-
-// Output: The new count is 1
-
-store.commit {
-  $0.count += 1
-}
-
-// Output: The new count is 2
 ```
 
-## Minimal usage example - In UIView - UIViewController
+The `storeWhileSourceActive()` call at the end is a method provided by Verge to automatically manage the lifetime of the subscription. It retains the subscription as long as the source (in this case, the `store` instance) is alive.
 
-State-management is everywhere, you can put a store and start state-management.
+That's it! You now know the basics of using Verge to manage the state in your Swift applications. For more advanced use cases and additional features, please refer to the official Verge documentation and GitHub repository.
+
+## Using Activity of Store for Event-Driven Programming
+
+In certain scenarios, event-driven programming is essential for creating responsive and efficient applications. The Verge library's Activity of Store feature is designed to cater to this need, allowing developers to handle events seamlessly within their projects.
+
+The Activity of Store comes into play when your application requires event-driven programming. It enables you to manage events and associated logic independently from the main store management, promoting a clean and organized code structure. This separation of concerns simplifies the overall development process and makes it easier to maintain and extend your application over time.
+
+By leveraging the Activity of Store functionality, you can efficiently handle events within your application while keeping the store management intact. This ensures that your application remains performant and scalable, enabling you to build robust and reliable Swift applications using the Verge library.
+
+Here's an example of using Activity of Store:
 
 ```swift
-final class CropViewController: UIViewController {
+let store: Store<MyState, MyActivity>
 
-  private struct State: Equatable {
-    var isSelectingAspectRatio = false
-  }
-  
-  private let store: Store<State, Never> = .init(initialState: .init())
-
-  override public func viewDidLoad() {
-    
-    store.sinkState { [weak self] state in 
-      guard let self = self else { return }
-      
-      state.ifChanged(\.isSelectingAspectRatio) { value in 
-        //
-      }
-
-    }
-    .storeWhileSourceActive()
-    
-  }
-
-  func showAspectRatioSelection() {
-    store.commit {
-      $0.isSelectingAspectRatio = true
-    }
-  }
-  
-  func hideAspectRatioSelection() {
-    store.commit {
-      $0.isSelectingAspectRatio = false
-    }
-  }
-}
+store.send(MyActivity.somethingHappened)
 ```
 
-## Advanced usage exmaple - UIKit / SwiftUI
-
-Creating a view-model (meaning Store)
-
 ```swift
-final class MyViewModel: StoreComponentType {
-
-  /// 💡 The state declaration can be aslo inner-type.
-  /// As possible adding Equatable for better performance.
-  struct State: Equatable {
-  
-    struct NestedState: Equatable {
-      ...
-    }
-    
-    var name: String = ""
-    var count: Int = 0
-    
-    var nested: NestedState = .init()  
-    
-  }
-
-  /// 💡 This is basically a template statement. You might have something type of `Store`.
-  let store: Store<State, Never> = .init(initialState: .init())
-
-  // MARK: - ✅ These are actions as well as writing methods.
-
-  func myAction() {
-    // 💥 Mutating a state
-    commit {
-      $0.name = "Hello, Verge"
-    }
-  }
-
-  func incrementAsync() {
-    /**
-    💥 Asynchronously mutating.
-    Verge just provides thread-safety.
-    We should manage operations in the Action.
-    */
-    DispatchQueue.global().async {    
-      commit {
-        // We must finish here synchronously - here is a critical session.
-        $0.count += 1
-      }
-    }
-  }
+store.sinkActivity { (activity: MyActivity) in
+  // handle activities.
 }
+.storeWhileSourceActive()
 ```
 
-### In SwiftUI
+## Using Verge with SwiftUI
 
-Use **StoreReader** to read a state of the store.  
-It optimizes frequency of update its content for performance wise.
-The content closure runs when reading properties have changed or parent tree updated.
+To use Verge in SwiftUI, you can utilize the `StoreReader` to subscribe to state updates within your SwiftUI views. Here's an example of how to do this:
 
-```swift
+```
 struct MyView: View {
 
   let store: MyViewModel
 
   var body: some View {
-    // ✅ Uses `StateReader` to read the state this clarifies where components need the state.
+    // ✅ Uses `StoreReader` to read the state; this clarifies where components need the state.
     StoreReader(store) { state in
       Text(state.name)
       Button(action: {
@@ -233,136 +154,84 @@ struct MyView: View {
     }
   }
 }
+
 ```
 
-### In UIKit
+In this example, `StoreReader` is used to read the state from the `MyViewModel` store. This allows you to access and display the state within your SwiftUI view. Additionally, you can perform actions by calling methods on the store directly, as demonstrated with the button in the example.
 
-Binding with a view (or view controller)
+This new section will help users understand how to use Verge with SwiftUI, allowing them to manage state effectively within their SwiftUI views. Let me know if you have any further suggestions or changes!
+
+## Efficient State Updates in UIKit using `sinkState`, `Changed<State>`, and `ifChanged`
+
+In UIKit, which is event-driven, it's crucial to update components efficiently by only updating them as needed. The Verge library provides a way to achieve this using the `sinkState` method, the `Changed<State>` type, and the `ifChanged` method.
+
+When you use the `sinkState` method, the closure you provide receives the latest state wrapped in a `Changed<State>` type. This wrapper also includes the previous state, allowing you to determine which properties have been updated using the `ifChanged` method.
+
+Here's an example of using `sinkState` and `ifChanged` in UIKit to efficiently update components:
 
 ```swift
-final class MyViewController: UIViewController {
-
-  let viewModel: MyViewModel
-
-  ...
-
-  var cancellable: VergeAnyCancellable?
-
-  init(viewModel: MyViewModel) {
-
-    self.viewModel = viewModel
-
-    // ✅ Start subscribing the state.
-    self.cancellable = viewModel.sinkState { [weak self] (state: Changes<MyViewModel.State>) in
-      self?.update(state: state)
-    }
-
+store.sinkState {
+  $0.ifChanged(\.myProperty) { newValue in
+    // Update the component only when myProperty has changed
   }
-
-  /**
-  Actually we don't need to create such as this method, but here is for better clarity in this document.  
-  */
-  private func update(state: Changes<MyViewModel.State>) {
-    
-    /**
-    💡 `Changes` is a reference-type, but it's immutable.
-    And so can not subscribe.
-    
-    Why is it a reference-type? Because it's for reducing copying cost.
-    
-    It can detect difference with previous value with it contains a previous value.
-    Which is using `.ifChanged` or `.takeIfChanged`.
-    */
-
-    /// 🥤 An example that setting the value if the target value has updated.
-    state.ifChanged(\.name) { (name) in
-      // ✅ `name` has changed! Update the text.
-      nameLabel.text = name
-    }
-    
-    /// 🥤 An example that composing as a tuple to behave like RxSwift's combine latest.
-    state.ifChanged({ ($0.name, $0.count) }, ==) { (name, count) in
-      /**
-      Receives every time the tuple differs from the previous one.
-      This means it changes when anyone in the tuple changed
-      */
-      nameLabel.text = name
-      countLabel.text = age.description
-    }
-
-    ...
-  }
-
 }
 ```
 
-[The details are here!](https://www.notion.so/Verge-a-performant-state-management-architecture-for-iOS-app-987250442b5c4645b816d4d58d27bb07)
+In this example, the component is updated only when `myProperty` has changed, ensuring efficient updates in the UIKit-based application.
 
-## Supports Integrating with RxSwift
+Compared to UIKit, SwiftUI works with a declarative view structure, which means that there is less need to check for state changes to update the view. However, when working with UIKit, using `sinkState`, `Changed<State>`, and `ifChanged` helps maintain a performant and responsive application.
 
-Verge supports to integrate with RxSwift that enables to create a stream of `State` and `Activity`.
-To activate it, install `VergeRx` module.
+## Using TaskManager for Asynchronous Operations
 
-## What differences between Flux library are
+Verge's Store includes a TaskManager that allows you to dispatch and manage asynchronous operations. This feature simplifies handling async tasks while keeping them associated with your Store.
 
-'store-pattern' is the core-concept of Flux.
-Flux works with the multiple restricted rules top of the 'store-pattern'.
+### Basic usage
 
-![store-pattern](https://user-images.githubusercontent.com/1888355/100537431-07951680-326c-11eb-93bd-4b9246fbeb96.png)
-
-This means we can start using like Flux without using Action, Mutation payload values.  
+To use TaskManager, simply call the `task` method on your Store instance, and provide a closure that contains the asynchronous operation:
 
 ```swift
-// ✌️ no needs to use.
-enum Action {
-  case increment
-  case decrement
+store.task {
+  await runMyOperation()
 }
 ```
 
-This declarations might be quite big cost of implementation in order to start to use Flux.  
-Verge does not have this rules, so we can do like this when we update the state.
+### Task management with keys and modes
+
+TaskManager also enables you to manage tasks based on keys and modes. You can assign a unique key to each task and specify a mode for its execution. This allows you to control the execution behavior of tasks based on their keys.
+
+For example, you can use the `.dropCurrent` mode to drop any currently running tasks with the same key and run the new task immediately:
 
 ```swift
-// 🤞 just like this
-extension MyStore {
-  func increment() {
-    commit { 
-      $0.count += 1
+store.task(key: .init("MyOperation"), mode: .dropCurrent) {
+  //
+}
+```
+
+This functionality provides you with fine-grained control over how tasks are executed, ensuring that your application remains responsive and efficient, even when handling multiple asynchronous operations.
+
+## Advanced Usage: Managing Multiple Stores for Complex Applications
+
+In theory, managing your entire application state in a single store is ideal. However, in large and complex applications, the computational complexity can become significant, leading to performance issues and slow application responsiveness. In such cases, it's recommended to separate your state into multiple stores and integrate them as needed.
+
+By dividing your state into multiple stores, you can reduce the complexity and overhead associated with state updates. Each store can manage a specific part of your application state, ensuring that updates are performed efficiently and quickly. This approach also promotes better organization and separation of concerns in your code, making it easier to maintain and extend your application over time.
+
+To use multiple stores, create separate Store instances for different parts of your application state, and then connect them as needed. This may involve passing store instances to child components or sharing stores between sibling components. By structuring your application this way, you can ensure that each part of your application state is managed efficiently and effectively.
+
+### Copying State Between Stores
+
+To copy state between stores, you can use the `sinkState` method along with the `ifChanged` function to only trigger updates when the state has changed. Here's an example:
+
+```swift
+store.sinkState {
+  $0.ifChanged(\\.myState) { value in
+    otherStore.commit {
+      $0.myState = value
     }
   }
 }
-
-let store: MyStore
-store.increment()
 ```
 
-It can be easy start.  
-Of course, we can create the layer to manage strict action and mutation payload on top of the Verge primitive layer.  
-Because 'store-pattern' is core-concept of Flux.
-
---
-
-## Sending volatile events instead of using state
-
-In certain scenarios, event-driven programming is essential for creating responsive and efficient applications. The Verge library's Activity of Store feature is designed to cater to this need, allowing developers to handle events seamlessly within their projects.
-
-The Activity of Store comes into play when your application requires event-driven programming. It enables you to manage events and associated logic independently from the main store management, promoting a clean and organized code structure. This separation of concerns simplifies the overall development process and makes it easier to maintain and extend your application over time.
-
-By leveraging the Activity of Store functionality, you can efficiently handle events within your application while keeping the store management intact. This ensures that your application remains performant and scalable, enabling you to build robust and reliable Swift applications using the Verge library.
-
-```swift
-let store: Store<MyState, MyActivity>
-
-store.send(MyActivity.somethingHappend)
-```
-
-```swift
-store.sinkActivity { (activity: MyActivity) in
-  // handle activities.
-}
-.storeWhileSourceActive()
-```
+In this example, when the state of `myState` changes in `store`, the new value is committed to `otherStore`. This approach allows you to synchronize state between multiple stores efficiently.
 
 ## Installation
 
