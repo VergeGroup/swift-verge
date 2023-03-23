@@ -29,6 +29,22 @@ extension DispatcherType {
    This function can be used to create a Derived object that contains only a selected part of the state. The selected part is determined by a pipeline that is passed in as an argument.
 
    - Parameters:
+   - pipeline: The pipeline object that selects a part of the state to be passed to other components.
+   - queue: The target queue for dispatching events.
+   */
+  public func derived<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: MainActorTargetQueue
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State> {
+    self.derived(pipeline, queue: Queues.MainActor(queue))
+  }
+
+  /**
+   Creates a derived state object from a given pipeline.
+
+   This function can be used to create a Derived object that contains only a selected part of the state. The selected part is determined by a pipeline that is passed in as an argument.
+
+   - Parameters:
      - pipeline: The pipeline object that selects a part of the state to be passed to other components.
      - queue: The target queue for dispatching events.
    */

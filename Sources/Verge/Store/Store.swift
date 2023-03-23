@@ -336,21 +336,6 @@ extension Store {
     self
   }
 
-  func _primitive_sinkActivity(
-    queue: some TargetQueueType,
-    receive: @escaping (Activity) -> Void
-  ) -> StoreSubscription {
-    
-    let execute = queue.execute
-    let cancellable = self._sinkActivityEvent { activity in
-      execute {
-        receive(activity)
-      }
-    }
-    return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
-    
-  }
-
   /**
    Adds an asynchronous task to perform.
    
@@ -551,6 +536,15 @@ Mutation: (%@)
     let log = ActivityLog(storeName: self.name, trace: trace)
     logger?.didSendActivity(log: log, sender: self)
   }
+
+  func _mainActor_sinkState(
+    keepsAliveSource: Bool? = nil,
+    dropsFirst: Bool = false,
+    queue: MainActorTargetQueue,
+    receive: @escaping @MainActor (Changes<State>) -> Void
+  ) -> StoreSubscription {
+    return _primitive_sinkState(queue: Queues.MainActor(queue), receive: receive)
+  }
   
   func _primitive_sinkState(
     keepsAliveSource: Bool? = nil,
@@ -677,6 +671,21 @@ Latest Version (%d): (%@)
     }
     
   }
+
+  func _mainActor_scan_sinkState<Accumulate>(
+    scan: Scan<Changes<State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: MainActorTargetQueue,
+    receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
+  ) -> StoreSubscription {
+
+    _mainActor_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+
+      let accumulate = scan.accumulate(changes)
+      receive(changes, accumulate)
+    }
+
+  }
   
   func _primitive_scan_sinkState<Accumulate>(
     scan: Scan<Changes<State>, Accumulate>,
@@ -692,6 +701,30 @@ Latest Version (%d): (%@)
     }
     
   }
+
+  func _mainActor_sinkActivity(
+    queue: MainActorTargetQueue,
+    receive: @escaping @MainActor (Activity) -> Void
+  ) -> StoreSubscription {
+    return _primitive_sinkActivity(queue: Queues.MainActor(queue), receive: receive)
+  }
+
+  func _primitive_sinkActivity(
+    queue: some TargetQueueType,
+    receive: @escaping (Activity) -> Void
+  ) -> StoreSubscription {
+
+    let execute = queue.execute
+    let cancellable = self._sinkActivityEvent { activity in
+      execute {
+        receive(activity)
+      }
+    }
+    
+    return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
+
+  }
+
 }
 
 // MARK: - Storage Implementation

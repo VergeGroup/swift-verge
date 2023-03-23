@@ -80,7 +80,7 @@ extension DispatcherType where Scope == State {
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<State>) -> Void
   ) -> StoreSubscription {
-    store.asStore()._primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
+    store.asStore()._mainActor_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
   /// Subscribe the state changes
@@ -118,7 +118,7 @@ extension DispatcherType where Scope == State {
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
   ) -> StoreSubscription {
-    store.asStore()._primitive_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+    store.asStore()._mainActor_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
   /// Subscribe the activity
@@ -142,7 +142,7 @@ extension DispatcherType where Scope == State {
     receive: @escaping @MainActor (Activity) -> Void
   ) -> StoreSubscription {
 
-    store.asStore()._primitive_sinkActivity(queue: queue) { activity in
+    store.asStore()._mainActor_sinkActivity(queue: queue) { activity in
       thunkToMainActor {
         receive(activity)
       }
