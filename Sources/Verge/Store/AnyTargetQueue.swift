@@ -45,7 +45,7 @@ public final class AnyTargetQueue: TargetQueueType {
 
 }
 
-public final class MainActorTargetQueue: TargetQueueType {
+public final class MainActorTargetQueue {
 
   public static let sharedImmediacy = MainActorTargetQueue(mode: .immediacy)
 
@@ -142,7 +142,7 @@ extension TargetQueueType where Self == AnyTargetQueue {
 
   /// Enqueue first item on current-thread(synchronously).
   /// From then, using specified queue.
-  public static func startsFromCurrentThread<Queue: TargetQueueType>(andUse queue: Queue) -> AnyTargetQueue {
+  public static func startsFromCurrentThread(andUse queue: some TargetQueueType) -> AnyTargetQueue {
     let numberEnqueued = ManagedAtomic<Bool>.init(true)
 
     let execute = queue.execute
@@ -159,9 +159,16 @@ extension TargetQueueType where Self == AnyTargetQueue {
 
     }
   }
+
+  /// Enqueue first item on current-thread(synchronously).
+  /// From then, using specified queue.
+  public static func startsFromCurrentThread(andUse queue: MainActorTargetQueue) -> AnyTargetQueue {
+    return startsFromCurrentThread(andUse: Queues.MainActor(queue))
+  }
+
 }
 
-extension TargetQueueType where Self == MainActorTargetQueue {
+extension MainActorTargetQueue {
 
   /// It dispatches to main-queue asynchronously always.
   public static var asyncMain: MainActorTargetQueue {
@@ -196,6 +203,20 @@ extension AnyTargetQueue {
 }
 
 public enum Queues {
+
+  struct MainActor: TargetQueueType {
+
+    let underlying: MainActorTargetQueue
+
+    init(_ underlying: MainActorTargetQueue) {
+      self.underlying = underlying
+    }
+
+    public func execute(_ workItem: @escaping () -> Void) {
+      underlying.execute(workItem)
+    }
+
+  }
 
   public struct Passthrough: TargetQueueType {
 
