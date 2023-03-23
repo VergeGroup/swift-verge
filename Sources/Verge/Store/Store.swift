@@ -37,6 +37,7 @@ public protocol StoreType<State>: AnyObject {
   func asStore() -> Store<State, Activity>
   
   var primitiveState: State { get }
+  var state: Changes<State> { get }
 }
 
 public typealias NoActivityStoreBase<State: Equatable> = Store<State, Never>

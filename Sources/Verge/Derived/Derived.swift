@@ -201,10 +201,11 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     
     let d = Derived<Pipeline.Output>(
       get: pipeline,
-      set: { _ in },
+      set: { _ in /* no operation as read only */},
       initialUpstreamState: state,
       subscribeUpstreamState: { callback in
         self._primitive_sinkState(
+          keepsAliveSource: true,
           dropsFirst: true,
           queue: queue,
           receive: callback

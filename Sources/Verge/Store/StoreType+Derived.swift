@@ -57,10 +57,8 @@ extension DispatcherType {
 
     let derived = Derived<Pipeline.Output>(
       get: pipeline,
-      set: { _ in
-
-      },
-      initialUpstreamState: store.asStore().state,
+      set: { _ in /* no operation as read only */},
+      initialUpstreamState: store.state,
       subscribeUpstreamState: { callback in
         store.asStore()._primitive_sinkState(
           keepsAliveSource: false,
