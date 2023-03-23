@@ -192,28 +192,13 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   /// - Attention:
   ///     As possible use the same pipeline instance and queue in order to enable caching.
   ///     Returns the Derived that previously created with that combination.
+  @available(*, deprecated, renamed: "derived")
   public func chain<Pipeline: PipelineType>(
     _ pipeline: Pipeline,
     queue: some TargetQueueType = .passthrough
   ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<Value> {
     
-    vergeSignpostEvent("Derived.chain.new", label: "\(type(of: Value.self)) -> \(type(of: Pipeline.Output.self))")
-    
-    let d = Derived<Pipeline.Output>(
-      get: pipeline,
-      set: { _ in },
-      initialUpstreamState: state,
-      subscribeUpstreamState: { callback in
-        self._primitive_sinkState(
-          dropsFirst: true,
-          queue: queue,
-          receive: callback
-        )
-      },
-      retainsUpstream: self
-    )
-    
-    return d
+    return derived(pipeline, queue: queue)
   }
   
 }

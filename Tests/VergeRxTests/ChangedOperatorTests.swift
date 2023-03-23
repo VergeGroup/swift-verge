@@ -28,7 +28,7 @@ class ChangedOperatorTests: XCTestCase {
     exp.assertForOverFulfill = true
     exp.expectedFulfillmentCount = 3
     
-    _ = count.rx.valueObservable()
+    _ = count.rx.stateObservable()
       .changed({ $0.description })
       .subscribe(onNext: { _ in
         exp.fulfill()

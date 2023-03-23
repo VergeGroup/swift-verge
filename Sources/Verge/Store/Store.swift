@@ -37,6 +37,7 @@ public protocol StoreType<State>: AnyObject {
   func asStore() -> Store<State, Activity>
   
   var primitiveState: State { get }
+  var state: Changes<State> { get }
 }
 
 public typealias NoActivityStoreBase<State: Equatable> = Store<State, Never>
@@ -547,7 +548,6 @@ Mutation: (%@)
   }
   
   func _primitive_sinkState(
-    keepsAliveSource: Bool? = nil,
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<State>) -> Void
@@ -663,7 +663,7 @@ Latest Version (%d): (%@)
       }
     }
 
-    if keepsAliveSource ?? keepsAliveForSubscribers {
+    if keepsAliveForSubscribers {
       return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
         .associate(store: self) // while subscribing its Store will be alive
     } else {

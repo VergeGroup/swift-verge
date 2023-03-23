@@ -3,7 +3,6 @@ import Foundation
 
 public var _verge_signpost_enabled = ProcessInfo.processInfo.environment["VERGE_SIGNPOST_ENABLED"] != nil
 
-@available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *)
 @usableFromInline
 enum SignpostConstants {
   @usableFromInline
@@ -21,7 +20,7 @@ enum SignpostConstants {
 @inlinable
 public func vergeSignpostEvent(_ event: StaticString) {
   #if DEBUG
-  if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *), _verge_signpost_enabled {
+  if _verge_signpost_enabled {
     let id = OSSignpostID(log: SignpostConstants.pointOfInterestLog)
     os_signpost(.event, log: SignpostConstants.pointOfInterestLog, name: event, signpostID: id)
   }
@@ -31,7 +30,7 @@ public func vergeSignpostEvent(_ event: StaticString) {
 @inlinable
 public func vergeSignpostEvent(_ event: StaticString, label: @autoclosure () -> String) {
   #if DEBUG
-  if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *), _verge_signpost_enabled {
+  if _verge_signpost_enabled {
     let id = OSSignpostID(log: SignpostConstants.pointOfInterestLog)
     os_signpost(.event, log: SignpostConstants.pointOfInterestLog, name: event, signpostID: id, "%@", label())
   }
@@ -49,7 +48,7 @@ public struct VergeSignpostTransaction {
   
   public init(_ name: StaticString) {
     #if DEBUG
-    if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *), _verge_signpost_enabled {
+    if _verge_signpost_enabled {
       let id = OSSignpostID(log: SignpostConstants.performanceLog)
       self.rawID = id.rawValue
       os_signpost(.begin, log: SignpostConstants.performanceLog, name: name, signpostID: id)
@@ -66,7 +65,7 @@ public struct VergeSignpostTransaction {
   
   public init(_ name: StaticString, label: @autoclosure () -> String) {
     #if DEBUG
-    if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *), _verge_signpost_enabled {
+    if _verge_signpost_enabled {
       let id = OSSignpostID(log: SignpostConstants.performanceLog)
       self.rawID = id.rawValue
       let _label = label()
@@ -84,7 +83,7 @@ public struct VergeSignpostTransaction {
   
   public func event(name: StaticString, label: @autoclosure () -> String) {
     #if DEBUG
-    if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *), _verge_signpost_enabled {
+    if _verge_signpost_enabled {
       let id = OSSignpostID(rawID)
       os_signpost(.event, log: SignpostConstants.pointOfInterestLog, name: name, signpostID: id, "%@", label())
     }
@@ -95,7 +94,7 @@ public struct VergeSignpostTransaction {
   @inline(__always)
   public func event(name: StaticString) {
     #if DEBUG
-    if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *), _verge_signpost_enabled {
+    if _verge_signpost_enabled {
       let id = OSSignpostID(rawID)
       os_signpost(.event, log: SignpostConstants.pointOfInterestLog, name: name, signpostID: id)
     }

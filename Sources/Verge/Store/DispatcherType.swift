@@ -36,8 +36,8 @@ public protocol DispatcherType<Scope>: AnyObject where State == WrappedStore.Sta
 
 extension DispatcherType {
   /// A state that cut out from root-state with the scope key path.
-  public var state: Changes<Scope> {
-    store.asStore().state.map { $0[keyPath: scope] }
+  public nonisolated var state: Changes<Scope> {
+    store.state.map { $0[keyPath: scope] }
   }
 }
 
