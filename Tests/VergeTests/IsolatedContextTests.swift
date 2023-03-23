@@ -18,11 +18,11 @@ final class IsolatedContextTests: XCTestCase {
       isInMain()
     }
     
-    _ = store.sinkState(queue: .main) { changes in
+    _ = store.sinkState(queue: .main) { @MainActor changes in
       isInMain()
     }
     
-    _ = store.sinkState(queue: .mainIsolated()) { changes in
+    _ = store.sinkState(queue: .mainIsolated()) { @MainActor changes in
       isInMain()
     }
     
