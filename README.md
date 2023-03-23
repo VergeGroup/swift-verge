@@ -328,7 +328,10 @@ let anotherDerived: Derived<String> = derived.derived(.map { $0.description })
 To subscribe to updates of a derived property, you can use the `sinkState` method, just like with a store:
 
 ```swift
-derived.sinkState { value in   // Handle updates of the derived property } .storeWhileSourceActive()
+derived.sinkState { value in 
+  // Handle updates of the derived property 
+} 
+.storeWhileSourceActive()
 ```
 
 By using `Derived` for computed properties and subscribing to updates, you can ensure that your application remains efficient and performant, avoiding unnecessary computations and state updates.
