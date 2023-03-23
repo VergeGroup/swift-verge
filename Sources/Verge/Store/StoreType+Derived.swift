@@ -61,7 +61,6 @@ extension DispatcherType {
       initialUpstreamState: store.state,
       subscribeUpstreamState: { callback in
         store.asStore()._primitive_sinkState(
-          keepsAliveSource: false,
           dropsFirst: true,
           queue: queue,
           receive: callback

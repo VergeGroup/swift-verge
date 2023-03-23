@@ -52,9 +52,6 @@ import Foundation
  */
 public protocol StoreComponentType: DispatcherType where Scope == WrappedStore.State {
 
-  typealias State = WrappedStore.State
-  typealias Activity = WrappedStore.Activity
-
   var store: WrappedStore { get }
 }
 
@@ -68,7 +65,7 @@ extension StoreComponentType {
   /// It causes locking and unlocking with a bit cost.
   /// It may cause blocking if any other is doing mutation or reading.
   public nonisolated var state: Changes<WrappedStore.State> {
-    store.asStore().state
+    store.state
   }
 
   @available(*, deprecated, renamed: "state")

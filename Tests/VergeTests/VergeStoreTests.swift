@@ -460,7 +460,7 @@ final class VergeStoreTests: XCTestCase {
       let d = sourceStore
         .derived(.map(\.count), queue: .passthrough)
 
-      self.store = .init(initialState: .init(source: d.value), logger: nil)
+      self.store = .init(initialState: .init(source: d.state), logger: nil)
 
       sub = d.assign(to: store.assignee(\.source))
 

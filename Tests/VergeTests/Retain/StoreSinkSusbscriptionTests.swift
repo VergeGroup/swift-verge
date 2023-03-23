@@ -103,6 +103,36 @@ final class StoreSinkSubscriptionTests: XCTestCase {
 
   }
 
+  func test_Derived_lifeCycle_with_source_release_store_earlier() {
+
+    let storeRef = withReference(DemoStore())
+    let resourceRef = withReference(Resource())
+
+    // make derived
+    let derivedRef = withReference(storeRef.value!.derived(.select(\.count)))
+
+    // start subscribe
+    derivedRef.value!
+      .sinkState { [ref = resourceRef.value!] _ in
+
+        withExtendedLifetime(ref) {}
+      }
+      .storeWhileSourceActive()
+
+    // make the resource is captured only from the closure
+    resourceRef.release()
+    XCTAssertNotNil(resourceRef.value)
+
+    // release store earlier than stop derived
+    storeRef.release()
+    // should be nil because derived won't retain store as upstream
+    XCTAssertNil(storeRef.value)
+
+    // released all resouces
+    XCTAssertNil(resourceRef.value)
+
+  }
+
   func testCompare() {
     let wasInvalidated = Atomics.ManagedAtomic(false)
 
@@ -126,22 +156,22 @@ final class StoreSinkSubscriptionTests: XCTestCase {
 
     let store = DemoStore()
 
-    let baseSliceRef = withReference(store.derived(.map { $0.count }, queue: .passthrough))
+    let derivedRef = withReference(store.derived(.map { $0.count }, queue: .passthrough))
 
     let expectation = XCTestExpectation(description: "receive changes")
     expectation.expectedFulfillmentCount = 1
     expectation.assertForOverFulfill = true
 
-    let subscription = baseSliceRef.value!
+    let subscription = derivedRef.value!
       .sinkState(dropsFirst: true, queue: .passthrough) { (changes) in
         expectation.fulfill()
       }
 
-    XCTAssertNotNil(baseSliceRef.value)
+    XCTAssertNotNil(derivedRef.value)
 
-    baseSliceRef.release()
+    derivedRef.release()
 
-    XCTAssertNotNil(baseSliceRef.value, "as still subscribing")
+    XCTAssertNotNil(derivedRef.value, "as still subscribing")
 
     store.commit { _ in }
 
@@ -149,7 +179,7 @@ final class StoreSinkSubscriptionTests: XCTestCase {
 
     subscription.cancel()
 
-    XCTAssertNil(baseSliceRef.value)
+    XCTAssertNil(derivedRef.value)
 
     wait(for: [expectation], timeout: 1)
 
@@ -163,7 +193,7 @@ final class StoreSinkSubscriptionTests: XCTestCase {
 
     weak var weakBaseSlice = baseSlice
 
-    var slice: Derived<Int>! = baseSlice.chain(.map { $0.self }, queue: .passthrough)
+    var slice: Derived<Int>! = baseSlice.derived(.map { $0.self }, queue: .passthrough)
 
     baseSlice = nil
 

@@ -548,7 +548,6 @@ Mutation: (%@)
   }
   
   func _primitive_sinkState(
-    keepsAliveSource: Bool? = nil,
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<State>) -> Void
@@ -664,7 +663,7 @@ Latest Version (%d): (%@)
       }
     }
 
-    if keepsAliveSource ?? keepsAliveForSubscribers {
+    if keepsAliveForSubscribers {
       return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
         .associate(store: self) // while subscribing its Store will be alive
     } else {

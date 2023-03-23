@@ -30,7 +30,7 @@ final class MutationTraceTests: XCTestCase {
       $0.count += 1
     }
     
-    let value = derived.value
+    let value = derived.state
     
     XCTAssertEqual(value.traces.count, 2)
     

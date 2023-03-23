@@ -30,7 +30,7 @@ final class DerivedTests: XCTestCase {
       
       let didUpdate = XCTestExpectation()
       
-      nullableDerived.valuePublisher()
+      nullableDerived.statePublisher()
         .dropFirst(1).sink { _ in
           didUpdate.fulfill()
       }
@@ -59,8 +59,8 @@ final class DerivedTests: XCTestCase {
       XCTAssertNotNil(nullableDerived.primitiveValue.wrapped)
       XCTAssertNotNil(nonnullDerived.primitiveValue.wrapped)
       
-      XCTAssertNotNil(nullableDerived.value.wrapped?.name, "initial")
-      XCTAssertEqual(nonnullDerived.value.wrapped.name, "initial")
+      XCTAssertNotNil(nullableDerived.state.wrapped?.name, "initial")
+      XCTAssertEqual(nonnullDerived.state.wrapped.name, "initial")
       
       waiter.wait(for: [didUpdate], timeout: 2)
       
@@ -171,7 +171,7 @@ final class DerivedTests: XCTestCase {
     
     let authorGetter = storage.databases.db.derivedNonNull(from: result, queue: .passthrough)
     
-    authorGetter.valuePublisher()
+    authorGetter.statePublisher()
       .dropFirst(1).sink { _ in
       updatedCount += 1
     }
