@@ -137,29 +137,91 @@ store.sinkActivity { (activity: MyActivity) in
 
 To use Verge in SwiftUI, you can utilize the `StoreReader` to subscribe to state updates within your SwiftUI views. Here's an example of how to do this:
 
-```
-struct MyView: View {
+```swift
+import SwiftUI
+import Verge
 
-  let store: MyViewModel
+struct ContentView: View {
+  @StateObject private var viewModel = CounterViewModel()
 
   var body: some View {
-    // ✅ Uses `StoreReader` to read the state; this clarifies where components need the state.
-    StoreReader(store) { state in
-      Text(state.name)
+    VStack {
+      StoreReader(viewModel.store) { state in
+        Text("Count: \(state.count)")
+          .font(.largeTitle)
+      }
+
       Button(action: {
-        self.store.myAction()
+        viewModel.increment()
       }) {
-        Text("Action")
+        Text("Increment")
       }
     }
   }
 }
 
+final class CounterViewModel: StoreComponentType {
+  struct State: Equatable {
+    var count: Int = 0
+  }
+
+  let store: Store<State, Never> = .init(initialState: .init())
+
+  func increment() {
+    commit {
+      $0.count += 1
+    }
+  }
+}
 ```
 
 In this example, `StoreReader` is used to read the state from the `MyViewModel` store. This allows you to access and display the state within your SwiftUI view. Additionally, you can perform actions by calling methods on the store directly, as demonstrated with the button in the example.
 
 This new section will help users understand how to use Verge with SwiftUI, allowing them to manage state effectively within their SwiftUI views. Let me know if you have any further suggestions or changes!
+
+## Using Verge with UIKit
+
+Here's a simple usage example of Verge with a UIViewController:
+
+```swift
+class MyViewController: UIViewController {
+  
+  private struct State: Equatable {
+    var count: Int = 0
+  }
+  
+  private let store: Store<State, Never> = .init(initialState: .init())
+  
+  private let label: UILabel = .init()
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    setupUI()
+    
+    // Subscribe to the store's state updates
+    store.sinkState { [weak self] state in
+      guard let self = self else { return }
+      
+      // Check if the value has been updated using ifChanged
+      state.ifChanged(\.count) { count in
+        self.label.text = "Count: \(count)"
+      }
+    }
+    .storeWhileSourceActive()
+  }
+  
+  private func setupUI() {
+    // Omitted for brevity
+  }
+  
+  private func incrementCount() {
+    store.commit {
+      $0.count += 1
+    }
+  }
+}
+```
 
 ## Efficient State Updates in UIKit using `sinkState`, `Changed<State>`, and `ifChanged`
 
@@ -232,6 +294,44 @@ store.sinkState {
 ```
 
 In this example, when the state of `myState` changes in `store`, the new value is committed to `otherStore`. This approach allows you to synchronize state between multiple stores efficiently.
+
+## Using Derived for Efficient Computed Properties
+
+Verge's `Derived` feature allows you to create computed properties based on your store's state and efficiently subscribe to updates. This feature can help you optimize your application by reducing unnecessary computations and updates. Derived is inspired by the [reselect](https://github.com/reduxjs/reselect) library and provides similar functionality.
+
+### Creating a Derived Property
+
+To create a derived property, you'll use the `store.derived` method. This method takes a `Pipeline` object that describes how the derived data is generated:
+
+```swift
+let derived: Derived<Int> = store.derived(.select(\\.count))
+```
+
+You can use `select` or `map` to generate derived data. `select` is used to take a value directly from the state, while `map` can be used to generate new values based on the state, similar to a map function:
+
+```swift
+let derived: Derived<Int> = store.derived(.map { $0.count * 2 })
+```
+
+The `Pipeline` checks if the derived data has been updated from the previous value. If it hasn't changed, `Derived` won't publish any changes.
+
+### Chaining Derived Instances
+
+You can create another Derived instance from an existing Derived instance, effectively chaining them together:
+
+```swift
+let anotherDerived: Derived<String> = derived.derived(.map { $0.description })
+```
+
+### Subscribing to Derived Property Updates
+
+To subscribe to updates of a derived property, you can use the `sinkState` method, just like with a store:
+
+```swift
+derived.sinkState { value in   // Handle updates of the derived property } .storeWhileSourceActive()
+```
+
+By using `Derived` for computed properties and subscribing to updates, you can ensure that your application remains efficient and performant, avoiding unnecessary computations and state updates.
 
 ## Installation
 
