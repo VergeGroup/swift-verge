@@ -26,7 +26,7 @@
 <img width="160" alt="yellow-button" src="https://user-images.githubusercontent.com/1888355/146226808-eb2e9ee0-c6bd-44a2-a330-3bbc8a6244cf.png">
 </a>
 
-# Verge: A High-Performance, Scalable State Management Library for Swift
+# Verge: A High-Performance, Scalable State Management Library for SwiftUI and UIKit
 
 Verge is a high-performance, scalable state management library for Swift, designed with real-world use cases in mind. It offers a lightweight and easy-to-use approach to managing your application state without the need for complex actions and reducers. This guide will walk you through the basics of using Verge in your Swift projects.
 
