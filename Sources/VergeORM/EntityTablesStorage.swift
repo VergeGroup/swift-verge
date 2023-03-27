@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 
 import Foundation
+import struct HashTreeCollections.TreeDictionary
 
 #if !COCOAPODS
 import Verge
@@ -39,7 +40,7 @@ struct _EntityRawTable: Equatable {
     return true
   }
 
-  typealias RawTable = [AnyEntityIdentifier : AnyEntity]
+  typealias RawTable = TreeDictionary<AnyEntityIdentifier, AnyEntity>
   
   private(set) var updatedMarker = NonAtomicCounter()
 
@@ -232,7 +233,7 @@ public struct EntityTable<Schema: EntitySchemaType, Entity: EntityType>: _Entity
    */
   public mutating func removeAll() {
     rawTable.updateEntity { (entities) in
-      entities.removeAll(keepingCapacity: false)
+      entities.removeAll { _ in true }
     }
   }
 }
