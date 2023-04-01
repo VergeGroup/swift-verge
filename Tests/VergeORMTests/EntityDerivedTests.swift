@@ -52,8 +52,7 @@ final class DerivedTests: XCTestCase {
       }
       
       let nonnullDerived = store.databases.db.derivedNonNull(
-        from: book,
-        queue: .passthrough
+        from: book
       )
       
       XCTAssertNotNil(nullableDerived.primitiveValue.wrapped)
@@ -116,7 +115,7 @@ final class DerivedTests: XCTestCase {
         }
       }
             
-      let selector = storage.databases.db.derivedNonNull(from: result, queue: .passthrough)
+      let selector = storage.databases.db.derivedNonNull(from: result)
       
       XCTAssertEqual(selector.primitiveValue.rawID, "some")
       XCTAssertEqual(selector.primitiveValue.name, "initial")
@@ -169,7 +168,7 @@ final class DerivedTests: XCTestCase {
     
     var updatedCount = 0
     
-    let authorGetter = storage.databases.db.derivedNonNull(from: result, queue: .passthrough)
+    let authorGetter = storage.databases.db.derivedNonNull(from: result)
     
     authorGetter.statePublisher()
       .dropFirst(1).sink { _ in
