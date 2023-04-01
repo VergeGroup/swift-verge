@@ -285,7 +285,7 @@ To copy state between stores, you can use the `sinkState` method along with the 
 
 ```swift
 store.sinkState {
-  $0.ifChanged(\\.myState) { value in
+  $0.ifChanged(\.myState) { value in
     otherStore.commit {
       $0.myState = value
     }
