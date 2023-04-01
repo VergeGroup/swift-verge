@@ -125,39 +125,39 @@ private final class DerivedCacheKey: NSObject {
 }
 
 fileprivate final class _DerivedObjectCache {
-    
-  private let _cache = NSCache<DerivedCacheKey, AnyObject>()
-  
+
+  private let storage = NSMapTable<DerivedCacheKey, AnyObject>.strongToWeakObjects()
+
   @inline(__always)
   private func key<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> DerivedCacheKey {
     return .init(entityType: ObjectIdentifier(E.self), entityID: entityID.any, keyPathToDatabase: keyPathToDatabase)
   }
   
   func get<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> E.Derived? {
-    _cache.object(forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase)) as? E.Derived
+    storage.object(forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase)) as? E.Derived
   }
   
   func set<E: EntityType>(_ getter: E.Derived, entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) {
-    _cache.setObject(getter, forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase))
+    storage.setObject(getter, forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase))
   }
   
 }
 
 fileprivate final class _NonNullDerivedObjectCache {
   
-  private let _cache = NSCache<DerivedCacheKey, AnyObject>()
-  
+  private let storage = NSMapTable<DerivedCacheKey, AnyObject>.strongToWeakObjects()
+
   @inline(__always)
   private func key<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> DerivedCacheKey {
     return .init(entityType: ObjectIdentifier(E.self), entityID: entityID.any, keyPathToDatabase: keyPathToDatabase)
   }
   
   func get<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> E.NonNullDerived? {
-    _cache.object(forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase)) as? E.NonNullDerived
+    storage.object(forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase)) as? E.NonNullDerived
   }
   
   func set<E: EntityType>(_ getter: E.NonNullDerived, entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) {
-    _cache.setObject(getter, forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase))
+    storage.setObject(getter, forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase))
   }
   
 }
@@ -280,31 +280,29 @@ extension DispatcherType {
   @inline(__always)
   public func derivedEntity<Entity: EntityType, Database: DatabaseType>(
     entityID: Entity.EntityID,
-    from keyPathToDatabase: KeyPath<State, Database>,
-    queue: some TargetQueueType = .passthrough
+    from keyPathToDatabase: KeyPath<State, Database>
   ) -> Entity.Derived {
     
     objc_sync_enter(self); defer { objc_sync_exit(self) }
     
-    let underlyingDerived: Derived<EntityWrapper<Entity>>
+    let instance: Derived<EntityWrapper<Entity>>
     
     if let cached = _nonatomic_derivedObjectCache.get(entityID: entityID, keyPathToDatabase: keyPathToDatabase) {
-      underlyingDerived = cached
+      instance = cached
     } else {
       /// creates a new underlying derived object
-      underlyingDerived = derived(
+      instance = derived(
         _DatabaseSingleEntityPipeline(
           keyPathToDatabase: keyPathToDatabase,
           entityID: entityID
         ),
-        queue: queue
+        queue: .passthrough
       )
-      .derived(.map(\.self))
-      
-      _nonatomic_derivedObjectCache.set(underlyingDerived, entityID: entityID, keyPathToDatabase: keyPathToDatabase)
+
+      _nonatomic_derivedObjectCache.set(instance, entityID: entityID, keyPathToDatabase: keyPathToDatabase)
     }
     
-    return underlyingDerived
+    return instance
   }
   
   /**
@@ -319,8 +317,7 @@ extension DispatcherType {
   @inline(__always)
   public func derivedEntityPersistent<Entity: EntityType, Database: DatabaseType>(
     entity: Entity,
-    from keyPathToDatabase: KeyPath<State, Database>,
-    queue: some TargetQueueType = .passthrough
+    from keyPathToDatabase: KeyPath<State, Database>
   ) -> Entity.NonNullDerived {
     
     objc_sync_enter(self); defer { objc_sync_exit(self) }
@@ -336,9 +333,8 @@ extension DispatcherType {
           keyPathToDatabase: keyPathToDatabase,
           entity: entity
         ),
-        queue: queue
+        queue: .passthrough
       )
-      .derived(.map(\.self))
       
       _nonatomic_nonnull_derivedObjectCache.set(underlyingDerived, entityID: entity.entityID, keyPathToDatabase: keyPathToDatabase)
     }
@@ -375,8 +371,7 @@ extension DatabaseContext {
   
   @inline(__always)
   fileprivate func _primary_derivedNonNull<Entity: EntityType>(
-    from entity: Entity,
-    queue: some TargetQueueType = .passthrough
+    from entity: Entity
   ) -> Entity.NonNullDerived {
     store.asStore().derivedEntityPersistent(entity: entity, from: keyPath)
   }
@@ -396,11 +391,10 @@ extension DatabaseContext {
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
     from entity: Entity,
-    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false },
-    queue: some TargetQueueType = .passthrough
+    dropsOutput: @escaping (Entity?, Entity?) -> Bool = { _, _ in false }
   ) -> Entity.NonNullDerived {
 
-    _primary_derivedNonNull(from: entity, queue: queue)
+    _primary_derivedNonNull(from: entity)
   }
   
   /// Returns a derived object that provides a concrete entity according to the updating source state
@@ -413,15 +407,14 @@ extension DatabaseContext {
   ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
-    from entityID: Entity.EntityID,
-    queue: some TargetQueueType = .passthrough
+    from entityID: Entity.EntityID
   ) throws -> Entity.NonNullDerived {
           
     guard let initalValue = store.primitiveState[keyPath: keyPath].entities.table(Entity.self).find(by: entityID) else {
       throw VergeORMError.notFoundEntityFromDatabase
     }
    
-    return _primary_derivedNonNull(from: initalValue, queue: queue)
+    return _primary_derivedNonNull(from: initalValue)
   }
 
   /// Returns a derived object that provides a concrete entity according to the updating source state
@@ -433,10 +426,9 @@ extension DatabaseContext {
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
   public func derivedNonNull<Entity: EntityType>(
-    from entity: Entity,
-    queue: some TargetQueueType = .passthrough
+    from entity: Entity
   ) -> Entity.NonNullDerived {
-    _primary_derivedNonNull(from: entity, queue: queue)
+    _primary_derivedNonNull(from: entity)
   }
   
 
@@ -449,12 +441,11 @@ extension DatabaseContext {
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
-    from entityIDs: S,
-    queue: some TargetQueueType = .passthrough
+    from entityIDs: S
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity.EntityID {
     entityIDs.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
       do {
-        r.append(derived: try derivedNonNull(from: e, queue: queue), id: e)
+        r.append(derived: try derivedNonNull(from: e), id: e)
       } catch {
         //
       }
@@ -470,11 +461,10 @@ extension DatabaseContext {
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
   public func derivedNonNull<Entity: EntityType>(
-    from entityIDs: Set<Entity.EntityID>,
-    queue: some TargetQueueType = .passthrough
+    from entityIDs: Set<Entity.EntityID>
   ) -> NonNullDerivedResult<Entity> {
     // TODO: Stop using AnySequence
-    derivedNonNull(from: AnySequence.init(entityIDs.makeIterator), queue: queue)
+    derivedNonNull(from: AnySequence.init(entityIDs.makeIterator))
   }
  
   /// Returns a derived object that provides a concrete entity according to the updating source state
@@ -486,11 +476,10 @@ extension DatabaseContext {
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
-    from entities: S,
-    queue: some TargetQueueType = .passthrough
+    from entities: S
   ) -> NonNullDerivedResult<Entity> where S.Element == Entity {
     entities.reduce(into: NonNullDerivedResult<Entity>()) { (r, e) in
-      r.append(derived: _primary_derivedNonNull(from: e, queue: queue), id: e.entityID)
+      r.append(derived: _primary_derivedNonNull(from: e), id: e.entityID)
     }
   }
 
@@ -503,10 +492,9 @@ extension DatabaseContext {
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
   public func derivedNonNull<Entity: EntityType>(
-    from entities: Set<Entity>,
-    queue: some TargetQueueType = .passthrough
+    from entities: Set<Entity>
   ) -> NonNullDerivedResult<Entity> {
-    derivedNonNull(from: AnySequence.init(entities.makeIterator), queue: queue)
+    derivedNonNull(from: AnySequence.init(entities.makeIterator))
   }
 
   /// Returns a derived object that provides a concrete entity according to the updating source state
@@ -519,10 +507,9 @@ extension DatabaseContext {
   ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType>(
-    from insertionResult: EntityTable<Database.Schema, Entity>.InsertionResult,
-    queue: some TargetQueueType = .passthrough
+    from insertionResult: EntityTable<Database.Schema, Entity>.InsertionResult
   ) -> Entity.NonNullDerived {
-    _primary_derivedNonNull(from: insertionResult.entity, queue: queue)
+    _primary_derivedNonNull(from: insertionResult.entity)
   }
 
   /// Returns a derived object that provides a concrete entity according to the updating source state
@@ -535,17 +522,15 @@ extension DatabaseContext {
   ///
   @inline(__always)
   public func derivedNonNull<Entity: EntityType, S: Sequence>(
-    from insertionResults: S,
-    queue: some TargetQueueType = .passthrough
+    from insertionResults: S
   ) -> NonNullDerivedResult<Entity> where S.Element == EntityTable<Database.Schema, Entity>.InsertionResult {
-    derivedNonNull(from: insertionResults.map { $0.entity }, queue: queue)
+    derivedNonNull(from: insertionResults.map { $0.entity })
   }
 
   /// Experimental
   /// TODO: More performant
   public func _derivedQueriedEntities<Entity: EntityType>(
-    ids: @escaping (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>,
-    queue: some TargetQueueType = .passthrough
+    ids: @escaping (IndexesPropertyAdapter<Database>) -> AnyCollection<Entity.EntityID>
   ) -> Derived<[Entity.Derived]> {
     
     return store.asStore().derived(
