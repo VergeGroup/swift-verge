@@ -31,6 +31,8 @@ private final class TaskNode {
     guard state.isInvalidated == false else { return }
     guard anyTask == nil else { return }
 
+    Log.debug(.taskQueue, "TaskNode activate: \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
+
     self.anyTask = Task {
       await taskFactory(self)
       state.isFinished = true
@@ -38,7 +40,7 @@ private final class TaskNode {
   }
 
   func invalidate() {
-    Log.debug(.taskQueue, "TaskNode invalidated \(label)")
+    Log.debug(.taskQueue, "TaskNode invalidated \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
     state.isInvalidated = true
     anyTask?.cancel()
   }
@@ -78,7 +80,7 @@ private final class TaskNode {
   }
   
   deinit {
-    Log.debug(.taskQueue, "Deinit TaskNode: \(label)")
+    Log.debug(.taskQueue, "Deinit TaskNode: \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
   }
 
 }
