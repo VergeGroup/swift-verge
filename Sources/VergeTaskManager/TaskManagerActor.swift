@@ -217,7 +217,7 @@ public actor TaskManagerActor {
   public func batch(_ closure: (isolated TaskManagerActor) -> Void) {
     closure(self)
   }
-  
+
   public func batch(_ closure: (isolated TaskManagerActor) async -> Void) async {
     await closure(self)
   }
