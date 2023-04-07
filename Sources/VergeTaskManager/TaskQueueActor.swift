@@ -1,6 +1,10 @@
 import Foundation
 
-private final class TaskNode {
+final class TaskNode: CustomStringConvertible {
+
+  struct WeakBox<T: AnyObject> {
+    weak var value: T?
+  }
 
   private struct State {
 
@@ -11,7 +15,7 @@ private final class TaskNode {
 
   private var anyTask: _Verge_TaskType?
 
-  let taskFactory: (TaskNode) async -> Void
+  let taskFactory: (WeakBox<TaskNode>) async -> Void
 
   private(set) var next: TaskNode?
   let label: String
@@ -20,7 +24,7 @@ private final class TaskNode {
 
   init(
     label: String = "",
-    taskFactory: @escaping @Sendable (TaskNode) async -> Void
+    @_inheritActorContext taskFactory: @escaping @Sendable (WeakBox<TaskNode>) async -> Void
   ) {
     self.label = label
     self.taskFactory = taskFactory
@@ -31,16 +35,16 @@ private final class TaskNode {
     guard state.isInvalidated == false else { return }
     guard anyTask == nil else { return }
 
-    Log.debug(.taskQueue, "TaskNode activate: \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
+    Log.debug(.taskNode, "activate: \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
 
-    self.anyTask = Task {
-      await taskFactory(self)
-      state.isFinished = true
+    self.anyTask = Task { [weak self] in
+      await self?.taskFactory(.init(value: self))
+      self?.state.isFinished = true
     }
   }
 
   func invalidate() {
-    Log.debug(.taskQueue, "TaskNode invalidated \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
+    Log.debug(.taskNode, "invalidated \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
     state.isInvalidated = true
     anyTask?.cancel()
   }
@@ -54,7 +58,7 @@ private final class TaskNode {
   }
 
   func endpoint() -> TaskNode {
-    sequence(first: self, next: \.next).map { $0 }.last ?? self
+    sequence(first: self, next: \.next).compactMap { $0 }.last!
   }
 
   func wait() async {
@@ -80,9 +84,17 @@ private final class TaskNode {
   }
   
   deinit {
-    Log.debug(.taskQueue, "Deinit TaskNode: \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
+    Log.debug(.taskNode, "Deinit: \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
   }
 
+  var description: String {
+    let chain = sequence(first: self, next: \.next).compactMap { $0 }.map {"<\(Unmanaged.passUnretained($0).toOpaque())>:\($0.label)" }.joined(separator: " -> ")
+    return "\(chain)"
+  }
+
+  func forEach(_ closure: (TaskNode) -> Void) {
+    sequence(first: self, next: \.next).forEach(closure)
+  }
 }
 
 public actor TaskQueueActor {
@@ -98,6 +110,7 @@ public actor TaskQueueActor {
   public let label: String
 
   public init(label: String = "") {
+    Log.debug(.taskQueue, "Init Queue: \(label)")
     self.label = label
   }
 
@@ -106,6 +119,7 @@ public actor TaskQueueActor {
   }
 
   public func cancelAllTasks() {
+    Log.debug(.taskQueue, "Cancell all task")
     if let head {
       sequence(first: head, next: \.next).forEach {
         $0.invalidate()
@@ -129,7 +143,7 @@ public actor TaskQueueActor {
       }
     }
     
-    let newNode = TaskNode(label: label) { [weak self] node in
+    let newNode = TaskNode(label: label) { [weak self] box in
       
       await withTaskCancellationHandler {
         do {
@@ -159,11 +173,14 @@ public actor TaskQueueActor {
       // connecting to the next if presents
 
       await self?.batch {
+        guard let node = box.value else { return }
         if let next = node.next {
           $0.head = next
           next.activate()
         } else {
-          $0.head = nil
+          if $0.head === node {
+            $0.head = nil
+          }
         }
       }
       
@@ -171,7 +188,9 @@ public actor TaskQueueActor {
 
     if let head {
       head.endpoint().addNext(newNode)
+      Log.debug(.taskQueue, "Add \(label) currentHead: \(head as Any)")
     } else {
+      Log.debug(.taskQueue, "Add \(label) as head")
       self.head = newNode
       newNode.activate()
     }
@@ -224,7 +243,7 @@ public actor TaskQueueActor {
 
 }
 
-private final class AutoReleaseContinuationBox<T>: @unchecked Sendable {
+final class AutoReleaseContinuationBox<T>: @unchecked Sendable {
 
   var continuation: UnsafeContinuation<T, Error>?
   private var wasConsumed: Bool = false
