@@ -12,39 +12,57 @@ public protocol TaskKeyType {
  ```
  
  */
-public struct TaskKey: Hashable, Sendable {
+public struct TaskKey: Hashable, Sendable, ExpressibleByStringLiteral {
+  
+  public typealias StringLiteralType = String
 
-  private struct TypedKey: Hashable, Sendable {
-
-    static func == (lhs: Self, rhs: Self) -> Bool {
-      lhs.metatype == rhs.metatype
-    }
-
-    func hash(into hasher: inout Hasher) {
-      hasher.combine(ObjectIdentifier(metatype))
-    }
-
-    let metatype: Any.Type
-
-    init<T>(base: T.Type) {
-      self.metatype = base
-    }
-
+  private enum Node: Hashable, @unchecked Sendable {
+    case int(Int)
+    case int64(Int64)
+    case string(String)
+    case boolean(Bool)
+    case type(ObjectIdentifier)
+    case anyHashable(AnyHashable)
   }
 
-  private enum Node: Hashable, Sendable {
-    case customString(String)
-    case type(TypedKey)
-  }
-
-  private let node: Node
+  private var nodes: Set<Node>
 
   public init<Key: TaskKeyType>(_ key: Key.Type) {
-    self.node = .type(.init(base: Key.self))
+    self.nodes = .init(arrayLiteral: .type(.init(Key.self)))
+  }
+
+  public init(_ hashableItem: some Hashable & Sendable) {
+    self.nodes = .init(arrayLiteral: .anyHashable(hashableItem))
+  }
+
+  public init(_ value: Int64) {
+    self.nodes = .init(arrayLiteral: .int64(value))
+  }
+
+  public init(_ value: Bool) {
+    self.nodes = .init(arrayLiteral: .boolean(value))
+  }
+
+  public init(_ value: Int) {
+    self.nodes = .init(arrayLiteral: .int(value))
   }
 
   public init(_ customString: String) {
-    self.node = .customString(customString)
+    self.nodes = .init(arrayLiteral: .string(customString))
+  }
+
+  public init(stringLiteral customString: String) {
+    self.nodes = .init(arrayLiteral: .string(customString))
+  }
+
+  /**
+   Make new distinct key with others.
+   Note that ignores the given key if it's already included in the current.
+   */
+  public func combined(_ other: TaskKey) -> Self {
+    var new = self
+    new.nodes.formUnion(other.nodes)
+    return new
   }
 
   /// Make with a new unique identifier
