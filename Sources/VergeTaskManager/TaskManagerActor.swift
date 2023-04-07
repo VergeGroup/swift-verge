@@ -16,9 +16,13 @@ public struct TaskKey: Hashable, Sendable, ExpressibleByStringLiteral {
   
   public typealias StringLiteralType = String
 
-  private enum Node: Hashable, Sendable {
-    case customString(String)
+  private enum Node: Hashable, @unchecked Sendable {
+    case int(Int)
+    case int64(Int64)
+    case string(String)
+    case boolean(Bool)
     case type(ObjectIdentifier)
+    case anyHashable(AnyHashable)
   }
 
   private var nodes: Set<Node>
@@ -27,12 +31,28 @@ public struct TaskKey: Hashable, Sendable, ExpressibleByStringLiteral {
     self.nodes = .init(arrayLiteral: .type(.init(Key.self)))
   }
 
+  public init(_ hashableItem: some Hashable & Sendable) {
+    self.nodes = .init(arrayLiteral: .anyHashable(hashableItem))
+  }
+
+  public init(_ value: Int64) {
+    self.nodes = .init(arrayLiteral: .int64(value))
+  }
+
+  public init(_ value: Bool) {
+    self.nodes = .init(arrayLiteral: .boolean(value))
+  }
+
+  public init(_ value: Int) {
+    self.nodes = .init(arrayLiteral: .int(value))
+  }
+
   public init(_ customString: String) {
-    self.nodes = .init(arrayLiteral: .customString(customString))
+    self.nodes = .init(arrayLiteral: .string(customString))
   }
 
   public init(stringLiteral customString: String) {
-    self.nodes = .init(arrayLiteral: .customString(customString))
+    self.nodes = .init(arrayLiteral: .string(customString))
   }
 
   /**
