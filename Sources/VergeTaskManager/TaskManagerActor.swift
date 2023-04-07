@@ -113,12 +113,8 @@ public actor TaskManagerActor {
   /**
    Returns a Boolean value that indicates whether the task for given key is currently running.
    */
-  public func isRunning(for key: TaskKey) async -> Bool {
-    guard let queue = queues[key] else {
-      return false
-    }
-
-    return await queue.hasTask
+  public func isRunning(for key: TaskKey) -> Bool {
+    return queues[key] != nil
   }
   
   /// Registers an asynchronous operation
@@ -137,20 +133,74 @@ public actor TaskManagerActor {
     key: TaskKey,
     mode: Mode,
     priority: TaskPriority = .userInitiated,
-    @_inheritActorContext _ action: @Sendable @escaping () async throws -> Return
-  ) async -> Task<Return, Error> {
-    
-    let targetQueue = prepareQueue(for: key)
-    
+    @_inheritActorContext _ operation: @Sendable @escaping () async throws -> Return
+  ) -> Task<Return, Error> {
+
+    let extendedContinuation: AutoReleaseContinuationBox<Return> = .init(nil)
+
+    let referenceTask = Task { [weak extendedContinuation] in
+      return try await withUnsafeThrowingContinuation{ (continuation: UnsafeContinuation<Return, Error>) in
+        extendedContinuation?.continuation = continuation
+      }
+    }
+
+    let newNode = TaskNode(label: label) { [weak self] box in
+
+      await withTaskCancellationHandler {
+        do {
+          let result = try await operation()
+
+          guard Task.isCancelled == false else {
+            extendedContinuation.resume(throwing: CancellationError())
+            return
+          }
+
+          extendedContinuation.resume(returning: result)
+
+        } catch {
+
+          guard Task.isCancelled == false else {
+            extendedContinuation.resume(throwing: CancellationError())
+            return
+          }
+
+          extendedContinuation.resume(throwing: error)
+
+        }
+      } onCancel: {
+        referenceTask.cancel()
+      }
+
+      // connecting to the next if presents
+
+      guard let self = self, let node = box.value else { return }
+
+      await loopback(key: key, completedNode: node)
+
+    }
+
     switch mode {
     case .dropCurrent:
-      return await targetQueue.batch {
-        $0.cancelAllTasks()
-        return $0.addTask(label: label, priority: priority, operation: action)
+
+      self.queues[key]?.forEach {
+        $0.invalidate()
       }
+
+      self.queues[key] = newNode
+      newNode.activate()
+
     case .waitInCurrent:
-      return await targetQueue.addTask(label: label, priority: priority, operation: action)
+
+      if let head = self.queues[key] {
+        head.endpoint().addNext(newNode)
+      } else {
+        self.queues[key] = newNode
+        newNode.activate()
+      }
+
     }
+
+    return referenceTask
     
   }
 
@@ -160,33 +210,10 @@ public actor TaskManagerActor {
     mode: Mode,
     priority: TaskPriority = .userInitiated,
     _ action: @Sendable @escaping () async throws -> Return
-  ) async -> Task<Return, Error> {
-    await task(label: label, key: key, mode: mode, priority: priority, action)
+  ) -> Task<Return, Error> {
+    task(label: label, key: key, mode: mode, priority: priority, action)
   }
-  
-  private func prepareQueue(for key: TaskKey) -> TaskQueueActor {
-    let targetQueue: TaskQueueActor
-    
-    if let currentQueue = queues[key] {
-      targetQueue = currentQueue
-    } else {
-      let newQueue = TaskQueueActor()
-      
-      Task { [weak self] in
-        await newQueue.waitUntilAllItemProcessed()
-        await self?.batch {
-          if $0.queues[key] === newQueue {
-            $0.queues.removeValue(forKey: key)
-          }
-        }
-      }
 
-      queues[key] = newQueue
-      targetQueue = newQueue
-    }
-    return targetQueue
-  }
-  
   public func batch(_ closure: (isolated TaskManagerActor) -> Void) {
     closure(self)
   }
@@ -200,15 +227,37 @@ public actor TaskManagerActor {
    */
   public func cancelAll() async {
 
-    for queue in queues.values {
-      await queue.cancelAllTasks()
+    for head in queues.values {
+      for node in sequence(first: head, next: \.next) {
+        node.invalidate()
+      }
     }
 
     queues.removeAll()
   }
 
+  private func loopback(key: TaskKey, completedNode: TaskNode) {
+
+    if let node = queues[key] {
+
+      if let next = node.next {
+        next.activate()
+        queues[key] = next
+      } else {
+        if node === completedNode {
+          queues.removeValue(forKey: key)
+        }
+      }
+    } else {
+      assertionFailure()
+    }
+
+    Log.debug(.taskManager, queues)
+
+  }
+
   // MARK: Private
   
-  private var queues: [TaskKey : TaskQueueActor] = [:]
+  private var queues: [TaskKey : TaskNode] = [:]
   
 }

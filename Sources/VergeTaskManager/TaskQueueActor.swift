@@ -24,7 +24,7 @@ final class TaskNode: CustomStringConvertible {
 
   init(
     label: String = "",
-    taskFactory: @escaping @Sendable (WeakBox<TaskNode>) async -> Void
+    @_inheritActorContext taskFactory: @escaping @Sendable (WeakBox<TaskNode>) async -> Void
   ) {
     self.label = label
     self.taskFactory = taskFactory
@@ -35,7 +35,7 @@ final class TaskNode: CustomStringConvertible {
     guard state.isInvalidated == false else { return }
     guard anyTask == nil else { return }
 
-    Log.debug(.taskQueue, "TaskNode activate: \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
+    Log.debug(.taskNode, "activate: \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
 
     self.anyTask = Task { [weak self] in
       await self?.taskFactory(.init(value: self))
@@ -44,7 +44,7 @@ final class TaskNode: CustomStringConvertible {
   }
 
   func invalidate() {
-    Log.debug(.taskQueue, "TaskNode invalidated \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
+    Log.debug(.taskNode, "invalidated \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
     state.isInvalidated = true
     anyTask?.cancel()
   }
@@ -84,12 +84,16 @@ final class TaskNode: CustomStringConvertible {
   }
   
   deinit {
-    Log.debug(.taskQueue, "Deinit TaskNode: \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
+    Log.debug(.taskNode, "Deinit: \(label) <\(Unmanaged.passUnretained(self).toOpaque())>")
   }
 
   var description: String {
     let chain = sequence(first: self, next: \.next).compactMap { $0 }.map {"<\(Unmanaged.passUnretained($0).toOpaque())>:\($0.label)" }.joined(separator: " -> ")
     return "\(chain)"
+  }
+
+  func forEach(_ closure: (TaskNode) -> Void) {
+    sequence(first: self, next: \.next).forEach(closure)
   }
 }
 
@@ -130,8 +134,6 @@ public actor TaskQueueActor {
     priority: TaskPriority? = nil,
     operation: @escaping @Sendable () async throws -> Return
   ) -> Task<Return, Error> {
-
-
 
     let extendedContinuation: AutoReleaseContinuationBox<Return> = .init(nil)
 
@@ -241,7 +243,7 @@ public actor TaskQueueActor {
 
 }
 
-private final class AutoReleaseContinuationBox<T>: @unchecked Sendable {
+final class AutoReleaseContinuationBox<T>: @unchecked Sendable {
 
   var continuation: UnsafeContinuation<T, Error>?
   private var wasConsumed: Bool = false
