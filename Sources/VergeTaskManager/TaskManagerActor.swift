@@ -175,7 +175,7 @@ public actor TaskManagerActor {
 
       guard let self = self, let node = box.value else { return }
 
-      await loopback(key: key, completedNode: node)
+      await self.loopback(key: key, completedNode: node)
 
     }
 
