@@ -12,39 +12,37 @@ public protocol TaskKeyType {
  ```
  
  */
-public struct TaskKey: Hashable, Sendable {
-
-  private struct TypedKey: Hashable, Sendable {
-
-    static func == (lhs: Self, rhs: Self) -> Bool {
-      lhs.metatype == rhs.metatype
-    }
-
-    func hash(into hasher: inout Hasher) {
-      hasher.combine(ObjectIdentifier(metatype))
-    }
-
-    let metatype: Any.Type
-
-    init<T>(base: T.Type) {
-      self.metatype = base
-    }
-
-  }
+public struct TaskKey: Hashable, Sendable, ExpressibleByStringLiteral {
+  
+  public typealias StringLiteralType = String
 
   private enum Node: Hashable, Sendable {
     case customString(String)
-    case type(TypedKey)
+    case type(ObjectIdentifier)
   }
 
-  private let node: Node
+  private var nodes: Set<Node>
 
   public init<Key: TaskKeyType>(_ key: Key.Type) {
-    self.node = .type(.init(base: Key.self))
+    self.nodes = .init(arrayLiteral: .type(.init(Key.self)))
   }
 
   public init(_ customString: String) {
-    self.node = .customString(customString)
+    self.nodes = .init(arrayLiteral: .customString(customString))
+  }
+
+  public init(stringLiteral customString: String) {
+    self.nodes = .init(arrayLiteral: .customString(customString))
+  }
+
+  /**
+   Make new distinct key with others.
+   Note that ignores the given key if it's already included in the current.
+   */
+  public func combined(_ other: TaskKey) -> Self {
+    var new = self
+    new.nodes.formUnion(other.nodes)
+    return new
   }
 
   /// Make with a new unique identifier
