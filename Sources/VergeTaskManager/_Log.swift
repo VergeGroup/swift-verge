@@ -8,7 +8,7 @@ enum Log {
     _ log: OSLog,
     _ object: @autoclosure () -> Any
   ) {
-    os_log(.default, log: log, "%{public}@\n%{public}@:%{public}@", "\(object())", "\(file)", "\(line.description)")
+    os_log(.default, log: log, "%{public}@", "\(object())")
   }
   
   static func error(

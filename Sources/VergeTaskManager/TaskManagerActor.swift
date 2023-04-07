@@ -175,7 +175,9 @@ public actor TaskManagerActor {
       Task { [weak self] in
         await newQueue.waitUntilAllItemProcessed()
         await self?.batch {
-          $0.queues.removeValue(forKey: key)
+          if $0.queues[key] === newQueue {
+            $0.queues.removeValue(forKey: key)
+          }
         }
       }
 
