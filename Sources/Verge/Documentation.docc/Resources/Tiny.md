@@ -1,88 +1,58 @@
 # Yet another super tiny store pattern with Verge/Tiny
 
-## To keep performance and scalability
+In fact, `store-pattern` doesn't need something library to run.
+The actually necessary thing is **the changing detection in UIKit.**
 
-## Adding a cachable computed property in a State
-
-We can add a computed property in a state to get a derived value with stored property,
-and that computed property works fine as well other stored property.
+Without the changing detection, the code is here.
+There is no dependencies.
 
 ```swift
-struct MyState {
-  var items: [Item] = [] {
-
-  var itemsCount: Int {
-    items.count
+class MyView: UIView {
+  private struct State {
+    var count: Int = 0
   }
-}
-```
-
-However, this patterns might cause an expensive cost of operation depends on how they computes.
-To solve it, Verge arrows us to define the computed property with another approach.
-
-```swift
-struct MyState: ExtendedStateType {
-
-  var name: String = ...
-  var items: [Int] = []
-
-  struct Extended: ExtendedType {
-    let filteredArray = Field.Computed<[Int]> {
-      $0.items.filter { $0 > 300 }
-    }
-    .ifChanged(selector: \.largeArray)
-  }
-}
-```
-
-```swift
-let store: MyStore
-
-store.changes.computed.filteredArray
-```
-
-This defined computed array calculates only if changed specified value.
-That condition to re-calculate is defined with `.ifChanged` method in the example code.
-
-And finally, it caches the result by first-time access and it returns cached value until if the source value changed.
-
-## Making a slice of the state (Selector)
-
-We can create a slice object that derives a data from the state.
-
-```swift
-let derived: Derived<Int> = store.derived(.map(\.count))
-
-// take a value
-derived.value
-
-// subscribe a value changes
-derived.sinkChanges { (changes: Changes<Int>) in
-}
-```
-
-## Creating a Dispatcher
-
-Store arrows us to define an action in itself, that might cause gain complexity in supporting a large application.
-To solve this, Verge offers us to create an object that dispatches an action to the store.
-We can separate the code of actions to keep maintainability.
-that also help us to manage a different type of dependencies.
-
-For example, the case of those dependencies different between logged-in and logged-out.
-
-```swift
-class MyDispatcher: MyStore.Dispatcher {
-  func moreOperation() {
-    commit {
-      ...
+  
+  private var state: State {
+    didSet {
+      update(with: state)
     }
   }
+
+  private func update(with state: State) {
+    ...
+  }
 }
 ```
 
-```swift
-let store: MyStore
-let dispatcher = MyDispatcher(target: store)
+Next, we focus on `update(with:)` method.
+Try to simulate updating the label's value.
 
-dispatcher.moreOperation()
+```swift
+private func update(with state: State) {
+  myLabel.text = "\(state.count)"
+}
 ```
+
+As you can see, you will think you want to prevent updating the value until the value changed.
+
+## Use Verge.Tiny module to prevent the duplicated updating.
+
+With installing `Verge/Tiny` module, we can write up like followings.
+
+```swift
+private func update(with state: State) {
+  associatedProperties.doIfChanged(state.count) { count in 
+    myLabel.text = "\(count)"
+  }
+}
+```
+
+`associatedProperties` is a storage of the values that associated with its owner object(NSObject).
+
+`doIfChanged` gets the location of the code that would be a unique key by composition in the storage.
+
+With this functions, we can get a filter anywhere in the object.
+However, this function might affect code readabilities in Swift. 
+Please carefully using this.
+
+We recommend you gather those operations into one place.
