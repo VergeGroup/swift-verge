@@ -100,6 +100,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
   ///   - retainsUpstream: Any instances to retain in this instance.
   public init<UpstreamState: HasTraces, Pipeline: PipelineType>(
+    name: String? = nil,
     get pipeline: Pipeline,
     set: ((Value) -> Void)?,
     initialUpstreamState: UpstreamState,
@@ -133,7 +134,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     self.upstreamSubscription = s
     self._set = set
     super.init(
-      name: nil,
+      name: name,
       initialState: pipeline.yield(initialUpstreamState),
       logger: nil,
       sanitizer: nil
