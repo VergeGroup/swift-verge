@@ -86,8 +86,7 @@ public enum Pipelines {
       }
       
       guard
-        previous.primitive == input.primitive ||
-          previous.primitive[keyPath: keyPath] == input.primitive[keyPath: keyPath]
+        previous.primitive[keyPath: keyPath] == input.primitive[keyPath: keyPath]
       else {
         
         guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
