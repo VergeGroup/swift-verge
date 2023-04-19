@@ -544,7 +544,7 @@ Mutation: (%@)
     queue: MainActorTargetQueue,
     receive: @escaping @MainActor (Changes<State>) -> Void
   ) -> StoreSubscription {
-    return _primitive_sinkState(queue: Queues.MainActor(queue), receive: receive)
+    return _primitive_sinkState(dropsFirst: dropsFirst, queue: Queues.MainActor(queue), receive: receive)
   }
   
   func _primitive_sinkState(
