@@ -42,7 +42,7 @@ extension EntityType {
 }
 
 /// A value that wraps an entity and results of fetching.
-public struct EntityWrapper<Entity: EntityType> {
+public struct EntityWrapper<Entity: EntityType>: Sendable {
   
   public private(set) var wrapped: Entity?
   public let id: Entity.EntityID
