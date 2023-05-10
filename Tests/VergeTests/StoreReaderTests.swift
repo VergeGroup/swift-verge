@@ -4,6 +4,7 @@ import SwiftUI
 import Verge
 import ViewInspector
 
+@available(iOS 14, *)
 final class StoreReaderTests: XCTestCase {
   
       
