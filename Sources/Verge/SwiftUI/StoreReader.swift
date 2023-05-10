@@ -11,9 +11,10 @@ import SwiftUI
  Store emits events of updated state, StoreReader filters them with current using KeyPaths.
  Therefore functions of the state are not available in this situation.
  */
+@available(iOS 14, *)
 public struct StoreReader<StateType: Equatable, Content: View>: View {
   
-  @_StateObject private var node: StoreReaderComponents<StateType>.Node
+  @StateObject private var node: StoreReaderComponents<StateType>.Node
   
   public typealias ContentMaker = @MainActor (inout StoreReaderComponents<StateType>.ReadTracker) -> Content
   
@@ -219,60 +220,5 @@ public enum StoreReaderComponents<StateType: Equatable> {
       return content
     }
     
-  }
-}
-
-@_spi(Internal)
-@available(iOS, deprecated: 14.0)
-@propertyWrapper
-public struct _StateObject<Wrapped>: DynamicProperty where Wrapped: ObservableObject {
-  
-  /// keep internal due to vanishing symbol in -O compilation.
-  @_spi(Internal)
-  public final class Wrapper: ObservableObject {
-    
-    var value: Wrapped? {
-      didSet {
-        guard let value else { return }
-        cancellable = value.objectWillChange
-          .sink { [weak self] _ in
-            self?.objectWillChange.send()
-          }
-      }
-    }
-    
-    private var cancellable: AnyCancellable?
-  }
-  
-  public var wrappedValue: Wrapped {
-    if let object = state.value {
-      return object
-    } else {
-      let object = thunk()
-      state.value = object
-      return object
-    }
-  }
-  
-  public var projectedValue: ObservedObject<Wrapped>.Wrapper {
-    return ObservedObject(wrappedValue: wrappedValue).projectedValue
-  }
-  
-  @State private var state = Wrapper()
-  @ObservedObject private var observedObject = Wrapper()
-  
-  private let thunk: () -> Wrapped
-  
-  public init(wrappedValue thunk: @autoclosure @escaping () -> Wrapped) {
-    self.thunk = thunk
-  }
-  
-  public mutating func update() {
-    if state.value == nil {
-      state.value = thunk()
-    }
-    if observedObject.value !== state.value {
-      observedObject.value = state.value
-    }
   }
 }
