@@ -4,23 +4,12 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: macos-12
+    runs-on: macos-13
 
     steps:
       - uses: maxim-lobanov/setup-xcode@v1.1
         with:
-          xcode-version: "14.2"
+          xcode-version: "14.3"
       - uses: actions/checkout@v2
       - name: Run Test
-        run: xcodebuild -scheme Verge-Package test -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
-
-  build-package-on-swiftpm:
-    runs-on: macos-12
-
-    steps:
-      - uses: maxim-lobanov/setup-xcode@v1.1
-        with:
-          xcode-version: "14.2"
-      - uses: actions/checkout@v2
-      - name: Build
-        run: swift build -v
+        run: xcodebuild -scheme Verge-Package test -destination 'platform=iOS Simulator,name=iPhone 14 Pro,OS=16.4' | xcpretty
