@@ -52,7 +52,8 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
 }
 
 public enum StoreReaderComponents<StateType: Equatable> {
-  
+
+  // Proxy
   @MainActor
   @dynamicMemberLookup
   public struct ReadTracker {
@@ -69,9 +70,11 @@ public enum StoreReaderComponents<StateType: Equatable> {
     }
     
     private(set) var detectors: Detectors = [:]
+    private weak var source: (any DispatcherType<StateType>)?
     
-    init(wrapped: StateType) {
+    init(wrapped: StateType, source: (any DispatcherType<StateType>)?) {
       self.wrapped = wrapped
+      self.source = source
     }
     
     /**
@@ -110,7 +113,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
         return wrapped[keyPath: keyPath]
       }
     }
-    
+
     /**
      ⚠️ Not equatable version.
      */
@@ -132,7 +135,35 @@ public enum StoreReaderComponents<StateType: Equatable> {
       }
             
     }
-       
+
+    /**
+     ✅ Equatable version
+     Make SwiftUI.Binding
+     */
+    public mutating func binding<T: Equatable>(_ keyPath: WritableKeyPath<StateType, T>) -> SwiftUI.Binding<T> {
+      return .init { [value = self[dynamicMember: keyPath]] in
+        return value
+      } set: { [weak source = self.source] newValue, _ in
+        source?.commit { state in
+          state[keyPath: keyPath] = newValue
+        }
+      }
+    }
+
+    /**
+     ⚠️ Not equatable version.
+     Make SwiftUI.Binding
+     */
+    public mutating func binding<T>(_ keyPath: WritableKeyPath<StateType, T>) -> SwiftUI.Binding<T> {
+      return .init { [value = self[dynamicMember: keyPath]] in
+        return value
+      } set: { [weak source = self.source] newValue, _ in
+        source?.commit { state in
+          state[keyPath: keyPath] = newValue
+        }
+      }
+    }
+
   }
   
   @MainActor
@@ -152,13 +183,16 @@ public enum StoreReaderComponents<StateType: Equatable> {
     private var currentValue: Changes<StateType>
     
     private let debug: Bool
+
+    private weak var source: (any DispatcherType<StateType>)?
     
-    init<Activity>(
-      store: Store<StateType, Activity>,
+    init(
+      store: some DispatcherType<StateType>,
       retainValues: [AnyObject],
       debug: Bool = false
     ) {
-      
+
+      self.source = store
       self.debug = debug
       self.retainValues = retainValues
       
@@ -212,7 +246,8 @@ public enum StoreReaderComponents<StateType: Equatable> {
     func makeContent<Content: View>(@ViewBuilder _ make: @MainActor (inout ReadTracker) -> Content)
     -> Content
     {
-      var tracker = ReadTracker(wrapped: currentValue.primitive)
+
+      var tracker = ReadTracker(wrapped: currentValue.primitive, source: source)
       let content = make(&tracker)
             
       detectors = tracker.detectors
