@@ -50,13 +50,19 @@ import Foundation
  }
  ``` 
  */
-public protocol StoreComponentType: DispatcherType where Scope == WrappedStore.State {
+public protocol StoreComponentType: DispatcherType, ObservableObject where Scope == WrappedStore.State {
 
   var store: WrappedStore { get }
 }
 
 /// It would be deprecated in the future.
 public typealias StoreWrapperType = StoreComponentType
+
+extension StoreComponentType {
+  public var objectWillChange: ObservableObjectPublisher {
+    store.objectWillChange
+  }
+}
 
 extension StoreComponentType {
 
