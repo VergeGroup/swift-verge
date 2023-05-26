@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "swift-concurrency-task-manager",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/VergeGroup/swift-concurrency-task-manager",
+      "state" : {
+        "revision" : "2945db667991d84052b56901bf68b78d606d0699",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "swift-docc-plugin",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-docc-plugin.git",

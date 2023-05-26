@@ -11,7 +11,6 @@ let package = Package(
   ],
   products: [
     .library(name: "Verge", targets: ["Verge"]),
-    .library(name: "VergeTaskManager", targets: ["VergeTaskManager"]),
     .library(name: "VergeTiny", targets: ["VergeTiny"]),
     .library(name: "VergeORM", targets: ["VergeORM"]),
     .library(name: "VergeRx", targets: ["VergeRx"]),
@@ -22,24 +21,19 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-docc-plugin.git", branch: "main"),
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
     .package(url: "https://github.com/apple/swift-collections", branch: "main"),
+    .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.0.0"),
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.9.3"),
   ],
   targets: [
-    .target(
-      name: "VergeTaskManager",
-      dependencies: [
-        //        .product(name: "Atomics", package: "swift-atomics")
-      ]
-    ),
     .target(name: "VergeTiny", dependencies: []),
     .target(
       name: "Verge",
       dependencies: [
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "DequeModule", package: "swift-collections"),
-        "VergeTaskManager",
+        .product(name: "ConcurrencyTaskManager", package: "swift-concurrency-task-manager"),
       ]
     ),
     .target(
@@ -62,13 +56,6 @@ let package = Package(
         "Verge",
         .product(name: "RxSwift", package: "RxSwift"),
         .product(name: "RxCocoa", package: "RxSwift"),
-      ]
-    ),
-    .testTarget(
-      name: "VergeTaskManagerTests",
-      dependencies: [
-        "VergeTaskManager",
-        "Verge",
       ]
     ),
     .testTarget(
