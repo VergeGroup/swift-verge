@@ -15,14 +15,12 @@ import SwiftUI
 public struct StoreReader<StateType: Equatable, Content: View>: View {
   
   @StateObject private var node: StoreReaderComponents<StateType>.Node
-  
-  public typealias ContentMaker = @MainActor (inout StoreReaderComponents<StateType>.ReadTracker) -> Content
-  
-  private let content: ContentMaker
+
+  private let content: @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
   
   private init(
     node: @autoclosure @escaping () -> StoreReaderComponents<StateType>.Node,
-    content: @escaping ContentMaker
+    content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
   ) {
     self._node = .init(wrappedValue: node())
     self.content = content
@@ -40,7 +38,7 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
   public init<Store: DispatcherType>(
     debug: Bool = false,
     _ store: Store,
-    @ViewBuilder content: @escaping ContentMaker
+    @ViewBuilder content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
   ) where StateType == Store.State {
     
     let store = store.store.asStore()
@@ -56,7 +54,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
   // Proxy
   @MainActor
   @dynamicMemberLookup
-  public struct ReadTracker {
+  public struct StateProxy {
     
     typealias Detectors = [PartialKeyPath<StateType> : (Changes<StateType>) -> Bool]
     
@@ -174,7 +172,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
     }
     
     /// nil means not loaded first yet
-    private var detectors: ReadTracker.Detectors?
+    private var detectors: StateProxy.Detectors?
     
     private let _publisher: ObservableObjectPublisher = .init()
     private var cancellable: StoreSubscription?
@@ -243,11 +241,11 @@ public enum StoreReaderComponents<StateType: Equatable> {
 #endif
     }
     
-    func makeContent<Content: View>(@ViewBuilder _ make: @MainActor (inout ReadTracker) -> Content)
+    func makeContent<Content: View>(@ViewBuilder _ make: @MainActor (inout StateProxy) -> Content)
     -> Content
     {
 
-      var tracker = ReadTracker(wrapped: currentValue.primitive, source: source)
+      var tracker = StateProxy(wrapped: currentValue.primitive, source: source)
       let content = make(&tracker)
             
       detectors = tracker.detectors
