@@ -142,7 +142,7 @@ import SwiftUI
 import Verge
 
 struct ContentView: View {
-  @StateObject private var viewModel = CounterViewModel()
+  @StoreObject private var viewModel = CounterViewModel()
 
   var body: some View {
     VStack {
