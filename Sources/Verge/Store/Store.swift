@@ -30,7 +30,7 @@ import Combine
 #endif
 
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
-public protocol StoreType<State>: AnyObject {
+public protocol StoreType<State>: AnyObject, ObservableObject where ObjectWillChangePublisher == ObservableObjectPublisher {
   associatedtype State: Equatable
   associatedtype Activity = Never
   
@@ -68,7 +68,7 @@ public enum _StoreEvent<State: Equatable, Activity> {
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, ObservableObject, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
+open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
 
   public var scope: WritableKeyPath<State, State> = \State.self
           
