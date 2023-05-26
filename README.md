@@ -179,6 +179,14 @@ In this example, `StoreReader` is used to read the state from the `MyViewModel` 
 
 This new section will help users understand how to use Verge with SwiftUI, allowing them to manage state effectively within their SwiftUI views. Let me know if you have any further suggestions or changes!
 
+**StoreObject** property wrapper:
+
+SwiftUI provides the @StateObject property wrapper to create and manage a persistent instance of a given object that adheres to the ObservableObject protocol. However, StateObject will cause the view to be refreshed whenever the ObservableObject is updated.
+
+In Verge, we introduce the StoreObject property wrapper, which instantiates a Store object for the duration of the view's lifecycle but does not cause the view to refresh when the Store updates.
+
+This is beneficial when you want to manage the Store in a more granular way, without causing the entire view to refresh when the Store changes. Instead, Store updates can be handled through the StoreReader.
+
 ## Using Verge with UIKit
 
 Here's a simple usage example of Verge with a UIViewController:
