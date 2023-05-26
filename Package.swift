@@ -21,7 +21,7 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-docc-plugin.git", branch: "main"),
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
     .package(url: "https://github.com/apple/swift-collections", branch: "main"),
-    .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.0.0"),
+    .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.9.3"),
