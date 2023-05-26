@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/swift-concurrency-task-manager",
       "state" : {
-        "revision" : "2945db667991d84052b56901bf68b78d606d0699",
-        "version" : "1.0.0"
+        "revision" : "53a16dbea3c685bc8e41289220f9ed08857adfe4",
+        "version" : "1.1.0"
       }
     },
     {
