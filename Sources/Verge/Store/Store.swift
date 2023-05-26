@@ -21,7 +21,7 @@
 
 import Foundation
 import os.log
-import VergeTaskManager
+import ConcurrencyTaskManager
 
 @_implementationOnly import Atomics
 
@@ -354,8 +354,8 @@ extension Store {
    */
   @discardableResult
   public func task<Return>(
-    key: VergeTaskManager.TaskKey = .distinct(),
-    mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
+    key: ConcurrencyTaskManager.TaskKey = .distinct(),
+    mode: ConcurrencyTaskManager.TaskManagerActor.Mode = .dropCurrent,
     priority: TaskPriority = .userInitiated,
     @_inheritActorContext _ action: @Sendable @escaping () async throws -> Return
   ) -> Task<Return, Error> {
@@ -384,8 +384,8 @@ extension Store {
    */
   @discardableResult
   public func taskDetached<Return>(
-    key: VergeTaskManager.TaskKey = .distinct(),
-    mode: VergeTaskManager.TaskManagerActor.Mode = .dropCurrent,
+    key: ConcurrencyTaskManager.TaskKey = .distinct(),
+    mode: ConcurrencyTaskManager.TaskManagerActor.Mode = .dropCurrent,
     priority: TaskPriority = .userInitiated,
     _ action: @Sendable @escaping () async throws -> Return
   ) -> Task<Return, Error> {

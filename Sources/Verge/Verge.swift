@@ -1,3 +1,3 @@
 
-@_exported import VergeTaskManager
+@_exported import ConcurrencyTaskManager
 @_exported import Combine
