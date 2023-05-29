@@ -187,6 +187,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   @_spi(Internal)
   public final override func receiveEvent(_ event: _StoreEvent<State, Activity>) {
     
+    
     switch event {
     case .state(let stateEvent):
       switch stateEvent {
