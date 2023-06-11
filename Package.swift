@@ -1,5 +1,6 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.9
 import PackageDescription
+import CompilerPluginSupport
 
 let package = Package(
   name: "Verge",
@@ -25,12 +26,25 @@ let package = Package(
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.9.3"),
+
+      .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0-swift-5.9-DEVELOPMENT-SNAPSHOT-2023-04-25-b")
   ],
   targets: [
+    .macro(
+      name: "VergeMacros",
+      dependencies: [
+        .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+        .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+      ]
+    ),
+
+    .target(name: "VergeMacrosExports", dependencies: ["VergeMacros"]),
+
     .target(name: "VergeTiny", dependencies: []),
     .target(
       name: "Verge",
       dependencies: [
+        "VergeMacrosExports",
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "DequeModule", package: "swift-collections"),
         .product(name: "ConcurrencyTaskManager", package: "swift-concurrency-task-manager"),
