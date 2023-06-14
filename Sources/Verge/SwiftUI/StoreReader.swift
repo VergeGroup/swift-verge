@@ -5,7 +5,7 @@ import SwiftUI
 /**
  For SwiftUI - A View that reads a ``Store`` including ``Derived``.
  It updates its content when reading properties have been updated.
- 
+
  Technically, it observes what properties used in making content closure as KeyPath.
  ``ReadTracker`` can get those using dynamicMemberLookup.
  Store emits events of updated state, StoreReader filters them with current using KeyPaths.
@@ -13,23 +13,24 @@ import SwiftUI
  */
 @available(iOS 14, *)
 public struct StoreReader<StateType: Equatable, Content: View>: View {
-  
-  @StateObject private var node: StoreReaderComponents<StateType>.Node
 
-  private let content: @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
-  
+  private let backing: _StoreReader<StateType, Content>
+  private let identifier: ObjectIdentifier
+
   private init(
-    node: @autoclosure @escaping () -> StoreReaderComponents<StateType>.Node,
+    identifier: ObjectIdentifier,
+    node: @escaping @MainActor () -> StoreReaderComponents<StateType>.Node,
     content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
   ) {
-    self._node = .init(wrappedValue: node())
-    self.content = content
+    self.identifier = identifier
+    self.backing = _StoreReader(node: node, content: content)
   }
-  
+
   public var body: some View {
-    node.makeContent(content)
+    backing
+      .id(identifier)
   }
-  
+
   /// Initialize from `Store`
   ///
   /// - Parameters:
@@ -40,11 +41,42 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
     _ store: Store,
     @ViewBuilder content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
   ) where StateType == Store.State {
-    
+
     let store = store.store.asStore()
-    
-    self.init(node: .init(store: store, retainValues: [], debug: debug), content: content)
-    
+
+    self.init(
+      identifier: ObjectIdentifier(store),
+      node: {
+        return .init(
+          store: store,
+          retainValues: [],
+          debug: debug
+        )
+      },
+      content: content
+    )
+
+  }
+
+}
+
+@available(iOS 14, *)
+private struct _StoreReader<StateType: Equatable, Content: View>: View {
+
+  @StateObject private var node: StoreReaderComponents<StateType>.Node
+
+  private let content: @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
+  
+  init(
+    node: @escaping @MainActor () -> StoreReaderComponents<StateType>.Node,
+    content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
+  ) {
+    self._node = .init(wrappedValue: node())
+    self.content = content
+  }
+  
+  public var body: some View {
+    node.makeContent(content)
   }
 
 }
@@ -173,8 +205,8 @@ public enum StoreReaderComponents<StateType: Equatable> {
     
     /// nil means not loaded first yet
     private var detectors: StateProxy.Detectors?
-    
-    private let _publisher: ObservableObjectPublisher = .init()
+
+    private nonisolated let _publisher: ObservableObjectPublisher = .init()
     private var cancellable: StoreSubscription?
     private let retainValues: [AnyObject]
     
@@ -255,3 +287,79 @@ public enum StoreReaderComponents<StateType: Equatable> {
     
   }
 }
+
+#if DEBUG
+
+@available(iOS 14, *)
+enum Preview_StoreReader: PreviewProvider {
+
+  static var previews: some View {
+
+    Group {
+      Content()
+    }
+
+  }
+
+  struct Content: View {
+
+    @StoreObject var viewModel_1: ViewModel = .init()
+    @StoreObject var viewModel_2: ViewModel = .init()
+
+    @State var flag = false
+
+    var body: some View {
+
+      VStack {
+
+        let store = flag ? viewModel_1 : viewModel_2
+
+        StoreReader(store) { state in
+          Text(state.count.description)
+        }
+
+        Button("up") {
+          store.increment()
+        }
+
+        Button("swap") {
+          flag.toggle()
+        }
+
+      }
+    }
+  }
+
+  final class ViewModel: StoreComponentType {
+
+    struct State: Equatable {
+      var count: Int = 0
+      var count_dummy: Int = 0
+    }
+
+    let store: Store<State, Never>
+
+    init() {
+      self.store = .init(initialState: .init())
+    }
+
+    func increment() {
+      commit {
+        $0.count += 1
+      }
+    }
+
+    func incrementDummy() {
+      commit {
+        $0.count_dummy += 1
+      }
+    }
+
+    deinit {
+      print("deinit")
+    }
+  }
+
+}
+
+#endif
