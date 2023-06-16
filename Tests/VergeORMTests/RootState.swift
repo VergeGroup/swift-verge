@@ -10,6 +10,7 @@ import Foundation
 
 import Verge
 import VergeORM
+import VergeMacros
 
 struct Book: EntityType, Hashable {
   
@@ -39,8 +40,9 @@ struct Author: EntityType {
 }
 
 struct RootState: StateType {
-    
-  struct Database: DatabaseType {
+
+  @DatabaseState
+  struct Database {
           
     struct Schema: EntitySchemaType {
       let book = Book.EntityTableKey()
@@ -62,8 +64,6 @@ struct RootState: StateType {
         })
       ]
     }
-    
-    var _backingStorage: BackingStorage = .init()
   }
   
   struct Other: Equatable {
