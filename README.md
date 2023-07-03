@@ -462,7 +462,7 @@ struct Database: DatabaseType {
 Embed the `Database` in your application's state:
 
 ```swift
-struct RootState: RootStateType {
+struct RootState: StateType {
   var database: Database = .init()
 }
 ```
