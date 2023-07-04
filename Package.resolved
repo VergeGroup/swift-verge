@@ -23,8 +23,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "branch" : "main",
-        "revision" : "53a8adc54374f620002a3b6401d39e0feb3c57ae"
+        "revision" : "939cfd25234472b4dc91c3caeab304d15bca9a73"
       }
     },
     {
