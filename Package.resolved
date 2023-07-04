@@ -21,9 +21,10 @@
     {
       "identity" : "swift-collections",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-collections",
+      "location" : "https://github.com/FluidGroup/swift-collections",
       "state" : {
-        "revision" : "939cfd25234472b4dc91c3caeab304d15bca9a73"
+        "revision" : "939cfd25234472b4dc91c3caeab304d15bca9a73",
+        "version" : "1.1.0"
       }
     },
     {
@@ -40,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-docc-plugin.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "6a6577adb48651a1ca7dee6861c894ee6ca66021"
+        "revision" : "26ac5758409154cc448d7ab82389c520fa8a8247",
+        "version" : "1.3.0"
       }
     },
     {
@@ -49,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-docc-symbolkit",
       "state" : {
-        "branch" : "main",
-        "revision" : "b45d1f2ed151d057b54504d653e0da5552844e34"
+        "revision" : "b45d1f2ed151d057b54504d653e0da5552844e34",
+        "version" : "1.0.0"
       }
     },
     {
