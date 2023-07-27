@@ -77,7 +77,7 @@ public final class MainActorTargetQueue {
 
       let previousNumberEnqueued = numberEnqueued.loadThenWrappingIncrement(ordering: .sequentiallyConsistent)
 
-      if DispatchQueue.isMain && previousNumberEnqueued == 0 {
+      if Thread.isMainThread && previousNumberEnqueued == 0 {
         workItem()
         numberEnqueued.wrappingDecrement(ordering: .sequentiallyConsistent)
       } else {
@@ -102,18 +102,6 @@ private enum StaticMember {
     target: nil
   )
 
-}
-
-extension DispatchQueue {
-  private static var token: DispatchSpecificKey<()> = {
-    let key = DispatchSpecificKey<()>()
-    DispatchQueue.main.setSpecific(key: key, value: ())
-    return key
-  }()
-
-  static var isMain: Bool {
-    return DispatchQueue.getSpecific(key: token) != nil
-  }
 }
 
 extension TargetQueueType where Self == Queues.Passthrough  {
