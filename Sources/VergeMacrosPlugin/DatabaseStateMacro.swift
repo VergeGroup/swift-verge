@@ -41,7 +41,7 @@ extension DatabaseStateMacro: MemberMacro {
   where Declaration: SwiftSyntax.DeclGroupSyntax, Context: SwiftSyntaxMacros.MacroExpansionContext {
 
     return [
-      "var _backingStorage: BackingStorage = .init()"
+      "var _backingStorage: DatabaseStorage<Schema, Indexes> = .init()"
     ]
 
   }

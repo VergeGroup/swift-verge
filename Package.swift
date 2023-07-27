@@ -16,7 +16,7 @@ let package = Package(
     .library(name: "VergeORM", targets: ["VergeORM"]),
     .library(name: "VergeRx", targets: ["VergeRx"]),
     .library(name: "VergeClassic", targets: ["VergeClassic"]),
-    .library(name: "VergeMacros", targets: ["VergeMacros"])
+    .library(name: "VergeMacros", targets: ["VergeMacros"]),
   ],
   dependencies: [
     .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.0.0"),
@@ -63,7 +63,6 @@ let package = Package(
       name: "VergeORM",
       dependencies: [
         "Verge",
-//        .product(name: "HashTreeCollections", package: "swift-collections"),
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]
     ),
@@ -97,7 +96,6 @@ let package = Package(
     ),
     .testTarget(name: "VergeMacrosTests", dependencies: [
       "VergeMacrosPlugin",
-      "VergeMacros",
       .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
     ])
   ],

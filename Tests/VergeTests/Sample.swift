@@ -7,6 +7,8 @@
 //
 
 import Foundation
+
+#if canImport(UIKIt)
 import UIKit
 
 import Verge
@@ -55,3 +57,5 @@ enum Sample {
     
   }
 }
+
+#endif
