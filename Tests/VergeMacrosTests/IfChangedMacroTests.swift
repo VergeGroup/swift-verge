@@ -7,18 +7,38 @@ import VergeMacrosPlugin
 
 final class IfChangedMacroTests: XCTestCase {
 
-  func test_1() {
+  func test_trailing_closure() {
 
     assertMacroExpansion(
       #"""
-      #property(\String.count, \.a)
+      #ifChanged(state, \.foo) { value in
+        print(value)
+      }
       """#,
       expandedSource: #"""
         {
             ($0.count, $0.a)
         }
         """#,
-      macros: ["property": IfChangedMacro.self]
+      macros: ["ifChanged": IfChangedMacro.self]
+    )
+
+  }
+
+  func test_parameter_closure() {
+
+    assertMacroExpansion(
+      #"""
+      #ifChanged(state, \.name, \.count, onChanged: { name, count in
+        print(name, count)
+      })
+      """#,
+      expandedSource: #"""
+        {
+            ($0.count, $0.a)
+        }
+        """#,
+      macros: ["ifChanged": IfChangedMacro.self]
     )
 
   }

@@ -1,4 +1,3 @@
-
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
@@ -16,35 +15,73 @@ public struct IfChangedMacro: ExpressionMacro {
     in context: some SwiftSyntaxMacros.MacroExpansionContext
   ) throws -> SwiftSyntax.ExprSyntax {
 
-    let arguments = node.argumentList
+    let onChangedClosure: ClosureExprSyntax
 
-    // validation
-    do {
+    if let _onChangedClosure: ClosureExprSyntax = node.trailingClosure {
+      onChangedClosure = _onChangedClosure
+    } else {
 
-      let passed = arguments.allSatisfy { arg in
-        if arg.as(TupleExprElementSyntax.self)?.expression.as(KeyPathExprSyntax.self) != nil {
-          return true
+      let onChangedParameter = node.argumentList.last!
+      let _onChangedClosure = onChangedParameter.expression.cast(ClosureExprSyntax.self)
+
+      onChangedClosure = _onChangedClosure
+    }
+
+    let arguments = node.argumentList.filter { $0.label?.text != "onChanged" }
+
+    let stateExpr = arguments.map { $0 }[0].cast(TupleExprElementSyntax.self).expression.cast(
+      IdentifierExprSyntax.self
+    ).identifier
+
+    let keyPahts = arguments.dropFirst()
+
+    let names: [(String, KeyPathComponentListSyntax)] = {
+      return keyPahts.map { keyPath in
+        let components = keyPath.cast(TupleExprElementSyntax.self).expression.cast(
+          KeyPathExprSyntax.self
+        ).components
+
+        let name =
+          components
+          .map {
+            $0.cast(KeyPathComponentSyntax.self).component.cast(
+              KeyPathPropertyComponentSyntax.self
+            ).identifier.description
+          }
+          .joined(separator: "_")
+
+        return (name, components)
+      }
+    }()
+
+    let conditions = names.map { arg in
+
+      return
+        (
+          condition: """
+            primitiveState\(arg.1) != previousState?\(arg.1)
+            """,
+          property: """
+            let \(arg.0) = primitiveState\(arg.1)
+            """,
+          accessor: "primitiveState\(arg.1)"
+        )
+    }
+
+    return """
+      { () -> Void in
+
+        let primitiveState = \(stateExpr).primitive
+        let previousState = \(stateExpr).previous?.primitive
+
+        guard \(raw: conditions.map { $0.condition }.joined(separator: " || ")) else {
+          return
         }
-        context.addDiagnostics(from: Error.foundNotKeyPathLiteral, node: arg)
-        return false
-      }
 
-      guard passed else {
-        throw Error.faildToExpand
-      }
+        let _: Void = \(onChangedClosure)(\(raw: conditions.map { $0.accessor }.joined(separator: ",")))
+      }()
+      """
 
-    }
-
-
-    let tupleExpression = TupleExprElementListSyntax {
-      for arg in arguments {
-        let components = arg.cast(TupleExprElementSyntax.self).expression.cast(KeyPathExprSyntax.self).components
-        let element = TupleExprElementSyntax.init(expression: ExprSyntax.init(stringLiteral: "$0\(components)"))
-        element
-      }
-    }
-
-    return "{ (\(tupleExpression)) }"
   }
 
 }
