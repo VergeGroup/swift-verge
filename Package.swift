@@ -96,6 +96,7 @@ let package = Package(
       dependencies: ["VergeTiny"]
     ),
     .testTarget(name: "VergeMacrosTests", dependencies: [
+      "VergeMacrosPlugin",
       "VergeMacros",
       .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
     ])
