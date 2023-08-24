@@ -9,6 +9,7 @@
 import Foundation
 import Verge
 import XCTest
+import Observation
 
 struct NonEquatable: Sendable {
   let id = UUID()

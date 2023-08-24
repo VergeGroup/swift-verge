@@ -1,5 +1,6 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.9
 import PackageDescription
+import CompilerPluginSupport
 
 let package = Package(
   name: "Verge",
@@ -15,6 +16,7 @@ let package = Package(
     .library(name: "VergeORM", targets: ["VergeORM"]),
     .library(name: "VergeRx", targets: ["VergeRx"]),
     .library(name: "VergeClassic", targets: ["VergeClassic"]),
+    .library(name: "VergeMacros", targets: ["VergeMacros"]),
   ],
   dependencies: [
     .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.0.0"),
@@ -25,12 +27,27 @@ let package = Package(
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.9.3"),
+    .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0-swift-5.9-DEVELOPMENT-SNAPSHOT-2023-04-25-b")
   ],
   targets: [
+
+    // compiler plugin
+    .macro(
+      name: "VergeMacrosPlugin",
+      dependencies: [
+        .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+        .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+      ]
+    ),
+
+    // macro exports
+    .target(name: "VergeMacros", dependencies: ["VergeMacrosPlugin"]),
+
     .target(name: "VergeTiny", dependencies: []),
     .target(
       name: "Verge",
       dependencies: [
+        "VergeMacros",
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "DequeModule", package: "swift-collections"),
         .product(name: "ConcurrencyTaskManager", package: "swift-concurrency-task-manager"),
@@ -46,7 +63,6 @@ let package = Package(
       name: "VergeORM",
       dependencies: [
         "Verge",
-//        .product(name: "HashTreeCollections", package: "swift-collections"),
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]
     ),
@@ -78,6 +94,10 @@ let package = Package(
       name: "VergeTinyTests",
       dependencies: ["VergeTiny"]
     ),
+    .testTarget(name: "VergeMacrosTests", dependencies: [
+      "VergeMacrosPlugin",
+      .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+    ])
   ],
   swiftLanguageVersions: [.v5]
 )
