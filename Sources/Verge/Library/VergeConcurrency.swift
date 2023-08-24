@@ -27,7 +27,7 @@ public enum VergeConcurrency {
     
   }
   
-  public final class UnfairLock: Sendable {
+  public struct UnfairLock: ~Copyable {
     private let _lock: os_unfair_lock_t
    
     public init() {
@@ -202,5 +202,5 @@ public enum VergeConcurrency {
       }
     }
   }
-  
+
 }
