@@ -6,27 +6,33 @@ public struct DatabaseStateMacro {
 
 }
 
-extension DatabaseStateMacro: ConformanceMacro {
-  public static func expansion<Declaration, Context>(
-    of node: SwiftSyntax.AttributeSyntax,
-    providingConformancesOf declaration: Declaration,
-    in context: Context
-  ) throws -> [(SwiftSyntax.TypeSyntax, SwiftSyntax.GenericWhereClauseSyntax?)]
-  where Declaration: SwiftSyntax.DeclGroupSyntax, Context: SwiftSyntaxMacros.MacroExpansionContext {
-    
+extension DatabaseStateMacro: ExtensionMacro {
+
+  public static func expansion(of node: AttributeSyntax, attachedTo declaration: some DeclGroupSyntax, providingExtensionsOf type: some TypeSyntaxProtocol, conformingTo protocols: [TypeSyntax], in context: some MacroExpansionContext) throws -> [ExtensionDeclSyntax] {
+
     // Decode the expansion arguments.
     guard let structDecl = declaration.as(StructDeclSyntax.self) else {
-//      context.diagnose(OptionSetMacroDiagnostic.requiresStruct.diagnose(at: decl))
+      //      context.diagnose(OptionSetMacroDiagnostic.requiresStruct.diagnose(at: decl))
       return []
     }
 
     // If there is an explicit conformance to OptionSet already, don't add one.
-    if let inheritedTypes = structDecl.inheritanceClause?.inheritedTypeCollection,
-       inheritedTypes.contains(where: { inherited in inherited.typeName.trimmedDescription == "DatabaseType" }) {
+    if let inheritedTypes = structDecl.inheritanceClause?.inheritedTypes,
+       inheritedTypes.contains(where: { inherited in inherited.type.trimmedDescription == "DatabaseType" }) {
       return []
     }
-    
-    return [("DatabaseType", nil)]
+
+    let stateTypeExtension: DeclSyntax =
+      """
+      extension \(type.trimmed): DatabaseType {}
+      """
+
+    guard let extensionDecl = stateTypeExtension.as(ExtensionDeclSyntax.self) else {
+      return []
+    }
+
+    return [extensionDecl]
+
   }
 
 }
