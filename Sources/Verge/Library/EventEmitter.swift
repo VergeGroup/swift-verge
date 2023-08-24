@@ -79,7 +79,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   }
 
   @_spi(EventEmitter)
-  public func accept(_ event: Event) {
+  public func accept(_ event: consuming Event) {
 
     /**
      https://github.com/VergeGroup/Verge/pull/220
@@ -126,8 +126,8 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
 
   }
   
-  open func receiveEvent(_ event: Event) {
-    
+  open func receiveEvent(_ event: consuming Event) {
+
   }
 
   @_spi(EventEmitter)
