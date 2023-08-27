@@ -29,15 +29,15 @@ public struct IfChangedMacro: ExpressionMacro {
 
     let arguments = node.argumentList.filter { $0.label?.text != "onChanged" }
 
-    let stateExpr = arguments.map { $0 }[0].cast(TupleExprElementSyntax.self).expression.cast(
-      IdentifierExprSyntax.self
-    ).identifier
+    let stateExpr = arguments.map { $0 }[0].cast(LabeledExprSyntax.self).expression.cast(
+      DeclReferenceExprSyntax.self
+    ).baseName
 
     let keyPahts = arguments.dropFirst()
 
     let names: [(String, KeyPathComponentListSyntax)] = {
       return keyPahts.map { keyPath in
-        let components = keyPath.cast(TupleExprElementSyntax.self).expression.cast(
+        let components = keyPath.cast(LabeledExprSyntax.self).expression.cast(
           KeyPathExprSyntax.self
         ).components
 
@@ -46,7 +46,7 @@ public struct IfChangedMacro: ExpressionMacro {
           .map {
             $0.cast(KeyPathComponentSyntax.self).component.cast(
               KeyPathPropertyComponentSyntax.self
-            ).identifier.description
+            ).declName.baseName.description
           }
           .joined(separator: "_")
 
@@ -69,6 +69,7 @@ public struct IfChangedMacro: ExpressionMacro {
     }
 
     return """
+
       { () -> Void in
 
         let primitiveState = \(stateExpr).primitive
