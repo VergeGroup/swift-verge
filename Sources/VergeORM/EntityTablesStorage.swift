@@ -21,10 +21,8 @@
 
 import Foundation
 import struct HashTreeCollections.TreeDictionary
-
-#if !COCOAPODS
+@_spi(ForORM) import struct VergeNormalization.EntityIdentifier
 import Verge
-#endif
 
 protocol _EntityTableType {
   typealias RawTable = _EntityRawTable

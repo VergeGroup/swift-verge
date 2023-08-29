@@ -42,7 +42,7 @@ public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConve
     raw.hash(into: &hasher)
   }
 
-  let any: AnyEntityIdentifier
+  public let any: AnyEntityIdentifier
 
   public let raw: Entity.EntityIDRawType
 
@@ -51,7 +51,8 @@ public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConve
     self.any = .init(raw._primitiveIdentifier)
   }
   
-  init(_ anyIdentifier: AnyEntityIdentifier) {
+  @_spi(ForORM)
+  public init(_ anyIdentifier: AnyEntityIdentifier) {
     self.any = anyIdentifier
     self.raw = Entity.EntityIDRawType._restore(from: anyIdentifier.value)!
   }
@@ -73,12 +74,6 @@ public protocol EntityType: Equatable, Sendable {
 
   var entityID: EntityID { get }
 
-  #if COCOAPODS
-  typealias EntityTableKey = Verge.EntityTableKey<Self>
-  #else
-  typealias EntityTableKey = VergeORM.EntityTableKey<Self>
-  #endif
-  
   typealias EntityID = EntityIdentifier<Self>
 }
 
@@ -91,14 +86,6 @@ extension EntityType {
   ///   To be faster, override this property each your entities.
   public static var entityName: EntityTableIdentifier {
     .init(Self.self)
-  }
-    
-  @available(*, deprecated, renamed: "EntityID")
-  public typealias ID = EntityID
-  
-  @available(*, deprecated, renamed: "entityID")
-  public var id: EntityID {
-    _read { yield entityID }
   }
 
 }

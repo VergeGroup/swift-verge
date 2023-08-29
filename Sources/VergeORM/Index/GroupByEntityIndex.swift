@@ -21,6 +21,8 @@
 
 import Foundation
 
+@_spi(ForORM) import struct VergeNormalization.EntityIdentifier
+
 @available(*, deprecated, renamed: "GroupByEntityIndex")
 public typealias GroupByIndex<
   Schema: EntitySchemaType,

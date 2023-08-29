@@ -14,6 +14,7 @@ let package = Package(
     .library(name: "Verge", targets: ["Verge"]),
     .library(name: "VergeTiny", targets: ["VergeTiny"]),
     .library(name: "VergeORM", targets: ["VergeORM"]),
+    .library(name: "VergeNormalization", targets: ["VergeNormalization"]),
     .library(name: "VergeRx", targets: ["VergeRx"]),
     .library(name: "VergeClassic", targets: ["VergeClassic"]),
     .library(name: "VergeMacros", targets: ["VergeMacros"]),
@@ -60,8 +61,16 @@ let package = Package(
       ]
     ),
     .target(
+      name: "VergeNormalization",
+      dependencies: [
+        "Verge",
+        .product(name: "HashTreeCollections", package: "swift-collections"),
+      ]
+    ),
+    .target(
       name: "VergeORM",
       dependencies: [
+        "VergeNormalization",
         "Verge",
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]
