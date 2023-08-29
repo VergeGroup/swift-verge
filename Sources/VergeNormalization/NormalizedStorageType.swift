@@ -18,7 +18,7 @@ extension NormalizedStorageType {
     return context
   }
 
-  public consuming func commitBatchUpdates(transaction: consuming ModifyingTransaction<Self>) {
+  public mutating func commitBatchUpdates(transaction: consuming ModifyingTransaction<Self>) {
 
     // middlewareAfter
     do {

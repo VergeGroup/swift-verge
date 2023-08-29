@@ -63,7 +63,15 @@ let package = Package(
     .target(
       name: "VergeNormalization",
       dependencies: [
+        "VergeMacros",
+        .product(name: "HashTreeCollections", package: "swift-collections"),
+      ]
+    ),
+    .target(
+      name: "VergeNormalizationDerived",
+      dependencies: [
         "Verge",
+        "VergeNormalization",
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]
     ),
@@ -86,6 +94,10 @@ let package = Package(
     .testTarget(
       name: "VergeClassicTests",
       dependencies: ["VergeClassic"]
+    ),
+    .testTarget(
+      name: "VergeNormalizationTests",
+      dependencies: ["VergeNormalization"]
     ),
     .testTarget(
       name: "VergeORMTests",

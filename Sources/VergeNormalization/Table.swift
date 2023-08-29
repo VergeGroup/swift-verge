@@ -15,10 +15,7 @@ public struct Table<Entity: EntityType>: Equatable {
     _read { yield storage.isEmpty }
   }
 
-  public let identifier: String
-
-  init(identifier: String, entities: TreeDictionary<Entity.EntityID, Entity> = .init()) {
-    self.identifier = identifier
+  public init(entities: TreeDictionary<Entity.EntityID, Entity> = .init()) {
     self.storage = entities
   }
 
@@ -36,7 +33,7 @@ public struct Table<Entity: EntityType>: Equatable {
    Finds an entity by the identifier of the entity.
    - Returns: An entity that found by identifier. Nil if the table does not have that entity.
    */
-  public borrowing func find(by id: Entity.EntityID) -> Entity? {
+  public borrowing func find(by id: consuming Entity.EntityID) -> Entity? {
     return storage[id]
   }
 
@@ -45,7 +42,7 @@ public struct Table<Entity: EntityType>: Equatable {
   ///
   /// if ids contains same id, result also contains same element.
   /// - Parameter ids: sequence of Entity.ID
-  public borrowing func find<S: Sequence>(in ids: S) -> [Entity] where S.Element == Entity.EntityID {
+  public borrowing func find<S: Sequence>(in ids: consuming S) -> [Entity] where S.Element == Entity.EntityID {
 
     return ids.reduce(into: [Entity]()) { (buf, id) in
       guard let entity = storage[id] else { return }
@@ -60,8 +57,8 @@ public struct Table<Entity: EntityType>: Equatable {
    */
   @discardableResult
   @inline(__always)
-  public consuming func updateExists(
-    id: Entity.EntityID,
+  public mutating func updateExists(
+    id: consuming Entity.EntityID,
     update: (inout Entity) throws -> Void
   ) throws -> Entity {
 
@@ -84,8 +81,8 @@ public struct Table<Entity: EntityType>: Equatable {
    - Attention: Please don't change `EntityType.entityID` value. if we changed, the crash happens (precondition)
    */
   @discardableResult
-  public consuming func updateIfExists(
-    id: Entity.EntityID,
+  public mutating func updateIfExists(
+    id: consuming Entity.EntityID,
     update: (inout Entity) throws -> Void
   ) rethrows -> Entity? {
     try? updateExists(id: id, update: update)
@@ -95,20 +92,22 @@ public struct Table<Entity: EntityType>: Equatable {
    Inserts an entity
    */
   @discardableResult
-  public consuming func insert(_ entity: Entity) -> InsertionResult {
+  public mutating func insert(_ entity: consuming Entity) -> InsertionResult {
 
-    storage[entity.entityID] = entity
+    let copied = copy entity
+
+    storage[entity.entityID] = copied
 
     updatedMarker.increment()
 
-    return .init(entity: entity)
+    return .init(entity: copied)
   }
 
   /**
    Inserts a collection of the entity.
    */
   @discardableResult
-  public consuming func insert<S: Sequence>(_ addingEntities: S) -> [InsertionResult] where S.Element == Entity {
+  public mutating func insert<S: Sequence>(_ addingEntities: consuming S) -> [InsertionResult] where S.Element == Entity {
 
     let results = addingEntities.map { entity -> InsertionResult in
       storage[entity.entityID] = entity
@@ -145,5 +144,9 @@ extension Table {
       entity.entityID
     }
     public let entity: Entity
+
+    init(entity: consuming Entity) {
+      self.entity = entity
+    }
   }
 }
