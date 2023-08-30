@@ -22,6 +22,7 @@
 import Foundation
 import os.log
 
+// TODO: will rename as Comparator
 public protocol Comparison<Input>: Sendable {
   associatedtype Input
 

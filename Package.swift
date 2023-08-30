@@ -45,10 +45,12 @@ let package = Package(
     .target(name: "VergeMacros", dependencies: ["VergeMacrosPlugin"]),
 
     .target(name: "VergeTiny", dependencies: []),
+    .target(name: "VergeComparator"),
     .target(
       name: "Verge",
       dependencies: [
         "VergeMacros",
+        "VergeComparator",
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "DequeModule", package: "swift-collections"),
         .product(name: "ConcurrencyTaskManager", package: "swift-concurrency-task-manager"),
@@ -64,6 +66,7 @@ let package = Package(
       name: "VergeNormalization",
       dependencies: [
         "VergeMacros",
+        "VergeComparator",
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]
     ),

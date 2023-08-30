@@ -1,10 +1,10 @@
 
-@attached(member, names: arbitrary)
+//@attached(member, names: arbitrary)
 //@attached(memberAttribute)
 @attached(extension, conformances: NormalizedStorageType, Equatable, names: named(Context), named(BBB), arbitrary)
 public macro NormalizedStorage() = #externalMacro(module: "VergeMacrosPlugin", type: "DatabaseMacro")
 
-@attached(accessor)
+@attached(peer)
 public macro TableAccessor() = #externalMacro(module: "VergeMacrosPlugin", type: "DatabaseTableMacro")
 
 
@@ -25,7 +25,7 @@ struct MyDatabase {
 
 private func play() {
 
-  var db = MyDatabase.init()
+  var db = MyDatabase.init(user: .init())
 
   db.performBatchUpdates { t in
     t.modifying.user.insert(.init())

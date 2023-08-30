@@ -1,5 +1,5 @@
 
-public protocol NormalizedStorageType {
+public protocol NormalizedStorageType: Equatable {
 
   func finalizeTransaction(transaction: inout ModifyingTransaction<Self>)
 

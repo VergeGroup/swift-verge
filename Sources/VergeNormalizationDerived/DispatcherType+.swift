@@ -4,17 +4,49 @@ extension DispatcherType {
     _StorageSelector: StorageSelector,
     _TableSelector: TableSelector
   >(
-    selector: consuming AbsoluteTableSelector<_StorageSelector, _TableSelector>
+    selector: consuming AbsoluteTableSelector<_StorageSelector, _TableSelector>,
+    entityID: _TableSelector.Entity.EntityID
   ) -> Derived<EntityWrapper<_TableSelector.Entity>>
   where
     _StorageSelector.Storage == _TableSelector.Storage,
     _StorageSelector.Source == Changes<Self.State>
   {
 
-    derived(SingleEntityPipeline(selector: selector), queue: .passthrough)
+    // TODO: caching
+
+    return derived(
+      SingleEntityPipeline(
+        targetIdentifier: entityID,
+        selector: selector
+      ),
+      queue: .passthrough
+    )
 
   }
 
+  public func derivedEntity2<
+    _StorageSelector: StorageSelector,
+    _TableSelector: TableSelector
+  >(
+    selector: consuming AbsoluteTableSelector<_StorageSelector, _TableSelector>,
+    entityID: _TableSelector.Entity.EntityID
+  ) -> Derived<EntityWrapper<_TableSelector.Entity>>
+  where
+  _StorageSelector.Storage == _TableSelector.Storage,
+  _StorageSelector.Source == Changes<Self.State>
+  {
+
+    // TODO: caching
+
+    return derived(
+      SingleEntityPipeline(
+        targetIdentifier: entityID,
+        selector: selector
+      ),
+      queue: .passthrough
+    )
+
+  }
 }
 
 private struct SingleEntityPipeline<
@@ -48,6 +80,11 @@ where _StorageSelector.Storage == _TableSelector.Storage, _StorageSelector.Sourc
   }
 
   func yieldContinuously(_ input: Input) -> Verge.ContinuousResult<EntityWrapper<Entity>> {
+
+    guard let previous = input.previous else {
+      return .new(yield(input))
+    }
+
     fatalError()
   }
 

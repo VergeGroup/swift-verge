@@ -216,6 +216,13 @@ public struct DatabaseTableMacro: Macro {
 
 }
 
+extension DatabaseTableMacro: PeerMacro {
+  public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+    return []
+  }
+  
+}
+
 extension DatabaseTableMacro: AccessorMacro {
   public static func expansion(
     of node: SwiftSyntax.AttributeSyntax,
@@ -230,16 +237,16 @@ extension DatabaseTableMacro: AccessorMacro {
     let id = identifier(from: declaration.cast(VariableDeclSyntax.self))
 
     return [
-      """
-      get {
-        _$\(id)
-      }
-      """,
-      """
-      set {
-        _$\(id) = newValue
-      }
-      """ ,
+//      """
+//      get {
+//        _$\(id)
+//      }
+//      """,
+//      """
+//      set {
+//        _$\(id) = newValue
+//      }
+//      """ ,
     ]
   }
 
