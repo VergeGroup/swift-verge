@@ -19,7 +19,54 @@ extension DatabaseMacro: ExtensionMacro {
       fatalError()
     }
 
+    let tableMembers = structDecl.memberBlock.members
+      .compactMap {
+        $0.decl.as(VariableDeclSyntax.self)
+      }
+      .filter {
+        guard $0.bindings.count == 1 else {
+          return false
+        }
+        guard $0.bindings.first!.typeAnnotation != nil else {
+          return false
+        }
+        return true
+      }
+      .filter {
+        $0.attributes.contains {
+          switch $0 {
+          case .attribute(let attribute):
+            return attribute.attributeName.description == "TableAccessor"
+          case .ifConfigDecl:
+            return false
+          }
+        }
+      }
+
+    let decls = tableMembers.map { member in
+      """
+      struct \(member.bindings.first!.pattern.trimmed): TableSelector {
+          typealias _Table = \(member.bindings.first!.typeAnnotation!.type.description)
+          typealias Entity = _Table.Entity
+          typealias Storage = \(structDecl.name.trimmed)
+
+          func select(storage: Storage) -> Table<Entity> {
+            storage.\(member.bindings.first!.pattern.trimmed)
+          }
+
+      }
+      """
+    }
+
+    let ext = ("""
+      extension \(structDecl.name.trimmed) {
+        \(raw: decls.joined(separator: "\n"))
+      }
+      """ as DeclSyntax).cast(ExtensionDeclSyntax.self)
+
+
     return [
+      ext,
       ("""
       extension \(structDecl.name.trimmed): NormalizedStorageType {}
       """ as DeclSyntax).cast(ExtensionDeclSyntax.self),

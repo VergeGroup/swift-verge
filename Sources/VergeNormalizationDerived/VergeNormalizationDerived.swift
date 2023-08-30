@@ -1,8 +1,2 @@
-//
-//  File.swift
-//  
-//
-//  Created by Muukii on 2023/08/30.
-//
-
-import Foundation
+@_exported import Verge
+@_exported import VergeNormalization

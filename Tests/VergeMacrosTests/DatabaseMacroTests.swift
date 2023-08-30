@@ -6,7 +6,7 @@ import XCTest
 import VergeMacrosPlugin
 
 fileprivate let macros: [String : Macro.Type] = [
-  "Database": DatabaseMacro.self
+  "NormalizedStorage": DatabaseMacro.self
 ]
 
 final class DatabaseMacroTests: XCTestCase {
@@ -15,8 +15,11 @@ final class DatabaseMacroTests: XCTestCase {
 
     assertMacroExpansion(
       #"""
-      @Database
+      @NormalizedStorage
       struct MyDatabase {
+        @TableAccessor
+        let user: String
+       @TableAccessor(hoge)
         let user: String
       }
       """#,
@@ -35,7 +38,7 @@ final class DatabaseMacroTests: XCTestCase {
     
     assertMacroExpansion(
       #"""
-      @Database
+      @NormalizedStorage
       struct MyDatabase {
         let user: String
       }

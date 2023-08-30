@@ -2,6 +2,8 @@ import struct HashTreeCollections.TreeDictionary
 
 public struct Table<Entity: EntityType>: Equatable {
 
+  public typealias Entity = Entity
+
   private var storage: TreeDictionary<Entity.EntityID, Entity>
   private(set) var updatedMarker = NonAtomicCounter()
 

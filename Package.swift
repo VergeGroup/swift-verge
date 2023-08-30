@@ -79,6 +79,7 @@ let package = Package(
       name: "VergeORM",
       dependencies: [
         "VergeNormalization",
+        "VergeNormalizationDerived",
         "Verge",
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]
