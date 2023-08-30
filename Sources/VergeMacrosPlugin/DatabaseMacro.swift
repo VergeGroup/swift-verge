@@ -43,7 +43,29 @@ extension DatabaseMacro: ExtensionMacro {
         }
       }
 
-    let decls = tableMembers.map { member in
+    let comparator = {
+
+      let markerComparators = tableMembers.map { member in
+        member.bindings.first!.pattern.trimmed
+      }
+      .map { name in
+        "guard lhs.\(name).updatedMarker == rhs.\(name).updatedMarker else { return lhs == rhs }"
+      }
+
+      return ("""
+      extension \(structDecl.name.trimmed) {
+        static func compare(lhs: Self, rhs: Self) -> Bool {
+          \(raw: markerComparators.joined(separator: "\n"))
+          return true
+        }
+      }
+      """ as DeclSyntax).cast(ExtensionDeclSyntax.self)
+
+    }()
+
+    let selectors = {
+
+      let decls = tableMembers.map { member in
       """
       struct \(member.bindings.first!.pattern.trimmed): TableSelector {
           typealias _Table = \(member.bindings.first!.typeAnnotation!.type.description)
@@ -56,17 +78,18 @@ extension DatabaseMacro: ExtensionMacro {
 
       }
       """
-    }
+      }
 
-    let ext = ("""
+      return ("""
       extension \(structDecl.name.trimmed) {
         \(raw: decls.joined(separator: "\n"))
       }
       """ as DeclSyntax).cast(ExtensionDeclSyntax.self)
-
+    }()
 
     return [
-      ext,
+      comparator,
+      selectors,
       ("""
       extension \(structDecl.name.trimmed): NormalizedStorageType {}
       """ as DeclSyntax).cast(ExtensionDeclSyntax.self),
@@ -220,7 +243,7 @@ extension DatabaseTableMacro: PeerMacro {
   public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
     return []
   }
-  
+
 }
 
 extension DatabaseTableMacro: AccessorMacro {

@@ -30,7 +30,9 @@ struct Author: EntityType {
 @NormalizedStorage
 struct MyStorage {
 
+  @TableAccessor
   var book: Table<Book> = .init()
+  @TableAccessor
   var author: Table<Author> = .init()
 
 }

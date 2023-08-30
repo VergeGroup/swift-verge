@@ -21,6 +21,22 @@ struct A: EntityType {
 struct MyDatabase {
   @TableAccessor
   var user: Table<A>
+
+  @TableAccessor
+  var user2: Table<A> = .init()
+
+  @TableAccessor
+  var user3: Table<A> = .init()
+}
+
+extension MyDatabase {
+
+  static func c(lhs: Self, rhs: Self) -> Bool {
+
+    lhs.user.updatedMarker == rhs.user.updatedMarker
+
+  }
+
 }
 
 private func play() {
