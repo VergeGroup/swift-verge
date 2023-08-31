@@ -2,18 +2,21 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public struct IfChangedMacro: ExpressionMacro {
+public struct IfChangedMacro: Macro {
 
   public enum Error: Swift.Error {
     case foundNotKeyPathLiteral
     case faildToExpand
-
   }
+
+}
+
+extension IfChangedMacro: DeclarationMacro {
 
   public static func expansion(
     of node: some SwiftSyntax.FreestandingMacroExpansionSyntax,
     in context: some SwiftSyntaxMacros.MacroExpansionContext
-  ) throws -> SwiftSyntax.ExprSyntax {
+  ) throws -> [SwiftSyntax.DeclSyntax] {
 
     let onChangedClosure: ClosureExprSyntax
 
@@ -42,7 +45,7 @@ public struct IfChangedMacro: ExpressionMacro {
         ).components
 
         let name =
-          components
+        components
           .map {
             $0.cast(KeyPathComponentSyntax.self).component.cast(
               KeyPathPropertyComponentSyntax.self
@@ -56,21 +59,20 @@ public struct IfChangedMacro: ExpressionMacro {
 
     let conditions = names.map { arg in
 
-      return
-        (
-          condition: """
+      return (
+        condition: """
             primitiveState\(arg.1) != previousState?\(arg.1)
             """,
-          property: """
+        property: """
             let \(arg.0) = primitiveState\(arg.1)
             """,
-          accessor: "primitiveState\(arg.1)"
-        )
+        accessor: "primitiveState\(arg.1)"
+      )
     }
 
-    return """
-
-      { () -> Void in
+    return [
+      ("""
+      do {
 
         let primitiveState = \(stateExpr).primitive
         let previousState = \(stateExpr).previous?.primitive
@@ -79,10 +81,10 @@ public struct IfChangedMacro: ExpressionMacro {
           return
         }
 
-        let _: Void = \(onChangedClosure)(\(raw: conditions.map { $0.accessor }.joined(separator: ",")))
-      }()
-      """
-
+        let _: Void = \(onChangedClosure)(\(raw: conditions.map { $0.accessor }.joined(separator: ", ")))
+      }
+      """ as DeclSyntax)
+    ]
   }
 
 }
