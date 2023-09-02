@@ -7,6 +7,12 @@ public struct NormalizedStorageMacro: Macro {
 }
 
 extension NormalizedStorageMacro: ExtensionMacro {
+
+  struct Table {
+    let node: VariableDeclSyntax
+    let typeAnnotation: TypeAnnotationSyntax
+  }
+
   public static func expansion(
     of node: SwiftSyntax.AttributeSyntax,
     attachedTo declaration: some SwiftSyntax.DeclGroupSyntax,
@@ -19,18 +25,9 @@ extension NormalizedStorageMacro: ExtensionMacro {
       fatalError()
     }
 
-    let tableMembers = structDecl.memberBlock.members
+    let tables: [Table] = structDecl.memberBlock.members
       .compactMap {
         $0.decl.as(VariableDeclSyntax.self)
-      }
-      .filter {
-        guard $0.bindings.count == 1 else {
-          return false
-        }
-        guard $0.bindings.first!.typeAnnotation != nil else {
-          return false
-        }
-        return true
       }
       .filter {
         $0.attributes.contains {
@@ -42,11 +39,31 @@ extension NormalizedStorageMacro: ExtensionMacro {
           }
         }
       }
+      .filter {
+        guard $0.bindings.count == 1 else {
+          context.addDiagnostics(
+            from: MacroError(message: "@Table macro does not support multiple binding, such as `let a, b = 0`"),
+            node: $0
+          )
+          return false
+        }
+        guard $0.bindings.first!.typeAnnotation != nil else {
+          context.addDiagnostics(
+            from: MacroError(message: "@Table macro requires a type annotation, such as `identifier: Type`"),
+            node: $0
+          )
+          return false
+        }
+        return true
+      }
+      .map {
+        return Table.init(node: $0, typeAnnotation: $0.bindings.first!.typeAnnotation!)
+      }
 
-    let comparator = {
+    let comparatorExtension = {
 
-      let markerComparators = tableMembers.map { member in
-        member.bindings.first!.pattern.trimmed
+      let markerComparators = tables.map { member in
+        member.node.bindings.first!.pattern.trimmed
       }
       .map { name in
         "guard lhs.\(name).updatedMarker == rhs.\(name).updatedMarker else { return lhs == rhs }"
@@ -63,17 +80,19 @@ extension NormalizedStorageMacro: ExtensionMacro {
 
     }()
 
-    let selectors = {
+    let selectorsExtension = {
 
-      let decls = tableMembers.map { member in
+      let decls = tables.map { member in
       """
-      struct \(member.bindings.first!.pattern.trimmed): TableSelector {
-        typealias _Table = \(member.bindings.first!.typeAnnotation!.type.description)
+      public struct \(member.node.bindings.first!.pattern.trimmed): TableSelector {
+        typealias _Table = \(member.node.bindings.first!.typeAnnotation!.type.description)
         typealias Entity = _Table.Entity
         typealias Storage = \(structDecl.name.trimmed)
 
-        func select(storage: Storage) -> _Table {
-          storage.\(member.bindings.first!.pattern.trimmed)
+        public let identifier: String = "\(member.node.bindings.first!.pattern.trimmed)"
+
+        public func select(storage: Storage) -> _Table {
+          storage.\(member.node.bindings.first!.pattern.trimmed)
         }
       }
       """
@@ -85,10 +104,10 @@ extension NormalizedStorageMacro: ExtensionMacro {
       }
       """ as DeclSyntax).cast(ExtensionDeclSyntax.self)
     }()
-
+    
     return [
-      comparator,
-      selectors,
+      comparatorExtension,
+      selectorsExtension,
       ("""
       extension \(structDecl.name.trimmed): NormalizedStorageType {}
       """ as DeclSyntax).cast(ExtensionDeclSyntax.self),
@@ -97,8 +116,6 @@ extension NormalizedStorageMacro: ExtensionMacro {
       """ as DeclSyntax).cast(ExtensionDeclSyntax.self),
       ("""
       extension \(structDecl.name.trimmed) {
-        typealias BBB = String
-        struct Context {}
       }
       """ as DeclSyntax).cast(ExtensionDeclSyntax.self)
     ]

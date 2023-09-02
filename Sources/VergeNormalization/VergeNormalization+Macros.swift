@@ -29,16 +29,9 @@ struct MyDatabase {
 
   @Table
   var user3: Tables.Hash<A> = .init()
-}
 
-extension MyDatabase {
-
-  static func c(lhs: Self, rhs: Self) -> Bool {
-
-    lhs.user.updatedMarker == rhs.user.updatedMarker
-
-  }
-
+  @Table
+  var user4: Tables.Hash<A> = .init()
 }
 
 private func play() {
