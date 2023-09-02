@@ -8,7 +8,7 @@ public macro NormalizedStorage() = #externalMacro(module: "VergeMacrosPlugin", t
 public macro Table() = #externalMacro(module: "VergeMacrosPlugin", type: "TableMacro")
 
 @attached(peer)
-public macro Index() = #externalMacro(module: "VergeMacrosPlugin", type: "DatabaseIndexMacro")
+public macro Index() = #externalMacro(module: "VergeMacrosPlugin", type: "IndexMacro")
 
 #if DEBUG
 

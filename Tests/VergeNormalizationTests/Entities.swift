@@ -35,4 +35,7 @@ struct MyStorage {
   @Table
   var author: Tables.Hash<Author> = .init()
 
+  @Index
+  var bookIndex: Indexes.Ordered<Book> = .init()
+
 }

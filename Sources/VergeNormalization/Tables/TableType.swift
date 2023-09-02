@@ -31,9 +31,9 @@ public protocol TableType<Entity>: Equatable {
   @discardableResult
   mutating func insert(_ addingEntities: consuming some Sequence<Entity>) -> [InsertionResult]
 
-  consuming func remove(_ id: Entity.EntityID)
+  mutating func remove(_ id: Entity.EntityID)
 
-  consuming func removeAll()
+  mutating func removeAll()
 }
 
 /// An object indicates result of insertion

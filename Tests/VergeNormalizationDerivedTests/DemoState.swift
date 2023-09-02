@@ -19,10 +19,10 @@ struct DemoState: Equatable {
 @NormalizedStorage
 struct Database {
 
-  @TableAccessor
+  @Table
   var book: Tables.Hash<Book> = .init()
 
-  @TableAccessor
+  @Table
   var author: Tables.Hash<Author> = .init()
 
 }

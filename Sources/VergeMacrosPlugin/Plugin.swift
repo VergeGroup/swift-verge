@@ -11,6 +11,6 @@ struct Plugin: CompilerPlugin {
 
     NormalizedStorageMacro.self,
     TableMacro.self,
-    DatabaseIndexMacro.self
+    IndexMacro.self
   ]
 }

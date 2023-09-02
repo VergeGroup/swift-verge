@@ -129,7 +129,7 @@ extension Tables {
     /**
      Removes the entity by the identifier.
      */
-    public consuming func remove(_ id: Entity.EntityID) {
+    public mutating func remove(_ id: Entity.EntityID) {
       storage.removeValue(forKey: id)
       updatedMarker.increment()
     }
@@ -137,7 +137,7 @@ extension Tables {
     /**
      Removes the all of the entities in the table.
      */
-    public consuming func removeAll() {
+    public mutating func removeAll() {
       storage.removeAll(where: { _ in true })
       updatedMarker.increment()
     }

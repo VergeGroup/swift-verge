@@ -78,20 +78,22 @@ final class Tests: XCTestCase {
 
       let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
       context.modifying.book.insert(book)
-      context.indexes.allBooks.append(book.entityID)
+      context.modifying.bookIndex.append(book.entityID)
     }
 
-    XCTAssertEqual(state.entities.book.count, 1)
-    XCTAssertEqual(state.indexes.allBooks.count, 1)
+    XCTAssertEqual(state.book.count, 1)
+    XCTAssertEqual(state.bookIndex.count, 1)
 
-    print(state.indexes.allBooks)
+    print(state.bookIndex)
 
     state.performBatchUpdates { (context) -> Void in
-      context.modifying.book.delete(Book.EntityID.init("some"))
+      context.modifying.book.remove(Book.EntityID.init("some"))
     }
 
-    XCTAssertEqual(state.entities.book.count, 0)
-    XCTAssertEqual(state.indexes.allBooks.count, 0)
+    XCTAssertEqual(state.book.count, 0)
+
+    /// should not be deleted automatically
+    XCTAssertEqual(state.bookIndex.count, 1)
 
   }
 
@@ -181,7 +183,7 @@ final class Tests: XCTestCase {
         author.name = "Kimura"
       }
 
-      XCTAssertEqual(context.author.all().first?.name, "Kimura")
+      XCTAssertEqual(context.modifying.author.allEntities().first?.name, "Kimura")
 
       context.modifying.author.updateIfExists(id: .init("muukii")) { (author) in
         XCTAssertEqual(author.name, "Kimura")
@@ -194,7 +196,7 @@ final class Tests: XCTestCase {
   func testDescription() {
 
     let authorID = Author.EntityID("author.id")
-    XCTAssertEqual(authorID.description, "<VergeORMTests.Author>(author.id)")
+    XCTAssertEqual(authorID.description, "<VergeNormalizationTests.Author>(author.id)")
   }
 
   func testFind() {
