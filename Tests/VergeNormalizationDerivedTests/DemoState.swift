@@ -16,6 +16,12 @@ struct DemoState: Equatable {
   }
 }
 
+extension StorageSelector where Self == DemoState.DatabaseSelector {
+  static var db: Self {
+    DemoState.DatabaseSelector()
+  }
+}
+
 @NormalizedStorage
 struct Database {
 

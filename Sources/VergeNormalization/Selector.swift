@@ -1,4 +1,4 @@
-public protocol TableSelector<Entity> {
+public protocol TableSelector {
   associatedtype Entity: EntityType
   associatedtype Storage: NormalizedStorageType
   func select(storage: consuming Storage) -> Tables.Hash<Entity>
@@ -13,7 +13,7 @@ public protocol StorageSelector {
 
 extension StorageSelector {
 
-  public func append<_TableSelector: TableSelector>(
+  public func appending<_TableSelector: TableSelector>(
     _ tableSelector: consuming _TableSelector
   )
     -> AbsoluteTableSelector<Self, _TableSelector>
@@ -27,6 +27,9 @@ public struct AbsoluteTableSelector<
   _StorageSelector: StorageSelector,
   _TableSelector: TableSelector
 > where _StorageSelector.Storage == _TableSelector.Storage {
+
+  public typealias Storage = _StorageSelector.Storage
+  public typealias Entity = _TableSelector.Entity
 
   public let storageSelector: _StorageSelector
   public let tableSelector: _TableSelector

@@ -12,7 +12,7 @@ final class VergeNormalizationDerivedTests: XCTestCase {
     )
 
     let derived = store.derivedEntity(
-      selector: DemoState.DatabaseSelector().append(Database.book()),
+      selector: DemoState.DatabaseSelector().appending(Database.book()),
       entityID: Book.EntityID.init("1")
     )
 
