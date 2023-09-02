@@ -2,11 +2,11 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public struct DatabaseMacro: Macro {
+public struct NormalizedStorageMacro: Macro {
 
 }
 
-extension DatabaseMacro: ExtensionMacro {
+extension NormalizedStorageMacro: ExtensionMacro {
   public static func expansion(
     of node: SwiftSyntax.AttributeSyntax,
     attachedTo declaration: some SwiftSyntax.DeclGroupSyntax,
@@ -36,7 +36,7 @@ extension DatabaseMacro: ExtensionMacro {
         $0.attributes.contains {
           switch $0 {
           case .attribute(let attribute):
-            return attribute.attributeName.description == "TableAccessor"
+            return attribute.attributeName.description == "Table"
           case .ifConfigDecl:
             return false
           }
@@ -68,14 +68,13 @@ extension DatabaseMacro: ExtensionMacro {
       let decls = tableMembers.map { member in
       """
       struct \(member.bindings.first!.pattern.trimmed): TableSelector {
-          typealias _Table = \(member.bindings.first!.typeAnnotation!.type.description)
-          typealias Entity = _Table.Entity
-          typealias Storage = \(structDecl.name.trimmed)
+        typealias _Table = \(member.bindings.first!.typeAnnotation!.type.description)
+        typealias Entity = _Table.Entity
+        typealias Storage = \(structDecl.name.trimmed)
 
-          func select(storage: Storage) -> Table<Entity> {
-            storage.\(member.bindings.first!.pattern.trimmed)
-          }
-
+        func select(storage: Storage) -> _Table {
+          storage.\(member.bindings.first!.pattern.trimmed)
+        }
       }
       """
       }
@@ -107,8 +106,9 @@ extension DatabaseMacro: ExtensionMacro {
 
 }
 
+#if false
 /// Add @Table
-extension DatabaseMacro: MemberAttributeMacro {
+extension NormalizedStorageMacro: MemberAttributeMacro {
 
   public static func expansion(
     of node: SwiftSyntax.AttributeSyntax,
@@ -139,7 +139,7 @@ extension DatabaseMacro: MemberAttributeMacro {
 //            }
 
       return [
-        "@TableAccessor"
+        "@Table"
       ]
 
     }
@@ -150,8 +150,10 @@ extension DatabaseMacro: MemberAttributeMacro {
 
 }
 
+#endif
+
 /// Add member
-extension DatabaseMacro: MemberMacro {
+extension NormalizedStorageMacro: MemberMacro {
 
   final class RenamingVisitor: SyntaxRewriter {
 
@@ -232,49 +234,5 @@ extension DatabaseMacro: MemberMacro {
     return storageMembers
 
   }
-
-}
-
-public struct DatabaseTableMacro: Macro {
-
-}
-
-extension DatabaseTableMacro: PeerMacro {
-  public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
-    return []
-  }
-
-}
-
-extension DatabaseTableMacro: AccessorMacro {
-  public static func expansion(
-    of node: SwiftSyntax.AttributeSyntax,
-    providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol,
-    in context: some SwiftSyntaxMacros.MacroExpansionContext
-  ) throws -> [SwiftSyntax.AccessorDeclSyntax] {
-
-    func identifier(from node: VariableDeclSyntax) -> TokenSyntax {
-      node.bindings.first!.cast(PatternBindingSyntax.self).pattern.cast(IdentifierPatternSyntax.self).identifier
-    }
-
-    let id = identifier(from: declaration.cast(VariableDeclSyntax.self))
-
-    return [
-//      """
-//      get {
-//        _$\(id)
-//      }
-//      """,
-//      """
-//      set {
-//        _$\(id) = newValue
-//      }
-//      """ ,
-    ]
-  }
-
-}
-
-public struct DatabaseIndexMacro: Macro {
 
 }

@@ -9,8 +9,8 @@ struct Plugin: CompilerPlugin {
     DatabaseStateMacro.self,
     IfChangedMacro.self,
 
-    DatabaseMacro.self,
-    DatabaseTableMacro.self,
+    NormalizedStorageMacro.self,
+    TableMacro.self,
     DatabaseIndexMacro.self
   ]
 }

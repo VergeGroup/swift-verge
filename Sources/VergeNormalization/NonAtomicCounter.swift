@@ -5,7 +5,7 @@ public struct NonAtomicCounter: Hashable, Sendable {
 
   public init() {}
 
-  public consuming func increment() {
+  public mutating func increment() {
     value &+= 1
   }
 

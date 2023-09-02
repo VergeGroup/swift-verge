@@ -3,6 +3,7 @@ public protocol NormalizedStorageType: Equatable {
 
   func finalizeTransaction(transaction: inout ModifyingTransaction<Self>)
 
+  static func compare(lhs: Self, rhs: Self) -> Bool
 }
 
 extension NormalizedStorageType {

@@ -1,14 +1,14 @@
 public protocol TableSelector<Entity> {
   associatedtype Entity: EntityType
   associatedtype Storage: NormalizedStorageType
-  func select(storage: Storage) -> Table<Entity>
+  func select(storage: consuming Storage) -> Tables.Hash<Entity>
 }
 
 public protocol StorageSelector {
-  associatedtype Source
+  associatedtype Source: Equatable
   associatedtype Storage: NormalizedStorageType
 
-  func select(source: Source) -> Storage
+  func select(source: consuming Source) -> Storage
 }
 
 extension StorageSelector {
@@ -28,19 +28,23 @@ public struct AbsoluteTableSelector<
   _TableSelector: TableSelector
 > where _StorageSelector.Storage == _TableSelector.Storage {
 
-  public let storage: _StorageSelector
-  public let table: _TableSelector
+  public let storageSelector: _StorageSelector
+  public let tableSelector: _TableSelector
 
   public init(
     storage: consuming _StorageSelector,
     table: consuming _TableSelector
   ) {
-    self.storage = storage
-    self.table = table
+    self.storageSelector = storage
+    self.tableSelector = table
   }
 
-  public func select(source: _StorageSelector.Source) -> Table<_TableSelector.Entity> {
-    table.select(storage: storage.select(source: source))
+  public func storage(source: consuming _StorageSelector.Source) -> _StorageSelector.Storage {
+    storageSelector.select(source: source)
+  }
+
+  public func table(source: consuming _StorageSelector.Source) -> Tables.Hash<_TableSelector.Entity> {
+    tableSelector.select(storage: storageSelector.select(source: source))
   }
 
 }

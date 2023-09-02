@@ -6,57 +6,57 @@ public enum NormalizedStorageComparisons<Storage: NormalizedStorageType> {
   public struct StorageComparison: Comparison {
     public typealias Input = Storage
 
-    public func callAsFunction(_ lhs: Storage, _ rhs: Storage) -> Bool {
+    public init() {}
 
-      lhs == rhs
-
-//      (lhs._backingStorage.entityUpdatedMarker, lhs._backingStorage.indexUpdatedMarker) == (rhs._backingStorage.entityUpdatedMarker, rhs._backingStorage.indexUpdatedMarker)
+    public func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool {
+      Storage.compare(lhs: lhs, rhs: rhs)
     }
   }
 
   /// Returns true if the table of the entity in database has no changes.
-  ///
-  /// - Complexity: O(1)
   public struct TableComparison<Entity: EntityType>: Comparison {
 
-    public typealias Input = Storage
+    public typealias Input = Tables.Hash<Entity>
 
-    public func callAsFunction(_ lhs: Storage, _ rhs: Storage) -> Bool {
-//      lhs._backingStorage.entityBackingStorage.table(Entity.self).updatedMarker == rhs._backingStorage.entityBackingStorage.table(Entity.self).updatedMarker
-      fatalError()
+    public init() {}
+
+    public func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool {
+      guard lhs.updatedMarker == rhs.updatedMarker else {
+        return lhs == rhs
+      }
+      return true
     }
 
   }
 
   /// Returns true if the updates result does not contain the entity.
-  public struct UpdateComparison<Entity: EntityType>: Comparison {
-
-    public typealias Input = Storage
-
-
-    public let entityID: Entity.EntityID
-
-    public init(entityID: Entity.EntityID) {
-      self.entityID = entityID
-    }
-
-    public func callAsFunction(_ lhs: Storage, _ rhs: Storage) -> Bool {
-
-      fatalError()
-
-//      guard let result = rhs._backingStorage.lastUpdatesResult else {
-//        return false
-//      }
-//      guard !result.wasUpdated(entityID) else {
-//        return false
-//      }
-//      guard !result.wasDeleted(entityID) else {
-//        return false
-//      }
-//      return true
-
-    }
-  }
+//  public struct UpdateComparison<Entity: EntityType>: Comparison {
+//
+//    public typealias Input = Storage
+//
+//    public let entityID: Entity.EntityID
+//
+//    public init(entityID: Entity.EntityID) {
+//      self.entityID = entityID
+//    }
+//
+//    public func callAsFunction(_ lhs: Storage, _ rhs: Storage) -> Bool {
+//
+//      fatalError()
+//
+////      guard let result = rhs._backingStorage.lastUpdatesResult else {
+////        return false
+////      }
+////      guard !result.wasUpdated(entityID) else {
+////        return false
+////      }
+////      guard !result.wasDeleted(entityID) else {
+////        return false
+////      }
+////      return true
+//
+//    }
+//  }
 
 }
 

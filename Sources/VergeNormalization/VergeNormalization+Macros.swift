@@ -2,11 +2,13 @@
 //@attached(member, names: arbitrary)
 //@attached(memberAttribute)
 @attached(extension, conformances: NormalizedStorageType, Equatable, names: named(Context), named(BBB), arbitrary)
-public macro NormalizedStorage() = #externalMacro(module: "VergeMacrosPlugin", type: "DatabaseMacro")
+public macro NormalizedStorage() = #externalMacro(module: "VergeMacrosPlugin", type: "NormalizedStorageMacro")
 
 @attached(peer)
-public macro TableAccessor() = #externalMacro(module: "VergeMacrosPlugin", type: "DatabaseTableMacro")
+public macro Table() = #externalMacro(module: "VergeMacrosPlugin", type: "TableMacro")
 
+@attached(peer)
+public macro Index() = #externalMacro(module: "VergeMacrosPlugin", type: "DatabaseIndexMacro")
 
 #if DEBUG
 
@@ -19,14 +21,14 @@ struct A: EntityType {
 
 @NormalizedStorage
 struct MyDatabase {
-  @TableAccessor
-  var user: Table<A>
+  @Table
+  var user: Tables.Hash<A>
 
-  @TableAccessor
-  var user2: Table<A> = .init()
+  @Table
+  var user2: Tables.Hash<A> = .init()
 
-  @TableAccessor
-  var user3: Table<A> = .init()
+  @Table
+  var user3: Tables.Hash<A> = .init()
 }
 
 extension MyDatabase {

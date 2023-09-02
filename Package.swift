@@ -104,6 +104,10 @@ let package = Package(
       dependencies: ["VergeNormalization"]
     ),
     .testTarget(
+      name: "VergeNormalizationDerivedTests",
+      dependencies: ["VergeNormalizationDerived"]
+    ),
+    .testTarget(
       name: "VergeORMTests",
       dependencies: ["VergeORM"]
     ),

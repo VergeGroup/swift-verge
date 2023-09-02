@@ -6,7 +6,7 @@ import XCTest
 import VergeMacrosPlugin
 
 fileprivate let macros: [String : Macro.Type] = [
-  "NormalizedStorage": DatabaseMacro.self
+  "NormalizedStorage": NormalizedStorageMacro.self
 ]
 
 final class DatabaseMacroTests: XCTestCase {
