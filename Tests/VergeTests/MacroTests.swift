@@ -8,15 +8,15 @@ final class MacroTests: XCTestCase {
 
     let state: Changes<DemoState> = .init(old: nil, new: .init(name: "hello"))
 
-    #IfChanged(state, \.name) { name in
+    #ifChanged(state, \.name) { name in
       print(name)
     }
 
-    #IfChanged(state, \.name, \.count) { name, count in
+    #ifChanged(state, \.name, \.count) { name, count in
       print(name, count)
     }
 
-    #IfChanged(state, \.name, \.count, onChanged: { name, count in
+    #ifChanged(state, \.name, \.count, onChanged: { name, count in
       print(name, count)
     })
 
@@ -28,7 +28,7 @@ final class MacroTests: XCTestCase {
 
     store.sinkState { state in
 
-      #IfChanged(state, \.count) { count in
+      #ifChanged(state, \.count) { count in
         print(count)
       }
 
