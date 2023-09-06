@@ -12,6 +12,14 @@ final class MacroTests: XCTestCase {
       print(name)
     }
 
+
+
+    let r = if false {
+      0
+    } else {
+      1
+    }
+
     #IfChanged(state, \.name, \.count) { name, count in
       print(name, count)
     }
@@ -19,6 +27,20 @@ final class MacroTests: XCTestCase {
     #IfChanged(state, \.name, \.count, onChanged: { name, count in
       print(name, count)
     })
+
+  }
+
+  func testSink() {
+
+    let store = Store<DemoState, Never>(initialState: .init())
+
+    store.sinkState { state in
+
+      #IfChanged(state, \.count) { count in
+        print(count)
+      }
+
+    }
 
   }
 

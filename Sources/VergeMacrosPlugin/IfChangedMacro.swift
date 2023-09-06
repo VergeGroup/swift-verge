@@ -11,12 +11,8 @@ public struct IfChangedMacro: Macro {
 
 }
 
-extension IfChangedMacro: DeclarationMacro {
-
-  public static func expansion(
-    of node: some SwiftSyntax.FreestandingMacroExpansionSyntax,
-    in context: some SwiftSyntaxMacros.MacroExpansionContext
-  ) throws -> [SwiftSyntax.DeclSyntax] {
+extension IfChangedMacro: ExpressionMacro {
+  public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
 
     let onChangedClosure: ClosureExprSyntax
 
@@ -70,10 +66,9 @@ extension IfChangedMacro: DeclarationMacro {
       )
     }
 
-    return [
+    return
       ("""
-      do {
-
+      { () -> Void in
         let primitiveState = \(stateExpr).primitive
         let previousState = \(stateExpr).previous?.primitive
 
@@ -82,9 +77,9 @@ extension IfChangedMacro: DeclarationMacro {
         }
 
         let _: Void = \(onChangedClosure)(\(raw: conditions.map { $0.accessor }.joined(separator: ", ")))
-      }
-      """ as DeclSyntax)
-    ]
+      }()
+      """ as ExprSyntax)
+
   }
 
 }
