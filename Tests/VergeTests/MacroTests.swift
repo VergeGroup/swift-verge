@@ -12,14 +12,6 @@ final class MacroTests: XCTestCase {
       print(name)
     }
 
-
-
-    let r = if false {
-      0
-    } else {
-      1
-    }
-
     #IfChanged(state, \.name, \.count) { name, count in
       print(name, count)
     }

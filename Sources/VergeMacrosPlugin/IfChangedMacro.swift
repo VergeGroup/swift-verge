@@ -68,16 +68,16 @@ extension IfChangedMacro: ExpressionMacro {
 
     return
       ("""
-      { () -> Void in
-        let primitiveState = \(stateExpr).primitive
-        let previousState = \(stateExpr).previous?.primitive
+      { arg in
+        let primitiveState = arg.primitive
+        let previousState = arg.previous?.primitive
 
         guard \(raw: conditions.map { $0.condition }.joined(separator: " || ")) else {
           return
         }
 
         let _: Void = \(onChangedClosure)(\(raw: conditions.map { $0.accessor }.joined(separator: ", ")))
-      }()
+      }(\(stateExpr))
       """ as ExprSyntax)
 
   }
