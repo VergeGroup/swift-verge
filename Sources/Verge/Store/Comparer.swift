@@ -35,6 +35,14 @@ extension Comparison {
     .init()
   }
 
+  public static func equality<each T: Equatable>() -> Self where Self == AnyEqualityComparison<(repeat each T)> {
+    return .init { a, b in
+//      let hoge = repeat each a
+//      each a == each b
+      return false
+    }
+  }
+
   public static func any<T>(_ isEqual: @escaping @Sendable (T, T) -> Bool) -> Self where Self == AnyEqualityComparison<T> {
     .init(isEqual)
   }

@@ -284,6 +284,15 @@ extension Changes {
     _ compose: (Value) throws -> Composed,
     _ comparer: some Comparison<Composed>
   ) rethrows -> Composed? {
+    try _takeIfChanged(compose, comparer)
+  }
+
+  @inline(__always)
+  fileprivate func _takeIfChanged<each Element>(
+    _ compose: (Value) throws -> (repeat each Element),
+    _ comparer: some Comparison<(repeat each Element)>
+  ) rethrows -> (repeat each Element)? {
+
     let signpost = VergeSignpostTransaction("Changes.takeIfChanged(compose:comparer:)")
     defer {
       signpost.end()
@@ -303,6 +312,7 @@ extension Changes {
     }
 
     return composedFromCurrent
+
   }
 
   /// Performs a closure if the selected value changed from the previous one.
@@ -360,6 +370,17 @@ extension Changes {
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     try ifChanged(compose, .equality(), perform)
+  }
+
+  public func ifChanged<each Element: Equatable, Result>(
+    _ compose: (Value) -> (repeat each Element),
+    _ perform: ((repeat each Element)) throws -> Result
+  ) rethrows -> Result? {
+    guard let result = _takeIfChanged(compose, .equality()) else {
+      return nil
+    }
+
+    return try perform(result)
   }
 
   /**

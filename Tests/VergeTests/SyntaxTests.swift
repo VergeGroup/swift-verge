@@ -9,6 +9,7 @@
 import Foundation
 
 import Verge
+import VergeMacros
 
 enum SyntaxTests {
 
@@ -19,6 +20,9 @@ enum SyntaxTests {
     changes.ifChanged(\.name) { name in
 
     }
+
+//    changes.ifChanged({ ($0.name, $0.name) }) { args in
+//    }
 
     changes.ifChanged(\.nonEquatable, .alwaysFalse()) { name in
 
