@@ -380,7 +380,7 @@ extension Changes {
       return nil
     }
 
-    return try perform(result)
+    return try perform((repeat each result))
   }
 
   /**

@@ -37,9 +37,8 @@ extension Comparison {
 
   public static func equality<each T: Equatable>() -> Self where Self == AnyEqualityComparison<(repeat each T)> {
     return .init { a, b in
-//      let hoge = repeat each a
-//      each a == each b
-      return false
+      
+      (repeat each a) == (repeat each b)
     }
   }
 
