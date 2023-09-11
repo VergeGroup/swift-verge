@@ -2,6 +2,10 @@ import Foundation
 
 @_spi(NormalizedStorage) import Verge
 
+public enum NormalizedStorageError: Swift.Error {
+  case notFoundEntityToMakeDerived
+}
+
 extension StoreType {
 
   public func normalizedStorage<Selector: StorageSelector>(_ selector: Selector) -> NormalizedStoragePath<Self, Selector> {
@@ -39,18 +43,20 @@ public struct NormalizedStoragePath<
 }
 
 public struct NormalizedStorageTablePath<
-  Store: DispatcherType,
+  Store: StoreType,
   _StorageSelector: StorageSelector,
   _TableSelector: TableSelector
 >: ~Copyable where _StorageSelector.Storage == _TableSelector.Storage, Store.State == _StorageSelector.Source {
+
+  public typealias Entity = _TableSelector.Table.Entity
 
   unowned let store: Store
   let storageSelector: _StorageSelector
   let tableSelector: _TableSelector
 
-  public func derivedEntity(
-    entityID: consuming _TableSelector.Table.Entity.EntityID
-  ) -> Derived<EntityWrapper<_TableSelector.Table.Entity>> {
+  public func derived(
+    from entityID: consuming Entity.EntityID
+  ) -> Derived<EntityWrapper<Entity>> {
 
     return store.derivedEntity(
       selector: .init(storage: storageSelector, table: tableSelector),
@@ -59,10 +65,19 @@ public struct NormalizedStorageTablePath<
 
   }
 
-  public func derivedEntityNonNull(
-    tableSelector: consuming _TableSelector,
-    entity: consuming _TableSelector.Table.Entity
-  ) -> Derived<NonNullEntityWrapper<_TableSelector.Table.Entity>> {
+  // MARK: - NonNull
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
+  public func derivedNonNull(
+    entity: consuming Entity
+  ) -> Derived<NonNullEntityWrapper<Entity>> {
 
     return store.derivedEntityNonNull(
       selector: .init(storage: storageSelector, table: tableSelector),
@@ -71,9 +86,138 @@ public struct NormalizedStorageTablePath<
 
   }
 
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
+  public func derivedNonNull(
+    entityID: consuming Entity.EntityID
+  ) throws -> Derived<NonNullEntityWrapper<Entity>> {
+
+    let _initialValue = storageSelector
+      .appending(tableSelector)
+      .table(source: store.state.primitive)
+      .find(by: entityID)
+
+    guard let initalValue = _initialValue else {
+      throw NormalizedStorageError.notFoundEntityToMakeDerived
+    }
+
+    return store.derivedEntityNonNull(
+      selector: .init(storage: storageSelector, table: tableSelector),
+      entity: initalValue
+    )
+
+  }
+
+  public func derivedNonNull(
+    entities: consuming some Sequence<Entity>
+  ) -> NonNullDerivedResult<Entity> {
+
+    var result = NonNullDerivedResult<Entity>()
+
+    for entity in entities {
+      result.append(
+        derived: self.derivedNonNull(entity: entity),
+        id: entity.entityID
+      )
+    }
+
+    return result
+
+  }
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
+  public func derivedNonNull(
+    entityIDs: consuming some Sequence<Entity.EntityID>
+  ) -> NonNullDerivedResult<Entity> {
+
+    var result = NonNullDerivedResult<Entity>()
+
+    for id in entityIDs {
+      do {
+        result.append(
+          derived: try self.derivedNonNull(entityID: id),
+          id: id
+        )
+      } catch {
+        // FIXME:
+      }
+    }
+
+    return result
+  }
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
+  public func derivedNonNull(
+    entityIDs: consuming Set<Entity.EntityID>
+  ) -> NonNullDerivedResult<Entity> {
+
+    var result = NonNullDerivedResult<Entity>()
+
+    for id in entityIDs {
+      do {
+        result.append(
+          derived: try self.derivedNonNull(entityID: id),
+          id: id
+        )
+      } catch {
+        // FIXME:
+      }
+    }
+
+    return result
+  }
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
+  public func derivedNonNull(
+    insertionResult: InsertionResult<Entity>
+  ) -> Entity.NonNullDerived {
+    derivedNonNull(entity: insertionResult.entity)
+  }
+
+  /// Returns a derived object that provides a concrete entity according to the updating source state
+  /// It uses the last value if the entity has been removed source.
+  /// You can get a flag that indicates whether the entity is live or removed which from `NonNullEntityWrapper<T>`
+  ///
+  /// If you call this method in many time, it's not so big issue.
+  /// Because, the backing derived-object to construct itself would be cached.
+  /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
+  ///
+  @inline(__always)
+  public func derivedNonNull(
+    insertionResults: some Sequence<InsertionResult<Entity>>
+  ) -> NonNullDerivedResult<Entity> {
+    derivedNonNull(entities: insertionResults.map { $0.entity })
+  }
 }
 
-extension DispatcherType {
+extension StoreType {
 
   public func derivedEntity<
     _StorageSelector: StorageSelector,
@@ -87,7 +231,7 @@ extension DispatcherType {
     _StorageSelector.Source == Self.State
   {
 
-    return store.asStore().$_derivedCache.modify { cache in
+    return asStore().$_derivedCache.modify { cache in
 
       typealias _Derived = Derived<SingleEntityPipeline<_StorageSelector, _TableSelector>.Output>
 
@@ -97,7 +241,7 @@ extension DispatcherType {
         return cached as! _Derived
       } else {
 
-        let new = derived(
+        let new = asStore().derived(
           SingleEntityPipeline(
             targetIdentifier: entityID,
             selector: selector
@@ -126,7 +270,7 @@ extension DispatcherType {
   _StorageSelector.Source == Self.State
   {
 
-    return store.asStore().$_nonnull_derivedCache.modify { cache in
+    return asStore().$_nonnull_derivedCache.modify { cache in
 
       typealias _Derived = Derived<NonNullSingleEntityPipeline<_StorageSelector, _TableSelector>.Output>
 
@@ -136,7 +280,7 @@ extension DispatcherType {
         return cached as! _Derived
       } else {
 
-        let new = derived(
+        let new = asStore().derived(
           NonNullSingleEntityPipeline(
             initialEntity: entity,
             selector: selector

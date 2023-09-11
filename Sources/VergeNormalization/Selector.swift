@@ -70,7 +70,7 @@ extension StorageSelector {
     return .init(keyPath: keyPath)
   }
 
-  public func appending<_TableSelector: TableSelector>(
+  public consuming func appending<_TableSelector: TableSelector>(
     _ tableSelector: consuming _TableSelector
   )
     -> AbsoluteTableSelector<Self, _TableSelector>

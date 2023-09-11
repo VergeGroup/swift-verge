@@ -22,7 +22,7 @@ final class VergeNormalizationDerivedTests: XCTestCase {
     let derived = store
       .normalizedStorage(.keyPath(\.db))
       .table(.keyPath(\.book))
-      .derivedEntity(entityID: Book.EntityID.init("1"))
+      .derived(from: Book.EntityID.init("1"))
 
     var received: [Book?] = []
 
@@ -56,17 +56,17 @@ final class VergeNormalizationDerivedTests: XCTestCase {
     let derived1 = store
       .normalizedStorage(.keyPath(\.db))
       .table(.keyPath(\.book))
-      .derivedEntity(entityID: Book.EntityID.init("1"))
+      .derived(from: Book.EntityID.init("1"))
 
     let derived2 = store
       .normalizedStorage(.keyPath(\.db))
       .table(.keyPath(\.book))
-      .derivedEntity(entityID: Book.EntityID.init("1"))
+      .derived(from: Book.EntityID.init("1"))
 
     let derived3 = store
       .normalizedStorage(.keyPath(\.db))
       .table(.keyPath(\.book2))
-      .derivedEntity(entityID: Book.EntityID.init("1"))
+      .derived(from: Book.EntityID.init("1"))
 
     XCTAssert(derived1 === derived2)
     XCTAssert(derived2 !== derived3)
