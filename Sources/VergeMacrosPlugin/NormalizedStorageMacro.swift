@@ -84,7 +84,7 @@ extension NormalizedStorageMacro: ExtensionMacro {
 
       let decls = tables.map { member in
       """
-      public struct \(member.node.bindings.first!.pattern.trimmed): TableSelector {
+      public struct TableSelector_\(member.node.bindings.first!.pattern.trimmed): TableSelector {
         typealias _Table = \(member.node.bindings.first!.typeAnnotation!.type.description)
         typealias Entity = _Table.Entity
         typealias Storage = \(structDecl.name.trimmed)

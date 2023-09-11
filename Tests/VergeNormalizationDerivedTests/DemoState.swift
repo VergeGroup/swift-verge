@@ -29,6 +29,9 @@ struct Database {
   var book: Tables.Hash<Book> = .init()
 
   @Table
+  var book2: Tables.Hash<Book> = .init()
+
+  @Table
   var author: Tables.Hash<Author> = .init()
 
 }

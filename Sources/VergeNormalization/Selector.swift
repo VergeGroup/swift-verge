@@ -1,17 +1,74 @@
-public protocol TableSelector {
-  associatedtype Entity: EntityType
+
+public protocol TableSelector: Hashable {
   associatedtype Storage: NormalizedStorageType
-  func select(storage: consuming Storage) -> Tables.Hash<Entity>
+  associatedtype Table: TableType
+  func select(storage: consuming Storage) -> Table
 }
 
-public protocol StorageSelector {
+public struct KeyPathTableSelector<
+  Storage: NormalizedStorageType,
+  Table: TableType
+>: TableSelector, Equatable {
+
+  public let keyPath: KeyPath<Storage, Table>
+
+  public init(keyPath: KeyPath<Storage, Table>) {
+    self.keyPath = keyPath
+  }
+
+  public func select(storage: consuming Storage) -> Table {
+    storage[keyPath: keyPath]
+  }
+
+}
+
+extension TableSelector {
+
+  public static func keyPath<
+    Storage: NormalizedStorageType,
+    Table: TableType
+  >(
+    _ keyPath: KeyPath<Storage, Table>
+  ) -> Self where Self == KeyPathTableSelector<Storage, Table> {
+    return .init(keyPath: keyPath)
+  }
+}
+
+public protocol StorageSelector: Hashable {
   associatedtype Source: Equatable
   associatedtype Storage: NormalizedStorageType
 
   func select(source: consuming Source) -> Storage
 }
 
+public struct KeyPathStorageSelector<
+  Source: Equatable,
+  Storage: NormalizedStorageType
+>: StorageSelector, Equatable {
+
+  public let keyPath: KeyPath<Source, Storage>
+
+  public init(keyPath: KeyPath<Source, Storage>) {
+    self.keyPath = keyPath
+  }
+
+  public func select(source: consuming Source) -> Storage {
+    source[keyPath: keyPath]
+  }
+
+}
+
 extension StorageSelector {
+
+  public static func keyPath<
+    Source: Equatable,
+    Storage: NormalizedStorageType
+  >
+  (
+    _ keyPath: KeyPath<Source, Storage>
+  ) -> Self where Self == KeyPathStorageSelector<Source, Storage> {
+    return .init(keyPath: keyPath)
+  }
 
   public func appending<_TableSelector: TableSelector>(
     _ tableSelector: consuming _TableSelector
@@ -26,10 +83,10 @@ extension StorageSelector {
 public struct AbsoluteTableSelector<
   _StorageSelector: StorageSelector,
   _TableSelector: TableSelector
-> where _StorageSelector.Storage == _TableSelector.Storage {
+>: Hashable where _StorageSelector.Storage == _TableSelector.Storage {
 
   public typealias Storage = _StorageSelector.Storage
-  public typealias Entity = _TableSelector.Entity
+  public typealias Entity = _TableSelector.Table.Entity
 
   public let storageSelector: _StorageSelector
   public let tableSelector: _TableSelector
@@ -46,7 +103,7 @@ public struct AbsoluteTableSelector<
     storageSelector.select(source: source)
   }
 
-  public func table(source: consuming _StorageSelector.Source) -> Tables.Hash<_TableSelector.Entity> {
+  public func table(source: consuming _StorageSelector.Source) -> _TableSelector.Table {
     tableSelector.select(storage: storageSelector.select(source: source))
   }
 

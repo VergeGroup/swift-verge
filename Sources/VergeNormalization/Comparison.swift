@@ -14,9 +14,9 @@ public enum NormalizedStorageComparisons<Storage: NormalizedStorageType> {
   }
 
   /// Returns true if the table of the entity in database has no changes.
-  public struct TableComparison<Entity: EntityType>: Comparison {
+  public struct TableComparison<Table: TableType>: Comparison {
 
-    public typealias Input = Tables.Hash<Entity>
+    public typealias Input = Table
 
     public init() {}
 

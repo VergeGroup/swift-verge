@@ -107,6 +107,12 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
 
   private let wasInvalidated = Atomics.ManagedAtomic(false)
 
+  @_spi(NormalizedStorage)
+  @VergeConcurrency.UnfairLockAtomic public var _derivedCache: NSMapTable<KeyObject<AnyHashable>, AnyObject> = .init(keyOptions: [.copyIn, .objectPersonality], valueOptions: [.weakMemory])
+
+  @_spi(NormalizedStorage)
+  @VergeConcurrency.AtomicLazy public var _nonnull_derivedCache: NSMapTable<KeyObject<AnyHashable>, AnyObject> = .init(keyOptions: [.copyIn, .objectPersonality], valueOptions: [.weakMemory])
+
   // MARK: - Deinit
   
   deinit {
@@ -814,4 +820,33 @@ extension Store {
     }
   }
   
+}
+
+public final class KeyObject<Content: Hashable>: NSObject, NSCopying {
+
+  public func copy(with zone: NSZone? = nil) -> Any {
+    return KeyObject(content: content)
+  }
+
+  public let content: Content
+
+  public init(content: consuming Content) {
+    self.content = content
+  }
+
+  public override var hash: Int {
+    content.hashValue
+  }
+
+  public override func isEqual(_ object: Any?) -> Bool {
+
+    guard let other = object as? KeyObject<Content> else {
+      return false
+    }
+
+    guard content == other.content else { return false }
+
+    return true
+  }
+
 }
