@@ -372,15 +372,14 @@ extension Changes {
     try ifChanged(compose, .equality(), perform)
   }
 
-  public func ifChanged<each Element: Equatable, Result>(
-    _ compose: (Value) -> (repeat each Element),
-    _ perform: ((repeat each Element)) throws -> Result
-  ) rethrows -> Result? {
+  public func ifChanged<each Element: Equatable>(
+    _ compose: (borrowing Value) -> (repeat each Element)
+  ) -> IfChangedBox<(repeat each Element)> {
     guard let result = _takeIfChanged(compose, .equality()) else {
-      return nil
+      return .init()
     }
 
-    return try perform((repeat each result))
+    return .init(value: (repeat each result))
   }
 
   /**
@@ -599,5 +598,28 @@ extension Changes where Value: Equatable {
 
   public func ifChanged(_ perform: (Value) throws -> Void) rethrows {
     try ifChanged(\.self, perform)
+  }
+}
+
+public enum IfChangedBox<T> {
+
+  case none
+  case present(T)
+
+  init(value: consuming T) {
+    self = .present(consume value)
+  }
+
+  init() {
+    self = .none
+  }
+
+  public consuming func `do`(_ perform: (consuming T) -> Void) {
+    switch self {
+    case .none:
+      break
+    case .present(let value):
+      perform(consume value)
+    }
   }
 }

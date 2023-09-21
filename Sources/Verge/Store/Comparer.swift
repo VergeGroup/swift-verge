@@ -37,11 +37,14 @@ extension Comparison {
     .init()
   }
 
+  /**
+   TODO: Use typed comparison instead of AnyEqualityComparison.
+   */
   public static func equality<each T: Equatable>() -> Self where Self == AnyEqualityComparison<(repeat each T)> {
     return .init { a, b in
 
       // https://github.com/apple/swift-evolution/blob/main/proposals/0408-pack-iteration.md
-      
+
       // Local throwing function for operating over each element of a pack expansion.
       func isEqual<Partial: Equatable>(_ left: Partial, _ right: Partial) throws {
         if left == right {
