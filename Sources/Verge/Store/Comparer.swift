@@ -29,6 +29,8 @@ public protocol Comparison<Input>: Sendable {
   func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool
 }
 
+private struct NotEqual: Error {}
+
 extension Comparison {
 
   public static func equality<T>() -> Self where Self == EqualityComparison<T> {
@@ -37,8 +39,27 @@ extension Comparison {
 
   public static func equality<each T: Equatable>() -> Self where Self == AnyEqualityComparison<(repeat each T)> {
     return .init { a, b in
+
+      // https://github.com/apple/swift-evolution/blob/main/proposals/0408-pack-iteration.md
       
-      (repeat each a) == (repeat each b)
+      // Local throwing function for operating over each element of a pack expansion.
+      func isEqual<Partial: Equatable>(_ left: Partial, _ right: Partial) throws {
+        if left == right {
+          return
+        }
+
+        throw NotEqual()
+      }
+
+      // Do-catch statement for short-circuiting as soon as two tuple elements are not equal.
+      do {
+        repeat try isEqual(each a, each b)
+      } catch {
+        return false
+      }
+
+      return true
+
     }
   }
 
