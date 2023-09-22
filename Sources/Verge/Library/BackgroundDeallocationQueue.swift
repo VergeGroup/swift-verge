@@ -20,10 +20,11 @@
 // THE SOFTWARE.
 
 import Foundation
+import Collections
 
 actor BackgroundDeallocationQueue {
 
-  private var buffer: ContiguousArray<Unmanaged<AnyObject>> = .init()
+  private var buffer: Deque<Unmanaged<AnyObject>> = .init()
 
   func releaseObjectInBackground(object: AnyObject) {
 
@@ -34,25 +35,25 @@ actor BackgroundDeallocationQueue {
 
     if isFirstEntry {
       Task {
+        // accumulate objects to dealloc for batching
         try? await Task.sleep(nanoseconds: 1_000_000)
-        self.drain()
+        await self.drain()
       }
     }
   }
 
-  func drain() {
+  func drain() async {
 
     guard buffer.isEmpty == false else {
       return
     }
 
-    let block = buffer
-    buffer.removeAll()
-
-    for pointer in block {
+    while let pointer = buffer.popFirst() {
       pointer.release()
+      await Task.yield()
     }
 
-    drain()
+    await drain()
+
   }
 }
