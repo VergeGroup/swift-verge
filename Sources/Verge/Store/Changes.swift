@@ -24,7 +24,7 @@ import Foundation
 #if !COCOAPODS
 #endif
 
-private let changesDeallocationQueue = BackgroundDeallocationQueue()
+private let _shared_changesDeallocationQueue = BackgroundDeallocationQueue()
 
 public protocol AnyChangesType: AnyObject, Sendable {
 
@@ -169,7 +169,9 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   deinit {
     vergeSignpostEvent("Changes.deinit", label: "\(type(of: self))")
 
-    changesDeallocationQueue.releaseObjectInBackground(object: innerBox)
+    Task { [innerBox] in
+      await _shared_changesDeallocationQueue.releaseObjectInBackground(object: innerBox)
+    }
   }
 
   @inline(__always)

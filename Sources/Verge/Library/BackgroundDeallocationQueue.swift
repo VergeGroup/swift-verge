@@ -21,38 +21,26 @@
 
 import Foundation
 
-final class BackgroundDeallocationQueue {
-
-  private let queue = DispatchQueue.init(label: "org.VergeGroup.deallocQueue", qos: .background)
+actor BackgroundDeallocationQueue {
 
   private var buffer: ContiguousArray<Unmanaged<AnyObject>> = .init()
-
-  private let lock = NSLock()
 
   func releaseObjectInBackground(object: AnyObject) {
 
     let innerCurrentRef = Unmanaged.passRetained(object)
 
-    lock.lock()
-
     let isFirstEntry = buffer.isEmpty
     buffer.append(innerCurrentRef)
 
-    lock.unlock()
-
     if isFirstEntry {
-      queue.asyncAfter(deadline: .now() + 0.1) {
-        self.drain()
-      }
+      self.drain()
     }
   }
 
   func drain() {
 
-    lock.lock()
     let block = buffer
-    buffer = .init()
-    lock.unlock()
+    buffer.removeAll()
 
     for pointer in block {
       pointer.release()
