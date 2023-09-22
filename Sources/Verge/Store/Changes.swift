@@ -394,6 +394,16 @@ extension Changes {
     try ifChanged(compose, .equality(), perform)
   }
 
+  public func ifChanged<Composed: Equatable>(
+    _ compose: (Value) -> Composed
+  ) -> IfChangedBox<Composed> {
+    guard let result = takeIfChanged(compose) else {
+      return .init()
+    }
+
+    return .init(value: consume result)
+  }
+
   /**
    Packed
 

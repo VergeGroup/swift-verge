@@ -24,7 +24,7 @@ final class ChangesTests: XCTestCase {
 
     measure {
       for _ in 0..<1000 {
-        changes.ifChanged(#keyPathMap(\.name))
+        _ = changes.ifChanged(#keyPathMap(\.name))
       }
     }
 
@@ -36,35 +36,57 @@ final class ChangesTests: XCTestCase {
 
     measure {
       for _ in 0..<1000 {
-        changes.ifChanged({ $0.name })
+        _ = changes.ifChanged({ $0.name })
       }
     }
 
   }
 
-  func testKeyPathMap() {
+  func test_same() {
 
-    let changes = Changes<DemoState>.init(old: nil, new: .init())
-
-    let b = #keyPathMap(\DemoState.name, \.count)
+    let changes = Changes<DemoState>.init(old: .init(), new: .init())
 
     changes
-      .ifChanged(#keyPathMap(\DemoState.name))
+      .ifChanged(#keyPathMap(\.name))
       .do { arg in
-
+        XCTFail()
     }
 
     changes
-      .ifChanged(#keyPathMap(\DemoState.name, \.count))
+      .ifChanged(#keyPathMap(\.name, \.count))
       .do { arg in
-
+        XCTFail()
     }
+
+    changes
+      .ifChanged({ $0.name })
+      .do { arg in
+        XCTFail()
+      }
 
     changes
       .ifChanged({ ($0.name, $0.count) })
       .do { arg in
-
+        XCTFail()
       }
 
+  }
+
+  func test_diff() {
+
+    let changes = Changes<DemoState>.init(
+      old: .init(name: "---"),
+      new: .init()
+    )
+
+    var hit = false
+
+    changes
+      .ifChanged({ ($0.name, $0.count) })
+      .do { arg in
+        hit = true
+      }
+
+    XCTAssertTrue(hit)
   }
 }
