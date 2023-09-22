@@ -16,9 +16,18 @@ final class IfChangedMacroTests: XCTestCase {
       }
       """#,
       expandedSource: #"""
-        {
-            ($0.count, $0.a)
-        }
+        { arg in
+          let primitiveState = arg.primitive
+          let previousState = arg.previous?.primitive
+
+          guard primitiveState.foo != previousState?.foo else {
+            return
+          }
+
+          let _: Void = { value in
+          print(value)
+          }(primitiveState.foo)
+        }(state)
         """#,
       macros: ["ifChanged": IfChangedMacro.self]
     )
@@ -34,9 +43,18 @@ final class IfChangedMacroTests: XCTestCase {
       })
       """#,
       expandedSource: #"""
-        {
-            ($0.count, $0.a)
-        }
+        { arg in
+          let primitiveState = arg.primitive
+          let previousState = arg.previous?.primitive
+
+          guard primitiveState.name != previousState?.name || primitiveState.count != previousState?.count else {
+            return
+          }
+
+          let _: Void = { name, count in
+          print(name, count)
+          }(primitiveState.name, primitiveState.count)
+        }(state)
         """#,
       macros: ["ifChanged": IfChangedMacro.self]
     )
