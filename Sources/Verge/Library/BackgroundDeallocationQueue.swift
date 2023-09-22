@@ -20,43 +20,40 @@
 // THE SOFTWARE.
 
 import Foundation
+import Collections
 
-final class BackgroundDeallocationQueue {
+actor BackgroundDeallocationQueue {
 
-  private let queue = DispatchQueue.init(label: "org.VergeGroup.deallocQueue", qos: .background)
-
-  private var buffer: ContiguousArray<Unmanaged<AnyObject>> = .init()
-
-  private let lock = NSLock()
+  private var buffer: Deque<Unmanaged<AnyObject>> = .init()
 
   func releaseObjectInBackground(object: AnyObject) {
 
     let innerCurrentRef = Unmanaged.passRetained(object)
 
-    lock.lock()
-
     let isFirstEntry = buffer.isEmpty
     buffer.append(innerCurrentRef)
 
-    lock.unlock()
-
     if isFirstEntry {
-      queue.asyncAfter(deadline: .now() + 0.1) {
-        self.drain()
+      Task {
+        // accumulate objects to dealloc for batching
+        try? await Task.sleep(nanoseconds: 1_000_000)
+        await self.drain()
       }
     }
   }
 
-  func drain() {
+  func drain() async {
 
-    lock.lock()
-    let block = buffer
-    buffer = .init()
-    lock.unlock()
-
-    for pointer in block {
-      pointer.release()
+    guard buffer.isEmpty == false else {
+      return
     }
+
+    while let pointer = buffer.popFirst() {
+      pointer.release()
+      await Task.yield()
+    }
+
+    await drain()
 
   }
 }
