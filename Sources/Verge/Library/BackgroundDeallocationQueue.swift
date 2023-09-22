@@ -33,11 +33,18 @@ actor BackgroundDeallocationQueue {
     buffer.append(innerCurrentRef)
 
     if isFirstEntry {
-      self.drain()
+      Task {
+        try? await Task.sleep(nanoseconds: 1_000_000)
+        self.drain()
+      }
     }
   }
 
   func drain() {
+
+    guard buffer.isEmpty == false else {
+      return
+    }
 
     let block = buffer
     buffer.removeAll()
@@ -46,5 +53,6 @@ actor BackgroundDeallocationQueue {
       pointer.release()
     }
 
+    drain()
   }
 }
