@@ -290,24 +290,46 @@ extension Changes {
   @inline(__always)
   fileprivate func _takeIfChanged<each Element>(
     _ compose: (Value) throws -> (repeat each Element),
-    _ comparer: some Comparison<(repeat each Element)>
+    _ comparer: consuming some Comparison<(repeat each Element)>
   ) rethrows -> (repeat each Element)? {
-
-    let signpost = VergeSignpostTransaction("Changes.takeIfChanged(compose:comparer:)")
-    defer {
-      signpost.end()
-    }
 
     let current = self.primitive
 
     guard let previousValue = previous else {
-      return try compose(current)
+      return try compose(consume current)
     }
 
     let old = previousValue.primitive
 
-    let composedFromCurrent = try compose(current)
-    guard !comparer(try compose(old), composedFromCurrent) else {
+    let composedFromCurrent = try compose(consume current)
+    guard !comparer(try compose(consume old), composedFromCurrent) else {
+      return nil
+    }
+
+    return composedFromCurrent
+
+  }
+
+  @inline(__always)
+  fileprivate func _takeIfChanged_packed<each Element: Equatable>(
+    _ compose: (Value) throws -> (repeat each Element)
+  ) rethrows -> (repeat each Element)? {
+
+    let current = self.primitive
+
+    guard let previousValue = previous else {
+      return try compose(consume current)
+    }
+
+    let old = previousValue.primitive
+
+    let composedFromCurrent = try compose(consume current)
+    let composedFromOld = try compose(old)
+
+    guard !areEqual(
+      (repeat each composedFromOld),
+      (repeat each composedFromCurrent)
+    ) else {
       return nil
     }
 
@@ -372,10 +394,19 @@ extension Changes {
     try ifChanged(compose, .equality(), perform)
   }
 
-  public func ifChanged<each Element: Equatable>(
+  /**
+   Packed
+
+   ```
+   state.ifChanged({ $0.name }).do { value in
+     ...
+   }
+   ```
+   */
+  public borrowing func ifChanged<each Element: Equatable>(
     _ compose: (borrowing Value) -> (repeat each Element)
   ) -> IfChangedBox<(repeat each Element)> {
-    guard let result = _takeIfChanged(compose, .equality()) else {
+    guard let result = _takeIfChanged_packed(compose) else {
       return .init()
     }
 
@@ -403,7 +434,7 @@ extension Changes {
     _ keyPath1: ChangesKeyPath<T1>,
     _ perform: ((T0, T1)) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) as (T0, T1) }, AnyEqualityComparison(==), perform)
+    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) as (T0, T1) }).do(perform)
   }
 
   /**
@@ -418,10 +449,9 @@ extension Changes {
     _ perform: ((T0, T1, T2)) throws -> Result
   ) rethrows -> Result? {
     try ifChanged(
-      { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) as (T0, T1, T2) },
-      AnyEqualityComparison(==),
-      perform
+      { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) as (T0, T1, T2) }
     )
+    .do(perform)
   }
 
   /**
@@ -444,10 +474,9 @@ extension Changes {
           $0[keyPath: keyPath2],
           $0[keyPath: keyPath3]
         ) as (T0, T1, T2, T3)
-      },
-      AnyEqualityComparison(==),
-      perform
+      }
     )
+    .do(perform)
   }
 
   /**
@@ -480,10 +509,9 @@ extension Changes {
           $0[keyPath: keyPath4]
         ) as (T0, T1, T2, T3, T4)
 
-      },
-      AnyEqualityComparison(==),
-      perform
+      }
     )
+    .do(perform)
   }
 }
 
@@ -601,25 +629,24 @@ extension Changes where Value: Equatable {
   }
 }
 
-public enum IfChangedBox<T> {
+public struct IfChangedBox<T>: ~Copyable {
 
-  case none
-  case present(T)
+  public let value: T?
 
   init(value: consuming T) {
-    self = .present(consume value)
+    self.value = consume value
   }
 
   init() {
-    self = .none
+    self.value = nil
   }
 
-  public consuming func `do`(_ perform: (consuming T) -> Void) {
-    switch self {
-    case .none:
-      break
-    case .present(let value):
-      perform(consume value)
+  @discardableResult
+  @inlinable
+  public consuming func `do`<Return>(_ perform: (consuming T) throws -> Return) rethrows -> Return? {
+    if let value {
+      return try perform(consume value)
     }
+    return nil
   }
 }
