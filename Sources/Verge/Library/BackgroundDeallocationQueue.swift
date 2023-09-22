@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 
 import Foundation
-import Collections
+import DequeModule
 
 actor BackgroundDeallocationQueue {
 
