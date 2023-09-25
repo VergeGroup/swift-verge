@@ -132,7 +132,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
             case .indeterminate:
               return true
             case nil:
-              return true
+              return changes.hasChanges({ $0[keyPath: keyPath] })
             }
             
           }
