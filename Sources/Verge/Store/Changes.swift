@@ -286,25 +286,57 @@ extension Changes {
     _ compose: (Value) throws -> Composed,
     _ comparer: some Comparison<Composed>
   ) rethrows -> Composed? {
-    let signpost = VergeSignpostTransaction("Changes.takeIfChanged(compose:comparer:)")
-    defer {
-      signpost.end()
-    }
+    try _takeIfChanged(compose, comparer)
+  }
+
+  @inline(__always)
+  fileprivate func _takeIfChanged<each Element>(
+    _ compose: (Value) throws -> (repeat each Element),
+    _ comparer: consuming some Comparison<(repeat each Element)>
+  ) rethrows -> (repeat each Element)? {
 
     let current = self.primitive
 
     guard let previousValue = previous else {
-      return try compose(current)
+      return try compose(consume current)
     }
 
     let old = previousValue.primitive
 
-    let composedFromCurrent = try compose(current)
-    guard !comparer(try compose(old), composedFromCurrent) else {
+    let composedFromCurrent = try compose(consume current)
+    guard !comparer(try compose(consume old), composedFromCurrent) else {
       return nil
     }
 
     return composedFromCurrent
+
+  }
+
+  @inline(__always)
+  fileprivate func _takeIfChanged_packed<each Element: Equatable>(
+    _ compose: (Value) throws -> (repeat each Element)
+  ) rethrows -> (repeat each Element)? {
+
+    let current = self.primitive
+
+    guard let previousValue = previous else {
+      return try compose(consume current)
+    }
+
+    let old = previousValue.primitive
+
+    let composedFromCurrent = try compose(consume current)
+    let composedFromOld = try compose(old)
+
+    guard !areEqual(
+      (repeat each composedFromOld),
+      (repeat each composedFromCurrent)
+    ) else {
+      return nil
+    }
+
+    return composedFromCurrent
+
   }
 
   /// Performs a closure if the selected value changed from the previous one.
@@ -364,6 +396,35 @@ extension Changes {
     try ifChanged(compose, .equality(), perform)
   }
 
+  public func ifChanged<Composed: Equatable>(
+    _ compose: (Value) -> Composed
+  ) -> IfChangedBox<Composed> {
+    guard let result = takeIfChanged(compose) else {
+      return .init()
+    }
+
+    return .init(value: consume result)
+  }
+
+  /**
+   Packed
+
+   ```
+   state.ifChanged({ $0.name }).do { value in
+     ...
+   }
+   ```
+   */
+  public borrowing func ifChanged<each Element: Equatable>(
+    _ compose: (borrowing Value) -> (repeat each Element)
+  ) -> IfChangedBox<(repeat each Element)> {
+    guard let result = _takeIfChanged_packed(compose) else {
+      return .init()
+    }
+
+    return .init(value: (repeat each result))
+  }
+
   /**
    Performs a closure if the selected value changed from the previous one.
    */
@@ -385,7 +446,7 @@ extension Changes {
     _ keyPath1: ChangesKeyPath<T1>,
     _ perform: ((T0, T1)) throws -> Result
   ) rethrows -> Result? {
-    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) as (T0, T1) }, AnyEqualityComparison(==), perform)
+    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) as (T0, T1) }).do(perform)
   }
 
   /**
@@ -400,10 +461,9 @@ extension Changes {
     _ perform: ((T0, T1, T2)) throws -> Result
   ) rethrows -> Result? {
     try ifChanged(
-      { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) as (T0, T1, T2) },
-      AnyEqualityComparison(==),
-      perform
+      { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) as (T0, T1, T2) }
     )
+    .do(perform)
   }
 
   /**
@@ -426,10 +486,9 @@ extension Changes {
           $0[keyPath: keyPath2],
           $0[keyPath: keyPath3]
         ) as (T0, T1, T2, T3)
-      },
-      AnyEqualityComparison(==),
-      perform
+      }
     )
+    .do(perform)
   }
 
   /**
@@ -462,10 +521,9 @@ extension Changes {
           $0[keyPath: keyPath4]
         ) as (T0, T1, T2, T3, T4)
 
-      },
-      AnyEqualityComparison(==),
-      perform
+      }
     )
+    .do(perform)
   }
 }
 
@@ -580,5 +638,27 @@ extension Changes where Value: Equatable {
 
   public func ifChanged(_ perform: (Value) throws -> Void) rethrows {
     try ifChanged(\.self, perform)
+  }
+}
+
+public struct IfChangedBox<T>: ~Copyable {
+
+  public let value: T?
+
+  init(value: consuming T) {
+    self.value = consume value
+  }
+
+  init() {
+    self.value = nil
+  }
+
+  @discardableResult
+  @inlinable
+  public consuming func `do`<Return>(_ perform: (consuming T) throws -> Return) rethrows -> Return? {
+    if let value {
+      return try perform(consume value)
+    }
+    return nil
   }
 }
