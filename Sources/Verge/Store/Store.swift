@@ -177,7 +177,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
         with: inoutRef.wrapped,
         from: inoutRef.traces,
         modification: inoutRef.modification ?? .indeterminate,
-        transaction: .init()
+        transaction: inoutRef._transaction
       )
       State.reduce(modifying: &inoutRef, current: intermediate)
     }
