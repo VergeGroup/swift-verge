@@ -30,10 +30,21 @@ public protocol Comparison<Input>: Sendable {
   func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool
 }
 
+struct NotEqual: Error {}
+
 extension Comparison {
 
   public static func equality<T>() -> Self where Self == EqualityComparison<T> {
     .init()
+  }
+
+  /**
+   TODO: Use typed comparison instead of AnyEqualityComparison.
+   */
+  public static func equality<each T: Equatable>() -> Self where Self == AnyEqualityComparison<(repeat each T)> {
+    return .init { a, b in
+      areEqual((repeat each a), (repeat each b))
+    }
   }
 
   public static func any<T>(_ isEqual: @escaping @Sendable (T, T) -> Bool) -> Self where Self == AnyEqualityComparison<T> {

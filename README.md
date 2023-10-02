@@ -15,12 +15,6 @@
 - [Verge Docs](https://vergegroup.github.io/swift-Verge/Verge/documentation/verge/)
 - [VergeORM Docs](https://vergegroup.github.io/swift-Verge/VergeORM/documentation/vergeorm/)
 
-
-<p align="center">
-<img alt="swift5.5" src="https://img.shields.io/badge/swift-5.5-ED523F.svg?style=flat"/>
-<img alt="Tests" src="https://github.com/VergeGroup/Verge/workflows/Tests/badge.svg"/>
-</p>
-
 ## Support this projects
 <a href="https://www.buymeacoffee.com/muukii">
 <img width="160" alt="yellow-button" src="https://user-images.githubusercontent.com/1888355/146226808-eb2e9ee0-c6bd-44a2-a330-3bbc8a6244cf.png">

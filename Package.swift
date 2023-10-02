@@ -28,7 +28,7 @@ let package = Package(
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.9.3"),
-    .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0-swift-5.9-DEVELOPMENT-SNAPSHOT-2023-04-25-b")
+    .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0")
   ],
   targets: [
 

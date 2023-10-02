@@ -11,6 +11,7 @@ struct Plugin: CompilerPlugin {
 
     NormalizedStorageMacro.self,
     TableMacro.self,
-    IndexMacro.self
+    IndexMacro.self,
+    KeyPathMap.self,
   ]
 }

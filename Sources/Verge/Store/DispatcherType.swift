@@ -32,6 +32,7 @@ public protocol DispatcherType<Scope>: AnyObject where State == WrappedStore.Sta
 
   var store: WrappedStore { get }
   var scope: WritableKeyPath<WrappedStore.State, Scope> { get }
+  var state: Changes<Scope> { get }
 }
 
 extension DispatcherType {
