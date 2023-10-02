@@ -386,16 +386,6 @@ extension Changes {
     return try perform(value)
   }
 
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   */
-  public func ifChanged<Composed: Equatable, Result>(
-    _ compose: (Value) -> Composed,
-    _ perform: (Composed) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(compose, .equality(), perform)
-  }
-
   public func ifChanged<Composed: Equatable>(
     _ compose: (Value) -> Composed
   ) -> IfChangedBox<Composed> {
@@ -426,9 +416,40 @@ extension Changes {
   }
 
   /**
+   singular variant
+   */
+  public func ifChanged<T: Equatable>(
+    _ keyPath: KeyPath<Value, T>
+  ) -> IfChangedBox<T> {
+    ifChanged({ $0[keyPath: keyPath] })
+  }
+
+  /**
+   multiple variant
+   */
+  public func ifChanged<each T: Equatable>(
+    _ keyPaths: repeat KeyPath<Value, each T>
+  ) -> IfChangedBox<(repeat each T)> {
+    ifChanged({ (repeat $0[keyPath: each keyPaths]) })
+  }
+
+
+  /**
+   Performs a closure if the selected value changed from the previous one.
+   */
+  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
+  public func ifChanged<Composed: Equatable, Result>(
+    _ compose: (Value) -> Composed,
+    _ perform: (Composed) throws -> Result
+  ) rethrows -> Result? {
+    try ifChanged(compose, .equality(), perform)
+  }
+
+  /**
    Performs a closure if the selected value changed from the previous one.
    */
   @inline(__always)
+  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
   public func ifChanged<T: Equatable, Result>(
     _ keyPath: ChangesKeyPath<T>,
     _ perform: (T) throws -> Result
@@ -441,6 +462,7 @@ extension Changes {
    Selected multiple value would be packed as tuple.
    */
   @inline(__always)
+  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
   public func ifChanged<T0: Equatable, T1: Equatable, Result>(
     _ keyPath0: ChangesKeyPath<T0>,
     _ keyPath1: ChangesKeyPath<T1>,
@@ -454,6 +476,7 @@ extension Changes {
    Selected multiple value would be packed as tuple.
    */
   @inline(__always)
+  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
   public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, Result>(
     _ keyPath0: ChangesKeyPath<T0>,
     _ keyPath1: ChangesKeyPath<T1>,
@@ -471,6 +494,7 @@ extension Changes {
    Selected multiple value would be packed as tuple.
    */
   @inline(__always)
+  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
   public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, T3: Equatable, Result>(
     _ keyPath0: ChangesKeyPath<T0>,
     _ keyPath1: ChangesKeyPath<T1>,
@@ -496,6 +520,7 @@ extension Changes {
    Selected multiple value would be packed as tuple.
    */
   @inline(__always)
+  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
   public func ifChanged<
     T0: Equatable,
     T1: Equatable,
