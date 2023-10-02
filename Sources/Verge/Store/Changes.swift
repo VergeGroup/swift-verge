@@ -661,9 +661,15 @@ extension Changes where Value: Equatable {
     previousPrimitive != primitive
   }
 
+  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
   public func ifChanged(_ perform: (Value) throws -> Void) rethrows {
     try ifChanged(\.self, perform)
   }
+
+  public func ifChanged() -> IfChangedBox<Value> {
+    ifChanged({ $0 })
+  }
+
 }
 
 public struct IfChangedBox<T>: ~Copyable {
