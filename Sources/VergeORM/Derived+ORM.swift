@@ -97,7 +97,7 @@ extension NonNullEntityWrapper: Equatable where Entity: Equatable {}
 extension NonNullEntityWrapper: Hashable where Entity: Hashable {}
 
 
-private final class DerivedCacheKey: NSObject {
+private final class DerivedCacheKey: NSObject, NSCopying {
 
   let entityType: ObjectIdentifier
   let entityID: AnyEntityIdentifier
@@ -107,6 +107,18 @@ private final class DerivedCacheKey: NSObject {
     self.entityType = entityType
     self.entityID = entityID
     self.keyPathToDatabase = keyPathToDatabase
+  }
+
+  func copy(with zone: NSZone? = nil) -> Any {
+    return DerivedCacheKey(
+      entityType: entityType,
+      entityID: entityID,
+      keyPathToDatabase: keyPathToDatabase
+    )
+  }
+
+  override var hash: Int {
+    entityID.hashValue ^ keyPathToDatabase.hashValue ^ entityType.hashValue
   }
 
   override func isEqual(_ object: Any?) -> Bool {
@@ -126,7 +138,7 @@ private final class DerivedCacheKey: NSObject {
 
 fileprivate final class _DerivedObjectCache {
 
-  private let storage = NSMapTable<DerivedCacheKey, AnyObject>.strongToWeakObjects()
+  private let storage = NSMapTable<DerivedCacheKey, AnyObject>.init(keyOptions: [.copyIn, .objectPersonality], valueOptions: [.weakMemory])
 
   @inline(__always)
   private func key<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> DerivedCacheKey {
