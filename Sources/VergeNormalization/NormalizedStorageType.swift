@@ -1,6 +1,9 @@
 
 public protocol NormalizedStorageType: Equatable {
 
+  /**
+   Performs any additional operations for updating.
+   */
   func finalizeTransaction(transaction: inout ModifyingTransaction<Self>)
 
   static func compare(lhs: Self, rhs: Self) -> Bool
