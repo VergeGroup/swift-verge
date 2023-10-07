@@ -121,7 +121,10 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
 
       _ = flag.compareExchange(expected: true, desired: false, ordering: .sequentiallyConsistent)
     } else {
-      // enqueue only
+      // enqueue
+      while queue.withValue({ $0.isEmpty }) == false {
+        // wait for consuming
+      }
     }
 
   }

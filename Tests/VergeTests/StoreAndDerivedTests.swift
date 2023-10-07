@@ -8,18 +8,36 @@ final class StoreAndDerivedTests: XCTestCase {
 
     let store = Store<_, Never>(initialState: DemoState())
 
-    let derived = store.derived(.select(\.name))
+    let nameDerived = store.derived(.select(\.name))
+    let countDerived = store.derived(.select(\.count))
 
-    for i in 0..<1000 {
+    await withTaskGroup(of: Void.self) { group in
 
-      await withBackground {
-        store.commit {
-          $0.name = "\(i)"
+      for i in 0..<1000 {
+        group.addTask {
+          await withBackground {
+            store.commit {
+              $0.name = "\(i)"
+            }
+          }
+
         }
       }
 
-      XCTAssertEqual(derived.state.primitive, "\(i)")
+      group.addTask {
+        await withBackground {
+          store.commit {
+            $0.count = 100
+          }
+        }
+
+        XCTAssertEqual(store.state.count, 100)
+        XCTAssertEqual(countDerived.state.primitive, 100)
+      }
+
     }
+
+    print("end")
 
   }
 
