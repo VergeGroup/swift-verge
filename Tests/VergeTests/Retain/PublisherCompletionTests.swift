@@ -155,7 +155,7 @@ final class SubjectCompletionTests: XCTestCase {
 
   }
 
-  func testDerived_stream_stops_on_store_deallocated() {
+  func testDerived_stream_stops_on_store_deallocated() async {
 
     var c: AnyCancellable?
 
@@ -164,6 +164,9 @@ final class SubjectCompletionTests: XCTestCase {
     let derivedRef = withReference(storeRef.value!.derived(.map(\.count)))
 
     storeRef.release()
+
+    await Task.yield()
+
     XCTAssertNil(storeRef.value)
 
     let onComplete = expectation(description: "onComplete")
@@ -180,12 +183,16 @@ final class SubjectCompletionTests: XCTestCase {
       )
 
     derivedRef.release()
+
+    await Task.yield()
+    
     XCTAssertNil(derivedRef.value)
 
     XCTAssertNil(storeRef.value)
 
     wait(for: [onComplete], timeout: 10)
-    c?.cancel()
+    withExtendedLifetime(c, {})
+//    c?.cancel()
 
   }
 
