@@ -117,7 +117,7 @@ extension StoreMap {
 
 extension StoreType {
 
-  public func map<Mapped>(_ map: @escaping @Sendable (State) -> Mapped) -> StoreMap<Self, Mapped> {
+  public func map<Mapped>(_ map: @escaping @Sendable (borrowing State) -> Mapped) -> StoreMap<Self, Mapped> {
     .init(store: self, map: map)
   }
 
