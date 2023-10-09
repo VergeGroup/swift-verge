@@ -11,5 +11,7 @@ jobs:
         with:
           xcode-version: "15.0"
       - uses: actions/checkout@v2
+      - name: xcbeautify
+        run: brew install xcbeautify
       - name: Run Test
-        run: xcodebuild -scheme Verge-Package test -destination 'platform=iOS Simulator,name=iPhone 14 Pro,OS=16.4'
+        run: xcodebuild -scheme Verge-Package test -destination 'platform=iOS Simulator,name=iPhone 14 Pro,OS=16.4' | xcbeautify
