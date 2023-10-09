@@ -73,7 +73,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
 
   fileprivate var _set: ((Value) -> Void)?
   
-  private let upstreamSubscription: (any CancellableType)?
+  private let upstreamSubscription: (any Cancellable)?
   private let retainsUpstream: Any?
   private var associatedObjects: ContiguousArray<AnyObject> = .init()
 
@@ -104,7 +104,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     get pipeline: Pipeline,
     set: ((Value) -> Void)?,
     initialUpstreamState: UpstreamState,
-    subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> CancellableType,
+    subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> any Cancellable,
     retainsUpstream: Any?
   ) where Pipeline.Input == UpstreamState, Value == Pipeline.Output {
 
