@@ -20,6 +20,7 @@ public final class StoreSubscription: Hashable, Cancellable {
   private let source: EventEmitterCancellable
   private weak var storeCancellable: VergeAnyCancellable?
   private var associatedStore: (any StoreType)?
+  private var associatedReferences: [AnyObject] = []
 
   init(
     _ eventEmitterCancellable: EventEmitterCancellable,
@@ -40,6 +41,12 @@ public final class StoreSubscription: Hashable, Cancellable {
   func associate(store: some StoreType) -> StoreSubscription {
     ensureAlive()
     associatedStore = store
+    return self
+  }
+
+  func associate(object: AnyObject) -> StoreSubscription {
+    ensureAlive()
+    associatedReferences.append(object)
     return self
   }
 
