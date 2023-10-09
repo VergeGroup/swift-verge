@@ -96,9 +96,9 @@ extension StoreMap {
    */
   public func assign(
     queue: some TargetQueueType = .passthrough,
-    to binder: @escaping (Changes<State>) -> Void
+    to binder: @escaping (Changes<Mapped>) -> Void
   ) -> StoreSubscription {
-    store.asStore().sinkState(queue: queue, receive: binder)
+    sinkState(queue: queue, receive: binder)
   }
 
   /**
@@ -108,9 +108,9 @@ extension StoreMap {
    */
   public func assign(
     queue: MainActorTargetQueue,
-    to binder: @escaping (Changes<State>) -> Void
+    to binder: @escaping (Changes<Mapped>) -> Void
   ) -> StoreSubscription {
-    store.asStore().sinkState(queue: queue, receive: binder)
+    sinkState(queue: queue, receive: binder)
   }
 
 }
