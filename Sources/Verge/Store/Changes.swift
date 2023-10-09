@@ -135,12 +135,12 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   // MARK: - Initializers
 
   public convenience init(
-    old: __owned Value?,
-    new: __owned Value
+    old: consuming Value?,
+    new: consuming Value
   ) {
     self.init(
       previous: old.map { .init(old: nil, new: $0) },
-      innerBox: .init(value: new),
+      innerBox: .init(value: consume new),
       version: 0,
       traces: [],
       modification: nil,
@@ -207,7 +207,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   /// Returns a new instance that projects value by transform closure.
   ///
   /// - Warning: modification would be dropped.
-  public func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U> {
+  public func map<U>(_ transform: (borrowing Value) throws -> U) rethrows -> Changes<U> {
     let signpost = VergeSignpostTransaction("Changes.map")
     defer {
       signpost.end()
@@ -629,14 +629,14 @@ extension Changes {
     var value: Value
 
     init(
-      value: __owned Value
+      value: consuming Value
     ) {
       self.value = value
     }
  
     deinit {}
 
-    func map<U>(_ transform: (Value) throws -> U) rethrows -> Changes<U>.InnerBox {
+    func map<U>(_ transform: (borrowing Value) throws -> U) rethrows -> Changes<U>.InnerBox {
       return .init(
         value: try transform(value)
       )
