@@ -51,7 +51,7 @@ public struct StoreMap<Store: StoreType, Mapped: Equatable>: Sendable {
 
   public let store: Store
 
-  private let _map: @Sendable (Store.State) -> Mapped
+  private let _map: @Sendable (borrowing Store.State) -> Mapped
 
   public var state: Changes<Mapped> {
     store.state.map(_map)
