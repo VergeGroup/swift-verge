@@ -4,11 +4,13 @@
  sink function works with store directly.
  state property retrieves the value from state of the store by mapping.
  */
-public final class StoreMap<Store: StoreType, Mapped: Equatable> {
+public final class StoreMap<Store: StoreType, Mapped: Equatable>: Sendable {
 
   public typealias State = Store.State
+
   public let store: Store
-  private let _map: (Store.State) -> Mapped
+
+  private let _map: @Sendable (Store.State) -> Mapped
 
   public var state: Changes<Mapped> {
     store.state.map(_map)
@@ -19,6 +21,47 @@ public final class StoreMap<Store: StoreType, Mapped: Equatable> {
     self._map = map
   }
 
+}
+
+// MARK: Implementations
+extension StoreMap {
+
+  /**
+   Start subscribing state updates in receive closure.
+   It skips publishing values if the mapped value is not changed.
+   */
+  @_disfavoredOverload
+  public func sinkState(
+    dropsFirst: Bool = false,
+    queue: MainActorTargetQueue = .mainIsolated(),
+    receive: @escaping @MainActor (Changes<Mapped>) -> Void
+  ) -> StoreSubscription {
+
+    let subscription = store.asStore()
+      .sinkState(
+        dropsFirst: dropsFirst,
+        queue: queue,
+        receive: { [_map] state in
+
+          let mapped = state
+            .map(_map)
+
+          mapped.ifChanged().do { _ in
+            receive(mapped)
+          }
+
+        }
+      )
+
+    _ = subscription.associate(object: self)
+
+    return subscription
+  }
+
+  /**
+   Start subscribing state updates in receive closure.
+   It skips publishing values if the mapped value is not changed.
+   */
   public func sinkState(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
@@ -30,13 +73,44 @@ public final class StoreMap<Store: StoreType, Mapped: Equatable> {
         dropsFirst: dropsFirst,
         queue: queue,
         receive: { [_map] state in
-          receive(state.map(_map))
+
+          let mapped = state
+            .map(_map)
+
+          mapped.ifChanged().do {
+            receive(mapped)
+          }
+
         }
       )
 
     _ = subscription.associate(object: self)
 
     return subscription
+  }
+
+  /**
+   Assigns a Store's state to a property of a store.
+
+   - Returns: a cancellable. See detail of handling cancellable from ``StoreSubscription``'s docs
+   */
+  public func assign(
+    queue: some TargetQueueType = .passthrough,
+    to binder: @escaping (Changes<State>) -> Void
+  ) -> StoreSubscription {
+    store.asStore().sinkState(queue: queue, receive: binder)
+  }
+
+  /**
+   Assigns a Store's state to a property of a store.
+
+   - Returns: a cancellable. See detail of handling cancellable from ``StoreSubscription``'s docs
+   */
+  public func assign(
+    queue: MainActorTargetQueue,
+    to binder: @escaping (Changes<State>) -> Void
+  ) -> StoreSubscription {
+    store.asStore().sinkState(queue: queue, receive: binder)
   }
 
 }
