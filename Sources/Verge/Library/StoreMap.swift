@@ -1,4 +1,45 @@
 
+public protocol StoreMapType<Mapped>: Sendable {
+
+  associatedtype Mapped: Equatable
+
+  func sinkState(
+    dropsFirst: Bool,
+    queue: MainActorTargetQueue,
+    receive: @escaping @MainActor (Changes<Mapped>) -> Void
+  ) -> StoreSubscription
+
+  func sinkState(
+    dropsFirst: Bool,
+    queue: some TargetQueueType,
+    receive: @escaping (Changes<Mapped>) -> Void
+  ) -> StoreSubscription
+}
+
+extension StoreMapType {
+
+  public func sinkState(
+    queue: some TargetQueueType,
+    receive: @escaping (Changes<Mapped>) -> Void
+  ) -> StoreSubscription {
+    sinkState(dropsFirst: false, queue: queue, receive: receive)
+  }
+
+  func sinkState(
+    receive: @escaping @MainActor (Changes<Mapped>) -> Void
+  ) -> StoreSubscription {
+    sinkState(dropsFirst: false, queue: .mainIsolated(), receive: receive)
+  }
+
+  func sinkState(
+    queue: MainActorTargetQueue,
+    receive: @escaping @MainActor (Changes<Mapped>) -> Void
+  ) -> StoreSubscription {
+    sinkState(dropsFirst: false, queue: queue, receive: receive)
+  }
+
+}
+
 /**
  Against Derived, StoreMap won't retain the value from the store.
  sink function works with store directly.
@@ -30,7 +71,6 @@ extension StoreMap {
    Start subscribing state updates in receive closure.
    It skips publishing values if the mapped value is not changed.
    */
-  @_disfavoredOverload
   public func sinkState(
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
