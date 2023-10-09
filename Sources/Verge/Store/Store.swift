@@ -30,7 +30,7 @@ import Combine
 #endif
 
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
-public protocol StoreType<State>: AnyObject, ObservableObject where ObjectWillChangePublisher == ObservableObjectPublisher {
+public protocol StoreType<State>: AnyObject, Sendable, ObservableObject where ObjectWillChangePublisher == ObservableObjectPublisher {
   associatedtype State: Equatable
   associatedtype Activity = Never
   
@@ -177,7 +177,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
         with: inoutRef.wrapped,
         from: inoutRef.traces,
         modification: inoutRef.modification ?? .indeterminate,
-        transaction: .init()
+        transaction: inoutRef._transaction
       )
       State.reduce(modifying: &inoutRef, current: intermediate)
     }

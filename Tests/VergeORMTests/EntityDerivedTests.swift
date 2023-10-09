@@ -194,8 +194,8 @@ final class DerivedTests: XCTestCase {
     
     XCTAssertEqual(updatedCount, 1)
     
-    XCTContext.runActivity(named: "updateName, but not changed") { _ in
-      
+    XCTContext.runActivity(named: "updateName, but same value") { _ in
+
       _ = storage.commit { state in
         state.db.performBatchUpdates { (context) in
           context.entities.author.updateIfExists(id: .init("muukii")) { (author) in
@@ -207,9 +207,10 @@ final class DerivedTests: XCTestCase {
       XCTAssertEqual(authorGetter.primitiveValue.name, "Hiroshi")
       
     }
-    
-    XCTAssertEqual(updatedCount, 1)
-    
+
+    // got update
+    XCTAssertEqual(updatedCount, 2)
+
     XCTContext.runActivity(named: "Update other, getter would not emit changes") { _ in
       
       for _ in 0..<10 {
@@ -244,8 +245,8 @@ final class DerivedTests: XCTestCase {
       return
     }
     
-    XCTAssertEqual(updatedCount, 1)
-    
+    XCTAssertEqual(updatedCount, 2)
+
   }
   
   func testPerformanceGetterCreationIncludesFirstTime() {

@@ -8,5 +8,6 @@ struct Plugin: CompilerPlugin {
   let providingMacros: [Macro.Type] = [
     DatabaseStateMacro.self,
     IfChangedMacro.self,
+    KeyPathMap.self,
   ]
 }
