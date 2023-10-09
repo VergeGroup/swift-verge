@@ -4,7 +4,7 @@
  sink function works with store directly.
  state property retrieves the value from state of the store by mapping.
  */
-public final class StoreMap<Store: StoreType, Mapped: Equatable>: Sendable {
+public struct StoreMap<Store: StoreType, Mapped: Equatable>: Sendable {
 
   public typealias State = Store.State
 
@@ -53,8 +53,6 @@ extension StoreMap {
         }
       )
 
-    _ = subscription.associate(object: self)
-
     return subscription
   }
 
@@ -84,8 +82,6 @@ extension StoreMap {
         }
       )
 
-    _ = subscription.associate(object: self)
-
     return subscription
   }
 
@@ -111,6 +107,57 @@ extension StoreMap {
     to binder: @escaping (Changes<Mapped>) -> Void
   ) -> StoreSubscription {
     sinkState(queue: queue, receive: binder)
+  }
+
+  /**
+   Creates a derived state object from a given pipeline.
+
+   This function can be used to create a Derived object that contains only a selected part of the state. The selected part is determined by a pipeline that is passed in as an argument.
+
+   - Parameters:
+   - pipeline: The pipeline object that selects a part of the state to be passed to other components.
+   - queue: The target queue for dispatching events.
+   */
+  public func derived<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: MainActorTargetQueue
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<Mapped> {
+    derived(pipeline, queue: Queues.MainActor(queue))
+  }
+
+  /**
+   Creates a derived state object from a given pipeline.
+
+   This function can be used to create a Derived object that contains only a selected part of the state. The selected part is determined by a pipeline that is passed in as an argument.
+
+   - Parameters:
+   - pipeline: The pipeline object that selects a part of the state to be passed to other components.
+   - queue: The target queue for dispatching events.
+   */
+  public func derived<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: some TargetQueueType = .passthrough
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<Mapped> {
+
+    let derived = Derived<Pipeline.Output>(
+      get: pipeline,
+      set: { _ in /* no operation as read only */},
+      initialUpstreamState: state,
+      subscribeUpstreamState: { callback in
+        sinkState(
+          dropsFirst: true,
+          queue: queue,
+          receive: callback
+        )
+      },
+      retainsUpstream: nil
+    )
+
+    store.asStore().onDeinit { [weak derived] in
+      derived?.invalidate()
+    }
+
+    return derived
   }
 
 }
