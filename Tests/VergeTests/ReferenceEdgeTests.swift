@@ -5,7 +5,7 @@ import Verge
 final class FragmentTests: XCTestCase {
 
   struct State {
-    @_COWFragment var number = 0
+    @ReferenceEdge var number = 0
   }
 
   func testFragment() {
