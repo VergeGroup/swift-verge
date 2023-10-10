@@ -22,7 +22,7 @@
 import Foundation
 @_implementationOnly import Atomics
 
-private let _edge_global_counter =  ManagedAtomic<UInt64>.init(0)
+private let _edge_global_counter = ManagedAtomic<UInt64>.init(0)
 
 /**
  A structure that manages sub-state-tree from root-state-tree.
@@ -35,27 +35,22 @@ private let _edge_global_counter =  ManagedAtomic<UInt64>.init(0)
 
  Fragment is a wrapper structure and manages version number inside.
  It increments the version number each wrapped value updated.
-
- Memoization can use that version if it should pass new input.
-
- To activate this feature, you can check this method.
- `MemoizeMap.map(_ map: @escaping (Changes<Input.Value>) -> Fragment<Output>) -> MemoizeMap<Input, Output>`
  */
 @propertyWrapper
-public struct _COWFragment<State>: EdgeType {
+public struct ReferenceEdge<State>: EdgeType {
 
   private final class Storage {
 
     var value: State
 
-    init(_ value: State) {
+    init(_ value: consuming State) {
       self.value = value
     }
 
   }
 
   public static func == (lhs: Self, rhs: Self) -> Bool {
-    lhs.storage === rhs.storage || lhs.version == rhs.version
+    lhs.storage === rhs.storage || (lhs.globalID == rhs.globalID && lhs.version == rhs.version)
   }
 
   public let globalID: UInt64
@@ -68,9 +63,9 @@ public struct _COWFragment<State>: EdgeType {
 
   private(set) public var counter: NonAtomicCounter = .init()
 
-  public init(wrappedValue: State) {
+  public init(wrappedValue: consuming State) {
     self.globalID = _edge_global_counter.loadThenWrappingIncrement(ordering: .relaxed)
-    self.storage = Storage(wrappedValue)
+    self.storage = Storage(consume wrappedValue)
   }
 
   private var storage: Storage
@@ -97,9 +92,9 @@ public struct _COWFragment<State>: EdgeType {
 
 }
 
-extension _COWFragment where State : Equatable {
+extension ReferenceEdge where State : Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
-    lhs.storage === rhs.storage || lhs.version == rhs.version || lhs.wrappedValue == rhs.wrappedValue
+    lhs.storage === rhs.storage || (lhs.globalID == rhs.globalID && lhs.version == rhs.version) || lhs.wrappedValue == rhs.wrappedValue
   }
 }
 
