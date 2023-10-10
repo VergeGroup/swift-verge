@@ -115,7 +115,7 @@ extension StoreMap {
           let mapped = state
             .map(_map)
 
-          mapped.ifChanged().do {
+          mapped.ifChanged().do { _ in
             receive(mapped)
           }
 
