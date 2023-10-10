@@ -1,5 +1,6 @@
 
-func areEqual<each Element: Equatable>(_ lhs: (repeat each Element), _ rhs: (repeat each Element)) -> Bool {
+@_spi(Internal)
+public func areEqual<each Element: Equatable>(_ lhs: (repeat each Element), _ rhs: (repeat each Element)) -> Bool {
 
   // https://github.com/apple/swift-evolution/blob/main/proposals/0408-pack-iteration.md
 
