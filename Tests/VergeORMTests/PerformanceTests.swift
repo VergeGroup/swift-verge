@@ -409,7 +409,7 @@ final class DictionaryPerformanceTests: XCTestCase {
   @available(iOS 13, *)
   func testModify_withCOWBox() {
     
-    let base = (0..<100000).reduce(into: [Int: _COWFragment<Any>]()) { partialResult, i in
+    let base = (0..<100000).reduce(into: [Int: ReferenceEdge<Any>]()) { partialResult, i in
       partialResult[i] = .init(wrappedValue: Concrete(id: i))
     }
     
