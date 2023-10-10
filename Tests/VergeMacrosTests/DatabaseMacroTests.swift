@@ -19,14 +19,40 @@ final class DatabaseMacroTests: XCTestCase {
       struct MyDatabase {
         @TableAccessor
         let user: String
-       @TableAccessor(hoge)
+        @TableAccessor(hoge)
         let user: String
       }
       """#,
       expandedSource: #"""
         struct MyDatabase {
-          @Table
+          @TableAccessor
           let user: String
+          @TableAccessor(hoge)
+          let user: String
+
+            @TableAccessor var _$user: String
+
+            @TableAccessor(hoge) var _$user: String
+        }
+
+        extension MyDatabase {
+          static func compare(lhs: Self, rhs: Self) -> Bool {
+
+            return true
+          }
+        }
+
+        extension MyDatabase {
+
+        }
+
+        extension MyDatabase: NormalizedStorageType {
+        }
+
+        extension MyDatabase: Equatable {
+        }
+
+        extension MyDatabase {
         }
         """#,
       macros: macros
@@ -45,8 +71,29 @@ final class DatabaseMacroTests: XCTestCase {
       """#,
       expandedSource: #"""
         struct MyDatabase {
-          @Table
           let user: String
+
+            var _$user: String
+        }
+
+        extension MyDatabase {
+          static func compare(lhs: Self, rhs: Self) -> Bool {
+
+            return true
+          }
+        }
+
+        extension MyDatabase {
+
+        }
+
+        extension MyDatabase: NormalizedStorageType {
+        }
+
+        extension MyDatabase: Equatable {
+        }
+
+        extension MyDatabase {
         }
         """#,
       macros: macros
