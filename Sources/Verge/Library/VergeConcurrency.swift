@@ -129,6 +129,7 @@ public enum VergeConcurrency {
   }
     
   /// An atomic variable.
+  @propertyWrapper
   public final class UnfairLockAtomic<Value>: @unchecked Sendable {
     
     public var unsafelyWrappedValue: Value {
@@ -143,21 +144,36 @@ public enum VergeConcurrency {
       get {
         return withValue { $0 }
       }
-      
       set(newValue) {
         swap(newValue)
       }
     }
-    
+
+    public var wrappedValue: Value {
+      get {
+        return withValue { $0 }
+      }
+      set(newValue) {
+        swap(newValue)
+      }
+    }
+
     /// Initialize the variable with the given initial value.
     ///
     /// - parameters:
     ///   - value: Initial value for `self`.
-    public init(_ value: Value) {
-      _value = value
+    public init(_ wrappedValue: Value) {
+      _value = wrappedValue
       lock = .init()
     }
-    
+
+    public init(wrappedValue: Value) {
+      _value = wrappedValue
+      lock = .init()
+    }
+
+    public var projectedValue: UnfairLockAtomic<Value> { self }
+
     /// Atomically modifies the variable.
     ///
     /// - parameters:
@@ -202,5 +218,84 @@ public enum VergeConcurrency {
       }
     }
   }
+
+  /// A container that initializes value when it needs.
+  ///
+  /// Supports multi-threading.
+  @propertyWrapper
+  public final class AtomicLazy<T>: @unchecked Sendable {
+
+    private enum State {
+      case initialized(T)
+      case notInitialized
+    }
+
+    public typealias Initializer = () -> T
+
+    private var _onInitialized: (T) -> Void = { _ in }
+
+    private let lock: UnfairLock = .init()
+
+    public var wrappedValue: T {
+
+      lock.lock()
+      defer {
+        lock.unlock()
+      }
+
+      return unsafeValue
+    }
+
+    public var projectedValue: AtomicLazy<T> {
+      self
+    }
+
+    @discardableResult
+    public func modify<Result>(_ action: (inout T) throws -> Result) rethrows -> Result {
+      lock.lock()
+      defer { lock.unlock() }
+
+      var new = unsafeValue
+      let result = try action(&new)
+      self._synchronized_state = .initialized(new)
+      return consume result
+    }
+
+    private var _synchronized_state: State = .notInitialized
+
+    private var unsafeValue: T {
+      get {
+        switch _synchronized_state {
+        case .notInitialized:
+          let value = initializer()
+          _onInitialized(value)
+          self._synchronized_state = .initialized(value)
+          self.initializer = nil
+          return value
+        case .initialized(let value):
+          return value
+        }
+      }
+    }
+
+    private var initializer: Initializer!
+
+    public init(_ initializer: @escaping Initializer) {
+      self.initializer = initializer
+    }
+
+    public init(wrappedValue initializer: @autoclosure @escaping Initializer) {
+      self.initializer = initializer
+    }
+
+    /// Set closure on value initialized.
+    /// the closure would be called on thread which value initialized.
+    @discardableResult
+    public func onInitialized(_ perform: @escaping (T) -> Void) -> Self {
+      _onInitialized = perform
+      return self
+    }
+  }
+
 
 }

@@ -20,6 +20,8 @@
 // THE SOFTWARE.
 import Foundation
 
+@_spi(ForORM) import struct VergeNormalization.EntityIdentifier
+
 /// Dictionary based index storage
 public struct HashIndex<Schema: EntitySchemaType, HashKey: Hashable, Entity: EntityType>: IndexType, Equatable {
   

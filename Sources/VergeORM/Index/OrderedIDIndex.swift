@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 
 import Foundation
+@_spi(ForORM) import struct VergeNormalization.EntityIdentifier
 
 /// Ordered Collection based index storage
 public struct OrderedIDIndex<Schema: EntitySchemaType, Entity: EntityType>: IndexType, Equatable {

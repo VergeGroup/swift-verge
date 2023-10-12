@@ -21,80 +21,12 @@
 
 import Foundation
 
-#if !COCOAPODS
 import Verge
-#endif
+import VergeNormalizationDerived
 
 public enum VergeORMError: Swift.Error {
   case notFoundEntityFromDatabase
 }
-
-extension EntityType {
-
-#if COCOAPODS
-  public typealias Derived = Verge.Derived<EntityWrapper<Self>>
-  public typealias NonNullDerived = Verge.Derived<NonNullEntityWrapper<Self>>
-#else
-  public typealias Derived = Verge.Derived<EntityWrapper<Self>>
-  public typealias NonNullDerived = Verge.Derived<NonNullEntityWrapper<Self>>
-#endif
-
-}
-
-/// A value that wraps an entity and results of fetching.
-public struct EntityWrapper<Entity: EntityType>: Sendable {
-
-  public private(set) var wrapped: Entity?
-  public let id: Entity.EntityID
-
-  public init(id: Entity.EntityID, entity: Entity?) {
-    self.id = id
-    self.wrapped = entity
-  }
-
-}
-
-extension EntityWrapper: Equatable where Entity: Equatable {
-
-}
-
-extension EntityWrapper: Hashable where Entity: Hashable {
-
-}
-
-/// A value that wraps an entity and results of fetching.
-@dynamicMemberLookup
-public struct NonNullEntityWrapper<Entity: EntityType> {
-
-  /// An entity value
-  public private(set) var wrapped: Entity
-
-  /// An identifier
-  public let id: Entity.EntityID
-
-  @available(*, deprecated, renamed: "isFallBack")
-  public var isUsingFallback: Bool {
-    isFallBack
-  }
-
-  /// A boolean value that indicates whether the wrapped entity is last value and has been removed from source store.
-  public let isFallBack: Bool
-
-  public init(entity: Entity, isFallBack: Bool) {
-    self.id = entity.entityID
-    self.wrapped = entity
-    self.isFallBack = isFallBack
-  }
-
-  public subscript<Property>(dynamicMember keyPath: KeyPath<Entity, Property>) -> Property {
-    wrapped[keyPath: keyPath]
-  }
-
-}
-
-extension NonNullEntityWrapper: Equatable where Entity: Equatable {}
-
-extension NonNullEntityWrapper: Hashable where Entity: Hashable {}
 
 
 private final class DerivedCacheKey: NSObject, NSCopying {
@@ -174,8 +106,6 @@ fileprivate final class _NonNullDerivedObjectCache {
 
 }
 
-public typealias NonNullDerivedResult<Entity: EntityType> = DerivedResult<Entity, Entity.NonNullDerived>
-
 // MARK: - Primitive operators
 
 fileprivate var _derivedContainerAssociated: Void?
@@ -209,30 +139,6 @@ extension DispatcherType {
       objc_setAssociatedObject(self, &_nonnull_derivedContainerAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
       return associated
     }
-  }
-
-}
-
-/// A result instance that contains created Derived object
-/// While creating non-null derived from entity id, some entity may be not founded.
-/// Created derived object are stored in hashed storage to the consumer can check if the entity was not found by the id.
-public struct DerivedResult<Entity: EntityType, Derived: AnyObject> {
-
-  /// A dictionary of Derived that stored by id
-  /// It's faster than filtering values array to use this dictionary to find missing id or created id.
-  public private(set) var storage: [Entity.EntityID : Derived] = [:]
-
-  /// An array of Derived that orderd by specified the order of id.
-  public private(set) var values: [Derived]
-
-  public init() {
-    self.storage = [:]
-    self.values = []
-  }
-
-  public mutating func append(derived: Derived, id: Entity.EntityID) {
-    storage[id] = derived
-    values.append(derived)
   }
 
 }
