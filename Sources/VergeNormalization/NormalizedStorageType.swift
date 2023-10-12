@@ -58,10 +58,15 @@ public enum ModifyingTransactionError: Error {
   case storedEntityNotFound
 }
 
+/**
+ The context of the current modifying storage update.
+ */
 public struct ModifyingTransaction<NormalizedStorage: NormalizedStorageType>: ~Copyable {
 
+  /// a storage before updated
   public let current: NormalizedStorage
 
+  /// a modifiable storage that will be applied.
   public var modifying: NormalizedStorage
 
   init(target: NormalizedStorage) {
