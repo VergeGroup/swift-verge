@@ -235,7 +235,7 @@ extension StoreType {
 
       typealias _Derived = Derived<SingleEntityPipeline<_StorageSelector, _TableSelector>.Output>
 
-      let key = KeyObject(content: AnyHashable(copy selector))
+      let key = KeyObject(content: AnyHashable(selector))
 
       if let cached = cache.object(forKey: key) {
         return cached as! _Derived
@@ -274,7 +274,7 @@ extension StoreType {
 
       typealias _Derived = Derived<NonNullSingleEntityPipeline<_StorageSelector, _TableSelector>.Output>
 
-      let key = KeyObject(content: AnyHashable(copy selector))
+      let key = KeyObject(content: AnyHashable(selector))
 
       if let cached = cache.object(forKey: key) {
         return cached as! _Derived
