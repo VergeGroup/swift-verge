@@ -99,15 +99,13 @@ extension Tables {
      Inserts an entity
      */
     @discardableResult
-    public mutating func insert(_ entity: consuming Entity) -> Self.InsertionResult {
+    public mutating func insert(_ entity: Entity) -> Self.InsertionResult {
 
-      let copied = copy entity
-
-      storage[entity.entityID] = copied
+      storage[entity.entityID] = entity
 
       updatedMarker.increment()
 
-      return .init(entity: copied)
+      return .init(entity: entity)
     }
 
     /**
