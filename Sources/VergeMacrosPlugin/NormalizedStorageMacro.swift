@@ -71,7 +71,7 @@ extension NormalizedStorageMacro: ExtensionMacro {
 
       return ("""
       extension \(structDecl.name.trimmed) {
-        static func compare(lhs: Self, rhs: Self) -> Bool {
+        public static func compare(lhs: Self, rhs: Self) -> Bool {
           \(raw: markerComparators.joined(separator: "\n"))
           return true
         }
@@ -85,9 +85,9 @@ extension NormalizedStorageMacro: ExtensionMacro {
       let decls = tables.map { member in
       """
       public struct TableSelector_\(member.node.bindings.first!.pattern.trimmed): TableSelector {
-        typealias _Table = \(member.node.bindings.first!.typeAnnotation!.type.description)
-        typealias Entity = _Table.Entity
-        typealias Storage = \(structDecl.name.trimmed)
+        public typealias _Table = \(member.node.bindings.first!.typeAnnotation!.type.description)
+        public typealias Entity = _Table.Entity
+        public typealias Storage = \(structDecl.name.trimmed)
 
         public let identifier: String = "\(member.node.bindings.first!.pattern.trimmed)"
 
