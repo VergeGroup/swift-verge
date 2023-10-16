@@ -1,5 +1,5 @@
 
-public protocol NormalizedStorageType: Equatable {
+public protocol NormalizedStorageType: Equatable, Sendable {
 
   /**
    Performs any additional operations for updating.
@@ -12,6 +12,12 @@ public protocol NormalizedStorageType: Equatable {
 extension NormalizedStorageType {
   public func finalizeTransaction(transaction: inout ModifyingTransaction<Self>) {
 
+  }
+
+  public func table<Selector: TableSelector>(
+    _ selector: consuming Selector
+  ) -> Selector.Table where Selector.Storage == Self {
+    selector.select(storage: self)
   }
 }
 
