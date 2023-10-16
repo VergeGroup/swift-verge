@@ -36,7 +36,7 @@ final class DatabaseMacroTests: XCTestCase {
         }
 
         extension MyDatabase {
-          static func compare(lhs: Self, rhs: Self) -> Bool {
+          public static func compare(lhs: Self, rhs: Self) -> Bool {
 
             return true
           }
@@ -77,7 +77,7 @@ final class DatabaseMacroTests: XCTestCase {
         }
 
         extension MyDatabase {
-          static func compare(lhs: Self, rhs: Self) -> Bool {
+          public static func compare(lhs: Self, rhs: Self) -> Bool {
 
             return true
           }
