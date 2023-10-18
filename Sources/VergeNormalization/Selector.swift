@@ -1,5 +1,5 @@
 
-public protocol TableSelector: Hashable {
+public protocol TableSelector: Hashable, Sendable {
   associatedtype Storage: NormalizedStorageType
   associatedtype Table: TableType
   func select(storage: consuming Storage) -> Table
@@ -34,7 +34,7 @@ extension TableSelector {
   }
 }
 
-public protocol StorageSelector: Hashable {
+public protocol StorageSelector: Hashable, Sendable {
   associatedtype Source: Equatable
   associatedtype Storage: NormalizedStorageType
 
