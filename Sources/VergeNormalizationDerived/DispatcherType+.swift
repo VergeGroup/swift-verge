@@ -14,6 +14,9 @@ extension StoreType {
 
 }
 
+/**
+ The entrypoint to make Derived object from the storage
+ */
 public struct NormalizedStoragePath<
   Store: DispatcherType,
   _StorageSelector: StorageSelector
@@ -42,6 +45,9 @@ public struct NormalizedStoragePath<
   }
 }
 
+/**
+ The entrypoint to make Derived object from the specific table.
+ */
 public struct NormalizedStorageTablePath<
   Store: StoreType,
   _StorageSelector: StorageSelector,
@@ -219,7 +225,7 @@ public struct NormalizedStorageTablePath<
 
 extension StoreType {
 
-  public func derivedEntity<
+  fileprivate func derivedEntity<
     _StorageSelector: StorageSelector,
     _TableSelector: TableSelector
   >(
@@ -258,7 +264,7 @@ extension StoreType {
 
   }
 
-  public func derivedEntityNonNull<
+  fileprivate func derivedEntityNonNull<
     _StorageSelector: StorageSelector,
     _TableSelector: TableSelector
   >(
