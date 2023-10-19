@@ -145,10 +145,6 @@ final class VergeStoreTests: XCTestCase {
         let _: InoutRef<Edge<State.TreeA>> = state
       }
       
-      commit(scope: \.treeB) { state in
-        let _: InoutRef<State.TreeB> = state
-      }
-      
       let treeB = detached(from: \.$treeB)
       
       let _: Changes<Edge<State.TreeB>> = treeB.state
@@ -160,26 +156,6 @@ final class VergeStoreTests: XCTestCase {
     }
   }
   
-  final class OptionalNestedDispatcher: Store.Dispatcher {
-   
-    func setMyName() {
-      commit(scope: \.optionalNested) {
-        $0?.myName = "Hello"
-      }
-    }
-    
-  }
-  
-  final class NestedDispatcher: Store.Dispatcher {
-    
-    func setMyName() {
-       commit(scope: \.nested) { (s) in
-        s.myName = "Hello"
-      }
-    }
-    
-  }
-    
   let store = Store()
   lazy var dispatcher = RootDispatcher(targetStore: self.store)
   
@@ -292,27 +268,6 @@ final class VergeStoreTests: XCTestCase {
       
     }
     
-  }
-  
-  func testMutatingOptionalNestedState() {
-    
-    XCTAssert(store.primitiveState.optionalNested == nil)
-    dispatcher.setNestedState()
-    dispatcher.setNestedState()
-    XCTAssert(store.primitiveState.optionalNested != nil)
-    dispatcher.setMyName()
-    XCTAssertEqual(store.primitiveState.optionalNested?.myName, "Muuk")
-    
-    let d = OptionalNestedDispatcher(targetStore: store)
-    d.setMyName()
-    XCTAssertEqual(store.primitiveState.optionalNested?.myName, "Hello")
-  }
-  
-  func testMutatingNestedState() {
-               
-    let d = NestedDispatcher(targetStore: store)
-    d.setMyName()
-    XCTAssertEqual(store.primitiveState.nested.myName, "Hello")
   }
   
   func testIncrement() {
