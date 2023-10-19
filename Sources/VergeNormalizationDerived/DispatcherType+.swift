@@ -1,6 +1,7 @@
 import Foundation
 
 @_spi(NormalizedStorage) import Verge
+@_spi(Internal) import Verge
 
 public enum NormalizedStorageError: Swift.Error {
   case notFoundEntityToMakeDerived
