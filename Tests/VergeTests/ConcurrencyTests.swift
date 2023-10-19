@@ -46,14 +46,11 @@ final class ConcurrencyTests: XCTestCase {
 
     var dispatched = Array<Int>()
 
-    // serial
-    let writeQueue = DispatchQueue(label: "write")
-
     DispatchQueue.global().async {
       DispatchQueue.concurrentPerform(iterations: 100) { i in
 
         Task {
-          await store.asyncCommit {
+          await store.backgroundCommit {
             $0.count = i
             dispatched.append(i)
           }
