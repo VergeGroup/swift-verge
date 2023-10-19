@@ -55,6 +55,18 @@ public enum _StoreEvent<State: Equatable, Activity> {
   case activity(Activity)
 }
 
+actor Writer {
+
+  init() {
+
+  }
+
+  func perform<R>(_ operation: (isolated Writer) throws -> R) rethrows -> R {
+    try operation(self)
+  }
+
+}
+
 /// An object that retains a latest state value and receives mutations that modify itself state.
 /// Those updates would be shared all of the subscribers these are sink(s), Derived(s)
 ///
@@ -71,7 +83,7 @@ public enum _StoreEvent<State: Equatable, Activity> {
 open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
 
   public var scope: WritableKeyPath<State, State> = \State.self
-          
+
   private let tracker = VergeConcurrency.SynchronizationTracker()
   
   /// A name of the store.
@@ -123,7 +135,9 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   // MARK: - Task
   
   public let taskManager: TaskManagerActor = .init()
-      
+
+  private let writer: Writer = .init()
+
   // MARK: - Initializers
   
   /// An initializer
@@ -151,7 +165,8 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
     self.externalOperation = { @Sendable _, _ in }
-    
+
+    super.init()
   }
   
   public nonisolated init(
@@ -188,6 +203,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
       State.reduce(modifying: &inoutRef, current: intermediate)
     }
     
+    super.init()
   }
 
   @_spi(Internal)
@@ -238,6 +254,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     }
   }
 }
+
 
 // MARK: - Typealias
 extension Store {
@@ -729,6 +746,27 @@ Latest Version (%d): (%@)
     
     return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
 
+  }
+
+}
+
+// MARK: - Mutation
+extension Store {
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func backgroundCommit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout InoutRef<State>) throws -> Result
+  ) async rethrows -> Result {
+
+    return try await writer.perform { [self] _ in
+      try self.commit(mutation: mutation)
+    }
   }
 
 }
