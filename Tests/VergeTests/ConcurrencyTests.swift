@@ -14,7 +14,8 @@ import Combine
 
 @available(iOS 13, *)
 final class ConcurrencyTests: XCTestCase {
-  func optout_testOrderOfEvents() {
+
+  func testOrderOfEvents() {
     RuntimeSanitizer.global.isSanitizerStateReceivingByCorrectOrder = true
     RuntimeSanitizer.global.onDidFindRuntimeError = { error in
       print(error)
@@ -47,9 +48,12 @@ final class ConcurrencyTests: XCTestCase {
 
     DispatchQueue.global().async {
       DispatchQueue.concurrentPerform(iterations: 100) { i in
-        store.commit {
-          $0.count = i
-          dispatched.append(i)
+
+        Task {
+          await store.backgroundCommit {
+            $0.count = i
+            dispatched.append(i)
+          }
         }
       }
 

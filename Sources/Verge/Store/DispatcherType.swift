@@ -303,22 +303,6 @@ extension DispatcherType {
       }
     )
   }
-  
-  /// Run Mutation that created inline
-  ///
-  /// Throwable
-  @inline(__always)
-  func _commit<Result>(
-    trace: MutationTrace,
-    mutation: (inout InoutRef<Scope>) throws -> Result
-  ) rethrows -> Result where Scope == WrappedStore.State {
-    return try store.asStore()._receive(
-      mutation: { ref -> Result in
-        ref.append(trace: trace)
-        return try mutation(&ref)
-      }
-    )
-  }
 
   /// Run Mutation that created inline
   ///
@@ -342,55 +326,15 @@ extension DispatcherType {
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func commit<Result, NewScope>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    scope: WritableKeyPath<WrappedStore.State, NewScope>,
-    mutation: (inout InoutRef<NewScope>) throws -> Result
-  ) rethrows -> Result {
-    let trace = MutationTrace(
-      name: name,
-      file: file,
-      function: function,
-      line: line
-    )
-
+  @inline(__always)
+  func _commit<Result>(
+    trace: MutationTrace,
+    mutation: (inout InoutRef<Scope>) throws -> Result
+  ) rethrows -> Result where Scope == WrappedStore.State {
     return try store.asStore()._receive(
-      mutation: { state -> Result in
-        try state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>) -> Result in
-          ref.append(trace: trace)
-          return try mutation(&ref)
-        }
-      }
-    )
-  }
-
-  /// Run Mutation that created inline
-  ///
-  /// Throwable
-  public func commit<Result, NewScope>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    scope: WritableKeyPath<WrappedStore.State, NewScope?>,
-    mutation: (inout InoutRef<NewScope>?) throws -> Result
-  ) rethrows -> Result {
-    let trace = MutationTrace(
-      name: name,
-      file: file,
-      function: function,
-      line: line
-    )
-
-    return try store.asStore()._receive(
-      mutation: { state -> Result in
-        try state.map(keyPath: scope) { (ref: inout InoutRef<NewScope>?) -> Result in
-          ref?.append(trace: trace)
-          return try mutation(&ref)
-        }
+      mutation: { ref -> Result in
+        ref.append(trace: trace)
+        return try mutation(&ref)
       }
     )
   }
