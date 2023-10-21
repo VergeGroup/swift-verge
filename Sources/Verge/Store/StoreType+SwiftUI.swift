@@ -34,9 +34,9 @@ extension BindingDerived {
    */
   public func _swiftUIBinding() -> SwiftUI.Binding<Value> {
     return .init(get: {
-      self.primitiveValue
+      self.wrappedValue
     }, set: { newValue in
-      self.primitiveValue = newValue
+      self.wrappedValue = newValue
     })
   }
 }

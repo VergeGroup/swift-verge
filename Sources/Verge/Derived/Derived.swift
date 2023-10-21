@@ -59,17 +59,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   public static func constant(_ value: Value) -> Derived<Value> {
     .init(constant: value)
   }
-  
-  /// A current state.
-  public var primitiveValue: Value {
-    primitiveState
-  }
-  
-  /// A current changes state.
-  @available(*, deprecated, renamed: "state")
-  public var value: Changes<Value> {
-    state
-  }
 
   fileprivate var _set: ((Value) -> Void)?
   
@@ -415,8 +404,8 @@ public final class BindingDerived<Value: Equatable>: Derived<Value> {
    
    - Warning: It does not always return the latest value after set a new value. It depends the specified target-queue.
    */
-  public override var primitiveValue: Value {
-    get { primitiveState }
+  public var wrappedValue: Value {
+    get { state.primitive }
     set {
       commit {
         $0.replace(with: newValue)
@@ -424,17 +413,6 @@ public final class BindingDerived<Value: Equatable>: Derived<Value> {
     }
   }
 
-  /**
-   Returns a derived value that created by get-pipeline.
-   And can modify the value.
-   
-   - Warning: It does not always return the latest value after set a new value. It depends the specified target-queue.
-   */
-  public var wrappedValue: Value {
-    get { primitiveValue }
-    set { primitiveValue = newValue }
-  }
-  
   public var projectedValue: BindingDerived<Value> {
     self
   }
