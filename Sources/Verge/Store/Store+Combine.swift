@@ -19,8 +19,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Foundation
-
 #if canImport(Combine)
 
 import Combine
@@ -53,11 +51,6 @@ extension Store {
         return Just(a).eraseToAnyPublisher()
       }
   }
-
-}
-
-@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-extension DispatcherBase: ObservableObject {
 
 }
 
