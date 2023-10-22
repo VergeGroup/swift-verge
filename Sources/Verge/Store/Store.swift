@@ -260,8 +260,6 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
 extension Store {
   
   public typealias Scope = State
-  public typealias Dispatcher = DispatcherBase<State, Activity>
-  public typealias ScopedDispatcher<Scope: Equatable> = ScopedDispatcherBase<State, Activity, Scope>
   public typealias Value = State
 }
 

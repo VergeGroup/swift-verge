@@ -19,8 +19,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Foundation
+public final class DetachedDispatcher<State: Equatable, Activity, Scope: Equatable>: DispatcherType
+{
 
-public final class DetachedDispatcher<State: Equatable, Activity, Scope: Equatable>: ScopedDispatcherBase<State, Activity, Scope> {
-  
+  public let store: Store<State, Activity>
+  public let scope: WritableKeyPath<State, Scope>
+
+  init(
+    store: Store<State, Activity>,
+    scope: WritableKeyPath<State, Scope>
+  ) {
+    self.store = store
+    self.scope = scope
+  }
+
 }

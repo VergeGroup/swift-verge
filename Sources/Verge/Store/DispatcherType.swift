@@ -40,6 +40,10 @@ extension DispatcherType {
   public nonisolated var state: Changes<Scope> {
     store.state.map { $0[keyPath: scope] }
   }
+
+  public nonisolated var rootState: Changes<State> {
+    return store.state
+  }
 }
 
 extension DispatcherType where Scope == State {
@@ -340,11 +344,11 @@ extension DispatcherType {
 
   public func detached<NewScope: Equatable>(from newScope: WritableKeyPath<WrappedStore.State, NewScope>)
   -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
-    .init(targetStore: store.asStore(), scope: newScope)
+    .init(store: store.asStore(), scope: newScope)
   }
 
   public func detached<NewScope: Equatable>(by appendingScope: WritableKeyPath<Scope, NewScope>)
   -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
-    .init(targetStore: store.asStore(), scope: scope.appending(path: appendingScope))
+    .init(store: store.asStore(), scope: scope.appending(path: appendingScope))
   }
 }

@@ -15,8 +15,8 @@ import Combine
 @available(iOS 13.0, *)
 final class VergeStoreTests: XCTestCase {
       
-  struct State: Equatable, StateType {
-    
+  struct _State: Equatable, StateType {
+
     struct TreeA {
       
     }
@@ -49,19 +49,29 @@ final class VergeStoreTests: XCTestCase {
     
   }
   
-  final class Store: Verge.Store<State, Never> {
-    
+  final class _Store: Verge.Store<_State, Never> {
+
     init() {
       super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
     }
   }
   
-  class RootDispatcher: Store.Dispatcher {
-    
+  class RootDispatcher: DispatcherType {
+
     enum Error: Swift.Error {
       case something
     }
-    
+
+    var scope: WritableKeyPath<VergeStoreTests._State, VergeStoreTests._State> {
+      \.self
+    }
+
+    let store: _Store
+
+    init(store: _Store) {
+      self.store = store
+    }
+
     func resetCount() {
       return commit { s in
         s.count = 0
@@ -131,34 +141,37 @@ final class VergeStoreTests: XCTestCase {
   /**
    Use Edge due to TreeA does not have Equatable.
    */
-  final class TreeADispatcher: Store.ScopedDispatcher<Edge<State.TreeA>> {
-    
-    init(store: Store) {
-      super.init(targetStore: store, scope: \.$treeA)
+  final class TreeADispatcher: DispatcherType {
+
+    let store: _Store
+    let scope: WritableKeyPath<VergeStoreTests._State, Edge<_State.TreeA>> = \.$treeA
+
+    init(store: _Store) {
+      self.store = store
     }
     
     func operation() {
       
-      let _: Changes<Edge<State.TreeA>> = state
+      let _: Changes<Edge<_State.TreeA>> = state
       
       commit { state in
-        let _: InoutRef<Edge<State.TreeA>> = state
+        let _: InoutRef<Edge<_State.TreeA>> = state
       }
       
       let treeB = detached(from: \.$treeB)
       
-      let _: Changes<Edge<State.TreeB>> = treeB.state
+      let _: Changes<Edge<_State.TreeB>> = treeB.state
                          
       treeB.commit { state in
-        let _: InoutRef<Edge<State.TreeB>> = state
+        let _: InoutRef<Edge<_State.TreeB>> = state
       }
          
     }
   }
   
-  let store = Store()
-  lazy var dispatcher = RootDispatcher(targetStore: self.store)
-  
+  let store = _Store()
+  lazy var dispatcher = RootDispatcher(store: self.store)
+
   var subs = Set<AnyCancellable>()
   
   override func setUp() {
@@ -459,7 +472,7 @@ final class VergeStoreTests: XCTestCase {
    
   func testMapIfPresent() {
     
-    let store = Store()
+    let store = _Store()
     
     XCTAssert(store.state.optionalNested == nil)
     
@@ -507,7 +520,7 @@ final class VergeStoreTests: XCTestCase {
   }
 
   func testChangesSwiftUIBinding() {
-    let store = Store()
+    let store = _Store()
     let binding = store.binding(\.count)
 
     binding.wrappedValue = 5
