@@ -32,7 +32,10 @@ public protocol StateType: Equatable {
    It's better to use it for better performance to get the value rather than using computed property.
    */
   @Sendable
-  static func reduce(modifying: inout InoutRef<Self>, current: Changes<Self>)
+  static func reduce(
+    modifying: inout InoutRef<Self>,
+    current: Changes<Self>
+  )
 }
 
 extension StateType {

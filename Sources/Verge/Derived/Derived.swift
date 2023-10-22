@@ -19,9 +19,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import class Foundation.NSMapTable
-import class Foundation.NSString
-
 #if canImport(Combine)
 import Combine
 #endif
@@ -36,6 +33,7 @@ public protocol DerivedMaking {
 
   associatedtype State: Equatable
 
+  // TODO: Remove
   var state: Changes<State> { get }
 
   func derived<Pipeline: PipelineType>(
@@ -123,8 +121,8 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
         }
 
         // TODO: Take over state.modification & state.mutation
-        indirectSelf.commit("Derived") {
-          $0._transaction.isDerivedFromUpstream = true
+        indirectSelf._receive {
+          $1.isDerivedFromUpstream = true
           $0.append(traces: value.traces)
           $0.replace(with: newState)
         }
@@ -231,7 +229,7 @@ extension Derived where Value : Equatable {
     receive: @escaping (Value) -> Void
   ) -> StoreSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
-      changes.ifChanged { value in
+      changes.ifChanged().do { value in
         receive(value)
       }
     }
@@ -248,7 +246,7 @@ extension Derived where Value : Equatable {
     receive: @escaping @MainActor (Value) -> Void
   ) -> StoreSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor changes in
-      changes.ifChanged { value in
+      changes.ifChanged().do { value in
         receive(value)
       }
     }

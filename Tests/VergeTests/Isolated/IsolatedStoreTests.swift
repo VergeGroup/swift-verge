@@ -23,10 +23,10 @@ final class MainActorIsolatedStoreTests: XCTestCase {
 
   nonisolated func test_mainActorStore_in_nonisolated() async {
 
-    let store = await TestStore(initialState: .init())
+    let store = TestStore(initialState: .init())
 
     do {
-      let count = await store.state.count
+      let count = store.state.count
       XCTAssertEqual(count, 0)
     }
 
@@ -35,7 +35,7 @@ final class MainActorIsolatedStoreTests: XCTestCase {
     }
 
     do {
-      let count = await store.state.count
+      let count = store.state.count
       XCTAssertEqual(count, 1)
     }
 
@@ -57,6 +57,54 @@ final class MainActorIsolatedStoreTests: XCTestCase {
     XCTAssertEqual(derived.state.primitive, 1)
 
   }
+
+  final class Driver: MainActorStoreDriverType {
+
+    typealias Store = TestStore
+
+    nonisolated var scope: WritableKeyPath<DemoState, DemoState.Inner> {
+      \.inner
+    }
+
+    let store: MainActorIsolatedStoreTests.TestStore
+
+    nonisolated init(store: MainActorIsolatedStoreTests.TestStore) {
+      self.store = store
+    }
+
+  }
+
+  func test_driver() async {
+
+    let store = TestStore(initialState: .init())
+
+    let driver = Driver(store: store)
+
+    await driver.commit {
+      $0.name = "Hiroshi"
+    }
+
+    let after = await driver.state
+
+    XCTAssertEqual(after.name, "Hiroshi")
+
+  }
+
+}
+
+final class ViewModelTests: XCTestCase {
+
+  @MainActor
+  final class ViewModel: MainActorStoreDriverType {
+
+    struct State: StateType {
+
+    }
+
+    let store: MainActorStore<State, Never> = .init(initialState: .init())
+
+  }
+
 
 }
 

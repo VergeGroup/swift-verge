@@ -15,10 +15,18 @@ public protocol MainActorStoreType: IsolatedStore {
   func commit<Result>(
     mutation: (inout InoutRef<State>) throws -> Result
   ) rethrows -> Result
+
+  func commit<Result>(
+    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+  ) rethrows -> Result
 }
 
 @MainActor
-public final class MainActorStore<State: Equatable, Activity>: MainActorStoreType, DerivedMaking, Sendable {
+public final class MainActorStore<State: Equatable, Activity>: MainActorStoreType, DerivedMaking, Sendable, MainActorStoreDriverType {
+
+  public nonisolated var store: MainActorStore<State, Activity> { self }
+
+  public typealias Scope = State
 
   public nonisolated var state: Changes<State> {
     backingStore.state
@@ -35,8 +43,14 @@ public final class MainActorStore<State: Equatable, Activity>: MainActorStoreTyp
     mutation: (inout InoutRef<State>) throws -> Result
   ) rethrows -> Result {
 
-    try backingStore._receive(mutation: mutation)
+    try backingStore._receive(mutation: { state, _ in try mutation(&state) })
 
+  }
+
+  public func commit<Result>(
+    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+  ) rethrows -> Result {
+    try backingStore._receive(mutation: mutation)
   }
 
 }
@@ -48,9 +62,17 @@ public protocol AsyncStoreType: IsolatedStore {
   func backgroundCommit<Result>(
     mutation: (inout InoutRef<State>) throws -> Result
   ) async rethrows -> Result
+
+  func backgroundCommit<Result>(
+    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+  ) async rethrows -> Result
 }
 
-public final class AsyncStore<State: Equatable, Activity>: AsyncStoreType, DerivedMaking, Sendable {
+public final class AsyncStore<State: Equatable, Activity>: AsyncStoreType, DerivedMaking, Sendable, AsyncStoreDriverType {
+
+  public var store: AsyncStore<State, Activity> { self }
+
+  public typealias Scope = State
 
   public var state: Changes<State> {
     backingStore.state
@@ -75,6 +97,16 @@ public final class AsyncStore<State: Equatable, Activity>: AsyncStoreType, Deriv
 
   public func backgroundCommit<Result>(
     mutation: (inout InoutRef<State>) throws -> Result
+  ) async rethrows -> Result {
+
+    try await writer.perform { _ in
+      try backingStore._receive(mutation: { state, _ in try mutation(&state) })
+    }
+
+  }
+
+  public func backgroundCommit<Result>(
+    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
   ) async rethrows -> Result {
 
     try await writer.perform { _ in
@@ -191,10 +223,18 @@ public protocol MainActorStoreDriverType {
 
   associatedtype Store: MainActorStoreType
 
-  associatedtype Scope: Equatable
+  associatedtype Scope: Equatable = Store.State
 
   nonisolated var store: Store { get }
   nonisolated var scope: WritableKeyPath<Store.State, Scope> { get }
+
+  func commit<Result>(
+    mutation: (inout InoutRef<Scope>) throws -> Result
+  ) rethrows -> Result
+
+  func commit<Result>(
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+  ) rethrows -> Result
 }
 
 extension MainActorStoreDriverType {
@@ -222,15 +262,23 @@ extension MainActorStoreDriverType {
   ///
   /// Throwable
   public func commit<Result>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
     mutation: (inout InoutRef<Scope>) throws -> Result
   ) rethrows -> Result {
 
     return try store.commit { ref in
       try ref.map(keyPath: scope, perform: mutation)
+    }
+
+  }
+
+  public func commit<Result>(
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+  ) rethrows -> Result {
+
+    return try store.commit { ref, transaction in
+      try ref.map(keyPath: scope, perform: {
+        try mutation(&$0, &transaction)
+      })
     }
 
   }
@@ -279,7 +327,7 @@ extension MainActorStoreDriverType {
 
 extension MainActorStoreDriverType where Scope == Store.State {
 
-  public var scope: WritableKeyPath<Store.State, Store.State> {
+  public nonisolated var scope: WritableKeyPath<Store.State, Store.State> {
     \Store.State.self
   }
 
@@ -287,10 +335,6 @@ extension MainActorStoreDriverType where Scope == Store.State {
   ///
   /// Throwable
   public func commit<Result>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
     mutation: (inout InoutRef<Scope>) throws -> Result
   ) rethrows -> Result {
 
@@ -331,6 +375,23 @@ extension AsyncStoreDriverType {
     _ line: UInt = #line
   ) {
     store.send(activity, file, function, line)
+  }
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func backgroundCommit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout InoutRef<Scope>) throws -> Result
+  ) async rethrows -> Result {
+
+    return try await store.backgroundCommit { ref in
+      try ref.map(keyPath: scope, perform: mutation)
+    }
+
   }
 
   /**
@@ -378,6 +439,21 @@ extension AsyncStoreDriverType {
 extension AsyncStoreDriverType where Scope == Store.State {
   public var scope: WritableKeyPath<Store.State, Store.State> {
     \Store.State.self
+  }
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func backgroundCommit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout InoutRef<Scope>) throws -> Result
+  ) async rethrows -> Result {
+
+    return try await store.backgroundCommit(mutation: mutation)
+
   }
 }
 
