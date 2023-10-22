@@ -32,6 +32,19 @@ public protocol DerivedType<State>: StoreType {
   func asDerived() -> Derived<Value>
 }
 
+public protocol DerivedMaking {
+
+  associatedtype State: Equatable
+
+  var state: Changes<State> { get }
+
+  func derived<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: some TargetQueueType
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State>
+
+}
+
 /**
  A container object that provides the current value and changes from the source Store.
 

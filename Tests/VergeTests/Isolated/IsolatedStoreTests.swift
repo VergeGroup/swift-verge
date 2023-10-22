@@ -4,10 +4,12 @@ import XCTest
 
 final class MainActorIsolatedStoreTests: XCTestCase {
 
+  typealias TestStore = MainActorStore<DemoState, Never>
+
   @MainActor
   func test_mainActorStore_in_mainActor() {
 
-    let store = MainActorStore<_, Never>(initialState: DemoState())
+    let store = TestStore(initialState: .init())
 
     XCTAssertEqual(store.state.count, 0)
 
@@ -21,7 +23,7 @@ final class MainActorIsolatedStoreTests: XCTestCase {
 
   nonisolated func test_mainActorStore_in_nonisolated() async {
 
-    let store = await MainActorStore<_, Never>(initialState: DemoState())
+    let store = await TestStore(initialState: .init())
 
     do {
       let count = await store.state.count
@@ -36,6 +38,23 @@ final class MainActorIsolatedStoreTests: XCTestCase {
       let count = await store.state.count
       XCTAssertEqual(count, 1)
     }
+
+  }
+
+  @MainActor
+  func test_make_derived() {
+
+    let store = TestStore(initialState: .init())
+
+    let derived = store.derived(.select(\.count))
+
+    XCTAssertEqual(derived.state.primitive, 0)
+
+    store.commit {
+      $0.count = 1
+    }
+
+    XCTAssertEqual(derived.state.primitive, 1)
 
   }
 

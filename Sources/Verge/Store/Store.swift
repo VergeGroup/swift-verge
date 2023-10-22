@@ -80,7 +80,7 @@ actor Writer {
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
+open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, DispatcherType, DerivedMaking, @unchecked Sendable {
 
   public var scope: WritableKeyPath<State, State> = \State.self
 

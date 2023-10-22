@@ -1,28 +1,5 @@
 
-extension NormalizedStoragePath {
-
-  /**
-   Make a new Derived of a composed object from the storage.
-   This is an effective way to resolving relationship entities into a single object. it's like SQLite's view.
-
-   ```
-   store.normalizedStorage(.keyPath(\.db)).derived {
-     MyComposed(
-       book: $0.book.find(...)
-       author: $0.author.find(...)
-     )
-   }
-   ```
-
-   This Derived makes a new composed object if the storage has updated.
-   There is not filters for entity tables so that Derived possibly makes a new object if not related entity has updated.
-   */
-  public func derived<Composed: Equatable>(query: @escaping @Sendable (Self.Storage) -> Composed) -> Derived<Composed> {
-    return store.derived(Pipeline(storageSelector: storageSelector, query: query), queue: .passthrough)
-  }
-}
-
-private struct Pipeline<
+struct QueryPipeline<
   _StorageSelector: StorageSelector,
   Output
 >: PipelineType, Sendable {
