@@ -23,7 +23,7 @@ final class DerivedTests: XCTestCase {
     
     let nullableDerived = store.databases.db.derived(from: id, queue: .passthrough)
     
-    XCTAssertNil(nullableDerived.primitiveValue.wrapped, "It should be nil because the target entity is not stored.")
+    XCTAssertNil(nullableDerived.state.primitive.wrapped, "It should be nil because the target entity is not stored.")
     
     XCTContext.runActivity(named: "simple") { (a) -> Void in
       let waiter = XCTWaiter()
@@ -55,8 +55,8 @@ final class DerivedTests: XCTestCase {
         from: book
       )
       
-      XCTAssertNotNil(nullableDerived.primitiveValue.wrapped)
-      XCTAssertNotNil(nonnullDerived.primitiveValue.wrapped)
+      XCTAssertNotNil(nullableDerived.state.primitive.wrapped)
+      XCTAssertNotNil(nonnullDerived.state.primitive.wrapped)
       
       XCTAssertNotNil(nullableDerived.state.wrapped?.name, "initial")
       XCTAssertEqual(nonnullDerived.state.wrapped.name, "initial")
@@ -75,8 +75,8 @@ final class DerivedTests: XCTestCase {
           }
         }
                 
-        XCTAssertEqual(nullableDerived.primitiveValue.wrapped!.name, "Hey")
-        XCTAssertEqual(nonnullDerived.primitiveValue.name, "Hey")
+        XCTAssertEqual(nullableDerived.state.primitive.wrapped!.name, "Hey")
+        XCTAssertEqual(nonnullDerived.state.primitive.name, "Hey")
         
       }
       
@@ -90,8 +90,8 @@ final class DerivedTests: XCTestCase {
           }
         }
         
-        XCTAssertEqual(nonnullDerived.primitiveValue.name, "Hey")
-        XCTAssertEqual(nullableDerived.primitiveValue.wrapped == nil, true)
+        XCTAssertEqual(nonnullDerived.state.primitive.name, "Hey")
+        XCTAssertEqual(nullableDerived.state.primitive.wrapped == nil, true)
         
       }
     }
@@ -117,8 +117,8 @@ final class DerivedTests: XCTestCase {
             
       let selector = storage.databases.db.derivedNonNull(from: result)
       
-      XCTAssertEqual(selector.primitiveValue.rawID, "some")
-      XCTAssertEqual(selector.primitiveValue.name, "initial")
+      XCTAssertEqual(selector.state.primitive.rawID, "some")
+      XCTAssertEqual(selector.state.primitive.name, "initial")
       
       XCTContext.runActivity(named: "modify") { (_) -> Void in
         
@@ -132,7 +132,7 @@ final class DerivedTests: XCTestCase {
           }
         }
         
-        XCTAssertEqual(selector.primitiveValue.name, "Hey")
+        XCTAssertEqual(selector.state.primitive.name, "Hey")
         
       }
       
@@ -146,7 +146,7 @@ final class DerivedTests: XCTestCase {
           }
         }
         
-        XCTAssertEqual(selector.primitiveValue.name, "Hey")
+        XCTAssertEqual(selector.state.primitive.name, "Hey")
         
       }
     }
@@ -176,7 +176,7 @@ final class DerivedTests: XCTestCase {
     }
     .store(in: &subscriptions)
     
-    XCTAssertEqual(authorGetter.primitiveValue.name, "muukii")
+    XCTAssertEqual(authorGetter.state.primitive.name, "muukii")
     
     XCTContext.runActivity(named: "updateName") { _ in
       
@@ -188,7 +188,7 @@ final class DerivedTests: XCTestCase {
         }
       }
       
-      XCTAssertEqual(authorGetter.primitiveValue.name, "Hiroshi")
+      XCTAssertEqual(authorGetter.state.primitive.name, "Hiroshi")
       
     }
     
@@ -204,7 +204,7 @@ final class DerivedTests: XCTestCase {
         }
       }
       
-      XCTAssertEqual(authorGetter.primitiveValue.name, "Hiroshi")
+      XCTAssertEqual(authorGetter.state.primitive.name, "Hiroshi")
       
     }
 

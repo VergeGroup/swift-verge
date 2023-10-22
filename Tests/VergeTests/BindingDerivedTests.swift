@@ -16,7 +16,7 @@ final class BindingDerivedTests: XCTestCase {
     XCTAssertEqual(binding.state.previous?.primitive, nil)
     XCTAssertEqual(binding.state.primitive, 0)
     
-    binding.primitiveValue = 2
+    binding.wrappedValue = 2
 
     XCTAssertEqual(binding.state.previous?.primitive, 0)
     XCTAssertEqual(binding.state.primitive, 2)

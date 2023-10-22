@@ -27,31 +27,31 @@ final class DerivedTests: XCTestCase {
                     
     let slice = localStore.derived(.map({ $0.count }), queue: .passthrough)      
 
-    XCTAssertEqual(slice.primitiveValue, 0)
+    XCTAssertEqual(slice.state.primitive, 0)
     XCTAssertEqual(slice.state.root, 0)
     XCTAssertEqual(slice.state.hasChanges(\.self), true)
     
     localStore.increment()
 
-    XCTAssertEqual(slice.primitiveValue, 1)
+    XCTAssertEqual(slice.state.primitive, 1)
     XCTAssertEqual(slice.state.root, 1)
     XCTAssertEqual(slice.state.hasChanges(\.self), true)
       
     localStore.empty()
 
-    XCTAssertEqual(slice.primitiveValue, 1)
+    XCTAssertEqual(slice.state.primitive, 1)
     XCTAssertEqual(slice.state.version, 1)
     XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     localStore.empty()
 
-    XCTAssertEqual(slice.primitiveValue, 1)
+    XCTAssertEqual(slice.state.primitive, 1)
     XCTAssertEqual(slice.state.version, 1)
     XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     localStore.increment()
 
-    XCTAssertEqual(slice.primitiveValue, 2)
+    XCTAssertEqual(slice.state.primitive, 2)
     XCTAssertEqual(slice.state.version, 2)
     XCTAssertEqual(slice.state.hasChanges(\.self), true)
   }
@@ -65,31 +65,31 @@ final class DerivedTests: XCTestCase {
       queue: .passthrough
     )
 
-    XCTAssertEqual(slice.primitiveValue, 0)
+    XCTAssertEqual(slice.state.primitive, 0)
     XCTAssertEqual(slice.state.root, 0)
     XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     wrapper.increment()
 
-    XCTAssertEqual(slice.primitiveValue, 1)
+    XCTAssertEqual(slice.state.primitive, 1)
     XCTAssertEqual(slice.state.root, 1)
     XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     wrapper.empty()
 
-    XCTAssertEqual(slice.primitiveValue, 1)
+    XCTAssertEqual(slice.state.primitive, 1)
     XCTAssertEqual(slice.state.version, 1)
     XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     wrapper.empty()
 
-    XCTAssertEqual(slice.primitiveValue, 1)
+    XCTAssertEqual(slice.state.primitive, 1)
     XCTAssertEqual(slice.state.version, 1)
     XCTAssertEqual(slice.state.hasChanges(\.self), true)
 
     wrapper.increment()
 
-    XCTAssertEqual(slice.primitiveValue, 2)
+    XCTAssertEqual(slice.state.primitive, 2)
     XCTAssertEqual(slice.state.version, 2)
     XCTAssertEqual(slice.state.hasChanges(\.self), true)
   }
@@ -116,7 +116,7 @@ final class DerivedTests: XCTestCase {
         
     let combined = Derived.combined(s0, s1, queue: .passthrough)
     
-    XCTAssert((combined.primitiveValue.0.primitive, combined.primitiveValue.1.primitive) == (0, ""))
+    XCTAssert((combined.state.primitive.0.primitive, combined.state.primitive.1.primitive) == (0, ""))
         
     let sub = combined.sinkState { (changes) in
       
@@ -136,13 +136,13 @@ final class DerivedTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssert((combined.primitiveValue.0.primitive, combined.primitiveValue.1.primitive) == (1, ""))
+    XCTAssert((combined.state.primitive.0.primitive, combined.state.primitive.1.primitive) == (1, ""))
     
     wrapper.commit {
       $0.name = "next"
     }
     
-    XCTAssert((combined.primitiveValue.0.primitive, combined.primitiveValue.1.primitive) == (1, "next"))
+    XCTAssert((combined.state.primitive.0.primitive, combined.state.primitive.1.primitive) == (1, "next"))
     
     wait(for: [updateCount, update1, update0], timeout: 10)
     withExtendedLifetime(sub) {}
