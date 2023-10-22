@@ -18,7 +18,7 @@ struct OnEquatable: Equatable, Sendable {
   let id = UUID()
 }
 
-struct DemoState: Equatable, Sendable {
+struct DemoState: StateType, Sendable {
 
   struct Inner: Equatable {
     var name: String = ""
