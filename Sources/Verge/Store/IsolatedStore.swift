@@ -1,8 +1,12 @@
 
 @MainActor
-public final class MainActorStore<State: StateType, Activity>: DerivedMaking, Sendable, MainActorStoreDriverType {
+public final class MainActorStore<State: StateType, Activity>: DerivedMaking, Sendable, MainActorStoreDriverType, ObservableObject {
 
   public typealias State = State
+
+  public nonisolated var objectWillChange: ObservableObjectPublisher {
+    backingStore.objectWillChange
+  }
 
   public nonisolated var store: MainActorStore<State, Activity> { self }
 
@@ -117,9 +121,13 @@ public final class MainActorStore<State: StateType, Activity>: DerivedMaking, Se
   }
 }
 
-public final class AsyncStore<State: StateType, Activity>: DerivedMaking, Sendable, AsyncStoreDriverType {
+public final class AsyncStore<State: StateType, Activity>: DerivedMaking, Sendable, AsyncStoreDriverType, ObservableObject {
 
   public typealias State = State
+
+  public var objectWillChange: ObservableObjectPublisher {
+    backingStore.objectWillChange
+  }
 
   public var store: AsyncStore<State, Activity> { self }
 
