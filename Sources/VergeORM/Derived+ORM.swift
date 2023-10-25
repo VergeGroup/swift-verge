@@ -28,120 +28,7 @@ public enum VergeORMError: Swift.Error {
   case notFoundEntityFromDatabase
 }
 
-
-private final class DerivedCacheKey: NSObject, NSCopying {
-
-  let entityType: ObjectIdentifier
-  let entityID: AnyEntityIdentifier
-  let keyPathToDatabase: AnyKeyPath
-
-  init(entityType: ObjectIdentifier, entityID: AnyEntityIdentifier, keyPathToDatabase: AnyKeyPath) {
-    self.entityType = entityType
-    self.entityID = entityID
-    self.keyPathToDatabase = keyPathToDatabase
-  }
-
-  func copy(with zone: NSZone? = nil) -> Any {
-    return DerivedCacheKey(
-      entityType: entityType,
-      entityID: entityID,
-      keyPathToDatabase: keyPathToDatabase
-    )
-  }
-
-  override var hash: Int {
-    entityID.hashValue ^ keyPathToDatabase.hashValue ^ entityType.hashValue
-  }
-
-  override func isEqual(_ object: Any?) -> Bool {
-
-    guard let other = object as? DerivedCacheKey else {
-      return false
-    }
-
-    guard entityType == other.entityType else { return false }
-    guard entityID == other.entityID else { return false }
-    guard keyPathToDatabase == other.keyPathToDatabase else { return false }
-
-    return true
-  }
-
-}
-
-fileprivate final class _DerivedObjectCache {
-
-  private let storage = NSMapTable<DerivedCacheKey, AnyObject>.init(keyOptions: [.copyIn, .objectPersonality], valueOptions: [.weakMemory])
-
-  @inline(__always)
-  private func key<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> DerivedCacheKey {
-    return .init(entityType: ObjectIdentifier(E.self), entityID: entityID.any, keyPathToDatabase: keyPathToDatabase)
-  }
-
-  func get<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> E.Derived? {
-    storage.object(forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase)) as? E.Derived
-  }
-
-  func set<E: EntityType>(_ getter: E.Derived, entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) {
-    storage.setObject(getter, forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase))
-  }
-
-}
-
-fileprivate final class _NonNullDerivedObjectCache {
-
-  private let storage = NSMapTable<DerivedCacheKey, AnyObject>.strongToWeakObjects()
-
-  @inline(__always)
-  private func key<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> DerivedCacheKey {
-    return .init(entityType: ObjectIdentifier(E.self), entityID: entityID.any, keyPathToDatabase: keyPathToDatabase)
-  }
-
-  func get<E: EntityType>(entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) -> E.NonNullDerived? {
-    storage.object(forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase)) as? E.NonNullDerived
-  }
-
-  func set<E: EntityType>(_ getter: E.NonNullDerived, entityID: E.EntityID, keyPathToDatabase: AnyKeyPath) {
-    storage.setObject(getter, forKey: key(entityID: entityID, keyPathToDatabase: keyPathToDatabase))
-  }
-
-}
-
 // MARK: - Primitive operators
-
-fileprivate var _derivedContainerAssociated: Void?
-fileprivate var _nonnull_derivedContainerAssociated: Void?
-
-extension DispatcherType {
-
-  private var _nonatomic_derivedObjectCache: _DerivedObjectCache {
-
-    if let associated = objc_getAssociatedObject(self, &_derivedContainerAssociated) as? _DerivedObjectCache {
-
-      return associated
-
-    } else {
-
-      let associated = _DerivedObjectCache()
-      objc_setAssociatedObject(self, &_derivedContainerAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
-      return associated
-    }
-  }
-
-  private var _nonatomic_nonnull_derivedObjectCache: _NonNullDerivedObjectCache {
-
-    if let associated = objc_getAssociatedObject(self, &_nonnull_derivedContainerAssociated) as? _NonNullDerivedObjectCache {
-
-      return associated
-
-    } else {
-
-      let associated = _NonNullDerivedObjectCache()
-      objc_setAssociatedObject(self, &_nonnull_derivedContainerAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
-      return associated
-    }
-  }
-
-}
 
 /**
  Do not retain, use as just method-chain
@@ -201,24 +88,14 @@ extension DispatcherType {
     from keyPathToDatabase: KeyPath<State, Database>
   ) -> Entity.Derived {
 
-    objc_sync_enter(self); defer { objc_sync_exit(self) }
-
-    let instance: Derived<EntityWrapper<Entity>>
-
-    if let cached = _nonatomic_derivedObjectCache.get(entityID: entityID, keyPathToDatabase: keyPathToDatabase) {
-      instance = cached
-    } else {
-      /// creates a new underlying derived object
-      instance = derived(
-        _DatabaseSingleEntityPipeline(
-          keyPathToDatabase: keyPathToDatabase,
-          entityID: entityID
-        ),
-        queue: .passthrough
-      )
-
-      _nonatomic_derivedObjectCache.set(instance, entityID: entityID, keyPathToDatabase: keyPathToDatabase)
-    }
+    /// creates a new underlying derived object
+    let instance = derived(
+      _DatabaseSingleEntityPipeline(
+        keyPathToDatabase: keyPathToDatabase,
+        entityID: entityID
+      ),
+      queue: .passthrough
+    )
 
     return instance
   }
@@ -238,26 +115,15 @@ extension DispatcherType {
     from keyPathToDatabase: KeyPath<State, Database>
   ) -> Entity.NonNullDerived {
 
-    objc_sync_enter(self); defer { objc_sync_exit(self) }
+    let instance = derived(
+      _DatabaseCachedSingleEntityPipeline(
+        keyPathToDatabase: keyPathToDatabase,
+        entity: entity
+      ),
+      queue: .passthrough
+    )
 
-    let underlyingDerived: Derived<NonNullEntityWrapper<Entity>>
-
-    if let cached = _nonatomic_nonnull_derivedObjectCache.get(entityID: entity.entityID, keyPathToDatabase: keyPathToDatabase) {
-      underlyingDerived = cached
-    } else {
-      /// creates a new underlying derived object
-      underlyingDerived = derived(
-        _DatabaseCachedSingleEntityPipeline(
-          keyPathToDatabase: keyPathToDatabase,
-          entity: entity
-        ),
-        queue: .passthrough
-      )
-
-      _nonatomic_nonnull_derivedObjectCache.set(underlyingDerived, entityID: entity.entityID, keyPathToDatabase: keyPathToDatabase)
-    }
-
-    return underlyingDerived
+    return instance
   }
 }
 
