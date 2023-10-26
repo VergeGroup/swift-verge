@@ -57,11 +57,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
     return .init(eventEmitter: self)
   }
 
-  /**
-   The reason why we use array against dictionary, the subscribers does not often remove.
-   */
-  private var subscribers:
-    VergeConcurrency.UnfairLockAtomic<[(EventEmitterCancellable, (Event) -> Void)]> = .init([])
+  private var subscribers: VergeConcurrency.UnfairLockAtomic<[EventEmitterCancellable : (Event) -> Void]> = .init([:])
 
   private let queue: VergeConcurrency.UnfairLockAtomic<Deque<Event>> = .init(.init())
 
@@ -135,25 +131,16 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
   public func addEventHandler(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterCancellable {
     let token = EventEmitterCancellable(owner: self)
     subscribers.modify {
-      $0.append((token, eventReceiver))
+      $0[token] = eventReceiver
     }
     return token
   }
 
   func removeEventHandler(_ token: EventEmitterCancellable) {
-    var itemToRemove: (EventEmitterCancellable, (Event) -> Void)? = nil
+    var itemToRemove: ((Event) -> Void)? = nil
     subscribers.modify {
-      $0.removeAll {
-        if $0.0 == token {
-          if itemToRemove == nil {
-            itemToRemove = $0
-          } else {
-            assertionFailure("found two or more values")
-          }
-          return true
-        }
-        return false
-      }
+      itemToRemove = $0[token]
+      $0.removeValue(forKey: token)
     }
 
     // To avoid triggering deinit inside removing operation
