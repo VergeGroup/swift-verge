@@ -26,11 +26,31 @@ import Foundation
  Stores the value in reference type storage.
  */
 @propertyWrapper
+@dynamicMemberLookup
 public struct ReferenceEdge<State>: EdgeType {
 
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.storage === rhs.storage
   }
+
+  public subscript <U>(dynamicMember keyPath: KeyPath<State, U>) -> U {
+    _read { yield wrappedValue[keyPath: keyPath] }
+  }
+
+  public subscript <U>(dynamicMember keyPath: KeyPath<State, U?>) -> U? {
+    _read { yield wrappedValue[keyPath: keyPath] }
+  }
+
+  public subscript <U>(dynamicMember keyPath: WritableKeyPath<State, U>) -> U {
+    _read { yield wrappedValue[keyPath: keyPath] }
+    _modify { yield &wrappedValue[keyPath: keyPath] }
+  }
+
+  public subscript <U>(dynamicMember keyPath: WritableKeyPath<State, U?>) -> U? {
+    _read { yield wrappedValue[keyPath: keyPath] }
+    _modify { yield &wrappedValue[keyPath: keyPath] }
+  }
+
 
   public init(wrappedValue: consuming State) {
     self.storage = ReferenceEdgeStorage(consume wrappedValue)
