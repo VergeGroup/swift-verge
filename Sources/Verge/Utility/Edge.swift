@@ -22,17 +22,9 @@
 import Foundation
 @_implementationOnly import Atomics
 
-@available(*, deprecated, renamed: "EdgeType")
-public typealias FragmentType = EdgeType
-
-@available(*, deprecated, renamed: "Edge")
-public typealias Fragment = Edge
-
 public protocol EdgeType : Equatable {
   associatedtype State
   var wrappedValue: State { get }
-  var globalID: UInt64 { get }
-  var version: UInt64 { get }
 }
 
 private let _edge_global_counter = ManagedAtomic<UInt64>.init(0)

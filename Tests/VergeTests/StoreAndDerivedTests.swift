@@ -11,8 +11,6 @@ final class StoreAndDerivedTests: XCTestCase {
     let nameDerived = store.derived(.select(\.name))
     let countDerived = store.derived(.select(\.count))
 
-    let countMap = store.map(\.count)
-
     await withTaskGroup(of: Void.self) { group in
 
       for i in 0..<1000 {
@@ -34,7 +32,6 @@ final class StoreAndDerivedTests: XCTestCase {
         }
 
         XCTAssertEqual(store.state.count, 100)
-        XCTAssertEqual(countMap.state.primitive, 100)
 
         // potentially it fails as EventEmitter's behavior
         // If EventEmitter's buffer is not empty, commit function escape from the stack by only adding.
