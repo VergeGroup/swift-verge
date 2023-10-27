@@ -415,7 +415,7 @@ struct _DatabaseSingleEntityPipeline<Source: Equatable, Database: DatabaseType, 
   let keyPathToDatabase: KeyPath<Source, Database>
   let entityID: Entity.EntityID
 
-  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, DatabaseComparisons<Database>.DatabaseComparison, DatabaseComparisons<Database>.TableComparison<Entity>>, DatabaseComparisons<Database>.UpdateComparison<Entity>>
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, DatabaseComparisons<Database>.DatabaseComparison, DatabaseComparisons<Database>.UpdateComparison<Entity>>
 
   init(
     keyPathToDatabase: KeyPath<Source, Database>,
@@ -425,11 +425,7 @@ struct _DatabaseSingleEntityPipeline<Source: Equatable, Database: DatabaseType, 
     self.keyPathToDatabase = keyPathToDatabase
     self.entityID = entityID
 
-    /** Step 1 */
     noChangesComparer = DatabaseComparisons<Database>.DatabaseComparison()
-    /** Step 2 */
-      .or(DatabaseComparisons<Database>.TableComparison<Entity>())
-    /** Step 3 */
       .or(DatabaseComparisons<Database>.UpdateComparison(entityID: entityID))
 
   }
@@ -478,7 +474,7 @@ struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: Database
   let keyPathToDatabase: KeyPath<Source, Database>
   let entityID: Entity.EntityID
 
-  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, DatabaseComparisons<Database>.DatabaseComparison, DatabaseComparisons<Database>.TableComparison<Entity>>, DatabaseComparisons<Database>.UpdateComparison<Entity>>
+  private let noChangesComparer: OrComparison<DatabaseComparisons<Database>.DatabaseComparison.Input, DatabaseComparisons<Database>.DatabaseComparison, DatabaseComparisons<Database>.UpdateComparison<Entity>>
 
   private let latestValue: VergeConcurrency.RecursiveLockAtomic<Entity>
 
@@ -491,11 +487,8 @@ struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: Database
     self.entityID = entity.entityID
     self.latestValue = .init(entity)
 
-    /** Step 1 */
+
     noChangesComparer = DatabaseComparisons<Database>.DatabaseComparison()
-    /** Step 2 */
-      .or(DatabaseComparisons<Database>.TableComparison<Entity>())
-    /** Step 3 */
       .or(DatabaseComparisons<Database>.UpdateComparison(entityID: entityID))
 
   }
