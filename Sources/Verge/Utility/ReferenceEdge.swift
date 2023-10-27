@@ -20,67 +20,40 @@
 // THE SOFTWARE.
 
 import Foundation
-@_implementationOnly import Atomics
-
-private let _edge_global_counter = ManagedAtomic<UInt64>.init(0)
 
 /**
- A structure that manages sub-state-tree from root-state-tree.
-
- When you create derived data for this sub-tree, you may need to activate memoization.
- The reason why it needs memoization, the derived data does not need to know if other sub-state-tree updated.
- Better memoization must know owning state-tree has been updated at least.
- To get this done, it's not always we need to support Equatable.
- It's easier to detect the difference than detect equals.
-
- Fragment is a wrapper structure and manages version number inside.
- It increments the version number each wrapped value updated.
+ Copy-on-Write property wrapper.
+ Stores the value in reference type storage.
  */
 @propertyWrapper
 public struct ReferenceEdge<State>: EdgeType {
 
-  private final class Storage {
-
-    var value: State
-
-    init(_ value: consuming State) {
-      self.value = value
-    }
-
-  }
-
   public static func == (lhs: Self, rhs: Self) -> Bool {
-    lhs.storage === rhs.storage || (lhs.globalID == rhs.globalID && lhs.version == rhs.version)
+    lhs.storage === rhs.storage
   }
-
-  public let globalID: UInt64
-  
-  public var version: UInt64 {
-    _read {
-      yield counter.value
-    }
-  }
-
-  private(set) public var counter: NonAtomicCounter = .init()
 
   public init(wrappedValue: consuming State) {
-    self.globalID = _edge_global_counter.loadThenWrappingIncrement(ordering: .relaxed)
-    self.storage = Storage(consume wrappedValue)
+    self.storage = ReferenceEdgeStorage(consume wrappedValue)
   }
 
-  private var storage: Storage
+  public var _storagePointer: OpaquePointer {
+    return .init(Unmanaged.passUnretained(storage).toOpaque())
+  }
+
+  private var storage: ReferenceEdgeStorage<State>
 
   public var wrappedValue: State {
     _read {
       yield storage.value
     }
     _modify {
-      counter.increment()
       let oldValue = storage.value
       if isKnownUniquelyReferenced(&storage) {
+        // modify
         yield &storage.value
       } else {
-        storage = Storage(oldValue)
+        // make copy
+        storage = ReferenceEdgeStorage(oldValue)
         yield &storage.value
       }
     }
@@ -94,8 +67,20 @@ public struct ReferenceEdge<State>: EdgeType {
 
 extension ReferenceEdge where State : Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
-    lhs.storage === rhs.storage || (lhs.globalID == rhs.globalID && lhs.version == rhs.version) || lhs.wrappedValue == rhs.wrappedValue
+    lhs.storage === rhs.storage || lhs.wrappedValue == rhs.wrappedValue
   }
 }
 
+final class ReferenceEdgeStorage<Value>: @unchecked Sendable {
 
+  var value: Value
+
+  init(_ value: consuming Value) {
+    self.value = value
+  }
+
+}
+
+extension ReferenceEdge: Sendable where State: Sendable {
+
+}
