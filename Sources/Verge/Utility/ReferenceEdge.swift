@@ -83,6 +83,10 @@ public struct ReferenceEdge<State>: EdgeType {
     self
   }
 
+  public func read<T>(_ thunk: (borrowing State) -> T) -> T {
+    thunk(wrappedValue)
+  }
+
 }
 
 extension ReferenceEdge where State : Equatable {
@@ -97,6 +101,10 @@ final class ReferenceEdgeStorage<Value>: @unchecked Sendable {
 
   init(_ value: consuming Value) {
     self.value = value
+  }
+
+  func read<T>(_ thunk: (borrowing Value) -> T) -> T {
+    thunk(value)
   }
 
 }

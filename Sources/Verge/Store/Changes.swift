@@ -271,7 +271,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   }
 
   @discardableResult
-  public func _read<Return>(perform: (__shared ReadRef<Value>) -> Return) -> Return {
+  public func _read<Return>(perform: (borrowing Value) -> Return) -> Return {
     innerBox._read(perform: perform)
   }
 
@@ -645,13 +645,8 @@ extension Changes {
 
     @discardableResult
     @inline(__always)
-    func _read<Return>(perform: (__shared ReadRef<Value>) -> Return) -> Return {
-
-      withUnsafePointer(to: &value) { (pointer) -> Return in
-        let ref = ReadRef<Value>.init(pointer)
-        return perform(ref)
-      }
-
+    func _read<Return>(perform: (borrowing Value) -> Return) -> Return {
+      perform(value)
     }
 
   }

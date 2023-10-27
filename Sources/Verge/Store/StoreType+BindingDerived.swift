@@ -119,7 +119,7 @@ extension DispatcherType {
 
     bindingDerived(
       name, file, function, line,
-      get: .select(select),
+      get: .select({ $0[keyPath: select] }),
       set: { state, newValue in
         state[keyPath: select] = newValue
       }
