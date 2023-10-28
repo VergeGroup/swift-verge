@@ -80,7 +80,12 @@ public struct ReferenceEdge<State>: EdgeType {
   }
 
   public var projectedValue: Self {
-    self
+    get {
+      self
+    }
+    mutating set {
+      self = newValue
+    }
   }
 
   public func read<T>(_ thunk: (borrowing State) -> T) -> T {
