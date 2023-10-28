@@ -47,5 +47,19 @@ final class FragmentTests: XCTestCase {
 
   }
 
+  func testCast() {
+
+    let source = ReferenceEdge<State?>(wrappedValue: State())
+
+    var binded = unsafeBitCast(source, to: ReferenceEdge<State>.self)
+
+    print(binded.name)
+
+    binded.name = "hiroshi"
+
+    XCTAssertEqual(binded.name, "hiroshi")
+
+  }
+
 }
 
