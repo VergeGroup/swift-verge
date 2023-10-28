@@ -17,6 +17,12 @@ final class VergeStoreTests: XCTestCase {
       
   struct _State: Equatable, StateType {
 
+    static func reduce(
+      modifying: inout Self,
+      current: Changes<Self>,
+      transaction: inout Transaction
+    ) {}
+
     struct TreeA {
       
     }
@@ -122,7 +128,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.NestedState> = _detached.state
       
       _detached.commit { state in
-        let _: InoutRef<State.NestedState> = state
+        let _: State.NestedState = state
         
       }
         
@@ -131,7 +137,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<State.OptionalNestedState?> = optionalNestedTarget.state
           
       optionalNestedTarget.commit { state in
-        let _: InoutRef<State.OptionalNestedState?> = state
+        let _: State.OptionalNestedState? = state
       }
                       
     }
@@ -155,7 +161,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<Edge<_State.TreeA>> = state
       
       commit { state in
-        let _: InoutRef<Edge<_State.TreeA>> = state
+        let _: Edge<_State.TreeA> = state
       }
       
       let treeB = detached(from: \.$treeB)
@@ -163,7 +169,7 @@ final class VergeStoreTests: XCTestCase {
       let _: Changes<Edge<_State.TreeB>> = treeB.state
                          
       treeB.commit { state in
-        let _: InoutRef<Edge<_State.TreeB>> = state
+        let _: Edge<_State.TreeB> = state
       }
          
     }
@@ -210,56 +216,6 @@ final class VergeStoreTests: XCTestCase {
 
     wait(for: [exp], timeout: 1)
 
-  }
-
-  func testEmptyCommit() {
-
-    let store = DemoStore()
-
-    var count = 0
-
-    let subs = store.sinkState(queue: .passthrough) { (_) in
-      count += 1
-    }
-
-    XCTAssertEqual(store.state.version, 0)
-
-    store.commit {
-      $0.count = 100
-    }
-
-    XCTAssertEqual(store.state.version, 1)
-
-    store.commit { _ in
-
-    }
-
-    // no changes
-    XCTAssertEqual(store.state.version, 1)
-
-    store.commit {
-      // explict marking
-      $0.markAsModified()
-    }
-
-    // many times calling empty commits
-    for _ in 0..<3 {
-      store.commit { _ in }
-    }
-
-    // no affects from read a value
-    store.commit {
-      if $0.count > 100 {
-        $0.count = 0
-        XCTFail()
-      }
-    }
-
-    XCTAssertEqual(store.state.version, 2)
-    XCTAssertEqual(count, 3)
-
-    withExtendedLifetime(subs, {})
-    
   }
 
   func testDispatch() {
@@ -316,14 +272,14 @@ final class VergeStoreTests: XCTestCase {
     .store(in: &subscriptions)
         
     store.commit {
-      $0.markAsModified()
+      $0.count += 1
     }
     
     // stop subscribing
     subscriptions = .init()
 
     store.commit {
-      $0.markAsModified()
+      $0.count += 1
     }
     
     XCTAssertEqual(count, 2)

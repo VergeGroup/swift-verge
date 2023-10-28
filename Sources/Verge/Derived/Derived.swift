@@ -99,19 +99,19 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   ///   - initialUpstreamState: Initial value of the `UpstreamState`
   ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
   ///   - retainsUpstream: Any instances to retain in this instance.
-  public init<UpstreamState: HasTraces, Pipeline: PipelineType>(
+  public init<UpstreamState, Pipeline: PipelineType>(
     name: String? = nil,
     get pipeline: Pipeline,
     set: ((Value) -> Void)?,
     initialUpstreamState: UpstreamState,
-    subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> any Cancellable,
+    subscribeUpstreamState: (@escaping (UpstreamState, Transaction) -> Void) -> any Cancellable,
     retainsUpstream: Any?
   ) where Pipeline.Input == UpstreamState, Value == Pipeline.Output {
 
     weak var indirectSelf: Derived<Value>?
 
-    let s = subscribeUpstreamState { value in
-      let update = pipeline.yieldContinuously(value)
+    let s = subscribeUpstreamState { value, transaction in
+      let update = pipeline.yieldContinuously(value, transaction: transaction)
       switch update {
       case .noUpdates:
         break
@@ -123,8 +123,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
         // TODO: Take over state.modification & state.mutation
         indirectSelf._receive {
           $1.isDerivedFromUpstream = true
-          $0.append(traces: value.traces)
-          $0.replace(with: newState)
+          $0 = newState
         }
 
       }
@@ -155,9 +154,9 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     self.upstreamSubscription?.cancel()
   }
 
-  public final override func stateDidUpdate(newState: Changes<Value>) {
+  public final override func stateDidUpdate(newState: Changes<Value>, transaction: Transaction) {
     // projects this update into upstream state
-    if let _set, newState._transaction.isDerivedFromUpstream == false {
+    if let _set, transaction.isDerivedFromUpstream == false {
       _set(newState.primitive)
     }
   }
@@ -173,7 +172,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   private func _combined_sinkValue(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<Value>) -> Void
+    receive: @escaping (Changes<Value>, Transaction) -> Void
   ) -> StoreSubscription {
     _primitive_sinkState(
       dropsFirst: dropsFirst,
@@ -181,27 +180,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
       receive: receive
     )
   }
-     
-  /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
-  ///
-  /// Drops output value if no changes with Equatable
-  ///
-  /// - Parameters:
-  ///   - queue: a queue to receive object
-  ///   - pipeline:
-  /// - Returns: Derived object that cached depends on the specified parameters
-  /// - Attention:
-  ///     As possible use the same pipeline instance and queue in order to enable caching.
-  ///     Returns the Derived that previously created with that combination.
-  @available(*, deprecated, renamed: "derived")
-  public func chain<Pipeline: PipelineType>(
-    _ pipeline: Pipeline,
-    queue: some TargetQueueType = .passthrough
-  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<Value> {
-    
-    return derived(pipeline, queue: queue)
-  }
-  
+
 }
 
 extension Derived : Equatable {
@@ -281,30 +260,24 @@ extension Derived where Value == Never {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
                 
-        let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
+        let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0, t0) in
           buffer.modify { value in
             let newValue = value.makeNextChanges(
-              with: value.primitive.next((s0, value.primitive.1)),
-              from: [],
-              modification: .indeterminate,
-              transaction: .init()
+              with: value.primitive.next((s0, value.primitive.1))
             )
             value = newValue
-            callback(newValue)
+            callback(newValue, t0)
           }
         }
 
-        let _s1 = s1._combined_sinkValue(dropsFirst: true, queue: queue) { (s1) in
+        let _s1 = s1._combined_sinkValue(dropsFirst: true, queue: queue) { (s1, t1) in
           buffer.modify { value in
 
             let newValue = value.makeNextChanges(
-              with: value.primitive.next((value.primitive.0, s1)),
-              from: [],
-              modification: .indeterminate,
-              transaction: .init()
+              with: value.primitive.next((value.primitive.0, s1))
             )
             value = newValue
-            callback(newValue)
+            callback(newValue, t1)
           }
         }
 
@@ -345,44 +318,35 @@ extension Derived where Value == Never {
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
         
-        let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
+        let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0, t0) in
           buffer.modify { value in
             let newValue = value.makeNextChanges(
-              with: value.primitive.next((s0, value.primitive.1, value.primitive.2)),
-              from: [],
-              modification: .indeterminate,
-              transaction: .init()
+              with: value.primitive.next((s0, value.primitive.1, value.primitive.2))
             )
             value = newValue
-            callback(newValue)
+            callback(newValue, t0)
           }
         }
         
-        let _s1 = s1._combined_sinkValue(dropsFirst: true, queue: queue) { (s1) in
+        let _s1 = s1._combined_sinkValue(dropsFirst: true, queue: queue) { (s1, t1) in
           buffer.modify { value in
             
             let newValue = value.makeNextChanges(
-              with: value.primitive.next((value.primitive.0, s1, value.primitive.2)),
-              from: [],
-              modification: .indeterminate,
-              transaction: .init()
+              with: value.primitive.next((value.primitive.0, s1, value.primitive.2))
             )
             value = newValue
-            callback(newValue)
+            callback(newValue, t1)
           }
         }
         
-        let _s2 = s2._combined_sinkValue(dropsFirst: true, queue: queue) { (s2) in
+        let _s2 = s2._combined_sinkValue(dropsFirst: true, queue: queue) { (s2, t2) in
           buffer.modify { value in
             
             let newValue = value.makeNextChanges(
-              with: value.primitive.next((value.primitive.0, value.primitive.1, s2)),
-              from: [],
-              modification: .indeterminate,
-              transaction: .init()
+              with: value.primitive.next((value.primitive.0, value.primitive.1, s2))
             )
             value = newValue
-            callback(newValue)
+            callback(newValue, t2)
           }
         }
         
@@ -419,7 +383,7 @@ public final class BindingDerived<Value: Equatable>: Derived<Value> {
     get { state.primitive }
     set {
       commit {
-        $0.replace(with: newValue)
+        $0 = newValue
       }
     }
   }

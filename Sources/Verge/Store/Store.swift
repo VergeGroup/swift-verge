@@ -48,7 +48,7 @@ public enum _StoreEvent<State: Equatable, Activity> {
   
   public enum StateEvent {
     case willUpdate
-    case didUpdate(Changes<State>)
+    case didUpdate(Changes<State>, Transaction)
   }
   
   case state(StateEvent)
@@ -82,6 +82,8 @@ actor Writer {
 ///
 open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, DispatcherType, DerivedMaking, @unchecked Sendable {
 
+  public typealias Artifact = Changes<State>
+
   public var scope: WritableKeyPath<State, State> = \State.self
 
   private let tracker = VergeConcurrency.SynchronizationTracker()
@@ -102,8 +104,8 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     
   private var middlewares: [AnyStoreMiddleware<State>] = []
   
-  private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>) -> Void
-  
+  private let externalOperation: @Sendable (inout State, Changes<State>, inout Transaction) -> Void
+
   private var nonatomicValue: Changes<State>
   
   private let _lock: StoreOperation
@@ -141,7 +143,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   ///   - logger: You can also use `DefaultLogger.shared`.
   public nonisolated init(
     name: String? = nil,
-    initialState: State,
+    initialState: consuming State,
     storeOperation: StoreOperation = .atomic,
     logger: StoreLogger? = nil,
     sanitizer: RuntimeSanitizer? = nil,
@@ -158,14 +160,14 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
-    self.externalOperation = { @Sendable _, _ in }
+    self.externalOperation = { @Sendable _, _, _ in }
 
     super.init()
   }
   
   public nonisolated init(
     name: String? = nil,
-    initialState: State,
+    initialState: consuming State,
     storeOperation: StoreOperation = .atomic,
     logger: StoreLogger? = nil,
     sanitizer: RuntimeSanitizer? = nil,
@@ -174,12 +176,15 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   ) where State : StateType {
     
     // making reduced state
-    var _initialState = initialState
-    var inoutRef = InoutRef<State>.init(&_initialState)
-    State.reduce(modifying: &inoutRef, current: .init(old: nil, new: initialState))
-    let reduced = inoutRef.wrapped
-    
+    var _initialState = consume initialState
+    var transaction = Transaction()
+
+    State.reduce(modifying: &_initialState, current: .init(old: nil, new: _initialState), transaction: &transaction)
+
+    let reduced = consume _initialState
+
     self.nonatomicValue = .init(old: nil, new: reduced)
+
     self._lock = storeOperation
     // TODO: copying value
     self._valueSubject = .init(nonatomicValue)
@@ -187,14 +192,12 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
-    self.externalOperation = { @Sendable inoutRef, state in
+
+    self.externalOperation = { @Sendable modifying, state, transaction in
       let intermediate = state.makeNextChanges(
-        with: inoutRef.wrapped,
-        from: inoutRef.traces,
-        modification: inoutRef.modification ?? .indeterminate,
-        transaction: state._transaction
+        with: modifying
       )
-      State.reduce(modifying: &inoutRef, current: intermediate)
+      State.reduce(modifying: &modifying, current: intermediate, transaction: &transaction)
     }
     
     super.init()
@@ -214,16 +217,16 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
             self?.objectWillChange.send()
           }
         }
-      case .didUpdate(let state):
+      case .didUpdate(let state, let transaction):
         _valueSubject.send(state)
-        stateDidUpdate(newState: state)
+        stateDidUpdate(newState: state, transaction: transaction)
       }
     case .activity:
       break
     }
   }
 
-  open func stateDidUpdate(newState: Changes<State>) {
+  open func stateDidUpdate(newState: Changes<State>, transaction: Transaction) {
 
   }
 
@@ -420,7 +423,7 @@ extension Store {
   ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
   func _receive<Result>(
-    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+    mutation: (inout State, inout Transaction) throws -> Result
   ) rethrows -> Result {
     
     let signpost = VergeSignpostTransaction("Store.commit")
@@ -448,39 +451,30 @@ extension Store {
     let __sanitizer__ = sanitizer
     
     /** a ciritical session */
-    try _update { (state) -> UpdateResult in
-      
+    try _update { (state, transaction) in
+
+      let previous = state.primitive
+
       let startedTime = CFAbsoluteTimeGetCurrent()
       defer {
         elapsed = CFAbsoluteTimeGetCurrent() - startedTime
       }
       
-      var current = state.primitive
-      
-      let updateResult = try withUnsafeMutablePointer(to: &current) { (stateMutablePointer) -> UpdateResult in
-        
-        var transaction = Transaction()
-        var inoutRef = InoutRef<State>.init(stateMutablePointer)
-        
-        let result = try mutation(&inoutRef, &transaction)
+      var modifying = state.primitive
+
+      do {
+
+        let result = try mutation(&modifying, &transaction)
+
         valueFromMutation = result
-        
-        /**
-         Step-1:
-         Checks if the state has been modified
-         */
-        guard inoutRef.nonatomic_hasModified else {
-          // No emits update event
-          return .nothingUpdates
-        }
-        
+
         /**
          Step-2:
          Reduce modifying state with externalOperation
          */
         
-        externalOperation(&inoutRef, state)
-        
+        externalOperation(&modifying, state, &transaction)
+
         /**
          Step-3
          Applying by middlewares
@@ -488,13 +482,10 @@ extension Store {
         self.middlewares.forEach { middleware in
           
           let intermediate = state.makeNextChanges(
-            with: stateMutablePointer.pointee,
-            from: inoutRef.traces,
-            modification: inoutRef.modification ?? .indeterminate,
-            transaction: transaction
+            with: modifying
           )
           middleware.modify(
-            modifyingState: &inoutRef,
+            modifyingState: &modifying,
             current: intermediate
           )
         }
@@ -503,10 +494,7 @@ extension Store {
          Make a new state
          */
         state = state.makeNextChanges(
-          with: stateMutablePointer.pointee,
-          from: inoutRef.traces,
-          modification: inoutRef.modification ?? .indeterminate,
-          transaction: transaction
+          with: modifying
         )
         
         if __sanitizer__.isRecursivelyCommitDetectionEnabled {
@@ -523,19 +511,22 @@ Mutation: (%@)
 """,
               log: VergeOSLogs.debugLog,
               type: .error,
-              String(describing: inoutRef.traces)
+              ""
             )
-            __sanitizer__.onDidFindRuntimeError(.recursiveleyCommit(storeName: name, traces: inoutRef.traces))
+            __sanitizer__.onDidFindRuntimeError(.recursiveleyCommit(storeName: name, traces: []))
           }
         }
         
-        commitLog = CommitLog(storeName: self.name, traces: inoutRef.traces, time: elapsed)
-        
-        return .updated
+        commitLog = CommitLog(storeName: self.name, traces: [], time: elapsed)
+
       }
-      
-      return updateResult
-      
+
+      guard modifying != previous else {
+        return .nothingUpdates
+      }
+
+      return .updated
+
     }
     
     if let logger = logger, let _commitLog = commitLog {
@@ -561,7 +552,7 @@ Mutation: (%@)
     keepsAliveSource: Bool? = nil,
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue,
-    receive: @escaping @MainActor (Changes<State>) -> Void
+    receive: @escaping @MainActor (Artifact, Transaction) -> Void
   ) -> StoreSubscription {
     return _primitive_sinkState(dropsFirst: dropsFirst, queue: Queues.MainActor(queue), receive: receive)
   }
@@ -569,13 +560,13 @@ Mutation: (%@)
   func _primitive_sinkState(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<State>) -> Void
+    receive: @escaping (Artifact, Transaction) -> Void
   ) -> StoreSubscription {
     
     let executor = queue.execute
     
-    var latestStateWrapper: Changes<State>? = nil
-    
+    var latestStateWrapper: Artifact? = nil
+
     let __sanitizer__ = sanitizer
     
     let lock = VergeConcurrency.UnfairLock()
@@ -586,8 +577,8 @@ Mutation: (%@)
       switch event {
       case .willUpdate:
         break
-      case .didUpdate(let receivedState):
-        
+      case .didUpdate(let receivedState, let transaction):
+
         executor {
           
           lock.lock()
@@ -648,9 +639,9 @@ Latest Version (%d): (%@)
                     receivedState.version,
                     latestState.version,
                     receivedState.version,
-                    String(describing: receivedState.traces),
+                    "Unimplemented",
                     latestState.version,
-                    String(describing: latestState.traces)
+                    "Unimplemented"
                   )
                 }
               }
@@ -663,8 +654,8 @@ Latest Version (%d): (%@)
           
           lock.unlock()
           
-          receive(resolvedReceivedState)
-        }        
+          receive(resolvedReceivedState, transaction)
+        }
       }
     }
     
@@ -678,7 +669,7 @@ Latest Version (%d): (%@)
         lock.unlock()
         // this closure might contains some mutations.
         // It depends outside usages.
-        receive(value)
+        receive(value, .init())
       }
     }
 
@@ -695,13 +686,13 @@ Latest Version (%d): (%@)
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue,
-    receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
+    receive: @escaping @MainActor (Artifact, Transaction, Accumulate) -> Void
   ) -> StoreSubscription {
 
-    _mainActor_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
+    _mainActor_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes, transaction) in
 
       let accumulate = scan.accumulate(changes)
-      receive(changes, accumulate)
+      receive(changes, transaction, accumulate)
     }
 
   }
@@ -710,13 +701,13 @@ Latest Version (%d): (%@)
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<State>, Accumulate) -> Void
+    receive: @escaping (Artifact, Transaction, Accumulate) -> Void
   ) -> StoreSubscription {
     
-    _primitive_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
-      
+    _primitive_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes, transaction) in
+
       let accumulate = scan.accumulate(changes)
-      receive(changes, accumulate)
+      receive(changes, transaction, accumulate)
     }
     
   }
@@ -757,7 +748,7 @@ extension Store {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<State>) throws -> Result
+    mutation: (inout State, inout Transaction) throws -> Result
   ) async rethrows -> Result {
 
     return try await writer.perform { [self] _ in
@@ -798,8 +789,8 @@ extension Store {
   }
   
   @inline(__always)
-  final func _update(_ update: (inout Changes<State>) throws -> UpdateResult) rethrows {
-    
+  final func _update(_ update: (inout Changes<State>, inout Transaction) throws -> UpdateResult) rethrows {
+
     let signpost = VergeSignpostTransaction("Storage.update")
     defer {
       signpost.end()
@@ -807,28 +798,30 @@ extension Store {
     
     lock()
     do {
-      
-      let result = try update(&nonatomicValue)
-      
+
+      var transaction: Transaction = .init()
+
+      let result = try update(&nonatomicValue, &transaction)
+
       switch result {
       case .nothingUpdates:
         unlock()
       case .updated:
         let afterValue = nonatomicValue
-        
+
         /**
          Unlocks lock before emitting event to avoid dead-locking.
          But it causes cracking the order of event.
          SeeAlso: testOrderOfEvents
          */
         unlock()
-        
+
         // it's not actual `will` 👨🏻❓
         accept(.state(.willUpdate))
-        accept(.state(.didUpdate(afterValue)))
-        
+        accept(.state(.didUpdate(afterValue, transaction)))
+
       }
-      
+
     } catch {
       unlock()
       throw error

@@ -33,18 +33,9 @@ public protocol StateType: Equatable {
    */
   @Sendable
   static func reduce(
-    modifying: inout InoutRef<Self>,
-    current: Changes<Self>
+    modifying: inout Self,
+    current: Changes<Self>,
+    transaction: inout Transaction
   )
 }
 
-extension StateType {
-
-  /**
-   Default empty implementation
-   */
-  @Sendable
-  public static func reduce(modifying: inout InoutRef<Self>, current: Changes<Self>) {
-
-  }
-}

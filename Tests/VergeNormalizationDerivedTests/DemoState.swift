@@ -1,6 +1,8 @@
 import VergeNormalizationDerived
 
 struct DemoState: StateType {
+  static func reduce(modifying: inout DemoState, current: Verge.Changes<DemoState>, transaction: inout Verge.Transaction) {
+  }
 
   var count: Int = 0
 

@@ -26,23 +26,23 @@ public protocol StoreMiddlewareType<State>: Sendable {
   associatedtype State: Equatable
 
   @Sendable
-  func modify(modifyingState: inout InoutRef<State>, current: Changes<State>)
+  func modify(modifyingState: inout State, current: Changes<State>)
 
 }
 
 public struct AnyStoreMiddleware<State: Equatable>: StoreMiddlewareType, Sendable {
 
   private let closure:
-    @Sendable (_ modifyingState: inout InoutRef<State>, _ current: Changes<State>) -> Void
+    @Sendable (_ modifyingState: inout State, _ current: Changes<State>) -> Void
 
   init(
-    modify: @escaping @Sendable (_ modifyingState: inout InoutRef<State>, _ current: Changes<State>)
+    modify: @escaping @Sendable (_ modifyingState: inout State, _ current: Changes<State>)
       -> Void
   ) {
     self.closure = modify
   }
 
-  public func modify(modifyingState: inout InoutRef<State>, current: Changes<State>) {
+  public func modify(modifyingState: inout State, current: Changes<State>) {
     self.closure(&modifyingState, current)
   }
 
@@ -54,7 +54,7 @@ extension StoreMiddlewareType  {
    Creates an instance that commits mutations according to the original committing.
    */
   public static func modify<State: Equatable>(
-    modify: @escaping @Sendable (_ modifyingState: inout InoutRef<State>, _ current: Changes<State>)
+    modify: @escaping @Sendable (_ modifyingState: inout State, _ current: Changes<State>)
       -> Void
   ) -> Self where Self == AnyStoreMiddleware<State> {
     return .init(modify: modify)

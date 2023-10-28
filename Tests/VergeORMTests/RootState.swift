@@ -40,6 +40,8 @@ struct Author: EntityType {
 }
 
 struct RootState: StateType {
+  static func reduce(modifying: inout RootState, current: Verge.Changes<RootState>, transaction: inout Verge.Transaction) {
+  }
 
   @DatabaseState
   struct Database {

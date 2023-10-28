@@ -37,6 +37,12 @@ struct DemoState: StateType, Sendable {
     count += 1
   }
 
+  @Sendable
+  static func reduce(
+    modifying: inout Self,
+    current: Changes<Self>,
+    transaction: inout Transaction
+  ) {}
 }
 
 enum DemoActivity {

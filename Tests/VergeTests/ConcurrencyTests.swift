@@ -23,7 +23,7 @@ final class ConcurrencyTests: XCTestCase {
 
     // Currently, it's collapsed because Storage emits event without locking.
 
-    let store = Verge.Store<DemoState, Never>(initialState: .init(), logger: nil)
+    let store = Verge.Store<DemoState, Never>(initialState: .init(count: -1), logger: nil)
 
     let exp = expectation(description: "")
     let counter = expectation(description: "update count")
@@ -50,8 +50,8 @@ final class ConcurrencyTests: XCTestCase {
       DispatchQueue.concurrentPerform(iterations: 100) { i in
 
         Task {
-          await store.backgroundCommit {
-            $0.count = i
+          await store.backgroundCommit { a, b in
+            a.count = i
             dispatched.append(i)
           }
         }
@@ -62,7 +62,7 @@ final class ConcurrencyTests: XCTestCase {
 
     wait(for: [exp, counter], timeout: 10)
 //    print(dispatched, results)
-    XCTAssertEqual([0] + dispatched, results.value, "\(([0] + dispatched).difference(from: results.value))")
+    XCTAssertEqual([-1] + dispatched, results.value, "\(([-1] + dispatched).difference(from: results.value))")
     withExtendedLifetime(sub) {}
   }
 
@@ -124,8 +124,9 @@ final class ConcurrencyTests: XCTestCase {
         }
         version = s.version
         print("x", s.version)
-        store.commit {
-          if s.count == 1 {
+
+        if s.count == 1 {
+          store.commit {
             $0.count += 1
           }
         }

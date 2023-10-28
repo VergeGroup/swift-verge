@@ -34,13 +34,10 @@ final class StateTypeTests: XCTestCase {
     var name = ""
     var count = 0
     var count2 = 0
-    
-    static func reduce(
-      modifying: inout InoutRef<StateTypeTests.State>,
-      current: Changes<StateTypeTests.State>
-    ) {
 
-      current.ifChanged(\.count) { _ in
+    static func reduce(modifying: inout StateTypeTests.State, current: Changes<StateTypeTests.State>, transaction: inout Transaction) {
+
+      current.ifChanged(\.count).do { _ in
         modifying.count2 += 1
       }
       

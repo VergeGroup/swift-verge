@@ -116,25 +116,9 @@ public enum StoreReaderComponents<StateType: Equatable> {
         if detectors[keyPath as PartialKeyPath<StateType>] == nil {
           
           let maybeChanged: (Changes<StateType>) -> Bool = { changes in
-            
-            switch changes.modification {
-            case .determinate(let keyPaths):
-              
-              /// modified but maybe value not changed.
-              let mayHasChanges = keyPaths.contains(keyPath)
-              
-              if mayHasChanges {
-                return true
-              }
-              
-              return changes.hasChanges({ $0[keyPath: keyPath] })
-              
-            case .indeterminate:
-              return true
-            case nil:
-              return changes.hasChanges({ $0[keyPath: keyPath] })
-            }
-            
+
+            return changes.hasChanges({ $0[keyPath: keyPath] })
+
           }
           
           detectors[keyPath] = maybeChanged

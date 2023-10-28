@@ -27,7 +27,7 @@ struct QueryPipeline<
 
   }
 
-  func yieldContinuously(_ input: Input) -> Verge.ContinuousResult<Output> {
+  func yieldContinuously(_ input: Input, transaction: Transaction) -> Verge.ContinuousResult<Output> {
 
     guard let previous = input.previous else {
       return .new(yield(input))

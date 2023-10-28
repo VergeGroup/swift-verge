@@ -37,8 +37,8 @@ public protocol PipelineType<Input, Output> {
      
   func yield(_ input: Input) -> Output
    
-  func yieldContinuously(_ input: Input) -> ContinuousResult<Output>
-  
+  func yieldContinuously(_ input: Input, transaction: Transaction) -> ContinuousResult<Output>
+
 }
 
 /**
@@ -62,7 +62,7 @@ public enum Pipelines {
       self.selector = selector
     }
 
-    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    public func yieldContinuously(_ input: Input, transaction: Transaction) -> ContinuousResult<Output> {
 
       let target = input._read(perform: selector)
 
@@ -92,8 +92,8 @@ public enum Pipelines {
       self.additionalDropCondition = additionalDropCondition
     }
     
-    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-      
+    public func yieldContinuously(_ input: Input, transaction: Transaction) -> ContinuousResult<Output> {
+
       guard let previous = input.previous else {
         return .new(input._read(perform: selector))
       }
@@ -155,8 +155,8 @@ public enum Pipelines {
     
     // MARK: - Functions
     
-    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-      
+    public func yieldContinuously(_ input: Input, transaction: Transaction) -> ContinuousResult<Output> {
+
       guard let previous = input.previous else {
         return .new(yield(input))
       }
@@ -224,7 +224,7 @@ public enum Pipelines {
     
     // MARK: - Functions
     
-    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    public func yieldContinuously(_ input: Input, transaction: Transaction) -> ContinuousResult<Output> {
                       
       guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
         return .new(yield(input))

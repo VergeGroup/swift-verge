@@ -93,7 +93,7 @@ However, you should attention `commit` is atomically operation which means, the 
 
 ```swift
 func myMutation() {
-  commit { (state: inout InoutRef<State>) in
+  commit { (state: inout State) in
     if ... {
       state.aaa = ...
     }

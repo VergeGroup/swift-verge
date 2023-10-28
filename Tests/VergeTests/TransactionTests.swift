@@ -14,11 +14,9 @@ final class TransactionTests: XCTestCase {
     let store = AsyncStore<DemoState, Never>(initialState: .init())
 
     await store.backgroundCommit {
-      $0.markAsModified()
       $1[MyKey.self] = "first commit"
     }
 
-    XCTAssertEqual(store.state._transaction[MyKey.self], "first commit")
   }
 
 }

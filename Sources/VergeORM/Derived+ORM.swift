@@ -377,7 +377,7 @@ struct _DatabaseMultipleEntityPipeline<Source: Equatable, Database: DatabaseType
 
   }
 
-  func yieldContinuously(_ input: Changes<Source>) -> ContinuousResult<[Entity.Derived]> {
+  func yieldContinuously(_ input: Changes<Source>, transaction: Transaction) -> ContinuousResult<[Entity.Derived]> {
 
     let changes = input
 
@@ -439,7 +439,7 @@ struct _DatabaseSingleEntityPipeline<Source: Equatable, Database: DatabaseType, 
 
   }
 
-  func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+  func yieldContinuously(_ input: Input, transaction: Transaction) -> ContinuousResult<Output> {
 
     func makeNew() -> ContinuousResult<Output> {
       let wrapper =  EntityWrapper<Entity>(
@@ -519,7 +519,7 @@ struct _DatabaseCachedSingleEntityPipeline<Source: Equatable, Database: Database
   }
 
 
-  func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+  func yieldContinuously(_ input: Input, transaction: Transaction) -> ContinuousResult<Output> {
 
     guard let previous = input.previous else {
       return .new(yield(input))

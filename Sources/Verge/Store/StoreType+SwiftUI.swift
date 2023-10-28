@@ -49,7 +49,7 @@ extension StoreType {
       return self.primitiveState
     }, set: { [weak self] value in
       self?.asStore().commit {
-        $0[keyPath: \.self] = value
+        $0 = value
       }
     })
   }

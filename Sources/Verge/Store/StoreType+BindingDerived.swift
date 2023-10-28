@@ -52,11 +52,11 @@ private struct BindingDerivedPipeline<Source: Equatable, Output: Equatable, Back
     backingPipeline.yield(input)
   }
 
-  func yieldContinuously(_ input: Changes<Source>) -> ContinuousResult<Output> {
-    if input._transaction.isFromBindingDerived {
+  func yieldContinuously(_ input: Changes<Source>, transaction: Transaction) -> ContinuousResult<Output> {
+    if transaction.isFromBindingDerived {
       return .noUpdates
     }
-    return backingPipeline.yieldContinuously(input)
+    return backingPipeline.yieldContinuously(input, transaction: transaction)
   }
 
 }
@@ -78,7 +78,7 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     get pipeline: Pipeline,
-    set: @escaping (inout InoutRef<State>, Pipeline.Output) -> Void,
+    set: @escaping (inout State, Pipeline.Output) -> Void,
     queue: some TargetQueueType = .passthrough
   ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<State> {
 

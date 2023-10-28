@@ -21,10 +21,6 @@
 
 import Foundation
 
-public protocol HasTraces {
-  var traces: [MutationTrace] { get }
-}
-
 /// A trace that indicates the mutation where comes from.
 public struct MutationTrace: Encodable, Equatable, Sendable {
   

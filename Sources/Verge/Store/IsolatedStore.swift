@@ -24,7 +24,7 @@ public final class MainActorStore<State: StateType, Activity>: DerivedMaking, Se
   }
 
   public func commit<Result>(
-    mutation: (inout InoutRef<State>) throws -> Result
+    mutation: (inout State) throws -> Result
   ) rethrows -> Result {
 
     try backingStore._receive(mutation: { state, _ in try mutation(&state) })
@@ -32,7 +32,7 @@ public final class MainActorStore<State: StateType, Activity>: DerivedMaking, Se
   }
 
   public func commit<Result>(
-    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+    mutation: (inout State, inout Transaction) throws -> Result
   ) rethrows -> Result {
     try backingStore._receive(mutation: mutation)
   }
@@ -155,7 +155,7 @@ public final class AsyncStore<State: StateType, Activity>: DerivedMaking, Sendab
   }
 
   public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<State>) throws -> Result
+    mutation: (inout State) throws -> Result
   ) async rethrows -> Result {
 
     try await writer.perform { _ in
@@ -165,7 +165,7 @@ public final class AsyncStore<State: StateType, Activity>: DerivedMaking, Sendab
   }
 
   public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+    mutation: (inout State, inout Transaction) throws -> Result
   ) async rethrows -> Result {
 
     try await writer.perform { _ in
@@ -286,11 +286,11 @@ public protocol MainActorStoreDriverType {
   nonisolated var scope: WritableKeyPath<State, Scope> { get }
 
   func commit<Result>(
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout Scope) throws -> Result
   ) rethrows -> Result
 
   func commit<Result>(
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout Scope, inout Transaction) throws -> Result
   ) rethrows -> Result
 }
 
@@ -319,23 +319,21 @@ extension MainActorStoreDriverType {
   ///
   /// Throwable
   public func commit<Result>(
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout Scope) throws -> Result
   ) rethrows -> Result {
 
     return try store.commit { ref in
-      try ref.map(keyPath: scope, perform: mutation)
+      try mutation(&ref[keyPath: scope])
     }
 
   }
 
   public func commit<Result>(
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout Scope, inout Transaction) throws -> Result
   ) rethrows -> Result {
 
     return try store.commit { ref, transaction in
-      try ref.map(keyPath: scope, perform: {
-        try mutation(&$0, &transaction)
-      })
+      try mutation(&ref[keyPath: scope], &transaction)
     }
 
   }
@@ -392,7 +390,7 @@ extension MainActorStoreDriverType where Scope == State {
   ///
   /// Throwable
   public func commit<Result>(
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout Scope) throws -> Result
   ) rethrows -> Result {
 
     return try store.commit(mutation: mutation)
@@ -414,11 +412,11 @@ public protocol AsyncStoreDriverType {
   var scope: WritableKeyPath<State, Scope> { get }
 
   func backgroundCommit<Result>(
-    mutation: (inout InoutRef<State>) throws -> Result
+    mutation: (inout State) throws -> Result
   ) async rethrows -> Result
 
   func backgroundCommit<Result>(
-    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+    mutation: (inout State, inout Transaction) throws -> Result
   ) async rethrows -> Result
 }
 
@@ -447,11 +445,11 @@ extension AsyncStoreDriverType {
   ///
   /// Throwable
   public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout Scope) throws -> Result
   ) async rethrows -> Result {
 
     return try await store.backgroundCommit { ref in
-      try ref.map(keyPath: scope, perform: mutation)
+      try mutation(&ref[keyPath: scope])
     }
 
   }
@@ -460,13 +458,11 @@ extension AsyncStoreDriverType {
   ///
   /// Throwable
   public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout Scope, inout Transaction) throws -> Result
   ) async rethrows -> Result {
 
     return try await store.backgroundCommit { ref, transaction in
-      try ref.map(keyPath: scope, perform: {
-        try mutation(&$0, &transaction)
-      })
+      try mutation(&ref[keyPath: scope], &transaction)
     }
 
   }
@@ -523,7 +519,7 @@ extension AsyncStoreDriverType where Scope == State {
   ///
   /// Throwable
   public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout Scope) throws -> Result
   ) async rethrows -> Result {
 
     return try await store.backgroundCommit(mutation: mutation)
@@ -534,7 +530,7 @@ extension AsyncStoreDriverType where Scope == State {
   ///
   /// Throwable
   public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout Scope, inout Transaction) throws -> Result
   ) async rethrows -> Result {
 
     return try await store.backgroundCommit(mutation: mutation)

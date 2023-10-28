@@ -39,7 +39,11 @@ struct Author: EntityType {
 }
 
 struct RootState: StateType {
-  
+
+  static func reduce(modifying: inout RootState, current: Changes<RootState>, transaction: inout Transaction) {
+    
+  }
+
   static let getterToDatabase: (RootState) -> RootState.Database = { $0.db }
   
   struct Database: DatabaseType {

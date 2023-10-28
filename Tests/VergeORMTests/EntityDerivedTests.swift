@@ -166,13 +166,13 @@ final class DerivedTests: XCTestCase {
       }
     }
     
-    var updatedCount = 0
-    
+    var targetAuthorUpdatedCount = 0
+
     let authorGetter = storage.databases.db.derivedNonNull(from: result)
     
     authorGetter.statePublisher()
       .dropFirst(1).sink { _ in
-      updatedCount += 1
+      targetAuthorUpdatedCount += 1
     }
     .store(in: &subscriptions)
     
@@ -192,7 +192,7 @@ final class DerivedTests: XCTestCase {
       
     }
     
-    XCTAssertEqual(updatedCount, 1)
+    XCTAssertEqual(targetAuthorUpdatedCount, 1)
     
     XCTContext.runActivity(named: "updateName, but same value") { _ in
 
@@ -208,8 +208,8 @@ final class DerivedTests: XCTestCase {
       
     }
 
-    // got update
-    XCTAssertEqual(updatedCount, 2)
+    // no update
+    XCTAssertEqual(targetAuthorUpdatedCount, 1)
 
     XCTContext.runActivity(named: "Update other, getter would not emit changes") { _ in
       
@@ -245,7 +245,7 @@ final class DerivedTests: XCTestCase {
       return
     }
     
-    XCTAssertEqual(updatedCount, 2)
+    XCTAssertEqual(targetAuthorUpdatedCount, 1)
 
   }
   

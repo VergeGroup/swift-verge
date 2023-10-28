@@ -29,7 +29,6 @@ private let _shared_changesDeallocationQueue = BackgroundDeallocationQueue()
 
 public protocol AnyChangesType: AnyObject, Sendable {
 
-  var traces: [MutationTrace] { get }
   var version: UInt64 { get }
 }
 
@@ -41,8 +40,6 @@ public protocol ChangesType<Value>: AnyChangesType {
   var primitive: Value { get }
 
   var previous: Self? { get }
-  
-  var modification: InoutRef<Value>.Modification? { get }
 
   func asChanges() -> Changes<Value>
 }
@@ -89,7 +86,7 @@ public protocol ChangesType<Value>: AnyChangesType {
 /// - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
 /// This means Changes will return equals if different pointer but the value is the same.
 @dynamicMemberLookup
-public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
+public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, Equatable {
   public typealias ChangesKeyPath<T> = KeyPath<Value, T>
 
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
@@ -128,11 +125,6 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   /// - Important: a returns value won't change against pointer-personality
   public var root: Value { _read { yield innerBox.value } }
 
-  public let traces: [MutationTrace]
-  public let modification: InoutRef<Value>.Modification?
-  
-  public let _transaction: Transaction
-
   // MARK: - Initializers
 
   public convenience init(
@@ -142,27 +134,18 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     self.init(
       previous: old.map { .init(old: nil, new: $0) },
       innerBox: .init(value: consume new),
-      version: 0,
-      traces: [],
-      modification: nil,
-      transaction: .init()
+      version: 0
     )
   }
 
   private init(
     previous: Changes<Value>?,
     innerBox: InnerBox,
-    version: UInt64,
-    traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification?,
-    transaction: Transaction
+    version: UInt64
   ) {
     self.previous = previous
     self.innerBox = innerBox
     self.version = version
-    self.traces = traces
-    self.modification = modification
-    self._transaction = transaction
 
     vergeSignpostEvent("Changes.init", label: "\(type(of: self))")
   }
@@ -180,10 +163,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     return .init(
       previous: nil,
       innerBox: innerBox,
-      version: version,
-      traces: traces,
-      modification: nil,
-      transaction: _transaction
+      version: version
     )
   }
 
@@ -217,10 +197,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     return Changes<U>(
       previous: try previous.map { try $0.map(transform) },
       innerBox: try innerBox.map(transform),
-      version: version,
-      traces: traces,
-      modification: nil,
-      transaction: _transaction
+      version: version
     )
   }
 
@@ -236,10 +213,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     return Changes<U>(
       previous: previous.flatMap { $0.mapIfPresent(keyPath) },
       innerBox: innerBox.map { $0[keyPath: keyPath]! },
-      version: version,
-      traces: traces,
-      modification: nil,
-      transaction: _transaction
+      version: version
     )
 
   }
@@ -253,20 +227,14 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   }
 
   public func makeNextChanges(
-    with nextNewValue: Value,
-    from traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification,
-    transaction: Transaction
+    with nextNewValue: Value
   ) -> Changes<Value> {
     let previous = cloneWithDropsPrevious()
     let nextVersion = previous.version &+ 1
     return Changes<Value>.init(
       previous: previous,
       innerBox: .init(value: nextNewValue),
-      version: nextVersion,
-      traces: traces,
-      modification: modification,
-      transaction: transaction
+      version: nextVersion
     )
   }
 
@@ -611,10 +579,7 @@ extension Changes: CustomReflectable {
       children: [
         "version": version,
         "previous": previous as Any,
-        "primitive": primitive,
-        "transaction": _transaction,
-        "traces": traces,
-        "modification": modification as Any,
+        "primitive": primitive
       ],
       displayStyle: .struct,
       ancestorRepresentation: .generated

@@ -61,19 +61,12 @@ extension ObservableType where Element : Equatable {
     _ function: StaticString = #function,
     _ line: UInt = #line
   ) -> Observable<Changes<Element>> {
-
-    let trace = MutationTrace(
-      name: name,
-      file: file,
-      function: function,
-      line: line
-    )
     
     return scan(into: initial, accumulator: { (pre, element) in
       if pre == nil {
         pre = Changes<Element>.init(old: nil, new: element)
       } else {
-        pre = pre!.makeNextChanges(with: element, from: [trace], modification: .indeterminate, transaction: .init())
+        pre = pre!.makeNextChanges(with: element)
       }
     })
     .map { $0! }
@@ -230,7 +223,7 @@ extension Reactive where Base : DispatcherType {
 
   public func commitBinder<S>(
     scheduler: ImmediateSchedulerType = MainScheduler(),
-    mutate: @escaping (inout InoutRef<Base.State>, S) -> Void
+    mutate: @escaping (inout Base.State, S) -> Void
   ) -> Binder<S> {
 
     return Binder<S>(base, scheduler: scheduler) { t, e in
@@ -243,7 +236,7 @@ extension Reactive where Base : DispatcherType {
 
   public func commitBinder<S>(
     scheduler: ImmediateSchedulerType = MainScheduler(),
-    mutate: @escaping (inout InoutRef<Base.State>, S?) -> Void
+    mutate: @escaping (inout Base.State, S?) -> Void
   ) -> Binder<S?> {
 
     return Binder<S?>(base, scheduler: scheduler) { t, e in

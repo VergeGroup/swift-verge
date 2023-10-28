@@ -98,7 +98,11 @@ final class ViewModelTests: XCTestCase {
   final class ViewModel: MainActorStoreDriverType {
 
     struct State: StateType {
-
+      static func reduce(
+        modifying: inout Self,
+        current: Changes<Self>,
+        transaction: inout Transaction
+      ) {}
     }
 
     let store: MainActorStore<State, Never> = .init(initialState: .init())
