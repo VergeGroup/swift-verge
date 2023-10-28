@@ -85,10 +85,11 @@ extension DispatcherType {
     let derived = BindingDerived<Pipeline.Output>.init(
       get: BindingDerivedPipeline(backingPipeline: pipeline),
       set: { [weak self] state in       
-        self?.store.asStore().commit(name, file, function, line) {
-          $0._transaction.isFromBindingDerived = true
-          set(&$0, state)
-        }
+        self?.store.asStore()
+          ._receive {
+            $1.isFromBindingDerived = true
+            set(&$0, state)
+          }
       },
       initialUpstreamState: store.asStore().state,
       subscribeUpstreamState: { callback in

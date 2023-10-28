@@ -1,6 +1,6 @@
 import VergeNormalizationDerived
 
-struct DemoState: Equatable {
+struct DemoState: StateType {
 
   var count: Int = 0
 

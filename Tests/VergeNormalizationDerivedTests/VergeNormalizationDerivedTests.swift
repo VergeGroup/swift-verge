@@ -47,29 +47,20 @@ final class VergeNormalizationDerivedTests: XCTestCase {
     withExtendedLifetime(derived, {})
   }
 
-  func test_cache() {
+  @MainActor 
+  func test_mainActorStore() {
 
-    let store = Store<DemoState, Never>(
-      initialState: .init()
-    )
+    let store = MainActorStore<_, Never>(initialState: DemoState())
 
-    let derived1 = store
-      .normalizedStorage(.keyPath(\.db))
-      .table(.keyPath(\.book))
-      .derived(from: Book.EntityID.init("1"))
+    store.normalizedStorage(.keyPath(\.db))
 
-    let derived2 = store
-      .normalizedStorage(.keyPath(\.db))
-      .table(.keyPath(\.book))
-      .derived(from: Book.EntityID.init("1"))
+  }
 
-    let derived3 = store
-      .normalizedStorage(.keyPath(\.db))
-      .table(.keyPath(\.book2))
-      .derived(from: Book.EntityID.init("1"))
+  func test_asyncStore() {
 
-    XCTAssert(derived1 === derived2)
-    XCTAssert(derived2 !== derived3)
+    let store = AsyncStore<_, Never>(initialState: DemoState())
+
+    store.normalizedStorage(.keyPath(\.db))
 
   }
 

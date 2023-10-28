@@ -5,7 +5,7 @@ extension Tables {
   /**
    A table that stores entities with hash table.
    */
-  public struct Hash<Entity: EntityType>: TableType {
+  public struct Hash<Entity: EntityType>: TableType, Sendable {
 
     public typealias Entity = Entity
 
