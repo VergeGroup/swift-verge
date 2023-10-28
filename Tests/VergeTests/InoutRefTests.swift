@@ -86,7 +86,7 @@ final class InoutTests: XCTestCase {
 
     withUnsafeMutablePointer(to: &state) { pointer in
 
-      let ref1 = InoutRef(pointer)
+      var ref1 = InoutRef(pointer)
       let ref2 = InoutRef(pointer)
 
       XCTAssertEqual(ref1.count, ref2.count)
@@ -142,7 +142,7 @@ final class InoutTests: XCTestCase {
     })
 
     withUnsafeMutablePointer(to: &value) { (pointer) -> Void in
-      let proxy = InoutRef.init(pointer)
+      var proxy = InoutRef.init(pointer)
 
       proxy.wrappedValue = 1
 
@@ -178,7 +178,7 @@ final class InoutTests: XCTestCase {
     var value = DemoState()
 
     let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
-      let proxy = InoutRef.init(pointer)
+      var proxy = InoutRef.init(pointer)
       proxy.count += 1
       
       XCTAssert(proxy.hasModified(\.self))
@@ -203,7 +203,7 @@ final class InoutTests: XCTestCase {
     var value = DemoState()
 
     let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
-      let proxy = InoutRef.init(pointer)
+      var proxy = InoutRef.init(pointer)
       proxy.count += 1
       proxy.map(keyPath: \.inner) { (inner) in
         inner.name = UUID().uuidString
@@ -228,7 +228,7 @@ final class InoutTests: XCTestCase {
     var value = DemoState()
 
     let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
-      let proxy = InoutRef.init(pointer)
+      var proxy = InoutRef.init(pointer)
       proxy.modify {
         $0.count += 1
       }
@@ -251,7 +251,7 @@ final class InoutTests: XCTestCase {
     var value = DemoState()
     
     let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
-      let proxy = InoutRef.init(pointer)
+      var proxy = InoutRef.init(pointer)
       proxy.modify {
         $0.count += 1
       }
@@ -266,7 +266,7 @@ final class InoutTests: XCTestCase {
     var value = DemoState()
 
     let modification = withUnsafeMutablePointer(to: &value) { (pointer) -> InoutRef<DemoState>.Modification? in
-      let proxy = InoutRef.init(pointer)
+      var proxy = InoutRef.init(pointer)
       proxy.wrapped.updateFromItself()
       return proxy.modification
     }

@@ -175,9 +175,12 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     
     // making reduced state
     var _initialState = initialState
-    var inoutRef = InoutRef<State>.init(&_initialState)
-    State.reduce(modifying: &inoutRef, current: .init(old: nil, new: initialState))
-    let reduced = inoutRef.wrapped
+
+    let reduced = withUnsafeMutablePointer(to: &_initialState) { pointer in
+      var inoutRef = InoutRef<State>.init(pointer)
+      State.reduce(modifying: &inoutRef, current: .init(old: nil, new: initialState))
+      return inoutRef.wrapped
+    }
     
     self.nonatomicValue = .init(old: nil, new: reduced)
     self._lock = storeOperation
