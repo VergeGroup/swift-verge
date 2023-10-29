@@ -121,17 +121,16 @@ final class VergeStoreTests: XCTestCase {
       
       let _: Changes<State.NestedState> = _detached.state
       
-      _detached.commit { state in
-        let _: InoutRef<State.NestedState> = state
-        
+      _detached.commit { (state: inout InoutRef<State.NestedState>) in
+
       }
         
       let optionalNestedTarget = detached(from: \.optionalNested)
                   
       let _: Changes<State.OptionalNestedState?> = optionalNestedTarget.state
           
-      optionalNestedTarget.commit { state in
-        let _: InoutRef<State.OptionalNestedState?> = state
+      optionalNestedTarget.commit { (state: inout InoutRef<State.OptionalNestedState?>) in
+
       }
                       
     }
@@ -154,16 +153,16 @@ final class VergeStoreTests: XCTestCase {
       
       let _: Changes<Edge<_State.TreeA>> = state
       
-      commit { state in
-        let _: InoutRef<Edge<_State.TreeA>> = state
+      commit { (state: inout InoutRef<Edge<_State.TreeA>>) in
+
       }
       
       let treeB = detached(from: \.$treeB)
       
       let _: Changes<Edge<_State.TreeB>> = treeB.state
                          
-      treeB.commit { state in
-        let _: InoutRef<Edge<_State.TreeB>> = state
+      treeB.commit { (state: inout InoutRef<Edge<_State.TreeB>>) in
+
       }
          
     }
