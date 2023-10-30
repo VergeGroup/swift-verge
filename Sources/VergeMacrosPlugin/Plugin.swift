@@ -13,5 +13,6 @@ struct Plugin: CompilerPlugin {
     TableMacro.self,
     IndexMacro.self,
     KeyPathMap.self,
+    WriterMacro.self
   ]
 }
