@@ -152,7 +152,7 @@ final class PropertyCollector: SyntaxVisitor {
       // let a,b,c = 0
       // it's stored
       onError(node, WriterMacroError.foundMultiBindingsStoredProperty)
-      return super.visit(node)
+      return .skipChildren
     }
 
     guard let binding: PatternBindingListSyntax.Element = node.bindings.first else {
@@ -161,19 +161,19 @@ final class PropertyCollector: SyntaxVisitor {
 
     guard let _ = binding.typeAnnotation else {
       onError(node, MacroError(message: "Requires a type annotation, such as `identifier: Type`"))
-      return super.visit(node)
+      return .skipChildren
     }
 
     let isConstant = node.bindingSpecifier == "let"
 
     if isConstant {
       properties.append(.storedConstant(binding))
-      return super.visit(node)
+      return .skipChildren
     }
 
     guard let accessorBlock = binding.accessorBlock else {
       properties.append(.storedVaraiable(binding))
-      return super.visit(node)
+      return .skipChildren
     }
 
     // computed property
@@ -190,10 +190,10 @@ final class PropertyCollector: SyntaxVisitor {
       }
     case .getter:
       properties.append(.computedGetOnly(binding))
-      return super.visit(node)
+      return .skipChildren
     }
 
-    return .visitChildren
+    return .skipChildren
   }
 
 }

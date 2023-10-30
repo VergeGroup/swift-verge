@@ -15,6 +15,14 @@ final class WritingStateTests: XCTestCase {
       "Mr. " + name
     }
 
+    var computedAge: Int {
+
+      let age = age
+
+      return age
+
+    }
+
   }
 
   func testObserve() {
