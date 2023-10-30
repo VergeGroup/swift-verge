@@ -30,7 +30,7 @@ import Foundation
  - Warning: Do not retain this object anywhere.
  */
 @dynamicMemberLookup
-public struct InoutRef<Wrapped>: ~Copyable {
+public struct InoutRef<Wrapped> {
 
   // MARK: - Nested types
 
