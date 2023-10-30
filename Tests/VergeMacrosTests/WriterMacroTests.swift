@@ -172,8 +172,7 @@ final class WriterMacroTests: XCTestCase {
               yield &pointer.pointee.stored_property_wrapper
             }
           }
-          }ss
-        
+          }
         }
         """#,
       macros: ["Writing": WriterMacro.self]
