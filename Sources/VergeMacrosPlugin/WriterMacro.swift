@@ -58,25 +58,15 @@ extension WriterMacro: ExtensionMacro {
           }
         }
         """
-      case .computedGetOnly(let b):
+      case .computedGetOnly(let b, let accessorBlock):
         """
-        public var \(b.pattern): \(b.typeAnnotation!.type) {
-          _read {
-            yield pointer.pointee.\(b.pattern)
-          }
-        }
+        public var \(b.pattern): \(b.typeAnnotation!.type)
+        \(accessorBlock.trimmed { _ in true })
         """
-      case .computed(let b):
+      case .computed(let b, let accessorBlock):
         """
-        public var \(b.pattern): \(b.typeAnnotation!.type) {
-          _read {
-            yield pointer.pointee.\(b.pattern)
-          }
-          _modify {
-            modifiedIdentifiers.insert("\(b.pattern)")
-            yield &pointer.pointee.\(b.pattern)
-          }
-        }
+        public var \(b.pattern): \(b.typeAnnotation!.type)
+        \(accessorBlock)
         """
       }
 
@@ -138,13 +128,22 @@ final class PropertyCollector: SyntaxVisitor {
   enum Property {
     case storedConstant(PatternBindingListSyntax.Element)
     case storedVaraiable(PatternBindingListSyntax.Element)
-    case computedGetOnly(PatternBindingListSyntax.Element)
-    case computed(PatternBindingListSyntax.Element)
+    case computedGetOnly(PatternBindingListSyntax.Element, AccessorBlockSyntax)
+    case computed(PatternBindingListSyntax.Element, AccessorBlockSyntax)
   }
 
   var properties: [Property] = []
 
   var onError: (any SyntaxProtocol, Error) -> Void = { _, _ in }
+
+  override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
+    // walk only toplevel variables
+    return .skipChildren
+  }
+
+  override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
+    return .skipChildren
+  }
 
   override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
 
@@ -184,12 +183,12 @@ final class PropertyCollector: SyntaxVisitor {
         $0.accessorSpecifier == "set" || $0.accessorSpecifier == "_modify"
       }
       if hasSetter {
-        properties.append(.computed(binding))
+        properties.append(.computed(binding, accessorBlock))
       } else {
-        properties.append(.computedGetOnly(binding))
+        properties.append(.computedGetOnly(binding, accessorBlock))
       }
     case .getter:
-      properties.append(.computedGetOnly(binding))
+      properties.append(.computedGetOnly(binding, accessorBlock))
       return .skipChildren
     }
 

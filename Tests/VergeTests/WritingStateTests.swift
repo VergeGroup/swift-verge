@@ -12,15 +12,29 @@ final class WritingStateTests: XCTestCase {
     @ReferenceEdge var edge: Int = 0
 
     var computedName: String {
-      "Mr. " + name
+      get {
+        "Mr. " + name
+      }
     }
 
     var computedAge: Int {
-
       let age = age
-
       return age
+    }
 
+    var computed_setter: String {
+      get {
+        name
+      }
+      set {
+        name = newValue
+      }
+    }
+
+    var nested: Nested = .init(name: "hello")
+
+    struct Nested {
+      var name = ""
     }
 
   }
@@ -35,6 +49,17 @@ final class WritingStateTests: XCTestCase {
 
     XCTAssert(r.modifiedIdentifiers.contains("name"))
 
+  }
+
+  func testModifyNested() {
+
+    var myState = MyState(name: "")
+
+    let r = myState.modify {
+      $0.nested.name = "hey"
+    }
+
+    XCTAssertEqual(myState.nested.name, "hey")
   }
 
 }
