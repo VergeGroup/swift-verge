@@ -82,74 +82,98 @@ final class WriterMacroTests: XCTestCase {
         }
 
         extension MyState: StateModifyingType {
-        }
 
-        extension MyState {
+          typealias ModifyingTarget = Self
 
-          public struct Modifying: MyStateModifyingType {
+          @discardableResult
+          public static func modify(source: inout Self, modifier: (inout Modifying) throws -> Void) rethrows -> ModifyingResult {
 
-            private let pointer: UnsafeMutablePointer<MyState >
+            try withUnsafeMutablePointer(to: &source) { pointer in
+              var modifying = Modifying(pointer: pointer)
+              try modifier(&modifying)
+              return ModifyingResult(modifiedIdentifiers: modifying.modifiedIdentifiers)
+            }
+          }
 
-            init(pointer: UnsafeMutablePointer<MyState >) {
+          public struct Modifying /* want to be ~Copyable */ {
+
+            public var modifiedIdentifiers: Set<String> = .init()
+
+            private let pointer: UnsafeMutablePointer<ModifyingTarget>
+
+            init(pointer: UnsafeMutablePointer<ModifyingTarget>) {
               self.pointer = pointer
             }
 
             public var constant_has_initial_value: Int  {
-              _read {
-                yield pointer.pointee.constant_has_initial_value
-              }
-              _modify {
-                yield &pointer.pointee.constant_has_initial_value
-              }
+            _read {
+              yield pointer.pointee.constant_has_initial_value
             }
-            public var variable_has_initial_value: String  {
-              _read {
-                yield pointer.pointee.variable_has_initial_value
-              }
-              _modify {
-                yield &pointer.pointee.variable_has_initial_value
-              }
-            }
-            public var constant_no_initial_value: Int {
-              _read {
-                yield pointer.pointee.constant_no_initial_value
-              }
-              _modify {
-                yield &pointer.pointee.constant_no_initial_value
-              }
-            }
-            public var variable_no_initial_value: String {
-              _read {
-                yield pointer.pointee.variable_no_initial_value
-              }
-              _modify {
-                yield &pointer.pointee.variable_no_initial_value
-              }
-            }
-            public var computed_read_only: Int  {
-              _read {
-                yield pointer.pointee.computed_read_only
-              }
-            }
-            public var computed_read_only2: Int  {
-              _read {
-                yield pointer.pointee.computed_read_only2
-              }
-            }
-            public var computed_readwrite: String  {
-              _read {
-                yield pointer.pointee.computed_readwrite
-              }
-            }
-            public var stored_property_wrapper: String  {
-              _read {
-                yield pointer.pointee.stored_property_wrapper
-              }
-              _modify {
-                yield &pointer.pointee.stored_property_wrapper
-              }
+            _modify {
+              modifiedIdentifiers.insert("constant_has_initial_value")
+              yield &pointer.pointee.constant_has_initial_value
             }
           }
+
+          public var variable_has_initial_value: String  {
+            _read {
+              yield pointer.pointee.variable_has_initial_value
+            }
+            _modify {
+              modifiedIdentifiers.insert("variable_has_initial_value")
+              yield &pointer.pointee.variable_has_initial_value
+            }
+          }
+
+          public var constant_no_initial_value: Int {
+            _read {
+              yield pointer.pointee.constant_no_initial_value
+            }
+            _modify {
+              modifiedIdentifiers.insert("constant_no_initial_value")
+              yield &pointer.pointee.constant_no_initial_value
+            }
+          }
+
+          public var variable_no_initial_value: String {
+            _read {
+              yield pointer.pointee.variable_no_initial_value
+            }
+            _modify {
+              modifiedIdentifiers.insert("variable_no_initial_value")
+              yield &pointer.pointee.variable_no_initial_value
+            }
+          }
+
+          public var computed_read_only: Int  {
+            _read {
+              yield pointer.pointee.computed_read_only
+            }
+          }
+
+          public var computed_read_only2: Int  {
+            _read {
+              yield pointer.pointee.computed_read_only2
+            }
+          }
+
+          public var computed_readwrite: String  {
+            _read {
+              yield pointer.pointee.computed_readwrite
+            }
+          }
+
+          public var stored_property_wrapper: String  {
+            _read {
+              yield pointer.pointee.stored_property_wrapper
+            }
+            _modify {
+              modifiedIdentifiers.insert("stored_property_wrapper")
+              yield &pointer.pointee.stored_property_wrapper
+            }
+          }
+          }ss
+        
         }
         """#,
       macros: ["Writing": WriterMacro.self]
