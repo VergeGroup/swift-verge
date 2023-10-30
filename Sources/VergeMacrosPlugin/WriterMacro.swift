@@ -118,16 +118,16 @@ extension WriterMacro: ExtensionMacro {
       """ as DeclSyntax)
 
     return [
-      modifyingDecl.formatted(
-        using: .init(
-          indentationWidth: .spaces(2),
-          initialIndentation: [],
-          viewMode: .fixedUp
+      modifyingDecl
+        .formatted(
+          using: .init(
+            indentationWidth: .spaces(2),
+            initialIndentation: [],
+            viewMode: .fixedUp
+          )
         )
-      ),
-    ].map {
-      $0.cast(ExtensionDeclSyntax.self)
-    }
+        .cast(ExtensionDeclSyntax.self)
+    ]
 
   }
 
