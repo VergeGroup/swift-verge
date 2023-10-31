@@ -94,6 +94,8 @@ extension NormalizedStorageMacro: ExtensionMacro {
         public func select(storage: Storage) -> _Table {
           storage.\(member.node.bindings.first!.pattern.trimmed)
         }
+
+        public init() {}
       }
       """
       }
