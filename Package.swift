@@ -24,6 +24,7 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-docc-plugin.git", from: "1.3.0"),
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
     .package(url: "https://github.com/FluidGroup/swift-collections", from: "1.1.0"),
+    .package(url: "https://github.com/VergeGroup/swift-macro-struct-transaction", from: "0.1.0"),
     .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
 
     /// for testing
@@ -51,6 +52,7 @@ let package = Package(
       dependencies: [
         "VergeMacros",
         "VergeComparator",
+        .product(name: "StructTransaction", package: "swift-macro-struct-transaction"),
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "DequeModule", package: "swift-collections"),
         .product(name: "ConcurrencyTaskManager", package: "swift-concurrency-task-manager"),
