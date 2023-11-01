@@ -111,6 +111,33 @@ public struct NormalizedStorageTablePath<
 
   }
 
+  public func derived(
+    entityIDs: some Sequence<Entity.EntityID>
+  ) -> DerivedResult<Entity, Derived<EntityWrapper<Entity>>> {
+
+    var result = DerivedResult<Entity, Derived<EntityWrapper<Entity>>>()
+
+    for id in entityIDs {
+      result.append(
+        derived: store.derivedEntity(
+          selector: .init(storage: storageSelector, table: tableSelector),
+          entityID: id
+        ),
+        id: id
+      )
+    }
+
+    return result
+
+  }
+
+  public func derived(
+    insertionResults: some Sequence<InsertionResult<Entity>>
+  ) -> DerivedResult<Entity, Derived<EntityWrapper<Entity>>> {
+
+    derived(entityIDs: insertionResults.map { $0.entityID })
+  }
+
   // MARK: - NonNull
 
   /// Returns a derived object that provides a concrete entity according to the updating source state
