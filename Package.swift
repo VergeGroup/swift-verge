@@ -15,6 +15,7 @@ let package = Package(
     .library(name: "VergeTiny", targets: ["VergeTiny"]),
     .library(name: "VergeORM", targets: ["VergeORM"]),
     .library(name: "VergeNormalization", targets: ["VergeNormalization"]),
+    .library(name: "VergeNormalizationDerived", targets: ["VergeNormalizationDerived"]),
     .library(name: "VergeRx", targets: ["VergeRx"]),
     .library(name: "VergeClassic", targets: ["VergeClassic"]),
     .library(name: "VergeMacros", targets: ["VergeMacros"]),
