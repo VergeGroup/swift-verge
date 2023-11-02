@@ -54,6 +54,10 @@ public struct NormalizedStoragePath<
     self.storageSelector = storageSelector
   }
 
+  public var tables: Storage.TablesRouter {
+    .init()
+  }
+
   public func table<Selector: TableSelector>(
     _ selector: Selector
   ) -> NormalizedStorageTablePath<Store, _StorageSelector, Selector> where Selector.Storage == _StorageSelector.Storage {

@@ -1,7 +1,7 @@
 
 //@attached(member, names: arbitrary)
 //@attached(memberAttribute)
-@attached(extension, conformances: NormalizedStorageType, Equatable, names: named(Context), named(BBB), arbitrary)
+@attached(extension, conformances: NormalizedStorageType, Equatable, names: arbitrary)
 public macro NormalizedStorage() = #externalMacro(module: "VergeMacrosPlugin", type: "NormalizedStorageMacro")
 
 @attached(peer)

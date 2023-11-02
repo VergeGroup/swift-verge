@@ -76,8 +76,30 @@ extension NormalizedStorageMacro: ExtensionMacro {
           return true
         }
       }
-      """ as DeclSyntax).cast(ExtensionDeclSyntax.self)
+      """ as DeclSyntax)
 
+    }()
+
+    let tablesExtension = {
+
+      let members = tables.map { member in
+
+        let typedSelectorName = "TableSelector_\(member.node.bindings.first!.pattern.trimmed)"
+
+        return """
+        public var \(member.node.bindings.first!.pattern.trimmed): \(member.node.bindings.first!.typeAnnotation!.type.description) {
+          // use: \(typedSelectorName)
+        }
+        """
+      }
+
+      return ("""
+      extension \(structDecl.name.trimmed) {
+        struct TablesRouter: NormalizedStorageTableRouterType {
+      \(raw: members.joined(separator: "\n"))
+        }
+      }
+      """ as DeclSyntax)
     }()
 
     let selectorsExtension = {
@@ -102,12 +124,13 @@ extension NormalizedStorageMacro: ExtensionMacro {
 
       return ("""
       extension \(structDecl.name.trimmed) {
-        \(raw: decls.joined(separator: "\n"))
+      \(raw: decls.joined(separator: "\n"))
       }
-      """ as DeclSyntax).cast(ExtensionDeclSyntax.self)
+      """ as DeclSyntax)
     }()
     
-    return [
+    return ([
+      tablesExtension,
       comparatorExtension,
       selectorsExtension,
       ("""
@@ -116,11 +139,11 @@ extension NormalizedStorageMacro: ExtensionMacro {
       ("""
       extension \(structDecl.name.trimmed): Equatable {}
       """ as DeclSyntax).cast(ExtensionDeclSyntax.self),
-      ("""
-      extension \(structDecl.name.trimmed) {
+    ] as [SyntaxProtocol])
+      .map {
+        $0.formatted(using: .init(indentationWidth: .spaces(2)))
+          .cast(ExtensionDeclSyntax.self)
       }
-      """ as DeclSyntax).cast(ExtensionDeclSyntax.self)
-    ]
   }
 
 }

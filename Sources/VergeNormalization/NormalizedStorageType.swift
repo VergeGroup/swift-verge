@@ -1,5 +1,16 @@
 
+public protocol NormalizedStorageTableRouterType {
+
+  associatedtype Storage: NormalizedStorageType
+  associatedtype Store: DerivedMaking & AnyObject
+
+  init(store: Store)
+
+}
+
 public protocol NormalizedStorageType: Equatable, Sendable {
+
+  associatedtype TablesRouter: NormalizedStorageTableRouterType where TablesRouter.Storage == Self
 
   /**
    Performs any additional operations for updating.
