@@ -34,14 +34,22 @@ jobs:
           --transform-for-static-hosting 
           --hosting-base-path swift-Verge/Verge
           --output-path public/Verge   
-      - name: Build VergeORM
-        run: swift package --allow-writing-to-directory public/VergeORM 
+      - name: Build VergeNormalization
+        run: swift package --allow-writing-to-directory public/VergeNormalization
           generate-documentation
-          --target VergeORM
+          --target VergeNormalization
           --disable-indexing 
           --transform-for-static-hosting 
-          --hosting-base-path swift-Verge/VergeORM
-          --output-path public/VergeORM          
+          --hosting-base-path swift-Verge/VergeNormalization
+          --output-path public/VergeNormalization  
+      - name: Build VergeNormalizationDerived
+        run: swift package --allow-writing-to-directory public/VergeNormalizationDerived
+          generate-documentation
+          --target VergeNormalizationDerived
+          --disable-indexing 
+          --transform-for-static-hosting 
+          --hosting-base-path swift-Verge/VergeNormalizationDerived
+          --output-path public/VergeNormalizationDerived             
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
