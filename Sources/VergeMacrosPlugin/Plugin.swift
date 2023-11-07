@@ -10,6 +10,7 @@ struct Plugin: CompilerPlugin {
     IfChangedMacro.self,
 
     NormalizedStorageMacro.self,
+    NormalizedStorageDerivingMacro.self,
     TableMacro.self,
     IndexMacro.self,
     KeyPathMap.self,

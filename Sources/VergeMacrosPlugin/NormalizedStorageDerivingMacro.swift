@@ -2,11 +2,11 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public struct NormalizedStorageMacro: Macro {
+public struct NormalizedStorageDerivingMacro: Macro {
 
 }
 
-extension NormalizedStorageMacro: ExtensionMacro {
+extension NormalizedStorageDerivingMacro: ExtensionMacro {
 
   struct Table {
     let node: VariableDeclSyntax
@@ -42,14 +42,18 @@ extension NormalizedStorageMacro: ExtensionMacro {
       .filter {
         guard $0.bindings.count == 1 else {
           context.addDiagnostics(
-            from: MacroError(message: "@Table macro does not support multiple binding, such as `let a, b = 0`"),
+            from: MacroError(
+              message: "@Table macro does not support multiple binding, such as `let a, b = 0`"
+            ),
             node: $0
           )
           return false
         }
         guard $0.bindings.first!.typeAnnotation != nil else {
           context.addDiagnostics(
-            from: MacroError(message: "@Table macro requires a type annotation, such as `identifier: Type`"),
+            from: MacroError(
+              message: "@Table macro requires a type annotation, such as `identifier: Type`"
+            ),
             node: $0
           )
           return false
@@ -60,77 +64,103 @@ extension NormalizedStorageMacro: ExtensionMacro {
         return Table.init(node: $0, typeAnnotation: $0.bindings.first!.typeAnnotation!)
       }
 
-    let comparatorExtension = {
+    let tablesExtension = {
 
-      let markerComparators = tables.map { member in
-        member.node.bindings.first!.pattern.trimmed
-      }
-      .map { name in
-        "guard lhs.\(name).updatedMarker == rhs.\(name).updatedMarker else { return lhs == rhs }"
+      let members = tables.map { member in
+
+        let typedSelectorName = "TableSelector_\(member.node.bindings.first!.pattern.trimmed)"
+
+        return """
+          public var \(member.node.bindings.first!.pattern.trimmed): NormalizedStorageTablePath<Store, _StorageSelector, \(typedSelectorName)> {
+            self.table(\(typedSelectorName)())
+          }
+          """
       }
 
-      return ("""
-      extension \(structDecl.name.trimmed) {
-        public static func compare(lhs: Self, rhs: Self) -> Bool {
-          \(raw: markerComparators.joined(separator: "\n"))
-          return true
+      return
+        (#"""
+      extension \#(structDecl.name.trimmed): NormalizedStorageDerivingType {
+
+        /**
+         The entrypoint to make Derived object from the storage
+         */
+        public struct NormalizedStoragePath<
+          Store: DerivedMaking & AnyObject,
+          _StorageSelector: StorageSelector
+        >: NoromalizedStoragePathType where Store.State == _StorageSelector.Source, _StorageSelector.Storage == \#(structDecl.name.trimmed) {
+
+          public typealias Storage = _StorageSelector.Storage
+          unowned let store: Store
+          let storageSelector: _StorageSelector
+
+          public init(
+            store: Store,
+            storageSelector: _StorageSelector
+          ) {
+
+            self.store = store
+            self.storageSelector = storageSelector
+          }
+
+          public func table<Selector: TableSelector>(
+            _ selector: Selector
+          ) -> NormalizedStorageTablePath<Store, _StorageSelector, Selector> where Selector.Storage == _StorageSelector.Storage {
+            return .init(
+              store: store,
+              storageSelector: storageSelector,
+              tableSelector: selector
+            )
+          }
+
+      \#(raw: members.joined(separator: "\n"))
+
+          /**
+           Make a new Derived of a composed object from the storage.
+           This is an effective way to resolving relationship entities into a single object. it's like SQLite's view.
+
+           ```
+           store.normalizedStorage(.keyPath(\.db)).derived {
+             MyComposed(
+               book: $0.book.find(...)
+               author: $0.author.find(...)
+             )
+           }
+           ```
+
+           This Derived makes a new composed object if the storage has updated.
+           There is not filters for entity tables so that Derived possibly makes a new object if not related entity has updated.
+           */
+          public func derived<Composed: Equatable>(query: @escaping @Sendable (Self.Storage) -> Composed) -> Derived<Composed> {
+            return store.derived(QueryPipeline(storageSelector: storageSelector, query: query), queue: .passthrough)
+          }
         }
       }
-      """ as DeclSyntax)
-
+      """# as DeclSyntax)
     }()
 
-    let selectorsExtension = {
+    let superextensions = try NormalizedStorageMacro.expansion(
+      of: node,
+      attachedTo: declaration,
+      providingExtensionsOf: type,
+      conformingTo: protocols,
+      in: context
+    )
 
-      let decls = tables.map { member in
-      """
-      public struct TableSelector_\(member.node.bindings.first!.pattern.trimmed): TableSelector {
-        public typealias _Table = \(member.node.bindings.first!.typeAnnotation!.type.description)
-        public typealias Entity = _Table.Entity
-        public typealias Storage = \(structDecl.name.trimmed)
-
-        public let identifier: String = "\(member.node.bindings.first!.pattern.trimmed)"
-
-        public func select(storage: Storage) -> _Table {
-          storage.\(member.node.bindings.first!.pattern.trimmed)
-        }
-
-        public init() {}
-      }
-      """
-      }
-
-      return ("""
-      extension \(structDecl.name.trimmed) {
-      \(raw: decls.joined(separator: "\n"))
-      }
-      """ as DeclSyntax)
-    }()
-    
-    return ([
-      comparatorExtension,
-      selectorsExtension,
-      ("""
-      extension \(structDecl.name.trimmed): NormalizedStorageType {}
-      """ as DeclSyntax).cast(ExtensionDeclSyntax.self),
-      ("""
-      extension \(structDecl.name.trimmed): Equatable {}
-      """ as DeclSyntax).cast(ExtensionDeclSyntax.self),
-      ("""
-      extension \(structDecl.name.trimmed): Sendable {}
-      """ as DeclSyntax).cast(ExtensionDeclSyntax.self),
-    ] as [SyntaxProtocol])
+    return
+      ([
+        tablesExtension,
+      ] as [SyntaxProtocol])
       .map {
         $0.formatted(using: .init(indentationWidth: .spaces(2)))
           .cast(ExtensionDeclSyntax.self)
-      }
+      } + superextensions
   }
 
 }
 
 #if false
 /// Add @Table
-extension NormalizedStorageMacro: MemberAttributeMacro {
+extension NormalizedStorageDerivingMacro: MemberAttributeMacro {
 
   public static func expansion(
     of node: SwiftSyntax.AttributeSyntax,
@@ -156,9 +186,9 @@ extension NormalizedStorageMacro: MemberAttributeMacro {
         return []
       }
 
-//            if isComputedProperty(from: variableDecl) {
-//              return []
-//            }
+      //            if isComputedProperty(from: variableDecl) {
+      //              return []
+      //            }
 
       return [
         "@Table"
@@ -172,10 +202,10 @@ extension NormalizedStorageMacro: MemberAttributeMacro {
 
 }
 
-
+#endif
 
 /// Add member
-extension NormalizedStorageMacro: MemberMacro {
+extension NormalizedStorageDerivingMacro: MemberMacro {
 
   final class RenamingVisitor: SyntaxRewriter {
 
@@ -236,7 +266,6 @@ extension NormalizedStorageMacro: MemberMacro {
     in context: some SwiftSyntaxMacros.MacroExpansionContext
   ) throws -> [SwiftSyntax.DeclSyntax] {
 
-
     let v = StoredPropertyCollector(viewMode: .fixedUp)
     v.onFoundMultipleBindings = {
       context.addDiagnostics(from: MacroError(message: "Cannot use multiple bindings"), node: node)
@@ -247,15 +276,14 @@ extension NormalizedStorageMacro: MemberMacro {
       .map(makeVariableFromConstant)
       .map {
 
-      let rename = RenamingVisitor()
-      let renamed = rename.visit($0)
+        let rename = RenamingVisitor()
+        let renamed = rename.visit($0)
 
-      return renamed
-    }
+        return renamed
+      }
 
     return storageMembers
 
   }
 
 }
-#endif
