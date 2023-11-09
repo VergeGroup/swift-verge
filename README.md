@@ -13,6 +13,7 @@
 </p>
 
 - [Verge Docs](https://vergegroup.github.io/swift-Verge/Verge/documentation/verge/)
+- [VergeNormalization Docs](https://vergegroup.github.io/swift-Verge/VergeNormalization/documentation/vergenormalization/)
 
 ## Support this projects
 <a href="https://www.buymeacoffee.com/muukii">
