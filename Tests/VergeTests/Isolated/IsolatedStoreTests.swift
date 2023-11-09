@@ -117,7 +117,7 @@ final class ActorIsolatedStoreTests: XCTestCase {
 
     XCTAssertEqual(store.state.count, 0)
 
-    await store.backgroundCommit {
+    await store.commit {
       $0.count = 1
     }
 
@@ -131,7 +131,7 @@ final class ActorIsolatedStoreTests: XCTestCase {
 
     XCTAssertEqual(store.state.count, 0)
 
-    await store.backgroundCommit {
+    await store.commit {
       $0.count = 1
     }
 

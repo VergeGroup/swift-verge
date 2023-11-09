@@ -13,7 +13,7 @@ final class TransactionTests: XCTestCase {
 
     let store = AsyncStore<DemoState, Never>(initialState: .init())
 
-    await store.backgroundCommit {
+    await store.commit {
       $0.markAsModified()
       $1[MyKey.self] = "first commit"
     }
