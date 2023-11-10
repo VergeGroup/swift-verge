@@ -154,24 +154,49 @@ public final class AsyncStore<State: StateType, Activity>: DerivedMaking, Sendab
     self.backingStore = .init(initialState: initialState, storeOperation: .atomic(.init()), logger: nil, sanitizer: nil)
   }
 
-  public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<State>) throws -> Result
+  public func commit<Result>(
+    mutation: @Sendable (inout InoutRef<State>) throws -> Result
   ) async rethrows -> Result {
-
     try await writer.perform { _ in
       try backingStore._receive(mutation: { state, _ in try mutation(&state) })
     }
-
   }
 
-  public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+  public func commit<Result>(
+    mutation: @Sendable (inout InoutRef<State>, inout Transaction) throws -> Result
   ) async rethrows -> Result {
-
     try await writer.perform { _ in
       try backingStore._receive(mutation: mutation)
     }
+  }
 
+  /**
+   Adds an asynchronous task to perform.
+
+   Use this function to perform an asynchronous task with a lifetime that matches that of this store.
+   If this store is deallocated ealier than the given task finished, that asynchronous task will be cancelled.
+
+   Carefully use this function - If the task retains this store, it will continue to live until the task is finished.
+
+   - Parameters:
+   - key:
+   - mode:
+   - priority:
+   - action
+   - Returns: A Task for tracking given async operation's completion.
+   */
+  @discardableResult
+  public func task<Return>(
+    key: ConcurrencyTaskManager.TaskKey = .distinct(),
+    mode: ConcurrencyTaskManager.TaskManagerActor.Mode = .dropCurrent,
+    priority: TaskPriority = .userInitiated,
+    @_inheritActorContext _ action: @Sendable @escaping () async throws -> Return
+  ) -> Task<Return, Error> {
+    backingStore.task(key: key, mode: mode, priority: priority, action)
+  }
+
+  public func add(middleware: some StoreMiddlewareType<State>) {
+    backingStore.add(middleware: middleware)
   }
 
   /// Send activity
@@ -413,12 +438,12 @@ public protocol AsyncStoreDriverType {
   var store: AsyncStore<State, Activity> { get }
   var scope: WritableKeyPath<State, Scope> { get }
 
-  func backgroundCommit<Result>(
-    mutation: (inout InoutRef<State>) throws -> Result
+  func commit<Result>(
+    mutation: @Sendable (inout InoutRef<Scope>) throws -> Result
   ) async rethrows -> Result
 
-  func backgroundCommit<Result>(
-    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+  func commit<Result>(
+    mutation: @Sendable (inout InoutRef<Scope>, inout Transaction) throws -> Result
   ) async rethrows -> Result
 }
 
@@ -446,11 +471,11 @@ extension AsyncStoreDriverType {
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<Scope>) throws -> Result
+  public func commit<Result>(
+    mutation: @Sendable (inout InoutRef<Scope>) throws -> Result
   ) async rethrows -> Result {
 
-    return try await store.backgroundCommit { ref in
+    return try await store.commit { ref in
       try ref.map(keyPath: scope, perform: mutation)
     }
 
@@ -459,11 +484,11 @@ extension AsyncStoreDriverType {
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+  public func commit<Result>(
+    mutation: @Sendable (inout InoutRef<Scope>, inout Transaction) throws -> Result
   ) async rethrows -> Result {
 
-    return try await store.backgroundCommit { ref, transaction in
+    return try await store.commit { ref, transaction in
       try ref.map(keyPath: scope, perform: {
         try mutation(&$0, &transaction)
       })
@@ -522,22 +547,22 @@ extension AsyncStoreDriverType where Scope == State {
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<Scope>) throws -> Result
+  public func commit<Result>(
+    mutation: @Sendable (inout InoutRef<Scope>) throws -> Result
   ) async rethrows -> Result {
 
-    return try await store.backgroundCommit(mutation: mutation)
+    return try await store.commit(mutation: mutation)
 
   }
 
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func backgroundCommit<Result>(
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+  public func commit<Result>(
+    mutation: @Sendable (inout InoutRef<Scope>, inout Transaction) throws -> Result
   ) async rethrows -> Result {
 
-    return try await store.backgroundCommit(mutation: mutation)
+    return try await store.commit(mutation: mutation)
 
   }
 }
