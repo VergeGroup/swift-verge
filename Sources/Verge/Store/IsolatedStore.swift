@@ -119,6 +119,35 @@ public final class MainActorStore<State: StateType, Activity>: DerivedMaking, Se
 
     return derived
   }
+
+  /**
+   Adds an asynchronous task to perform.
+
+   Use this function to perform an asynchronous task with a lifetime that matches that of this store.
+   If this store is deallocated ealier than the given task finished, that asynchronous task will be cancelled.
+
+   Carefully use this function - If the task retains this store, it will continue to live until the task is finished.
+
+   - Parameters:
+   - key:
+   - mode:
+   - priority:
+   - action
+   - Returns: A Task for tracking given async operation's completion.
+   */
+  @discardableResult
+  public func task<Return>(
+    key: ConcurrencyTaskManager.TaskKey = .distinct(),
+    mode: ConcurrencyTaskManager.TaskManagerActor.Mode = .dropCurrent,
+    priority: TaskPriority = .userInitiated,
+    @_inheritActorContext _ action: @Sendable @escaping () async throws -> Return
+  ) -> Task<Return, Error> {
+    backingStore.task(key: key, mode: mode, priority: priority, action)
+  }
+
+  public func add(middleware: some StoreMiddlewareType<State>) {
+    backingStore.add(middleware: middleware)
+  }
 }
 
 public final class AsyncStore<State: StateType, Activity>: DerivedMaking, Sendable, AsyncStoreDriverType, ObservableObject {
@@ -317,6 +346,12 @@ public protocol MainActorStoreDriverType {
   func commit<Result>(
     mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
   ) rethrows -> Result
+
+  func derived<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: some TargetQueueType
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State>
+
 }
 
 extension MainActorStoreDriverType {
@@ -404,6 +439,13 @@ extension MainActorStoreDriverType {
     return store.sinkState(dropsFirst: dropsFirst, queue: queue, receive: { state in
       receive(state.map({ $0[keyPath: scope] }))
     })
+  }
+
+  public nonisolated func derived<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: some TargetQueueType = .passthrough
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State> {
+    return store.derived(pipeline, queue: queue)
   }
 }
 
