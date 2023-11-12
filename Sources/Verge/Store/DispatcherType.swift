@@ -40,6 +40,10 @@ extension DispatcherType {
   public nonisolated var state: Changes<Scope> {
     store.state.map { $0[keyPath: scope] }
   }
+
+  public nonisolated var rootState: Changes<State> {
+    return store.state
+  }
 }
 
 extension DispatcherType where Scope == State {
@@ -295,7 +299,7 @@ extension DispatcherType {
     )
 
     return try store.asStore()._receive(
-      mutation: { state -> Result in
+      mutation: { state, transaction -> Result in
         try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
           ref.append(trace: trace)
           return try mutation(&ref)
@@ -332,7 +336,7 @@ extension DispatcherType {
     mutation: (inout InoutRef<Scope>) throws -> Result
   ) rethrows -> Result where Scope == WrappedStore.State {
     return try store.asStore()._receive(
-      mutation: { ref -> Result in
+      mutation: { ref, transaction -> Result in
         ref.append(trace: trace)
         return try mutation(&ref)
       }
@@ -341,11 +345,11 @@ extension DispatcherType {
 
   public func detached<NewScope: Equatable>(from newScope: WritableKeyPath<WrappedStore.State, NewScope>)
   -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
-    .init(targetStore: store.asStore(), scope: newScope)
+    .init(store: store.asStore(), scope: newScope)
   }
 
   public func detached<NewScope: Equatable>(by appendingScope: WritableKeyPath<Scope, NewScope>)
   -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
-    .init(targetStore: store.asStore(), scope: scope.appending(path: appendingScope))
+    .init(store: store.asStore(), scope: scope.appending(path: appendingScope))
   }
 }

@@ -48,49 +48,64 @@ public protocol PipelineType<Input, Output> {
  This will be helpful in performance. Therefore most type parameters require Equatable.
  */
 public enum Pipelines {
-  
+
+  /// KeyPath based pipeline, light weight operation just take value from source.
+  public struct ChangesSelectPassthroughPipeline<Source: Equatable, Output: Equatable>: PipelineType {
+
+    public typealias Input = Changes<Source>
+
+    public let selector: (borrowing Input.Value) -> Output
+
+    public init(
+      selector: @escaping (borrowing Input.Value) -> Output
+    ) {
+      self.selector = selector
+    }
+
+    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+
+      let target = input._read(perform: selector)
+
+      return .new(consume target)
+
+    }
+
+    public func yield(_ input: Input) -> Output {
+      input._read(perform: selector)
+    }
+
+  }
+
   /// KeyPath based pipeline, light weight operation just take value from source.
   public struct ChangesSelectPipeline<Source: Equatable, Output: Equatable>: PipelineType {
     
     public typealias Input = Changes<Source>
     
-    public let keyPath: KeyPath<Input.Value, Output>
+    public let selector: (borrowing Input.Value) -> Output
     public let additionalDropCondition: ((Input) -> Bool)?
     
     public init(
-      keyPath: KeyPath<Input.Value, Output>,
+      selector: @escaping (borrowing Input.Value) -> Output,
       additionalDropCondition: ((Input) -> Bool)?
     ) {
-      self.keyPath = keyPath
+      self.selector = selector
       self.additionalDropCondition = additionalDropCondition
     }
     
     public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
       
-      // TODO: Using keypath to look up modification
-//      if let modification = input.modification {
-//        switch modification {
-//        case .indeterminate:
-//          break
-//        case .determinate(_, let changesKeyPaths):
-//          
-//          if changesKeyPaths.contains(keyPath) == false {
-//            return .noUpdates
-//          }
-//          
-//        }
-//      }
-            
       guard let previous = input.previous else {
-        return .new(input.primitive[keyPath: keyPath])
+        return .new(input._read(perform: selector))
       }
-      
+
+      let target = input._read(perform: selector)
+
       guard
-        previous.primitive[keyPath: keyPath] == input.primitive[keyPath: keyPath]
+        previous._read(perform: selector) == target
       else {
         
         guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-          return .new(input.primitive[keyPath: keyPath])
+          return .new(consume target)
         }
         
         return .noUpdates
@@ -101,12 +116,12 @@ public enum Pipelines {
     }
     
     public func yield(_ input: Input) -> Output {
-      input.primitive[keyPath: keyPath]
+      input._read(perform: selector)
     }
     
     public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
       return .init(
-        keyPath: keyPath,
+        selector: selector,
         additionalDropCondition: additionalDropCondition.map { currentCondition in
           { input in
             currentCondition(input) || predicate(input)
@@ -246,20 +261,20 @@ extension PipelineType {
    
    exactly same with ``PipelineType/select(_:)``
    */
-  public static func map<Input, Output>(_ keyPath: KeyPath<Input, Output>) -> Self
+  public static func map<Input, Output>(_ selector: @escaping (borrowing Input) -> Output) -> Self
   where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
-    select(keyPath)
+    select(selector)
   }
   
   /**
    For Changes input
-   Produces output values using KeyPath-based projection.
-   
+   Produces output values using closure based projection.
+
    exactly same with ``PipelineType/map(_:)-7xvom``
    */
-  public static func select<Input, Output>(_ keyPath: KeyPath<Input, Output>) -> Self
+  public static func select<Input, Output>(_ selector: @escaping (borrowing Input) -> Output) -> Self
   where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
-    self.init(keyPath: keyPath, additionalDropCondition: nil)
+    self.init(selector: selector, additionalDropCondition: nil)
   }
 }
 
@@ -308,24 +323,6 @@ extension PipelineType {
     )
   }
   
-  /**
-   For Changes input
-   Produces output values using closure-based projection.
-   
-   ## 💡Tips
-   Consider to use intermediate value with `using` parameter variant if `map` closure takes much higher cost.
-   */
-  public static func map<Input, Output>(
-    _ transform: @escaping (Input) -> Output
-  ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesMapPipeline<Input, Input, Output> {
-    
-    self.init(
-      intermediate: { $0 },
-      transform: transform,
-      additionalDropCondition: nil
-    )
-  }
-
 }
 
 public struct PipelineIntermediate<T>: Equatable {

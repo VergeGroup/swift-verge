@@ -114,6 +114,13 @@ extension TargetQueueType where Self == Queues.Passthrough  {
 
 }
 
+extension TargetQueueType where Self == Queues.AsyncBackground {
+  /// It dispatches to the serial background queue asynchronously.
+  public static var asyncSerialBackground: Self {
+    self.init()
+  }
+}
+
 extension TargetQueueType where Self == AnyTargetQueue {
 
 
@@ -123,10 +130,7 @@ extension TargetQueueType where Self == AnyTargetQueue {
       targetQueue.async(execute: workItem)
     }
   }
-  /// It dispatches to the serial background queue asynchronously.
-  public static var asyncSerialBackground: AnyTargetQueue {
-    AnyTargetQueue._asyncSerialBackground
-  }
+
 
   /// Enqueue first item on current-thread(synchronously).
   /// From then, using specified queue.
@@ -175,21 +179,6 @@ extension MainActorTargetQueue {
   }
 }
 
-extension AnyTargetQueue {
-
-  /// Returns a instance that never dispatches.
-  /// The Sink use this targetQueue performs in the queue which the upstream commit dispatched.
-  static let _passthrough: AnyTargetQueue = .init { workItem in
-    workItem()
-  }
-
-  /// It dispatches to the serial background queue asynchronously.
-  static let _asyncSerialBackground: AnyTargetQueue = .init { workItem in
-    StaticMember.serialBackgroundDispatchQueue.async(execute: workItem)
-  }
-
-}
-
 public enum Queues {
 
   struct MainActor: TargetQueueType {
@@ -214,4 +203,31 @@ public enum Queues {
 
   }
 
+  public struct AsyncBackground: TargetQueueType {
+
+    private let executor: BackgroundActor = .init()
+
+    public func execute(_ workItem: @escaping () -> Void) {
+      Task {
+        await executor.perform {
+          workItem()
+        }
+      }
+    }
+
+    private actor BackgroundActor: Actor {
+
+      init() {
+
+      }
+
+      func perform<R>(_ operation: () throws -> R) rethrows -> R {
+        try operation()
+      }
+
+    }
+
+  }
+
 }
+

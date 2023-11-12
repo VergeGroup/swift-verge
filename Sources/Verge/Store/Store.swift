@@ -80,7 +80,7 @@ actor Writer {
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, DispatcherType, @unchecked Sendable {
+open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, DispatcherType, DerivedMaking, @unchecked Sendable {
 
   public var scope: WritableKeyPath<State, State> = \State.self
 
@@ -118,12 +118,6 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   open var keepsAliveForSubscribers: Bool { false }
 
   private let wasInvalidated = Atomics.ManagedAtomic(false)
-
-  @_spi(NormalizedStorage)
-  @VergeConcurrency.UnfairLockAtomic public var _derivedCache: NSMapTable<KeyObject<AnyHashable>, AnyObject> = .init(keyOptions: [.copyIn, .objectPersonality], valueOptions: [.weakMemory])
-
-  @_spi(NormalizedStorage)
-  @VergeConcurrency.AtomicLazy public var _nonnull_derivedCache: NSMapTable<KeyObject<AnyHashable>, AnyObject> = .init(keyOptions: [.copyIn, .objectPersonality], valueOptions: [.weakMemory])
 
   // MARK: - Deinit
   
@@ -181,9 +175,12 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     
     // making reduced state
     var _initialState = initialState
-    var inoutRef = InoutRef<State>.init(&_initialState)
-    State.reduce(modifying: &inoutRef, current: .init(old: nil, new: initialState))
-    let reduced = inoutRef.wrapped
+
+    let reduced = withUnsafeMutablePointer(to: &_initialState) { pointer in
+      var inoutRef = InoutRef<State>.init(pointer)
+      State.reduce(modifying: &inoutRef, current: .init(old: nil, new: initialState))
+      return inoutRef.wrapped
+    }
     
     self.nonatomicValue = .init(old: nil, new: reduced)
     self._lock = storeOperation
@@ -198,7 +195,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
         with: inoutRef.wrapped,
         from: inoutRef.traces,
         modification: inoutRef.modification ?? .indeterminate,
-        transaction: inoutRef._transaction
+        transaction: state._transaction
       )
       State.reduce(modifying: &inoutRef, current: intermediate)
     }
@@ -260,8 +257,6 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
 extension Store {
   
   public typealias Scope = State
-  public typealias Dispatcher = DispatcherBase<State, Activity>
-  public typealias ScopedDispatcher<Scope: Equatable> = ScopedDispatcherBase<State, Activity, Scope>
   public typealias Value = State
 }
 
@@ -428,7 +423,7 @@ extension Store {
   ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
   func _receive<Result>(
-    mutation: (inout InoutRef<State>) throws -> Result
+    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
   ) rethrows -> Result {
     
     let signpost = VergeSignpostTransaction("Store.commit")
@@ -467,9 +462,10 @@ extension Store {
       
       let updateResult = try withUnsafeMutablePointer(to: &current) { (stateMutablePointer) -> UpdateResult in
         
+        var transaction = Transaction()
         var inoutRef = InoutRef<State>.init(stateMutablePointer)
         
-        let result = try mutation(&inoutRef)
+        let result = try mutation(&inoutRef, &transaction)
         valueFromMutation = result
         
         /**
@@ -498,9 +494,12 @@ extension Store {
             with: stateMutablePointer.pointee,
             from: inoutRef.traces,
             modification: inoutRef.modification ?? .indeterminate,
-            transaction: inoutRef._transaction
+            transaction: transaction
           )
-          middleware.modify(modifyingState: &inoutRef, current: intermediate)
+          middleware.modify(
+            modifyingState: &inoutRef,
+            current: intermediate
+          )
         }
         
         /**
@@ -510,7 +509,7 @@ extension Store {
           with: stateMutablePointer.pointee,
           from: inoutRef.traces,
           modification: inoutRef.modification ?? .indeterminate,
-          transaction: inoutRef._transaction
+          transaction: transaction
         )
         
         if __sanitizer__.isRecursivelyCommitDetectionEnabled {

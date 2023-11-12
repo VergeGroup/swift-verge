@@ -30,7 +30,7 @@ import Foundation
  - Warning: Do not retain this object anywhere.
  */
 @dynamicMemberLookup
-public final class InoutRef<Wrapped> {
+public struct InoutRef<Wrapped> {
 
   // MARK: - Nested types
 
@@ -99,7 +99,7 @@ public final class InoutRef<Wrapped> {
 
   private(set) var nonatomic_hasModified = false
 
-  private lazy var nonatomic_modifiedKeyPaths: Set<PartialKeyPath<Wrapped>> = .init()
+  private var nonatomic_modifiedKeyPaths: Set<PartialKeyPath<Wrapped>> = .init()
 
   private var nonatomic_wasModifiedIndeterminate = false
 
@@ -117,8 +117,6 @@ public final class InoutRef<Wrapped> {
     }
   }
   
-  public var _transaction: Transaction = .init()
-
   // MARK: - Initializers
 
   /**
@@ -163,11 +161,11 @@ public final class InoutRef<Wrapped> {
     }
   }
   
-  func append(trace: MutationTrace) {
+  mutating func append(trace: MutationTrace) {
     traces.append(trace)
   }
   
-  func append(traces otherTraces: [MutationTrace]) {
+  mutating func append(traces otherTraces: [MutationTrace]) {
     traces.append(contentsOf: otherTraces)
   }
 
@@ -236,20 +234,20 @@ public final class InoutRef<Wrapped> {
   }
 
   @inline(__always)
-  private func maskAsModified<U>(on keyPath: KeyPath<Wrapped, U>) {
+  private mutating  func maskAsModified<U>(on keyPath: KeyPath<Wrapped, U>) {
     nonatomic_modifiedKeyPaths.insert(keyPath)
     nonatomic_hasModified = true
   }
   
   @inline(__always)
-  private func maskAsModified<U>(on keyPath: KeyPath<Wrapped, U?>) {
+  private mutating func maskAsModified<U>(on keyPath: KeyPath<Wrapped, U?>) {
     nonatomic_modifiedKeyPaths.insert(keyPath)
     nonatomic_hasModified = true
   }
 
   /// Marks as modified
   /// `modification` property becomes to `.indeterminate`.
-  public func markAsModified() {
+  public mutating func markAsModified() {
     nonatomic_hasModified = true
     nonatomic_wasModifiedIndeterminate = true
   }
@@ -260,7 +258,7 @@ public final class InoutRef<Wrapped> {
    We can't overload `=` operator.
    https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html
    */
-  public func replace(with newValue: Wrapped) {
+  public mutating func replace(with newValue: Wrapped) {
     markAsModified()
     pointer.pointee = newValue
   }
@@ -270,7 +268,7 @@ public final class InoutRef<Wrapped> {
   /// Attention: Using this method makes modifition indeterminate.
   @available(*, renamed: "modifyDirectly")
   @discardableResult
-  public func modify<Return>(_ perform: (inout Wrapped) throws -> Return) rethrows -> Return {
+  public mutating func modify<Return>(_ perform: (inout Wrapped) throws -> Return) rethrows -> Return {
     return try modifyDirectly(perform)
   }
 
@@ -278,7 +276,7 @@ public final class InoutRef<Wrapped> {
   ///
   /// Attention: Using this method makes modifition indeterminate.
   @discardableResult
-  public func modifyDirectly<Return>(_ perform: (inout Wrapped) throws -> Return) rethrows -> Return {
+  public mutating func modifyDirectly<Return>(_ perform: (inout Wrapped) throws -> Return) rethrows -> Return {
     markAsModified()
     return try perform(&pointer.pointee)
   }
@@ -309,15 +307,15 @@ public final class InoutRef<Wrapped> {
    
    - SeeAlso: InoutRef<Wrapped>.Modification
    */
-  public func withType<Return>(_ perform: (Wrapped.Type, InoutRef<Wrapped>) throws -> Return) rethrows -> Return {
-    try perform(Wrapped.self, self)
+  public mutating func withType<Return>(_ perform: (Wrapped.Type, inout InoutRef<Wrapped>) throws -> Return) rethrows -> Return {
+    try perform(Wrapped.self, &self)
   }
 
   /**
    Returns a tantative InoutRef that projects the value specified by KeyPath.
    That InoutRef must be used only in the given perform closure.
    */
-  public func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result {
+  public mutating func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result {
     try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
       var ref = InoutRef<U>.init(pointer)
       defer {
@@ -338,15 +336,14 @@ public final class InoutRef<Wrapped> {
    Returns a tantative InoutRef that projects the value specified by KeyPath.
    That InoutRef must be used only in the given perform closure.
    */
-  public func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U?>, perform: (inout InoutRef<U>?) throws -> Result) rethrows -> Result {
+  public mutating func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U?>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result? {
 
     guard pointer.pointee[keyPath: keyPath] != nil else {
-      var _nil: InoutRef<U>! = .none
-      return try perform(&_nil)
+      return nil
     }
 
     return try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]!) { (pointer) in
-      var ref: InoutRef<U>! = InoutRef<U>.init(pointer)
+      var ref: InoutRef<U> = InoutRef<U>.init(pointer)
       defer {
         self.nonatomic_hasModified = ref.nonatomic_hasModified
         self.nonatomic_wasModifiedIndeterminate = ref.nonatomic_wasModifiedIndeterminate

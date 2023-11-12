@@ -19,9 +19,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import class Foundation.NSMapTable
-import class Foundation.NSString
-
 #if canImport(Combine)
 import Combine
 #endif
@@ -30,6 +27,20 @@ public protocol DerivedType<State>: StoreType {
   typealias Value = State
 
   func asDerived() -> Derived<Value>
+}
+
+public protocol DerivedMaking {
+
+  associatedtype State: Equatable
+
+  // TODO: Remove
+  var state: Changes<State> { get }
+
+  func derived<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: some TargetQueueType
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State>
+
 }
 
 /**
@@ -58,17 +69,6 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   /// - Returns:
   public static func constant(_ value: Value) -> Derived<Value> {
     .init(constant: value)
-  }
-  
-  /// A current state.
-  public var primitiveValue: Value {
-    primitiveState
-  }
-  
-  /// A current changes state.
-  @available(*, deprecated, renamed: "state")
-  public var value: Changes<Value> {
-    state
   }
 
   fileprivate var _set: ((Value) -> Void)?
@@ -121,8 +121,8 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
         }
 
         // TODO: Take over state.modification & state.mutation
-        indirectSelf.commit("Derived") {
-          $0._transaction.isDerivedFromUpstream = true
+        indirectSelf._receive {
+          $1.isDerivedFromUpstream = true
           $0.append(traces: value.traces)
           $0.replace(with: newState)
         }
@@ -229,7 +229,7 @@ extension Derived where Value : Equatable {
     receive: @escaping (Value) -> Void
   ) -> StoreSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
-      changes.ifChanged { value in
+      changes.ifChanged().do { value in
         receive(value)
       }
     }
@@ -246,7 +246,7 @@ extension Derived where Value : Equatable {
     receive: @escaping @MainActor (Value) -> Void
   ) -> StoreSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor changes in
-      changes.ifChanged { value in
+      changes.ifChanged().do { value in
         receive(value)
       }
     }
@@ -276,7 +276,7 @@ extension Derived where Value == Never {
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
         
     return Derived<Edge<(Changes<S0>, Changes<S1>)>>(
-      get: .map(\.self),
+      get: .select({ $0 }),
       set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
@@ -340,7 +340,7 @@ extension Derived where Value == Never {
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
     
     return Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>>(
-      get: .map(\.self),
+      get: .select { $0 },
       set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
@@ -415,8 +415,8 @@ public final class BindingDerived<Value: Equatable>: Derived<Value> {
    
    - Warning: It does not always return the latest value after set a new value. It depends the specified target-queue.
    */
-  public override var primitiveValue: Value {
-    get { primitiveState }
+  public var wrappedValue: Value {
+    get { state.primitive }
     set {
       commit {
         $0.replace(with: newValue)
@@ -424,17 +424,6 @@ public final class BindingDerived<Value: Equatable>: Derived<Value> {
     }
   }
 
-  /**
-   Returns a derived value that created by get-pipeline.
-   And can modify the value.
-   
-   - Warning: It does not always return the latest value after set a new value. It depends the specified target-queue.
-   */
-  public var wrappedValue: Value {
-    get { primitiveValue }
-    set { primitiveValue = newValue }
-  }
-  
   public var projectedValue: BindingDerived<Value> {
     self
   }

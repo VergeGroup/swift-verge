@@ -3,7 +3,7 @@ import XCTest
 
 final class TransactionTests: XCTestCase {
 
-  func testTransaction() {
+  func testTransaction() async {
 
     struct MyKey: TransactionKey {
       static var defaultValue: String? {
@@ -11,11 +11,11 @@ final class TransactionTests: XCTestCase {
       }
     }
 
-    let store = DemoStore()
+    let store = AsyncStore<DemoState, Never>(initialState: .init())
 
-    store.commit {
-      $0._transaction[MyKey.self] = "first commit"
+    await store.commit {
       $0.markAsModified()
+      $1[MyKey.self] = "first commit"
     }
 
     XCTAssertEqual(store.state._transaction[MyKey.self], "first commit")

@@ -2,9 +2,27 @@ import Foundation
 
 @_spi(NormalizedStorage) import Verge
 @_spi(Internal) import Verge
+import Verge
 
 public enum NormalizedStorageError: Swift.Error {
   case notFoundEntityToMakeDerived
+}
+
+extension MainActorStore {
+
+  @MainActor
+  public func normalizedStorage<Selector: StorageSelector>(_ selector: Selector) -> NormalizedStoragePath<MainActorStore, Selector> {
+    return .init(store: self, storageSelector: selector)
+  }
+
+}
+
+extension AsyncStore {
+
+  public func normalizedStorage<Selector: StorageSelector>(_ selector: Selector) -> NormalizedStoragePath<AsyncStore, Selector> {
+    return .init(store: self, storageSelector: selector)
+  }
+
 }
 
 extension StoreType {
@@ -19,7 +37,7 @@ extension StoreType {
  The entrypoint to make Derived object from the storage
  */
 public struct NormalizedStoragePath<
-  Store: DispatcherType,
+  Store: DerivedMaking & AnyObject,
   _StorageSelector: StorageSelector
 >: ~Copyable where Store.State == _StorageSelector.Source {
 
@@ -31,6 +49,7 @@ public struct NormalizedStoragePath<
     store: Store,
     storageSelector: _StorageSelector
   ) {
+
     self.store = store
     self.storageSelector = storageSelector
   }
@@ -44,13 +63,33 @@ public struct NormalizedStoragePath<
       tableSelector: selector
     )
   }
+
+  /**
+   Make a new Derived of a composed object from the storage.
+   This is an effective way to resolving relationship entities into a single object. it's like SQLite's view.
+
+   ```
+   store.normalizedStorage(.keyPath(\.db)).derived {
+     MyComposed(
+       book: $0.book.find(...)
+       author: $0.author.find(...)
+     )
+   }
+   ```
+
+   This Derived makes a new composed object if the storage has updated.
+   There is not filters for entity tables so that Derived possibly makes a new object if not related entity has updated.
+   */
+  public func derived<Composed: Equatable>(query: @escaping @Sendable (Self.Storage) -> Composed) -> Derived<Composed> {
+    return store.derived(QueryPipeline(storageSelector: storageSelector, query: query), queue: .passthrough)
+  }
 }
 
 /**
  The entrypoint to make Derived object from the specific table.
  */
 public struct NormalizedStorageTablePath<
-  Store: StoreType,
+  Store: DerivedMaking & AnyObject,
   _StorageSelector: StorageSelector,
   _TableSelector: TableSelector
 >: ~Copyable where _StorageSelector.Storage == _TableSelector.Storage, Store.State == _StorageSelector.Source {
@@ -70,6 +109,33 @@ public struct NormalizedStorageTablePath<
       entityID: entityID
     )
 
+  }
+
+  public func derived(
+    entityIDs: some Sequence<Entity.EntityID>
+  ) -> DerivedResult<Entity, Derived<EntityWrapper<Entity>>> {
+
+    var result = DerivedResult<Entity, Derived<EntityWrapper<Entity>>>()
+
+    for id in entityIDs {
+      result.append(
+        derived: store.derivedEntity(
+          selector: .init(storage: storageSelector, table: tableSelector),
+          entityID: id
+        ),
+        id: id
+      )
+    }
+
+    return result
+
+  }
+
+  public func derived(
+    insertionResults: some Sequence<InsertionResult<Entity>>
+  ) -> DerivedResult<Entity, Derived<EntityWrapper<Entity>>> {
+
+    derived(entityIDs: insertionResults.map { $0.entityID })
   }
 
   // MARK: - NonNull
@@ -224,7 +290,7 @@ public struct NormalizedStorageTablePath<
   }
 }
 
-extension StoreType {
+extension DerivedMaking {
 
   fileprivate func derivedEntity<
     _StorageSelector: StorageSelector,
@@ -238,30 +304,13 @@ extension StoreType {
     _StorageSelector.Source == Self.State
   {
 
-    return asStore().$_derivedCache.modify { cache in
-
-      typealias _Derived = Derived<SingleEntityPipeline<_StorageSelector, _TableSelector>.Output>
-
-      let key = KeyObject(content: AnyHashable(selector))
-
-      if let cached = cache.object(forKey: key) {
-        return cached as! _Derived
-      } else {
-
-        let new = asStore().derived(
-          SingleEntityPipeline(
-            targetIdentifier: entityID,
-            selector: selector
-          ),
-          queue: .passthrough
-        )
-
-        cache.setObject(new, forKey: key)
-
-        return new as _Derived
-      }
-
-    }
+    return derived(
+      SingleEntityPipeline(
+        targetIdentifier: entityID,
+        selector: selector
+      ),
+      queue: .passthrough
+    )
 
   }
 
@@ -277,30 +326,13 @@ extension StoreType {
   _StorageSelector.Source == Self.State
   {
 
-    return asStore().$_nonnull_derivedCache.modify { cache in
-
-      typealias _Derived = Derived<NonNullSingleEntityPipeline<_StorageSelector, _TableSelector>.Output>
-
-      let key = KeyObject(content: AnyHashable(selector))
-
-      if let cached = cache.object(forKey: key) {
-        return cached as! _Derived
-      } else {
-
-        let new = asStore().derived(
-          NonNullSingleEntityPipeline(
-            initialEntity: entity,
-            selector: selector
-          ),
-          queue: .passthrough
-        )
-
-        cache.setObject(new, forKey: key)
-
-        return new as _Derived
-      }
-
-    }
+    return derived(
+      NonNullSingleEntityPipeline(
+        initialEntity: entity,
+        selector: selector
+      ),
+      queue: .passthrough
+    )
 
   }
 }
