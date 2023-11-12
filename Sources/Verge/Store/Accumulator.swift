@@ -1,18 +1,23 @@
 
+public protocol Sink {
+  associatedtype Source
+  func receive(source: Source)
+}
+
 public struct AccumulationBuilder<Source>: ~Copyable {
 
   public func ifChanged<U: Equatable>(_ selector: @escaping (Source) -> U) -> IfChangedSink<U> {
     .init(selector: selector)
   }
 
-  public final class IfChangedSink<Target: Equatable> {
+  public final class IfChangedSink<Target: Equatable>: Sink {
 
     private let selector: (Source) -> Target
 
     private var latestValue: Target?
     private var handler: ((consuming Target) -> Void)?
 
-    init(selector: @escaping (Source) -> Target) {
+    public init(selector: @escaping (Source) -> Target) {
       self.selector = selector
     }
 
@@ -21,7 +26,7 @@ public struct AccumulationBuilder<Source>: ~Copyable {
       return self
     }
 
-    func receive(source: Source) {
+    public func receive(source: Source) {
 
       let selected = selector(source)
 
@@ -55,7 +60,7 @@ extension DispatcherType {
 
 }
 
-public struct SinkGroup<Source> {
+public struct SinkGroup<Source>: Sink {
 
   private let _receive: (Source) -> Void
 
@@ -63,12 +68,13 @@ public struct SinkGroup<Source> {
     self._receive = receive
   }
 
-  func receive(source: Source) {
+  public func receive(source: Source) {
     self._receive(source)
   }
 }
 
-@resultBuilder public struct SinkComponentBuilder<Source> {
+@resultBuilder 
+public struct SinkComponentBuilder<Source> {
 
   public static func buildBlock() -> SinkGroup<Source> {
     return .init(receive: { _ in })
