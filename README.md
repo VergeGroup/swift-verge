@@ -338,7 +338,7 @@ derived.sinkState { value in
 
 By using `Derived` for computed properties and subscribing to updates, you can ensure that your application remains efficient and performant, avoiding unnecessary computations and state updates.
 
-# **Introducing VergeORM**
+# **Introducing VergeNormalization**
 
 State management plays a crucial role in building efficient and maintainable applications. One of the essential aspects of state management is organizing the data in a way that simplifies its manipulation and usage. This is where normalization becomes vital.
 
@@ -437,17 +437,14 @@ struct Author: EntityType {
 To store the entities in the state, you need to define the database schema:
 
 ```swift
-struct Database: DatabaseType {
-          
-  struct Schema: EntitySchemaType {
-    let book = Book.EntityTableKey()
-    let author = Author.EntityTableKey()
-  }
-    
-  struct Indexes: IndexesType {
-  }
-    
-  var _backingStorage: BackingStorage = .init()
+@NormalizedStorage
+struct Database {
+
+  @Table
+  var books: Tables.Hash<Book> = .init()
+
+  @Table
+  var authors: Tables.Hash<Book> = .init()
 }
 ```
 
@@ -472,18 +469,18 @@ store.commit {
     let authors = (0..<10).map { i in
       Author(rawID: "\(i)")
     }
-    let result = context.entities.author.insert(authors)
+    let result = context.modifying.author.insert(authors)
   }
 }
 
 // Querying entities
-let book = store.state.database.db.entities.book.find(by: .init("1"))
-let author = store.state.database.db.entities.author.find(by: .init("1"))
+let book = store.state.database.db.book.find(by: .init("1"))
+let author = store.state.database.db.author.find(by: .init("1"))
 ```
 
-In this example, we use `store.commit` to perform batch updates on the database. We insert a new set of authors into the `author` entity table. Then, we use `store.state.database.db.entities` to query the `book` and `author` entities by their identifiers.
+In this example, we use `store.commit` to perform batch updates on the database. We insert a new set of authors into the `author` entity table. Then, we use `store.state.database.db` to query the `book` and `author` entities by their identifiers.
 
-By using VergeORM, you can efficiently manage your application state with a normalized data structure, which simplifies your state management, reduces the computational complexity of operations, and improves the overall performance and maintainability of your application.
+By using VergeNormalization, you can efficiently manage your application state with a normalized data structure, which simplifies your state management, reduces the computational complexity of operations, and improves the overall performance and maintainability of your application.
 
 # Installation
 
