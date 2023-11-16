@@ -114,6 +114,9 @@ extension NormalizedStorageMacro: ExtensionMacro {
       extension \(structDecl.name.trimmed): NormalizedStorageType {}
       """ as DeclSyntax).cast(ExtensionDeclSyntax.self),
       ("""
+      extension \(structDecl.name.trimmed): Sendable {}
+      """ as DeclSyntax).cast(ExtensionDeclSyntax.self),
+      ("""
       extension \(structDecl.name.trimmed): Equatable {}
       """ as DeclSyntax).cast(ExtensionDeclSyntax.self),
       ("""

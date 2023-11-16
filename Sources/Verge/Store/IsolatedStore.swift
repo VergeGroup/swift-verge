@@ -55,6 +55,24 @@ public final class MainActorStore<State: StateType, Activity>: DerivedMaking, Se
     backingStore._send(activity: activity, trace: trace)
   }
 
+  public func sinkActivity(
+    queue: MainActorTargetQueue = .mainIsolated(),
+    receive: @escaping @MainActor (Activity) -> Void
+  ) -> StoreSubscription {
+    backingStore.sinkActivity(queue: queue, receive: receive)
+  }
+
+  /// Subscribe the activity
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @_disfavoredOverload
+  public func sinkActivity(
+    queue: some TargetQueueType,
+    receive: @escaping (Activity) -> Void
+  ) -> StoreSubscription {
+    backingStore.sinkActivity(queue: queue, receive: receive)
+  }
+
   /**
    Subscribe the state that scoped
 
@@ -92,6 +110,44 @@ public final class MainActorStore<State: StateType, Activity>: DerivedMaking, Se
   ) -> StoreSubscription {
     return backingStore
       .sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - scan: Accumulates a specified type of value over receiving updates.
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @_disfavoredOverload
+  public func sinkState<Accumulate>(
+    scan: Scan<Changes<State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: some TargetQueueType,
+    receive: @escaping (Changes<State>, Accumulate) -> Void
+  ) -> StoreSubscription {
+    backingStore.sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+  }
+
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - scan: Accumulates a specified type of value over receiving updates.
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @discardableResult
+  public func sinkState<Accumulate>(
+    scan: Scan<Changes<State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: MainActorTargetQueue = .mainIsolated(),
+    receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
+  ) -> StoreSubscription {
+    backingStore.sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
   public nonisolated func derived<Pipeline: PipelineType>(
@@ -400,6 +456,24 @@ extension MainActorStoreDriverType {
 
   }
 
+  public func sinkActivity(
+    queue: MainActorTargetQueue = .mainIsolated(),
+    receive: @escaping @MainActor (Activity) -> Void
+  ) -> StoreSubscription {
+    store.sinkActivity(queue: queue, receive: receive)
+  }
+
+  /// Subscribe the activity
+  ///
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @_disfavoredOverload
+  public func sinkActivity(
+    queue: some TargetQueueType,
+    receive: @escaping (Activity) -> Void
+  ) -> StoreSubscription {
+    store.sinkActivity(queue: queue, receive: receive)
+  }
+
   /**
    Subscribe the state that scoped
 
@@ -438,6 +512,48 @@ extension MainActorStoreDriverType {
   ) -> StoreSubscription {
     return store.sinkState(dropsFirst: dropsFirst, queue: queue, receive: { state in
       receive(state.map({ $0[keyPath: scope] }))
+    })
+  }
+
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - scan: Accumulates a specified type of value over receiving updates.
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @_disfavoredOverload
+  public func sinkState<Accumulate>(
+    scan: Scan<Changes<State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: some TargetQueueType,
+    receive: @escaping (Changes<Scope>, Accumulate) -> Void
+  ) -> StoreSubscription {
+    return store.sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: { state, scan in
+      receive(state.map({ $0[keyPath: scope] }), scan)
+    })
+  }
+
+  /// Subscribe the state changes
+  ///
+  /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
+  ///
+  /// - Parameters:
+  ///   - scan: Accumulates a specified type of value over receiving updates.
+  ///   - dropsFirst: Drops the latest value on started. if true, receive closure will call from next state updated.
+  ///   - queue: Specify a queue to receive changes object.
+  /// - Returns: A subscriber that performs the provided closure upon receiving values.
+  @discardableResult
+  public func sinkState<Accumulate>(
+    scan: Scan<Changes<State>, Accumulate>,
+    dropsFirst: Bool = false,
+    queue: MainActorTargetQueue = .mainIsolated(),
+    receive: @escaping @MainActor (Changes<Scope>, Accumulate) -> Void
+  ) -> StoreSubscription {
+    return store.sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: { state, scan in
+      receive(state.map({ $0[keyPath: scope] }), scan)
     })
   }
 
