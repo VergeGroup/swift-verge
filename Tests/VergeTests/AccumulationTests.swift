@@ -22,6 +22,10 @@ final class AccumulationTests: XCTestCase {
         
       }
 
+      SinkIfChanged(selector: \.count).do { value in
+        print(value)
+      }
+
     }
 
     store.commit {
