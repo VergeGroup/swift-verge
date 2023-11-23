@@ -9,7 +9,7 @@ import SwiftUI
 
  - Warning: This property wrapper should only be used for store objects that are expected to have a lifetime matching the lifetime of the view.
  */
-@available(iOS 14, *)
+@available(iOS 14, watchOS 7.0, tvOS 14, *)
 @propertyWrapper
 public struct StoreObject<Store: DispatcherType>: DynamicProperty {
 
@@ -39,7 +39,7 @@ public struct StoreObject<Store: DispatcherType>: DynamicProperty {
 
 #if DEBUG
 
-@available(iOS 14, *)
+@available(iOS 14, watchOS 7.0, tvOS 14, *)
 enum Preview_StoreObject: PreviewProvider {
 
   static var previews: some View {

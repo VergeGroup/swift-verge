@@ -11,7 +11,7 @@ import SwiftUI
  Store emits events of updated state, StoreReader filters them with current using KeyPaths.
  Therefore functions of the state are not available in this situation.
  */
-@available(iOS 14, *)
+@available(iOS 14, watchOS 7.0, tvOS 14, *)
 public struct StoreReader<StateType: Equatable, Content: View>: View {
 
   private let backing: _StoreReader<StateType, Content>
@@ -102,7 +102,7 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
 
 }
 
-@available(iOS 14, *)
+@available(iOS 14, watchOS 7.0, tvOS 14, *)
 private struct _StoreReader<StateType: Equatable, Content: View>: View {
 
   @StateObject private var node: StoreReaderComponents<StateType>.Node
@@ -332,7 +332,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
 
 #if DEBUG
 
-@available(iOS 14, *)
+@available(iOS 14, watchOS 7.0, tvOS 14, *)
 enum Preview_StoreReader: PreviewProvider {
 
   static var previews: some View {
