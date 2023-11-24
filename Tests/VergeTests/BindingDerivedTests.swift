@@ -20,7 +20,7 @@ final class BindingDerivedTests: XCTestCase {
 
     XCTAssertEqual(binding.state.previous?.primitive, 0)
     XCTAssertEqual(binding.state.primitive, 2)
-    XCTAssertEqual(source.primitiveState.count, 2)
+    XCTAssertEqual(source.state.primitive.count, 2)
 
   }
 
@@ -28,7 +28,7 @@ final class BindingDerivedTests: XCTestCase {
 
     let source = DemoStore()
 
-    let binding: some DispatcherType<Int> = source.bindingDerived(
+    let binding: some StoreDriverType<Int> = source.bindingDerived(
       get: .map { $0.count },
       set: { source, new in
         source.count = new
@@ -44,7 +44,7 @@ final class BindingDerivedTests: XCTestCase {
     XCTAssertEqual(binding.state.previous?.primitive, 0)
     XCTAssertEqual(binding.state.primitive, 2)
 
-    XCTAssertEqual(source.primitiveState.count, 2)
+    XCTAssertEqual(source.state.primitive.count, 2)
 
     source.commit {
       $0.count += 1

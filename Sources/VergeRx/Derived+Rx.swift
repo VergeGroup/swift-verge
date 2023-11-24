@@ -7,7 +7,7 @@ import Verge
 import RxSwift
 import RxCocoa
 
-extension Reactive where Base : DispatcherType {
+extension Reactive where Base : StoreDriverType {
 
   /// An observable that repeatedly emits the changes when state updated
   ///
@@ -16,7 +16,7 @@ extension Reactive where Base : DispatcherType {
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
   @available(*, deprecated, renamed: "stateObservable()")
-  public func valueObservable() -> Observable<Changes<Base.State>> {
+  public func valueObservable() -> Observable<Changes<Base.TargetStore.State>> {
     self.stateObservable()
   }
 }

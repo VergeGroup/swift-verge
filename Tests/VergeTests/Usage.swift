@@ -13,7 +13,7 @@ final class RootStore: Store<RootState, Never> {
 
 }
 
-final class Service: DispatcherType {
+final class Service: StoreDriverType {
 
   var store: RootStore { fatalError() }
 
@@ -23,7 +23,7 @@ final class Service: DispatcherType {
 
 }
 
-final class SpecificService: DispatcherType {
+final class SpecificService: StoreDriverType {
 
   var scope: WritableKeyPath<RootState, RootState.Nested> { \.nested }
 
@@ -62,7 +62,7 @@ final class ViewModel: StoreComponentType {
 
 // MARK: - Abstraction
 
-protocol MyViewModelType: StoreComponentType where State == String, Activity == Int {
+protocol MyViewModelType: StoreComponentType where TargetStore.State == String, TargetStore.Activity == Int {
 
 }
 
@@ -80,13 +80,15 @@ final class Concrete: MyViewModelType {
     commit { _ in
 
     }
+
   }
 
 }
 
-final class Controller<ViewModel: MyViewModelType> {
+final class Controller<ViewModel: MyViewModelType> where ViewModel.Scope == ViewModel.TargetStore.State {
 
   init(viewModel: ViewModel) {
+
     let _: Changes<String> = viewModel.state
 
     viewModel.send(1)

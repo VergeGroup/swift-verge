@@ -21,7 +21,7 @@
 
 import Foundation
 
-extension DispatcherType {
+extension StoreDriverType {
 
   public typealias Assignee<Value> = (Value) -> Void
 
@@ -38,7 +38,7 @@ extension DispatcherType {
    ```
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value>,
+    _ keyPath: WritableKeyPath<TargetStore.State, Value>,
     dropsOutput: @escaping (Changes<Value>) -> Bool = { _ in false }
   ) -> Assignee<Changes<Value>> {
     return { [weak self] value in
@@ -62,7 +62,7 @@ extension DispatcherType {
    ```
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value?>,
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?>,
     dropsOutput: @escaping (Changes<Value?>) -> Bool = { _ in false }
   ) -> Assignee<Changes<Value?>> {
     return { [weak self] value in
@@ -86,7 +86,7 @@ extension DispatcherType {
    ```
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value?>,
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?>,
     dropsOutput: @escaping (Changes<Value?>) -> Bool = { _ in false }
   ) -> Assignee<Changes<Value>> {
     return { [weak self] value in
@@ -102,7 +102,7 @@ extension DispatcherType {
    Assignee to asign Changes object directly.
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value>
   ) -> Assignee<Value> {
     return { [weak self] value in
       self?.store.asStore().commit {
@@ -115,7 +115,7 @@ extension DispatcherType {
    Assignee to asign Changes object directly.
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value?>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?>
   ) -> Assignee<Value?> {
     return { [weak self] value in
       self?.store.asStore().commit {
@@ -128,7 +128,7 @@ extension DispatcherType {
    Assignee to asign Changes object directly.
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<State, Value?>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?>
   ) -> Assignee<Value> {
     return { [weak self] value in
       self?.store.asStore().commit {
@@ -150,7 +150,7 @@ extension DispatcherType {
    ```
    */
   public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<State, Value>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value>
   ) -> Assignee<Changes<Value>> {
     assignee(keyPath, dropsOutput: { !$0.hasChanges })
   }
@@ -168,7 +168,7 @@ extension DispatcherType {
    ```
    */
   public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<State, Value?>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?>
   ) -> Assignee<Changes<Value?>> {
     assignee(keyPath, dropsOutput: { !$0.hasChanges })
   }
@@ -186,7 +186,7 @@ extension DispatcherType {
    ```
    */
   public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<State, Value?>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?>
   ) -> Assignee<Changes<Value>> {
     assignee(keyPath, dropsOutput: { !$0.hasChanges })
   }

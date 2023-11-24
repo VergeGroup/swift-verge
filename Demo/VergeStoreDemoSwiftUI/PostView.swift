@@ -9,7 +9,7 @@ struct PostView: View {
   let post: Entity.Post
 
   private var user: Entity.User? {
-    session.store.primitiveState.db.entities.user.find(by: post.userID)
+    session.store.state.primitive.db.entities.user.find(by: post.userID)
   }
 
   var body: some View {

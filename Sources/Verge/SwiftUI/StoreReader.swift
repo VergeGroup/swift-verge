@@ -36,11 +36,11 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
   /// - Parameters:
   ///   - store:
   ///   - content:
-  public init<Store: DispatcherType>(
+  public init<Driver: StoreDriverType>(
     debug: Bool = false,
-    _ store: Store,
+    _ store: Driver,
     @ViewBuilder content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
-  ) where StateType == Store.State {
+  ) where StateType == Driver.TargetStore.State {
 
     let store = store.store.asStore()
 
@@ -142,9 +142,9 @@ public enum StoreReaderComponents<StateType: Equatable> {
     }
     
     private(set) var detectors: Detectors = [:]
-    private weak var source: (any DispatcherType<StateType>)?
+    private weak var source: (any StoreDriverType<StateType>)?
     
-    init(wrapped: StateType, source: (any DispatcherType<StateType>)?) {
+    init(wrapped: StateType, source: (any StoreDriverType<StateType>)?) {
       self.wrapped = wrapped
       self.source = source
     }
@@ -256,10 +256,10 @@ public enum StoreReaderComponents<StateType: Equatable> {
     
     private let debug: Bool
 
-    private weak var source: (any DispatcherType<StateType>)?
+    private weak var source: (any StoreDriverType<StateType>)?
 
     init(
-      store: some DispatcherType<StateType>,
+      store: some StoreDriverType<StateType>,
       retainValues: [AnyObject],
       debug: Bool = false
     ) {

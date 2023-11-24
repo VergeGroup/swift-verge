@@ -61,7 +61,7 @@ private struct BindingDerivedPipeline<Source: Equatable, Output: Equatable, Back
 
 }
 
-extension DispatcherType {
+extension StoreDriverType {
 
   /// Returns Binding Derived object
   ///
@@ -78,9 +78,9 @@ extension DispatcherType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     get pipeline: Pipeline,
-    set: @escaping (inout InoutRef<State>, Pipeline.Output) -> Void,
+    set: @escaping (inout InoutRef<TargetStore.State>, Pipeline.Output) -> Void,
     queue: some TargetQueueType = .passthrough
-  ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<State> {
+  ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<TargetStore.State> {
 
     let derived = BindingDerived<Pipeline.Output>.init(
       get: BindingDerivedPipeline(backingPipeline: pipeline),
@@ -114,7 +114,7 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    select: WritableKeyPath<State, Select>,
+    select: WritableKeyPath<TargetStore.State, Select>,
     queue: some TargetQueueType = .passthrough
   ) -> BindingDerived<Select> {
 
