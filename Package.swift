@@ -28,7 +28,8 @@ let package = Package(
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.9.3"),
-    .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0")
+    .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
+    .package(url: "https://github.com/pointfreeco/swift-macro-testing.git", from: "0.2.1")
   ],
   targets: [
 
@@ -113,6 +114,7 @@ let package = Package(
     .testTarget(name: "VergeMacrosTests", dependencies: [
       "VergeMacrosPlugin",
       .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+      .product(name: "MacroTesting", package: "swift-macro-testing"),
     ])
   ],
   swiftLanguageVersions: [.v5]
