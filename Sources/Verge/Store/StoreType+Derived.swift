@@ -21,7 +21,7 @@
 
 import class Foundation.NSString
 
-extension DispatcherType {
+extension StoreDriverType {
 
   /**
    Creates a derived state object from a given pipeline.
@@ -35,7 +35,7 @@ extension DispatcherType {
   public func derived<Pipeline: PipelineType>(
     _ pipeline: Pipeline,
     queue: MainActorTargetQueue
-  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State> {
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<TargetStore.State> {
     self.derived(pipeline, queue: Queues.MainActor(queue))
   }
 
@@ -51,9 +51,9 @@ extension DispatcherType {
   public func derived<Pipeline: PipelineType>(
     _ pipeline: Pipeline,
     queue: some TargetQueueType = .passthrough
-  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State> {
-    
-    vergeSignpostEvent("Store.derived.new", label: "\(type(of: State.self)) -> \(type(of: Pipeline.Output.self))")
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<TargetStore.State> {
+
+    vergeSignpostEvent("Store.derived.new", label: "\(type(of: TargetStore.State.self)) -> \(type(of: Pipeline.Output.self))")
 
     let derived = Derived<Pipeline.Output>(
       get: pipeline,

@@ -36,7 +36,6 @@ public protocol StoreType<State>: AnyObject, Sendable, ObservableObject where Ob
   
   func asStore() -> Store<State, Activity>
   
-  var primitiveState: State { get }
   var state: Changes<State> { get }
 }
 
@@ -80,7 +79,7 @@ actor Writer {
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, DispatcherType, DerivedMaking, @unchecked Sendable {
+open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable {
 
   public var scope: WritableKeyPath<State, State> = \State.self
 
@@ -267,15 +266,6 @@ extension Store {
   
   public var objectDidChange: AnyPublisher<Changes<State>, Never> {
     valuePublisher.dropFirst().eraseToAnyPublisher()
-  }
-
-  
-  /// A current state.
-  ///
-  /// It causes locking and unlocking with a bit cost.
-  /// It may cause blocking if any other is doing mutation or reading.
-  public var primitiveState: State {
-    state.primitive
   }
   
   /// Returns a current state with thread-safety.

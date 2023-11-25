@@ -56,7 +56,7 @@ final class VergeStoreTests: XCTestCase {
     }
   }
   
-  class RootDispatcher: DispatcherType {
+  class RootDispatcher: StoreDriverType {
 
     enum Error: Swift.Error {
       case something
@@ -119,17 +119,17 @@ final class VergeStoreTests: XCTestCase {
       
       let _detached = detached(from: \.nested)
       
-      let _: Changes<State.NestedState> = _detached.state
-      
-      _detached.commit { (state: inout InoutRef<State.NestedState>) in
+      let _: Changes<TargetStore.State.NestedState> = _detached.state
+
+      _detached.commit { (state: inout InoutRef<TargetStore.State.NestedState>) in
 
       }
         
       let optionalNestedTarget = detached(from: \.optionalNested)
                   
-      let _: Changes<State.OptionalNestedState?> = optionalNestedTarget.state
-          
-      optionalNestedTarget.commit { (state: inout InoutRef<State.OptionalNestedState?>) in
+      let _: Changes<TargetStore.State.OptionalNestedState?> = optionalNestedTarget.state
+
+      optionalNestedTarget.commit { (state: inout InoutRef<TargetStore.State.OptionalNestedState?>) in
 
       }
                       
@@ -140,7 +140,7 @@ final class VergeStoreTests: XCTestCase {
   /**
    Use Edge due to TreeA does not have Equatable.
    */
-  final class TreeADispatcher: DispatcherType {
+  final class TreeADispatcher: StoreDriverType {
 
     let store: _Store
     let scope: WritableKeyPath<VergeStoreTests._State, Edge<_State.TreeA>> = \.$treeA
@@ -268,7 +268,7 @@ final class VergeStoreTests: XCTestCase {
         
     dispatcher.resetCount()
     dispatcher.continuousIncrement()
-    XCTAssert(store.primitiveState.count == 2)
+    XCTAssert(store.state.primitive.count == 2)
   }
   
   func testTryMutation() {
@@ -285,7 +285,7 @@ final class VergeStoreTests: XCTestCase {
   func testIncrement() {
     
     dispatcher.increment()
-    XCTAssertEqual(store.primitiveState.count, 1)
+    XCTAssertEqual(store.state.primitive.count, 1)
     
   }
   
@@ -293,7 +293,7 @@ final class VergeStoreTests: XCTestCase {
     
     dispatcher.setNestedState()
     dispatcher.setMyName()
-    XCTAssertEqual(store.primitiveState.optionalNested?.myName, "Muuk")
+    XCTAssertEqual(store.state.primitive.optionalNested?.myName, "Muuk")
   }
   
   func testReturnAnyValueFromMutation() {
@@ -375,13 +375,13 @@ final class VergeStoreTests: XCTestCase {
       $0.count += 1
     }
 
-    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.count)
+    XCTAssertEqual(store1.state.primitive.count, store2.state.primitive.count)
 
     store1.commit {
       $0.count += 1
     }
 
-    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.count)
+    XCTAssertEqual(store1.state.primitive.count, store2.state.primitive.count)
 
     withExtendedLifetime(sub, {})
 
@@ -401,13 +401,13 @@ final class VergeStoreTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.count)
+    XCTAssertEqual(store1.state.primitive.count, store2.state.primitive.count)
     
     store1.commit {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.count)
+    XCTAssertEqual(store1.state.primitive.count, store2.state.primitive.count)
     
     withExtendedLifetime(sub, {})
     
@@ -444,13 +444,13 @@ final class VergeStoreTests: XCTestCase {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.source.root)
-    
+    XCTAssertEqual(store1.state.primitive.count, store2.state.primitive.source.root)
+
     store1.commit {
       $0.count += 1
     }
     
-    XCTAssertEqual(store1.primitiveState.count, store2.primitiveState.source.root)
+    XCTAssertEqual(store1.state.primitive.count, store2.state.primitive.source.root)
 
   }
 

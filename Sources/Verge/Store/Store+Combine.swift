@@ -32,7 +32,8 @@ extension Store {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
-  public func statePublisher() -> some Combine.Publisher<Changes<Value>, Never> {
+  @_spi(Package)
+  public func _statePublisher() -> some Combine.Publisher<Changes<Value>, Never> {
 
     return valuePublisher
       .dropFirst()
@@ -40,7 +41,8 @@ extension Store {
       .merge(with: Just(state.droppedPrevious()))
   }
 
-  public func activityPublisher() -> some Combine.Publisher<Activity, Never> {
+//  @_spi(Package)
+  public func _activityPublisher() -> some Combine.Publisher<Activity, Never> {
 
     return publisher
       .associate(resource: self, retains: keepsAliveForSubscribers)

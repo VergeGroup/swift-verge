@@ -11,7 +11,7 @@ import SwiftUI
  */
 @available(iOS 14, watchOS 7.0, tvOS 14, *)
 @propertyWrapper
-public struct StoreObject<Store: DispatcherType>: DynamicProperty {
+public struct StoreObject<Store: StoreDriverType>: DynamicProperty {
 
   @StateObject private var backing: Wrapper
 

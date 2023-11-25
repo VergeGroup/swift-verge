@@ -19,7 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-extension DispatcherType {
+extension StoreDriverType {
 
   /**
    Assigns a Store's state to a property of a store.
@@ -28,7 +28,7 @@ extension DispatcherType {
    */
   public func assign(
     queue: some TargetQueueType = .passthrough,
-    to binder: @escaping (Changes<State>) -> Void
+    to binder: @escaping (Changes<TargetStore.State>) -> Void
   ) -> StoreSubscription {
     store.asStore().sinkState(queue: queue, receive: binder)
   }
@@ -40,7 +40,7 @@ extension DispatcherType {
    */
   public func assign(
     queue: MainActorTargetQueue,
-    to binder: @escaping (Changes<State>) -> Void
+    to binder: @escaping (Changes<TargetStore.State>) -> Void
   ) -> StoreSubscription {
     store.asStore().sinkState(queue: queue, receive: binder)
   }

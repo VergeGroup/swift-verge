@@ -28,7 +28,7 @@ final class StoreInitTests: XCTestCase {
   }
   */
   
-  class StructViewModel: StoreComponentType {
+  class StructViewModel: StoreDriverType {
     
     struct State: Equatable {
       

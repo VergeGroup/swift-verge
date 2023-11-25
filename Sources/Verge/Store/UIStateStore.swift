@@ -50,7 +50,7 @@ public struct UIState<State: Equatable>: Sendable {
   // MARK: - PropertyWrapper
 
   public var wrappedValue: State {
-    get { store.primitiveState }
+    get { store.state.primitive }
     nonmutating set {
       store.commit {
         $0.replace(with: newValue)
@@ -76,7 +76,7 @@ public struct AtomicState<State: Equatable>: Sendable {
   // MARK: - PropertyWrapper
   
   public var wrappedValue: State {
-    get { store.primitiveState }
+    get { store.state.primitive }
     nonmutating set {
       store.commit {
         $0.replace(with: newValue)
