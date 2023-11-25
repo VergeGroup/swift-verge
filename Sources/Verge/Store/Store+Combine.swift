@@ -41,7 +41,7 @@ extension Store {
       .merge(with: Just(state.droppedPrevious()))
   }
 
-  @_spi(Package)
+//  @_spi(Package)
   public func _activityPublisher() -> some Combine.Publisher<Activity, Never> {
 
     return publisher

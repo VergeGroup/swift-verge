@@ -47,9 +47,10 @@ public typealias DispatcherType<Scope> = StoreDriverType<Scope>
  }
  ``` 
  */
-public protocol StoreDriverType<Scope>: ObservableObject {
+public protocol StoreDriverType<Scope>: ObservableObject where Activity == TargetStore.Activity {
 
   associatedtype TargetStore: StoreType
+
 
   associatedtype Scope: Equatable = TargetStore.State
 
@@ -58,6 +59,8 @@ public protocol StoreDriverType<Scope>: ObservableObject {
 
   var state: Changes<Scope> { get }
 
+  // WORKAROUND: for activityPublisher()
+  associatedtype Activity = TargetStore.Activity
 }
 
 extension StoreDriverType {
@@ -66,7 +69,7 @@ extension StoreDriverType {
     store.asStore()._statePublisher()
   }
 
-  public func activityPublisher() -> some Combine.Publisher<TargetStore.Activity, Never> {
+  public func activityPublisher() -> some Combine.Publisher<Activity, Never> {
     store.asStore()._activityPublisher()
   }
 
