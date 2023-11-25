@@ -21,7 +21,7 @@ extension Reactive where Base : StoreDriverType {
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
   public func stateObservable() -> Observable<Changes<Base.TargetStore.State>> {
-    base.store.asStore().statePublisher().asObservable()
+    base.store.asStore()._statePublisher().asObservable()
   }
   
   /// An observable that repeatedly emits the changes when state updated
@@ -36,7 +36,7 @@ extension Reactive where Base : StoreDriverType {
   }
 
   public func activitySignal() -> Signal<Base.TargetStore.Activity> {
-    base.store.asStore().activityPublisher().asObservable().asSignal(onErrorRecover: { _ in Signal.empty() })
+    base.store.asStore()._activityPublisher().asObservable().asSignal(onErrorRecover: { _ in Signal.empty() })
   }
   
 }

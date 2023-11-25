@@ -57,9 +57,18 @@ public protocol StoreDriverType<Scope>: ObservableObject {
   var scope: WritableKeyPath<TargetStore.State, Scope> { get }
 
   var state: Changes<Scope> { get }
+
 }
 
 extension StoreDriverType {
+
+  public func statePublisher() -> some Combine.Publisher<Changes<TargetStore.State>, Never> {
+    store.asStore()._statePublisher()
+  }
+
+  public func activityPublisher() -> some Combine.Publisher<TargetStore.Activity, Never> {
+    store.asStore()._activityPublisher()
+  }
 
   public var objectWillChange: TargetStore.ObjectWillChangePublisher {
     store.objectWillChange
