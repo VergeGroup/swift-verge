@@ -12,8 +12,10 @@
 <sub>_ Supports concurrent processing _</sub><br/>
 </p>
 
-- [Verge Docs](https://vergegroup.github.io/swift-Verge/Verge/documentation/verge/)
-- [VergeNormalization Docs](https://vergegroup.github.io/swift-Verge/VergeNormalization/documentation/vergenormalization/)
+- Docs
+  - [Verge](https://swiftpackageindex.com/VergeGroup/swift-Verge/main/documentation/verge)
+  - [VergeNormalization](https://swiftpackageindex.com/VergeGroup/swift-Verge/main/documentation/vergenormalization)
+  - [VergeNormalizationDerived](https://swiftpackageindex.com/VergeGroup/swift-Verge/main/documentation/vergenormalizationderived)
 
 ## Support this projects
 <a href="https://www.buymeacoffee.com/muukii">
