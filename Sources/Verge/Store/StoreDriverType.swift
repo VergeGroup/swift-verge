@@ -337,10 +337,37 @@ extension StoreDriverType {
     )
 
     return try store.asStore()._receive(
-      mutation: { state, transaction -> Result in
+      mutation: { state, _ -> Result in
         try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
           ref.append(trace: trace)
           return try mutation(&ref)
+        }
+      }
+    )
+  }
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func commit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+  ) rethrows -> Result {
+    let trace = MutationTrace(
+      name: name,
+      file: file,
+      function: function,
+      line: line
+    )
+
+    return try store.asStore()._receive(
+      mutation: { state, transaction -> Result in
+        try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
+          ref.append(trace: trace)
+          return try mutation(&ref, &transaction)
         }
       }
     )
@@ -362,21 +389,34 @@ extension StoreDriverType {
       function: function,
       line: line
     )
-    return try self._commit(trace: trace, mutation: mutation)
+    return try store.asStore()._receive(
+      mutation: { ref, transaction -> Result in
+        ref.append(trace: trace)
+        return try mutation(&ref)
+      }
+    )
   }
 
   /// Run Mutation that created inline
   ///
   /// Throwable
-  @inline(__always)
-  func _commit<Result>(
-    trace: MutationTrace,
-    mutation: (inout InoutRef<Scope>) throws -> Result
+  public func commit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
   ) rethrows -> Result where Scope == TargetStore.State {
+    let trace = MutationTrace(
+      name: name,
+      file: file,
+      function: function,
+      line: line
+    )
     return try store.asStore()._receive(
       mutation: { ref, transaction -> Result in
         ref.append(trace: trace)
-        return try mutation(&ref)
+        return try mutation(&ref, &transaction)
       }
     )
   }
