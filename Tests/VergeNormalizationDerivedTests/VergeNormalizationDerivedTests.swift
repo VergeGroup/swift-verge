@@ -47,21 +47,4 @@ final class VergeNormalizationDerivedTests: XCTestCase {
     withExtendedLifetime(derived, {})
   }
 
-  @MainActor 
-  func test_mainActorStore() {
-
-    let store = MainActorStore<_, Never>(initialState: DemoState())
-
-    store.normalizedStorage(.keyPath(\.db))
-
-  }
-
-  func test_asyncStore() {
-
-    let store = AsyncStore<_, Never>(initialState: DemoState())
-
-    store.normalizedStorage(.keyPath(\.db))
-
-  }
-
 }

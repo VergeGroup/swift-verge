@@ -58,48 +58,6 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
 
   }
 
-  public init<Activity>(
-    debug: Bool = false,
-    _ store: MainActorStore<StateType, Activity>,
-    @ViewBuilder content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
-  ) {
-
-    self.init(
-      identifier: ObjectIdentifier(store),
-      node: {
-        return .init(
-          store: store.backingStore,
-          retainValues: [store],
-          debug: debug
-        )
-      },
-      content: content
-    )
-
-  }
-
-  public init<Driver: MainActorStoreDriverType>(
-    debug: Bool = false,
-    _ storeDriver: Driver,
-    @ViewBuilder content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
-  ) where StateType == Driver.State {
-
-    let mainActorStore = storeDriver.store
-
-    self.init(
-      identifier: ObjectIdentifier(mainActorStore),
-      node: {
-        return .init(
-          store: mainActorStore.backingStore,
-          retainValues: [],
-          debug: debug
-        )
-      },
-      content: content
-    )
-
-  }
-
 }
 
 @available(iOS 14, watchOS 7.0, tvOS 14, *)
