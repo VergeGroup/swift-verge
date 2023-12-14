@@ -68,4 +68,8 @@ fastlane/test_output
 
 .DS_Store
 
+# Tuist
+Derived
+*.xcodeproj
+
 # End of https://www.gitignore.io/api/swift
