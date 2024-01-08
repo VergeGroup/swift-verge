@@ -59,7 +59,7 @@ Create a state struct that represents the state of your application. Your state 
 Example:
 
 ```swift
-struct MyState: Equatable {
+struct MyState: StateType {
  var count: Int = 0 
 }
 ```
