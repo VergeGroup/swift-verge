@@ -44,7 +44,8 @@ class ActivityTests: XCTestCase {
     let store = Store()
     
     let waiter = XCTestExpectation()
-    
+    waiter.expectedFulfillmentCount = 1
+
     store
       .activityPublisher()
       .sink { event in
