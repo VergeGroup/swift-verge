@@ -52,7 +52,6 @@ let package = Package(
       dependencies: [
         "VergeMacros",
         "VergeComparator",
-        "VergeMacrosPlugin",
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "DequeModule", package: "swift-collections"),
         .product(name: "ConcurrencyTaskManager", package: "swift-concurrency-task-manager"),
