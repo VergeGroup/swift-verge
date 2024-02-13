@@ -67,7 +67,6 @@ let package = Package(
       name: "VergeNormalization",
       dependencies: [
         "VergeMacros",
-        "VergeMacrosPlugin",
         "VergeComparator",
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]
