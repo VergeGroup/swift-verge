@@ -209,12 +209,9 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     case .state(let stateEvent):
       switch stateEvent {
       case .willUpdate:
-        if Thread.isMainThread {
-          objectWillChange.send()
-        } else {
-          DispatchQueue.main.async { [weak self] in
-            self?.objectWillChange.send()
-          }
+        DispatchQueue.main.async { [weak self] in
+          // For: `Publishing changes from within view updates is not allowed, this will cause undefined behavior.`
+          self?.objectWillChange.send()
         }
       case .didUpdate(let state):
         _valueSubject.send(state)

@@ -252,7 +252,10 @@ public enum StoreReaderComponents<StateType: Equatable> {
         }()
         
         if shouldUpdate {
-          self._publisher.send()
+          DispatchQueue.main.async {
+            // For: Publishing changes from within view updates is not allowed, this will cause undefined behavior.
+            self._publisher.send()
+          }
         }
       }
       
