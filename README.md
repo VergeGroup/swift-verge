@@ -177,7 +177,7 @@ This new section will help users understand how to use Verge with SwiftUI, allow
 
 **StoreObject** property wrapper:
 
-SwiftUI provides the @StateObject property wrapper to create and manage a persistent instance of a given object that adheres to the ObservableObject protocol. However, StateObject will cause the view to be refreshed whenever the ObservableObject is updated.
+SwiftUI provides the `@StateObject` property wrapper to create and manage a persistent instance of a given object that adheres to the ObservableObject protocol. However, StateObject will cause the view to be refreshed whenever the ObservableObject is updated.
 
 In Verge, we introduce the StoreObject property wrapper, which instantiates a Store object for the duration of the view's lifecycle but does not cause the view to refresh when the Store updates.
 
