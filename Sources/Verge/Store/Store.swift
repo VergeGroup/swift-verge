@@ -552,7 +552,7 @@ Mutation: (%@)
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue,
     receive: @escaping @MainActor (Changes<State>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     return _primitive_sinkState(dropsFirst: dropsFirst, queue: Queues.MainActor(queue), receive: receive)
   }
   
@@ -560,16 +560,52 @@ Mutation: (%@)
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<State>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
+
+    let cancellable = _base_primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
+
+    let onAction: (StoreStateSubscription, StoreStateSubscription.Action) -> Void = { [weak self] object, action in
+      
+      guard let self else {
+        return
+      }
+      
+      switch action {
+      case .suspend:
+        object.cancelSubscription()
+      case .resume:
+        let newCancellable = _base_primitive_sinkState(
+          dropsFirst: false, // emits current value from beginning.
+          queue: queue,
+          receive: receive
+        )
+        object.replace(cancellable: consume newCancellable)
+      }
+    }
+
+    if keepsAliveForSubscribers {
+      return .init(cancellable, storeCancellable: storeLifeCycleCancellable, onAction: onAction)
+        .associate(store: self) // while subscribing its Store will be alive
+    } else {
+      return .init(cancellable, storeCancellable: storeLifeCycleCancellable, onAction: onAction)
+    }
     
+  }
+
+  private func _base_primitive_sinkState(
+    dropsFirst: Bool = false,
+    queue: some TargetQueueType,
+    receive: @escaping (Changes<State>) -> Void
+  ) -> EventEmitterCancellable {
+
     let executor = queue.execute
-    
+
     var latestStateWrapper: Changes<State>? = nil
-    
+
     let __sanitizer__ = sanitizer
-    
+
     let lock = VergeConcurrency.UnfairLock()
-    
+
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
     /// To get recursive updates that comes from first call receive closure.
     let cancellable = _sinkStateEvent { (event) in
@@ -577,13 +613,13 @@ Mutation: (%@)
       case .willUpdate:
         break
       case .didUpdate(let receivedState):
-        
+
         executor {
-          
+
           lock.lock()
-          
+
           var resolvedReceivedState = receivedState
-          
+
           // To escaping from critical issue
           if let latestState = latestStateWrapper {
             if latestState.version <= receivedState.version {
@@ -593,16 +629,16 @@ Mutation: (%@)
                */
               latestStateWrapper = receivedState
             } else {
-              
+
               /*
                Serious problem case:
                Received an older version than the state received before.
                To recover this case, send latest version state with dropping previous value in order to make `ifChanged` returns always true.
                */
               resolvedReceivedState = latestState.droppedPrevious()
-              
+
               if __sanitizer__.isSanitizerStateReceivingByCorrectOrder {
-                
+
                 sanitizerQueue.async {
                   __sanitizer__.onDidFindRuntimeError(
                     .recoveredStateFromReceivingOlderVersion(
@@ -610,7 +646,7 @@ Mutation: (%@)
                       receivedState: receivedState
                     )
                   )
-                  
+
                   os_log(
                     """
 ⚠️ [Verge Error] Received older version(%d) value rather than latest received version(%d).
@@ -645,23 +681,23 @@ Latest Version (%d): (%@)
                 }
               }
             }
-            
+
           } else {
             // first item
             latestStateWrapper = receivedState
           }
-          
+
           lock.unlock()
-          
+
           receive(resolvedReceivedState)
-        }        
+        }
       }
     }
-    
+
     if !dropsFirst {
-      
+
       let value = state.droppedPrevious()
-      
+
       executor {
         lock.lock()
         latestStateWrapper = value
@@ -672,13 +708,7 @@ Latest Version (%d): (%@)
       }
     }
 
-    if keepsAliveForSubscribers {
-      return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
-        .associate(store: self) // while subscribing its Store will be alive
-    } else {
-      return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
-    }
-    
+    return cancellable
   }
 
   func _mainActor_scan_sinkState<Accumulate>(
@@ -686,7 +716,7 @@ Latest Version (%d): (%@)
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue,
     receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
 
     _mainActor_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
 
@@ -701,8 +731,8 @@ Latest Version (%d): (%@)
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<State>, Accumulate) -> Void
-  ) -> StoreSubscription {
-    
+  ) -> StoreStateSubscription {
+
     _primitive_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       
       let accumulate = scan.accumulate(changes)
@@ -845,3 +875,49 @@ extension Store {
   }
   
 }
+
+#if DEBUG && canImport(SwiftUI)
+
+import SwiftUI
+
+@available(iOS 17, *)
+#Preview {
+  StoreSubscriptionView(frame: .zero)
+}
+
+@available(iOS 15, *)
+private final class StoreSubscriptionView: UIView {
+
+  struct State: StateType {
+    var count: Int = 0
+  }
+
+  let store: Store<State, Never> = .init(initialState: .init())
+
+  private let label = UILabel()
+
+  override init(frame: CGRect) {
+    super.init(frame: frame)
+
+    backgroundColor = .red
+
+    let button = UIButton.init(configuration: .bordered())
+    button.addAction(.init(handler: { action in
+
+    }), for: .touchUpInside)
+
+    let stack = UIStackView()
+
+    stack.addArrangedSubview(label)
+    stack.addArrangedSubview(button)
+
+    addSubview(stack)
+    stack.autoresizingMask = 
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+}
+
+#endif

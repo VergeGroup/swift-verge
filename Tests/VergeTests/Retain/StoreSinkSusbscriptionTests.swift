@@ -30,7 +30,7 @@ final class StoreSinkSubscriptionTests: XCTestCase {
 
   func test_Store_sinkState_canceled_by_others() {
 
-    var cancellable: StoreSubscription?
+    var cancellable: StoreStateSubscription?
 
     let storeRef = withReference(DemoStore())
     let resourceRef = withReference(Resource())

@@ -40,14 +40,6 @@ public final class StoreSubscription: Hashable, Cancellable, @unchecked Sendable
     associatedStore = nil
   }
 
-  public func suspend() {
-
-  }
-
-  public func resume() {
-
-  }
-
   func associate(store: some StoreType) -> StoreSubscription {
     ensureAlive()
     associatedStore = store
@@ -94,4 +86,147 @@ public final class StoreSubscription: Hashable, Cancellable, @unchecked Sendable
   }
 }
 
+public final class StoreStateSubscription: Hashable, Cancellable, @unchecked Sendable {
 
+  enum Action {
+    case suspend
+    case resume
+  }
+
+  public static func == (lhs: StoreStateSubscription, rhs: StoreStateSubscription) -> Bool {
+    lhs === rhs
+  }
+
+  public func hash(into hasher: inout Hasher) {
+    ObjectIdentifier(self).hash(into: &hasher)
+  }
+
+  private let wasCancelled = ManagedAtomic(false)
+
+  private var entranceForSuspension: ManagedAtomic<Int8> = .init(0)
+
+  private var source: AtomicReferenceStorage<EventEmitterCancellable>
+
+  // TODO: can't be sendable
+  private weak var storeCancellable: VergeAnyCancellable?
+  private var associatedStore: (any StoreType)?
+  private var associatedReferences: [AnyObject] = []
+  private let onAction: (StoreStateSubscription, Action) -> Void
+
+  init(
+    _ eventEmitterCancellable: EventEmitterCancellable,
+    storeCancellable: VergeAnyCancellable,
+    onAction: @escaping (StoreStateSubscription, Action) -> Void
+  ) {
+    self.source = .init(eventEmitterCancellable)
+    self.storeCancellable = storeCancellable
+    self.onAction = onAction
+  }
+
+  public func cancel() {
+
+    guard wasCancelled.compareExchange(expected: false, desired: true, ordering: .sequentiallyConsistent).exchanged else {
+      return
+    }
+
+    source.dispose().cancel()
+
+    associatedStore = nil
+  }
+
+  func cancelSubscription() {
+
+    guard wasCancelled.load(ordering: .sequentiallyConsistent) == false else {
+      return
+    }
+
+    source.dispose().cancel()
+
+  }
+
+  func replace(cancellable: consuming EventEmitterCancellable) {
+
+    guard wasCancelled.load(ordering: .sequentiallyConsistent) == false else {
+      return
+    }
+
+    AtomicReferenceStorage.atomicStore(cancellable, at: &source, ordering: .relaxed)
+  }
+
+  public func suspend() {
+
+    guard wasCancelled.load(ordering: .sequentiallyConsistent) == false else {
+      return
+    }
+
+    guard entranceForSuspension.loadThenWrappingIncrement(ordering: .sequentiallyConsistent) == 0 else {
+      assertionFailure("currently operating")
+      return
+    }
+
+    onAction(self, .suspend)
+
+    entranceForSuspension.wrappingDecrement(ordering: .sequentiallyConsistent)
+  }
+
+  public func resume() {
+
+    guard wasCancelled.load(ordering: .sequentiallyConsistent) == false else {
+      return
+    }
+
+    guard entranceForSuspension.loadThenWrappingIncrement(ordering: .sequentiallyConsistent) == 0 else {
+      assertionFailure("currently operating")
+      return
+    }
+
+    onAction(self, .resume)
+
+    entranceForSuspension.wrappingDecrement(ordering: .sequentiallyConsistent)
+  }
+
+  func associate(store: some StoreType) -> StoreStateSubscription {
+    ensureAlive()
+    associatedStore = store
+    return self
+  }
+
+  func associate(object: AnyObject) -> StoreStateSubscription {
+    ensureAlive()
+    associatedReferences.append(object)
+    return self
+  }
+
+  /**
+   Make this subscription alive while the source is active.
+   the source means a root data store which is Store.
+
+   In case of Derived, the source will be Derived's upstream.
+   If the upstream invalidated, this subscription will stop.
+   */
+  @discardableResult
+  public func storeWhileSourceActive() -> StoreStateSubscription {
+    ensureAlive()
+    assert(storeCancellable != nil)
+    storeCancellable?.associate(self)
+    return self
+  }
+
+  @inline(__always)
+  private func ensureAlive() {
+    assert(wasCancelled.load(ordering: .sequentiallyConsistent) == false)
+  }
+
+  /**
+   Converts to Combine.AnyCancellable to make it auto cancellable.
+   */
+  public func asAny() -> AnyCancellable {
+    return .init { [self] in
+      self.cancel()
+    }
+  }
+
+  deinit {
+    cancel()
+  }
+}
