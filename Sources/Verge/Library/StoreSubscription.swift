@@ -103,6 +103,8 @@ public final class StoreStateSubscription: Hashable, Cancellable, @unchecked Sen
 
   private let wasCancelled = ManagedAtomic(false)
 
+  private let isSuspending: ManagedAtomic<Bool> = .init(false)
+
   private var entranceForSuspension: ManagedAtomic<Int8> = .init(0)
 
   private var source: AtomicReferenceStorage<EventEmitterCancellable>
@@ -129,7 +131,7 @@ public final class StoreStateSubscription: Hashable, Cancellable, @unchecked Sen
       return
     }
 
-    source.dispose().cancel()
+    AtomicReferenceStorage.atomicLoad(at: &source, ordering: .relaxed).cancel()
 
     associatedStore = nil
   }
@@ -140,7 +142,7 @@ public final class StoreStateSubscription: Hashable, Cancellable, @unchecked Sen
       return
     }
 
-    source.dispose().cancel()
+    AtomicReferenceStorage.atomicLoad(at: &source, ordering: .relaxed).cancel()
 
   }
 
@@ -164,9 +166,16 @@ public final class StoreStateSubscription: Hashable, Cancellable, @unchecked Sen
       return
     }
 
+    defer {
+      entranceForSuspension.wrappingDecrement(ordering: .sequentiallyConsistent)
+    }
+
+    guard isSuspending.compareExchange(expected: false, desired: true, ordering: .sequentiallyConsistent).exchanged else {      
+      return
+    }
+
     onAction(self, .suspend)
 
-    entranceForSuspension.wrappingDecrement(ordering: .sequentiallyConsistent)
   }
 
   public func resume() {
@@ -180,9 +189,15 @@ public final class StoreStateSubscription: Hashable, Cancellable, @unchecked Sen
       return
     }
 
-    onAction(self, .resume)
+    defer {
+      entranceForSuspension.wrappingDecrement(ordering: .sequentiallyConsistent)
+    }
 
-    entranceForSuspension.wrappingDecrement(ordering: .sequentiallyConsistent)
+    guard isSuspending.compareExchange(expected: true, desired: false, ordering: .sequentiallyConsistent).exchanged else {
+      return
+    }
+
+    onAction(self, .resume)
   }
 
   func associate(store: some StoreType) -> StoreStateSubscription {

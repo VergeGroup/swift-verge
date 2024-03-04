@@ -895,24 +895,70 @@ private final class StoreSubscriptionView: UIView {
   let store: Store<State, Never> = .init(initialState: .init())
 
   private let label = UILabel()
+  private var subscription: StoreStateSubscription?
 
   override init(frame: CGRect) {
     super.init(frame: frame)
 
-    backgroundColor = .red
+    backgroundColor = .systemBackground
 
-    let button = UIButton.init(configuration: .bordered())
-    button.addAction(.init(handler: { action in
+    let upButton = UIButton.init(configuration: .bordered())
+    upButton.setTitle("Up", for: .normal)
+    upButton.addAction(.init(handler: { [weak self] action in
+
+      self?.store.commit {
+        $0.count += 1
+      }
 
     }), for: .touchUpInside)
+
+    let suspendButton = UIButton.init(configuration: .bordered())
+    suspendButton.setTitle("Suspend", for: .normal)
+    suspendButton.addAction(.init(handler: { [weak self] action in
+
+      self?.subscription?.suspend()
+
+    }), for: .touchUpInside)
+
+    let resumeButton = UIButton.init(configuration: .bordered())
+    resumeButton.setTitle("Resume", for: .normal)
+    resumeButton.addAction(.init(handler: { [weak self] action in
+
+      self?.subscription?.resume()
+
+    }), for: .touchUpInside)
+
 
     let stack = UIStackView()
 
     stack.addArrangedSubview(label)
-    stack.addArrangedSubview(button)
+    stack.addArrangedSubview(upButton)
+    stack.addArrangedSubview(suspendButton)
+    stack.addArrangedSubview(resumeButton)
+    
+    stack.axis = .vertical
+    stack.distribution = .equalCentering
 
     addSubview(stack)
-    stack.autoresizingMask = 
+    stack.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate(
+      [
+        stack.topAnchor.constraint(equalTo: topAnchor),
+        stack.leadingAnchor.constraint(equalTo: leadingAnchor),
+        stack.trailingAnchor.constraint(equalTo: trailingAnchor),
+        stack.bottomAnchor.constraint(equalTo: bottomAnchor)
+      ]
+    )
+
+    subscription = store.sinkState { [weak self] state in
+      guard let self else { return }
+
+      state.ifChanged(\.count).do { value in
+        self.label.text = value.description
+      }
+
+    }
+
   }
 
   required init?(coder: NSCoder) {
