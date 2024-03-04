@@ -5,7 +5,7 @@ import Combine
  A subscription that is compatible with Combine’s Cancellable.
  You can manage asynchronous tasks either call the ``cancel()`` to halt the subscription, or allow it to terminate upon instance deallocation, and by implementing the ``storeWhileSourceActive()`` technique, the subscription’s active status is maintained until the source store is released.
  */
-public final class StoreSubscription: Hashable, Cancellable {
+public final class StoreSubscription: Hashable, Cancellable, @unchecked Sendable {
 
   public static func == (lhs: StoreSubscription, rhs: StoreSubscription) -> Bool {
     lhs === rhs
@@ -18,6 +18,8 @@ public final class StoreSubscription: Hashable, Cancellable {
   private let wasCancelled = ManagedAtomic(false)
 
   private let source: EventEmitterCancellable
+
+  // TODO: can't be sendable
   private weak var storeCancellable: VergeAnyCancellable?
   private var associatedStore: (any StoreType)?
   private var associatedReferences: [AnyObject] = []
@@ -36,6 +38,14 @@ public final class StoreSubscription: Hashable, Cancellable {
 
     source.cancel()
     associatedStore = nil
+  }
+
+  public func suspend() {
+
+  }
+
+  public func resume() {
+
   }
 
   func associate(store: some StoreType) -> StoreSubscription {
