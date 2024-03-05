@@ -876,9 +876,10 @@ extension Store {
   
 }
 
-#if DEBUG && canImport(SwiftUI)
+#if DEBUG && canImport(SwiftUI) && canImport(UIKit)
 
 import SwiftUI
+import UIKit
 
 @available(iOS 17, *)
 #Preview {
