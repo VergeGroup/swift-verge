@@ -323,7 +323,7 @@ extension Store {
 // MARK: - Wait
 extension Store {
 
-  public func waitUntilFinishedAllEvents() async {
+  public func waitUntilAllEventConsumed() async {
     await withUnsafeContinuation { c in
       accept(.waiter({
         c.resume()
