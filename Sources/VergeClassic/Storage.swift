@@ -24,10 +24,14 @@ import Foundation
 
 open class ReadonlyStorage<Value>: @unchecked Sendable, CustomReflectable {
 
-  public enum Event {
+  public enum Event: EventEmitterEventType {
     case willUpdate
     case didUpdate(Value)
     case willDeinit
+
+    public func onComsume() {
+      
+    }
   }
 
   private let eventEmitter = EventEmitter<Event>()
