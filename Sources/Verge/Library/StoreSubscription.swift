@@ -36,6 +36,7 @@ public final class StoreSubscription: Hashable, Cancellable, @unchecked Sendable
 
     guard wasCancelled.compareExchange(expected: false, desired: true, ordering: .relaxed).exchanged else { return }
 
+    storeCancellable?.dissociate(self)
     source.cancel()
     associatedStore = nil
   }
@@ -113,7 +114,8 @@ public final class StoreStateSubscription: Hashable, Cancellable, @unchecked Sen
   private weak var storeCancellable: VergeAnyCancellable?
   private var associatedStore: (any StoreType)?
   private var associatedReferences: [AnyObject] = []
-  private let onAction: (StoreStateSubscription, Action) -> Void
+
+  private var onAction: ((StoreStateSubscription, Action) -> Void)?
 
   init(
     _ eventEmitterCancellable: EventEmitterCancellable,
@@ -132,8 +134,9 @@ public final class StoreStateSubscription: Hashable, Cancellable, @unchecked Sen
     }
 
     AtomicReferenceStorage.atomicLoad(at: &source, ordering: .relaxed).cancel()
-
+    storeCancellable?.dissociate(self)
     associatedStore = nil
+    onAction = nil
   }
 
   func cancelSubscription() {
@@ -174,7 +177,7 @@ public final class StoreStateSubscription: Hashable, Cancellable, @unchecked Sen
       return
     }
 
-    onAction(self, .suspend)
+    onAction?(self, .suspend)
 
   }
 
@@ -197,7 +200,7 @@ public final class StoreStateSubscription: Hashable, Cancellable, @unchecked Sen
       return
     }
 
-    onAction(self, .resume)
+    onAction?(self, .resume)
   }
 
   func associate(store: some StoreType) -> StoreStateSubscription {

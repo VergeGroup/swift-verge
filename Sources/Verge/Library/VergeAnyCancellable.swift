@@ -4,6 +4,24 @@ import Combine
 /// A typealias to `Set<AnyCancellable>`.
 public typealias VergeAnyCancellables = Set<AnyCancellable>
 
+final class Reference: Equatable, Hashable {
+
+  static func == (lhs: Reference, rhs: Reference) -> Bool {
+    lhs === rhs
+  }
+
+  func hash(into hasher: inout Hasher) {
+    ObjectIdentifier(value).hash(into: &hasher)
+  }
+
+  let value: AnyObject
+
+  init(value: AnyObject) {
+    self.value = value
+  }
+
+}
+
 /// A type-erasing cancellable object that executes a provided closure when canceled.
 /// An AnyCancellable instance automatically calls cancel() when deinitialized.
 /// To cancel depending owner, can be written following
@@ -39,7 +57,7 @@ public final class VergeAnyCancellable: Hashable, Cancellable, @unchecked Sendab
   }
 
   private var actions: ContiguousArray<() -> Void>? = .init()
-  private var retainObjects: ContiguousArray<AnyObject> = .init()
+  private var retainObjects: Set<Reference> = .init()
 
   public init() {
   }
@@ -65,9 +83,25 @@ public final class VergeAnyCancellable: Hashable, Cancellable, @unchecked Sendab
 
     assert(!wasCancelled)
 
-    retainObjects.append(object)
+    retainObjects.insert(.init(value: object))
 
     return self
+  }
+
+  public func dissociate(_ object: AnyObject) {
+
+    lock.lock()
+
+    let target = retainObjects.remove(.init(value: object))
+
+    lock.unlock()
+
+    guard let target else {
+      return
+    }
+
+    withExtendedLifetime(target, {})
+
   }
 
   public func insert(_ cancellable: Cancellable) {
@@ -102,20 +136,27 @@ public final class VergeAnyCancellable: Hashable, Cancellable, @unchecked Sendab
   public func cancel() {
 
     lock.lock()
-    defer {
+
+    guard !wasCancelled else {
       lock.unlock()
+      return
     }
 
-    guard !wasCancelled else { return }
     wasCancelled = true
 
+    let _retainObjects = self.retainObjects
     retainObjects.removeAll()
-    
-    actions?.forEach {
+
+    let _actions = self.actions
+    self.actions = nil
+
+    lock.unlock()
+
+    withExtendedLifetime(_retainObjects, {})
+
+    _actions?.forEach {
       $0()
     }
-
-    actions = nil
 
   }
 
