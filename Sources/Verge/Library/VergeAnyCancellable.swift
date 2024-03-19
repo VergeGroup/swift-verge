@@ -4,24 +4,6 @@ import Combine
 /// A typealias to `Set<AnyCancellable>`.
 public typealias VergeAnyCancellables = Set<AnyCancellable>
 
-final class Reference: Equatable, Hashable {
-
-  static func == (lhs: Reference, rhs: Reference) -> Bool {
-    lhs === rhs
-  }
-
-  func hash(into hasher: inout Hasher) {
-    ObjectIdentifier(value).hash(into: &hasher)
-  }
-
-  let value: AnyObject
-
-  init(value: AnyObject) {
-    self.value = value
-  }
-
-}
-
 /// A type-erasing cancellable object that executes a provided closure when canceled.
 /// An AnyCancellable instance automatically calls cancel() when deinitialized.
 /// To cancel depending owner, can be written following
@@ -185,3 +167,21 @@ public final class VergeAnyCancellable: Hashable, Cancellable, @unchecked Sendab
 ///
 @available(*, deprecated, renamed: "Cancellable", message: "Integrated with Combine")
 public typealias CancellableType = Cancellable
+
+private final class Reference: Equatable, Hashable {
+
+  static func == (lhs: Reference, rhs: Reference) -> Bool {
+    lhs === rhs
+  }
+
+  func hash(into hasher: inout Hasher) {
+    ObjectIdentifier(value).hash(into: &hasher)
+  }
+
+  let value: AnyObject
+
+  init(value: AnyObject) {
+    self.value = value
+  }
+
+}

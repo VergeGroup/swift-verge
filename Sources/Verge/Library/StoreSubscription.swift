@@ -41,18 +41,6 @@ public final class StoreSubscription: Hashable, Cancellable, @unchecked Sendable
     associatedStore = nil
   }
 
-  func associate(store: some StoreType) -> StoreSubscription {
-    ensureAlive()
-    associatedStore = store
-    return self
-  }
-
-  func associate(object: AnyObject) -> StoreSubscription {
-    ensureAlive()
-    associatedReferences.append(object)
-    return self
-  }
-
   /**
    Make this subscription alive while the source is active.
    the source means a root data store which is Store.
