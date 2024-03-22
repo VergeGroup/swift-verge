@@ -63,11 +63,13 @@ let package = Package(
         "VergeRx"
       ]
     ),
+    .target(name: "VergeTypedIdentifier"),
     .target(
       name: "VergeNormalization",
       dependencies: [
         "VergeMacros",
         "VergeComparator",
+        "VergeTypedIdentifier",
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]
     ),
