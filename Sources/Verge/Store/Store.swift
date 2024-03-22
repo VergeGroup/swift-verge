@@ -744,14 +744,14 @@ Latest Version (%d): (%@)
   func _mainActor_sinkActivity(
     queue: MainActorTargetQueue,
     receive: @escaping @MainActor (Activity) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreActivitySubscription {
     return _primitive_sinkActivity(queue: Queues.MainActor(queue), receive: receive)
   }
 
   func _primitive_sinkActivity(
     queue: some TargetQueueType,
     receive: @escaping (Activity) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreActivitySubscription {
 
     let execute = queue.execute
     let cancellable = self._sinkActivityEvent { activity in

@@ -172,7 +172,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   public func sinkActivity(
     queue: some TargetQueueType,
     receive: @escaping (TargetStore.Activity) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreActivitySubscription {
 
     store.asStore()._primitive_sinkActivity(queue: queue, receive: receive)
 
@@ -184,7 +184,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   public func sinkActivity(
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (TargetStore.Activity) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreActivitySubscription {
 
     store.asStore()._mainActor_sinkActivity(queue: queue) { activity in
       thunkToMainActor {
