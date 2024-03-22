@@ -207,7 +207,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
     private var detectors: StateProxy.Detectors?
 
     private nonisolated let _publisher: ObservableObjectPublisher = .init()
-    private var cancellable: StoreSubscription?
+    private var cancellable: StoreStateSubscription?
     private let retainValues: [AnyObject]
     
     private var currentValue: Changes<StateType>
@@ -333,7 +333,7 @@ enum Preview_StoreReader: PreviewProvider {
     }
   }
 
-  final class ViewModel: StoreComponentType {
+  final class ViewModel: StoreDriverType {
 
     struct State: Equatable {
       var count: Int = 0

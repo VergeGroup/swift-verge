@@ -5,9 +5,9 @@ import Combine
  A subscription that is compatible with Combine’s Cancellable.
  You can manage asynchronous tasks either call the ``cancel()`` to halt the subscription, or allow it to terminate upon instance deallocation, and by implementing the ``storeWhileSourceActive()`` technique, the subscription’s active status is maintained until the source store is released.
  */
-public final class StoreSubscription: Hashable, Cancellable {
+public final class StoreActivitySubscription: Hashable, Cancellable, @unchecked Sendable {
 
-  public static func == (lhs: StoreSubscription, rhs: StoreSubscription) -> Bool {
+  public static func == (lhs: StoreActivitySubscription, rhs: StoreActivitySubscription) -> Bool {
     lhs === rhs
   }
 
@@ -18,6 +18,8 @@ public final class StoreSubscription: Hashable, Cancellable {
   private let wasCancelled = ManagedAtomic(false)
 
   private let source: EventEmitterCancellable
+
+  // TODO: can't be sendable
   private weak var storeCancellable: VergeAnyCancellable?
   private var associatedStore: (any StoreType)?
   private var associatedReferences: [AnyObject] = []
@@ -34,20 +36,9 @@ public final class StoreSubscription: Hashable, Cancellable {
 
     guard wasCancelled.compareExchange(expected: false, desired: true, ordering: .relaxed).exchanged else { return }
 
+    storeCancellable?.dissociate(self)
     source.cancel()
     associatedStore = nil
-  }
-
-  func associate(store: some StoreType) -> StoreSubscription {
-    ensureAlive()
-    associatedStore = store
-    return self
-  }
-
-  func associate(object: AnyObject) -> StoreSubscription {
-    ensureAlive()
-    associatedReferences.append(object)
-    return self
   }
 
   /**
@@ -58,7 +49,7 @@ public final class StoreSubscription: Hashable, Cancellable {
    If the upstream invalidated, this subscription will stop.
    */
   @discardableResult
-  public func storeWhileSourceActive() -> StoreSubscription {
+  public func storeWhileSourceActive() -> StoreActivitySubscription {
     ensureAlive()
     assert(storeCancellable != nil)
     storeCancellable?.associate(self)
@@ -83,5 +74,4 @@ public final class StoreSubscription: Hashable, Cancellable {
     cancel()
   }
 }
-
 

@@ -107,7 +107,7 @@ extension StoreDriverType where Scope == TargetStore.State {
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<TargetStore.State>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     store.asStore()._primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
@@ -123,7 +123,7 @@ extension StoreDriverType where Scope == TargetStore.State {
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<TargetStore.State>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     store.asStore()._mainActor_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
@@ -142,7 +142,7 @@ extension StoreDriverType where Scope == TargetStore.State {
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<TargetStore.State>, Accumulate) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     store.asStore()._primitive_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
@@ -161,7 +161,7 @@ extension StoreDriverType where Scope == TargetStore.State {
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<TargetStore.State>, Accumulate) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     store.asStore()._mainActor_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
@@ -172,7 +172,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   public func sinkActivity(
     queue: some TargetQueueType,
     receive: @escaping (TargetStore.Activity) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreActivitySubscription {
 
     store.asStore()._primitive_sinkActivity(queue: queue, receive: receive)
 
@@ -184,7 +184,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   public func sinkActivity(
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (TargetStore.Activity) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreActivitySubscription {
 
     store.asStore()._mainActor_sinkActivity(queue: queue) { activity in
       thunkToMainActor {
@@ -213,7 +213,7 @@ extension StoreDriverType {
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<Scope>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     let _scope = scope
 
     return store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue) { state in
@@ -236,7 +236,7 @@ extension StoreDriverType {
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<Scope>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     let _scope = scope
 
     return store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor state in
@@ -259,7 +259,7 @@ extension StoreDriverType {
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<Scope>, Accumulate) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       let accumulate = scan.accumulate(changes)
       receive(changes, accumulate)
@@ -281,7 +281,7 @@ extension StoreDriverType {
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<Scope>, Accumulate) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor changes in
       let accumulate = scan.accumulate(changes)
       receive(changes, accumulate)

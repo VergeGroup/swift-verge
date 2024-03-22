@@ -29,7 +29,7 @@ extension StoreDriverType {
   public func assign(
     queue: some TargetQueueType = .passthrough,
     to binder: @escaping (Changes<TargetStore.State>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     store.asStore().sinkState(queue: queue, receive: binder)
   }
 
@@ -41,7 +41,7 @@ extension StoreDriverType {
   public func assign(
     queue: MainActorTargetQueue,
     to binder: @escaping (Changes<TargetStore.State>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     store.asStore().sinkState(queue: queue, receive: binder)
   }
   

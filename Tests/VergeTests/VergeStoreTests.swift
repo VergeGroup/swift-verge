@@ -413,14 +413,14 @@ final class VergeStoreTests: XCTestCase {
     
   }
 
-  final class DemoStoreWrapper2: StoreWrapperType {
+  final class DemoStoreWrapper2: StoreDriverType {
 
     struct State: Equatable {
       var source: Changes<Int>
     }
 
     let store: Verge.Store<State, Never>
-    var sub: StoreSubscription? = nil
+    var sub: StoreStateSubscription? = nil
 
     init(sourceStore: DemoStore) {
 
