@@ -23,7 +23,7 @@ import Foundation
 import os.log
 import ConcurrencyTaskManager
 
-@_implementationOnly import Atomics
+import Atomics
 
 #if canImport(Combine)
 import Combine
