@@ -324,7 +324,7 @@ extension Store {
 extension Store {
 
   public func waitUntilAllEventConsumed() async {
-    await withUnsafeContinuation { c in
+    await withCheckedContinuation { c in
       accept(.waiter({
         c.resume()
       }))
