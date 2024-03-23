@@ -15,14 +15,26 @@ import Combine
 
 @available(iOS 13.0, *)
 class EventEmitterTests: XCTestCase {
-  
+
+  struct _Event: EventEmitterEventType {
+    let value: String
+
+    init(_ value: String) {
+      self.value = value
+    }
+
+    func onComsume() {
+      print("consume")
+    }
+  }
+
   private var subscriptions = Set<AnyCancellable>()
   
   @available(iOS 13, *)
   func testPublisher() {
     
-    let emitter = EventEmitter<String>()
-    
+    let emitter = EventEmitter<_Event>()
+
     let waiter = XCTestExpectation()
     
     emitter
@@ -30,7 +42,7 @@ class EventEmitterTests: XCTestCase {
       .handleEvents(receiveSubscription: { (sub) in
         print(sub)
       }, receiveOutput: { (value) in
-        XCTAssertEqual(value, "Hello")
+        XCTAssertEqual(value.value, "Hello")
         waiter.fulfill()
       }, receiveCompletion: { (completion) in
         
@@ -43,16 +55,16 @@ class EventEmitterTests: XCTestCase {
       .connect()
       .store(in: &subscriptions)
     
-    emitter.accept("Hello")
-    
+    emitter.accept(.init("Hello"))
+
     wait(for: [waiter], timeout: 10)
   }
   
   @available(iOS 13, *)
   func testPublisherMultiple() {
     
-    let emitter = EventEmitter<String>()
-    
+    let emitter = EventEmitter<_Event>()
+
     let waiter1 = XCTestExpectation()
     let waiter2 = XCTestExpectation()
     let waiter3 = XCTestExpectation()
@@ -78,15 +90,15 @@ class EventEmitterTests: XCTestCase {
     }
     .store(in: &subscriptions)
     
-    emitter.accept("Hello")
-    
+    emitter.accept(.init("Hello"))
+
     wait(for: [waiter1, waiter2, waiter3], timeout: 10)
   }
   
   
   func testRegistrationPerformance() {
     
-    let emitter = EventEmitter<Void>()
+    let emitter = EventEmitter<_Event>()
     measure(metrics: [XCTMemoryMetric(), XCTCPUMetric(), XCTClockMetric()]) {
       for _ in 0..<1000 {
         emitter.addEventHandler { _ in
@@ -99,11 +111,11 @@ class EventEmitterTests: XCTestCase {
 
   func testEmittingPerformance() {
 
-    let emitter = EventEmitter<Void>()
+    let emitter = EventEmitter<_Event>()
 
     measure(metrics: [XCTMemoryMetric(), XCTCPUMetric()]) {
       for _ in 0..<10000 {
-        emitter.accept(())
+        emitter.accept(.init(""))
       }
     }
 
@@ -111,49 +123,49 @@ class EventEmitterTests: XCTestCase {
 
   func testOrder() {
 
-    let emitter = EventEmitter<Int>()
+    let emitter = EventEmitter<_Event>()
 
-    var results_1 = [Int]()
+    var results_1 = [_Event]()
     emitter.addEventHandler { value in
       results_1.append(value)
 
-      if value == 1 {
-        emitter.accept(2)
+      if value.value == "1" {
+        emitter.accept(.init("2"))
       }
     }
 
-    var results_2 = [Int]()
+    var results_2 = [_Event]()
     emitter.addEventHandler { value in
       results_2.append(value)
     }
 
-    emitter.accept(1)
+    emitter.accept(.init("1"))
 
-    XCTAssertEqual(results_1, [1, 2])
-    XCTAssertEqual(results_2, [1, 2])
+    XCTAssertEqual(results_1.map(\.value), ["1", "2"])
+    XCTAssertEqual(results_2.map(\.value), ["1", "2"])
 
   }
 
   func testEmitsAll() {
 
-    let emitter = EventEmitter<Int>()
+    let emitter = EventEmitter<_Event>()
 
     emitter.addEventHandler { value in
     }
 
-    let outputs = VergeConcurrency.UnfairLockAtomic.init([Int]())
+    let outputs = VergeConcurrency.UnfairLockAtomic.init([_Event]())
     emitter.addEventHandler { value in
       outputs.modify({
         $0.append(value)
       })
     }
 
-    let inputs = VergeConcurrency.UnfairLockAtomic.init([Int]())
+    let inputs = VergeConcurrency.UnfairLockAtomic.init([_Event]())
     DispatchQueue.concurrentPerform(iterations: 500) { i in
       inputs.modify {
-        $0.append(i)
+        $0.append(.init("\(i)"))
       }
-      emitter.accept(i)
+      emitter.accept(.init("\(i)"))
     }
 
     XCTAssertEqual(outputs.value.count, 500)
