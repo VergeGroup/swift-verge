@@ -111,8 +111,8 @@ open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchec
         
         for subscriber in capturedSubscribers {
           subscriber.1(event)
-          event.onComsume()
         }
+        event.onComsume()
       }
 
       /**
