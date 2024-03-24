@@ -21,9 +21,9 @@
     {
       "identity" : "swift-collections",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/FluidGroup/swift-collections",
+      "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "939cfd25234472b4dc91c3caeab304d15bca9a73",
+        "revision" : "94cf62b3ba8d4bed62680a282d4c25f9c63c2efb",
         "version" : "1.1.0"
       }
     },
