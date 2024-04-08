@@ -19,71 +19,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Foundation
-
-public struct AnyEntityIdentifier: Hashable, Sendable {
-  
-  public typealias StringLiteralType = String
-
-  public let value: PrimitiveIdentifier
-  public init(_ value: PrimitiveIdentifier) {
-    self.value = value
-  }
-
-}
-
 public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConvertible, Sendable {
-  
+
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.raw == rhs.raw
   }
-  
+
   public func hash(into hasher: inout Hasher) {
     raw.hash(into: &hasher)
   }
 
-  public let any: AnyEntityIdentifier
-
   public let raw: Entity.EntityIDRawType
 
-  public init(_ raw: Entity.EntityIDRawType) {
+  public init(_ raw: consuming Entity.EntityIDRawType) {
     self.raw = raw
-    self.any = .init(raw._primitiveIdentifier)
   }
-  
-  @_spi(ForORM)
-  public init(_ anyIdentifier: AnyEntityIdentifier) {
-    self.any = anyIdentifier
-    self.raw = Entity.EntityIDRawType._restore(from: anyIdentifier.value)!
-  }
-  
+
   public var description: String {
     "<\(String(reflecting: Entity.self))>(\(raw))"
   }
 }
 
 /// A protocol describes object is an Entity.
-///
-/// EntityType has VergeTypedIdentifiable.
-/// You might use IdentifiableEntityType instead, if you create SwiftUI app.
 public protocol EntityType: Equatable, Sendable {
 
-  associatedtype EntityIDRawType: _PrimitiveIdentifierConvertible
+  associatedtype EntityIDRawType: Hashable, Sendable
 
   var entityID: EntityID { get }
 
   typealias EntityID = EntityIdentifier<Self>
-}
-
-public struct EntityTableIdentifier: Hashable {
-
-  public let name: String
-
-  public init(_ rawName: String) {
-    self.name = rawName
-  }
-
-  public init<T>(_ type: T.Type) {
-    self.name = _typeName(T.self)
-  }
 }
