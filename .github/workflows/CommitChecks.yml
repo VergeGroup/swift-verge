@@ -12,9 +12,9 @@ jobs:
     steps:
       - uses: maxim-lobanov/setup-xcode@v1.1
         with:
-          xcode-version: "15.2"
+          xcode-version: "15.3"
       - uses: actions/checkout@v2
       - name: xcbeautify
         run: brew install xcbeautify
       - name: Run Test
-        run: set -o pipefail && xcodebuild -scheme Verge-Package test -destination 'platform=iOS Simulator,name=iPhone 14 Pro,OS=16.4' | xcbeautify
+        run: set -o pipefail && xcodebuild -scheme Verge-Package test -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.0.1' | xcbeautify
