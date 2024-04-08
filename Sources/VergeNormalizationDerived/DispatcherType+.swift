@@ -8,23 +8,6 @@ public enum NormalizedStorageError: Swift.Error {
   case notFoundEntityToMakeDerived
 }
 
-extension MainActorStore {
-
-  @MainActor
-  public func normalizedStorage<Selector: StorageSelector>(_ selector: Selector) -> NormalizedStoragePath<MainActorStore, Selector> {
-    return .init(store: self, storageSelector: selector)
-  }
-
-}
-
-extension AsyncStore {
-
-  public func normalizedStorage<Selector: StorageSelector>(_ selector: Selector) -> NormalizedStoragePath<AsyncStore, Selector> {
-    return .init(store: self, storageSelector: selector)
-  }
-
-}
-
 extension StoreType {
 
   public func normalizedStorage<Selector: StorageSelector>(_ selector: Selector) -> NormalizedStoragePath<Self, Selector> {

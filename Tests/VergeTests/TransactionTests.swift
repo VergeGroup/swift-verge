@@ -11,7 +11,7 @@ final class TransactionTests: XCTestCase {
       }
     }
 
-    let store = AsyncStore<DemoState, Never>(initialState: .init())
+    let store = Store<DemoState, Never>(initialState: .init())
 
     await store.commit {
       $0.markAsModified()

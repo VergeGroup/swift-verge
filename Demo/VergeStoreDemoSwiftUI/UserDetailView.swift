@@ -23,8 +23,8 @@ struct UserDetailView: View, Equatable {
 
   private var posts: [Entity.Post] {
 
-    session.store.primitiveState.db.entities.post.find(in:
-      session.store.primitiveState.db.indexes.postIDsAuthorGrouped.orderedID(in: user.entityID)
+    session.store.state.primitive.db.entities.post.find(in:
+      session.store.state.primitive.db.indexes.postIDsAuthorGrouped.orderedID(in: user.entityID)
     )
   }
 

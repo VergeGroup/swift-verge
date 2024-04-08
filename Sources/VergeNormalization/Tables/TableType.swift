@@ -1,3 +1,4 @@
+import VergeTypedIdentifier
 
 /// a storage of the entity
 public protocol TableType<Entity>: Equatable {

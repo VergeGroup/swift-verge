@@ -22,8 +22,8 @@ extension View {
   /// - Parameters:
   ///   - instance: The `DispatcherType` instance to subscribe to.
   ///   - perform: A closure to execute when the `State` changes.
-  public func onReceiveState<D: DispatcherType>(_ instance: D, perform: @escaping @MainActor (Changes<D.State>) -> Void) -> some View {
-    onReceive(instance.store.asStore().statePublisher().receive(on: DispatchQueue.main), perform: perform)
+  public func onReceiveState<D: StoreDriverType>(_ instance: D, perform: @escaping @MainActor (Changes<D.TargetStore.State>) -> Void) -> some View {
+    onReceive(instance.store.asStore()._statePublisher().receive(on: DispatchQueue.main), perform: perform)
   }
 
   /// Adds an action to perform when the specified `DispatcherType` publishes an activity.
@@ -46,8 +46,8 @@ extension View {
   /// - Parameters:
   ///   - instance: The `DispatcherType` instance to subscribe to.
   ///   - perform: A closure to execute when the `Activity` is published.
-  public func onReceiveActivity<D: DispatcherType>(_ instance: D, perform: @escaping @MainActor (D.Activity) -> Void) -> some View {
-    onReceive(instance.store.asStore().activityPublisher().receive(on: DispatchQueue.main), perform: perform)
+  public func onReceiveActivity<D: StoreDriverType>(_ instance: D, perform: @escaping @MainActor (D.TargetStore.Activity) -> Void) -> some View {
+    onReceive(instance.store.asStore()._activityPublisher().receive(on: DispatchQueue.main), perform: perform)
   }
 
 }

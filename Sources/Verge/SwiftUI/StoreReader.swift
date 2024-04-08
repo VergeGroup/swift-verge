@@ -11,7 +11,7 @@ import SwiftUI
  Store emits events of updated state, StoreReader filters them with current using KeyPaths.
  Therefore functions of the state are not available in this situation.
  */
-@available(iOS 14, *)
+@available(iOS 14, watchOS 7.0, tvOS 14, *)
 public struct StoreReader<StateType: Equatable, Content: View>: View {
 
   private let backing: _StoreReader<StateType, Content>
@@ -36,11 +36,11 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
   /// - Parameters:
   ///   - store:
   ///   - content:
-  public init<Store: DispatcherType>(
+  public init<Driver: StoreDriverType>(
     debug: Bool = false,
-    _ store: Store,
+    _ store: Driver,
     @ViewBuilder content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
-  ) where StateType == Store.State {
+  ) where StateType == Driver.TargetStore.State {
 
     let store = store.store.asStore()
 
@@ -60,7 +60,7 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
 
 }
 
-@available(iOS 14, *)
+@available(iOS 14, watchOS 7.0, tvOS 14, *)
 private struct _StoreReader<StateType: Equatable, Content: View>: View {
 
   @StateObject private var node: StoreReaderComponents<StateType>.Node
@@ -100,9 +100,9 @@ public enum StoreReaderComponents<StateType: Equatable> {
     }
     
     private(set) var detectors: Detectors = [:]
-    private weak var source: (any DispatcherType<StateType>)?
+    private weak var source: (any StoreDriverType<StateType>)?
     
-    init(wrapped: StateType, source: (any DispatcherType<StateType>)?) {
+    init(wrapped: StateType, source: (any StoreDriverType<StateType>)?) {
       self.wrapped = wrapped
       self.source = source
     }
@@ -207,17 +207,17 @@ public enum StoreReaderComponents<StateType: Equatable> {
     private var detectors: StateProxy.Detectors?
 
     private nonisolated let _publisher: ObservableObjectPublisher = .init()
-    private var cancellable: StoreSubscription?
+    private var cancellable: StoreStateSubscription?
     private let retainValues: [AnyObject]
     
     private var currentValue: Changes<StateType>
     
     private let debug: Bool
 
-    private weak var source: (any DispatcherType<StateType>)?
-    
+    private weak var source: (any StoreDriverType<StateType>)?
+
     init(
-      store: some DispatcherType<StateType>,
+      store: some StoreDriverType<StateType>,
       retainValues: [AnyObject],
       debug: Bool = false
     ) {
@@ -252,7 +252,10 @@ public enum StoreReaderComponents<StateType: Equatable> {
         }()
         
         if shouldUpdate {
-          self._publisher.send()
+          DispatchQueue.main.async {
+            // For: Publishing changes from within view updates is not allowed, this will cause undefined behavior.
+            self._publisher.send()
+          }
         }
       }
       
@@ -290,7 +293,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
 
 #if DEBUG
 
-@available(iOS 14, *)
+@available(iOS 14, watchOS 7.0, tvOS 14, *)
 enum Preview_StoreReader: PreviewProvider {
 
   static var previews: some View {
@@ -330,7 +333,7 @@ enum Preview_StoreReader: PreviewProvider {
     }
   }
 
-  final class ViewModel: StoreComponentType {
+  final class ViewModel: StoreDriverType {
 
     struct State: Equatable {
       var count: Int = 0

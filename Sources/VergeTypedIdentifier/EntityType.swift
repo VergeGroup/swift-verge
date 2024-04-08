@@ -70,24 +70,9 @@ public protocol EntityType: Equatable, Sendable {
 
   associatedtype EntityIDRawType: _PrimitiveIdentifierConvertible
 
-  static var entityName: EntityTableIdentifier { get }
-
   var entityID: EntityID { get }
 
   typealias EntityID = EntityIdentifier<Self>
-}
-
-extension EntityType {
-    
-  /// Returns EntityName from reflection
-  ///
-  /// - Warning:
-  ///   Taking the name in runtime, it's not fast.
-  ///   To be faster, override this property each your entities.
-  public static var entityName: EntityTableIdentifier {
-    .init(Self.self)
-  }
-
 }
 
 public struct EntityTableIdentifier: Hashable {

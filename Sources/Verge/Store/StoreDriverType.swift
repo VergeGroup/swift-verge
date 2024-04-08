@@ -21,39 +21,77 @@
 
 import Foundation
 
-// It would be renamed as StoreContextType
-public protocol DispatcherType<Scope>: AnyObject where State == WrappedStore.State, Activity == WrappedStore.Activity {
+@available(*, deprecated, renamed: "StoreDriverType")
+public typealias DispatcherType<Scope> = StoreDriverType<Scope>
 
-  associatedtype WrappedStore: StoreType
-  associatedtype Scope: Equatable = WrappedStore.State
+/**
+ A protocol that uses external Store inside and provides the functions.
+ ```
+ final class MyViewModel: StoreDriverType {
+   
+   struct State {
+     ...
+   }
 
-  associatedtype State = WrappedStore.State
-  associatedtype Activity = WrappedStore.Activity
+   // If you don't need Activity, you can remove it.
+   enum Activity {
+     ...
+   }
+   
+   let store: Store<State, Activity>
 
-  var store: WrappedStore { get }
-  var scope: WritableKeyPath<WrappedStore.State, Scope> { get }
+   init() {
+     self.store = .init(initialState: .init(), logger: nil)
+   }
+ 
+ }
+ ``` 
+ */
+public protocol StoreDriverType<Scope>: ObservableObject where Activity == TargetStore.Activity {
+
+  associatedtype TargetStore: StoreType
+
+
+  associatedtype Scope: Equatable = TargetStore.State
+
+  var store: TargetStore { get }
+  var scope: WritableKeyPath<TargetStore.State, Scope> { get }
+
   var state: Changes<Scope> { get }
+
+  // WORKAROUND: for activityPublisher()
+  associatedtype Activity = TargetStore.Activity
 }
 
-extension DispatcherType {
+extension StoreDriverType {
+
+  public func statePublisher() -> some Combine.Publisher<Changes<TargetStore.State>, Never> {
+    store.asStore()._statePublisher()
+  }
+
+  public func activityPublisher() -> some Combine.Publisher<Activity, Never> {
+    store.asStore()._activityPublisher()
+  }
+
+  public var objectWillChange: TargetStore.ObjectWillChangePublisher {
+    store.objectWillChange
+  }
+
   /// A state that cut out from root-state with the scope key path.
   public nonisolated var state: Changes<Scope> {
     store.state.map { $0[keyPath: scope] }
   }
 
-  public nonisolated var rootState: Changes<State> {
+  public nonisolated var rootState: Changes<TargetStore.State> {
     return store.state
   }
 }
 
-extension DispatcherType where Scope == State {
-  public var scope: WritableKeyPath<WrappedStore.State, WrappedStore.State> {
-    \WrappedStore.State.self
+extension StoreDriverType where Scope == TargetStore.State {
+
+  public var scope: WritableKeyPath<TargetStore.State, TargetStore.State> {
+    \TargetStore.State.self
   }
-}
-
-
-extension DispatcherType where Scope == State {
 
   // MARK: - Subscribings
 
@@ -68,8 +106,8 @@ extension DispatcherType where Scope == State {
   public func sinkState(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<State>) -> Void
-  ) -> StoreSubscription {
+    receive: @escaping (Changes<TargetStore.State>) -> Void
+  ) -> StoreStateSubscription {
     store.asStore()._primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
@@ -84,8 +122,8 @@ extension DispatcherType where Scope == State {
   public func sinkState(
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (Changes<State>) -> Void
-  ) -> StoreSubscription {
+    receive: @escaping @MainActor (Changes<TargetStore.State>) -> Void
+  ) -> StoreStateSubscription {
     store.asStore()._mainActor_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
@@ -100,11 +138,11 @@ extension DispatcherType where Scope == State {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   @_disfavoredOverload
   public func sinkState<Accumulate>(
-    scan: Scan<Changes<State>, Accumulate>,
+    scan: Scan<Changes<TargetStore.State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<State>, Accumulate) -> Void
-  ) -> StoreSubscription {
+    receive: @escaping (Changes<TargetStore.State>, Accumulate) -> Void
+  ) -> StoreStateSubscription {
     store.asStore()._primitive_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
@@ -119,11 +157,11 @@ extension DispatcherType where Scope == State {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   @discardableResult
   public func sinkState<Accumulate>(
-    scan: Scan<Changes<State>, Accumulate>,
+    scan: Scan<Changes<TargetStore.State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
-  ) -> StoreSubscription {
+    receive: @escaping @MainActor (Changes<TargetStore.State>, Accumulate) -> Void
+  ) -> StoreStateSubscription {
     store.asStore()._mainActor_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
@@ -133,8 +171,8 @@ extension DispatcherType where Scope == State {
   @_disfavoredOverload
   public func sinkActivity(
     queue: some TargetQueueType,
-    receive: @escaping (Activity) -> Void
-  ) -> StoreSubscription {
+    receive: @escaping (TargetStore.Activity) -> Void
+  ) -> StoreActivitySubscription {
 
     store.asStore()._primitive_sinkActivity(queue: queue, receive: receive)
 
@@ -145,8 +183,8 @@ extension DispatcherType where Scope == State {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkActivity(
     queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (Activity) -> Void
-  ) -> StoreSubscription {
+    receive: @escaping @MainActor (TargetStore.Activity) -> Void
+  ) -> StoreActivitySubscription {
 
     store.asStore()._mainActor_sinkActivity(queue: queue) { activity in
       thunkToMainActor {
@@ -158,7 +196,7 @@ extension DispatcherType where Scope == State {
 
 }
 
-extension DispatcherType {
+extension StoreDriverType {
 
   /**
     Subscribe the state that scoped
@@ -175,7 +213,7 @@ extension DispatcherType {
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<Scope>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     let _scope = scope
 
     return store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue) { state in
@@ -198,7 +236,7 @@ extension DispatcherType {
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<Scope>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     let _scope = scope
 
     return store.asStore().sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor state in
@@ -221,7 +259,7 @@ extension DispatcherType {
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<Scope>, Accumulate) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       let accumulate = scan.accumulate(changes)
       receive(changes, accumulate)
@@ -243,7 +281,7 @@ extension DispatcherType {
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue = .mainIsolated(),
     receive: @escaping @MainActor (Changes<Scope>, Accumulate) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor changes in
       let accumulate = scan.accumulate(changes)
       receive(changes, accumulate)
@@ -255,7 +293,7 @@ extension DispatcherType {
   /// - Parameter activity:
   public func send(
     _ name: String = "",
-    _ activity: WrappedStore.Activity,
+    _ activity: TargetStore.Activity,
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line
@@ -273,7 +311,7 @@ extension DispatcherType {
   /// Send activity
   /// - Parameter activity:
   public func send(
-    _ activity: WrappedStore.Activity,
+    _ activity: TargetStore.Activity,
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line
@@ -299,7 +337,7 @@ extension DispatcherType {
     )
 
     return try store.asStore()._receive(
-      mutation: { state, transaction -> Result in
+      mutation: { state, _ -> Result in
         try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
           ref.append(trace: trace)
           return try mutation(&ref)
@@ -316,25 +354,41 @@ extension DispatcherType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> Result
-  ) rethrows -> Result where Scope == WrappedStore.State {
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+  ) rethrows -> Result {
     let trace = MutationTrace(
       name: name,
       file: file,
       function: function,
       line: line
     )
-    return try self._commit(trace: trace, mutation: mutation)
+
+    return try store.asStore()._receive(
+      mutation: { state, transaction -> Result in
+        try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
+          ref.append(trace: trace)
+          return try mutation(&ref, &transaction)
+        }
+      }
+    )
   }
 
   /// Run Mutation that created inline
   ///
   /// Throwable
-  @inline(__always)
-  func _commit<Result>(
-    trace: MutationTrace,
+  public func commit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
     mutation: (inout InoutRef<Scope>) throws -> Result
-  ) rethrows -> Result where Scope == WrappedStore.State {
+  ) rethrows -> Result where Scope == TargetStore.State {
+    let trace = MutationTrace(
+      name: name,
+      file: file,
+      function: function,
+      line: line
+    )
     return try store.asStore()._receive(
       mutation: { ref, transaction -> Result in
         ref.append(trace: trace)
@@ -343,13 +397,37 @@ extension DispatcherType {
     )
   }
 
-  public func detached<NewScope: Equatable>(from newScope: WritableKeyPath<WrappedStore.State, NewScope>)
-  -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func commit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+  ) rethrows -> Result where Scope == TargetStore.State {
+    let trace = MutationTrace(
+      name: name,
+      file: file,
+      function: function,
+      line: line
+    )
+    return try store.asStore()._receive(
+      mutation: { ref, transaction -> Result in
+        ref.append(trace: trace)
+        return try mutation(&ref, &transaction)
+      }
+    )
+  }
+
+  public func detached<NewScope: Equatable>(from newScope: WritableKeyPath<TargetStore.State, NewScope>)
+  -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
     .init(store: store.asStore(), scope: newScope)
   }
 
   public func detached<NewScope: Equatable>(by appendingScope: WritableKeyPath<Scope, NewScope>)
-  -> DetachedDispatcher<WrappedStore.State, WrappedStore.Activity, NewScope> {
+  -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
     .init(store: store.asStore(), scope: scope.appending(path: appendingScope))
   }
 }

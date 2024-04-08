@@ -12,8 +12,10 @@
 <sub>_ Supports concurrent processing _</sub><br/>
 </p>
 
-- [Verge Docs](https://vergegroup.github.io/swift-Verge/Verge/documentation/verge/)
-- [VergeNormalization Docs](https://vergegroup.github.io/swift-Verge/VergeNormalization/documentation/vergenormalization/)
+- Docs
+  - [Verge](https://swiftpackageindex.com/VergeGroup/swift-Verge/main/documentation/verge)
+  - [VergeNormalization](https://swiftpackageindex.com/VergeGroup/swift-Verge/main/documentation/vergenormalization)
+  - [VergeNormalizationDerived](https://swiftpackageindex.com/VergeGroup/swift-Verge/main/documentation/vergenormalizationderived)
 
 ## Support this projects
 <a href="https://www.buymeacoffee.com/muukii">
@@ -57,7 +59,7 @@ Create a state struct that represents the state of your application. Your state 
 Example:
 
 ```swift
-struct MyState: Equatable {
+struct MyState: StateType {
  var count: Int = 0 
 }
 ```
@@ -175,7 +177,7 @@ This new section will help users understand how to use Verge with SwiftUI, allow
 
 **StoreObject** property wrapper:
 
-SwiftUI provides the @StateObject property wrapper to create and manage a persistent instance of a given object that adheres to the ObservableObject protocol. However, StateObject will cause the view to be refreshed whenever the ObservableObject is updated.
+SwiftUI provides the `@StateObject` property wrapper to create and manage a persistent instance of a given object that adheres to the ObservableObject protocol. However, StateObject will cause the view to be refreshed whenever the ObservableObject is updated.
 
 In Verge, we introduce the StoreObject property wrapper, which instantiates a Store object for the duration of the view's lifecycle but does not cause the view to refresh when the Store updates.
 
@@ -343,6 +345,10 @@ By using `Derived` for computed properties and subscribing to updates, you can e
 State management plays a crucial role in building efficient and maintainable applications. One of the essential aspects of state management is organizing the data in a way that simplifies its manipulation and usage. This is where normalization becomes vital.
 
 Normalization is the process of structuring data in a way that eliminates redundancy and ensures data consistency. It is essential in state-management libraries because it significantly reduces the computational complexity of operations and makes it easier to manage the state.
+
+Docs:
+  - [VergeNormalization](https://swiftpackageindex.com/VergeGroup/swift-Verge/main/documentation/vergenormalization)
+  - [VergeNormalizationDerived](https://swiftpackageindex.com/VergeGroup/swift-Verge/main/documentation/vergenormalizationderived)
 
 Let's take a look at an example to illustrate the difference between normalized and denormalized data structures.
 

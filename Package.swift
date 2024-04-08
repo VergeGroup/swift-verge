@@ -23,12 +23,13 @@ let package = Package(
     .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.0.0"),
     .package(url: "https://github.com/apple/swift-docc-plugin.git", from: "1.3.0"),
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
-    .package(url: "https://github.com/FluidGroup/swift-collections", from: "1.1.0"),
+    .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
     .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.9.3"),
-    .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0")
+    .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
+    .package(url: "https://github.com/pointfreeco/swift-macro-testing.git", from: "0.2.1")
   ],
   targets: [
 
@@ -62,11 +63,13 @@ let package = Package(
         "VergeRx"
       ]
     ),
+    .target(name: "VergeTypedIdentifier"),
     .target(
       name: "VergeNormalization",
       dependencies: [
         "VergeMacros",
         "VergeComparator",
+        "VergeTypedIdentifier",
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]
     ),
@@ -113,6 +116,7 @@ let package = Package(
     .testTarget(name: "VergeMacrosTests", dependencies: [
       "VergeMacrosPlugin",
       .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+      .product(name: "MacroTesting", package: "swift-macro-testing"),
     ])
   ],
   swiftLanguageVersions: [.v5]

@@ -7,8 +7,6 @@ import SwiftSyntaxMacros
 struct Plugin: CompilerPlugin {
   let providingMacros: [Macro.Type] = [
     DatabaseStateMacro.self,
-    IfChangedMacro.self,
-
     NormalizedStorageMacro.self,
     TableMacro.self,
     IndexMacro.self,

@@ -37,7 +37,7 @@ final class RootStore: Store<RootState, RootActivity> {
     DispatchQueue.main.async {
       
       self.increment()
-      if self.primitiveState.count > 10 {
+      if self.state.primitive.count > 10 {
         self.send(.bomb)
       }
       

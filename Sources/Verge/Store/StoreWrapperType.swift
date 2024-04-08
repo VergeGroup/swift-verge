@@ -21,85 +21,9 @@
 
 import Foundation
 
-/**
- A protocol that wraps Store inside and provides the functions of DispatcherType
- 
- Especially, it would be helpful to migrate from Verge classic.
- 
- ```
- final class MyViewModel: StoreComponentType {
- 
-   // Current restriction, you need put the typealias as Scope points to State.
-   typealias Scope = State
-   
-   struct State {
-     ...
-   }
-
-   // If you don't need Activity, you can remove it.
-   enum Activity {
-     ...
-   }
-   
-   let store: DefaultStore
- 
-   init() {
-     self.store = .init(initialState: .init(), logger: nil)
-   }
- 
- }
- ``` 
- */
-public protocol StoreComponentType: DispatcherType, ObservableObject where Scope == WrappedStore.State {
-
-  var store: WrappedStore { get }
-}
+@available(*, deprecated, renamed: "StoreDriverType")
+public typealias StoreComponentType = StoreDriverType
 
 /// It would be deprecated in the future.
+@available(*, deprecated, renamed: "StoreDriverType")
 public typealias StoreWrapperType = StoreComponentType
-
-extension StoreComponentType {
-  public var objectWillChange: ObservableObjectPublisher {
-    store.objectWillChange
-  }
-}
-
-extension StoreComponentType {
-
-  /// Returns a current state with thread-safety.
-  ///
-  /// It causes locking and unlocking with a bit cost.
-  /// It may cause blocking if any other is doing mutation or reading.
-  public nonisolated var state: Changes<WrappedStore.State> {
-    store.state
-  }
-
-  @available(*, deprecated, renamed: "state")
-  public nonisolated var changes: Changes<WrappedStore.State> {
-    store.asStore().changes
-  }
-  
-  public nonisolated var primitiveState: WrappedStore.State {
-    store.primitiveState
-  }
- 
-}
-
-#if canImport(Combine)
-
-import Combine
-
-@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-extension StoreComponentType {
-  
-  public func statePublisher() -> some Combine.Publisher<Changes<State>, Never> {
-    store.asStore().statePublisher()
-  }
-  
-  public func activityPublisher() -> some Combine.Publisher<Activity, Never> {
-    store.asStore().activityPublisher()
-  }
-  
-}
-
-#endif

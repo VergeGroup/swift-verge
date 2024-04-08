@@ -12,7 +12,7 @@ import RxCocoa
 
 extension Store: ReactiveCompatible {}
 
-extension Reactive where Base : DispatcherType {
+extension Reactive where Base : StoreDriverType {
     
   /// An observable that repeatedly emits the changes when state updated
   ///
@@ -20,8 +20,8 @@ extension Reactive where Base : DispatcherType {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
-  public func stateObservable() -> Observable<Changes<Base.State>> {
-    base.store.asStore().statePublisher().asObservable()
+  public func stateObservable() -> Observable<Changes<Base.TargetStore.State>> {
+    base.store.asStore()._statePublisher().asObservable()
   }
   
   /// An observable that repeatedly emits the changes when state updated
@@ -30,13 +30,13 @@ extension Reactive where Base : DispatcherType {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
-  public func stateInfallible(startsFromInitial: Bool = true) -> Infallible<Changes<Base.State>> {
+  public func stateInfallible(startsFromInitial: Bool = true) -> Infallible<Changes<Base.TargetStore.State>> {
     stateObservable()
       .asInfallible(onErrorRecover: { _ in fatalError() })
   }
 
-  public func activitySignal() -> Signal<Base.Activity> {
-    base.store.asStore().activityPublisher().asObservable().asSignal(onErrorRecover: { _ in Signal.empty() })
+  public func activitySignal() -> Signal<Base.TargetStore.Activity> {
+    base.store.asStore()._activityPublisher().asObservable().asSignal(onErrorRecover: { _ in Signal.empty() })
   }
   
 }
@@ -226,11 +226,11 @@ extension EventEmitter {
   
 }
 
-extension Reactive where Base : DispatcherType {
+extension Reactive where Base : StoreDriverType {
 
   public func commitBinder<S>(
     scheduler: ImmediateSchedulerType = MainScheduler(),
-    mutate: @escaping (inout InoutRef<Base.State>, S) -> Void
+    mutate: @escaping (inout InoutRef<Base.TargetStore.State>, S) -> Void
   ) -> Binder<S> {
 
     return Binder<S>(base, scheduler: scheduler) { t, e in
@@ -243,7 +243,7 @@ extension Reactive where Base : DispatcherType {
 
   public func commitBinder<S>(
     scheduler: ImmediateSchedulerType = MainScheduler(),
-    mutate: @escaping (inout InoutRef<Base.State>, S?) -> Void
+    mutate: @escaping (inout InoutRef<Base.TargetStore.State>, S?) -> Void
   ) -> Binder<S?> {
 
     return Binder<S?>(base, scheduler: scheduler) { t, e in
@@ -256,7 +256,7 @@ extension Reactive where Base : DispatcherType {
 
   public func commitBinder<S>(
     scheduler: ImmediateSchedulerType = MainScheduler(),
-    target: WritableKeyPath<Base.State, S>
+    target: WritableKeyPath<Base.TargetStore.State, S>
   ) -> Binder<S> {
 
     return Binder<S>(base, scheduler: scheduler) { t, e in
@@ -269,7 +269,7 @@ extension Reactive where Base : DispatcherType {
 
   public func commitBinder<S>(
     scheduler: ImmediateSchedulerType = MainScheduler(),
-    target: WritableKeyPath<Base.State, S?>
+    target: WritableKeyPath<Base.TargetStore.State, S?>
   ) -> Binder<S?> {
 
     return Binder<S?>(base, scheduler: scheduler) { t, e in

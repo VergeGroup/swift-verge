@@ -36,7 +36,6 @@ public protocol StoreType<State>: AnyObject, Sendable, ObservableObject where Ob
   
   func asStore() -> Store<State, Activity>
   
-  var primitiveState: State { get }
   var state: Changes<State> { get }
 }
 
@@ -44,8 +43,8 @@ public typealias NoActivityStoreBase<State: Equatable> = Store<State, Never>
 
 private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.sanitizer")
 
-public enum _StoreEvent<State: Equatable, Activity> {
-  
+public enum _StoreEvent<State: Equatable, Activity>: EventEmitterEventType {
+
   public enum StateEvent {
     case willUpdate
     case didUpdate(Changes<State>)
@@ -53,6 +52,18 @@ public enum _StoreEvent<State: Equatable, Activity> {
   
   case state(StateEvent)
   case activity(Activity)
+  case waiter(() -> Void)
+
+  public func onComsume() {
+    switch self {
+    case .state:
+      break
+    case .activity:
+      break
+    case .waiter(let closure):
+      closure()
+    }
+  }
 }
 
 actor Writer {
@@ -80,7 +91,7 @@ actor Writer {
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, DispatcherType, DerivedMaking, @unchecked Sendable {
+open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable {
 
   public var scope: WritableKeyPath<State, State> = \State.self
 
@@ -210,18 +221,17 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
     case .state(let stateEvent):
       switch stateEvent {
       case .willUpdate:
-        if Thread.isMainThread {
-          objectWillChange.send()
-        } else {
-          DispatchQueue.main.async { [weak self] in
-            self?.objectWillChange.send()
-          }
+        DispatchQueue.main.async { [weak self] in
+          // For: `Publishing changes from within view updates is not allowed, this will cause undefined behavior.`
+          self?.objectWillChange.send()
         }
       case .didUpdate(let state):
         _valueSubject.send(state)
         stateDidUpdate(newState: state)
       }
     case .activity:
+      break
+    case .waiter:
       break
     }
   }
@@ -268,15 +278,6 @@ extension Store {
   public var objectDidChange: AnyPublisher<Changes<State>, Never> {
     valuePublisher.dropFirst().eraseToAnyPublisher()
   }
-
-  
-  /// A current state.
-  ///
-  /// It causes locking and unlocking with a bit cost.
-  /// It may cause blocking if any other is doing mutation or reading.
-  public var primitiveState: State {
-    state.primitive
-  }
   
   /// Returns a current state with thread-safety.
   ///
@@ -315,6 +316,19 @@ extension Store {
     
     preconditionFailure("Using the reference type for the state is restricted. it must be a value type to run correctly.")
     
+  }
+
+}
+
+// MARK: - Wait
+extension Store {
+
+  public func waitUntilAllEventConsumed() async {
+    await withCheckedContinuation { c in
+      accept(.waiter({
+        c.resume()
+      }))
+    }
   }
 
 }
@@ -565,7 +579,7 @@ Mutation: (%@)
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue,
     receive: @escaping @MainActor (Changes<State>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
     return _primitive_sinkState(dropsFirst: dropsFirst, queue: Queues.MainActor(queue), receive: receive)
   }
   
@@ -573,16 +587,52 @@ Mutation: (%@)
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<State>) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
+
+    let cancellable = _base_primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
+
+    let onAction: (StoreStateSubscription, StoreStateSubscription.Action) -> Void = { [weak self] object, action in
+      
+      guard let self else {
+        return
+      }
+      
+      switch action {
+      case .suspend:
+        object.cancelSubscription()
+      case .resume:
+        let newCancellable = _base_primitive_sinkState(
+          dropsFirst: false, // emits current value from beginning.
+          queue: queue,
+          receive: receive
+        )
+        object.replace(cancellable: consume newCancellable)
+      }
+    }
+
+    if keepsAliveForSubscribers {
+      return .init(cancellable, storeCancellable: storeLifeCycleCancellable, onAction: onAction)
+        .associate(store: self) // while subscribing its Store will be alive
+    } else {
+      return .init(cancellable, storeCancellable: storeLifeCycleCancellable, onAction: onAction)
+    }
     
+  }
+
+  private func _base_primitive_sinkState(
+    dropsFirst: Bool = false,
+    queue: some TargetQueueType,
+    receive: @escaping (Changes<State>) -> Void
+  ) -> EventEmitterCancellable {
+
     let executor = queue.execute
-    
+
     var latestStateWrapper: Changes<State>? = nil
-    
+
     let __sanitizer__ = sanitizer
-    
+
     let lock = VergeConcurrency.UnfairLock()
-    
+
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
     /// To get recursive updates that comes from first call receive closure.
     let cancellable = _sinkStateEvent { (event) in
@@ -590,13 +640,13 @@ Mutation: (%@)
       case .willUpdate:
         break
       case .didUpdate(let receivedState):
-        
+
         executor {
-          
+
           lock.lock()
-          
+
           var resolvedReceivedState = receivedState
-          
+
           // To escaping from critical issue
           if let latestState = latestStateWrapper {
             if latestState.version <= receivedState.version {
@@ -606,16 +656,16 @@ Mutation: (%@)
                */
               latestStateWrapper = receivedState
             } else {
-              
+
               /*
                Serious problem case:
                Received an older version than the state received before.
                To recover this case, send latest version state with dropping previous value in order to make `ifChanged` returns always true.
                */
               resolvedReceivedState = latestState.droppedPrevious()
-              
+
               if __sanitizer__.isSanitizerStateReceivingByCorrectOrder {
-                
+
                 sanitizerQueue.async {
                   __sanitizer__.onDidFindRuntimeError(
                     .recoveredStateFromReceivingOlderVersion(
@@ -623,7 +673,7 @@ Mutation: (%@)
                       receivedState: receivedState
                     )
                   )
-                  
+
                   os_log(
                     """
 ⚠️ [Verge Error] Received older version(%d) value rather than latest received version(%d).
@@ -658,23 +708,23 @@ Latest Version (%d): (%@)
                 }
               }
             }
-            
+
           } else {
             // first item
             latestStateWrapper = receivedState
           }
-          
+
           lock.unlock()
-          
+
           receive(resolvedReceivedState)
-        }        
+        }
       }
     }
-    
+
     if !dropsFirst {
-      
+
       let value = state.droppedPrevious()
-      
+
       executor {
         lock.lock()
         latestStateWrapper = value
@@ -685,13 +735,7 @@ Latest Version (%d): (%@)
       }
     }
 
-    if keepsAliveForSubscribers {
-      return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
-        .associate(store: self) // while subscribing its Store will be alive
-    } else {
-      return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
-    }
-    
+    return cancellable
   }
 
   func _mainActor_scan_sinkState<Accumulate>(
@@ -699,7 +743,7 @@ Latest Version (%d): (%@)
     dropsFirst: Bool = false,
     queue: MainActorTargetQueue,
     receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreStateSubscription {
 
     _mainActor_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
 
@@ -714,8 +758,8 @@ Latest Version (%d): (%@)
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping (Changes<State>, Accumulate) -> Void
-  ) -> StoreSubscription {
-    
+  ) -> StoreStateSubscription {
+
     _primitive_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       
       let accumulate = scan.accumulate(changes)
@@ -727,14 +771,14 @@ Latest Version (%d): (%@)
   func _mainActor_sinkActivity(
     queue: MainActorTargetQueue,
     receive: @escaping @MainActor (Activity) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreActivitySubscription {
     return _primitive_sinkActivity(queue: Queues.MainActor(queue), receive: receive)
   }
 
   func _primitive_sinkActivity(
     queue: some TargetQueueType,
     receive: @escaping (Activity) -> Void
-  ) -> StoreSubscription {
+  ) -> StoreActivitySubscription {
 
     let execute = queue.execute
     let cancellable = self._sinkActivityEvent { activity in
@@ -858,3 +902,96 @@ extension Store {
   }
   
 }
+
+#if DEBUG && canImport(SwiftUI) && canImport(UIKit)
+
+import SwiftUI
+import UIKit
+
+@available(iOS 17, *)
+#Preview {
+  StoreSubscriptionView(frame: .zero)
+}
+
+@available(iOS 15, *)
+private final class StoreSubscriptionView: UIView {
+
+  struct State: StateType {
+    var count: Int = 0
+  }
+
+  let store: Store<State, Never> = .init(initialState: .init())
+
+  private let label = UILabel()
+  private var subscription: StoreStateSubscription?
+
+  override init(frame: CGRect) {
+    super.init(frame: frame)
+
+    backgroundColor = .systemBackground
+
+    let upButton = UIButton.init(configuration: .bordered())
+    upButton.setTitle("Up", for: .normal)
+    upButton.addAction(.init(handler: { [weak self] action in
+
+      self?.store.commit {
+        $0.count += 1
+      }
+
+    }), for: .touchUpInside)
+
+    let suspendButton = UIButton.init(configuration: .bordered())
+    suspendButton.setTitle("Suspend", for: .normal)
+    suspendButton.addAction(.init(handler: { [weak self] action in
+
+      self?.subscription?.suspend()
+
+    }), for: .touchUpInside)
+
+    let resumeButton = UIButton.init(configuration: .bordered())
+    resumeButton.setTitle("Resume", for: .normal)
+    resumeButton.addAction(.init(handler: { [weak self] action in
+
+      self?.subscription?.resume()
+
+    }), for: .touchUpInside)
+
+
+    let stack = UIStackView()
+
+    stack.addArrangedSubview(label)
+    stack.addArrangedSubview(upButton)
+    stack.addArrangedSubview(suspendButton)
+    stack.addArrangedSubview(resumeButton)
+    
+    stack.axis = .vertical
+    stack.distribution = .equalCentering
+
+    addSubview(stack)
+    stack.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate(
+      [
+        stack.topAnchor.constraint(equalTo: topAnchor),
+        stack.leadingAnchor.constraint(equalTo: leadingAnchor),
+        stack.trailingAnchor.constraint(equalTo: trailingAnchor),
+        stack.bottomAnchor.constraint(equalTo: bottomAnchor)
+      ]
+    )
+
+    subscription = store.sinkState { [weak self] state in
+      guard let self else { return }
+
+      state.ifChanged(\.count).do { value in
+        self.label.text = value.description
+      }
+
+    }
+
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+}
+
+#endif
