@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 
 import Foundation
-@_implementationOnly import Atomics
+import Atomics
 
 public protocol EdgeType : Equatable {
   associatedtype State

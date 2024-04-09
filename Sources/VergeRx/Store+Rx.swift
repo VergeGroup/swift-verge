@@ -41,7 +41,7 @@ extension Reactive where Base : StoreDriverType {
   
 }
 
-extension StoreWrapperType {
+extension StoreDriverType {
 
   @_disfavoredOverload
   public var rx: Reactive<Self> {
