@@ -40,7 +40,7 @@ final class CombiningTests: XCTestCase {
       $0.count += 1
     }
 
-    store.commit {
+    _ = store.commit {
       $0.db.performBatchUpdates { t in
         t.modifying.author.insert(Author(rawID: "1", name: "Hiroshi Kimura"))
       }

@@ -122,11 +122,11 @@ final class DerivedTests: XCTestCase {
       
       updateCount.fulfill()
       
-      changes.ifChanged(\.0) { _0 in
+      changes.ifChanged(\.0).do { _0 in
         update0.fulfill()
       }
       
-      changes.ifChanged(\.1) { _1 in
+      changes.ifChanged(\.1).do { _1 in
         update1.fulfill()
       }
       

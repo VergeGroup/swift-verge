@@ -17,23 +17,22 @@ enum SyntaxTests {
 
     let changes: Changes<DemoState> = .init(old: nil, new: .init())
 
-    changes.ifChanged(\.name) { name in
+    changes.ifChanged(\.name).do { name in
 
     }
 
 //    changes.ifChanged({ ($0.name, $0.name) }) { args in
 //    }
 
-    changes.ifChanged(\.nonEquatable, .alwaysFalse()) { name in
+    changes.ifChanged({ $0.nonEquatable }, comparator: .alwaysFalse()).do { name in
 
     }
 
-
-    changes.ifChanged({ $0.name }) { name in
+    changes.ifChanged({ $0.name }).do { name in
 
     }
 
-    changes.ifChanged(\.name, \.count) { name, count in
+    changes.ifChanged(\.name, \.count).do { name, count in
 
     }
 

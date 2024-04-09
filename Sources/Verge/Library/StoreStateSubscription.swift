@@ -1,5 +1,5 @@
 import Combine
-@_implementationOnly import Atomics
+import Atomics
 
 @available(*, deprecated, message: "StoreSubscription has separated into StoreStateSubscription and StoreActivitySubscription.")
 public typealias StoreSubscription = Cancellable
