@@ -187,6 +187,17 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     )
   }
 
+  func replacePrevious(_ previous: Changes<Value>) -> Changes<Value> {
+    return .init(
+      previous: previous,
+      innerBox: innerBox,
+      version: version,
+      traces: traces,
+      modification: nil,
+      transaction: _transaction
+    )
+  }
+
   @inlinable
   public func asChanges() -> Changes<Value> {
     self
