@@ -119,7 +119,7 @@ private struct Content: View {
       }
     }
       .onAppear {
-        subscription = store.poll { state in
+        subscription = store.pollMainLoop { state in
           print(state.count)
         }
       }
