@@ -8,7 +8,7 @@ final class StoreAndDerivedTests: XCTestCase {
 
     let store = Store<_, Never>(initialState: DemoState())
 
-    let nameDerived = store.derived(.select(\.name))
+    let _ = store.derived(.select(\.name))
     let countDerived = store.derived(.select(\.count))
 
     await withTaskGroup(of: Void.self) { group in
@@ -31,12 +31,13 @@ final class StoreAndDerivedTests: XCTestCase {
           }
         }
 
+
         XCTAssertEqual(store.state.count, 100)
 
+        await store.waitUntilAllEventConsumed()
         // potentially it fails as EventEmitter's behavior
         // If EventEmitter's buffer is not empty, commit function escape from the stack by only adding.
-//        XCTAssertEqual(countDerived.state.primitive, 100)
-        XCTAssertNotEqual(countDerived.state.primitive, 100)
+        XCTAssertEqual(countDerived.state.primitive, 100)
       }
 
     }

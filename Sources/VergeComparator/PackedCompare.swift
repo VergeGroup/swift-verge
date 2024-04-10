@@ -4,7 +4,6 @@ public func areEqual<each Element: Equatable>(_ lhs: (repeat each Element), _ rh
 
   // https://github.com/apple/swift-evolution/blob/main/proposals/0408-pack-iteration.md
 
-  
   func isEqual<T: Equatable>(_ left: T, _ right: T) throws {
     if left == right {
       return
@@ -21,3 +20,4 @@ public func areEqual<each Element: Equatable>(_ lhs: (repeat each Element), _ rh
 
   return true
 }
+

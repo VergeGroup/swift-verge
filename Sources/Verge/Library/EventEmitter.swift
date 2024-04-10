@@ -19,7 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-@_implementationOnly import Atomics
+import Atomics
 import Combine
 import Foundation
 import os
@@ -50,8 +50,12 @@ protocol EventEmitterType: AnyObject, Sendable {
   func removeEventHandler(_ token: EventEmitterCancellable)
 }
 
+public protocol EventEmitterEventType {
+  func onComsume()
+}
+
 /// Instead of Combine
-open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
+open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchecked Sendable {
 
   public var publisher: Publisher {
     return .init(eventEmitter: self)
@@ -108,6 +112,7 @@ open class EventEmitter<Event>: EventEmitterType, @unchecked Sendable {
         for subscriber in capturedSubscribers {
           subscriber.1(event)
         }
+        event.onComsume()
       }
 
       /**

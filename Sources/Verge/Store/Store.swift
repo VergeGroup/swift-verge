@@ -23,7 +23,7 @@ import Foundation
 import os.log
 import ConcurrencyTaskManager
 
-@_implementationOnly import Atomics
+import Atomics
 
 #if canImport(Combine)
 import Combine
@@ -43,8 +43,8 @@ public typealias NoActivityStoreBase<State: Equatable> = Store<State, Never>
 
 private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.sanitizer")
 
-public enum _StoreEvent<State: Equatable, Activity> {
-  
+public enum _StoreEvent<State: Equatable, Activity>: EventEmitterEventType {
+
   public enum StateEvent {
     case willUpdate
     case didUpdate(Changes<State>)
@@ -52,6 +52,18 @@ public enum _StoreEvent<State: Equatable, Activity> {
   
   case state(StateEvent)
   case activity(Activity)
+  case waiter(() -> Void)
+
+  public func onComsume() {
+    switch self {
+    case .state:
+      break
+    case .activity:
+      break
+    case .waiter(let closure):
+      closure()
+    }
+  }
 }
 
 actor Writer {
@@ -219,6 +231,8 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
       }
     case .activity:
       break
+    case .waiter:
+      break
     }
   }
 
@@ -302,6 +316,19 @@ extension Store {
     
     preconditionFailure("Using the reference type for the state is restricted. it must be a value type to run correctly.")
     
+  }
+
+}
+
+// MARK: - Wait
+extension Store {
+
+  public func waitUntilAllEventConsumed() async {
+    await withCheckedContinuation { c in
+      accept(.waiter({
+        c.resume()
+      }))
+    }
   }
 
 }

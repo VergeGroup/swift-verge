@@ -21,9 +21,8 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.0.0"),
-    .package(url: "https://github.com/apple/swift-docc-plugin.git", from: "1.3.0"),
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
-    .package(url: "https://github.com/FluidGroup/swift-collections", from: "1.1.0"),
+    .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
     .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
 
     /// for testing
