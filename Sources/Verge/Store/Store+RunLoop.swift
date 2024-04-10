@@ -61,7 +61,7 @@ private enum RunLoopActivityObserver {
 
     assert(o != nil)
 
-    let mode = CFRunLoopMode.defaultMode!
+    let mode = CFRunLoopMode.commonModes!
     let cfRunLoop = runLoop.getCFRunLoop()
 
     CFRunLoopAddObserver(cfRunLoop, o, mode);
