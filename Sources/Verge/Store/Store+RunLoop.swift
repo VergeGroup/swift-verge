@@ -2,11 +2,19 @@ import Foundation
 
 extension Store {
 
-  public func poll(in runLoop: RunLoop = .main, receive: @escaping (Changes<State>) -> Void) -> VergeAnyCancellable {
+  /// Push an event to run event loop.
+  public func updateMainLoop() {
+    RunLoop.main.perform(inModes: [.common]) {}
+  }
+
+  /**
+   Subscribes state updates in given run-loop.
+   */
+  public func pollMainLoop(receive: @escaping @MainActor (Changes<State>) -> Void) -> VergeAnyCancellable {
 
     var latestState: Changes<State>? = nil
 
-    let subscription = RunLoopActivityObserver.addObserver(acitivity: .beforeWaiting, in: runLoop) {
+    let subscription = RunLoopActivityObserver.addObserver(acitivity: .beforeWaiting, in: .main) {
 
       let newState = self.state
 
@@ -24,7 +32,9 @@ extension Store {
         state = newState.droppedPrevious()
       }
 
-      receive(state)
+      MainActor.assumeIsolated {
+        receive(state)
+      }
 
     }
 
@@ -86,6 +96,7 @@ private struct Content: View {
   let store = Store<_, Never>(initialState: StoreState())
 
   @State var subscription: VergeAnyCancellable?
+  @State var timer: Timer?
 
   var body: some View {
     VStack {
@@ -93,6 +104,15 @@ private struct Content: View {
         store.commit {
           $0.count += 1
         }
+      }
+      Button("Background Up") {
+
+        for _ in 0..<10 {
+          store.commit {
+            $0.count += 1
+          }
+        }
+
       }
       Button("Run") {
         RunLoop.main.run(until: Date(timeIntervalSinceNow: 19))
