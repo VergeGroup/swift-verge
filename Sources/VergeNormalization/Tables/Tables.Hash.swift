@@ -139,5 +139,14 @@ extension Tables {
       storage.removeAll(where: { _ in true })
       updatedMarker.increment()
     }
+
+    public func map<U>(_ transform: (Entity) throws -> U) rethrows -> [U] {
+      try storage.values.map(transform)
+    }
+
+    public func filter(_ isIncluded: (Entity) throws -> Bool) rethrows -> [Entity] {
+      try storage.values.filter(isIncluded)
+    }
+    
   }
 }
