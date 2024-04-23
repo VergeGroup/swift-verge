@@ -323,6 +323,12 @@ extension Store {
 // MARK: - Wait
 extension Store {
 
+  /**
+   Commit operation does not mean that emitting latest state for all of subscribers synchronously.
+   Updating state of the store will be updated immediately.
+
+   To wait until all of the subscribers get the latest state, you can use this method.
+   */
   public func waitUntilAllEventConsumed() async {
     await withCheckedContinuation { c in
       accept(.waiter({
@@ -807,9 +813,13 @@ extension Store {
     mutation: (inout InoutRef<State>) throws -> Result
   ) async rethrows -> Result {
 
-    return try await writer.perform { [self] _ in
+    let result = try await writer.perform { [self] _ in
       try self.commit(mutation: mutation)
     }
+    
+    await self.waitUntilAllEventConsumed()
+
+    return result
   }
 
 }

@@ -199,6 +199,19 @@ extension StoreDriverType where Scope == TargetStore.State {
 extension StoreDriverType {
 
   /**
+   Commit operation does not mean that emitting latest state for all of subscribers synchronously.
+   Updating state of the store will be updated immediately.
+
+   To wait until all of the subscribers get the latest state, you can use this method.
+   */
+  public func waitUntilAllEventConsumed() async {
+    await store.asStore().waitUntilAllEventConsumed()
+  }
+}
+
+extension StoreDriverType {
+
+  /**
     Subscribe the state that scoped
 
     First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
