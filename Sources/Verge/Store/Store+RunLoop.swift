@@ -10,6 +10,7 @@ extension Store {
   /**
    Subscribes state updates in given run-loop.
    */
+  @MainActor
   public func pollMainLoop(receive: @escaping @MainActor (Changes<State>) -> Void) -> VergeAnyCancellable {
 
     var latestState: Changes<State>? = nil
@@ -37,6 +38,8 @@ extension Store {
       }
 
     }
+
+    receive(state)
 
     return .init {
       RunLoopActivityObserver.remove(subscription)
