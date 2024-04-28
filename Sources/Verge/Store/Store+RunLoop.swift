@@ -17,23 +17,23 @@ extension Store {
 
     let subscription = RunLoopActivityObserver.addObserver(acitivity: .beforeWaiting, in: .main) {
 
-      let newState = self.state
-
-      guard (latestState?.version ?? 0) < newState.version else {
-        return
-      }
-
-      latestState = newState
-
-      let state: Changes<State>
-
-      if let latestState {
-        state = newState.replacePrevious(latestState)
-      } else {
-        state = newState.droppedPrevious()
-      }
-
       MainActor.assumeIsolated {
+        let newState = self.state
+
+        guard (latestState?.version ?? 0) < newState.version else {
+          return
+        }
+
+        latestState = newState
+
+        let state: Changes<State>
+
+        if let latestState {
+          state = newState.replacePrevious(latestState)
+        } else {
+          state = newState.droppedPrevious()
+        }
+
         receive(state)
       }
 
@@ -48,7 +48,7 @@ extension Store {
 
 }
 
-private enum RunLoopActivityObserver {
+enum RunLoopActivityObserver {
 
   struct Subscription {
     let mode: CFRunLoopMode
@@ -72,7 +72,7 @@ private enum RunLoopActivityObserver {
     return .init(mode: mode, observer: o, targetRunLoop: runLoop)
   }
 
-  static func remove(_ subscription: Subscription) {
+  static func remove(_ subscription: consuming Subscription) {
 
     guard let observer = subscription.observer, let targetRunLoop = subscription.targetRunLoop else {
       return

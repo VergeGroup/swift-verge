@@ -44,7 +44,7 @@ public final class VergeAnyCancellable: Hashable, Cancellable, @unchecked Sendab
   public init() {
   }
 
-  public convenience init(onDeinit: @escaping () -> Void) {
+  public convenience init(onDeinit: @escaping @Sendable () -> Void) {
     self.init()
     self.actions = [onDeinit]
   }
