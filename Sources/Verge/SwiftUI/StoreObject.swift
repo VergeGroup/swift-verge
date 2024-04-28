@@ -111,7 +111,7 @@ enum Preview_StoreObject: PreviewProvider {
     }
   }
 
-  final class ViewModel: StoreComponentType {
+  final class ViewModel: StoreDriverType {
 
     struct State: Equatable {
       var count: Int = 0

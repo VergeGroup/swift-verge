@@ -40,7 +40,7 @@ final class SpecificService: StoreDriverType {
 
 }
 
-final class ViewModel: StoreComponentType {
+final class ViewModel: StoreDriverType {
 
   struct State: Equatable {}
 
@@ -62,7 +62,7 @@ final class ViewModel: StoreComponentType {
 
 // MARK: - Abstraction
 
-protocol MyViewModelType: StoreComponentType where TargetStore.State == String, TargetStore.Activity == Int {
+protocol MyViewModelType: StoreDriverType where TargetStore.State == String, TargetStore.Activity == Int {
 
 }
 

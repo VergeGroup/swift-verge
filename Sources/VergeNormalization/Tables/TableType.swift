@@ -1,7 +1,7 @@
 import VergeTypedIdentifier
 
 /// a storage of the entity
-public protocol TableType<Entity>: Equatable {
+public protocol TableType<Entity>: Equatable, Sendable {
 
   associatedtype Entity: EntityType
 

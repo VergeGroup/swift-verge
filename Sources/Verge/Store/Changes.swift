@@ -187,6 +187,17 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     )
   }
 
+  func replacePrevious(_ previous: Changes<Value>) -> Changes<Value> {
+    return .init(
+      previous: previous,
+      innerBox: innerBox,
+      version: version,
+      traces: traces,
+      modification: nil,
+      transaction: _transaction
+    )
+  }
+
   @inlinable
   public func asChanges() -> Changes<Value> {
     self
@@ -340,6 +351,33 @@ extension Changes {
 
   }
 
+  @inline(__always)
+  fileprivate func _takeIfChanged_packed_nonEquatable<each Element>(
+    _ compose: (Value) throws -> (repeat each Element),
+    comparator: some Comparison<(repeat each Element)>
+  ) rethrows -> (repeat each Element)? {
+
+    let current = self.primitive
+
+    guard let previousValue = previous else {
+      return try compose(consume current)
+    }
+
+    let old = previousValue.primitive
+
+    let composedFromCurrent = try compose(consume current)
+    let composedFromOld = try compose(old)
+
+    let isEqual = comparator(composedFromOld, composedFromCurrent)
+
+    guard isEqual == false else {
+      return nil
+    }
+
+    return composedFromCurrent
+
+  }
+
   /// Performs a closure if the selected value changed from the previous one.
   ///
   /// - Parameters:
@@ -376,6 +414,7 @@ extension Changes {
   /**
    Performs a closure if the selected value changed from the previous one.
    */
+  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
   public func ifChanged<T, Result>(
     _ selector: ChangesKeyPath<T>,
     _ comparer: some Comparison<T>,
@@ -410,6 +449,17 @@ extension Changes {
     _ compose: (borrowing Value) -> (repeat each Element)
   ) -> IfChangedBox<(repeat each Element)> {
     guard let result = _takeIfChanged_packed(compose) else {
+      return .init()
+    }
+
+    return .init(value: (repeat each result))
+  }
+
+  public borrowing func ifChanged<each Element>(
+    _ compose: (borrowing Value) -> (repeat each Element),
+    comparator: some Comparison<(repeat each Element)>
+  ) -> IfChangedBox<(repeat each Element)> {
+    guard let result = _takeIfChanged_packed_nonEquatable(compose, comparator: comparator) else {
       return .init()
     }
 

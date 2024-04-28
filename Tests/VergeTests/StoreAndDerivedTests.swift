@@ -8,7 +8,7 @@ final class StoreAndDerivedTests: XCTestCase {
 
     let store = Store<_, Never>(initialState: DemoState())
 
-    let nameDerived = store.derived(.select(\.name))
+    let _ = store.derived(.select(\.name))
     let countDerived = store.derived(.select(\.count))
 
     await withTaskGroup(of: Void.self) { group in

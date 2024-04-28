@@ -139,5 +139,10 @@ extension Tables {
       storage.removeAll(where: { _ in true })
       updatedMarker.increment()
     }
+
+    public var values: TreeDictionary<Entity.EntityID, Entity>.Values {
+      storage.values
+    }
+    
   }
 }

@@ -1,5 +1,5 @@
 import Combine
-@_implementationOnly import Atomics
+import Atomics
 
 /**
  A subscription that is compatible with Combine’s Cancellable.
