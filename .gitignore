@@ -72,4 +72,6 @@ fastlane/test_output
 Derived
 *.xcodeproj
 
+Workspace.xcworkspace/
+
 # End of https://www.gitignore.io/api/swift
