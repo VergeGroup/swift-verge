@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ReactiveX/RxSwift.git",
       "state" : {
-        "revision" : "b4307ba0b6425c0ba4178e138799946c3da594f8",
-        "version" : "6.5.0"
+        "revision" : "5949cbd3d4f3f97968bb40b6cd232f8315c6341c",
+        "version" : "6.7.0"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/swift-concurrency-task-manager",
       "state" : {
-        "revision" : "53a16dbea3c685bc8e41289220f9ed08857adfe4",
-        "version" : "1.1.0"
+        "revision" : "340cf14e0282977deeeb436605d1810ce4f4fbc9",
+        "version" : "1.4.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-macro-testing.git",
       "state" : {
-        "revision" : "10dcef36314ddfea6f60442169b0b320204cbd35",
-        "version" : "0.2.2"
+        "revision" : "5c4a1b9d7c23cd5c08ea50677d8e89080365cb00",
+        "version" : "0.4.0"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
       "state" : {
-        "revision" : "4862d48562483d274a2ac7522d905c9237a31a48",
-        "version" : "1.15.0"
+        "revision" : "625ccca8570773dd84a34ee51a81aa2bc5a4f97a",
+        "version" : "1.16.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-syntax.git",
       "state" : {
-        "revision" : "74203046135342e4a4a627476dd6caf8b28fe11b",
-        "version" : "509.0.0"
+        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
+        "version" : "509.1.1"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nalexn/ViewInspector.git",
       "state" : {
-        "revision" : "6b77fcff222e129fc9d74967ea40ad52aefcd004",
-        "version" : "0.9.3"
+        "revision" : "7b1732802ffe30e6a67754bda6c7819e5cb0eb70",
+        "version" : "0.9.11"
       }
     }
   ],
