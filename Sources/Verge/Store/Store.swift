@@ -141,7 +141,7 @@ open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Ac
   
   public let taskManager: TaskManagerActor = .init()
 
-  private let writer: Writer = .init()
+  let writer: Writer = .init()
 
   // MARK: - Initializers
   
@@ -795,31 +795,6 @@ Latest Version (%d): (%@)
     
     return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
 
-  }
-
-}
-
-// MARK: - Mutation
-extension Store {
-
-  /// Run Mutation that created inline
-  ///
-  /// Throwable
-  public func backgroundCommit<Result>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    mutation: (inout InoutRef<State>) throws -> Result
-  ) async rethrows -> Result {
-
-    let result = try await writer.perform { [self] _ in
-      try self.commit(mutation: mutation)
-    }
-    
-    await self.waitUntilAllEventConsumed()
-
-    return result
   }
 
 }

@@ -434,6 +434,86 @@ extension StoreDriverType {
     )
   }
 
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func backgroundCommit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout InoutRef<Scope>) throws -> Result
+  ) async rethrows -> Result {
+
+    let result = try await store.asStore().writer.perform { [self] _ in
+      try self.commit(mutation: mutation)
+    }
+
+    await self.waitUntilAllEventConsumed()
+
+    return result
+  }
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func backgroundCommit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+  ) async rethrows -> Result {
+
+    let result = try await store.asStore().writer.perform { [self] _ in
+      try self.commit(mutation: mutation)
+    }
+
+    await self.waitUntilAllEventConsumed()
+
+    return result
+  }
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func backgroundCommit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout InoutRef<Scope>) throws -> Result
+  ) async rethrows -> Result where Scope == TargetStore.State {
+
+    let result = try await store.asStore().writer.perform { [self] _ in
+      try self.commit(mutation: mutation)
+    }
+
+    await self.waitUntilAllEventConsumed()
+
+    return result
+  }
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func backgroundCommit<Result>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+  ) async rethrows -> Result where Scope == TargetStore.State {
+
+    let result = try await store.asStore().writer.perform { [self] _ in
+      try self.commit(mutation: mutation)
+    }
+
+    await self.waitUntilAllEventConsumed()
+
+    return result
+  }
+
   public func detached<NewScope: Equatable>(from newScope: WritableKeyPath<TargetStore.State, NewScope>)
   -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
     .init(store: store.asStore(), scope: newScope)

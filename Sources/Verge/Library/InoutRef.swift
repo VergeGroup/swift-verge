@@ -28,6 +28,9 @@ import Foundation
    - Doing the above things without copying.
  
  - Warning: Do not retain this object anywhere.
+
+ TODO: We failed to introduce non-copyable
+ https://github.com/VergeGroup/swift-verge/pull/448
  */
 @dynamicMemberLookup
 public struct InoutRef<Wrapped> {
