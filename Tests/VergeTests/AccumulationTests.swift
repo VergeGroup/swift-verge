@@ -7,23 +7,21 @@ final class AccumulationTests: XCTestCase {
 
     let store = DemoStore()
 
-    let exp = expectation(description: "count")
-    exp.expectedFulfillmentCount = 2
+    let expForCount = expectation(description: "count")
+    expForCount.expectedFulfillmentCount = 2
 
-    let sub = store.accumulate {
+    let expForName = expectation(description: "name")
+    expForName.expectedFulfillmentCount = 2
 
-      $0.ifChanged(\.count).do { [weak self] value in
-        let _ = self
-        exp.fulfill()
+    let sub = store.accumulate { [weak self] in
+
+      $0.ifChanged(\.count).do { value in
+        expForCount.fulfill()
+        runMain()
       }
 
-      $0.ifChanged(\.name).do { [weak self] value in
-        let _ = self
-        
-      }
-
-      SinkIfChanged(selector: \.count).do { value in
-        print(value)
+      $0.ifChanged(\.name).do { value in
+        expForName.fulfill()
       }
 
     }
@@ -32,9 +30,18 @@ final class AccumulationTests: XCTestCase {
       $0.count += 1
     }
 
-    wait(for: [exp])
+    store.commit {
+      $0.name = "name"
+    }
+
+    wait(for: [expForCount, expForName], timeout: 1)
 
     let _ = sub
   }
+
+}
+
+@MainActor
+private func runMain() {
 
 }

@@ -1,60 +1,102 @@
 
 public protocol Sink<Source> {
   associatedtype Source
-  func receive(source: Source)
+  consuming func receive(source: borrowing ReadingBox<Source>) -> Self
+  consuming func receive(other: consuming Self) -> Self
+  consuming func consume() -> Self
 }
 
 public struct AccumulationBuilder<Source>: ~Copyable {
 
-  public func ifChanged<U: Equatable>(_ selector: @escaping (Source) -> U) -> SinkIfChanged<Source, U> {
-    .init(selector: selector)
+  public func ifChanged<U: Equatable>(_ selector: @escaping (borrowing Source) -> U) -> SinkIfChanged<Source, U> {
+    .init(
+      selector: selector
+    )
   }
 
 }
 
-public final class SinkIfChanged<Source, Target: Equatable>: Sink {
+public struct SinkIfChanged<Source, Target: Equatable>: Sink {
 
-  private let selector: (Source) -> Target
+  private let selector: (borrowing Source) -> Target
 
   private var latestValue: Target?
+  private var previousValue: Target?
+
   private var handler: ((consuming Target) -> Void)?
 
-  public init(selector: @escaping (Source) -> Target) {
+  init(
+    selector: @escaping (borrowing Source) -> Target
+  ) {
     self.selector = selector
   }
 
-  public func `do`(_ perform: @escaping (consuming Target) -> Void) -> Self {
+  /**
+   the closure will be released after consumed.
+   */
+  public consuming func `do`(@_inheritActorContext @_implicitSelfCapture _ perform: @escaping (consuming Target) -> Void) -> Self {
     self.handler = perform
     return self
   }
 
-  public func receive(source: Source) {
+  public consuming func receive(source: borrowing ReadingBox<Source>) -> Self {
 
-    let selected = selector(source)
+    self.latestValue = selector(source.value)
 
-    guard latestValue != selected else {
-      return
+    return self
+  }
+
+  public consuming func receive(other: consuming SinkIfChanged<Source, Target>) -> Self {
+
+    self.previousValue = other.latestValue
+
+    return self
+  }
+
+  public consuming func consume() -> Self {
+
+    guard let handler = handler else {
+      return self
     }
 
-    latestValue = selected
+    if latestValue != previousValue {
+      handler(latestValue!)
+    }
 
-    handler?(selected)
+    self.handler = nil
+
+    return self
 
   }
 }
 
-extension DispatcherType {
+extension StoreDriverType {
 
-  public func accumulate(
+  public func accumulate<T>(
     queue: MainActorTargetQueue = .mainIsolated(),
-    @SinkComponentBuilder<Scope> _ buildSubscription: (consuming AccumulationBuilder<Scope>) -> SinkGroup<Scope>) -> Cancellable {
+    @SinkComponentBuilder<Scope> _ buildSubscription: @escaping @MainActor (consuming AccumulationBuilder<Scope>) -> SinkGroup<Scope, T>
+  ) -> StoreStateSubscription {
 
-    let builder = AccumulationBuilder<Scope>()
-    let group = buildSubscription(consume builder)
+    var previous: SinkGroup<Scope, T>?
 
     return sinkState(dropsFirst: false, queue: queue) { state in
 
-      group.receive(source: state.primitive)
+      let builder = AccumulationBuilder<Scope>()
+
+      var group = buildSubscription(consume builder)
+
+      // sets the latest value
+      group = group.receive(source: state.primitiveBox)
+
+      // sets the previous value
+      if let previous {
+        group = group.receive(other: previous)
+      }
+
+      // runs sink
+      group = group.consume()
+
+      previous = group
 
     }
 
@@ -62,63 +104,95 @@ extension DispatcherType {
 
 }
 
-public struct SinkBox<Source>: Sink {
+public struct SinkGroup<Source, Component>: Sink {
 
-  private let base: any Sink<Source>
+  private var component: Component
+  private var _receiveSource: (ReadingBox<Source>, Component) -> Component
+  private var _receiveOther: (Component, Component) -> Component
+  private var _consume: (Component) -> Component
 
-  public init(base: some Sink<Source>) {
-    self.base = base
+  init(
+    component: Component,
+    receiveSource: @escaping (ReadingBox<Source>, Component) -> Component,
+    receiveOther: @escaping (Component, Component) -> Component,
+    consume: @escaping (Component) -> Component
+  ) {
+    self.component = component
+    self._receiveSource = receiveSource
+    self._receiveOther = receiveOther
+    self._consume = consume
   }
 
-  public func receive(source: Source) {
-    base.receive(source: source)
-  }
-}
-
-public struct SinkGroup<Source>: Sink {
-
-  private let _receive: (Source) -> Void
-
-  init(receive: @escaping (Source) -> Void) {
-    self._receive = receive
+  init() where Component == Void {
+    self.component = ()
+    self._receiveSource = { _, component in component }
+    self._receiveOther = { _, component in component }
+    self._consume = { component in component }
   }
 
-  public func receive(source: Source) {
-    self._receive(source)
+  public consuming func receive(source: ReadingBox<Source>) -> Self {
+    component = _receiveSource(source, component)
+    return self
   }
+
+  public consuming func receive(other: SinkGroup<Source, Component>) -> Self {
+    component = _receiveOther(other.component, component)
+    return self
+  }
+
+  public consuming func consume() -> Self {
+    component = _consume(component)
+    return self
+  }
+
 }
 
 @resultBuilder 
 public struct SinkComponentBuilder<Source> {
 
-  public static func buildBlock() -> SinkGroup<Source> {
-    return .init(receive: { _ in })
-  }
-//
-//  public static func buildBlock<each Target>(_ components: repeat AccumulationBuilder<Source>.IfChangedSink<each Target>) -> SinkGroup<Source> {
-//    .init { source in
-//
-//      func run<T>(_ component: AccumulationBuilder<Source>.IfChangedSink<T>) {
-//        component.receive(source: source)
-//      }
-//
-//      repeat run(each components)
-//
-//    }
-//  }
-
-  public static func buildExpression(_ expression: any Sink<Source>) -> SinkBox<Source> {
-    .init(base: expression)
+  public static func buildBlock() -> SinkGroup<Source, Void> {
+    return .init()
   }
 
-  public static func buildBlock(_ sinks: (SinkBox<Source>)...) -> SinkGroup<Source> {
-    .init { source in
+  public static func buildExpression<S: Sink>(_ expression: S) -> some Sink<Source> where S.Source == Source {
+    expression
+  }
+  
+  // FIXME: add `where repeat (each S).Source == Source`
+  public static func buildBlock<each S: Sink>(_ sinks: repeat each S) -> SinkGroup<Source, (repeat each S)> {
 
-      for sink in sinks {
-        sink.receive(source: source)
+    return SinkGroup<Source, (repeat each S)>(
+      component: (repeat each sinks),
+      receiveSource: { source, component in
+        func iterate<T: Sink>(_ left: T) -> T {
+          return left.receive(source: source as! ReadingBox<T.Source>)
+        }
+
+        let modified = (repeat iterate(each component))
+
+        return modified
+      },
+      receiveOther: { other, current in
+        func iterate<T: Sink>(other: consuming T, current: consuming T) -> T {
+          return current.receive(other: other)
+        }
+
+        let modified = (repeat iterate(other: each other, current: each current))
+
+        return modified
+      },
+      consume: { component in
+        func iterate<T: Sink>(_ component: consuming T) -> T {
+          return component.consume()
+        }
+
+        let modified = (repeat iterate(each component))
+
+        return modified
       }
+    )
 
-    }
   }
 
 }
+
