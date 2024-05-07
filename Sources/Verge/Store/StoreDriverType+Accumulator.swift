@@ -164,6 +164,7 @@ public struct SinkComponentBuilder<Source> {
     return SinkGroup<Source, (repeat each S)>(
       component: (repeat each sinks),
       receiveSource: { source, component in
+        // Waiting https://www.swift.org/blog/pack-iteration/
         func iterate<T: Sink>(_ left: T) -> T {
           return left.receive(source: source as! ReadingBox<T.Source>)
         }
@@ -173,6 +174,7 @@ public struct SinkComponentBuilder<Source> {
         return modified
       },
       receiveOther: { other, current in
+        // Waiting https://www.swift.org/blog/pack-iteration/
         func iterate<T: Sink>(other: consuming T, current: consuming T) -> T {
           return current.receive(other: other)
         }
@@ -182,6 +184,7 @@ public struct SinkComponentBuilder<Source> {
         return modified
       },
       consume: { component in
+        // Waiting https://www.swift.org/blog/pack-iteration/
         func iterate<T: Sink>(_ component: consuming T) -> T {
           return component.consume()
         }
