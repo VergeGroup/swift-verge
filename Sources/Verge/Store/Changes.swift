@@ -122,7 +122,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   /// - Important: a returns value won't change against pointer-personality
   public var primitive: Value { _read { yield innerBox.value } }
 
-  var primitiveBox: ReadingBox<Value> { innerBox }
+  var primitiveBox: ReadonlyBox<Value> { innerBox }
 
   /// Returns a value as primitive
   /// We can't access `.computed` from this.
@@ -678,30 +678,8 @@ extension Changes: CustomReflectable {
 
 extension Changes {
 
-  private typealias InnerBox = ReadingBox<Value>
+  private typealias InnerBox = ReadonlyBox<Value>
 
-}
-
-// FIXME: should be noncopyable but it's not supported yet.
-public final class ReadingBox<Value> {
-
-  public let value: Value
-
-  public init(value: consuming Value) {
-    self.value = value
-  }
-
-  func map<U>(_ transform: (borrowing Value) throws -> U) rethrows -> ReadingBox<U> {
-    return .init(
-      value: try transform(value)
-    )
-  }
-
-  @discardableResult
-  @inline(__always)
-  func _read<Return>(perform: (borrowing Value) -> Return) -> Return {
-    perform(value)
-  }
 }
 
 extension Changes where Value: Equatable {
