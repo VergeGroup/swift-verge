@@ -3,14 +3,16 @@ extension StoreDriverType {
 
   public func accumulate<T>(
     queue: MainActorTargetQueue = .mainIsolated(),
-    @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @MainActor (consuming AccumulationBuilder<Scope>) -> AccumulationSinkGroup<Scope, T>
+    @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @MainActor (consuming AccumulationBuilder<Scope>) -> _AccumulationSinkGroup<Scope, T>
   ) -> StoreStateSubscription {
 
-    var previous: AccumulationSinkGroup<Scope, T>?
+    var previousBox: ReferenceEdge<_AccumulationSinkGroup<Scope, T>?> = .init(wrappedValue: nil)
 
     return sinkState(dropsFirst: false, queue: queue) { state in
 
-      let builder = AccumulationBuilder<Scope>()
+      let builder = AccumulationBuilder<Scope>(previousLoader: {
+        previousBox.wrappedValue
+      })
 
       var group = buildSubscription(consume builder)
 
@@ -18,14 +20,14 @@ extension StoreDriverType {
       group = group.receive(source: state.primitiveBox)
 
       // sets the previous value
-      if let previous {
+      if let previous = previousBox.wrappedValue {
         group = group.receive(other: previous)
       }
 
       // runs sink
       group = group.consume()
 
-      previous = group
+      previousBox.wrappedValue = group
 
     }
 
@@ -41,6 +43,16 @@ public protocol AccumulationSink<Source> {
 }
 
 public struct AccumulationBuilder<Source>: ~Copyable {
+
+  public var previous: (any AccumulationSink)? {
+    previousLoader()
+  }
+
+  private let previousLoader: () -> (any AccumulationSink)?
+
+  init(previousLoader: @escaping () -> (any AccumulationSink)?) {
+    self.previousLoader = previousLoader
+  }
 
   public func ifChanged<U: Equatable>(_ selector: @escaping (borrowing Source) -> U) -> AccumulationSinkIfChanged<Source, U> {
     .init(
@@ -104,7 +116,7 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
   }
 }
 
-public struct AccumulationSinkGroup<Source, Component>: AccumulationSink {
+public struct _AccumulationSinkGroup<Source, Component>: AccumulationSink {
 
   private var component: Component
   private var _receiveSource: (ReadonlyBox<Source>, Component) -> Component
@@ -135,7 +147,7 @@ public struct AccumulationSinkGroup<Source, Component>: AccumulationSink {
     return self
   }
 
-  public consuming func receive(other: AccumulationSinkGroup<Source, Component>) -> Self {
+  public consuming func receive(other: _AccumulationSinkGroup<Source, Component>) -> Self {
     component = _receiveOther(other.component, component)
     return self
   }
@@ -147,21 +159,117 @@ public struct AccumulationSinkGroup<Source, Component>: AccumulationSink {
 
 }
 
-@resultBuilder 
+public struct _AccumulationSinkCondition<Source, TrueComponent: AccumulationSink, FalseComponent: AccumulationSink>: AccumulationSink where TrueComponent.Source == Source, FalseComponent.Source == Source {
+
+  private var trueComponent: TrueComponent?
+  private var falseComponent: FalseComponent?
+
+  init(
+    trueComponent: TrueComponent?,
+    falseComponent: FalseComponent?
+  ) {
+    self.trueComponent = trueComponent
+    self.falseComponent = falseComponent
+  }
+
+  public consuming func receive(source: ReadonlyBox<Source>) -> Self {
+    if let trueComponent = trueComponent {
+      self.trueComponent = trueComponent.receive(source: source)
+    } else if let falseComponent = falseComponent {
+      self.falseComponent = falseComponent.receive(source: source)
+    }
+    return self
+  }
+
+  public consuming func receive(other: _AccumulationSinkCondition<Source, TrueComponent, FalseComponent>) -> Self {
+    if let trueComponent = trueComponent, let otherTrueComponent = other.trueComponent {
+      self.trueComponent = trueComponent.receive(other: otherTrueComponent)
+    } else if let falseComponent = falseComponent, let otherFalseComponent = other.falseComponent {
+      self.falseComponent = falseComponent.receive(other: otherFalseComponent)
+    }
+    return self
+  }
+
+  public consuming func consume() -> Self {
+    if let trueComponent = trueComponent {
+      self.trueComponent = trueComponent.consume()
+    } else if let falseComponent = falseComponent {
+      self.falseComponent = falseComponent.consume()
+    }
+    return self
+  }
+
+}
+
+struct _AccumulationSinkOptional<Source, Component: AccumulationSink>: AccumulationSink where Component.Source == Source {
+
+  private var component: Component?
+
+  init(
+    component: Component?
+  ) {
+    self.component = component
+  }
+
+  consuming func receive(source: ReadonlyBox<Source>) -> Self {
+    if let component = component {
+      self.component = component.receive(source: source)
+    }
+    return self
+  }
+
+  consuming func receive(other: _AccumulationSinkOptional<Source, Component>) -> Self {
+    if let component = component, let otherComponent = other.component {
+      self.component = component.receive(other: otherComponent)
+    }
+    return self
+  }
+
+  consuming func consume() -> Self {
+    if let component = component {
+      self.component = component.consume()
+    }
+    return self
+  }
+
+}
+
+@resultBuilder
 public struct AccumulationSinkComponentBuilder<Source> {
 
-  public static func buildBlock() -> AccumulationSinkGroup<Source, Void> {
-    return .init()
-  }
-
-  public static func buildExpression<S: AccumulationSink>(_ expression: S) -> some AccumulationSink<Source> where S.Source == Source {
+  public static func buildExpression<S: AccumulationSink>(_ expression: S) -> S where S.Source == Source {
     expression
   }
-  
-  // FIXME: add `where repeat (each S).Source == Source`
-  public static func buildBlock<each S: AccumulationSink>(_ sinks: repeat each S) -> AccumulationSinkGroup<Source, (repeat each S)> {
 
-    return AccumulationSinkGroup<Source, (repeat each S)>(
+  public static func buildBlock() -> some AccumulationSink {
+    return _AccumulationSinkGroup<Source, Void>()
+  }
+
+  public static func buildEither<TrueComponent: AccumulationSink, FalseComponent: AccumulationSink>(first component: TrueComponent) -> _AccumulationSinkCondition<Source, TrueComponent, FalseComponent> where TrueComponent.Source == Source, FalseComponent.Source == Source {
+
+    return _AccumulationSinkCondition<Source, TrueComponent, FalseComponent>(
+      trueComponent: component,
+      falseComponent: nil
+    )
+
+  }
+
+  public static func buildEither<TrueComponent: AccumulationSink, FalseComponent: AccumulationSink>(second component: FalseComponent) -> _AccumulationSinkCondition<Source, TrueComponent, FalseComponent> where TrueComponent.Source == Source, FalseComponent.Source == Source {
+
+    return _AccumulationSinkCondition<Source, TrueComponent, FalseComponent>(
+      trueComponent: nil,
+      falseComponent: component
+    )
+  }
+
+  public static func buildOptional<Component>(_ component: Component?) -> some AccumulationSink where Component : AccumulationSink {
+    return _AccumulationSinkOptional.init(component: component)
+  }
+
+  // FIXME: add `where repeat (each S).Source == Source`
+  public static func buildBlock<each S: AccumulationSink>(_ sinks: repeat each S) -> _AccumulationSinkGroup<Source, (repeat each S)> {
+
+    return _AccumulationSinkGroup<Source, (repeat each S)>(
       component: (repeat each sinks),
       receiveSource: { source, component in
         // Waiting https://www.swift.org/blog/pack-iteration/

@@ -24,6 +24,31 @@ final class AccumulationTests: XCTestCase {
         expForName.fulfill()
       }
 
+      // checks for result builders
+      if let _ = self {
+        $0.ifChanged(\.name).do { value in
+          runMain()
+        }
+      }
+
+      // checks for result builders
+      if true {
+        $0.ifChanged(\.name).do { value in
+          runMain()
+        }
+      } else {
+        $0.ifChanged(\.name).do { value in
+          runMain()
+        }
+      }
+
+      // checks for result builders
+      if true {
+        $0.ifChanged(\.name).do { value in
+          runMain()
+        }
+      }
+
     }
 
     store.commit {
