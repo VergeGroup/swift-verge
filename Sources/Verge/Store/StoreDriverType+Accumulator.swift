@@ -1,4 +1,38 @@
 
+extension StoreDriverType {
+
+  public func accumulate<T>(
+    queue: MainActorTargetQueue = .mainIsolated(),
+    @SinkComponentBuilder<Scope> _ buildSubscription: @escaping @MainActor (consuming AccumulationBuilder<Scope>) -> SinkGroup<Scope, T>
+  ) -> StoreStateSubscription {
+
+    var previous: SinkGroup<Scope, T>?
+
+    return sinkState(dropsFirst: false, queue: queue) { state in
+
+      let builder = AccumulationBuilder<Scope>()
+
+      var group = buildSubscription(consume builder)
+
+      // sets the latest value
+      group = group.receive(source: state.primitiveBox)
+
+      // sets the previous value
+      if let previous {
+        group = group.receive(other: previous)
+      }
+
+      // runs sink
+      group = group.consume()
+
+      previous = group
+
+    }
+
+  }
+
+}
+
 public protocol Sink<Source> {
   associatedtype Source
   consuming func receive(source: borrowing ReadingBox<Source>) -> Self
@@ -68,40 +102,6 @@ public struct SinkIfChanged<Source, Target: Equatable>: Sink {
     return self
 
   }
-}
-
-extension StoreDriverType {
-
-  public func accumulate<T>(
-    queue: MainActorTargetQueue = .mainIsolated(),
-    @SinkComponentBuilder<Scope> _ buildSubscription: @escaping @MainActor (consuming AccumulationBuilder<Scope>) -> SinkGroup<Scope, T>
-  ) -> StoreStateSubscription {
-
-    var previous: SinkGroup<Scope, T>?
-
-    return sinkState(dropsFirst: false, queue: queue) { state in
-
-      let builder = AccumulationBuilder<Scope>()
-
-      var group = buildSubscription(consume builder)
-
-      // sets the latest value
-      group = group.receive(source: state.primitiveBox)
-
-      // sets the previous value
-      if let previous {
-        group = group.receive(other: previous)
-      }
-
-      // runs sink
-      group = group.consume()
-
-      previous = group
-
-    }
-
-  }
-
 }
 
 public struct SinkGroup<Source, Component>: Sink {
