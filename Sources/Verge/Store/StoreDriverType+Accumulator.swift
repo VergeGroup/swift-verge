@@ -8,7 +8,7 @@ extension StoreDriverType {
 
     var previousBox: ReferenceEdge<_AccumulationSinkGroup<Scope, T>?> = .init(wrappedValue: nil)
 
-    return sinkState(dropsFirst: false, queue: queue) { state in
+    return sinkState(dropsFirst: false, queue: queue) { @MainActor state in
 
       let builder = AccumulationBuilder<Scope>(previousLoader: {
         previousBox.wrappedValue
@@ -33,6 +33,56 @@ extension StoreDriverType {
 
   }
 
+  @_disfavoredOverload
+  public func accumulate<T>(
+    queue: some TargetQueueType,
+    @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @Sendable (consuming AccumulationBuilder<Scope>) -> _AccumulationSinkGroup<Scope, T>
+  ) -> StoreStateSubscription {
+
+    let previousBox: UnsafeSendableBox<ReferenceEdge<_AccumulationSinkGroup<Scope, T>?>> = .init(value: .init(wrappedValue: nil))
+    let lock = VergeConcurrency.UnfairLock()
+
+    return sinkState(dropsFirst: false, queue: queue) { @Sendable state in
+
+      lock.lock()
+      defer {
+        lock.unlock()
+      }
+
+      withUncheckedSendable {
+
+        let builder = AccumulationBuilder<Scope>(previousLoader: {
+          previousBox.value.wrappedValue
+        })
+
+        var group = buildSubscription(consume builder)
+
+        // sets the latest value
+        group = group.receive(source: state.primitiveBox)
+
+        // sets the previous value
+        if let previous = previousBox.value.wrappedValue {
+          group = group.receive(other: previous)
+        }
+
+        // runs sink
+        group = group.consume()
+
+        previousBox.value.wrappedValue = group
+
+      }
+    }
+
+  }
+
+}
+
+private final class UnsafeSendableBox<T>: @unchecked Sendable {
+  var value: T
+
+  init(value: T) {
+    self.value = value
+  }
 }
 
 public protocol AccumulationSink<Source> {
