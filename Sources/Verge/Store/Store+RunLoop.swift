@@ -39,7 +39,11 @@ extension Store {
 
     }
 
-    receive(state)
+    let firstState = state.droppedPrevious()
+
+    latestState = firstState
+
+    receive(firstState)
 
     return .init {
       RunLoopActivityObserver.remove(subscription)
