@@ -24,8 +24,6 @@ extension Store {
           return
         }
 
-        latestState = newState
-
         let state: Changes<State>
 
         if let latestState {
@@ -33,6 +31,8 @@ extension Store {
         } else {
           state = newState.droppedPrevious()
         }
+
+        latestState = newState
 
         receive(state)
       }
