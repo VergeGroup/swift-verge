@@ -1,6 +1,11 @@
 
 extension StoreDriverType {
 
+  /**
+   Subscribes states and accumulates into components.
+   Against sink method, it does not use Changes object.
+   It allows to check if values has changed in the unit of accumulation, not Changes view.
+   */
   public func accumulate<T>(
     queue: MainActorTargetQueue = .mainIsolated(),
     @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @MainActor (consuming AccumulationBuilder<Scope>) -> _AccumulationSinkGroup<Scope, T>
@@ -33,6 +38,11 @@ extension StoreDriverType {
 
   }
 
+  /**
+   Subscribes states and accumulates into components.
+   Against sink method, it does not use Changes object.
+   It allows to check if values has changed in the unit of accumulation, not Changes view.
+   */
   @_disfavoredOverload
   public func accumulate<T>(
     queue: some TargetQueueType,
