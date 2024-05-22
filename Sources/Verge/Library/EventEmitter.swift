@@ -110,6 +110,7 @@ open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchec
         receiveEvent(event)
         
         for subscriber in capturedSubscribers {
+          vergeSignpostEvent("EventEmitter.emitForSubscriber")
           subscriber.1(event)
         }
         event.onComsume()

@@ -24,8 +24,6 @@ extension Store {
           return
         }
 
-        latestState = newState
-
         let state: Changes<State>
 
         if let latestState {
@@ -34,12 +32,18 @@ extension Store {
           state = newState.droppedPrevious()
         }
 
+        latestState = newState
+
         receive(state)
       }
 
     }
 
-    receive(state)
+    let firstState = state.droppedPrevious()
+
+    latestState = firstState
+
+    receive(firstState)
 
     return .init {
       RunLoopActivityObserver.remove(subscription)
