@@ -299,3 +299,8 @@ public enum VergeConcurrency {
 
 
 }
+
+@inline(__always)
+func withUncheckedSendable<T>(_ body: () throws -> T) rethrows -> T {
+  try body()
+}

@@ -44,7 +44,7 @@ final class ConcurrencyTests: XCTestCase {
       counter.fulfill()
     }
 
-    var dispatched = Array<Int>()
+    let dispatched = VergeConcurrency.UnfairLockAtomic<Array<Int>>([])
 
     DispatchQueue.global().async {
       DispatchQueue.concurrentPerform(iterations: 100) { i in
@@ -52,7 +52,9 @@ final class ConcurrencyTests: XCTestCase {
         Task {
           await store.backgroundCommit {
             $0.count = i
-            dispatched.append(i)
+            dispatched.modify {
+              $0.append(i)
+            }
           }
         }
       }
@@ -62,7 +64,8 @@ final class ConcurrencyTests: XCTestCase {
 
     wait(for: [exp, counter], timeout: 10)
 //    print(dispatched, results)
-    XCTAssertEqual([0] + dispatched, results.value, "\(([0] + dispatched).difference(from: results.value))")
+    let _dispatched = dispatched.value
+    XCTAssertEqual([0] + _dispatched, results.value, "\(([0] + _dispatched).difference(from: results.value))")
     withExtendedLifetime(sub) {}
   }
 

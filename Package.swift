@@ -106,7 +106,10 @@ let package = Package(
     ),
     .testTarget(
       name: "VergeTests",
-      dependencies: ["Verge", "ViewInspector"]
+      dependencies: ["Verge", "ViewInspector"],
+      swiftSettings: [
+        .enableExperimentalFeature("StrictConcurrency")
+      ]
     ),
     .testTarget(
       name: "VergeTinyTests",
