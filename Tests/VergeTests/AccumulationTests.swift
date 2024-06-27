@@ -64,6 +64,36 @@ final class AccumulationTests: XCTestCase {
     let _ = sub
   }
 
+  func test_drop() {
+
+    let store = DemoStore()
+
+    let expForCount = expectation(description: "count")
+    expForCount.expectedFulfillmentCount = 1
+
+    let sub = store.accumulate(queue: .mainIsolated()) { [weak self] in
+
+      $0.ifChanged(\.count)
+        .dropFirst(2)
+        .do { value in
+          expForCount.fulfill()
+        }
+
+    }
+
+    store.commit {
+      $0.count += 1
+    }
+
+    store.commit {
+      $0.count += 1
+    }
+
+    wait(for: [expForCount], timeout: 1)
+
+    let _ = sub
+  }
+
   func test_background() {
 
     let store = DemoStore()

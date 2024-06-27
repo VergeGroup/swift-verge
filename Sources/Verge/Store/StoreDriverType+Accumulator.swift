@@ -129,12 +129,20 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
   private var latestValue: Target?
   private var previousValue: Target?
 
+  private var counter: Int = 0
+  private var countToEmit: Int = 0
+
   private var handler: ((consuming Target) -> Void)?
 
   init(
     selector: @escaping (borrowing Source) -> Target
   ) {
     self.selector = selector
+  }
+
+  public consuming func dropFirst(_ k: Int = 1) -> Self {
+    countToEmit = k
+    return self
   }
 
   /**
@@ -155,6 +163,7 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
   public consuming func receive(other: consuming AccumulationSinkIfChanged<Source, Target>) -> Self {
 
     self.previousValue = other.latestValue
+    self.counter = other.counter
 
     return self
   }
@@ -166,7 +175,10 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
     }
 
     if latestValue != previousValue {
-      handler(latestValue!)
+      if counter >= countToEmit {
+        handler(latestValue!)
+      }
+      counter += 1
     }
 
     self.handler = nil
