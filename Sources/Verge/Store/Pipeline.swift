@@ -37,7 +37,7 @@ public protocol PipelineType<Input, Output> {
   
   associatedtype Input
   associatedtype Output
-  associatedtype Storage = Void
+  associatedtype Storage: Sendable = Void
 
   func makeStorage() -> Storage
 
