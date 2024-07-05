@@ -30,13 +30,18 @@ extension ContinuousResult: Equatable where Output: Equatable {
   
 }
 
+/**
+ A filter object that yields the output produced from the input.
+ */
 public protocol PipelineType<Input, Output> {
   
   associatedtype Input
   associatedtype Output
      
+  /// Yields the output from the input.
   func yield(_ input: Input) -> Output
    
+  /// Yields the output from the input if it's needed
   func yieldContinuously(_ input: Input) -> ContinuousResult<Output>
   
 }
