@@ -37,13 +37,22 @@ public protocol PipelineType<Input, Output> {
   
   associatedtype Input
   associatedtype Output
-     
+  associatedtype Storage = Void
+
+  func makeStorage() -> Storage
+
   /// Yields the output from the input.
-  func yield(_ input: Input) -> Output
-   
+  func yield(_ input: Input, storage: Storage) -> Output
+
   /// Yields the output from the input if it's needed
-  func yieldContinuously(_ input: Input) -> ContinuousResult<Output>
-  
+  func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output>
+
+}
+
+extension PipelineType where Storage == Void {
+  public func makeStorage() -> Void {
+    ()
+  }
 }
 
 /**
@@ -57,6 +66,8 @@ public enum Pipelines {
   /// KeyPath based pipeline, light weight operation just take value from source.
   public struct ChangesSelectPassthroughPipeline<Source: Equatable, Output: Equatable>: PipelineType {
 
+    public typealias Storage = Void
+
     public typealias Input = Changes<Source>
 
     public let selector: (borrowing Input.Value) -> Output
@@ -67,7 +78,7 @@ public enum Pipelines {
       self.selector = selector
     }
 
-    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
+    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
 
       let target = input._read(perform: selector)
 
@@ -75,7 +86,7 @@ public enum Pipelines {
 
     }
 
-    public func yield(_ input: Input) -> Output {
+    public func yield(_ input: Input, storage: Storage) -> Output {
       input._read(perform: selector)
     }
 
@@ -83,7 +94,9 @@ public enum Pipelines {
 
   /// KeyPath based pipeline, light weight operation just take value from source.
   public struct ChangesSelectPipeline<Source: Equatable, Output: Equatable>: PipelineType {
-    
+
+    public typealias Storage = Void
+
     public typealias Input = Changes<Source>
     
     public let selector: (borrowing Input.Value) -> Output
@@ -97,8 +110,8 @@ public enum Pipelines {
       self.additionalDropCondition = additionalDropCondition
     }
     
-    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-      
+    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
+
       guard let previous = input.previous else {
         return .new(input._read(perform: selector))
       }
@@ -120,7 +133,7 @@ public enum Pipelines {
       
     }
     
-    public func yield(_ input: Input) -> Output {
+    public func yield(_ input: Input, storage: Storage) -> Output {
       input._read(perform: selector)
     }
     
@@ -140,6 +153,8 @@ public enum Pipelines {
   /// Closure based pipeline, 
   public struct ChangesMapPipeline<Source: Equatable, Intermediate, Output: Equatable>: PipelineType {
     
+    public typealias Storage = Void
+
     public typealias Input = Changes<Source>
     
     // MARK: - Properties
@@ -160,10 +175,10 @@ public enum Pipelines {
     
     // MARK: - Functions
     
-    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-      
+    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
+
       guard let previous = input.previous else {
-        return .new(yield(input))
+        return .new(yield(input, storage: storage))
       }
       
       guard previous.primitive == input.primitive else {
@@ -195,7 +210,7 @@ public enum Pipelines {
       return .noUpdates
     }
     
-    public func yield(_ input: Input) -> Output {
+    public func yield(_ input: Input, storage: Storage) -> Output {
       transform(intermediate(input.primitive).value)
     }
       
@@ -213,7 +228,9 @@ public enum Pipelines {
   }
   
   public struct BasicMapPipeline<Input: Equatable, Output: Equatable>: PipelineType {
-        
+
+    public typealias Storage = Void
+
     // MARK: - Properties
     
     public let map: (Input) -> Output
@@ -229,17 +246,17 @@ public enum Pipelines {
     
     // MARK: - Functions
     
-    public func yieldContinuously(_ input: Input) -> ContinuousResult<Output> {
-                      
+    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
+
       guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-        return .new(yield(input))
+        return .new(yield(input, storage: storage))
       }
       
       return .noUpdates
       
     }
     
-    public func yield(_ input: Input) -> Output {
+    public func yield(_ input: Input, storage: Storage) -> Output {
       map(input)
     }
     
@@ -255,6 +272,67 @@ public enum Pipelines {
     }
     
   }
+
+
+  public struct UniqueFilterEquatableToEquatable<Input: Equatable, Output: Equatable>: PipelineType {
+
+    public typealias Output = Input
+
+    public func yield(_ input: Input, storage: Storage) -> Input {
+      input
+    }
+
+    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Input> {
+      .new(input)
+    }
+
+  }
+
+  public struct UniqueFilterEquatableToNonEquatable<Input: Equatable, Output>: PipelineType {
+
+    public typealias Output = Input
+
+    public func yield(_ input: Input, storage: Storage) -> Input {
+      input
+    }
+
+    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Input> {
+      .new(input)
+    }
+
+  }
+
+  public struct UniqueFilterNonEquatableToEquatable<Input, Output: Equatable>: PipelineType {
+
+    public typealias Output = Input
+
+    public func yield(_ input: Input, storage: Storage) -> Input {
+      input
+    }
+
+    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Input> {
+      .new(input)
+    }
+
+  }
+
+  public struct UniqueFilterNonEquatableToNonEquatable<Input, Output>: PipelineType {
+
+    public typealias Output = Input
+
+    public func yield(_ input: Input, storage: Storage) -> Input {
+      input
+    }
+
+    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Input> {
+      .new(input)
+    }
+
+  }
+
+}
+
+extension Pipelines {
 
 }
 
