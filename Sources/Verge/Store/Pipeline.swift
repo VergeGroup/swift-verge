@@ -273,63 +273,105 @@ public enum Pipelines {
     
   }
 
+  public struct UniqueFilterEquatable<Map: MapFunction>: PipelineType where Map.Output : Equatable {
 
-  public struct UniqueFilterEquatableToEquatable<Input: Equatable, Output: Equatable>: PipelineType {
+    public typealias Input = Map.Input
+    public typealias Output = Map.Output
 
-    public typealias Output = Input
+    private let map: Map
 
-    public func yield(_ input: Input, storage: Storage) -> Input {
-      input
+    public init(map: Map) {
+      self.map = map
     }
 
-    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Input> {
-      .new(input)
+    public func makeStorage() -> VergeConcurrency.UnfairLockAtomic<Output?> {
+      .init(nil)
     }
 
-  }
-
-  public struct UniqueFilterEquatableToNonEquatable<Input: Equatable, Output>: PipelineType {
-
-    public typealias Output = Input
-
-    public func yield(_ input: Input, storage: Storage) -> Input {
-      input
+    public func yield(_ input: Input, storage: Storage) -> Output {
+      let result = map.perform(input)
+      storage.swap(result)
+      return result
     }
 
-    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Input> {
-      .new(input)
-    }
+    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
 
-  }
+      // not to check if input has changed because storing the input may cause performance issue by copying.
 
-  public struct UniqueFilterNonEquatableToEquatable<Input, Output: Equatable>: PipelineType {
+      let result = map.perform(input)
 
-    public typealias Output = Input
-
-    public func yield(_ input: Input, storage: Storage) -> Input {
-      input
-    }
-
-    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Input> {
-      .new(input)
+      return storage.modify { value in
+        if value != result {
+          value = result
+          return .new(result)
+        } else {
+          return .noUpdates
+        }
+      }
     }
 
   }
 
-  public struct UniqueFilterNonEquatableToNonEquatable<Input, Output>: PipelineType {
+  public struct UniqueFilter<Map: MapFunction, OutputComparator: Comparison>: PipelineType where OutputComparator.Input == Map.Output? {
 
-    public typealias Output = Input
+    public typealias Input = Map.Input
+    public typealias Output = Map.Output
 
-    public func yield(_ input: Input, storage: Storage) -> Input {
-      input
+    private let map: Map
+    private let outputComparator: OutputComparator
+
+    public init(map: Map, outputComparator: OutputComparator) {
+      self.map = map
+      self.outputComparator = outputComparator
     }
 
-    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Input> {
-      .new(input)
+    public func makeStorage() -> VergeConcurrency.UnfairLockAtomic<Output?> {
+      .init(nil)
+    }
+
+    public func yield(_ input: Input, storage: Storage) -> Output {
+      let result = map.perform(input)
+      storage.swap(result)
+      return result
+    }
+
+    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
+
+      // not to check if input has changed because storing the input may cause performance issue by copying.
+
+      let result = map.perform(input)
+
+      return storage.modify { value in
+        if !outputComparator(value, result) {
+          value = result
+          return .new(result)
+        } else {
+          return .noUpdates
+        }
+      }
     }
 
   }
 
+}
+
+public protocol MapFunction: Sendable {
+  associatedtype Input
+  associatedtype Output
+  func perform(_ input: Input) -> Output
+}
+
+public struct AnyMapFunction<Input, Output>: MapFunction {
+
+  private let _perform: @Sendable (Input) -> Output
+
+  public init(_ perform: @escaping @Sendable (Input) -> Output) {
+    self._perform = perform
+  }
+
+  public func perform(_ input: Input) -> Output {
+    _perform(input)
+  }
 }
 
 extension Pipelines {
