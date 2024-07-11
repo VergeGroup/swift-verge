@@ -226,52 +226,6 @@ public enum Pipelines {
       )
     }
   }
-  
-  public struct BasicMapPipeline<Input: Equatable, Output: Equatable>: PipelineType {
-
-    public typealias Storage = Void
-
-    // MARK: - Properties
-    
-    public let map: (Input) -> Output
-    public let additionalDropCondition: ((Input) -> Bool)?
-    
-    public init(
-      map: @escaping (Input) -> Output,
-      additionalDropCondition: ((Input) -> Bool)?
-    ) {
-      self.map = map
-      self.additionalDropCondition = additionalDropCondition
-    }
-    
-    // MARK: - Functions
-    
-    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
-
-      guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-        return .new(yield(input, storage: storage))
-      }
-      
-      return .noUpdates
-      
-    }
-    
-    public func yield(_ input: Input, storage: Storage) -> Output {
-      map(input)
-    }
-    
-    public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
-      return .init(
-        map: map,
-        additionalDropCondition: additionalDropCondition.map { currentCondition in
-          { input in
-            currentCondition(input) || predicate(input)
-          }
-        } ?? predicate
-      )
-    }
-    
-  }
 
   public struct UniqueFilterEquatable<Map: MapFunction>: PipelineType where Map.Output : Equatable {
 
@@ -374,7 +328,27 @@ public struct AnyMapFunction<Input, Output>: MapFunction {
   }
 }
 
-extension Pipelines {
+extension PipelineType {
+
+  public static func uniqueMap<Map: MapFunction>(_ mapFunction: Map) -> Self
+  where Map.Output: Equatable, Self == Pipelines.UniqueFilterEquatable<Map> {
+    return .init(map: mapFunction)
+  }
+
+  public static func uniqueMap<Input, Output: Equatable>(_ map: @escaping @Sendable (Input) -> Output) -> Self
+  where Output: Equatable, Self == Pipelines.UniqueFilterEquatable<AnyMapFunction<Input, Output>> {
+    return uniqueMap(.init(map))
+  }
+
+  public static func uniqueMap<Map: MapFunction, OutputComparator: Comparison>(_ mapFunction: Map, _ outputComparator: OutputComparator) -> Self
+  where Self == Pipelines.UniqueFilter<Map, OutputComparator> {
+    return .init(map: mapFunction, outputComparator: outputComparator)
+  }
+
+  public static func uniqueMap<Input, Output, OutputComparator: Comparison>(_ map: @escaping @Sendable (Input) -> Output, _ outputComparator: OutputComparator) -> Self
+  where Self == Pipelines.UniqueFilter<AnyMapFunction<Input, Output>, OutputComparator> {
+    return .init(map: .init(map), outputComparator: outputComparator)
+  }
 
 }
 
