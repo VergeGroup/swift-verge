@@ -41,11 +41,17 @@ public struct EntityIdentifier<Entity: EntityType> : Hashable, CustomStringConve
 }
 
 /// A protocol describes object is an Entity.
-public protocol EntityType: Equatable, Sendable {
+public protocol EntityType: Identifiable, Equatable, Sendable {
 
   associatedtype EntityIDRawType: Hashable, Sendable
 
   var entityID: EntityID { get }
 
   typealias EntityID = EntityIdentifier<Self>
+}
+
+extension EntityType {
+  public var id: EntityID {
+    entityID
+  }
 }
