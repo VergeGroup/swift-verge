@@ -42,7 +42,7 @@ extension BindingDerived {
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-extension StoreDriverType {
+extension StoreDriverType where Self : Sendable {
 
   public func binding() -> SwiftUI.Binding<Scope> {
     .init(get: { [self /* source store lives until binding released */] in
@@ -65,7 +65,7 @@ extension StoreDriverType {
   ///   - mutation: A closure to update the state.
   ///   If the closure is nil, state will be automatically updated.
   /// - Returns: The result of binding
-  public func binding<T>(_ keypath: WritableKeyPath<Scope, T>, with mutation: ((T) -> Void)? = nil) -> SwiftUI.Binding<T> {
+  public func binding<T>(_ keypath: WritableKeyPath<Scope, T> & Sendable, with mutation: (@Sendable (T) -> Void)? = nil) -> SwiftUI.Binding<T> {
     .init(get: { [self /* source store lives until binding released */] in
       return self.state.primitive[keyPath: keypath]
     }, set: { [weak self] value in

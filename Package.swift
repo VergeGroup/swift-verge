@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 import PackageDescription
 import CompilerPluginSupport
 
@@ -26,8 +26,8 @@ let package = Package(
     .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
 
     /// for testing
-    .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.9.3"),
-    .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
+    .package(url: "https://github.com/nalexn/ViewInspector.git", branch: "0.10.0"),
+    .package(url: "https://github.com/apple/swift-syntax.git", from: "510.0.3"),
     .package(url: "https://github.com/pointfreeco/swift-macro-testing.git", from: "0.2.1")
   ],
   targets: [
@@ -121,5 +121,5 @@ let package = Package(
       .product(name: "MacroTesting", package: "swift-macro-testing"),
     ])
   ],
-  swiftLanguageVersions: [.v5]
+  swiftLanguageModes: [.v5, .v6]
 )
