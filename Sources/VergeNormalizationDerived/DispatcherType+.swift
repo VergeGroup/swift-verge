@@ -357,11 +357,11 @@ where _StorageSelector.Storage == _TableSelector.Storage {
       return .new(yield(input))
     }
 
-    if NormalizedStorageComparisons<Storage>.StorageComparison()(selector.storage(source: input.primitive), selector.storage(source: previous.primitive)) {
+    if NormalizedStorageComparators<Storage>.StorageComparator()(selector.storage(source: input.primitive), selector.storage(source: previous.primitive)) {
       return .noUpdates
     }
 
-    if NormalizedStorageComparisons<Storage>.TableComparison<_TableSelector.Table>()(selector.table(source: input.primitive), selector.table(source: previous.primitive)) {
+    if NormalizedStorageComparators<Storage>.TableComparator<_TableSelector.Table>()(selector.table(source: input.primitive), selector.table(source: previous.primitive)) {
       return .noUpdates
     }
 
@@ -418,11 +418,11 @@ where _StorageSelector.Storage == _TableSelector.Storage {
       return .new(yield(input))
     }
 
-    if NormalizedStorageComparisons<Storage>.StorageComparison()(selector.storage(source: input.primitive), selector.storage(source: previous.primitive)) {
+    if NormalizedStorageComparators<Storage>.StorageComparator()(selector.storage(source: input.primitive), selector.storage(source: previous.primitive)) {
       return .noUpdates
     }
 
-    if NormalizedStorageComparisons<Storage>.TableComparison<_TableSelector.Table>()(selector.table(source: input.primitive), selector.table(source: previous.primitive)) {
+    if NormalizedStorageComparators<Storage>.TableComparator<_TableSelector.Table>()(selector.table(source: input.primitive), selector.table(source: previous.primitive)) {
       return .noUpdates
     }
 

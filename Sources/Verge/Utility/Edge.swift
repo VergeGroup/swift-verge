@@ -228,7 +228,7 @@ extension Edge where Value : Equatable {
 
 extension Edge {
 
-  public struct VersionComparison: Comparison {
+  public struct VersionComparison: TypedComparator {
 
     public func callAsFunction(_ lhs: Edge, _ rhs: Edge) -> Bool {
       lhs.globalID == rhs.globalID && lhs.version == rhs.version
@@ -237,7 +237,7 @@ extension Edge {
 
 }
 
-extension Comparison {
+extension TypedComparator {
 
   public static func versionEquals<T>() -> Self where Self == Edge<T>.VersionComparison {
     .init()

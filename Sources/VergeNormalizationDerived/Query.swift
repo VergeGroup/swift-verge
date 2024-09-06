@@ -34,7 +34,7 @@ struct QueryPipeline<
     }
 
     // check if the storage has been updated
-    if NormalizedStorageComparisons<Storage>.StorageComparison()(storageSelector.select(source: input.primitive), storageSelector.select(source: previous.primitive)) {
+    if NormalizedStorageComparators<Storage>.StorageComparator()(storageSelector.select(source: input.primitive), storageSelector.select(source: previous.primitive)) {
       return .noUpdates
     }
 
