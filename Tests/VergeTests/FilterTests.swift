@@ -22,7 +22,7 @@ final class FilterTests: XCTestCase {
       var c = 0
     }
 
-    let comparison = OrComparison<Model, _, _>(
+    let comparison = OrComparator<Model, _, _>(
       .any { @Sendable in $0.a == 1 && $1.a == 1 },
       .any { @Sendable in  $0.b == 1 && $1.b == 1 }
     )
@@ -60,7 +60,7 @@ final class FilterTests: XCTestCase {
       var c = 0
     }
 
-    let comparison = AndComparison<Model, _, _>(
+    let comparison = AndComparator<Model, _, _>(
       .any { @Sendable in $0.a == 1 && $1.a == 1 },
       .any { @Sendable in  $0.b == 1 && $1.b == 1 }
     )

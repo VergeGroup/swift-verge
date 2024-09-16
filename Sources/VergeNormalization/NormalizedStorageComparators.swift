@@ -1,9 +1,9 @@
 import VergeComparator
 
-public enum NormalizedStorageComparisons<Storage: NormalizedStorageType> {
+public enum NormalizedStorageComparators<Storage: NormalizedStorageType> {
 
   /// True indicates database is not changed
-  public struct StorageComparison: Comparison {
+  public struct StorageComparator: TypedComparator {
     public typealias Input = Storage
 
     public init() {}
@@ -14,7 +14,7 @@ public enum NormalizedStorageComparisons<Storage: NormalizedStorageType> {
   }
 
   /// Returns true if the table of the entity in database has no changes.
-  public struct TableComparison<Table: TableType>: Comparison {
+  public struct TableComparator<Table: TableType>: TypedComparator {
 
     public typealias Input = Table
 

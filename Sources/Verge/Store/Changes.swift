@@ -298,7 +298,7 @@ extension Changes {
   @inline(__always)
   public func takeIfChanged<Composed>(
     _ compose: (Value) throws -> Composed,
-    _ comparer: some Comparison<Composed>
+    _ comparer: some TypedComparator<Composed>
   ) rethrows -> Composed? {
     try _takeIfChanged(compose, comparer)
   }
@@ -306,7 +306,7 @@ extension Changes {
   @inline(__always)
   fileprivate func _takeIfChanged<each Element>(
     _ compose: (Value) throws -> (repeat each Element),
-    _ comparer: consuming some Comparison<(repeat each Element)>
+    _ comparer: consuming some TypedComparator<(repeat each Element)>
   ) rethrows -> (repeat each Element)? {
 
     let current = self.primitive
@@ -356,7 +356,7 @@ extension Changes {
   @inline(__always)
   fileprivate func _takeIfChanged_packed_nonEquatable<each Element>(
     _ compose: (Value) throws -> (repeat each Element),
-    comparator: some Comparison<(repeat each Element)>
+    comparator: some TypedComparator<(repeat each Element)>
   ) rethrows -> (repeat each Element)? {
 
     let current = self.primitive
@@ -391,7 +391,7 @@ extension Changes {
   @inline(__always)
   public func ifChanged<Composed, Result>(
     _ compose: (Value) -> Composed,
-    _ comparer: some Comparison<Composed>,
+    _ comparer: some TypedComparator<Composed>,
     _ perform: (Composed) throws -> Result
   ) rethrows -> Result? {
     guard let result = takeIfChanged(compose, comparer) else {
@@ -419,7 +419,7 @@ extension Changes {
   @available(*, deprecated, message: "Use another function that returns IfChangedBox")
   public func ifChanged<T, Result>(
     _ selector: ChangesKeyPath<T>,
-    _ comparer: some Comparison<T>,
+    _ comparer: some TypedComparator<T>,
     _ perform: (T) throws -> Result
   ) rethrows -> Result? {
     guard let value = takeIfChanged({ $0[keyPath: selector] }, comparer) else {
@@ -459,7 +459,7 @@ extension Changes {
 
   public borrowing func ifChanged<each Element>(
     _ compose: (borrowing Value) -> (repeat each Element),
-    comparator: some Comparison<(repeat each Element)>
+    comparator: some TypedComparator<(repeat each Element)>
   ) -> IfChangedBox<(repeat each Element)> {
     guard let result = _takeIfChanged_packed_nonEquatable(compose, comparator: comparator) else {
       return .init()
@@ -611,14 +611,14 @@ extension Changes {
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   @inline(__always)
   public func hasChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
-    hasChanges(keyPath, EqualityComparison())
+    hasChanges(keyPath, EqualityComparator())
   }
 
   /// Returns boolean that indicates value specified by keyPath contains changes with compared old and new.
   @inline(__always)
   public func hasChanges<T>(
     _ keyPath: ChangesKeyPath<T>,
-    _ comparer: some Comparison<T>
+    _ comparer: some TypedComparator<T>
   ) -> Bool {
     hasChanges({ $0[keyPath: keyPath] }, comparer)
   }
@@ -627,13 +627,13 @@ extension Changes {
   public func hasChanges<Composed: Equatable>(
     _ compose: (Value) -> Composed
   ) -> Bool {
-    hasChanges(compose, EqualityComparison())
+    hasChanges(compose, EqualityComparator())
   }
 
   @inline(__always)
   public func hasChanges<Composed>(
     _ compose: (Value) -> Composed,
-    _ comparer: some Comparison<Composed>
+    _ comparer: some TypedComparator<Composed>
   ) -> Bool {
     takeIfChanged(compose, comparer) != nil
   }
@@ -646,12 +646,12 @@ extension Changes {
   /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
   @inline(__always)
   public func noChanges<T: Equatable>(_ keyPath: ChangesKeyPath<T>) -> Bool {
-    !hasChanges(keyPath, EqualityComparison())
+    !hasChanges(keyPath, EqualityComparator())
   }
 
   /// Returns boolean that indicates value specified by keyPath contains **NO** changes with compared old and new.
   @inline(__always)
-  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: some Comparison<T>) -> Bool {
+  public func noChanges<T>(_ keyPath: ChangesKeyPath<T>, _ comparer: some TypedComparator<T>) -> Bool {
     !hasChanges(keyPath, comparer)
   }
 }

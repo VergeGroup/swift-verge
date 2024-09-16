@@ -119,8 +119,8 @@ extension ObservableType where Element : ChangesType {
   ///   - selector:
   ///   - compare:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changed<S>(_ selector: @escaping (Element.Value) -> S, _ comparer: some Comparison<S>) -> Observable<S> {
-    
+  public func changed<S>(_ selector: @escaping (Element.Value) -> S, _ comparer: some TypedComparator<S>) -> Observable<S> {
+
     return flatMap { changes -> Observable<S> in
       let _r = changes.asChanges().ifChanged(selector, comparer) { value in
         return value
@@ -138,7 +138,7 @@ extension ObservableType where Element : ChangesType {
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
   public func changed<S : Equatable>(_ selector: @escaping (Element.Value) -> S) -> Observable<S> {
-    return changed(selector, EqualityComparison())
+    return changed(selector, EqualityComparator())
   }
     
   /// Returns an observable sequence that contains only changed elements according to the `comparer`.
@@ -149,7 +149,7 @@ extension ObservableType where Element : ChangesType {
   ///   - selector:
   ///   - compare:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
-  public func changedDriver<S>(_ selector: @escaping (Element.Value) -> S, _ comparer: some Comparison<S>) -> Driver<S> {
+  public func changedDriver<S>(_ selector: @escaping (Element.Value) -> S, _ comparer: some TypedComparator<S>) -> Driver<S> {
     changed(selector, comparer)
         .asDriver(onErrorRecover: { _ in .empty() })
   }
@@ -163,7 +163,7 @@ extension ObservableType where Element : ChangesType {
   ///   - comparer:
   /// - Returns: Returns an observable sequence that contains only changed elements according to the `comparer`.
   public func changedDriver<S : Equatable>(_ selector: @escaping (Element.Value) -> S) -> Driver<S> {
-    return changedDriver(selector, EqualityComparison())
+    return changedDriver(selector, EqualityComparator())
   }
   
 }

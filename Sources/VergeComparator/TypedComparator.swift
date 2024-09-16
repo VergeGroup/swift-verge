@@ -22,8 +22,7 @@
 import Foundation
 import os.log
 
-// TODO: will rename as Comparator
-public protocol Comparison<Input>: Sendable {
+public protocol TypedComparator<Input>: Sendable {
   associatedtype Input
 
   @Sendable
@@ -32,49 +31,49 @@ public protocol Comparison<Input>: Sendable {
 
 struct NotEqual: Error {}
 
-extension Comparison {
+extension TypedComparator {
 
-  public static func equality<T>() -> Self where Self == EqualityComparison<T> {
+  public static func equality<T>() -> Self where Self == EqualityComparator<T> {
     .init()
   }
 
   /**
    TODO: Use typed comparison instead of AnyEqualityComparison.
    */
-  public static func equality<each T: Equatable>() -> Self where Self == AnyEqualityComparison<(repeat each T)> {
+  public static func equality<each T: Equatable>() -> Self where Self == AnyEqualityComparator<(repeat each T)> {
     return .init { a, b in
       areEqual((repeat each a), (repeat each b))
     }
   }
 
-  public static func any<T>(_ isEqual: @escaping @Sendable (T, T) -> Bool) -> Self where Self == AnyEqualityComparison<T> {
+  public static func any<T>(_ isEqual: @escaping @Sendable (T, T) -> Bool) -> Self where Self == AnyEqualityComparator<T> {
     .init(isEqual)
   }
 
-  public static func any<T, U: Equatable>(selector: @escaping @Sendable (T) -> U) -> Self where Self == AnyEqualityComparison<T> {
+  public static func any<T, U: Equatable>(selector: @escaping @Sendable (T) -> U) -> Self where Self == AnyEqualityComparator<T> {
     .init {
       selector($0) == selector($1)
     }
   }
 
-  public static func alwaysFalse<T>() -> Self where Self == FalseComparison<T> {
+  public static func alwaysFalse<T>() -> Self where Self == FalseComparator<T> {
     .init()
   }
 
 }
 
-extension Comparison {
+extension TypedComparator {
 
-  public func and<C: Comparison>(_ otherExpression: C) -> AndComparison<Input, Self, C> {
+  public func and<C: TypedComparator>(_ otherExpression: C) -> AndComparator<Input, Self, C> {
     .init(self, otherExpression)
   }
 
-  public func or<C: Comparison>(_ otherExpression: C) -> OrComparison<Input, Self, C> {
+  public func or<C: TypedComparator>(_ otherExpression: C) -> OrComparator<Input, Self, C> {
     .init(self, otherExpression)
   }
 }
 
-public struct FalseComparison<Input>: Comparison {
+public struct FalseComparator<Input>: TypedComparator {
   public init() {}
 
   public func callAsFunction(_ lhs: Input, _ rhs: Input) -> Bool {
@@ -82,7 +81,7 @@ public struct FalseComparison<Input>: Comparison {
   }
 }
 
-public struct EqualityComparison<Input: Equatable>: Comparison {
+public struct EqualityComparator<Input: Equatable>: TypedComparator {
 
   public init() {}
 
@@ -93,7 +92,7 @@ public struct EqualityComparison<Input: Equatable>: Comparison {
 
 }
 
-public struct AnyEqualityComparison<Input>: Comparison {
+public struct AnyEqualityComparator<Input>: TypedComparator {
 
   private let closure: @Sendable (Input, Input) -> Bool
 
@@ -107,7 +106,7 @@ public struct AnyEqualityComparison<Input>: Comparison {
 
 }
 
-public struct AndComparison<Input, C1: Comparison, C2: Comparison>: Comparison where C1.Input == Input, C2.Input == Input {
+public struct AndComparator<Input, C1: TypedComparator, C2: TypedComparator>: TypedComparator where C1.Input == Input, C2.Input == Input {
 
   public let c1: C1
   public let c2: C2
@@ -122,7 +121,7 @@ public struct AndComparison<Input, C1: Comparison, C2: Comparison>: Comparison w
   }
 }
 
-public struct OrComparison<Input, C1: Comparison, C2: Comparison>: Comparison where C1.Input == Input, C2.Input == Input  {
+public struct OrComparator<Input, C1: TypedComparator, C2: TypedComparator>: TypedComparator where C1.Input == Input, C2.Input == Input  {
   public let c1: C1
   public let c2: C2
 
