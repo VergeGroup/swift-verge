@@ -1,6 +1,6 @@
-// swift-tools-version:6.0
-import PackageDescription
+// swift-tools-version: 6.0
 import CompilerPluginSupport
+import PackageDescription
 
 let package = Package(
   name: "Verge",
@@ -28,7 +28,7 @@ let package = Package(
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", branch: "0.10.0"),
     .package(url: "https://github.com/apple/swift-syntax.git", from: "510.0.3"),
-    .package(url: "https://github.com/pointfreeco/swift-macro-testing.git", from: "0.2.1")
+    .package(url: "https://github.com/pointfreeco/swift-macro-testing.git", from: "0.2.1"),
   ],
   targets: [
 
@@ -37,7 +37,7 @@ let package = Package(
       name: "VergeMacrosPlugin",
       dependencies: [
         .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-        .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+        .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
       ]
     ),
 
@@ -115,11 +115,13 @@ let package = Package(
       name: "VergeTinyTests",
       dependencies: ["VergeTiny"]
     ),
-    .testTarget(name: "VergeMacrosTests", dependencies: [
-      "VergeMacrosPlugin",
-      .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
-      .product(name: "MacroTesting", package: "swift-macro-testing"),
-    ])
+    .testTarget(
+      name: "VergeMacrosTests",
+      dependencies: [
+        "VergeMacrosPlugin",
+        .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+        .product(name: "MacroTesting", package: "swift-macro-testing"),
+      ]),
   ],
   swiftLanguageModes: [.v5, .v6]
 )

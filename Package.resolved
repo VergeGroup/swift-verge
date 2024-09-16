@@ -1,4 +1,5 @@
 {
+  "originHash" : "82f71c92629a240db65e931912dfb2240dd0b70609e84bc12a7b6ccab081b14b",
   "pins" : [
     {
       "identity" : "rxswift",
@@ -59,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-syntax.git",
       "state" : {
-        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
-        "version" : "509.1.1"
+        "revision" : "2bc86522d115234d1f588efe2bcb4ce4be8f8b82",
+        "version" : "510.0.3"
       }
     },
     {
@@ -68,10 +69,10 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nalexn/ViewInspector.git",
       "state" : {
-        "revision" : "7b1732802ffe30e6a67754bda6c7819e5cb0eb70",
-        "version" : "0.9.11"
+        "branch" : "0.10.0",
+        "revision" : "23d6fabc6e8f0115c94ad3af5935300c70e0b7fa"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

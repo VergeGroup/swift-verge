@@ -106,7 +106,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   public func sinkState(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<TargetStore.State>) -> Void
+    receive: @escaping @Sendable (Changes<TargetStore.State>) -> Void
   ) -> StoreStateSubscription {
     store.asStore()._primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
@@ -121,7 +121,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     receive: @escaping @MainActor (Changes<TargetStore.State>) -> Void
   ) -> StoreStateSubscription {
     store.asStore()._mainActor_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -159,7 +159,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   public func sinkState<Accumulate>(
     scan: Scan<Changes<TargetStore.State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     receive: @escaping @MainActor (Changes<TargetStore.State>, Accumulate) -> Void
   ) -> StoreStateSubscription {
     store.asStore()._mainActor_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -182,7 +182,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkActivity(
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     receive: @escaping @MainActor (TargetStore.Activity) -> Void
   ) -> StoreActivitySubscription {
 
@@ -247,7 +247,7 @@ extension StoreDriverType {
   @_disfavoredOverload
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     receive: @escaping @MainActor (Changes<Scope>) -> Void
   ) -> StoreStateSubscription {
     let _scope = scope
@@ -292,7 +292,7 @@ extension StoreDriverType {
   public func sinkState<Accumulate>(
     scan: Scan<Changes<Scope>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     receive: @escaping @MainActor (Changes<Scope>, Accumulate) -> Void
   ) -> StoreStateSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor changes in
