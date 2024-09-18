@@ -91,9 +91,9 @@ actor Writer {
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable {
+open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable {
 
-  public var scope: WritableKeyPath<State, State> = \State.self
+  public var scope: WritableKeyPath<State, State> & Sendable = \State.self
 
   private let tracker = VergeConcurrency.SynchronizationTracker()
   
@@ -772,7 +772,7 @@ Latest Version (%d): (%@)
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<State>, Accumulate) -> Void
+    receive: @escaping @Sendable (Changes<State>, Accumulate) -> Void
   ) -> StoreStateSubscription {
 
     _primitive_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
@@ -784,7 +784,7 @@ Latest Version (%d): (%@)
   }
 
   func _mainActor_sinkActivity(
-    queue: MainActorTargetQueue,
+    queue: some MainActorTargetQueueType,
     receive: @escaping @MainActor (sending Activity) -> Void
   ) -> StoreActivitySubscription {
     return _primitive_sinkActivity(

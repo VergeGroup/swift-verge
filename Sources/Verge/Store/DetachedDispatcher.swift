@@ -23,11 +23,11 @@ public final class DetachedDispatcher<State: Equatable, Activity, Scope: Equatab
 {
 
   public let store: Store<State, Activity>
-  public let scope: WritableKeyPath<State, Scope>
+  public let scope: WritableKeyPath<State, Scope> & Sendable
 
   init(
     store: Store<State, Activity>,
-    scope: WritableKeyPath<State, Scope>
+    scope: WritableKeyPath<State, Scope> & Sendable
   ) {
     self.store = store
     self.scope = scope

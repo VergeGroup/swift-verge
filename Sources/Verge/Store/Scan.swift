@@ -21,9 +21,9 @@
 
 import Foundation
 
-public final class Scan<Element, Accumulate> {
+public final class Scan<Element, Accumulate>: Sendable {
 
-  public typealias Accumulator = (inout Accumulate, Element) -> Void
+  public typealias Accumulator = @Sendable (inout Accumulate, Element) -> Void
 
   public var value: Accumulate {
     _value.value
