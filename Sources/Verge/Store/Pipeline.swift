@@ -33,7 +33,7 @@ extension ContinuousResult: Equatable where Output: Equatable {
 /**
  A filter object that yields the output produced from the input.
  */
-public protocol PipelineType<Input, Output> {
+public protocol PipelineType<Input, Output>: Sendable {
   
   associatedtype Input
   associatedtype Output
@@ -59,10 +59,10 @@ public enum Pipelines {
 
     public typealias Input = Changes<Source>
 
-    public let selector: (borrowing Input.Value) -> Output
+    public let selector: @Sendable (borrowing Input.Value) -> Output
 
     public init(
-      selector: @escaping (borrowing Input.Value) -> Output
+      selector: @escaping @Sendable (borrowing Input.Value) -> Output
     ) {
       self.selector = selector
     }

@@ -215,7 +215,7 @@ public final class DynamicPropertyStorage {
 
 }
 
-private var _storageKey: Void?
+nonisolated(unsafe) private var _storageKey: Void?
 
 extension NSObject {
 

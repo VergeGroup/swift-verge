@@ -19,14 +19,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-public final class RuntimeSanitizer {
+public struct RuntimeSanitizer: Sendable {
   
   public static let global = RuntimeSanitizer()
    
   public var isSanitizerStateReceivingByCorrectOrder: Bool = false
   public var isRecursivelyCommitDetectionEnabled: Bool = false
   
-  public var onDidFindRuntimeError: (RuntimeError) -> Void = { _ in }
+  public var onDidFindRuntimeError: @Sendable (RuntimeError) -> Void = { _ in }
   
   public init() {
     

@@ -51,16 +51,15 @@ public protocol StoreDriverType<Scope>: ObservableObject where Activity == Targe
 
   associatedtype TargetStore: StoreType
 
-
   associatedtype Scope: Equatable = TargetStore.State
 
   var store: TargetStore { get }
-  var scope: WritableKeyPath<TargetStore.State, Scope> { get }
+  var scope: WritableKeyPath<TargetStore.State, Scope> & Sendable { get }
 
   var state: Changes<Scope> { get }
 
   // WORKAROUND: for activityPublisher()
-  associatedtype Activity = TargetStore.Activity
+  associatedtype Activity: Sendable = TargetStore.Activity
 }
 
 extension StoreDriverType {
@@ -106,7 +105,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   public func sinkState(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<TargetStore.State>) -> Void
+    receive: @escaping @Sendable (Changes<TargetStore.State>) -> Void
   ) -> StoreStateSubscription {
     store.asStore()._primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
@@ -121,7 +120,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     receive: @escaping @MainActor (Changes<TargetStore.State>) -> Void
   ) -> StoreStateSubscription {
     store.asStore()._mainActor_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -141,9 +140,14 @@ extension StoreDriverType where Scope == TargetStore.State {
     scan: Scan<Changes<TargetStore.State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<TargetStore.State>, Accumulate) -> Void
+    receive: @escaping @Sendable (Changes<TargetStore.State>, Accumulate) -> Void
   ) -> StoreStateSubscription {
-    store.asStore()._primitive_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+    store.asStore()._primitive_scan_sinkState(
+      scan: scan,
+      dropsFirst: dropsFirst,
+      queue: queue,
+      receive: receive
+    )
   }
 
   /// Subscribe the state changes
@@ -159,7 +163,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   public func sinkState<Accumulate>(
     scan: Scan<Changes<TargetStore.State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     receive: @escaping @MainActor (Changes<TargetStore.State>, Accumulate) -> Void
   ) -> StoreStateSubscription {
     store.asStore()._mainActor_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -171,7 +175,7 @@ extension StoreDriverType where Scope == TargetStore.State {
   @_disfavoredOverload
   public func sinkActivity(
     queue: some TargetQueueType,
-    receive: @escaping (TargetStore.Activity) -> Void
+    receive: @escaping @Sendable (sending TargetStore.Activity) -> Void
   ) -> StoreActivitySubscription {
 
     store.asStore()._primitive_sinkActivity(queue: queue, receive: receive)
@@ -182,12 +186,12 @@ extension StoreDriverType where Scope == TargetStore.State {
   ///
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkActivity(
-    queue: MainActorTargetQueue = .mainIsolated(),
-    receive: @escaping @MainActor (TargetStore.Activity) -> Void
+    queue: some MainActorTargetQueueType = .mainIsolated(),
+    receive: @escaping @MainActor (sending TargetStore.Activity) -> Void
   ) -> StoreActivitySubscription {
 
     store.asStore()._mainActor_sinkActivity(queue: queue) { activity in
-      thunkToMainActor {
+      MainActor.assumeIsolated {
         receive(activity)
       }
     }
@@ -225,7 +229,7 @@ extension StoreDriverType {
   public func sinkState(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<Scope>) -> Void
+    receive: @escaping @Sendable (Changes<Scope>) -> Void
   ) -> StoreStateSubscription {
     let _scope = scope
 
@@ -247,7 +251,7 @@ extension StoreDriverType {
   @_disfavoredOverload
   public func sinkState(
     dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     receive: @escaping @MainActor (Changes<Scope>) -> Void
   ) -> StoreStateSubscription {
     let _scope = scope
@@ -271,7 +275,7 @@ extension StoreDriverType {
     scan: Scan<Changes<Scope>, Accumulate>,
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<Scope>, Accumulate) -> Void
+    receive: @escaping @Sendable (Changes<Scope>, Accumulate) -> Void
   ) -> StoreStateSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       let accumulate = scan.accumulate(changes)
@@ -292,7 +296,7 @@ extension StoreDriverType {
   public func sinkState<Accumulate>(
     scan: Scan<Changes<Scope>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     receive: @escaping @MainActor (Changes<Scope>, Accumulate) -> Void
   ) -> StoreStateSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor changes in
@@ -340,8 +344,8 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> Result
-  ) rethrows -> Result {
+    mutation: (inout InoutRef<Scope>) throws -> sending Result
+  ) rethrows -> sending Result {
     let trace = MutationTrace(
       name: name,
       file: file,
@@ -394,7 +398,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout InoutRef<Scope>) throws -> sending Result
   ) rethrows -> Result where Scope == TargetStore.State {
     let trace = MutationTrace(
       name: name,
@@ -418,7 +422,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> sending Result
   ) rethrows -> Result where Scope == TargetStore.State {
     let trace = MutationTrace(
       name: name,
@@ -442,7 +446,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout InoutRef<Scope>) throws -> sending Result
   ) async rethrows -> Result {
 
     let result = try await store.asStore().writer.perform { [self] _ in
@@ -462,7 +466,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> sending Result
   ) async rethrows -> Result {
 
     let result = try await store.asStore().writer.perform { [self] _ in
@@ -482,7 +486,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout InoutRef<Scope>) throws -> sending Result
   ) async rethrows -> Result where Scope == TargetStore.State {
 
     let result = try await store.asStore().writer.perform { [self] _ in
@@ -514,13 +518,31 @@ extension StoreDriverType {
     return result
   }
 
-  public func detached<NewScope: Equatable>(from newScope: WritableKeyPath<TargetStore.State, NewScope>)
-  -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
+  public func detached<NewScope: Equatable>(
+    from newScope: WritableKeyPath<TargetStore.State, NewScope> & Sendable
+  ) -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
     .init(store: store.asStore(), scope: newScope)
   }
+  
+  // https://muukii.notion.site/Appending-Sendable-WritableKeyPath-makes-non-sendable-KeyPath-10618017d4c1800a8835fce9d6bffeba?pvs=4
+  /*
+  public func detached<NewScope: Equatable>(
+    by appendingScope: WritableKeyPath<Scope, NewScope> & Sendable
+  ) -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
 
-  public func detached<NewScope: Equatable>(by appendingScope: WritableKeyPath<Scope, NewScope>)
-  -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
-    .init(store: store.asStore(), scope: scope.appending(path: appendingScope))
+    return .init(
+      store: store.asStore(),
+      scope: scope.appending(path: appendingScope)
+    )
   }
+   */
+}
+
+
+func nonthunk() {
+  
+}
+
+func thunk(isolation: isolated (any Actor)? = #isolation) {
+  
 }
