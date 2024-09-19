@@ -443,8 +443,8 @@ extension Store {
   ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
   func _receive<Result>(
-    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
-  ) rethrows -> Result {
+    mutation: (inout InoutRef<State>, inout Transaction) throws -> sending Result
+  ) rethrows -> sending Result {
     
     let signpost = VergeSignpostTransaction("Store.commit")
     defer {

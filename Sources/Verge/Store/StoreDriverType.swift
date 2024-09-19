@@ -344,8 +344,8 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> Result
-  ) rethrows -> Result {
+    mutation: (inout InoutRef<Scope>) throws -> sending Result
+  ) rethrows -> sending Result {
     let trace = MutationTrace(
       name: name,
       file: file,
@@ -398,7 +398,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout InoutRef<Scope>) throws -> sending Result
   ) rethrows -> Result where Scope == TargetStore.State {
     let trace = MutationTrace(
       name: name,
@@ -422,7 +422,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> sending Result
   ) rethrows -> Result where Scope == TargetStore.State {
     let trace = MutationTrace(
       name: name,
@@ -446,7 +446,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout InoutRef<Scope>) throws -> sending Result
   ) async rethrows -> Result {
 
     let result = try await store.asStore().writer.perform { [self] _ in
@@ -466,7 +466,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> sending Result
   ) async rethrows -> Result {
 
     let result = try await store.asStore().writer.perform { [self] _ in
@@ -486,7 +486,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout InoutRef<Scope>) throws -> sending Result
   ) async rethrows -> Result where Scope == TargetStore.State {
 
     let result = try await store.asStore().writer.perform { [self] _ in
@@ -518,13 +518,31 @@ extension StoreDriverType {
     return result
   }
 
-  public func detached<NewScope: Equatable>(from newScope: WritableKeyPath<TargetStore.State, NewScope> & Sendable)
-  -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
+  public func detached<NewScope: Equatable>(
+    from newScope: WritableKeyPath<TargetStore.State, NewScope> & Sendable
+  ) -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
     .init(store: store.asStore(), scope: newScope)
   }
+  
+  // https://muukii.notion.site/Appending-Sendable-WritableKeyPath-makes-non-sendable-KeyPath-10618017d4c1800a8835fce9d6bffeba?pvs=4
+  /*
+  public func detached<NewScope: Equatable>(
+    by appendingScope: WritableKeyPath<Scope, NewScope> & Sendable
+  ) -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
 
-  public func detached<NewScope: Equatable>(by appendingScope: WritableKeyPath<Scope, NewScope> & Sendable)
-  -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
-    .init(store: store.asStore(), scope: scope.appending(path: appendingScope))
+    return .init(
+      store: store.asStore(),
+      scope: scope.appending(path: appendingScope)
+    )
   }
+   */
+}
+
+
+func nonthunk() {
+  
+}
+
+func thunk(isolation: isolated (any Actor)? = #isolation) {
+  
 }
