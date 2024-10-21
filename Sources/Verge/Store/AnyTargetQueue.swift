@@ -215,19 +215,17 @@ public enum Queues {
     private let executor: BackgroundActor = .init()
 
     public func execute(_ workItem: sending @escaping @Sendable () -> Void) {
-      Task {
-        await executor.perform {
-          workItem()
-        }
+      Task { [executor, workItem] in
+        await executor.perform(workItem)
       }
     }
-
+    
     private actor BackgroundActor: Actor {
 
       init() {
 
       }
-
+          
       func perform<R>(_ operation: sending @Sendable () throws -> R) rethrows -> R {
         try operation()
       }
@@ -237,4 +235,3 @@ public enum Queues {
   }
 
 }
-
