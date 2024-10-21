@@ -8,7 +8,7 @@ extension StoreDriverType {
    */
   public func accumulate<T>(
     queue: MainActorTargetQueue = .mainIsolated(),
-    @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @MainActor (consuming AccumulationBuilder<Scope>) -> _AccumulationSinkGroup<Scope, T>
+    @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @MainActor (_ builder: borrowing AccumulationBuilder<Scope>, _ state: borrowing Self.Scope) -> _AccumulationSinkGroup<Scope, T>
   ) -> StoreStateSubscription {
 
     var previousBox: ReferenceEdge<_AccumulationSinkGroup<Scope, T>?> = .init(wrappedValue: nil)
@@ -19,7 +19,7 @@ extension StoreDriverType {
         previousBox.wrappedValue
       })
 
-      var group = buildSubscription(consume builder)
+      var group = buildSubscription(builder, state.primitive)
 
       // sets the latest value
       group = group.receive(source: state.primitiveBox)
@@ -46,7 +46,7 @@ extension StoreDriverType {
   @_disfavoredOverload
   public func accumulate<T>(
     queue: some TargetQueueType,
-    @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @Sendable (consuming AccumulationBuilder<Scope>) -> _AccumulationSinkGroup<Scope, T>
+    @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @Sendable (_ builder: borrowing AccumulationBuilder<Scope>, _ state: borrowing Self.Scope) -> _AccumulationSinkGroup<Scope, T>
   ) -> StoreStateSubscription {
 
     let previousBox: UnsafeSendableBox<ReferenceEdge<_AccumulationSinkGroup<Scope, T>?>> = .init(value: .init(wrappedValue: nil))
@@ -65,7 +65,7 @@ extension StoreDriverType {
           previousBox.value.wrappedValue
         })
 
-        var group = buildSubscription(consume builder)
+        var group = buildSubscription(builder, state.primitive)
 
         // sets the latest value
         group = group.receive(source: state.primitiveBox)
