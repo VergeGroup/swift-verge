@@ -42,7 +42,12 @@ extension TypedComparator {
    */
   public static func equality<each T: Equatable>() -> Self where Self == AnyEqualityComparator<(repeat each T)> {
     return .init { a, b in
-      areEqual((repeat each a), (repeat each b))
+      
+      for (left, right) in repeat (each a, each b) {
+        guard left == right else { return false }
+      }
+      return true
+      
     }
   }
 
