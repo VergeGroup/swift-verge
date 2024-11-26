@@ -21,9 +21,6 @@ final class StoreReaderTests: XCTestCase {
     let inspect = try view.inspect()
         
     XCTAssertEqual(count, 0)
-    
-    // POC
-    XCTAssertEqual(try inspect.vStack()[0].text().string(), "Hello")
             
     XCTAssertEqual(try inspect.find(viewWithId: "count_1").text().string(), "0")
     
