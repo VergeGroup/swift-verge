@@ -1,6 +1,7 @@
 import os
 import Foundation
 
+nonisolated(unsafe)
 public var _verge_signpost_enabled = ProcessInfo.processInfo.environment["VERGE_SIGNPOST_ENABLED"] != nil
 
 @usableFromInline

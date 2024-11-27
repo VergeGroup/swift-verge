@@ -7,7 +7,7 @@ extension StoreDriverType {
    It allows to check if values has changed in the unit of accumulation, not Changes view.
    */
   public func accumulate<T>(
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @MainActor (consuming AccumulationBuilder<Scope>) -> _AccumulationSinkGroup<Scope, T>
   ) -> StoreStateSubscription {
 
