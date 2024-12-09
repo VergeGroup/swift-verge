@@ -72,8 +72,8 @@ actor Writer {
 
   }
 
-  func perform<R>(_ operation: (isolated Writer) throws -> sending R) rethrows -> sending R {
-    try operation(self)
+  func perform<R: ~Copyable>(_ operation: () throws -> sending R) rethrows -> sending R {
+    try operation()
   }
 
 }
@@ -442,7 +442,7 @@ extension Store {
   /// - Parameters:
   ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
-  func _receive<Result>(
+  func _receive<Result: ~Copyable>(
     mutation: (inout InoutRef<State>, inout Transaction) throws -> sending Result
   ) rethrows -> sending Result {
     
@@ -486,7 +486,7 @@ extension Store {
         var inoutRef = InoutRef<State>.init(stateMutablePointer)
         
         let result = try mutation(&inoutRef, &transaction)
-        valueFromMutation = result
+        valueFromMutation = consume result
         
         /**
          Step-1:
@@ -564,8 +564,8 @@ Mutation: (%@)
     if let logger = logger, let _commitLog = commitLog {
       logger.didCommit(log: _commitLog, sender: self)
     }
-    
-    return valueFromMutation
+        
+    return UnsafeSendableStruct(valueFromMutation).send()
   }
   
   @inline(__always)

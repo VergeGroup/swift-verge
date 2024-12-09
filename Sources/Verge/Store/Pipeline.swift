@@ -86,12 +86,12 @@ public enum Pipelines {
     
     public typealias Input = Changes<Source>
     
-    public let selector: (borrowing Input.Value) -> Output
-    public let additionalDropCondition: ((Input) -> Bool)?
+    public let selector: @Sendable (borrowing Input.Value) -> Output
+    public let additionalDropCondition: (@Sendable (Input) -> Bool)?
     
     public init(
-      selector: @escaping (borrowing Input.Value) -> Output,
-      additionalDropCondition: ((Input) -> Bool)?
+      selector: @escaping @Sendable (borrowing Input.Value) -> Output,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
     ) {
       self.selector = selector
       self.additionalDropCondition = additionalDropCondition
@@ -124,7 +124,7 @@ public enum Pipelines {
       input._read(perform: selector)
     }
     
-    public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
+    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
       return .init(
         selector: selector,
         additionalDropCondition: additionalDropCondition.map { currentCondition in
@@ -144,14 +144,16 @@ public enum Pipelines {
     
     // MARK: - Properties
     
-    public let intermediate: (Input.Value) -> PipelineIntermediate<Intermediate>
-    public let transform: (Intermediate) -> Output
-    public let additionalDropCondition: ((Input) -> Bool)?
+    public let intermediate: @Sendable (Input.Value) -> PipelineIntermediate<Intermediate>
+    public let transform: @Sendable (Intermediate) -> Output
+    public let additionalDropCondition: (@Sendable (Input) -> Bool)?
     
     public init(
-      @PipelineIntermediateBuilder intermediate: @escaping (Input.Value) -> PipelineIntermediate<Intermediate>,
-      transform: @escaping (Intermediate) -> Output,
-      additionalDropCondition: ((Input) -> Bool)?
+      @PipelineIntermediateBuilder intermediate: @escaping @Sendable (
+        Input.Value
+      ) -> PipelineIntermediate<Intermediate>,
+      transform: @escaping @Sendable (Intermediate) -> Output,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
     ) {
       self.intermediate = intermediate
       self.transform = transform
@@ -199,7 +201,7 @@ public enum Pipelines {
       transform(intermediate(input.primitive).value)
     }
       
-    public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
+    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
       return .init(
         intermediate: intermediate,
         transform: transform,
@@ -216,12 +218,12 @@ public enum Pipelines {
         
     // MARK: - Properties
     
-    public let map: (Input) -> Output
-    public let additionalDropCondition: ((Input) -> Bool)?
+    public let map: @Sendable (Input) -> Output
+    public let additionalDropCondition: (@Sendable (Input) -> Bool)?
     
     public init(
-      map: @escaping (Input) -> Output,
-      additionalDropCondition: ((Input) -> Bool)?
+      map: @escaping @Sendable (Input) -> Output,
+      additionalDropCondition: (@Sendable (Input) -> Bool)?
     ) {
       self.map = map
       self.additionalDropCondition = additionalDropCondition
@@ -243,7 +245,7 @@ public enum Pipelines {
       map(input)
     }
     
-    public func drop(while predicate: @escaping (Input) -> Bool) -> Self {
+    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
       return .init(
         map: map,
         additionalDropCondition: additionalDropCondition.map { currentCondition in
@@ -266,7 +268,11 @@ extension PipelineType {
    
    exactly same with ``PipelineType/select(_:)``
    */
-  public static func map<Input, Output>(_ selector: @escaping (borrowing Input) -> Output) -> Self
+  public static func map<Input, Output>(
+    _ selector: @escaping @Sendable (
+      borrowing Input
+    ) -> Output
+  ) -> Self
   where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
     select(selector)
   }
@@ -277,7 +283,11 @@ extension PipelineType {
 
    exactly same with ``PipelineType/map(_:)-7xvom``
    */
-  public static func select<Input, Output>(_ selector: @escaping (borrowing Input) -> Output) -> Self
+  public static func select<Input, Output>(
+    _ selector: @escaping @Sendable (
+      borrowing Input
+    ) -> Output
+  ) -> Self
   where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
     self.init(selector: selector, additionalDropCondition: nil)
   }
@@ -301,8 +311,10 @@ extension PipelineType {
    
    */
   public static func map<Input, Intermediate, Output>(
-    @PipelineIntermediateBuilder using intermediate: @escaping (Input) -> PipelineIntermediate<Intermediate>,
-    transform: @escaping (Intermediate) -> Output
+    @PipelineIntermediateBuilder using intermediate: @escaping @Sendable (
+      Input
+    ) -> PipelineIntermediate<Intermediate>,
+    transform: @escaping @Sendable (Intermediate) -> Output
   ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesMapPipeline<Input, Intermediate, Output> {
     
     self.init(
@@ -318,7 +330,7 @@ extension PipelineType {
    Using Edge as intermediate, output value will be unwrapped value from the Edge.
    */
   public static func map<Input, EdgeIntermediate>(
-    @PipelineIntermediateBuilder using intermediate: @escaping (Input) -> PipelineIntermediate<Edge<EdgeIntermediate>>
+    @PipelineIntermediateBuilder using intermediate: @escaping @Sendable (Input) -> PipelineIntermediate<Edge<EdgeIntermediate>>
   ) -> Self where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesMapPipeline<Input, Edge<EdgeIntermediate>, EdgeIntermediate> {
     
     self.init(

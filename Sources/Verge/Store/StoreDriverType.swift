@@ -88,7 +88,7 @@ extension StoreDriverType {
 
 extension StoreDriverType where Scope == TargetStore.State {
 
-  public var scope: WritableKeyPath<TargetStore.State, TargetStore.State> {
+  public var scope: WritableKeyPath<TargetStore.State, TargetStore.State> & Sendable {
     \TargetStore.State.self
   }
 
@@ -339,12 +339,40 @@ extension StoreDriverType {
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func commit<Result>(
+  public func commit<Result: ~Copyable>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> sending Result
+    mutation: (inout sending InoutRef<Scope>) throws -> sending Result
+  ) rethrows -> sending Result {
+    let trace = MutationTrace(
+      name: name,
+      file: file,
+      function: function,
+      line: line
+    )
+    
+    return try store.asStore()._receive(
+      mutation: { state, _ -> sending Result in
+        try state.map(keyPath: scope) { (ref: inout sending InoutRef<Scope>) -> sending Result in
+          ref.append(trace: trace)
+          return try mutation(&ref)
+        }
+      }
+    )
+    
+  }
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func commit<Result: ~Copyable>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout sending InoutRef<Scope>, inout Transaction) throws -> sending Result
   ) rethrows -> sending Result {
     let trace = MutationTrace(
       name: name,
@@ -354,35 +382,8 @@ extension StoreDriverType {
     )
 
     return try store.asStore()._receive(
-      mutation: { state, _ -> Result in
-        try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
-          ref.append(trace: trace)
-          return try mutation(&ref)
-        }
-      }
-    )
-  }
-
-  /// Run Mutation that created inline
-  ///
-  /// Throwable
-  public func commit<Result>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
-  ) rethrows -> Result {
-    let trace = MutationTrace(
-      name: name,
-      file: file,
-      function: function,
-      line: line
-    )
-
-    return try store.asStore()._receive(
-      mutation: { state, transaction -> Result in
-        try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
+      mutation: { state, transaction -> sending Result in
+        try state.map(keyPath: scope) { (ref: inout sending InoutRef<Scope>) -> sending Result in
           ref.append(trace: trace)
           return try mutation(&ref, &transaction)
         }
@@ -393,13 +394,13 @@ extension StoreDriverType {
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func commit<Result>(
+  public func commit<Result: ~Copyable>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> sending Result
-  ) rethrows -> Result where Scope == TargetStore.State {
+    mutation: (inout sending InoutRef<Scope>) throws -> sending Result
+  ) rethrows -> sending Result where Scope == TargetStore.State {
     let trace = MutationTrace(
       name: name,
       file: file,
@@ -407,7 +408,7 @@ extension StoreDriverType {
       line: line
     )
     return try store.asStore()._receive(
-      mutation: { ref, transaction -> Result in
+      mutation: { ref, transaction -> sending Result in
         ref.append(trace: trace)
         return try mutation(&ref)
       }
@@ -417,13 +418,13 @@ extension StoreDriverType {
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func commit<Result>(
+  public func commit<Result: ~Copyable>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> sending Result
-  ) rethrows -> Result where Scope == TargetStore.State {
+    mutation: (inout sending InoutRef<Scope>, inout Transaction) throws -> sending Result
+  ) rethrows -> sending Result where Scope == TargetStore.State {
     let trace = MutationTrace(
       name: name,
       file: file,
@@ -431,7 +432,7 @@ extension StoreDriverType {
       line: line
     )
     return try store.asStore()._receive(
-      mutation: { ref, transaction -> Result in
+      mutation: { ref, transaction -> sending Result in
         ref.append(trace: trace)
         return try mutation(&ref, &transaction)
       }
@@ -441,15 +442,52 @@ extension StoreDriverType {
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func backgroundCommit<Result>(
+  public func backgroundCommit<Result: ~Copyable>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> sending Result
-  ) async rethrows -> Result {
+    mutation: (inout sending InoutRef<Scope>) throws -> Result
+  ) async rethrows -> sending Result {
+    
+    let trace = MutationTrace(
+      name: name,
+      file: file,
+      function: function,
+      line: line
+    )
+    
+    let result = try await store.asStore().writer.perform { [store = self.store] in
+      return try store.asStore()._receive { ref, transaction in
+        try ref.map(keyPath: scope) { ref in
+          try mutation(&ref)
+        }
+      }
+//        mutation: { state, _ -> sending Result in
+//          try state.map(keyPath: scope) { (ref: inout sending InoutRef<Scope>) -> sending Result in
+//            ref.append(trace: trace)
+//            return try mutation(&ref)
+//          }
+//        }
+    }
 
-    let result = try await store.asStore().writer.perform { [self] _ in
+    await self.waitUntilAllEventConsumed()
+
+    return result
+  }
+
+  /// Run Mutation that created inline
+  ///
+  /// Throwable
+  public func backgroundCommit<Result: ~Copyable>(
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    mutation: (inout sending InoutRef<Scope>, inout Transaction) throws -> sending Result
+  ) async rethrows -> sending Result {
+
+    let result = try await store.asStore().writer.perform { [self] in
       try self.commit(mutation: mutation)
     }
 
@@ -461,15 +499,15 @@ extension StoreDriverType {
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func backgroundCommit<Result>(
+  public func backgroundCommit<Result: ~Copyable>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> sending Result
-  ) async rethrows -> Result {
+    mutation: (inout sending InoutRef<Scope>) throws -> sending Result
+  ) async rethrows -> sending Result where Scope == TargetStore.State {
 
-    let result = try await store.asStore().writer.perform { [self] _ in
+    let result = try await store.asStore().writer.perform { [self] in
       try self.commit(mutation: mutation)
     }
 
@@ -481,35 +519,15 @@ extension StoreDriverType {
   /// Run Mutation that created inline
   ///
   /// Throwable
-  public func backgroundCommit<Result>(
+  public func backgroundCommit<Result: ~Copyable>(
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> sending Result
-  ) async rethrows -> Result where Scope == TargetStore.State {
-
-    let result = try await store.asStore().writer.perform { [self] _ in
-      try self.commit(mutation: mutation)
-    }
-
-    await self.waitUntilAllEventConsumed()
-
-    return result
-  }
-
-  /// Run Mutation that created inline
-  ///
-  /// Throwable
-  public func backgroundCommit<Result>(
-    _ name: String = "",
-    _ file: StaticString = #file,
-    _ function: StaticString = #function,
-    _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
-  ) async rethrows -> Result where Scope == TargetStore.State {
-
-    let result = try await store.asStore().writer.perform { [self] _ in
+    mutation: (inout sending InoutRef<Scope>, inout Transaction) throws -> sending Result
+  ) async rethrows -> sending Result where Scope == TargetStore.State, Self : Sendable {
+    
+    let result = try await store.asStore().writer.perform { [self] in
       try self.commit(mutation: mutation)
     }
 

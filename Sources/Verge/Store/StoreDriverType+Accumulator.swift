@@ -87,14 +87,6 @@ extension StoreDriverType {
 
 }
 
-private final class UnsafeSendableBox<T>: @unchecked Sendable {
-  var value: T
-
-  init(value: T) {
-    self.value = value
-  }
-}
-
 public protocol AccumulationSink<Source> {
   associatedtype Source
   consuming func receive(source: borrowing ReadonlyBox<Source>) -> Self

@@ -108,9 +108,9 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     retainsUpstream: Any?
   ) where Pipeline.Input == UpstreamState, Value == Pipeline.Output {
 
-    weak var indirectSelf: Derived<Value>?
+    nonisolated(unsafe) weak var indirectSelf: Derived<Value>?
 
-    let s = subscribeUpstreamState { value in
+    let s = subscribeUpstreamState { @Sendable value in
       let update = pipeline.yieldContinuously(value)
       switch update {
       case .noUpdates:
@@ -276,7 +276,7 @@ extension Derived where Value == Never {
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
         
     return Derived<Edge<(Changes<S0>, Changes<S1>)>>(
-      get: .select({ $0 }),
+      get: .select({ @Sendable in $0 }),
       set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
@@ -340,7 +340,7 @@ extension Derived where Value == Never {
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
     
     return Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>>(
-      get: .select { $0 },
+      get: .select { @Sendable in $0 },
       set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in

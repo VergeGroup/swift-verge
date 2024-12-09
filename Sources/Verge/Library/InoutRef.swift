@@ -318,35 +318,58 @@ public struct InoutRef<Wrapped> {
    Returns a tantative InoutRef that projects the value specified by KeyPath.
    That InoutRef must be used only in the given perform closure.
    */
-  public mutating func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result {
-    try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
-      var ref = InoutRef<U>.init(pointer)
-      defer {
+  public mutating func map<U, Result: ~Copyable>(
+    keyPath: WritableKeyPath<Wrapped, U>,
+    perform: (sending InoutRef<U>) throws -> sending Result
+  ) rethrows -> sending Result {
+    
+    let result = try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
+      
+      let ref = InoutRef<U>.init(pointer)
+      let unsafeBox = UnsafeSendableStruct(ref)
+      
+      defer {        
+        
         self.nonatomic_hasModified = ref.nonatomic_hasModified
         self.nonatomic_wasModifiedIndeterminate = ref.nonatomic_wasModifiedIndeterminate
-
+        
         let appended = ref.nonatomic_modifiedKeyPaths.compactMap {
           (keyPath as PartialKeyPath<Wrapped>).appending(path: $0)
         }
-
-        self.nonatomic_modifiedKeyPaths.formUnion(appended)
+        
+        self.nonatomic_modifiedKeyPaths.formUnion(appended)        
+        
       }
-      return try perform(&ref)
+      
+      let result = try perform(unsafeBox.send())
+            
+      return UnsafeSendableStruct(result)
     }
+    
+
+    
+    return result.send()
+    
   }
 
   /**
    Returns a tantative InoutRef that projects the value specified by KeyPath.
    That InoutRef must be used only in the given perform closure.
    */
-  public mutating func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U?>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result? {
+  public mutating func map<U, Result: ~Copyable>(
+    keyPath: WritableKeyPath<Wrapped, U?>,
+    perform: (sending InoutRef<U>) throws -> sending Result
+  ) rethrows -> sending Result? {
 
     guard pointer.pointee[keyPath: keyPath] != nil else {
       return nil
     }
 
-    return try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]!) { (pointer) in
-      var ref: InoutRef<U> = InoutRef<U>.init(pointer)
+    let result = try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]!) { (pointer) in
+            
+      let ref = InoutRef<U>.init(pointer)
+      let unsafeBox = UnsafeSendableStruct(ref)
+            
       defer {
         self.nonatomic_hasModified = ref.nonatomic_hasModified
         self.nonatomic_wasModifiedIndeterminate = ref.nonatomic_wasModifiedIndeterminate
@@ -358,9 +381,13 @@ public struct InoutRef<Wrapped> {
         self.nonatomic_modifiedKeyPaths.formUnion(appended)
 
       }
-      return try perform(&ref)
+      
+      let result = UnsafeSendableStruct(try perform(unsafeBox.send()))      
+      
+      return result
     }
 
+    return result.send()
   }
   
 }
