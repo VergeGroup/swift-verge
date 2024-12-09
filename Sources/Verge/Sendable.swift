@@ -15,7 +15,11 @@ struct UnsafeSendableStruct<T: ~Copyable>: ~Copyable, @unchecked Sendable {
   }
   
   consuming func send() -> sending T {
-    return value
+    return value    
+  }
+  
+  consuming func with<Return: ~Copyable>(_ mutation: (inout sending T) throws -> sending Return) rethrows -> sending Return {
+    try mutation(&value)
   }
 }
 

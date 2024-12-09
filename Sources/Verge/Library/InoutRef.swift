@@ -33,7 +33,7 @@ import Foundation
  https://github.com/VergeGroup/swift-verge/pull/448
  */
 @dynamicMemberLookup
-public struct InoutRef<Wrapped> {
+public struct InoutRef<Wrapped>: Sendable {
 
   // MARK: - Nested types
 
@@ -102,11 +102,11 @@ public struct InoutRef<Wrapped> {
 
   private(set) var nonatomic_hasModified = false
 
-  private var nonatomic_modifiedKeyPaths: Set<PartialKeyPath<Wrapped>> = .init()
+  nonisolated(unsafe) private var nonatomic_modifiedKeyPaths: Set<PartialKeyPath<Wrapped>> = .init()
 
   private var nonatomic_wasModifiedIndeterminate = false
 
-  private let pointer: UnsafeMutablePointer<Wrapped>
+  nonisolated(unsafe) private let pointer: UnsafeMutablePointer<Wrapped>
 
   /// A wrapped value
   /// You may use this property to call the mutating method which `Wrapped` has.
@@ -320,16 +320,14 @@ public struct InoutRef<Wrapped> {
    */
   public mutating func map<U, Result: ~Copyable>(
     keyPath: WritableKeyPath<Wrapped, U>,
-    perform: (sending InoutRef<U>) throws -> sending Result
+    perform: (inout sending InoutRef<U>) throws -> sending Result
   ) rethrows -> sending Result {
     
     let result = try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
       
-      let ref = InoutRef<U>.init(pointer)
-      let unsafeBox = UnsafeSendableStruct(ref)
+      var ref = InoutRef<U>.init(pointer)
       
-      defer {        
-        
+      defer {
         self.nonatomic_hasModified = ref.nonatomic_hasModified
         self.nonatomic_wasModifiedIndeterminate = ref.nonatomic_wasModifiedIndeterminate
         
@@ -337,17 +335,15 @@ public struct InoutRef<Wrapped> {
           (keyPath as PartialKeyPath<Wrapped>).appending(path: $0)
         }
         
-        self.nonatomic_modifiedKeyPaths.formUnion(appended)        
+        self.nonatomic_modifiedKeyPaths.formUnion(appended)
         
       }
       
-      let result = try perform(unsafeBox.send())
-            
-      return UnsafeSendableStruct(result)
+      let result = UnsafeSendableStruct(try perform(&ref))      
+      
+      return result
     }
-    
-
-    
+        
     return result.send()
     
   }
@@ -358,7 +354,7 @@ public struct InoutRef<Wrapped> {
    */
   public mutating func map<U, Result: ~Copyable>(
     keyPath: WritableKeyPath<Wrapped, U?>,
-    perform: (sending InoutRef<U>) throws -> sending Result
+    perform: (inout sending InoutRef<U>) throws -> sending Result
   ) rethrows -> sending Result? {
 
     guard pointer.pointee[keyPath: keyPath] != nil else {
@@ -367,8 +363,7 @@ public struct InoutRef<Wrapped> {
 
     let result = try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]!) { (pointer) in
             
-      let ref = InoutRef<U>.init(pointer)
-      let unsafeBox = UnsafeSendableStruct(ref)
+      var ref = InoutRef<U>.init(pointer)
             
       defer {
         self.nonatomic_hasModified = ref.nonatomic_hasModified
@@ -382,7 +377,7 @@ public struct InoutRef<Wrapped> {
 
       }
       
-      let result = UnsafeSendableStruct(try perform(unsafeBox.send()))      
+      let result = UnsafeSendableStruct(try perform(&ref))      
       
       return result
     }
