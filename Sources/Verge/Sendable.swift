@@ -2,7 +2,15 @@
 final class UnsafeSendableClass<T>: @unchecked Sendable {
   var value: T
   
-  init(value: T) {
+  init(_ value: T) {
+    self.value = value
+  }
+}
+
+struct UnsafeSendableWeak<T: AnyObject>: @unchecked Sendable {
+  weak var value: T?
+  
+  init(_ value: T) {
     self.value = value
   }
 }
