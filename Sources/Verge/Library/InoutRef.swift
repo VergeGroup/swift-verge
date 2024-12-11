@@ -318,7 +318,18 @@ public struct InoutRef<Wrapped>: Sendable {
    Returns a tantative InoutRef that projects the value specified by KeyPath.
    That InoutRef must be used only in the given perform closure.
    */
-  public mutating func map<U, Result: ~Copyable>(
+  public mutating func map<U, Result>(
+    keyPath: WritableKeyPath<Wrapped, U>,
+    perform: (inout sending InoutRef<U>) throws -> Result
+  ) rethrows -> Result {
+    
+    try map_sending(keyPath: keyPath, perform: {
+      try perform(&$0)
+    })
+    
+  }
+  
+  public mutating func map_sending<U, Result>(
     keyPath: WritableKeyPath<Wrapped, U>,
     perform: (inout sending InoutRef<U>) throws -> sending Result
   ) rethrows -> sending Result {
@@ -343,16 +354,26 @@ public struct InoutRef<Wrapped>: Sendable {
       
       return result
     }
-        
+    
     return result.send()
     
   }
 
+  public mutating func map<U, Result>(
+    keyPath: WritableKeyPath<Wrapped, U?>,
+    perform: (inout sending InoutRef<U>) throws -> Result
+  ) rethrows -> Result? {
+    
+    try map_sending(keyPath: keyPath, perform: {
+      try perform(&$0)
+    })
+  }
+  
   /**
    Returns a tantative InoutRef that projects the value specified by KeyPath.
    That InoutRef must be used only in the given perform closure.
    */
-  public mutating func map<U, Result: ~Copyable>(
+  public mutating func map_sending<U, Result>(
     keyPath: WritableKeyPath<Wrapped, U?>,
     perform: (inout sending InoutRef<U>) throws -> sending Result
   ) rethrows -> sending Result? {

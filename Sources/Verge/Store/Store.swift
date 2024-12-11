@@ -72,7 +72,7 @@ actor Writer {
 
   }
 
-  func perform<R: ~Copyable>(_ operation: () throws -> sending R) rethrows -> sending R {
+  func perform<R>(_ operation: () throws -> sending R) rethrows -> sending R {
     try operation()
   }
 
@@ -437,12 +437,21 @@ extension Store {
 
   // MARK: - Internal
   
+  @inline(__always)
+  func _receive<Result>(
+    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+  ) rethrows -> Result {
+    try _receive_sending(mutation: {
+      try mutation(&$0, &$1)
+    }) 
+  }
+  
   /// Receives mutation
   ///
   /// - Parameters:
   ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
-  func _receive<Result: ~Copyable>(
+  func _receive_sending<Result>(
     mutation: (inout InoutRef<State>, inout Transaction) throws -> sending Result
   ) rethrows -> sending Result {
     

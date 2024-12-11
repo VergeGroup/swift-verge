@@ -49,7 +49,9 @@ extension StoreDriverType {
     @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @Sendable (consuming AccumulationBuilder<Scope>) -> _AccumulationSinkGroup<Scope, T>
   ) -> StoreStateSubscription {
 
-    let previousBox: UnsafeSendableBox<ReferenceEdge<_AccumulationSinkGroup<Scope, T>?>> = .init(value: .init(wrappedValue: nil))
+    let previousBox: UnsafeSendableClass<ReferenceEdge<_AccumulationSinkGroup<Scope, T>?>> = .init(
+      .init(wrappedValue: nil)
+    )
     let lock = VergeConcurrency.UnfairLock()
 
     return sinkState(dropsFirst: false, queue: queue) { @Sendable state in

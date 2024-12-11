@@ -29,9 +29,9 @@ import Foundation
 
  ``Changes`` has ``Changes/transaction`` property.
  */
-public struct Transaction {
+public struct Transaction: Sendable {
   
-  private var values: [ObjectIdentifier : Any] = [:]
+  private var values: [ObjectIdentifier : Any & Sendable] = [:]
 
   public subscript<K>(key: K.Type) -> K.Value where K : TransactionKey {
     get {
@@ -74,7 +74,7 @@ public struct Transaction {
  */
 public protocol TransactionKey {
 
-  associatedtype Value
+  associatedtype Value: Sendable
 
   static var defaultValue: Value { get }
 
