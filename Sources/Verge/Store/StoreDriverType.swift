@@ -54,15 +54,18 @@ public protocol StoreDriverType<Scope>: ObservableObject where Activity == Targe
   associatedtype Scope: Equatable = TargetStore.State
 
   var store: TargetStore { get }
-  var scope: WritableKeyPath<TargetStore.State, Scope> & Sendable { get }
+  var scope: ScopeKeyPath<Scope> { get }
 
   var state: Changes<Scope> { get }
 
   // WORKAROUND: for activityPublisher()
   associatedtype Activity: Sendable = TargetStore.Activity
+  
 }
 
 extension StoreDriverType {
+  
+  public typealias ScopeKeyPath<Scope> = WritableKeyPath<TargetStore.State, Scope> & Sendable
 
   public func statePublisher() -> some Combine.Publisher<Changes<TargetStore.State>, Never> {
     store.asStore()._statePublisher()
@@ -88,7 +91,7 @@ extension StoreDriverType {
 
 extension StoreDriverType where Scope == TargetStore.State {
 
-  public var scope: WritableKeyPath<TargetStore.State, TargetStore.State> & Sendable {
+  public var scope: ScopeKeyPath<TargetStore.State> {
     \TargetStore.State.self
   }
 

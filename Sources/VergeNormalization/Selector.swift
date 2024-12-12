@@ -83,7 +83,7 @@ extension StorageSelector {
 public struct AbsoluteTableSelector<
   _StorageSelector: StorageSelector,
   _TableSelector: TableSelector
->: Hashable where _StorageSelector.Storage == _TableSelector.Storage {
+>: Sendable, Hashable where _StorageSelector.Storage == _TableSelector.Storage {
 
   public typealias Storage = _StorageSelector.Storage
   public typealias Entity = _TableSelector.Table.Entity

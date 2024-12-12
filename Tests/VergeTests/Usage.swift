@@ -25,7 +25,7 @@ final class Service: StoreDriverType {
 
 final class SpecificService: StoreDriverType {
 
-  var scope: WritableKeyPath<RootState, RootState.Nested> { \.nested }
+  var scope: WritableKeyPath<RootState, RootState.Nested> & Sendable { \.nested }
 
   var store: RootStore { fatalError() }
 

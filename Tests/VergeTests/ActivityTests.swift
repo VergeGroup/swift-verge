@@ -29,7 +29,7 @@ class ActivityTests: XCTestCase {
   final class Store: Verge.Store<Value, Activity> {
         
     init() {
-      super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
+      super.init(initialState: .init(), logger: DefaultStoreLogger.default)
     }
     
     func sendMessage() {

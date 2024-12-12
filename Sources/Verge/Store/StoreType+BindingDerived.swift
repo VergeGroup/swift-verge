@@ -120,7 +120,7 @@ extension StoreDriverType {
 
     bindingDerived(
       name, file, function, line,
-      get: .select({ $0[keyPath: select] }),
+      get: .select(select),
       set: { state, newValue in
         state[keyPath: select] = newValue
       }

@@ -30,6 +30,7 @@ final class VergeClassicTests: XCTestCase {
     var name2: String? = nil
   }
 
+  @MainActor
   func testUpdate() {
 
     XCTContext.runActivity(named: "Set changed value, target is non-optional") { _ in

@@ -12,6 +12,7 @@ import VergeRx
 
 class VergeRxTests: XCTestCase {
   
+  @MainActor
   func testChangesObbservable() {
     
     let store = DemoStore()

@@ -21,7 +21,8 @@
 
 public struct RuntimeSanitizer: Sendable {
   
-  public static let global = RuntimeSanitizer()
+  nonisolated(unsafe)
+  public static var global = RuntimeSanitizer()
    
   public var isSanitizerStateReceivingByCorrectOrder: Bool = false
   public var isRecursivelyCommitDetectionEnabled: Bool = false

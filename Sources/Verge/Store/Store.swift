@@ -93,7 +93,7 @@ actor Writer {
 ///
 open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable {
 
-  public var scope: WritableKeyPath<State, State> & Sendable = \State.self
+  public let scope: ScopeKeyPath<State> = \State.self
 
   private let tracker = VergeConcurrency.SynchronizationTracker()
   

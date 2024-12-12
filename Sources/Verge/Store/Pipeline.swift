@@ -274,7 +274,21 @@ extension PipelineType {
     ) -> Output
   ) -> Self
   where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
-    select(selector)
+    self.init(selector: selector, additionalDropCondition: nil)
+  }
+  
+  /**
+   For Changes input
+   Produces output values using closure based projection.
+   
+   exactly same with ``PipelineType/map(_:)-7xvom``
+   */
+  // needs this overload as making closure from keyPath will not make sendable closure.
+  public static func map<Input, Output>(
+    _ selector: KeyPath<Input, Output> & Sendable
+  ) -> Self
+  where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
+    self.init(selector: { $0[keyPath: selector] }, additionalDropCondition: nil)
   }
   
   /**
@@ -284,12 +298,10 @@ extension PipelineType {
    exactly same with ``PipelineType/map(_:)-7xvom``
    */
   public static func select<Input, Output>(
-    _ selector: @escaping @Sendable (
-      borrowing Input
-    ) -> Output
+    _ selector: KeyPath<Input, Output> & Sendable
   ) -> Self
   where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
-    self.init(selector: selector, additionalDropCondition: nil)
+    self.init(selector: { $0[keyPath: selector] }, additionalDropCondition: nil)
   }
 }
 

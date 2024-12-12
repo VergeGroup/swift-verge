@@ -53,9 +53,23 @@ extension MainActorTargetQueueType where Self == ImmediateMainActorTargetQueue {
   public static func mainIsolated() -> Self {
     .init()
   }
+  
+  public static var main: Self {
+    .shared
+  }
+  
 }
 
-public final class MainActorTargetQueue: MainActorTargetQueueType {
+extension MainActorTargetQueueType where Self == HoppingMainActorTargetQueue {
+  
+  /// It dispatches to main-queue asynchronously always.
+  public static var asyncMain: Self {
+    return .init()
+  }
+}
+
+/// always dispatches to main-queue asynchronously
+public struct HoppingMainActorTargetQueue: MainActorTargetQueueType {
 
   init() {
   }
@@ -69,6 +83,7 @@ public final class MainActorTargetQueue: MainActorTargetQueueType {
 
 }
 
+/// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously.
 public struct ImmediateMainActorTargetQueue: Sendable, MainActorTargetQueueType {
   
   public static let shared = Self()
@@ -161,16 +176,16 @@ extension TargetQueueType where Self == AnyTargetQueue {
 
   /// Enqueue first item on current-thread(synchronously).
   /// From then, using specified queue.
-  public static func startsFromCurrentThread(andUse queue: MainActorTargetQueue) -> AnyTargetQueue {
+  public static func startsFromCurrentThread(andUse queue: some MainActorTargetQueueType) -> AnyTargetQueue {
     return startsFromCurrentThread(andUse: Queues.MainActor(queue))
   }
 
 }
 
-extension MainActorTargetQueue {
+extension HoppingMainActorTargetQueue {
 
   /// It dispatches to main-queue asynchronously always.
-  public static var asyncMain: MainActorTargetQueue {
+  public static var asyncMain: HoppingMainActorTargetQueue {
     return .init()
   }
 

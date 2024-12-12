@@ -6,7 +6,7 @@ let package = Package(
   name: "Verge",
   platforms: [
     .macOS(.v11),
-    .iOS(.v13),
+    .iOS(.v16),
     .tvOS(.v13),
     .watchOS(.v6),
   ],
