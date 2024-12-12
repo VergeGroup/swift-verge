@@ -9,7 +9,7 @@ struct RootState: Equatable {
 
 }
 
-final class RootStore: Store<RootState, Never> {
+final class RootStore: Store<RootState, Never>, @unchecked Sendable {
 
 }
 

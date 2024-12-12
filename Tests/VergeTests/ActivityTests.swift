@@ -26,7 +26,7 @@ class ActivityTests: XCTestCase {
     case didSendMessage
   }
   
-  final class Store: Verge.Store<Value, Activity> {
+  final class Store: Verge.Store<Value, Activity>, @unchecked Sendable {
         
     init() {
       super.init(initialState: .init(), logger: DefaultStoreLogger.default)

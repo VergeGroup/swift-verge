@@ -73,7 +73,7 @@ final class AccumulationTests: XCTestCase {
     let expForCount = expectation(description: "count")
     expForCount.expectedFulfillmentCount = 1
 
-    let sub = store.accumulate(queue: .mainIsolated()) { [weak self] in
+    let sub = store.accumulate(queue: .mainIsolated()) { 
 
       $0.ifChanged(\.count)
         .dropFirst(2)
