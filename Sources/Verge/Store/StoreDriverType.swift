@@ -451,7 +451,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: sending (inout InoutRef<Scope>) throws -> Result
+    mutation: sending (inout InoutRef<Scope>) throws -> sending Result
   ) async rethrows -> Result {
     
     let trace = MutationTrace(
@@ -493,7 +493,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: sending (inout InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: sending (inout InoutRef<Scope>, inout Transaction) throws -> sending Result
   ) async rethrows -> Result {
     
     let trace = MutationTrace(
@@ -535,7 +535,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: sending (inout InoutRef<Scope>) throws -> Result
+    mutation: sending (inout InoutRef<Scope>) throws -> sending Result
   ) async rethrows -> Result where Scope == TargetStore.State {
 
     let trace = MutationTrace(

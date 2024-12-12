@@ -444,7 +444,7 @@ extension Store {
   @inline(__always)
   func _receive_sending<Result>(
     mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
-  ) rethrows -> sending Result {
+  ) rethrows -> Result {
     
     let signpost = VergeSignpostTransaction("Store.commit")
     defer {
