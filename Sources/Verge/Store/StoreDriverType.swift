@@ -467,11 +467,13 @@ extension StoreDriverType {
           return try mutation(&ref)
         }        
         
-        return result
-                
+        let box = UnsafeSendableStruct(result)
+        
+        return box.send()
       }
       
-      return result
+      let box = UnsafeSendableStruct(result)
+      return box.send()
     }
     
     await self.waitUntilAllEventConsumed()
