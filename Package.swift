@@ -123,5 +123,5 @@ let package = Package(
         .product(name: "MacroTesting", package: "swift-macro-testing"),
       ]),
   ],
-  swiftLanguageModes: [.v5, .v6]
+  swiftLanguageModes: [.v6]
 )
