@@ -347,7 +347,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout sending InoutRef<Scope>) throws -> Result
+    mutation: (inout InoutRef<Scope>) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -357,9 +357,9 @@ extension StoreDriverType {
       line: line
     )
     
-    return try store.asStore()._receive(
+    return try store.asStore()._receive_sending(
       mutation: { [scope] stateRef, _ -> Result in       
-        try stateRef.map(keyPath: scope) { (ref: inout sending InoutRef<Scope>) -> Result in
+        try stateRef.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
           ref.append(trace: trace)
           return try mutation(&ref)
         }              
@@ -376,7 +376,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout sending InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
   ) rethrows -> Result {
     let trace = MutationTrace(
       name: name,
@@ -385,9 +385,9 @@ extension StoreDriverType {
       line: line
     )
 
-    return try store.asStore()._receive(
+    return try store.asStore()._receive_sending(
       mutation: { [scope] state, transaction -> Result in
-        try state.map(keyPath: scope) { (ref: inout sending InoutRef<Scope>) -> Result in
+        try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
           ref.append(trace: trace)
           return try mutation(&ref, &transaction)
         }      
@@ -403,7 +403,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout sending InoutRef<Scope>) throws -> Result
+    mutation: (inout InoutRef<Scope>) throws -> Result
   ) rethrows -> Result where Scope == TargetStore.State {
     let trace = MutationTrace(
       name: name,
@@ -411,7 +411,7 @@ extension StoreDriverType {
       function: function,
       line: line
     )
-    return try store.asStore()._receive(
+    return try store.asStore()._receive_sending(
       mutation: { ref, transaction -> Result in
         ref.append(trace: trace)
         return try mutation(&ref)
@@ -427,7 +427,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout sending InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
   ) rethrows -> Result where Scope == TargetStore.State {
     let trace = MutationTrace(
       name: name,
@@ -435,7 +435,7 @@ extension StoreDriverType {
       function: function,
       line: line
     )
-    return try store.asStore()._receive(
+    return try store.asStore()._receive_sending(
       mutation: { ref, transaction -> Result in
         ref.append(trace: trace)
         return try mutation(&ref, &transaction)
@@ -451,8 +451,8 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: sending (inout sending InoutRef<Scope>) throws -> sending Result
-  ) async rethrows -> sending Result {
+    mutation: sending (inout InoutRef<Scope>) throws -> Result
+  ) async rethrows -> Result {
     
     let trace = MutationTrace(
       name: name,
@@ -463,20 +463,21 @@ extension StoreDriverType {
     
     let result = try await store.asStore().writer.perform { [store = self.store, scope] in
       
-      let result = try store.asStore()._receive_sending { ref, _ in
+      let r = try store.asStore()._receive_sending { ref, _ in
         
-        let result = try ref.map_sending(keyPath: scope) { ref in
+        let r = try ref.map_sending(keyPath: scope) { ref in
           ref.append(trace: trace)
-          return try mutation(&ref)
+          let r = try mutation(&ref)
+          let workaround = { r }
+          return workaround()
         }        
         
-        let box = UnsafeSendableStruct(result)
-        
-        return box.send()
+        let workaround = { r }
+        return workaround()
       }
       
-      let box = UnsafeSendableStruct(result)
-      return box.send()
+      let workaround = { r }
+      return workaround()
     }
     
     await self.waitUntilAllEventConsumed()
@@ -492,8 +493,8 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: sending (inout sending InoutRef<Scope>, inout Transaction) throws -> sending Result
-  ) async rethrows -> sending Result {
+    mutation: sending (inout InoutRef<Scope>, inout Transaction) throws -> Result
+  ) async rethrows -> Result {
     
     let trace = MutationTrace(
       name: name,
@@ -504,20 +505,21 @@ extension StoreDriverType {
     
     let result = try await store.asStore().writer.perform { [store = self.store, scope] in
       
-      let result = try store.asStore()._receive_sending { ref, transaction in
+      let r = try store.asStore()._receive_sending { ref, transaction in
         
-        let result = try ref.map_sending(keyPath: scope) { ref in
+        let r = try ref.map_sending(keyPath: scope) { ref in
           ref.append(trace: trace)
-          return try mutation(&ref, &transaction)
+          let r = try mutation(&ref, &transaction)
+          let workaround = { r }
+          return workaround()
         }        
         
-        let box = UnsafeSendableStruct(result)
-        
-        return box.send()
+        let workaround = { r }
+        return workaround()
       }
       
-      let box = UnsafeSendableStruct(result)
-      return box.send()
+      let workaround = { r }
+      return workaround()
     }
     
     await self.waitUntilAllEventConsumed()
@@ -533,8 +535,8 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: sending (inout sending InoutRef<Scope>) throws -> sending Result
-  ) async rethrows -> sending Result where Scope == TargetStore.State {
+    mutation: sending (inout InoutRef<Scope>) throws -> Result
+  ) async rethrows -> Result where Scope == TargetStore.State {
 
     let trace = MutationTrace(
       name: name,
@@ -545,13 +547,15 @@ extension StoreDriverType {
     
     let result = try await store.asStore().writer.perform { [store = self.store] in
       
-      let result = try store.asStore()._receive_sending { ref, _ in        
+      let r = try store.asStore()._receive_sending { ref, _ in        
         ref.append(trace: trace)
-        return try mutation(&ref)
+        let r = try mutation(&ref)
+        let workaround = { r }
+        return workaround()
       }
       
-      let box = UnsafeSendableStruct(result)
-      return box.send()
+      let workaround = { r }
+      return workaround()
     }
     
     await self.waitUntilAllEventConsumed()
@@ -568,8 +572,8 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: sending (inout sending InoutRef<Scope>, inout Transaction) throws -> sending Result
-  ) async rethrows -> sending Result where Scope == TargetStore.State, Self : Sendable {
+    mutation: sending (inout InoutRef<Scope>, inout Transaction) throws -> Result
+  ) async rethrows -> Result where Scope == TargetStore.State, Self : Sendable {
     
     let trace = MutationTrace(
       name: name,
@@ -580,13 +584,15 @@ extension StoreDriverType {
     
     let result = try await store.asStore().writer.perform { [store = self.store] in
       
-      let result = try store.asStore()._receive_sending { ref, transaction in        
+      let r = try store.asStore()._receive_sending { ref, transaction in        
         ref.append(trace: trace)
-        return try mutation(&ref, &transaction)
+        let r = try mutation(&ref, &transaction)
+        let workaround = { r }
+        return workaround()
       }
       
-      let box = UnsafeSendableStruct(result)
-      return box.send()
+      let workaround = { r }
+      return workaround()
     }
     
     await self.waitUntilAllEventConsumed()

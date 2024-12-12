@@ -437,22 +437,13 @@ extension Store {
 
   // MARK: - Internal
   
-  @inline(__always)
-  func _receive<Result>(
-    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
-  ) rethrows -> Result {
-    try _receive_sending(mutation: {
-      try mutation(&$0, &$1)
-    }) 
-  }
-  
   /// Receives mutation
   ///
   /// - Parameters:
   ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
   func _receive_sending<Result>(
-    mutation: (inout InoutRef<State>, inout Transaction) throws -> sending Result
+    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
   ) rethrows -> sending Result {
     
     let signpost = VergeSignpostTransaction("Store.commit")

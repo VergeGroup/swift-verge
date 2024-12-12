@@ -86,7 +86,7 @@ extension StoreDriverType {
       get: BindingDerivedPipeline(backingPipeline: pipeline),
       set: { [weak self] state in       
         self?.store.asStore()
-          ._receive { inoutRef, transaction in
+          ._receive_sending { inoutRef, transaction in
             transaction.isFromBindingDerived = true
             set(&inoutRef, state)
           }

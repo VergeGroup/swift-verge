@@ -33,7 +33,7 @@ import Foundation
  https://github.com/VergeGroup/swift-verge/pull/448
  */
 @dynamicMemberLookup
-public struct InoutRef<Wrapped>: Sendable {
+public struct InoutRef<Wrapped> {
 
   // MARK: - Nested types
 
@@ -320,18 +320,21 @@ public struct InoutRef<Wrapped>: Sendable {
    */
   public mutating func map<U, Result>(
     keyPath: WritableKeyPath<Wrapped, U>,
-    perform: (inout sending InoutRef<U>) throws -> Result
+    perform: (inout InoutRef<U>) throws -> Result
   ) rethrows -> Result {
     
     try map_sending(keyPath: keyPath, perform: {
-      try perform(&$0)
+      let r = try perform(&$0)
+      /// https://github.com/swiftlang/swift/issues/78135
+      let workaround = { r }
+      return workaround()
     })
     
   }
   
   public mutating func map_sending<U, Result>(
     keyPath: WritableKeyPath<Wrapped, U>,
-    perform: (inout sending InoutRef<U>) throws -> sending Result
+    perform: (inout InoutRef<U>) throws -> sending Result
   ) rethrows -> sending Result {
     
     let result = try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
@@ -350,22 +353,26 @@ public struct InoutRef<Wrapped>: Sendable {
         
       }
       
-      let result = UnsafeSendableStruct(try perform(&ref))      
+      let result = try perform(&ref)
       
       return result
     }
     
-    return result.send()
+    let workaround = { result }
+    return workaround()
     
   }
 
   public mutating func map<U, Result>(
     keyPath: WritableKeyPath<Wrapped, U?>,
-    perform: (inout sending InoutRef<U>) throws -> Result
+    perform: (inout InoutRef<U>) throws -> Result
   ) rethrows -> Result? {
     
     try map_sending(keyPath: keyPath, perform: {
-      try perform(&$0)
+      let r = try perform(&$0)
+      /// https://github.com/swiftlang/swift/issues/78135
+      let workaround = { r }
+      return workaround()
     })
   }
   
@@ -375,7 +382,7 @@ public struct InoutRef<Wrapped>: Sendable {
    */
   public mutating func map_sending<U, Result>(
     keyPath: WritableKeyPath<Wrapped, U?>,
-    perform: (inout sending InoutRef<U>) throws -> sending Result
+    perform: (inout InoutRef<U>) throws -> sending Result
   ) rethrows -> sending Result? {
 
     guard pointer.pointee[keyPath: keyPath] != nil else {
@@ -398,12 +405,13 @@ public struct InoutRef<Wrapped>: Sendable {
 
       }
       
-      let result = UnsafeSendableStruct(try perform(&ref))      
-      
+      let result = try perform(&ref)
+            
       return result
     }
 
-    return result.send()
+    let workaround = { result }
+    return workaround()
   }
   
 }
