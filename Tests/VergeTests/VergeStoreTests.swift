@@ -9,6 +9,7 @@
 import XCTest
 
 import Verge
+import os.lock
 
 import Combine
 
@@ -49,10 +50,10 @@ final class VergeStoreTests: XCTestCase {
     
   }
   
-  final class _Store: Verge.Store<_State, Never> {
+  final class _Store: Verge.Store<_State, Never>, @unchecked Sendable {
 
     init() {
-      super.init(initialState: .init(), logger: DefaultStoreLogger.shared)
+      super.init(initialState: .init(), logger: DefaultStoreLogger.default)
     }
   }
   
@@ -143,7 +144,7 @@ final class VergeStoreTests: XCTestCase {
   final class TreeADispatcher: StoreDriverType {
 
     let store: _Store
-    let scope: WritableKeyPath<VergeStoreTests._State, Edge<_State.TreeA>> = \.$treeA
+    let scope: WritableKeyPath<VergeStoreTests._State, Edge<_State.TreeA>> & Sendable = \.$treeA
 
     init(store: _Store) {
       self.store = store
@@ -215,10 +216,10 @@ final class VergeStoreTests: XCTestCase {
 
     let store = DemoStore()
 
-    var count = 0
+    let count = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
 
     let subs = store.sinkState(queue: .passthrough) { (_) in
-      count += 1
+      count.modify { $0 += 1 }
     }
 
     XCTAssertEqual(store.state.version, 0)
@@ -255,7 +256,7 @@ final class VergeStoreTests: XCTestCase {
     }
 
     XCTAssertEqual(store.state.version, 2)
-    XCTAssertEqual(count, 3)
+    XCTAssertEqual(count.value, 3)
 
     withExtendedLifetime(subs, {})
     
@@ -307,10 +308,12 @@ final class VergeStoreTests: XCTestCase {
   func testSubscription() {
     
     var subscriptions = Set<AnyCancellable>()
-    var count = 0
+    let count = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
     
     store.sinkState(queue: .passthrough) { (changes) in
-      count += 1
+      count.modify {
+        $0 += 1
+      }
     }
     .store(in: &subscriptions)
         
@@ -325,10 +328,11 @@ final class VergeStoreTests: XCTestCase {
       $0.markAsModified()
     }
     
-    XCTAssertEqual(count, 2)
+    XCTAssertEqual(count.value, 2)
     
   }
   
+  @MainActor
   func testChangesPublisher() {
     
     let store = DemoStore()

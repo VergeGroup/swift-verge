@@ -23,7 +23,7 @@ import Foundation
 
 extension StoreDriverType {
 
-  public typealias Assignee<Value> = (Value) -> Void
+  public typealias Assignee<Value> = @Sendable (Value) -> Void
 
   /**
    Returns an asignee function to asign
@@ -38,12 +38,12 @@ extension StoreDriverType {
    ```
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value>,
-    dropsOutput: @escaping (Changes<Value>) -> Bool = { _ in false }
+    _ keyPath: WritableKeyPath<TargetStore.State, Value> & Sendable,
+    dropsOutput: @escaping @Sendable (Changes<Value>) -> Bool = { _ in false }
   ) -> Assignee<Changes<Value>> {
-    return { [weak self] value in
+    return { [weak store] value in
       guard !dropsOutput(value) else { return }
-      self?.store.asStore().commit {
+      store?.asStore().commit {
         $0[keyPath: keyPath] = value.primitive
       }
     }
@@ -62,12 +62,12 @@ extension StoreDriverType {
    ```
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value?>,
-    dropsOutput: @escaping (Changes<Value?>) -> Bool = { _ in false }
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable,
+    dropsOutput: @escaping @Sendable (Changes<Value?>) -> Bool = { _ in false }
   ) -> Assignee<Changes<Value?>> {
-    return { [weak self] value in
+    return { [weak store] value in
       guard !dropsOutput(value) else { return }
-      self?.store.asStore().commit {
+      store?.asStore().commit {
         $0[keyPath: keyPath] = value.primitive
       }
     }
@@ -86,13 +86,13 @@ extension StoreDriverType {
    ```
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value?>,
-    dropsOutput: @escaping (Changes<Value?>) -> Bool = { _ in false }
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable,
+    dropsOutput: @escaping @Sendable (Changes<Value?>) -> Bool = { _ in false }
   ) -> Assignee<Changes<Value>> {
-    return { [weak self] value in
+    return { [weak store] value in
       let changes = value.map { Optional.some($0) }
       guard !dropsOutput(changes) else { return }
-      self?.store.asStore().commit {
+      store?.asStore().commit {
         $0[keyPath: keyPath] = .some(value.primitive)
       }
     }
@@ -102,10 +102,10 @@ extension StoreDriverType {
    Assignee to asign Changes object directly.
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value> & Sendable
   ) -> Assignee<Value> {
-    return { [weak self] value in
-      self?.store.asStore().commit {
+    return { [weak store] value in
+      store?.asStore().commit {
         $0[keyPath: keyPath] = value
       }
     }
@@ -115,11 +115,11 @@ extension StoreDriverType {
    Assignee to asign Changes object directly.
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value?>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable
   ) -> Assignee<Value?> {
-    return { [weak self] value in
-      self?.store.asStore().commit {
-        $0[keyPath: keyPath] = value
+    return { [weak store] value in
+      store?.asStore().commit { [value] a in        
+        a[keyPath: keyPath] = value
       }
     }
   }
@@ -128,10 +128,10 @@ extension StoreDriverType {
    Assignee to asign Changes object directly.
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value?>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable
   ) -> Assignee<Value> {
-    return { [weak self] value in
-      self?.store.asStore().commit {
+    return { [weak store] value in
+      store?.asStore().commit {
         $0[keyPath: keyPath] = .some(value)
       }
     }
@@ -150,7 +150,7 @@ extension StoreDriverType {
    ```
    */
   public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value> & Sendable
   ) -> Assignee<Changes<Value>> {
     assignee(keyPath, dropsOutput: { !$0.hasChanges })
   }
@@ -168,7 +168,7 @@ extension StoreDriverType {
    ```
    */
   public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value?>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable
   ) -> Assignee<Changes<Value?>> {
     assignee(keyPath, dropsOutput: { !$0.hasChanges })
   }
@@ -186,7 +186,7 @@ extension StoreDriverType {
    ```
    */
   public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value?>
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable
   ) -> Assignee<Changes<Value>> {
     assignee(keyPath, dropsOutput: { !$0.hasChanges })
   }

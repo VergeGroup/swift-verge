@@ -269,7 +269,7 @@ extension Edge {
     /// - Parameter middlewares:
     public init<C: Collection>(
       _ middlewares: C
-    ) where C.Element == Middleware {
+    ) where C.Element == Middleware, C : Sendable {
 
       self._onSet = { state in
         middlewares.forEach {
@@ -282,7 +282,7 @@ extension Edge {
     /// Raises an Swift.assertionFailure when its new value does not fit the condition.
     /// - Parameter condition:
     /// - Returns: A Middleware instance
-    public static func assert(_ condition: @escaping (Value) -> Bool, _ failureReason: String? = nil) -> Self {
+    public static func assert(_ condition: @escaping @Sendable (Value) -> Bool, _ failureReason: String? = nil) -> Self {
       #if DEBUG
       return .init(onSet: { state in
         let message = failureReason ?? "[Verge] \(Edge<Value>.self) raised a failure in the assertion. \(state)"
@@ -303,7 +303,7 @@ extension Edge {
     /// It won't mutate the value
     ///
     /// - Returns: A Middleware instance
-    public static func `do`(_ perform: @escaping (Value) -> Void) -> Self {
+    public static func `do`(_ perform: @escaping @Sendable (Value) -> Void) -> Self {
       return .init(onSet: { perform($0) })
     }
 

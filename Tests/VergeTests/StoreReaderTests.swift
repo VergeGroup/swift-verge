@@ -7,7 +7,7 @@ import ViewInspector
 @available(iOS 14, tvOS 14, *)
 final class StoreReaderTests: XCTestCase {
   
-      
+  @MainActor
   func test_increment_counter() throws {
     
     let store = Store<State, Never>(initialState: .init())

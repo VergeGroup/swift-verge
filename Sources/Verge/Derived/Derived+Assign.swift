@@ -28,7 +28,7 @@ extension StoreDriverType {
    */
   public func assign(
     queue: some TargetQueueType = .passthrough,
-    to binder: @escaping (Changes<TargetStore.State>) -> Void
+    to binder: @escaping @Sendable (Changes<TargetStore.State>) -> Void
   ) -> StoreStateSubscription {
     store.asStore().sinkState(queue: queue, receive: binder)
   }
@@ -39,8 +39,8 @@ extension StoreDriverType {
    - Returns: a cancellable. See detail of handling cancellable from ``StoreSubscription``'s docs
    */
   public func assign(
-    queue: MainActorTargetQueue,
-    to binder: @escaping (Changes<TargetStore.State>) -> Void
+    queue: some MainActorTargetQueueType,
+    to binder: @escaping @MainActor (Changes<TargetStore.State>) -> Void
   ) -> StoreStateSubscription {
     store.asStore().sinkState(queue: queue, receive: binder)
   }

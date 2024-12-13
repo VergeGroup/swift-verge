@@ -61,7 +61,7 @@ extension VergeType {
   public typealias DefaultStore = Storage<State>
 }
 
-private var _associated: Void?
+nonisolated(unsafe) private var _associated: Void?
 
 extension VergeType {
 

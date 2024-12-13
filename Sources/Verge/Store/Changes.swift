@@ -171,9 +171,11 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
 
   deinit {
     vergeSignpostEvent("Changes.deinit", label: "\(type(of: self))")
-
-    Task { [innerBox] in
-      await _shared_changesDeallocationQueue.releaseObjectInBackground(object: innerBox)
+    
+    let unsafeBox = UnsafeSendableStruct(innerBox)
+    
+    Task {
+      await _shared_changesDeallocationQueue.releaseObjectInBackground(object: unsafeBox.value)
     }
   }
 
@@ -719,3 +721,4 @@ public struct IfChangedBox<T>: ~Copyable {
     return nil
   }
 }
+

@@ -22,7 +22,7 @@
 /// A store that optimized for only using in UI thread.
 /// No using locks.
 @MainActor
-public final class UIStateStore<State: Equatable, Activity>: Store<State, Activity> {
+public final class UIStateStore<State: Equatable, Activity: Sendable>: Store<State, Activity>, @unchecked Sendable {
 
   public nonisolated init(
     initialState: State,

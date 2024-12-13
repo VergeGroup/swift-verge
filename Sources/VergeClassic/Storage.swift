@@ -125,7 +125,7 @@ open class ReadonlyStorage<Value>: @unchecked Sendable, CustomReflectable {
   
 }
 
-open class Storage<Value>: ReadonlyStorage<Value> {
+open class Storage<Value>: ReadonlyStorage<Value>, @unchecked Sendable {
   
   public enum UpdateResult {
     case updated
@@ -203,10 +203,6 @@ open class Storage<Value>: ReadonlyStorage<Value> {
     
 }
 
-public final class StateStorage<Value>: Storage<Value> {
-
-}
-
 extension ReadonlyStorage {
   
   /// Transform value with filtering.
@@ -249,41 +245,11 @@ import Combine
 
 // MARK: - Integrate with Combine
 
-fileprivate var _willChangeAssociated: Void?
-fileprivate var _didChangeAssociated: Void?
+nonisolated(unsafe) fileprivate var _didChangeAssociated: Void?
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-extension ReadonlyStorage: ObservableObject {
-  
-  public var objectWillChange: ObservableObjectPublisher {
-    assert(Thread.isMainThread)
-    if let associated = objc_getAssociatedObject(self, &_willChangeAssociated) as? ObservableObjectPublisher {
-      return associated
-    } else {
-      let associated = ObservableObjectPublisher()
-      objc_setAssociatedObject(self, &_willChangeAssociated, associated, .OBJC_ASSOCIATION_RETAIN)
-
-      sinkEvent { (event) in
-        switch event {
-        case .willUpdate:
-          if Thread.isMainThread {
-            associated.send()
-          } else {
-            DispatchQueue.main.async {
-              associated.send()
-            }
-          }
-        case .didUpdate:
-         break
-        case .willDeinit:
-          break
-        }
-      }
-      
-      return associated
-    }
-  }
-  
+extension ReadonlyStorage {
+    
   public var objectDidChange: AnyPublisher<Value, Never> {
     valuePublisher.dropFirst().eraseToAnyPublisher()
   }

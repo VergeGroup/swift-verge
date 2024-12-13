@@ -6,11 +6,11 @@
 //  Copyright © 2021 muukii. All rights reserved.
 //
 
+import Combine
 import Foundation
 import Verge
 import XCTest
-
-import Combine
+import os.lock
 
 @available(iOS 13, *)
 final class ConcurrencyTests: XCTestCase {
@@ -44,7 +44,7 @@ final class ConcurrencyTests: XCTestCase {
       counter.fulfill()
     }
 
-    let dispatched = VergeConcurrency.UnfairLockAtomic<Array<Int>>([])
+    let dispatched = VergeConcurrency.UnfairLockAtomic<[Int]>([])
 
     DispatchQueue.global().async {
       DispatchQueue.concurrentPerform(iterations: 100) { i in
@@ -63,9 +63,10 @@ final class ConcurrencyTests: XCTestCase {
     }
 
     wait(for: [exp, counter], timeout: 10)
-//    print(dispatched, results)
+    //    print(dispatched, results)
     let _dispatched = dispatched.value
-    XCTAssertEqual([0] + _dispatched, results.value, "\(([0] + _dispatched).difference(from: results.value))")
+    XCTAssertEqual(
+      [0] + _dispatched, results.value, "\(([0] + _dispatched).difference(from: results.value))")
     withExtendedLifetime(sub) {}
   }
 
@@ -73,16 +74,18 @@ final class ConcurrencyTests: XCTestCase {
     let store1 = DemoStore()
 
     let exp = expectation(description: "11")
-    var count = 0
+
+    let count = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
 
     DispatchQueue.global().async {
-      let cancellable = store1.sinkState(queue: .startsFromCurrentThread(andUse: .mainIsolated())) { state in
+      let cancellable = store1.sinkState(queue: .startsFromCurrentThread(andUse: .mainIsolated())) {
+        state in
 
         defer {
-          count += 1
+          count.modify { $0 += 1 }
         }
 
-        if count == 0 {
+        if count.modify({ $0 == 0 }) {
           XCTAssertEqual(Thread.isMainThread, false)
         } else {
           XCTAssertEqual(Thread.isMainThread, true)
@@ -105,14 +108,14 @@ final class ConcurrencyTests: XCTestCase {
 
     var bag = Set<AnyCancellable>()
 
-    for i in 0 ..< 100 {
+    for i in 0..<100 {
       do {
-        var version: UInt64 = 0
+        let version = VergeConcurrency.UnfairLockAtomic<UInt64>.init(0)
         store.sinkState(queue: .passthrough) { s in
-          if version > s.version {
+          if version.modify({ $0 > s.version }) {
             XCTFail()
           }
-          version = s.version
+          version.modify { $0 = s.version }
           print("\(i)", s.version)
         }
         .store(in: &bag)
@@ -120,12 +123,12 @@ final class ConcurrencyTests: XCTestCase {
     }
 
     do {
-      var version: UInt64 = 0
+      let version = VergeConcurrency.UnfairLockAtomic<UInt64>.init(0)
       store.sinkState(queue: .passthrough) { s in
-        if version > s.version {
+        if version.modify({ $0 > s.version }) {
           XCTFail()
         }
-        version = s.version
+        version.modify { $0 = s.version }
         print("x", s.version)
         store.commit {
           if s.count == 1 {
@@ -150,7 +153,7 @@ final class ConcurrencyTests: XCTestCase {
 
     let cancellable = store1.sinkState { [weak store1] state in
 
-      state.ifChanged(\.count) { value in
+      state.ifChanged(\.count).do { value in
         if value == 10 {
           store1?.commit {
             $0.count = 11

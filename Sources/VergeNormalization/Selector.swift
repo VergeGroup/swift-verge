@@ -10,9 +10,9 @@ public struct KeyPathTableSelector<
   Table: TableType
 >: TableSelector, Equatable {
 
-  public let keyPath: KeyPath<Storage, Table>
+  public let keyPath: KeyPath<Storage, Table> & Sendable
 
-  public init(keyPath: KeyPath<Storage, Table>) {
+  public init(keyPath: KeyPath<Storage, Table> & Sendable) {
     self.keyPath = keyPath
   }
 
@@ -28,7 +28,7 @@ extension TableSelector {
     Storage: NormalizedStorageType,
     Table: TableType
   >(
-    _ keyPath: KeyPath<Storage, Table>
+    _ keyPath: KeyPath<Storage, Table> & Sendable
   ) -> Self where Self == KeyPathTableSelector<Storage, Table> {
     return .init(keyPath: keyPath)
   }
@@ -46,9 +46,9 @@ public struct KeyPathStorageSelector<
   Storage: NormalizedStorageType
 >: StorageSelector, Equatable {
 
-  public let keyPath: KeyPath<Source, Storage>
+  public let keyPath: KeyPath<Source, Storage> & Sendable
 
-  public init(keyPath: KeyPath<Source, Storage>) {
+  public init(keyPath: KeyPath<Source, Storage> & Sendable) {
     self.keyPath = keyPath
   }
 
@@ -65,7 +65,7 @@ extension StorageSelector {
     Storage: NormalizedStorageType
   >
   (
-    _ keyPath: KeyPath<Source, Storage>
+    _ keyPath: KeyPath<Source, Storage> & Sendable
   ) -> Self where Self == KeyPathStorageSelector<Source, Storage> {
     return .init(keyPath: keyPath)
   }
@@ -83,7 +83,7 @@ extension StorageSelector {
 public struct AbsoluteTableSelector<
   _StorageSelector: StorageSelector,
   _TableSelector: TableSelector
->: Hashable where _StorageSelector.Storage == _TableSelector.Storage {
+>: Sendable, Hashable where _StorageSelector.Storage == _TableSelector.Storage {
 
   public typealias Storage = _StorageSelector.Storage
   public typealias Entity = _TableSelector.Table.Entity

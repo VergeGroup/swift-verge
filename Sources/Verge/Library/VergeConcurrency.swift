@@ -23,11 +23,11 @@ import Foundation
 
 public enum VergeConcurrency {
   
-  public final class RecursiveLock: NSRecursiveLock {
+  public final class RecursiveLock: NSRecursiveLock, @unchecked Sendable {
     
   }
   
-  public struct UnfairLock: ~Copyable {
+  public struct UnfairLock: ~Copyable, @unchecked Sendable {
     private let _lock: os_unfair_lock_t
    
     public init() {

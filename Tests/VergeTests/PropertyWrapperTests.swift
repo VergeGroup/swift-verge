@@ -6,6 +6,7 @@ final class PropertyWrapperTests: XCTestCase {
   
   @UIState var isOn = false
   
+  @MainActor
   func testFoo() {
     
     let store: UIStateStore<_, _> = $isOn

@@ -13,7 +13,9 @@ final class AccumulationTests: XCTestCase {
     let expForName = expectation(description: "name")
     expForName.expectedFulfillmentCount = 2
 
-    let sub = store.accumulate(queue: .mainIsolated()) { [weak self] in
+    weak var weakStore: DemoStore? = store
+    
+    let sub = store.accumulate(queue: .mainIsolated()) { [weakStore] in
 
       $0.ifChanged(\.count).do { value in
         expForCount.fulfill()
@@ -25,7 +27,7 @@ final class AccumulationTests: XCTestCase {
       }
 
       // checks for result builders
-      if let _ = self {
+      if let _ = weakStore {
         $0.ifChanged(\.name).do { value in
           runMain()
         }
@@ -71,7 +73,7 @@ final class AccumulationTests: XCTestCase {
     let expForCount = expectation(description: "count")
     expForCount.expectedFulfillmentCount = 1
 
-    let sub = store.accumulate(queue: .mainIsolated()) { [weak self] in
+    let sub = store.accumulate(queue: .mainIsolated()) { 
 
       $0.ifChanged(\.count)
         .dropFirst(2)
@@ -103,8 +105,10 @@ final class AccumulationTests: XCTestCase {
 
     let expForName = expectation(description: "name")
     expForName.expectedFulfillmentCount = 2
+    
+    weak var weakStore: DemoStore? = store
 
-    let sub = store.accumulate(queue: .passthrough) { [weak self] in
+    let sub = store.accumulate(queue: .passthrough) { [weakStore] in
 
       $0.ifChanged(\.count).do { value in
         expForCount.fulfill()
@@ -115,7 +119,7 @@ final class AccumulationTests: XCTestCase {
       }
 
       // checks for result builders
-      if let _ = self {
+      if let _ = weakStore {
         $0.ifChanged(\.name).do { value in
         }
       }

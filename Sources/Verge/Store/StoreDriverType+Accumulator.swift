@@ -7,7 +7,7 @@ extension StoreDriverType {
    It allows to check if values has changed in the unit of accumulation, not Changes view.
    */
   public func accumulate<T>(
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @MainActor (consuming AccumulationBuilder<Scope>) -> _AccumulationSinkGroup<Scope, T>
   ) -> StoreStateSubscription {
 
@@ -49,7 +49,9 @@ extension StoreDriverType {
     @AccumulationSinkComponentBuilder<Scope> _ buildSubscription: @escaping @Sendable (consuming AccumulationBuilder<Scope>) -> _AccumulationSinkGroup<Scope, T>
   ) -> StoreStateSubscription {
 
-    let previousBox: UnsafeSendableBox<ReferenceEdge<_AccumulationSinkGroup<Scope, T>?>> = .init(value: .init(wrappedValue: nil))
+    let previousBox: UnsafeSendableClass<ReferenceEdge<_AccumulationSinkGroup<Scope, T>?>> = .init(
+      .init(wrappedValue: nil)
+    )
     let lock = VergeConcurrency.UnfairLock()
 
     return sinkState(dropsFirst: false, queue: queue) { @Sendable state in
@@ -85,14 +87,6 @@ extension StoreDriverType {
 
   }
 
-}
-
-private final class UnsafeSendableBox<T>: @unchecked Sendable {
-  var value: T
-
-  init(value: T) {
-    self.value = value
-  }
 }
 
 public protocol AccumulationSink<Source> {

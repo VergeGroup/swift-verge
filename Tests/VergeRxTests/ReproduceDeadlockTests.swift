@@ -14,7 +14,7 @@ import VergeRx
 
 class ReproduceDeadlockTests: XCTestCase {
   
-  class StoreWrapper: StoreWrapperType {
+  final class StoreWrapper: StoreDriverType, Sendable {
 
     struct State: Equatable {
       var count = 0

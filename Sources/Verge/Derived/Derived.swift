@@ -104,13 +104,13 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
     get pipeline: Pipeline,
     set: ((Value) -> Void)?,
     initialUpstreamState: UpstreamState,
-    subscribeUpstreamState: (@escaping (UpstreamState) -> Void) -> any Cancellable,
+    subscribeUpstreamState: (@escaping @Sendable (UpstreamState) -> Void) -> any Cancellable,
     retainsUpstream: Any?
   ) where Pipeline.Input == UpstreamState, Value == Pipeline.Output {
 
-    weak var indirectSelf: Derived<Value>?
+    nonisolated(unsafe) weak var indirectSelf: Derived<Value>?
 
-    let s = subscribeUpstreamState { value in
+    let s = subscribeUpstreamState { @Sendable value in
       let update = pipeline.yieldContinuously(value)
       switch update {
       case .noUpdates:
@@ -121,7 +121,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
         }
 
         // TODO: Take over state.modification & state.mutation
-        indirectSelf._receive {
+        indirectSelf._receive_sending {
           $1.isDerivedFromUpstream = true
           $0.append(traces: value.traces)
           $0.replace(with: newState)
@@ -173,7 +173,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   private func _combined_sinkValue(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<Value>) -> Void
+    receive: @escaping @Sendable (Changes<Value>) -> Void
   ) -> StoreStateSubscription {
     _primitive_sinkState(
       dropsFirst: dropsFirst,
@@ -226,7 +226,7 @@ extension Derived where Value : Equatable {
   public func sinkChangedPrimitiveValue(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Value) -> Void
+    receive: @escaping @Sendable (Value) -> Void
   ) -> StoreStateSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
       changes.ifChanged().do { value in
@@ -242,7 +242,7 @@ extension Derived where Value : Equatable {
   /// - Returns: A subscriber that performs the provided closure upon receiving values.
   public func sinkChangedPrimitiveValue(
     dropsFirst: Bool = false,
-    queue: MainActorTargetQueue = .mainIsolated(),
+    queue: some MainActorTargetQueueType = .mainIsolated(),
     receive: @escaping @MainActor (Value) -> Void
   ) -> StoreStateSubscription {
     sinkState(dropsFirst: dropsFirst, queue: queue) { @MainActor changes in
@@ -276,7 +276,7 @@ extension Derived where Value == Never {
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
         
     return Derived<Edge<(Changes<S0>, Changes<S1>)>>(
-      get: .select({ $0 }),
+      get: .select(\.self),
       set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
@@ -340,7 +340,7 @@ extension Derived where Value == Never {
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
     
     return Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>>(
-      get: .select { $0 },
+      get: .select(\.self),
       set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
@@ -407,7 +407,7 @@ extension Derived where Value == Never {
  In most cases, `Store` will be running underlying.
  */
 @propertyWrapper
-public final class BindingDerived<Value: Equatable>: Derived<Value> {
+public final class BindingDerived<Value: Equatable>: Derived<Value>, @unchecked Sendable {
   
   /**
    Returns a derived value that created by get-pipeline.
