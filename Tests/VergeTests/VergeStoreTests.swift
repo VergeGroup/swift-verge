@@ -216,10 +216,10 @@ final class VergeStoreTests: XCTestCase {
 
     let store = DemoStore()
 
-    let count = OSAllocatedUnfairLock<Int>.init(initialState: 0)
+    let count = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
 
     let subs = store.sinkState(queue: .passthrough) { (_) in
-      count.withLock { $0 += 1 }
+      count.modify { $0 += 1 }
     }
 
     XCTAssertEqual(store.state.version, 0)
@@ -256,7 +256,7 @@ final class VergeStoreTests: XCTestCase {
     }
 
     XCTAssertEqual(store.state.version, 2)
-    XCTAssertEqual(count.withLock { $0 }, 3)
+    XCTAssertEqual(count.value, 3)
 
     withExtendedLifetime(subs, {})
     
@@ -308,10 +308,10 @@ final class VergeStoreTests: XCTestCase {
   func testSubscription() {
     
     var subscriptions = Set<AnyCancellable>()
-    let count = OSAllocatedUnfairLock<Int>.init(initialState: 0)
+    let count = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
     
     store.sinkState(queue: .passthrough) { (changes) in
-      count.withLock {
+      count.modify {
         $0 += 1
       }
     }
@@ -328,7 +328,7 @@ final class VergeStoreTests: XCTestCase {
       $0.markAsModified()
     }
     
-    XCTAssertEqual(count.withLock { $0 }, 2)
+    XCTAssertEqual(count.value, 2)
     
   }
   

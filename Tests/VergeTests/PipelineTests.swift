@@ -1,20 +1,21 @@
 
 import XCTest
 import Verge
-import os.lock
 
 final class PipelineTests: XCTestCase {
   
   func test_MapPipeline() {
-    
-    let mapCounter = OSAllocatedUnfairLock<Int>.init(initialState: 0)
+        
+    let mapCounter = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
     
     let pipeline = Pipelines.ChangesMapPipeline<DemoState, _, _>(
       intermediate: {
         $0
       },
       transform: {
-        mapCounter.withLock { $0 += 1 }
+        mapCounter.modify { 
+          $0 += 1
+        }
         return $0.name.count
       },
       additionalDropCondition: nil
@@ -33,7 +34,7 @@ final class PipelineTests: XCTestCase {
         .noUpdates
       )
       
-      XCTAssertEqual(mapCounter.withLock { $0 }, 0)
+      XCTAssertEqual(mapCounter.value, 0)
     }
     
     do {
@@ -48,7 +49,7 @@ final class PipelineTests: XCTestCase {
         .noUpdates
       )
       
-      XCTAssertEqual(mapCounter.withLock { $0 }, 2)
+      XCTAssertEqual(mapCounter.value , 2)
       
     }
     
@@ -56,14 +57,14 @@ final class PipelineTests: XCTestCase {
  
   func test_MapPipeline_Intermediate() {
     
-    let mapCounter = OSAllocatedUnfairLock<Int>.init(initialState: 0)    
+    let mapCounter = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
     
     let pipeline = Pipelines.ChangesMapPipeline<DemoState, _, _>(
       intermediate: {
         $0.name
       },
       transform: {
-        mapCounter.withLock { $0 += 1 }
+        mapCounter.modify { $0 += 1 }
         return $0.count
       },
       additionalDropCondition: nil
@@ -82,7 +83,7 @@ final class PipelineTests: XCTestCase {
         .noUpdates
       )
       
-      XCTAssertEqual(mapCounter.withLock { $0 }, 0)
+      XCTAssertEqual(mapCounter.value, 0)
     }
     
     do {
@@ -97,7 +98,7 @@ final class PipelineTests: XCTestCase {
         .noUpdates
       )
       
-      XCTAssertEqual(mapCounter.withLock { $0 }, 0)
+      XCTAssertEqual(mapCounter.value, 0)
       
     }
         
