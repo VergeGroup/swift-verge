@@ -414,22 +414,22 @@ Here's an example of how to define the `Book` and `Author` entities:
 ```swift
 struct Book: EntityType {
   
-  typealias EntityIDRawType = String
+  typealias TypedIdentifierRawValue = String
   
-  var entityID: EntityID {
+  var typedID: TypedID {
     .init(rawID)
   }
   
   let rawID: String
   var name: String = "initial"
-  let authorID: Author.EntityID
+  let authorID: Author.TypedID
 }
 
 struct Author: EntityType {
   
-  typealias EntityIDRawType = String
+  typealias TypedIdentifierRawValue = String
   
-  var entityID: EntityID {
+  var typedID: TypedID {
     .init(rawID)
   }
     
