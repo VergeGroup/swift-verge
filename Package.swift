@@ -24,6 +24,7 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
     .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
     .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
+    .package(url: "https://github.com/VergeGroup/swift-typed-identifier", from: "2.0.1"),
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.10.0"),
@@ -62,13 +63,12 @@ let package = Package(
         "VergeRx"
       ]
     ),
-    .target(name: "VergeTypedIdentifier"),
     .target(
       name: "VergeNormalization",
       dependencies: [
         "VergeMacros",
         "VergeComparator",
-        "VergeTypedIdentifier",
+        .product(name: "TypedIdentifier", package: "swift-typed-identifier"),
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]
     ),
