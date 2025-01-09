@@ -2,22 +2,22 @@ import VergeNormalization
 
 struct Book: EntityType, Hashable {
 
-  typealias EntityIDRawType = String
+  typealias TypedIdentifierRawValue = String
 
-  var entityID: EntityID {
+  var typedID: TypedID {
     .init(rawID)
   }
 
   let rawID: String
-  let authorID: Author.EntityID
+  let authorID: Author.TypedID
   var name: String = "initial"
 }
 
 struct Author: EntityType {
 
-  typealias EntityIDRawType = String
+  typealias TypedIdentifierRawValue = String
 
-  var entityID: EntityID {
+  var typedID: TypedID {
     .init(rawID)
   }
 

@@ -34,9 +34,9 @@ public enum NormalizedStorageComparators<Storage: NormalizedStorageType> {
 //
 //    public typealias Input = Storage
 //
-//    public let entityID: Entity.EntityID
+//    public let entityID: Entity.TypedID
 //
-//    public init(entityID: Entity.EntityID) {
+//    public init(entityID: Entity.TypedID) {
 //      self.entityID = entityID
 //    }
 //

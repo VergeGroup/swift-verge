@@ -41,7 +41,7 @@ public protocol TableType<Entity>: Equatable, Sendable {
 /// It can be used to create a getter object.
 public struct InsertionResult<Entity: EntityType> {
   
-  public var typedID: Entity.TypedID {
+  public var entityID: Entity.TypedID {
     entity.typedID
   }
   

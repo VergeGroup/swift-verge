@@ -8,7 +8,7 @@ public struct NonNullEntityWrapper<Entity: EntityType> {
   public private(set) var wrapped: Entity
 
   /// An identifier
-  public let id: Entity.EntityID
+  public let id: Entity.TypedID
 
   @available(*, deprecated, renamed: "isFallBack")
   public var isUsingFallback: Bool {

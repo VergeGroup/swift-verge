@@ -15,7 +15,7 @@ public struct DerivedResult<Entity: EntityType, Derived: DerivedType> {
 
   /// A dictionary of Derived that stored by id
   /// It's faster than filtering values array to use this dictionary to find missing id or created id.
-  public private(set) var storage: [Entity.EntityID : Derived] = [:]
+  public private(set) var storage: [Entity.TypedID : Derived] = [:]
 
   /// An array of Derived that orderd by specified the order of id.
   public private(set) var values: [Derived]
@@ -25,7 +25,7 @@ public struct DerivedResult<Entity: EntityType, Derived: DerivedType> {
     self.values = []
   }
 
-  public mutating func append(derived: Derived, id: Entity.EntityID) {
+  public mutating func append(derived: Derived, id: Entity.TypedID) {
     storage[id] = derived
     values.append(derived)
   }

@@ -84,7 +84,7 @@ public struct NormalizedStorageTablePath<
   let tableSelector: _TableSelector
 
   public func derived(
-    from entityID: consuming Entity.EntityID
+    from entityID: consuming Entity.TypedID
   ) -> Derived<EntityWrapper<Entity>> {
 
     return store.derivedEntity(
@@ -95,7 +95,7 @@ public struct NormalizedStorageTablePath<
   }
 
   public func derived(
-    entityIDs: some Sequence<Entity.EntityID>
+    entityIDs: some Sequence<Entity.TypedID>
   ) -> DerivedResult<Entity, Derived<EntityWrapper<Entity>>> {
 
     var result = DerivedResult<Entity, Derived<EntityWrapper<Entity>>>()
@@ -151,7 +151,7 @@ public struct NormalizedStorageTablePath<
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
   public func derivedNonNull(
-    entityID: consuming Entity.EntityID
+    entityID: consuming Entity.TypedID
   ) throws -> Derived<NonNullEntityWrapper<Entity>> {
 
     let _initialValue = storageSelector
@@ -179,7 +179,7 @@ public struct NormalizedStorageTablePath<
     for entity in entities {
       result.append(
         derived: self.derivedNonNull(entity: entity),
-        id: entity.entityID
+        id: entity.typedID
       )
     }
 
@@ -196,7 +196,7 @@ public struct NormalizedStorageTablePath<
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
   public func derivedNonNull(
-    entityIDs: consuming some Sequence<Entity.EntityID>
+    entityIDs: consuming some Sequence<Entity.TypedID>
   ) -> NonNullDerivedResult<Entity> {
 
     var result = NonNullDerivedResult<Entity>()
@@ -224,7 +224,7 @@ public struct NormalizedStorageTablePath<
   /// A pointer of the result derived object will be different from each other, but the backing source will be shared.
   ///
   public func derivedNonNull(
-    entityIDs: consuming Set<Entity.EntityID>
+    entityIDs: consuming Set<Entity.TypedID>
   ) -> NonNullDerivedResult<Entity> {
 
     var result = NonNullDerivedResult<Entity>()
@@ -280,7 +280,7 @@ extension DerivedMaking {
     _TableSelector: TableSelector
   >(
     selector: AbsoluteTableSelector<_StorageSelector, _TableSelector>,
-    entityID: consuming _TableSelector.Table.Entity.EntityID
+    entityID: consuming _TableSelector.Table.Entity.TypedID
   ) -> Derived<EntityWrapper<_TableSelector.Table.Entity>>
   where
     _StorageSelector.Storage == _TableSelector.Storage,
@@ -332,10 +332,10 @@ where _StorageSelector.Storage == _TableSelector.Storage {
   typealias Output = EntityWrapper<Entity>
 
   private let selector: AbsoluteTableSelector<_StorageSelector, _TableSelector>
-  private let entityID: Entity.EntityID
+  private let entityID: Entity.TypedID
 
   init(
-    targetIdentifier: Entity.EntityID,
+    targetIdentifier: Entity.TypedID,
     selector: consuming AbsoluteTableSelector<_StorageSelector, _TableSelector>
   ) {
     self.entityID = targetIdentifier
@@ -383,7 +383,7 @@ where _StorageSelector.Storage == _TableSelector.Storage {
   typealias Output = NonNullEntityWrapper<Entity>
 
   private let selector: AbsoluteTableSelector<_StorageSelector, _TableSelector>
-  private let entityID: Entity.EntityID
+  private let entityID: Entity.TypedID
 
   private let latestValue: Entity
   private let lock: NSLock = .init()
@@ -393,7 +393,7 @@ where _StorageSelector.Storage == _TableSelector.Storage {
     selector: consuming AbsoluteTableSelector<_StorageSelector, _TableSelector>
   ) {
 
-    self.entityID = initialEntity.entityID
+    self.entityID = initialEntity.typedID
     self.latestValue = initialEntity
     self.selector = selector
 
