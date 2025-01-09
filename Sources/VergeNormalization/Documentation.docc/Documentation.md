@@ -74,9 +74,9 @@ Here's an example of how to define the `Book` and `Author` entities:
 ```swift
 struct Book: EntityType {
   
-  typealias EntityIDRawType = String
+  typealias TypedIdentifierRawValue = String
   
-  var entityID: EntityID {
+  var typedID: TypedID {
     .init(rawID)
   }
   
@@ -87,9 +87,9 @@ struct Book: EntityType {
 
 struct Author: EntityType {
   
-  typealias EntityIDRawType = String
+  typealias TypedIdentifierRawValue = String
   
-  var entityID: EntityID {
+  var typedID: TypedID {
     .init(rawID)
   }
     
