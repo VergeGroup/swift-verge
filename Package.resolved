@@ -1,5 +1,5 @@
 {
-  "originHash" : "b75013f8419f793a50b6d73cb9621ef9740473c318bdf5f0c790ee3f9743b530",
+  "originHash" : "ee3f350fd3d229f68927207ca24a9198872a51157f5ab77fc9f62d85458f30ed",
   "pins" : [
     {
       "identity" : "rxswift",
@@ -65,12 +65,12 @@
       }
     },
     {
-      "identity" : "swift-typed-identifier",
+      "identity" : "typedidentifier",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/VergeGroup/swift-typed-identifier",
+      "location" : "https://github.com/VergeGroup/TypedIdentifier",
       "state" : {
-        "revision" : "83d7d7e3f9649da938b4f9a34b8e78cda26ab21d",
-        "version" : "2.0.1"
+        "revision" : "297de87772cccec24f8f1a63376778d3227305d7",
+        "version" : "2.0.2"
       }
     },
     {
