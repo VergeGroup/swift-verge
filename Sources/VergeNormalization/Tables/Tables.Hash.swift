@@ -9,7 +9,7 @@ extension Tables {
 
     public typealias Entity = Entity
 
-    private var storage: TreeDictionary<Entity.EntityID, Entity>
+    private var storage: TreeDictionary<Entity.TypedID, Entity>
     public private(set) var updatedMarker = NonAtomicCounter()
 
     /// The number of entities in table
@@ -22,12 +22,12 @@ extension Tables {
       _read { yield storage.isEmpty }
     }
 
-    public init(entities: TreeDictionary<Entity.EntityID, Entity> = .init()) {
+    public init(entities: TreeDictionary<Entity.TypedID, Entity> = .init()) {
       self.storage = entities
     }
 
     /// Returns all entity ids that stored.
-    public borrowing func allIDs() -> TreeDictionary<Entity.EntityID, Entity>.Keys {
+    public borrowing func allIDs() -> TreeDictionary<Entity.TypedID, Entity>.Keys {
       return storage.keys
     }
 
@@ -40,7 +40,7 @@ extension Tables {
      Finds an entity by the identifier of the entity.
      - Returns: An entity that found by identifier. Nil if the table does not have that entity.
      */
-    public borrowing func find(by id: consuming Entity.EntityID) -> Entity? {
+    public borrowing func find(by id: consuming Entity.TypedID) -> Entity? {
       return storage[id]
     }
 
@@ -49,7 +49,7 @@ extension Tables {
     ///
     /// if ids contains same id, result also contains same element.
     /// - Parameter ids: sequence of Entity.ID
-    public borrowing func find(in ids: consuming some Sequence<Entity.EntityID>) -> [Entity] {
+    public borrowing func find(in ids: consuming some Sequence<Entity.TypedID>) -> [Entity] {
 
       return ids.reduce(into: [Entity]()) { (buf, id) in
         guard let entity = storage[id] else { return }
@@ -60,12 +60,12 @@ extension Tables {
     /**
      Updates the entity that already exsisting in the table.
 
-     - Attention: Please don't change `EntityType.entityID` value. if we changed, the crash happens (precondition)
+     - Attention: Please don't change `EntityType.TypedID` value. if we changed, the crash happens (precondition)
      */
     @discardableResult
     @inline(__always)
     public mutating func updateExists(
-      id: consuming Entity.EntityID,
+      id: consuming Entity.TypedID,
       update: (inout Entity) throws -> Void
     ) throws -> Entity {
 
@@ -74,7 +74,7 @@ extension Tables {
       }
 
       try update(&current)
-      precondition(current.entityID == id)
+      precondition(current.typedID == id)
       storage[id] = current
 
       updatedMarker.increment()
@@ -85,11 +85,11 @@ extension Tables {
     /**
      Updates the entity that already exsisting in the table.
 
-     - Attention: Please don't change `EntityType.entityID` value. if we changed, the crash happens (precondition)
+     - Attention: Please don't change `EntityType.TypedID` value. if we changed, the crash happens (precondition)
      */
     @discardableResult
     public mutating func updateIfExists(
-      id: consuming Entity.EntityID,
+      id: consuming Entity.TypedID,
       update: (inout Entity) throws -> Void
     ) rethrows -> Entity? {
       try? updateExists(id: id, update: update)
@@ -101,7 +101,7 @@ extension Tables {
     @discardableResult
     public mutating func insert(_ entity: Entity) -> Self.InsertionResult {
 
-      storage[entity.entityID] = entity
+      storage[entity.typedID] = entity
 
       updatedMarker.increment()
 
@@ -115,7 +115,7 @@ extension Tables {
     public mutating func insert(_ addingEntities: consuming some Sequence<Entity>) -> [Self.InsertionResult] {
 
       let results = addingEntities.map { entity -> Self.InsertionResult in
-        storage[entity.entityID] = entity
+        storage[entity.typedID] = entity
         return .init(entity: entity)
       }
 
@@ -127,7 +127,7 @@ extension Tables {
     /**
      Removes the entity by the identifier.
      */
-    public mutating func remove(_ id: Entity.EntityID) {
+    public mutating func remove(_ id: Entity.TypedID) {
       storage.removeValue(forKey: id)
       updatedMarker.increment()
     }
@@ -140,7 +140,7 @@ extension Tables {
       updatedMarker.increment()
     }
 
-    public var values: TreeDictionary<Entity.EntityID, Entity>.Values {
+    public var values: TreeDictionary<Entity.TypedID, Entity>.Values {
       storage.values
     }
     

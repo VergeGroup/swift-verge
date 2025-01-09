@@ -27,7 +27,7 @@ final class Tests: XCTestCase {
 
     var transaction = state.beginBatchUpdates()
 
-    let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
+    let book = Book(rawID: "some", authorID: Author.anonymous.typedID)
     transaction.modifying.book.insert(book)
 
     state.commitBatchUpdates(transaction: transaction)
@@ -45,7 +45,7 @@ final class Tests: XCTestCase {
 
     state.performBatchUpdates { (context) in
 
-      let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
+      let book = Book(rawID: "some", authorID: Author.anonymous.typedID)
       context.modifying.book.insert(book)
     }
 
@@ -62,7 +62,7 @@ final class Tests: XCTestCase {
 
     state.performBatchUpdates { (context) in
 
-      let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
+      let book = Book(rawID: "some", authorID: Author.anonymous.typedID)
       context.modifying.book.insert(book)
     }
 
@@ -76,9 +76,9 @@ final class Tests: XCTestCase {
 
     state.performBatchUpdates { (context) in
 
-      let book = Book(rawID: "some", authorID: Author.anonymous.entityID)
+      let book = Book(rawID: "some", authorID: Author.anonymous.typedID)
       context.modifying.book.insert(book)
-      context.modifying.bookIndex.append(book.entityID)
+      context.modifying.bookIndex.append(book.typedID)
     }
 
     XCTAssertEqual(state.book.count, 1)
@@ -87,7 +87,7 @@ final class Tests: XCTestCase {
     print(state.bookIndex)
 
     state.performBatchUpdates { (context) -> Void in
-      context.modifying.book.remove(Book.EntityID.init("some"))
+      context.modifying.book.remove(Book.TypedID.init("some"))
     }
 
     XCTAssertEqual(state.book.count, 0)
@@ -101,11 +101,11 @@ final class Tests: XCTestCase {
 
     var state = MyStorage()
 
-    let id = Book.EntityID.init("some")
+    let id = Book.TypedID.init("some")
 
     state.performBatchUpdates { (context) in
 
-      let book = Book(rawID: id.raw, authorID: Author.anonymous.entityID)
+      let book = Book(rawID: id.raw, authorID: Author.anonymous.typedID)
       context.modifying.book.insert(book)
     }
 
@@ -195,7 +195,7 @@ final class Tests: XCTestCase {
 
   func testDescription() {
 
-    let authorID = Author.EntityID("author.id")
+    let authorID = Author.TypedID("author.id")
     XCTAssertEqual(authorID.description, "<VergeNormalizationTests.Author>(author.id)")
   }
 
@@ -210,7 +210,7 @@ final class Tests: XCTestCase {
         let a = Author(rawID: "\(i)", name: "\(i)")
 
         context.modifying.author.insert(a)
-        context.modifying.book.insert(Book(rawID: "\(i)", authorID: a.entityID))
+        context.modifying.book.insert(Book(rawID: "\(i)", authorID: a.typedID))
 
       }
 

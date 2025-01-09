@@ -32,9 +32,9 @@ public enum Indexes {
    ]
    ```
    */
-  public typealias Hash<Key: Hashable, Entity: EntityType> = HashTreeCollections.TreeDictionary<Key, Entity.EntityID>
+  public typealias Hash<Key: Hashable, Entity: EntityType> = HashTreeCollections.TreeDictionary<Key, Entity.TypedID>
 
-  public typealias Ordered<Entity: EntityType> = Array<Entity.EntityID>
+  public typealias Ordered<Entity: EntityType> = Array<Entity.TypedID>
 
   public typealias Set = Never
 

@@ -1,4 +1,4 @@
-import VergeTypedIdentifier
+import TypedIdentifier
 
 /// a storage of the entity
 public protocol TableType<Entity>: Equatable, Sendable {
@@ -12,17 +12,17 @@ public protocol TableType<Entity>: Equatable, Sendable {
   var count: Int { get }
   var isEmpty: Bool { get }
 
-  borrowing func find(by id: consuming Entity.EntityID) -> Entity?
+  borrowing func find(by id: consuming Entity.TypedID) -> Entity?
 
-  borrowing func find(in ids: consuming some Sequence<Entity.EntityID>) -> [Entity]
+  borrowing func find(in ids: consuming some Sequence<Entity.TypedID>) -> [Entity]
 
   mutating func updateExists(
-    id: consuming Entity.EntityID,
+    id: consuming Entity.TypedID,
     update: (inout Entity) throws -> Void
   ) throws -> Entity
 
   mutating func updateIfExists(
-    id: consuming Entity.EntityID,
+    id: consuming Entity.TypedID,
     update: (inout Entity) throws -> Void
   ) rethrows -> Entity?
 
@@ -32,7 +32,7 @@ public protocol TableType<Entity>: Equatable, Sendable {
   @discardableResult
   mutating func insert(_ addingEntities: consuming some Sequence<Entity>) -> [InsertionResult]
 
-  mutating func remove(_ id: Entity.EntityID)
+  mutating func remove(_ id: Entity.TypedID)
 
   mutating func removeAll()
 }
@@ -40,9 +40,11 @@ public protocol TableType<Entity>: Equatable, Sendable {
 /// An object indicates result of insertion
 /// It can be used to create a getter object.
 public struct InsertionResult<Entity: EntityType> {
-  public var entityID: Entity.EntityID {
-    entity.entityID
+  
+  public var entityID: Entity.TypedID {
+    entity.typedID
   }
+  
   public let entity: Entity
 
   init(entity: consuming Entity) {

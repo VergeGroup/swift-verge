@@ -13,8 +13,8 @@ public macro Index() = #externalMacro(module: "VergeMacrosPlugin", type: "IndexM
 #if DEBUG
 
 struct A: EntityType {
-  typealias EntityIDRawType = String
-  var entityID: EntityID {
+  typealias TypedIdentifierRawValue = String
+  var typedID: TypedID {
     .init("")
   }
 }
