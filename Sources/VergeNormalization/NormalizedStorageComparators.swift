@@ -1,4 +1,4 @@
-import VergeComparator
+import TypedComparator
 
 public enum NormalizedStorageComparators<Storage: NormalizedStorageType> {
 

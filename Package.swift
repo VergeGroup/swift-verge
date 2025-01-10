@@ -25,6 +25,7 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
     .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
     .package(url: "https://github.com/VergeGroup/TypedIdentifier", from: "2.0.2"),
+    .package(url: "https://github.com/VergeGroup/TypedComparator", from: "1.0.0"),
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.10.0"),
@@ -46,12 +47,11 @@ let package = Package(
     .target(name: "VergeMacros", dependencies: ["VergeMacrosPlugin"]),
 
     .target(name: "VergeTiny", dependencies: []),
-    .target(name: "VergeComparator"),
     .target(
       name: "Verge",
       dependencies: [
         "VergeMacros",
-        "VergeComparator",
+        .product(name: "TypedComparator", package: "TypedComparator"),
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "DequeModule", package: "swift-collections"),
         .product(name: "ConcurrencyTaskManager", package: "swift-concurrency-task-manager"),
@@ -67,7 +67,7 @@ let package = Package(
       name: "VergeNormalization",
       dependencies: [
         "VergeMacros",
-        "VergeComparator",
+        .product(name: "TypedComparator", package: "TypedComparator"),
         .product(name: "TypedIdentifier", package: "TypedIdentifier"),
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]

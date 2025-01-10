@@ -1,5 +1,5 @@
 {
-  "originHash" : "ee3f350fd3d229f68927207ca24a9198872a51157f5ab77fc9f62d85458f30ed",
+  "originHash" : "f688316170c1771e6db10ff04cd9ed454130cdedcd7f04ed4c16bf050623d1ee",
   "pins" : [
     {
       "identity" : "rxswift",
@@ -62,6 +62,15 @@
       "state" : {
         "revision" : "0687f71944021d616d34d922343dcef086855920",
         "version" : "600.0.1"
+      }
+    },
+    {
+      "identity" : "typedcomparator",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/VergeGroup/TypedComparator",
+      "state" : {
+        "revision" : "337ce0e573e7637ddd29392cb88c3b852f042c8e",
+        "version" : "1.0.0"
       }
     },
     {

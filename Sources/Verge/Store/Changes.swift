@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 
 import Foundation
-@_spi(Internal) import VergeComparator
+@_spi(Internal) import TypedComparator
 
 #if !COCOAPODS
 #endif
