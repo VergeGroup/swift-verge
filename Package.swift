@@ -13,7 +13,6 @@ let package = Package(
   products: [
     .library(name: "Verge", targets: ["Verge"]),
     .library(name: "VergeTiny", targets: ["VergeTiny"]),
-    .library(name: "VergeNormalization", targets: ["VergeNormalization"]),
     .library(name: "VergeNormalizationDerived", targets: ["VergeNormalizationDerived"]),
     .library(name: "VergeRx", targets: ["VergeRx"]),
     .library(name: "VergeClassic", targets: ["VergeClassic"]),
@@ -26,6 +25,7 @@ let package = Package(
     .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
     .package(url: "https://github.com/VergeGroup/TypedIdentifier", from: "2.0.2"),
     .package(url: "https://github.com/VergeGroup/TypedComparator", from: "1.0.0"),
+    .package(url: "https://github.com/VergeGroup/Normalization", from: "1.0.0"),
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.10.0"),
@@ -64,19 +64,10 @@ let package = Package(
       ]
     ),
     .target(
-      name: "VergeNormalization",
-      dependencies: [
-        "VergeMacros",
-        .product(name: "TypedComparator", package: "TypedComparator"),
-        .product(name: "TypedIdentifier", package: "TypedIdentifier"),
-        .product(name: "HashTreeCollections", package: "swift-collections"),
-      ]
-    ),
-    .target(
       name: "VergeNormalizationDerived",
       dependencies: [
         "Verge",
-        "VergeNormalization",
+        .product(name: "Normalization", package: "Normalization"),
         .product(name: "HashTreeCollections", package: "swift-collections"),
       ]
     ),
@@ -91,10 +82,6 @@ let package = Package(
     .testTarget(
       name: "VergeClassicTests",
       dependencies: ["VergeClassic"]
-    ),
-    .testTarget(
-      name: "VergeNormalizationTests",
-      dependencies: ["VergeNormalization"]
     ),
     .testTarget(
       name: "VergeNormalizationDerivedTests",

@@ -1,4 +1,4 @@
-import VergeNormalization
+import Normalization
 
 /// A value that wraps an entity and results of fetching.
 @dynamicMemberLookup
