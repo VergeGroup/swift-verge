@@ -14,7 +14,5 @@ jobs:
         with:
           xcode-version: "16.2"
       - uses: actions/checkout@v2
-      - name: xcbeautify
-        run: brew install xcbeautify
       - name: Run Test
         run: set -o pipefail && xcodebuild -scheme Verge-Package test -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.1' -skipMacroValidation -skipPackagePluginValidation | xcbeautify
