@@ -12,9 +12,13 @@
 <sub>_ Supports concurrent processing _</sub><br/>
 </p>
 
+- Dependencies
+  - [TypedIdentifier](https://github.com/VergeGroup/TypedIdentifier)
+  - [TypedComparator](https://github.com/VergeGroup/TypedComparator)
+  - [Normalization](https://github.com/VergeGroup/Normalization)
+
 - Docs
   - [Verge](https://swiftpackageindex.com/VergeGroup/swift-Verge/main/documentation/verge)
-  - [VergeNormalization](https://swiftpackageindex.com/VergeGroup/swift-Verge/main/documentation/vergenormalization)
   - [VergeNormalizationDerived](https://swiftpackageindex.com/VergeGroup/swift-Verge/main/documentation/vergenormalizationderived)
 
 ## Support this projects
