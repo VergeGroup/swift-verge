@@ -72,8 +72,8 @@ actor Writer {
 
   }
 
-  func perform<R>(_ operation: (isolated Writer) throws -> R) rethrows -> R {
-    try operation(self)
+  func perform<R>(_ operation: () throws -> sending R) rethrows -> sending R {
+    try operation()
   }
 
 }
@@ -91,9 +91,9 @@ actor Writer {
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable {
+open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>, CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable {
 
-  public var scope: WritableKeyPath<State, State> = \State.self
+  public let scope: any WritableKeyPath<State, State> & Sendable = \State.self
 
   private let tracker = VergeConcurrency.SynchronizationTracker()
   
@@ -442,7 +442,7 @@ extension Store {
   /// - Parameters:
   ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
-  func _receive<Result>(
+  func _receive_sending<Result>(
     mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
   ) rethrows -> Result {
     
@@ -486,7 +486,7 @@ extension Store {
         var inoutRef = InoutRef<State>.init(stateMutablePointer)
         
         let result = try mutation(&inoutRef, &transaction)
-        valueFromMutation = result
+        valueFromMutation = consume result
         
         /**
          Step-1:
@@ -564,8 +564,8 @@ Mutation: (%@)
     if let logger = logger, let _commitLog = commitLog {
       logger.didCommit(log: _commitLog, sender: self)
     }
-    
-    return valueFromMutation
+        
+    return UnsafeSendableStruct(valueFromMutation).send()
   }
   
   @inline(__always)
@@ -583,16 +583,24 @@ Mutation: (%@)
   func _mainActor_sinkState(
     keepsAliveSource: Bool? = nil,
     dropsFirst: Bool = false,
-    queue: MainActorTargetQueue,
+    queue: some MainActorTargetQueueType,
     receive: @escaping @MainActor (Changes<State>) -> Void
   ) -> StoreStateSubscription {
-    return _primitive_sinkState(dropsFirst: dropsFirst, queue: Queues.MainActor(queue), receive: receive)
+    return _primitive_sinkState(
+      dropsFirst: dropsFirst,
+      queue: Queues.MainActor(queue),
+      receive: { e in
+        MainActor.assumeIsolated {
+          receive(e)
+        }
+      }
+    )
   }
   
   func _primitive_sinkState(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<State>) -> Void
+    receive: @escaping @Sendable (Changes<State>) -> Void
   ) -> StoreStateSubscription {
 
     let cancellable = _base_primitive_sinkState(dropsFirst: dropsFirst, queue: queue, receive: receive)
@@ -628,11 +636,12 @@ Mutation: (%@)
   private func _base_primitive_sinkState(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<State>) -> Void
+    receive: @escaping @Sendable (Changes<State>) -> Void
   ) -> EventEmitterCancellable {
 
     let executor = queue.execute
 
+    nonisolated(unsafe)
     var latestStateWrapper: Changes<State>? = nil
 
     let __sanitizer__ = sanitizer
@@ -747,7 +756,7 @@ Latest Version (%d): (%@)
   func _mainActor_scan_sinkState<Accumulate>(
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
-    queue: MainActorTargetQueue,
+    queue: some MainActorTargetQueueType,
     receive: @escaping @MainActor (Changes<State>, Accumulate) -> Void
   ) -> StoreStateSubscription {
 
@@ -763,7 +772,7 @@ Latest Version (%d): (%@)
     scan: Scan<Changes<State>, Accumulate>,
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping (Changes<State>, Accumulate) -> Void
+    receive: @escaping @Sendable (Changes<State>, Accumulate) -> Void
   ) -> StoreStateSubscription {
 
     _primitive_sinkState(dropsFirst: dropsFirst, queue: queue) { (changes) in
@@ -775,15 +784,22 @@ Latest Version (%d): (%@)
   }
 
   func _mainActor_sinkActivity(
-    queue: MainActorTargetQueue,
-    receive: @escaping @MainActor (Activity) -> Void
+    queue: some MainActorTargetQueueType,
+    receive: @escaping @MainActor (sending Activity) -> Void
   ) -> StoreActivitySubscription {
-    return _primitive_sinkActivity(queue: Queues.MainActor(queue), receive: receive)
+    return _primitive_sinkActivity(
+      queue: Queues.MainActor(queue),
+      receive: { e in 
+        MainActor.assumeIsolated {
+          receive(e)
+        }
+      }
+    )
   }
-
+  
   func _primitive_sinkActivity(
     queue: some TargetQueueType,
-    receive: @escaping (Activity) -> Void
+    receive: @escaping @Sendable (sending Activity) -> Void
   ) -> StoreActivitySubscription {
 
     let execute = queue.execute
@@ -817,7 +833,7 @@ extension Store {
     }
   }
   
-  final func _sinkActivityEvent(subscriber: @escaping (Activity) -> Void) -> EventEmitterCancellable {
+  final func _sinkActivityEvent(subscriber: @escaping (sending Activity) -> Void) -> EventEmitterCancellable {
     addEventHandler { event in
       guard case .activity(let activity) = event else { return }
       subscriber(activity)

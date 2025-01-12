@@ -26,7 +26,7 @@ final class ComparerTests: XCTestCase {
 
   func testPerfomance_new() {
 
-    let base = EqualityComparison<String>()
+    let base = EqualityComparator<String>()
 
     measure(metrics: [XCTMemoryMetric(), XCTCPUMetric()]) {
       for _ in 0..<10000 {

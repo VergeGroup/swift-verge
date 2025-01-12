@@ -82,7 +82,7 @@ extension StoreDriverType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     get pipeline: Pipeline,
-    set: @escaping (inout InoutRef<TargetStore.State>, Pipeline.Output) -> Void,
+    set: sending @escaping @Sendable (inout InoutRef<TargetStore.State>, Pipeline.Output) -> Void,
     queue: some TargetQueueType = .passthrough
   ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<TargetStore.State> {
 
@@ -90,9 +90,9 @@ extension StoreDriverType {
       get: BindingDerivedPipeline(backingPipeline: pipeline),
       set: { [weak self] state in       
         self?.store.asStore()
-          ._receive {
-            $1.isFromBindingDerived = true
-            set(&$0, state)
+          ._receive_sending { inoutRef, transaction in
+            transaction.isFromBindingDerived = true
+            set(&inoutRef, state)
           }
       },
       initialUpstreamState: store.asStore().state,
@@ -113,18 +113,18 @@ extension StoreDriverType {
     return derived
   }
 
-  public func bindingDerived<Select>(
+  public func bindingDerived<Select>(    
     _ name: String = "",
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    select: WritableKeyPath<TargetStore.State, Select>,
+    select: WritableKeyPath<TargetStore.State, Select> & Sendable,
     queue: some TargetQueueType = .passthrough
   ) -> BindingDerived<Select> {
 
     bindingDerived(
       name, file, function, line,
-      get: .select({ $0[keyPath: select] }),
+      get: .select(select),
       set: { state, newValue in
         state[keyPath: select] = newValue
       }

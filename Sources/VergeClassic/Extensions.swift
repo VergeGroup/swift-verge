@@ -2,7 +2,7 @@ import RxSwift
 import Foundation
 import Verge
 
-fileprivate var storage_subject: Void?
+nonisolated(unsafe) fileprivate var storage_subject: Void?
 
 extension ReadonlyStorage {
 

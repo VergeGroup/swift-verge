@@ -102,11 +102,11 @@ public struct InoutRef<Wrapped> {
 
   private(set) var nonatomic_hasModified = false
 
-  private var nonatomic_modifiedKeyPaths: Set<PartialKeyPath<Wrapped>> = .init()
+  nonisolated(unsafe) private var nonatomic_modifiedKeyPaths: Set<PartialKeyPath<Wrapped>> = .init()
 
   private var nonatomic_wasModifiedIndeterminate = false
 
-  private let pointer: UnsafeMutablePointer<Wrapped>
+  nonisolated(unsafe) private let pointer: UnsafeMutablePointer<Wrapped>
 
   /// A wrapped value
   /// You may use this property to call the mutating method which `Wrapped` has.
@@ -318,35 +318,81 @@ public struct InoutRef<Wrapped> {
    Returns a tantative InoutRef that projects the value specified by KeyPath.
    That InoutRef must be used only in the given perform closure.
    */
-  public mutating func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result {
-    try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
+  public mutating func map<U, Result>(
+    keyPath: WritableKeyPath<Wrapped, U>,
+    perform: (inout InoutRef<U>) throws -> Result
+  ) rethrows -> Result {
+    
+    try map_sending(keyPath: keyPath, perform: {
+      let r = try perform(&$0)
+      /// https://github.com/swiftlang/swift/issues/78135
+      let workaround = { r }
+      return workaround()
+    })
+    
+  }
+  
+  public mutating func map_sending<U, Result>(
+    keyPath: WritableKeyPath<Wrapped, U>,
+    perform: (inout InoutRef<U>) throws -> sending Result
+  ) rethrows -> sending Result {
+    
+    let result = try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
+      
       var ref = InoutRef<U>.init(pointer)
+      
       defer {
         self.nonatomic_hasModified = ref.nonatomic_hasModified
         self.nonatomic_wasModifiedIndeterminate = ref.nonatomic_wasModifiedIndeterminate
-
+        
         let appended = ref.nonatomic_modifiedKeyPaths.compactMap {
           (keyPath as PartialKeyPath<Wrapped>).appending(path: $0)
         }
-
+        
         self.nonatomic_modifiedKeyPaths.formUnion(appended)
+        
       }
-      return try perform(&ref)
+      
+      let result = try perform(&ref)
+      
+      return result
     }
+    
+    let workaround = { result }
+    return workaround()
+    
   }
 
+  public mutating func map<U, Result>(
+    keyPath: WritableKeyPath<Wrapped, U?>,
+    perform: (inout InoutRef<U>) throws -> Result
+  ) rethrows -> Result? {
+    
+    try map_sending(keyPath: keyPath, perform: {
+      let r = try perform(&$0)
+      /// https://github.com/swiftlang/swift/issues/78135
+      let workaround = { r }
+      return workaround()
+    })
+  }
+  
   /**
    Returns a tantative InoutRef that projects the value specified by KeyPath.
    That InoutRef must be used only in the given perform closure.
    */
-  public mutating func map<U, Result>(keyPath: WritableKeyPath<Wrapped, U?>, perform: (inout InoutRef<U>) throws -> Result) rethrows -> Result? {
+  public mutating func map_sending<U, Result>(
+    keyPath: WritableKeyPath<Wrapped, U?>,
+    perform: (inout InoutRef<U>) throws -> sending Result
+  ) rethrows -> sending Result? {
 
     guard pointer.pointee[keyPath: keyPath] != nil else {
       return nil
     }
 
-    return try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]!) { (pointer) in
-      var ref: InoutRef<U> = InoutRef<U>.init(pointer)
+    let result = try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]!) { (pointer) in
+            
+      var ref = InoutRef<U>.init(pointer)
+            
       defer {
         self.nonatomic_hasModified = ref.nonatomic_hasModified
         self.nonatomic_wasModifiedIndeterminate = ref.nonatomic_wasModifiedIndeterminate
@@ -358,9 +404,14 @@ public struct InoutRef<Wrapped> {
         self.nonatomic_modifiedKeyPaths.formUnion(appended)
 
       }
-      return try perform(&ref)
+      
+      let result = try perform(&ref)
+            
+      return result
     }
 
+    let workaround = { result }
+    return workaround()
   }
   
 }

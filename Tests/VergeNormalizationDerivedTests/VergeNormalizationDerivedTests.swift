@@ -22,7 +22,7 @@ final class VergeNormalizationDerivedTests: XCTestCase {
     let derived = store
       .normalizedStorage(.keyPath(\.db))
       .table(.keyPath(\.book))
-      .derived(from: Book.EntityID.init("1"))
+      .derived(from: Book.TypedID.init("1"))
 
     var received: [Book?] = []
 

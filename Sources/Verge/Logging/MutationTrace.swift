@@ -56,7 +56,7 @@ public struct MutationTrace: Encodable, Equatable, Sendable {
 
 }
 
-extension StaticString: Encodable {
+extension StaticString: @retroactive Encodable {
 
   public func encode(to encoder: Encoder) throws {
     var container = encoder.singleValueContainer()

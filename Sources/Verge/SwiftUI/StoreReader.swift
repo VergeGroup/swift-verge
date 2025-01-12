@@ -196,17 +196,13 @@ public enum StoreReaderComponents<StateType: Equatable> {
 
   }
   
-  @MainActor
   public final class Node: ObservableObject {
     
-    nonisolated public var objectWillChange: ObservableObjectPublisher {
-      _publisher
-    }
+    public let objectWillChange: ObservableObjectPublisher = .init()
     
     /// nil means not loaded first yet
     private var detectors: StateProxy.Detectors?
 
-    private nonisolated let _publisher: ObservableObjectPublisher = .init()
     private var cancellable: StoreStateSubscription?
     private let retainValues: [AnyObject]
     
@@ -228,9 +224,11 @@ public enum StoreReaderComponents<StateType: Equatable> {
       
       self.currentValue = store.state
       
-      cancellable = store.sinkState(queue: .mainIsolated()) { [weak self] state in
+      let weakSelf = UnsafeSendableWeak(self)
+            
+      cancellable = store.sinkState(queue: .mainIsolated()) { state in
         
-        guard let self else { return }
+        guard let self = weakSelf.value else { return }
         
         /// retain the latest one
         self.currentValue = state
@@ -254,7 +252,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
         if shouldUpdate {
           DispatchQueue.main.async {
             // For: Publishing changes from within view updates is not allowed, this will cause undefined behavior.
-            self._publisher.send()
+            self.objectWillChange.send()
           }
         }
       }
@@ -276,6 +274,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
 #endif
     }
     
+    @MainActor
     func makeContent<Content: View>(@ViewBuilder _ make: @MainActor (inout StateProxy) -> Content)
     -> Content
     {

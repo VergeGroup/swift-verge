@@ -5,15 +5,17 @@ import Verge
 final class PipelineTests: XCTestCase {
   
   func test_MapPipeline() {
-    
-    var mapCounter = NonAtomicCounter()
+        
+    let mapCounter = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
     
     let pipeline = Pipelines.ChangesMapPipeline<DemoState, _, _>(
       intermediate: {
         $0
       },
       transform: {
-        mapCounter.increment()
+        mapCounter.modify { 
+          $0 += 1
+        }
         return $0.name.count
       },
       additionalDropCondition: nil
@@ -49,7 +51,7 @@ final class PipelineTests: XCTestCase {
         .noUpdates
       )
       
-      XCTAssertEqual(mapCounter.value, 2)
+      XCTAssertEqual(mapCounter.value , 2)
       
     }
     
@@ -57,14 +59,14 @@ final class PipelineTests: XCTestCase {
  
   func test_MapPipeline_Intermediate() {
     
-    var mapCounter = NonAtomicCounter()
+    let mapCounter = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
     
     let pipeline = Pipelines.ChangesMapPipeline<DemoState, _, _>(
       intermediate: {
         $0.name
       },
       transform: {
-        mapCounter.increment()
+        mapCounter.modify { $0 += 1 }
         return $0.count
       },
       additionalDropCondition: nil

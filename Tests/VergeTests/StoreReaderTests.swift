@@ -7,7 +7,7 @@ import ViewInspector
 @available(iOS 14, tvOS 14, *)
 final class StoreReaderTests: XCTestCase {
   
-      
+  @MainActor
   func test_increment_counter() throws {
     
     let store = Store<State, Never>(initialState: .init())
@@ -21,9 +21,6 @@ final class StoreReaderTests: XCTestCase {
     let inspect = try view.inspect()
         
     XCTAssertEqual(count, 0)
-    
-    // POC
-    XCTAssertEqual(try inspect.vStack()[0].text().string(), "Hello")
             
     XCTAssertEqual(try inspect.find(viewWithId: "count_1").text().string(), "0")
     

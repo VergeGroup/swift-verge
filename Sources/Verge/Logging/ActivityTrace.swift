@@ -22,7 +22,7 @@
 import Foundation
 
 /// A trace that indicates the activity where comes from.
-public struct ActivityTrace: Encodable {
+public struct ActivityTrace: Encodable, Sendable {
   
   public let createdAt: Date = .init()
   public let name: String

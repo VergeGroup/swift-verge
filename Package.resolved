@@ -1,5 +1,15 @@
 {
+  "originHash" : "fd63ba598fb7bdb17467c0e757a41f2afdb4c10f98a605d67f8f8168321d4443",
   "pins" : [
+    {
+      "identity" : "normalization",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/VergeGroup/Normalization",
+      "state" : {
+        "revision" : "2cb57bc6ffce81e3ffa2b0781c82f13f00bf1e98",
+        "version" : "1.0.0"
+      }
+    },
     {
       "identity" : "rxswift",
       "kind" : "remoteSourceControl",
@@ -41,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-macro-testing.git",
       "state" : {
-        "revision" : "5c4a1b9d7c23cd5c08ea50677d8e89080365cb00",
-        "version" : "0.4.0"
+        "revision" : "20c1a8f3b624fb5d1503eadcaa84743050c350f4",
+        "version" : "0.5.2"
       }
     },
     {
@@ -50,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
       "state" : {
-        "revision" : "625ccca8570773dd84a34ee51a81aa2bc5a4f97a",
-        "version" : "1.16.0"
+        "revision" : "7b0bbbae90c41f848f90ac7b4df6c4f50068256d",
+        "version" : "1.17.5"
       }
     },
     {
@@ -59,8 +69,26 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-syntax.git",
       "state" : {
-        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
-        "version" : "509.1.1"
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
+      }
+    },
+    {
+      "identity" : "typedcomparator",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/VergeGroup/TypedComparator",
+      "state" : {
+        "revision" : "337ce0e573e7637ddd29392cb88c3b852f042c8e",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "typedidentifier",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/VergeGroup/TypedIdentifier",
+      "state" : {
+        "revision" : "297de87772cccec24f8f1a63376778d3227305d7",
+        "version" : "2.0.2"
       }
     },
     {
@@ -68,10 +96,10 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nalexn/ViewInspector.git",
       "state" : {
-        "revision" : "7b1732802ffe30e6a67754bda6c7819e5cb0eb70",
-        "version" : "0.9.11"
+        "revision" : "5acfa0a3c095ac9ad050abe51c60d1831e8321da",
+        "version" : "0.10.0"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

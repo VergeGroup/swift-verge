@@ -189,8 +189,8 @@ final class SubjectCompletionTests: XCTestCase {
     XCTAssertNil(derivedRef.value)
 
     XCTAssertNil(storeRef.value)
-
-    wait(for: [onComplete], timeout: 10)
+    
+    await fulfillment(of: [onComplete], timeout: 10)
     withExtendedLifetime(c, {})
 //    c?.cancel()
 
@@ -199,7 +199,7 @@ final class SubjectCompletionTests: XCTestCase {
   class Ref {}
 }
 
-final class Reference<T: AnyObject> {
+final class Reference<T: AnyObject>: @unchecked Sendable {
 
   weak var value: T?
   private var strong: T?

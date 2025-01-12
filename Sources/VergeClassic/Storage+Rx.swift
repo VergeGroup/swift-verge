@@ -11,8 +11,8 @@ import VergeRx
 
 extension Storage: ReactiveCompatible {}
 
-private var storage_subject: Void?
-private var storage_diposeBag: Void?
+nonisolated(unsafe) private var storage_subject: Void?
+nonisolated(unsafe) private var storage_diposeBag: Void?
 
 extension ReadonlyStorage {
   

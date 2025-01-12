@@ -23,7 +23,7 @@ import Foundation
 import Atomics
 
 public protocol TargetQueueType {
-  func execute(_ workItem: @escaping () -> Void)
+  func execute(_ workItem: sending @escaping @Sendable () -> Void)
 }
 
 /// Describes queue to dispatch event
@@ -31,65 +31,87 @@ public protocol TargetQueueType {
 /// A reason why class is to take an object identifier.
 public final class AnyTargetQueue: TargetQueueType {
 
-  private let _execute: (@escaping () -> Void) -> Void
+  private let _execute: (@escaping @Sendable () -> Void) -> Void
 
   fileprivate init(
-    _execute: @escaping (@escaping () -> Void) -> Void
+    _execute: @escaping (@escaping @Sendable () -> Void) -> Void
   ) {
     self._execute = _execute
   }
 
-  public func execute(_ workItem: @escaping () -> Void) {
+  public func execute(_ workItem: @escaping @Sendable () -> Void) {
     _execute(workItem)
   }
 
 }
 
-public final class MainActorTargetQueue {
+public protocol MainActorTargetQueueType {
+  func execute(_ workItem: @escaping @MainActor () -> Void)
+}
 
-  public static let sharedImmediacy = MainActorTargetQueue(mode: .immediacy)
+extension MainActorTargetQueueType where Self == ImmediateMainActorTargetQueue {
+  public static func mainIsolated() -> Self {
+    .init()
+  }
+  
+  public static var main: Self {
+    .shared
+  }
+  
+}
 
-  public enum Mode {
-    /// Always execuses work item with dispatch(hop) to main queue.
-    case alwaysDispatch
+extension MainActorTargetQueueType where Self == HoppingMainActorTargetQueue {
+  
+  /// It dispatches to main-queue asynchronously always.
+  public static var asyncMain: Self {
+    return .init()
+  }
+}
 
-    /// Execuses work item immediately if receives it on main context and main queue is empty.
-    case immediacy
+/// always dispatches to main-queue asynchronously
+public struct HoppingMainActorTargetQueue: MainActorTargetQueueType {
+
+  init() {
   }
 
-  public let mode: Mode
-  private let numberEnqueued = ManagedAtomic<UInt64>.init(0)
-
-  init(mode: Mode) {
-    self.mode = mode
-  }
-
-  public func execute(_ workItem: @escaping () -> Void) {
-
-    switch mode {
-    case .alwaysDispatch:
-
-      DispatchQueue.main.async {
-        workItem()
-      }
-
-    case .immediacy:
-
-      let previousNumberEnqueued = numberEnqueued.loadThenWrappingIncrement(ordering: .sequentiallyConsistent)
-
-      if Thread.isMainThread && previousNumberEnqueued == 0 {
-        workItem()
-        numberEnqueued.wrappingDecrement(ordering: .sequentiallyConsistent)
-      } else {
-        DispatchQueue.main.async {
-          workItem()
-          self.numberEnqueued.wrappingDecrement(ordering: .sequentiallyConsistent)
-        }
-      }
-
+  public func execute(_ workItem: @escaping @MainActor () -> Void) {
+ 
+    DispatchQueue.main.async {
+      workItem()
     }
   }
 
+}
+
+/// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously.
+public struct ImmediateMainActorTargetQueue: Sendable, MainActorTargetQueueType {
+  
+  public static let shared = Self()
+
+  private let numberEnqueued = ManagedAtomic<UInt64>.init(0)
+  
+  init() {
+
+  }
+  
+  public func execute(_ workItem: @escaping @MainActor () -> Void) {
+          
+    let previousNumberEnqueued = numberEnqueued.loadThenWrappingIncrement(ordering: .sequentiallyConsistent)
+    
+    if Thread.isMainThread && previousNumberEnqueued == 0 {
+      MainActor.assumeIsolated {
+        workItem()
+      }
+      numberEnqueued.wrappingDecrement(ordering: .sequentiallyConsistent)
+    } else {
+      DispatchQueue.main.async {
+        workItem()
+        self.numberEnqueued.wrappingDecrement(ordering: .sequentiallyConsistent)
+      }
+    }
+    
+  }
+  
 }
 
 private enum StaticMember {
@@ -154,42 +176,42 @@ extension TargetQueueType where Self == AnyTargetQueue {
 
   /// Enqueue first item on current-thread(synchronously).
   /// From then, using specified queue.
-  public static func startsFromCurrentThread(andUse queue: MainActorTargetQueue) -> AnyTargetQueue {
+  public static func startsFromCurrentThread(andUse queue: some MainActorTargetQueueType) -> AnyTargetQueue {
     return startsFromCurrentThread(andUse: Queues.MainActor(queue))
   }
 
 }
 
-extension MainActorTargetQueue {
+extension HoppingMainActorTargetQueue {
 
   /// It dispatches to main-queue asynchronously always.
-  public static var asyncMain: MainActorTargetQueue {
-    MainActorTargetQueue.init(mode: .alwaysDispatch)
+  public static var asyncMain: HoppingMainActorTargetQueue {
+    return .init()
   }
 
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
-  public static var main: MainActorTargetQueue {
-    MainActorTargetQueue.sharedImmediacy
+  public static var main: ImmediateMainActorTargetQueue {
+    return .shared
   }
 
   /// It dispatches to main-queue as possible as synchronously. Otherwise, it dispatches asynchronously from other background-thread.
   /// This create isolated queue against using `.main`.
-  public static func mainIsolated() -> MainActorTargetQueue {
-    return .init(mode: .immediacy)
+  public static func mainIsolated() -> ImmediateMainActorTargetQueue {
+    return .init()
   }
 }
 
 public enum Queues {
 
-  struct MainActor: TargetQueueType {
+  struct MainActor<Underlying: MainActorTargetQueueType>: TargetQueueType {
 
-    let underlying: MainActorTargetQueue
+    let underlying: Underlying
 
-    init(_ underlying: MainActorTargetQueue) {
+    init(_ underlying: Underlying) {
       self.underlying = underlying
     }
 
-    public func execute(_ workItem: @escaping () -> Void) {
+    public func execute(_ workItem: sending @escaping @Sendable () -> Void) {
       underlying.execute(workItem)
     }
 
@@ -197,7 +219,7 @@ public enum Queues {
 
   public struct Passthrough: TargetQueueType {
 
-    public func execute(_ workItem: @escaping () -> Void) {
+    public func execute(_ workItem: sending @escaping @Sendable () -> Void) {
       workItem()
     }
 
@@ -207,27 +229,24 @@ public enum Queues {
 
     private let executor: BackgroundActor = .init()
 
-    public func execute(_ workItem: @escaping () -> Void) {
-      Task {
-        await executor.perform {
-          workItem()
-        }
+    public func execute(_ workItem: sending @escaping @Sendable () -> Void) {
+      Task { [executor, workItem] in
+        await executor.perform(workItem)
       }
     }
-
+    
     private actor BackgroundActor: Actor {
 
       init() {
 
       }
-
-      func perform<R>(_ operation: () throws -> R) rethrows -> R {
+          
+      func perform<R>(_ operation: sending @Sendable () throws -> R) rethrows -> R {
         try operation()
       }
-
+          
     }
 
   }
 
 }
-

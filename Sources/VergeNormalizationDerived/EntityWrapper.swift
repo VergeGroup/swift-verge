@@ -1,12 +1,12 @@
-import VergeNormalization
+import Normalization
 
 /// A value that wraps an entity and results of fetching.
 public struct EntityWrapper<Entity: EntityType>: Sendable {
 
   public private(set) var wrapped: Entity?
-  public let id: Entity.EntityID
+  public let id: Entity.TypedID
 
-  public init(id: Entity.EntityID, entity: Entity?) {
+  public init(id: Entity.TypedID, entity: Entity?) {
     self.id = id
     self.wrapped = entity
   }

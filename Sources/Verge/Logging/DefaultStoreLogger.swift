@@ -23,7 +23,7 @@ import Foundation
 
 import os
 
-public struct CommitLog: Encodable {
+public struct CommitLog: Encodable, Sendable {
 
   public let type: String = "commit"
   public let tookMilliseconds: Double
@@ -37,7 +37,7 @@ public struct CommitLog: Encodable {
   }
 }
 
-public struct ActivityLog: Encodable {
+public struct ActivityLog: Encodable, Sendable {
   
   public let type: String = "activity"
   public let trace: ActivityTrace
@@ -49,7 +49,7 @@ public struct ActivityLog: Encodable {
   }
 }
 
-public struct DidCreateDispatcherLog: Encodable {
+public struct DidCreateDispatcherLog: Encodable, Sendable {
   
   public let type: String = "did_create_dispatcher"
   public let store: String
@@ -62,7 +62,7 @@ public struct DidCreateDispatcherLog: Encodable {
   
 }
 
-public struct DidDestroyDispatcherLog: Encodable {
+public struct DidDestroyDispatcherLog: Encodable, Sendable {
   
   public let type: String = "did_destroy_dispatcher"
   public let store: String
@@ -79,18 +79,18 @@ public struct DidDestroyDispatcherLog: Encodable {
 /// It uses `os_log` to print inside.
 /// There are OSLog object each type of action.
 /// You can turn off logging each OSLog object.
-public final class DefaultStoreLogger: StoreLogger {
+public struct DefaultStoreLogger: StoreLogger {
   
-  public static let shared = DefaultStoreLogger()
+  public static var `default`: Self { 
+    .init()
+  }
   
   public let commitLog = OSLog(subsystem: "VergeStore", category: "Commit")
   public let activityLog = OSLog(subsystem: "VergeStore", category: "Activity")
 
   public let dispatcherCreationLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Creation")
   public let dispatcherDestructionLog = OSLog(subsystem: "VergeStore", category: "Dispatcher_Destruction")
-  
-  let queue = DispatchQueue(label: "logger")
-  
+    
   public init() {
     
   }
@@ -107,30 +107,30 @@ public final class DefaultStoreLogger: StoreLogger {
   }()
     
   public func didCommit(log: CommitLog, sender: AnyObject) {
-    queue.async {
+    Task { [commitLog]in
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
-      os_log("%@", log: self.commitLog, type: .default, string)
+      os_log("%@", log: commitLog, type: .default, string)
     }
   }
   
   public func didSendActivity(log: ActivityLog, sender: AnyObject) {
-    queue.async {
+    Task { [activityLog] in
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
-      os_log("%@", log: self.activityLog, type: .default, string)
+      os_log("%@", log: activityLog, type: .default, string)
     }
   }
    
-  public func didCreateDispatcher(log: DidCreateDispatcherLog, sender: AnyObject) {
-    queue.async {
+  public func didCreateDispatcher(log: DidCreateDispatcherLog, sender: AnyObject) {    
+    Task { [dispatcherCreationLog] in
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
-      os_log("%@", log: self.dispatcherCreationLog, type: .default, string)
+      os_log("%@", log: dispatcherCreationLog, type: .default, string)
     }
   }
   
   public func didDestroyDispatcher(log: DidDestroyDispatcherLog, sender: AnyObject) {
-    queue.async {
+    Task { [dispatcherDestructionLog] in
       let string = String(data: try! DefaultStoreLogger.encoder.encode(log), encoding: .utf8)!
-      os_log("%@", log: self.dispatcherDestructionLog, type: .default, string)
+      os_log("%@", log: dispatcherDestructionLog, type: .default, string)
     }
   }
     

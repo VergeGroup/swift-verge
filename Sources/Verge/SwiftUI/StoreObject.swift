@@ -10,6 +10,7 @@ import SwiftUI
  - Warning: This property wrapper should only be used for store objects that are expected to have a lifetime matching the lifetime of the view.
  */
 @available(iOS 14, watchOS 7.0, tvOS 14, *)
+@MainActor
 @propertyWrapper
 public struct StoreObject<Store: StoreDriverType>: DynamicProperty {
 

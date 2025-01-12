@@ -34,7 +34,7 @@ extension StoreDriverType {
    */
   public func derived<Pipeline: PipelineType>(
     _ pipeline: Pipeline,
-    queue: MainActorTargetQueue
+    queue: some MainActorTargetQueueType
   ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<TargetStore.State> {
     self.derived(pipeline, queue: Queues.MainActor(queue))
   }

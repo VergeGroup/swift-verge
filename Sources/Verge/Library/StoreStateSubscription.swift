@@ -167,5 +167,6 @@ public final class StoreStateSubscription: Hashable, Cancellable, @unchecked Sen
 
   deinit {
     cancel()
+    _ = source.dispose()
   }
 }
