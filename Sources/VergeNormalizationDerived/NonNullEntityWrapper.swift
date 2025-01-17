@@ -1,11 +1,17 @@
 import Normalization
 
+public protocol NonNullEntityWrapperType {
+  associatedtype Entity: EntityType  
+  
+  var id: Entity.TypedID { get }
+}
+
 /// A value that wraps an entity and results of fetching.
 @dynamicMemberLookup
-public struct NonNullEntityWrapper<Entity: EntityType> {
+public struct NonNullEntityWrapper<Entity: EntityType>: Sendable, NonNullEntityWrapperType {
 
   /// An entity value
-  public private(set) var wrapped: Entity
+  public let wrapped: Entity
 
   /// An identifier
   public let id: Entity.TypedID

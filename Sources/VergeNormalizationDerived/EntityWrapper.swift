@@ -1,9 +1,16 @@
 import Normalization
 
-/// A value that wraps an entity and results of fetching.
-public struct EntityWrapper<Entity: EntityType>: Sendable {
+public protocol EntityWrapperType {
+  associatedtype Entity: EntityType
+  
+  var id: Entity.TypedID { get }
+}
 
-  public private(set) var wrapped: Entity?
+/// A value that wraps an entity and results of fetching.
+public struct EntityWrapper<Entity: EntityType>: Sendable, EntityWrapperType {
+
+  public let wrapped: Entity?
+  
   public let id: Entity.TypedID
 
   public init(id: Entity.TypedID, entity: Entity?) {
