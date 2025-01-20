@@ -97,10 +97,6 @@ let package = Package(
       ]
     ),
     .testTarget(
-      name: "VergeTinyTests",
-      dependencies: ["VergeTiny"]
-    ),
-    .testTarget(
       name: "VergeMacrosTests",
       dependencies: [
         "VergeMacrosPlugin",
