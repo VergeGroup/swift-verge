@@ -12,7 +12,6 @@ let package = Package(
   ],
   products: [
     .library(name: "Verge", targets: ["Verge"]),
-    .library(name: "VergeTiny", targets: ["VergeTiny"]),
     .library(name: "VergeNormalizationDerived", targets: ["VergeNormalizationDerived"]),
     .library(name: "VergeRx", targets: ["VergeRx"]),
     .library(name: "VergeClassic", targets: ["VergeClassic"]),
@@ -46,7 +45,6 @@ let package = Package(
     // macro exports
     .target(name: "VergeMacros", dependencies: ["VergeMacrosPlugin"]),
 
-    .target(name: "VergeTiny", dependencies: []),
     .target(
       name: "Verge",
       dependencies: [
