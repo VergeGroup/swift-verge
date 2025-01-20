@@ -6,56 +6,79 @@
 //
 
 import SwiftUI
-import SwiftData
+import Verge
+
+struct State: StateType {
+  var count1: Int = 0
+  var count2: Int = 0
+}
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+  
+  let store: Store<State, Never>
 
+  var body: some View {
+    Button("Up 1") {
+      store.commit {
+        $0.count1 += 1
+      }
+    }
+    Button("Up 2") {
+      store.commit {
+        $0.count2 += 1
+      }
+    }
+    StoreReader(store) { state in      
+      Cell(name: "1", text: state.count1.description, onTap: {
+        store.commit {
+          $0.count1 += 1
+        }
+      })
+      Cell(name: "2", text: state.count2.description, onTap: {
+        store.commit {
+          $0.count2 += 1
+        }
+      })
+    }
+  }
+  
+  struct Cell: View {
+    
+    let name: String
+    let text: String
+    
+    let onTap: () -> Void
+    
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
+      let _ = Self._printChanges()
+      let _ = print("Rendering Cell on \(name)")  
+      HStack {
+        CellContent(name: name, text: text)
+        Button("Up!") {
+          onTap()
         }
+      }
     }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
+    
+  }
+  
+  struct CellContent: View {
+    
+    let name: String
+    let text: String
+    
+    var body: some View {
+      let _ = Self._printChanges()
+      let _ = print("Rendering CellContent on \(name)")
+      HStack {
+        Text(name)
+        Text(text)
+      }
     }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
-        }
-    }
+    
+  }
 }
 
 #Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+  ContentView(store: .init(initialState: .init()))
 }
