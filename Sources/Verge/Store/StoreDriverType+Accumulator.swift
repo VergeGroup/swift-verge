@@ -26,7 +26,7 @@ extension StoreDriverType {
 
       // sets the previous value
       if let previous = previousBox.wrappedValue {
-        group = group.receive(other: previous)
+        group = group.receive(previous: previous)
       }
 
       // runs sink
@@ -74,7 +74,7 @@ extension StoreDriverType {
 
         // sets the previous value
         if let previous = previousBox.value.wrappedValue {
-          group = group.receive(other: previous)
+          group = group.receive(previous: previous)
         }
 
         // runs sink
@@ -91,8 +91,8 @@ extension StoreDriverType {
 
 public protocol AccumulationSink<Source> {
   associatedtype Source
-  consuming func receive(source: borrowing ReadonlyBox<Source>) -> Self
-  consuming func receive(other: consuming Self) -> Self
+  consuming func receive(source: ReadonlyBox<Source>) -> Self
+  consuming func receive(previous: consuming Self) -> Self
   consuming func consume() -> Self
 }
 
@@ -108,12 +108,12 @@ public struct AccumulationBuilder<Source>: ~Copyable {
     self.previousLoader = previousLoader
   }
 
-  public func ifChanged<U: Equatable>(_ selector: @escaping (borrowing Source) -> U) -> AccumulationSinkIfChanged<Source, U> {
+  public func ifChanged<Value: Equatable>(_ selector: @escaping (borrowing Source) -> Value) -> AccumulationSinkIfChanged<Source, Value> {
     .init(
       selector: selector
     )
   }
-
+  
 }
 
 public struct AccumulationSinkIfChanged<Source, Target: Equatable>: AccumulationSink {
@@ -122,11 +122,13 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
 
   private var latestValue: Target?
   private var previousValue: Target?
+  private var source: ReadonlyBox<Source>?
 
-  private var counter: Int = 0
-  private var countToEmit: Int = 0
+  private var counter: UInt64 = 0
+  private var countToEmit: UInt64 = 0
 
-  private var handler: ((consuming Target) -> Void)?
+  private var handlerWithSelectedValue: ((consuming Target) -> Void)?
+  private var handlerWithSource: ((Source) -> Void)?
 
   init(
     selector: @escaping (borrowing Source) -> Target
@@ -134,7 +136,7 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
     self.selector = selector
   }
 
-  public consuming func dropFirst(_ k: Int = 1) -> Self {
+  public consuming func dropFirst(_ k: UInt64 = 1) -> Self {
     countToEmit = k
     return self
   }
@@ -143,39 +145,43 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
    the closure will be released after consumed.
    */
   public consuming func `do`(@_inheritActorContext @_implicitSelfCapture _ perform: @escaping (consuming Target) -> Void) -> Self {
-    self.handler = perform
+    self.handlerWithSelectedValue = perform
+    return self
+  }
+  
+  public consuming func `doWithSource`(@_inheritActorContext @_implicitSelfCapture _ perform: @escaping (Source) -> Void) -> Self {
+    self.handlerWithSource = perform
     return self
   }
 
-  public consuming func receive(source: borrowing ReadonlyBox<Source>) -> Self {
+  public consuming func receive(source: ReadonlyBox<Source>) -> Self {
 
     self.latestValue = selector(source.value)
+    self.source = source
 
     return self
   }
 
-  public consuming func receive(other: consuming AccumulationSinkIfChanged<Source, Target>) -> Self {
+  public consuming func receive(previous: consuming Self) -> Self {
 
-    self.previousValue = other.latestValue
-    self.counter = other.counter
+    self.previousValue = previous.latestValue
+    self.counter = previous.counter
 
     return self
   }
 
   public consuming func consume() -> Self {
 
-    guard let handler = handler else {
-      return self
-    }
-
     if latestValue != previousValue {
-      if counter >= countToEmit {
-        handler(latestValue!)
+      if counter >= countToEmit {        
+        handlerWithSelectedValue?(latestValue!)
+        handlerWithSource?(source!.value)
       }
-      counter += 1
+      counter &+= 1
     }
 
-    self.handler = nil
+    self.handlerWithSource = nil
+    self.handlerWithSelectedValue = nil
 
     return self
 
@@ -213,8 +219,8 @@ public struct _AccumulationSinkGroup<Source, Component>: AccumulationSink {
     return self
   }
 
-  public consuming func receive(other: _AccumulationSinkGroup<Source, Component>) -> Self {
-    component = _receiveOther(other.component, component)
+  public consuming func receive(previous: Self) -> Self {
+    component = _receiveOther(previous.component, component)
     return self
   }
 
@@ -247,11 +253,11 @@ public struct _AccumulationSinkCondition<Source, TrueComponent: AccumulationSink
     return self
   }
 
-  public consuming func receive(other: _AccumulationSinkCondition<Source, TrueComponent, FalseComponent>) -> Self {
-    if let trueComponent = trueComponent, let otherTrueComponent = other.trueComponent {
-      self.trueComponent = trueComponent.receive(other: otherTrueComponent)
-    } else if let falseComponent = falseComponent, let otherFalseComponent = other.falseComponent {
-      self.falseComponent = falseComponent.receive(other: otherFalseComponent)
+  public consuming func receive(previous: Self) -> Self {
+    if let trueComponent = trueComponent, let previousTrueComponent = previous.trueComponent {
+      self.trueComponent = trueComponent.receive(previous: previousTrueComponent)
+    } else if let falseComponent = falseComponent, let previousFalseComponent = previous.falseComponent {
+      self.falseComponent = falseComponent.receive(previous: previousFalseComponent)
     }
     return self
   }
@@ -284,9 +290,9 @@ struct _AccumulationSinkOptional<Source, Component: AccumulationSink>: Accumulat
     return self
   }
 
-  consuming func receive(other: _AccumulationSinkOptional<Source, Component>) -> Self {
-    if let component = component, let otherComponent = other.component {
-      self.component = component.receive(other: otherComponent)
+  consuming func receive(previous: Self) -> Self {
+    if let component = component, let previousComponent = previous.component {
+      self.component = component.receive(previous: previousComponent)
     }
     return self
   }
@@ -349,11 +355,11 @@ public struct AccumulationSinkComponentBuilder<Source> {
       },
       receiveOther: { other, current in
         // Waiting https://www.swift.org/blog/pack-iteration/
-        func iterate<T: AccumulationSink>(other: consuming T, current: consuming T) -> T {
-          return current.receive(other: other)
+        func iterate<T: AccumulationSink>(previous: consuming T, current: consuming T) -> T {
+          return current.receive(previous: previous)
         }
 
-        let modified = (repeat iterate(other: each other, current: each current))
+        let modified = (repeat iterate(previous: each other, current: each current))
 
         return modified
       },
