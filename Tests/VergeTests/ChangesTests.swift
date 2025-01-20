@@ -10,7 +10,7 @@ final class ChangesTests: XCTestCase {
 
     measure {
       for _ in 0..<1000 {
-        changes.ifChanged(\.name) { _ in
+        changes.ifChanged(\.name).do { _ in
 
         }
       }
