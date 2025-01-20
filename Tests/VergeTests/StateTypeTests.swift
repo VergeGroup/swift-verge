@@ -40,7 +40,7 @@ final class StateTypeTests: XCTestCase {
       current: Changes<StateTypeTests.State>
     ) {
 
-      current.ifChanged(\.count) { _ in
+      current.ifChanged(\.count).do { _ in
         modifying.count2 += 1
       }
       

@@ -415,29 +415,14 @@ extension Changes {
     try takeIfChanged(compose, .equality())
   }
 
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   */
-  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
-  public func ifChanged<T, Result>(
-    _ selector: ChangesKeyPath<T>,
-    _ comparer: some TypedComparator<T>,
-    _ perform: (T) throws -> Result
-  ) rethrows -> Result? {
-    guard let value = takeIfChanged({ $0[keyPath: selector] }, comparer) else {
-      return nil
-    }
-    return try perform(value)
-  }
-
   public func ifChanged<Composed: Equatable>(
     _ compose: (Value) -> Composed
-  ) -> IfChangedBox<Composed> {
+  ) -> IfChangedBox<Value, Composed> {
     guard let result = takeIfChanged(compose) else {
       return .init()
     }
 
-    return .init(value: consume result)
+    return .init(value: consume result, source: innerBox)
   }
 
   /**
@@ -451,23 +436,23 @@ extension Changes {
    */
   public borrowing func ifChanged<each Element: Equatable>(
     _ compose: (borrowing Value) -> (repeat each Element)
-  ) -> IfChangedBox<(repeat each Element)> {
+  ) -> IfChangedBox<Value, (repeat each Element)> {
     guard let result = _takeIfChanged_packed(compose) else {
       return .init()
     }
 
-    return .init(value: (repeat each result))
+    return .init(value: (repeat each result), source: innerBox)
   }
 
   public borrowing func ifChanged<each Element>(
     _ compose: (borrowing Value) -> (repeat each Element),
     comparator: some TypedComparator<(repeat each Element)>
-  ) -> IfChangedBox<(repeat each Element)> {
+  ) -> IfChangedBox<Value, (repeat each Element)> {
     guard let result = _takeIfChanged_packed_nonEquatable(compose, comparator: comparator) else {
       return .init()
     }
 
-    return .init(value: (repeat each result))
+    return .init(value: (repeat each result), source: innerBox)
   }
 
   /**
@@ -475,7 +460,7 @@ extension Changes {
    */
   public func ifChanged<T: Equatable>(
     _ keyPath: KeyPath<Value, T>
-  ) -> IfChangedBox<T> {
+  ) -> IfChangedBox<Value, T> {
     ifChanged({ $0[keyPath: keyPath] })
   }
 
@@ -484,127 +469,10 @@ extension Changes {
    */
   public func ifChanged<each T: Equatable>(
     _ keyPaths: repeat KeyPath<Value, each T>
-  ) -> IfChangedBox<(repeat each T)> {
+  ) -> IfChangedBox<Value, (repeat each T)> {
     ifChanged({ (repeat $0[keyPath: each keyPaths]) })
   }
-
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   */
-  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
-  public func ifChanged<Composed: Equatable, Result>(
-    _ compose: (Value) -> Composed,
-    _ perform: (Composed) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(compose, .equality(), perform)
-  }
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   */
-  @inline(__always)
-  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
-  public func ifChanged<T: Equatable, Result>(
-    _ keyPath: ChangesKeyPath<T>,
-    _ perform: (T) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(keyPath, .equality(), perform)
-  }
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   Selected multiple value would be packed as tuple.
-   */
-  @inline(__always)
-  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
-  public func ifChanged<T0: Equatable, T1: Equatable, Result>(
-    _ keyPath0: ChangesKeyPath<T0>,
-    _ keyPath1: ChangesKeyPath<T1>,
-    _ perform: ((T0, T1)) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged({ ($0[keyPath: keyPath0], $0[keyPath: keyPath1]) as (T0, T1) }).do(perform)
-  }
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   Selected multiple value would be packed as tuple.
-   */
-  @inline(__always)
-  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
-  public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, Result>(
-    _ keyPath0: ChangesKeyPath<T0>,
-    _ keyPath1: ChangesKeyPath<T1>,
-    _ keyPath2: ChangesKeyPath<T2>,
-    _ perform: ((T0, T1, T2)) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(
-      { ($0[keyPath: keyPath0], $0[keyPath: keyPath1], $0[keyPath: keyPath2]) as (T0, T1, T2) }
-    )
-    .do(perform)
-  }
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   Selected multiple value would be packed as tuple.
-   */
-  @inline(__always)
-  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
-  public func ifChanged<T0: Equatable, T1: Equatable, T2: Equatable, T3: Equatable, Result>(
-    _ keyPath0: ChangesKeyPath<T0>,
-    _ keyPath1: ChangesKeyPath<T1>,
-    _ keyPath2: ChangesKeyPath<T2>,
-    _ keyPath3: ChangesKeyPath<T3>,
-    _ perform: ((T0, T1, T2, T3)) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(
-      {
-        (
-          $0[keyPath: keyPath0],
-          $0[keyPath: keyPath1],
-          $0[keyPath: keyPath2],
-          $0[keyPath: keyPath3]
-        ) as (T0, T1, T2, T3)
-      }
-    )
-    .do(perform)
-  }
-
-  /**
-   Performs a closure if the selected value changed from the previous one.
-   Selected multiple value would be packed as tuple.
-   */
-  @inline(__always)
-  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
-  public func ifChanged<
-    T0: Equatable,
-    T1: Equatable,
-    T2: Equatable,
-    T3: Equatable,
-    T4: Equatable,
-    Result
-  >(
-    _ keyPath0: ChangesKeyPath<T0>,
-    _ keyPath1: ChangesKeyPath<T1>,
-    _ keyPath2: ChangesKeyPath<T2>,
-    _ keyPath3: ChangesKeyPath<T3>,
-    _ keyPath4: ChangesKeyPath<T4>,
-    _ perform: ((T0, T1, T2, T3, T4)) throws -> Result
-  ) rethrows -> Result? {
-    try ifChanged(
-      {
-        (
-          $0[keyPath: keyPath0],
-          $0[keyPath: keyPath1],
-          $0[keyPath: keyPath2],
-          $0[keyPath: keyPath3],
-          $0[keyPath: keyPath4]
-        ) as (T0, T1, T2, T3, T4)
-
-      }
-    )
-    .do(perform)
-  }
+ 
 }
 
 // MARK: - Has changes
@@ -689,27 +557,27 @@ extension Changes where Value: Equatable {
     previousPrimitive != primitive
   }
 
-  @available(*, deprecated, message: "Use another function that returns IfChangedBox")
-  public func ifChanged(_ perform: (Value) throws -> Void) rethrows {
-    try ifChanged(\.self, perform)
-  }
-
-  public func ifChanged() -> IfChangedBox<Value> {
+  public func ifChanged() -> IfChangedBox<Value, Value> {
     ifChanged({ $0 })
   }
 
 }
 
-public struct IfChangedBox<T>: ~Copyable {
+public struct IfChangedBox<Source, T>: ~Copyable {
 
   public let value: T?
+  
+  @usableFromInline
+  let source: ReadonlyBox<Source>?
 
-  init(value: consuming T) {
+  init(value: consuming T, source: ReadonlyBox<Source>) {
     self.value = consume value
+    self.source = source
   }
 
   init() {
-    self.value = nil
+    self.value = nil  
+    self.source = nil
   }
 
   @discardableResult
@@ -717,6 +585,15 @@ public struct IfChangedBox<T>: ~Copyable {
   public consuming func `do`<Return>(_ perform: (consuming T) throws -> Return) rethrows -> Return? {
     if let value {
       return try perform(consume value)
+    }
+    return nil
+  }
+  
+  @discardableResult
+  @inlinable
+  public consuming func doWithSource<Return>(_ perform: (consuming ReadonlyBox<Source>) throws -> Return) rethrows -> Return? {
+    if let source {
+      return try perform(source)
     }
     return nil
   }
