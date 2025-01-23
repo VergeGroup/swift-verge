@@ -82,3 +82,46 @@ struct ContentView: View {
 #Preview {
   ContentView(store: .init(initialState: .init()))
 }
+
+#Preview {
+  
+  struct _View: View {
+    
+    let store: Store<State, Never>
+    
+    var body: some View {
+      VStack {
+        Button("Up 1") {
+          store.commit {
+            $0.count1 += 1
+          }
+        }
+        Button("Up 2") {
+          store.commit {
+            $0.count2 += 1
+          }
+        }        
+      }      
+      .onAppear {
+        
+        store.tracking { state in
+          state.count1            
+        } onChange: { 
+          print("Changed count1")
+          print(store.state.count1)
+        }
+        
+        store.tracking { state in
+          state.count2          
+        } onChange: { 
+          print("Changed count2")
+          print(store.state.count2)
+        }                   
+        
+      }
+    }
+  }
+  
+  return _View(store: .init(initialState: .init()))
+  
+}
