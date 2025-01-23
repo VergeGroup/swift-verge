@@ -17,7 +17,10 @@ public struct StoreReader<State: Equatable, Activity: Sendable, Content: View>: 
   private let store: Store<State, Activity>
   
   @SwiftUI.State private var version: UInt64 = 0
-  
+
+  private let file: StaticString
+  private let line: UInt
+
   private let content: @MainActor (inout StoreReaderComponents<State>.StateProxy) -> Content
   
   /// Initialize from `Store`
@@ -26,6 +29,8 @@ public struct StoreReader<State: Equatable, Activity: Sendable, Content: View>: 
   ///   - store:
   ///   - content:
   public init<Driver: StoreDriverType>(
+    file: StaticString = #file,
+    line: UInt = #line,
     _ store: Driver,
     @ViewBuilder content: @escaping @MainActor (inout StoreReaderComponents<State>.StateProxy) -> Content
   ) where State == Driver.TargetStore.State, Activity == Driver.TargetStore.Activity {
@@ -33,6 +38,8 @@ public struct StoreReader<State: Equatable, Activity: Sendable, Content: View>: 
     let store = store.store.asStore()
     
     self.init(
+      file: file,
+      line: line,
       store: store,
       content: content
     )
@@ -40,9 +47,13 @@ public struct StoreReader<State: Equatable, Activity: Sendable, Content: View>: 
   }
   
   private init(
+    file: StaticString,
+    line: UInt,
     store: Store<State, Activity>,
     content: @escaping @MainActor (inout StoreReaderComponents<State>.StateProxy) -> Content
   ) {
+    self.file = file
+    self.line = line
     self.store = store
     self.content = content
   }
@@ -54,13 +65,9 @@ public struct StoreReader<State: Equatable, Activity: Sendable, Content: View>: 
     
     let _content = store.tracking { state -> Content in
       content(&state)
-    } onChange: { 
-      if Thread.isMainThread {
+    } onChange: {
+      ImmediateMainActorTargetQueue.main.execute {
         version &+= 1
-      } else {
-        Task { @MainActor in
-          version &+= 1
-        }
       }
     }
     
@@ -74,7 +81,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
   // Proxy
   @dynamicMemberLookup
   public struct StateProxy: ~Copyable {
-    
+
     typealias Detectors = [PartialKeyPath<StateType> : (Changes<StateType>) -> Bool]
     
     private let wrapped: ReadonlyBox<StateType>
@@ -100,7 +107,9 @@ public enum StoreReaderComponents<StateType: Equatable> {
     /**
      ✅ Equatable version
      */
-    public subscript<T>(dynamicMember keyPath: KeyPath<StateType, T>) -> T where T : Equatable {
+    public subscript<T>(
+      dynamicMember keyPath: KeyPath<StateType, T>
+    ) -> T where T : Equatable {
       mutating get {
         
         if detectors[keyPath as PartialKeyPath<StateType>] == nil {
@@ -109,7 +118,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
             
             switch changes.modification {
             case .determinate(let keyPaths):
-              
+
               /// modified but maybe value not changed.
               let mayHasChanges = keyPaths.contains(keyPath)
               

@@ -248,6 +248,7 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
       swap(&registrations.0, &registrations.1)
 
       for registration in registrations.1 {
+
         if registration.containsUpdates(state: newState) {
           registration.onChange()          
         } else {
@@ -284,7 +285,10 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
   }
 
   public func tracking<T>(
-    _ apply: (inout StoreReaderComponents<State>.StateProxy) -> T, onChange: @escaping () -> Void
+    file: StaticString = #file,
+    line: UInt = #line,
+    _ apply: (inout StoreReaderComponents<State>.StateProxy) -> T,
+    onChange: @escaping @Sendable () -> Void
   ) -> T {
 
     let currentState = state.primitiveBox
@@ -293,7 +297,14 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
     let result = apply(&tracker)
 
     registrations.modify {
-      $0.0.append(.init(detectors: tracker.detectors, onChange: onChange))
+      $0.0.append(
+        .init(
+          file: file,
+          line: line,
+          detectors: tracker.detectors,
+          onChange: onChange
+        )
+      )
     }
     
     return result
@@ -302,13 +313,19 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
 
   private struct TrackingRegistration {
 
+    let file: StaticString
+    let line: UInt
     let detectors: [PartialKeyPath<State>: (Changes<State>) -> Bool]
-    let onChange: () -> Void
+    let onChange: @Sendable () -> Void
 
     init(
+      file: StaticString,
+      line: UInt,
       detectors: [PartialKeyPath<State>: (Changes<State>) -> Bool],
-      onChange: @escaping () -> Void
+      onChange: @escaping @Sendable () -> Void
     ) {
+      self.file = file
+      self.line = line
       self.detectors = detectors
       self.onChange = onChange
     }
