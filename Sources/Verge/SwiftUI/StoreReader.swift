@@ -86,11 +86,11 @@ public enum StoreReaderComponents<StateType: Equatable> {
   // Proxy
   @MainActor
   @dynamicMemberLookup
-  public struct StateProxy {
+  public struct StateProxy: ~Copyable {
     
     typealias Detectors = [PartialKeyPath<StateType> : (Changes<StateType>) -> Bool]
     
-    private let wrapped: StateType
+    private let wrapped: ReadonlyBox<StateType>
     
     /// wrapped value itself
     public var primitive: StateType {
@@ -102,7 +102,10 @@ public enum StoreReaderComponents<StateType: Equatable> {
     private(set) var detectors: Detectors = [:]
     private weak var source: (any StoreDriverType<StateType>)?
     
-    init(wrapped: StateType, source: (any StoreDriverType<StateType>)?) {
+    init(
+      wrapped: ReadonlyBox<StateType>,
+      source: (any StoreDriverType<StateType>)?
+    ) {
       self.wrapped = wrapped
       self.source = source
     }
@@ -140,7 +143,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
           detectors[keyPath] = maybeChanged
         }
         
-        return wrapped[keyPath: keyPath]
+        return wrapped[keyPath: \.value][keyPath: keyPath]
       }
     }
 
@@ -161,7 +164,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
           detectors[keyPath] = maybeChanged
         }
         
-        return wrapped[keyPath: keyPath]
+        return wrapped[keyPath: \.value][keyPath: keyPath]
       }
             
     }
@@ -279,7 +282,7 @@ public enum StoreReaderComponents<StateType: Equatable> {
     -> Content
     {
 
-      var tracker = StateProxy(wrapped: currentValue.primitive, source: source)
+      var tracker = StateProxy(wrapped: currentValue.primitiveBox, source: source)
       let content = make(&tracker)
             
       detectors = tracker.detectors
