@@ -63,13 +63,11 @@ public struct StoreReader<State: Equatable, Activity: Sendable, Content: View>: 
     // trigger to subscribe
     let _ = $version.wrappedValue
     
-    let _content = store.tracking { state -> Content in
-      content(&state)
-    } onChange: {
+    let _content = store.tracking(content, onChange: {    
       ImmediateMainActorTargetQueue.main.execute {
         version &+= 1
       }
-    }
+    })
     
     _content
   }
