@@ -256,7 +256,7 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
         }    
       }
       
-      registrations.1.removeAll()
+      registrations.1.removeAll(keepingCapacity: true)
     }
     
   }
