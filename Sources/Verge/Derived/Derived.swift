@@ -156,6 +156,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   }
 
   public final override func stateDidUpdate(newState: Changes<Value>) {
+    super.stateDidUpdate(newState: newState)
     // projects this update into upstream state
     if let _set, newState._transaction.isDerivedFromUpstream == false {
       _set(newState.primitive)
