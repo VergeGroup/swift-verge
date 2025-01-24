@@ -284,6 +284,11 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
     }
   }
 
+  /**
+   onChange closure will run if the tracking properties are changed.
+   If how properties are changed is not determined, it will run always.   
+   The tracking properties will be determined from apply closure reading properties over dynamicMemberLookup.
+   */
   public func tracking<T>(
     file: StaticString = #file,
     line: UInt = #line,
