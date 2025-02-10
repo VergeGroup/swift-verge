@@ -21,6 +21,7 @@
 
 import Foundation
 @_spi(Internal) import TypedComparator
+import StateStruct
 
 #if !COCOAPODS
 #endif
@@ -42,7 +43,7 @@ public protocol ChangesType<Value>: AnyChangesType {
 
   var previous: Self? { get }
   
-  var modification: InoutRef<Value>.Modification? { get }
+  var modification: PropertyNode InoutRef<Value>.Modification? { get }
 
   func asChanges() -> Changes<Value>
 }
