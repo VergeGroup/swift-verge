@@ -26,6 +26,7 @@ let package = Package(
     .package(url: "https://github.com/VergeGroup/TypedIdentifier", from: "2.0.2"),
     .package(url: "https://github.com/VergeGroup/TypedComparator", from: "1.0.0"),
     .package(url: "https://github.com/VergeGroup/Normalization", from: "1.0.0"),
+    .package(url: "https://github.com/VergeGroup/swift-macro-state-struct", from: "1.0.0-beta.1"),
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.10.0"),
@@ -51,6 +52,7 @@ let package = Package(
       name: "Verge",
       dependencies: [
         "VergeMacros",
+        "StateStruct",
         .product(name: "TypedComparator", package: "TypedComparator"),
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "DequeModule", package: "swift-collections"),
