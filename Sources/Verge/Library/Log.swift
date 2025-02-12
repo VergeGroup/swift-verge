@@ -48,4 +48,6 @@ extension OSLog {
   }
   
   static let storeReader: OSLog = makeOSLogInDebug { OSLog.init(subsystem: "org.VergeGroup", category: "StoreReader") }
+  
+  static let writeGraph: OSLog = makeOSLogInDebug { OSLog.init(subsystem: "org.VergeGroup", category: "WriteGraph") }
 }

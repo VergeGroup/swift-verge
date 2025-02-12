@@ -57,7 +57,7 @@ public protocol DerivedMaking {
 
  Conforms to Equatable that compares pointer personality.
  */
-public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unchecked Sendable {
+public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendable {
 
   public override var keepsAliveForSubscribers: Bool {
     true    
@@ -123,8 +123,8 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
         // TODO: Take over state.modification & state.mutation
         indirectSelf._receive_sending {
           $1.isDerivedFromUpstream = true
-          $0.append(traces: value.traces)
-          $0.replace(with: newState)
+          $1.append(traces: value.traces)
+          $0 = newState
         }
 
       }

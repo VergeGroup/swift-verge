@@ -20,11 +20,12 @@
 // THE SOFTWARE.
 
 import Foundation
+import StateStruct
 
 /**
  An opt-in protocol that indicates it's used as a state of the State.
  */
-public protocol StateType: Equatable {
+public protocol StateType: Equatable, TrackingObject {
 
   /**
    A chance of modifying state alongside the commit.
@@ -33,7 +34,8 @@ public protocol StateType: Equatable {
    */
   @Sendable
   static func reduce(
-    modifying: inout InoutRef<Self>,
+    modifying: inout Self,
+    transaction: inout Transaction,
     current: Changes<Self>
   )
 }
@@ -44,7 +46,11 @@ extension StateType {
    Default empty implementation
    */
   @Sendable
-  public static func reduce(modifying: inout InoutRef<Self>, current: Changes<Self>) {
+  public static func reduce(
+    modifying: inout Self,
+    transaction: inout Transaction,
+    current: Changes<Self>
+  )
 
   }
 }

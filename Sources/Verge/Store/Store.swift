@@ -32,7 +32,7 @@ import StateStruct
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
 public protocol StoreType<State>: AnyObject, Sendable, ObservableObject
 where ObjectWillChangePublisher == ObservableObjectPublisher {
-  associatedtype State: Equatable
+  associatedtype State
   associatedtype Activity = Never
 
   func asStore() -> Store<State, Activity>
@@ -40,11 +40,11 @@ where ObjectWillChangePublisher == ObservableObjectPublisher {
   var state: Changes<State> { get }
 }
 
-public typealias NoActivityStoreBase<State: Equatable> = Store<State, Never>
+public typealias NoActivityStoreBase<State> = Store<State, Never>
 
 private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.sanitizer")
 
-public enum _StoreEvent<State: Equatable, Activity>: EventEmitterEventType {
+public enum _StoreEvent<State, Activity>: EventEmitterEventType {
 
   public enum StateEvent {
     case willUpdate
@@ -92,9 +92,23 @@ actor Writer {
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>,
+open class Store<State: StateTrait, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>,
   CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable
 {
+  
+  /**
+   For tracking replacing root value with new value.
+   */
+  @Tracking
+  public struct Container {
+    
+    public var state: State
+
+    public init(state: consuming State) {
+      self.state = state
+    }
+
+  }
 
   public let scope: any WritableKeyPath<State, State> & Sendable = \State.self
 
@@ -116,7 +130,7 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
 
   private var middlewares: [AnyStoreMiddleware<State>] = []
 
-  private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>) -> Void
+  private let externalOperation: @Sendable (inout InoutRef<Container>, Changes<State>, inout Transaction) -> Void
 
   private var nonatomicValue: Changes<State>
 
@@ -194,8 +208,11 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
     var _initialState = initialState
 
     let reduced = withUnsafeMutablePointer(to: &_initialState) { pointer in
-      var inoutRef = InoutRef<State>.init(pointer)
-      State.reduce(modifying: &inoutRef, current: .init(old: nil, new: initialState))
+      var inoutRef = InoutRef<Container>.init(pointer)
+      inoutRef.modify { container in
+        var transaction = Transaction()
+        State.reduce(modifying: &container.state, transaction: &transaction, current: .init(old: nil, new: initialState))
+      }
       return inoutRef.wrapped
     }
 
@@ -208,14 +225,19 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
     
-    self.externalOperation = { @Sendable inoutRef, state in
+    self.externalOperation = { @Sendable inoutRef, state, transaction in
       let intermediate = state.makeNextChanges(
-        with: inoutRef.wrapped,
-        from: inoutRef.traces,
-        modification: inoutRef.modification ?? nil,
-        transaction: state._transaction
+        with: inoutRef.wrapped.state,
+        modification: inoutRef.writeGraph ?? nil,
+        transaction: transaction
       )
-      State.reduce(modifying: &inoutRef, current: intermediate)
+      inoutRef.modify { container in
+        State.reduce(
+          modifying: &container.state,
+          transaction: &transaction,
+          current: intermediate
+        )
+      }
     }
 
     super.init()
@@ -341,8 +363,9 @@ extension Store where State : TrackingObject {
     
     let currentState = state.primitiveBox
     
-    let readGraph = currentState.value.tracking {
-      apply(currentState.value)    
+    var result: T!
+    let readResult = currentState.value.tracking {
+      result = apply(currentState.value)    
     }
     
     registrations.modify {
@@ -350,7 +373,7 @@ extension Store where State : TrackingObject {
         .init(
           file: file,
           line: line,
-          detectors: tracker.detectors,
+          readGraph: readResult.graph,
           onChange: onChange
         )
       )
@@ -581,16 +604,16 @@ extension Store {
         elapsed = CFAbsoluteTimeGetCurrent() - startedTime
       }
 
-      var current = state.primitive
+      var container = Container(state: state.primitive)
 
-      let updateResult = try withUnsafeMutablePointer(to: &current) {
+      let updateResult = try withUnsafeMutablePointer(to: &container) {
         (stateMutablePointer) -> UpdateResult in
 
         var transaction = Transaction()
-        var inoutRef = InoutRef<State>.init(stateMutablePointer)
+        var inoutRef = InoutRef<Container>.init(stateMutablePointer)
         
-        let result = inoutRef.modify { modifying in          
-          try mutation(&modifying, &transaction)
+        let result = try inoutRef.modify { modifying in          
+          try mutation(&modifying.state, &transaction)
         }
 
         valueFromMutation = consume result
@@ -599,7 +622,7 @@ extension Store {
          Step-1:
          Checks if the state has been modified
          */
-        guard inoutRef.nonatomic_hasModified else {
+        guard inoutRef.hasModified else {          
           // No emits update event
           return .nothingUpdates
         }
@@ -618,15 +641,17 @@ extension Store {
         self.middlewares.forEach { middleware in
 
           let intermediate = state.makeNextChanges(
-            with: stateMutablePointer.pointee,
-            from: inoutRef.traces,
-            modification: inoutRef.modification ?? .indeterminate,
+            with: stateMutablePointer.pointee.state,
+            modification: inoutRef.writeGraph,
             transaction: transaction
           )
-          middleware.modify(
-            modifyingState: &inoutRef,
-            current: intermediate
-          )
+          inoutRef.modify { modifying in          
+            middleware.modify(
+              modifyingState: &modifying,
+              transaction: &transaction
+              current: intermediate
+            )
+          }
         }
 
         /**
@@ -635,7 +660,7 @@ extension Store {
         state = state.makeNextChanges(
           with: stateMutablePointer.pointee,
           from: inoutRef.traces,
-          modification: inoutRef.modification ?? .indeterminate,
+          modification: inoutRef.writeGraph,
           transaction: transaction
         )
 
@@ -1031,6 +1056,7 @@ extension Store {
   @available(iOS 15, *)
   private final class StoreSubscriptionView: UIView {
 
+    @Tracking
     struct State: StateType {
       var count: Int = 0
     }

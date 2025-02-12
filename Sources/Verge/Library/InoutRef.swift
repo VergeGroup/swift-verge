@@ -26,9 +26,6 @@ public struct InoutRef<Wrapped: TrackingObject> {
 
   // MARK: - Properties
 
-  /// - Attention: non-atomic property
-  public private(set) var traces: [MutationTrace] = []
-
   nonisolated(unsafe) private let pointer: UnsafeMutablePointer<Wrapped>
 
   /// A wrapped value
@@ -47,8 +44,8 @@ public struct InoutRef<Wrapped: TrackingObject> {
   public var hasModified: Bool {
     guard let writeGraph else {
       return false
-    }
-
+    }    
+    return writeGraph.isEmpty
   }
 
   // MARK: - Initializers
@@ -65,23 +62,22 @@ public struct InoutRef<Wrapped: TrackingObject> {
 
   // MARK: - Functions
 
-  mutating func append(trace: MutationTrace) {
-    traces.append(trace)
-  }
-
-  mutating func append(traces otherTraces: [MutationTrace]) {
-    traces.append(contentsOf: otherTraces)
-  }
-
   public mutating func modify<T>(_ perform: (inout Wrapped) throws -> T) rethrows -> T {
 
     var result: T!
     
-    let modifyingResult = try pointer.pointee.tracking(using: writeGraph) {
+    var modifyingResult = try pointer.pointee.tracking(using: writeGraph) {
       result = try perform(&pointer.pointee)
     }
 
+    modifyingResult.graph.shakeAsWrite()
+    
     self.writeGraph = modifyingResult.graph
+    
+    #if DEBUG
+    Log.debug(.writeGraph, "Modified: \(writeGraph!.prettyPrint())")
+    #endif
+    
     return result
 
   }

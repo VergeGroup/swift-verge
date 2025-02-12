@@ -272,7 +272,6 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
 
   public func makeNextChanges(
     with nextNewValue: Value,
-    from traces: [MutationTrace],
     modification: PropertyNode?,
     transaction: Transaction
   ) -> Changes<Value> {
