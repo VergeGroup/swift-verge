@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import StateStruct
 
 /**
  For SwiftUI - A View that reads a ``Store`` including ``Derived``.
@@ -12,7 +13,7 @@ import SwiftUI
  Therefore functions of the state are not available in this situation.
  */
 @available(iOS 14, watchOS 7.0, tvOS 14, *)
-public struct StoreReader<State: Equatable, Activity: Sendable, Content: View>: View {
+public struct StoreReader<State: Equatable & TrackingObject, Activity: Sendable, Content: View>: View {
     
   private let store: Store<State, Activity>
   
@@ -21,7 +22,7 @@ public struct StoreReader<State: Equatable, Activity: Sendable, Content: View>: 
   private let file: StaticString
   private let line: UInt
 
-  private let content: @MainActor (inout StoreReaderComponents<State>.StateProxy) -> Content
+  private let content: @MainActor (State) -> Content
   
   /// Initialize from `Store`
   ///
@@ -32,7 +33,7 @@ public struct StoreReader<State: Equatable, Activity: Sendable, Content: View>: 
     file: StaticString = #file,
     line: UInt = #line,
     _ store: Driver,
-    @ViewBuilder content: @escaping @MainActor (inout StoreReaderComponents<State>.StateProxy) -> Content
+    @ViewBuilder content: @escaping @MainActor (State) -> Content
   ) where State == Driver.TargetStore.State, Activity == Driver.TargetStore.Activity {
     
     let store = store.store.asStore()
@@ -50,7 +51,7 @@ public struct StoreReader<State: Equatable, Activity: Sendable, Content: View>: 
     file: StaticString,
     line: UInt,
     store: Store<State, Activity>,
-    content: @escaping @MainActor (inout StoreReaderComponents<State>.StateProxy) -> Content
+    content: @escaping @MainActor (State) -> Content
   ) {
     self.file = file
     self.line = line

@@ -345,7 +345,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout Scope) throws -> Result
   ) rethrows -> Result {
     
     let trace = MutationTrace(
@@ -374,7 +374,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout Scope, inout Transaction) throws -> Result
   ) rethrows -> Result {
     let trace = MutationTrace(
       name: name,
@@ -401,7 +401,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>) throws -> Result
+    mutation: (inout Scope) throws -> Result
   ) rethrows -> Result where Scope == TargetStore.State {
     let trace = MutationTrace(
       name: name,

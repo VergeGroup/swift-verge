@@ -23,9 +23,6 @@ import Foundation
 @_spi(Internal) import TypedComparator
 import StateStruct
 
-#if !COCOAPODS
-#endif
-
 private let _shared_changesDeallocationQueue = BackgroundDeallocationQueue()
 
 public protocol AnyChangesType: AnyObject, Sendable {
@@ -43,7 +40,7 @@ public protocol ChangesType<Value>: AnyChangesType {
 
   var previous: Self? { get }
   
-  var modification: PropertyNode InoutRef<Value>.Modification? { get }
+  var modification: PropertyNode? { get }
 
   func asChanges() -> Changes<Value>
 }
@@ -132,7 +129,12 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   public var root: Value { _read { yield innerBox.value } }
 
   public let traces: [MutationTrace]
-  public let modification: InoutRef<Value>.Modification?
+  
+  public let modification: PropertyNode?
+  
+  public var writeGraph: PropertyNode? {
+    modification
+  }
   
   public let _transaction: Transaction
 
@@ -157,7 +159,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     innerBox: InnerBox,
     version: UInt64,
     traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification?,
+    modification: consuming PropertyNode?,
     transaction: Transaction
   ) {
     self.previous = previous
@@ -271,7 +273,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   public func makeNextChanges(
     with nextNewValue: Value,
     from traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification,
+    modification: PropertyNode?,
     transaction: Transaction
   ) -> Changes<Value> {
     let previous = cloneWithDropsPrevious()

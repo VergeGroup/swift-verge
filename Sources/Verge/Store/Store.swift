@@ -23,6 +23,7 @@ import Atomics
 import ConcurrencyTaskManager
 import Foundation
 import os.log
+import StateStruct
 
 #if canImport(Combine)
   import Combine
@@ -206,11 +207,12 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
+    
     self.externalOperation = { @Sendable inoutRef, state in
       let intermediate = state.makeNextChanges(
         with: inoutRef.wrapped,
         from: inoutRef.traces,
-        modification: inoutRef.modification ?? .indeterminate,
+        modification: inoutRef.modification ?? nil,
         transaction: state._transaction
       )
       State.reduce(modifying: &inoutRef, current: intermediate)
@@ -284,6 +286,47 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
     }
   }
 
+  private struct TrackingRegistration {
+
+    let file: StaticString
+    let line: UInt
+    let readGraph: PropertyNode
+    let onChange: @Sendable () -> Void
+
+    init(
+      file: StaticString,
+      line: UInt,
+      readGraph: PropertyNode,
+      onChange: @escaping @Sendable () -> Void
+    ) {
+      self.file = file
+      self.line = line
+      self.readGraph = readGraph
+      self.onChange = onChange
+    }
+
+    func containsUpdates(state: Changes<State>) -> Bool {
+      
+      guard let writeGraph = state.writeGraph else {
+        // it's unknown status, so indicates it has changes anyway.
+        return true
+      }
+      
+      let hasChanges = PropertyNode.hasChanges(
+        writeGraph: consume writeGraph,
+        readGraph: readGraph
+      )
+      
+      return hasChanges
+
+    }
+
+  }
+
+}
+
+extension Store where State : TrackingObject {
+  
   /**
    onChange closure will run if the tracking properties are changed.
    If how properties are changed is not determined, it will run always.   
@@ -292,15 +335,16 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
   public func tracking<T>(
     file: StaticString = #file,
     line: UInt = #line,
-    _ apply: (inout StoreReaderComponents<State>.StateProxy) -> T,
+    _ apply: (borrowing State) -> T,
     onChange: @escaping @Sendable () -> Void
   ) -> T {
-
+    
     let currentState = state.primitiveBox
-
-    var tracker = StoreReaderComponents<State>.StateProxy(wrapped: currentState, source: self)
-    let result = apply(&tracker)
-
+    
+    let readGraph = currentState.value.tracking {
+      apply(currentState.value)    
+    }
+    
     registrations.modify {
       $0.0.append(
         .init(
@@ -313,40 +357,8 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
     }
     
     return result
-
+    
   }
-
-  private struct TrackingRegistration {
-
-    let file: StaticString
-    let line: UInt
-    let detectors: [PartialKeyPath<State>: (Changes<State>) -> Bool]
-    let onChange: @Sendable () -> Void
-
-    init(
-      file: StaticString,
-      line: UInt,
-      detectors: [PartialKeyPath<State>: (Changes<State>) -> Bool],
-      onChange: @escaping @Sendable () -> Void
-    ) {
-      self.file = file
-      self.line = line
-      self.detectors = detectors
-      self.onChange = onChange
-    }
-
-    func containsUpdates(state: Changes<State>) -> Bool {
-
-      let _shouldUpdate = detectors.contains {
-        $0.value(state)
-      }
-
-      return _shouldUpdate
-
-    }
-
-  }
-
 }
 
 // MARK: - Typealias
@@ -534,7 +546,7 @@ extension Store {
   ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
   func _receive_sending<Result>(
-    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+    mutation: (inout State, inout Transaction) throws -> Result
   ) rethrows -> Result {
 
     let signpost = VergeSignpostTransaction("Store.commit")
@@ -576,8 +588,11 @@ extension Store {
 
         var transaction = Transaction()
         var inoutRef = InoutRef<State>.init(stateMutablePointer)
+        
+        let result = inoutRef.modify { modifying in          
+          try mutation(&modifying, &transaction)
+        }
 
-        let result = try mutation(&inoutRef, &transaction)
         valueFromMutation = consume result
 
         /**
