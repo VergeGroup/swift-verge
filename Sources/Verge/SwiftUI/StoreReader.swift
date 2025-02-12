@@ -13,7 +13,7 @@ import StateStruct
  Therefore functions of the state are not available in this situation.
  */
 @available(iOS 14, watchOS 7.0, tvOS 14, *)
-public struct StoreReader<State: Equatable & TrackingObject, Activity: Sendable, Content: View>: View {
+public struct StoreReader<State: TrackingObject, Activity: Sendable, Content: View>: View {
     
   private let store: Store<State, Activity>
   
@@ -85,13 +85,6 @@ public enum StoreReaderComponents<StateType: Equatable> {
     
     private let wrapped: ReadonlyBox<StateType>
     
-    /// wrapped value itself
-    public var primitive: StateType {
-      mutating get {
-        self[dynamicMember: \.self]
-      }
-    }
-    
     private(set) var detectors: Detectors = [:]
     private weak var source: (any StoreDriverType<StateType>)?
     
@@ -102,90 +95,15 @@ public enum StoreReaderComponents<StateType: Equatable> {
       self.wrapped = wrapped
       self.source = source
     }
-    
-    /**
-     ✅ Equatable version
-     */
-    public subscript<T>(
-      dynamicMember keyPath: KeyPath<StateType, T>
-    ) -> T where T : Equatable {
-      mutating get {
-        
-        if detectors[keyPath as PartialKeyPath<StateType>] == nil {
-          
-          let maybeChanged: (Changes<StateType>) -> Bool = { changes in
-            
-            switch changes.modification {
-            case .determinate(let keyPaths):
 
-              /// modified but maybe value not changed.
-              let mayHasChanges = keyPaths.contains(keyPath)
-              
-              if mayHasChanges {
-                return true
-              }
-              
-              return changes.hasChanges({ $0[keyPath: keyPath] })
-              
-            case .indeterminate:
-              return true
-            case nil:
-              return changes.hasChanges({ $0[keyPath: keyPath] })
-            }
-            
-          }
-          
-          detectors[keyPath] = maybeChanged
-        }
-        
-        return wrapped[keyPath: \.value][keyPath: keyPath]
-      }
+    public subscript<T>(dynamicMember keyPath: WritableKeyPath<StateType, T>) -> Binding<T> {
+      binding(keyPath)
     }
 
-    /**
-     ⚠️ Not equatable version.
-     */
-    public subscript<T>(dynamicMember keyPath: KeyPath<StateType, T>) -> T {
-      mutating get {
-         
-        if detectors[keyPath as PartialKeyPath<StateType>] == nil {
-          
-          let maybeChanged: (Changes<StateType>) -> Bool = { changes in
-            
-            return true
-            
-          }
-          
-          detectors[keyPath] = maybeChanged
-        }
-        
-        return wrapped[keyPath: \.value][keyPath: keyPath]
-      }
-            
-    }
-
-    /**
-     ✅ Equatable version
-     Make SwiftUI.Binding
-     */
-    public mutating func binding<T: Equatable>(_ keyPath: WritableKeyPath<StateType, T>) -> SwiftUI.Binding<T> {
-      return .init { [value = self[dynamicMember: keyPath]] in
+    public func binding<T>(_ keyPath: WritableKeyPath<StateType, T>) -> SwiftUI.Binding<T> {
+      return .init { [value = self.wrapped.value[keyPath: keyPath]] in
         return value
-      } set: { [weak source = self.source] newValue, _ in
-        source?.commit { [keyPath] state in
-          state[keyPath: keyPath] = newValue
-        }
-      }
-    }
-
-    /**
-     ⚠️ Not equatable version.
-     Make SwiftUI.Binding
-     */
-    public mutating func binding<T>(_ keyPath: WritableKeyPath<StateType, T>) -> SwiftUI.Binding<T> {
-      return .init { [value = self[dynamicMember: keyPath]] in
-        return value
-      } set: { [weak source = self.source] newValue, _ in
+      } set: { [weak source = self.source, keyPath] newValue, _ in
         source?.commit { [keyPath] state in
           state[keyPath: keyPath] = newValue
         }
@@ -240,6 +158,7 @@ enum Preview_StoreReader: PreviewProvider {
 
   final class ViewModel: StoreDriverType {
 
+    @Tracking
     struct State: Equatable {
       var count: Int = 0
       var count_dummy: Int = 0
