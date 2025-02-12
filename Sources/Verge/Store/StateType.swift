@@ -50,7 +50,7 @@ extension StateType {
     modifying: inout Self,
     transaction: inout Transaction,
     current: Changes<Self>
-  )
-
+  ) {
+  
   }
 }

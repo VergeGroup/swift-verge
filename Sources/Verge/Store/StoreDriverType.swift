@@ -24,34 +24,32 @@ import Foundation
 @available(*, deprecated, renamed: "StoreDriverType")
 public typealias DispatcherType<Scope> = StoreDriverType<Scope>
 
-/**
- A protocol that uses external Store inside and provides the functions.
- ```
- final class MyViewModel: StoreDriverType {
-   
-   struct State {
-     ...
-   }
-
-   // If you don't need Activity, you can remove it.
-   enum Activity {
-     ...
-   }
-   
-   let store: Store<State, Activity>
-
-   init() {
-     self.store = .init(initialState: .init(), logger: nil)
-   }
- 
- }
- ``` 
- */
+/// A protocol that uses external Store inside and provides the functions.
+/// ```
+/// final class MyViewModel: StoreDriverType {
+///
+///   struct State {
+///     ...
+///   }
+///
+///   // If you don't need Activity, you can remove it.
+///   enum Activity {
+///     ...
+///   }
+///
+///   let store: Store<State, Activity>
+///
+///   init() {
+///     self.store = .init(initialState: .init(), logger: nil)
+///   }
+///
+/// }
+/// ```
 public protocol StoreDriverType<Scope>: ObservableObject where Activity == TargetStore.Activity {
 
   associatedtype TargetStore: StoreType
 
-  associatedtype Scope: Equatable = TargetStore.State
+  associatedtype Scope = TargetStore.State
 
   var store: TargetStore { get }
   var scope: WritableKeyPath<TargetStore.State, Scope> & Sendable { get }
@@ -60,11 +58,11 @@ public protocol StoreDriverType<Scope>: ObservableObject where Activity == Targe
 
   // WORKAROUND: for activityPublisher()
   associatedtype Activity: Sendable = TargetStore.Activity
-  
+
 }
 
 extension StoreDriverType {
-  
+
   public func statePublisher() -> some Combine.Publisher<Changes<TargetStore.State>, Never> {
     store.asStore()._statePublisher()
   }
@@ -167,7 +165,8 @@ extension StoreDriverType where Scope == TargetStore.State {
     queue: some MainActorTargetQueueType = .mainIsolated(),
     receive: @escaping @MainActor (Changes<TargetStore.State>, Accumulate) -> Void
   ) -> StoreStateSubscription {
-    store.asStore()._mainActor_scan_sinkState(scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
+    store.asStore()._mainActor_scan_sinkState(
+      scan: scan, dropsFirst: dropsFirst, queue: queue, receive: receive)
   }
 
   /// Subscribe the activity
@@ -238,7 +237,7 @@ extension StoreDriverType {
       receive(state.map { $0[keyPath: _scope] })
     }
   }
-  
+
   /**
     Subscribe the state that scoped
 
@@ -283,7 +282,7 @@ extension StoreDriverType {
       receive(changes, accumulate)
     }
   }
-  
+
   /// Subscribe the state changes
   ///
   /// First object always returns true from ifChanged / hasChanges / noChanges unless dropsFirst is true.
@@ -305,7 +304,6 @@ extension StoreDriverType {
       receive(changes, accumulate)
     }
   }
-
 
   /// Send activity
   /// - Parameter activity:
@@ -347,23 +345,20 @@ extension StoreDriverType {
     _ line: UInt = #line,
     mutation: (inout Scope) throws -> Result
   ) rethrows -> Result {
-    
+
     let trace = MutationTrace(
       name: name,
       file: file,
       function: function,
       line: line
     )
-    
+
     return try store.asStore()._receive_sending(
-      mutation: { [scope] stateRef, _ -> Result in       
-        try stateRef.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
-          ref.append(trace: trace)
-          return try mutation(&ref)
-        }              
+      mutation: { [scope] state, _ -> Result in
+        try mutation(&state[keyPath: scope])
       }
     )
-    
+
   }
 
   /// Run Mutation that created inline
@@ -376,6 +371,7 @@ extension StoreDriverType {
     _ line: UInt = #line,
     mutation: (inout Scope, inout Transaction) throws -> Result
   ) rethrows -> Result {
+    
     let trace = MutationTrace(
       name: name,
       file: file,
@@ -385,10 +381,8 @@ extension StoreDriverType {
 
     return try store.asStore()._receive_sending(
       mutation: { [scope] state, transaction -> Result in
-        try state.map(keyPath: scope) { (ref: inout InoutRef<Scope>) -> Result in
-          ref.append(trace: trace)
-          return try mutation(&ref, &transaction)
-        }      
+        transaction.append(trace: trace)
+        return try mutation(&state[keyPath: scope], &transaction)
       }
     )
   }
@@ -403,16 +397,18 @@ extension StoreDriverType {
     _ line: UInt = #line,
     mutation: (inout Scope) throws -> Result
   ) rethrows -> Result where Scope == TargetStore.State {
+    
     let trace = MutationTrace(
       name: name,
       file: file,
       function: function,
       line: line
     )
+    
     return try store.asStore()._receive_sending(
-      mutation: { ref, transaction -> Result in
-        ref.append(trace: trace)
-        return try mutation(&ref)
+      mutation: { state, transaction -> Result in        
+        transaction.append(trace: trace)
+        return try mutation(&state)        
       }
     )
   }
@@ -425,7 +421,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: (inout InoutRef<Scope>, inout Transaction) throws -> Result
+    mutation: (inout Scope, inout Transaction) throws -> Result
   ) rethrows -> Result where Scope == TargetStore.State {
     let trace = MutationTrace(
       name: name,
@@ -434,9 +430,9 @@ extension StoreDriverType {
       line: line
     )
     return try store.asStore()._receive_sending(
-      mutation: { ref, transaction -> Result in
-        ref.append(trace: trace)
-        return try mutation(&ref, &transaction)
+      mutation: { state, transaction -> Result in
+        transaction.append(trace: trace)
+        return try mutation(&state, &transaction)
       }
     )
   }
@@ -449,37 +445,31 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: sending (inout InoutRef<Scope>) throws -> sending Result
+    mutation: sending (inout Scope) throws -> sending Result
   ) async rethrows -> Result {
-    
+
     let trace = MutationTrace(
       name: name,
       file: file,
       function: function,
       line: line
     )
-    
+
     let result = try await store.asStore().writer.perform { [store = self.store, scope] in
-      
-      let r = try store.asStore()._receive_sending { ref, _ in
+
+      let r = try store.asStore()._receive_sending { state, transaction in
         
-        let r = try ref.map_sending(keyPath: scope) { ref in
-          ref.append(trace: trace)
-          let r = try mutation(&ref)
-          let workaround = { r }
-          return workaround()
-        }        
-        
-        let workaround = { r }
-        return workaround()
+        transaction.append(trace: trace)
+        let r = try mutation(&state[keyPath: scope])
+
+        return r
       }
-      
-      let workaround = { r }
-      return workaround()
+
+      return r
     }
-    
+
     await self.waitUntilAllEventConsumed()
-    
+
     return result
   }
 
@@ -491,37 +481,31 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: sending (inout InoutRef<Scope>, inout Transaction) throws -> sending Result
+    mutation: sending (inout Scope, inout Transaction) throws -> sending Result
   ) async rethrows -> Result {
-    
+
     let trace = MutationTrace(
       name: name,
       file: file,
       function: function,
       line: line
     )
-    
+
     let result = try await store.asStore().writer.perform { [store = self.store, scope] in
       
-      let r = try store.asStore()._receive_sending { ref, transaction in
+      let r = try store.asStore()._receive_sending { state, transaction in
         
-        let r = try ref.map_sending(keyPath: scope) { ref in
-          ref.append(trace: trace)
-          let r = try mutation(&ref, &transaction)
-          let workaround = { r }
-          return workaround()
-        }        
+        transaction.append(trace: trace)
+        let r = try mutation(&state[keyPath: scope], &transaction)
         
-        let workaround = { r }
-        return workaround()
+        return r
       }
       
-      let workaround = { r }
-      return workaround()
+      return r
     }
-    
+
     await self.waitUntilAllEventConsumed()
-    
+
     return result
   }
 
@@ -533,7 +517,7 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: sending (inout InoutRef<Scope>) throws -> sending Result
+    mutation: sending (inout Scope) throws -> sending Result
   ) async rethrows -> Result where Scope == TargetStore.State {
 
     let trace = MutationTrace(
@@ -542,22 +526,20 @@ extension StoreDriverType {
       function: function,
       line: line
     )
-    
+
     let result = try await store.asStore().writer.perform { [store = self.store] in
-      
-      let r = try store.asStore()._receive_sending { ref, _ in        
-        ref.append(trace: trace)
-        let r = try mutation(&ref)
-        let workaround = { r }
-        return workaround()
+
+      let r = try store.asStore()._receive_sending { state, transaction in
+        transaction.append(trace: trace)        
+        let r = try mutation(&state)
+        return r
       }
-      
-      let workaround = { r }
-      return workaround()
+
+      return r
     }
-    
+
     await self.waitUntilAllEventConsumed()
-    
+
     return result
 
   }
@@ -570,31 +552,29 @@ extension StoreDriverType {
     _ file: StaticString = #file,
     _ function: StaticString = #function,
     _ line: UInt = #line,
-    mutation: sending (inout InoutRef<Scope>, inout Transaction) throws -> Result
-  ) async rethrows -> Result where Scope == TargetStore.State, Self : Sendable {
-    
+    mutation: sending (inout Scope, inout Transaction) throws -> Result
+  ) async rethrows -> Result where Scope == TargetStore.State, Self: Sendable {
+
     let trace = MutationTrace(
       name: name,
       file: file,
       function: function,
       line: line
     )
-    
+
     let result = try await store.asStore().writer.perform { [store = self.store] in
-      
-      let r = try store.asStore()._receive_sending { ref, transaction in        
-        ref.append(trace: trace)
-        let r = try mutation(&ref, &transaction)
-        let workaround = { r }
-        return workaround()
+
+      let r = try store.asStore()._receive_sending { state, transaction in
+        transaction.append(trace: trace)
+        let r = try mutation(&state, &transaction)
+        return r
       }
-      
-      let workaround = { r }
-      return workaround()
+
+      return r
     }
-    
+
     await self.waitUntilAllEventConsumed()
-    
+
     return result
   }
 
@@ -603,7 +583,7 @@ extension StoreDriverType {
   ) -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
     .init(store: store.asStore(), scope: newScope)
   }
-  
+
   // https://muukii.notion.site/Appending-Sendable-WritableKeyPath-makes-non-sendable-KeyPath-10618017d4c1800a8835fce9d6bffeba?pvs=4
   /*
   public func detached<NewScope: Equatable>(

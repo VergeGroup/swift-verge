@@ -92,7 +92,7 @@ actor Writer {
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: StateTrait, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>,
+open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>,
   CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable
 {
   
@@ -189,7 +189,7 @@ open class Store<State: StateTrait, Activity: Sendable>: EventEmitter<_StoreEven
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
-    self.externalOperation = { @Sendable _, _ in }
+    self.externalOperation = { @Sendable _, _, _ in }
 
     super.init()
   }
@@ -205,7 +205,7 @@ open class Store<State: StateTrait, Activity: Sendable>: EventEmitter<_StoreEven
   ) where State: StateType {
 
     // making reduced state
-    var _initialState = initialState
+    var _initialState = Container(state: initialState)
 
     let reduced = withUnsafeMutablePointer(to: &_initialState) { pointer in
       var inoutRef = InoutRef<Container>.init(pointer)
@@ -216,7 +216,7 @@ open class Store<State: StateTrait, Activity: Sendable>: EventEmitter<_StoreEven
       return inoutRef.wrapped
     }
 
-    self.nonatomicValue = .init(old: nil, new: reduced)
+    self.nonatomicValue = .init(old: nil, new: reduced.state)
     self._lock = storeOperation
     // TODO: copying value
     self._valueSubject = .init(nonatomicValue)
@@ -632,7 +632,7 @@ extension Store {
          Reduce modifying state with externalOperation
          */
 
-        externalOperation(&inoutRef, state)
+        externalOperation(&inoutRef, state, &transaction)
 
         /**
          Step-3
@@ -647,8 +647,8 @@ extension Store {
           )
           inoutRef.modify { modifying in          
             middleware.modify(
-              modifyingState: &modifying,
-              transaction: &transaction
+              modifyingState: &modifying.state,
+              transaction: &transaction,
               current: intermediate
             )
           }
@@ -658,8 +658,7 @@ extension Store {
          Make a new state
          */
         state = state.makeNextChanges(
-          with: stateMutablePointer.pointee,
-          from: inoutRef.traces,
+          with: stateMutablePointer.pointee.state,
           modification: inoutRef.writeGraph,
           transaction: transaction
         )
@@ -678,14 +677,14 @@ extension Store {
               """,
               log: VergeOSLogs.debugLog,
               type: .error,
-              String(describing: inoutRef.traces)
+              String(describing: transaction.traces)
             )
             __sanitizer__.onDidFindRuntimeError(
-              .recursiveleyCommit(storeName: name, traces: inoutRef.traces))
+              .recursiveleyCommit(storeName: name, traces: transaction.traces))
           }
         }
 
-        commitLog = CommitLog(storeName: self.name, traces: inoutRef.traces, time: elapsed)
+        commitLog = CommitLog(storeName: self.name, traces: transaction.traces, time: elapsed)
 
         return .updated
       }

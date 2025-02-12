@@ -82,7 +82,7 @@ public enum Pipelines {
   }
 
   /// KeyPath based pipeline, light weight operation just take value from source.
-  public struct ChangesSelectPipeline<Source: Equatable, Output: Equatable>: PipelineType {
+  public struct ChangesSelectPipeline<Source, Output: Equatable>: PipelineType {
     
     public typealias Input = Changes<Source>
     
@@ -273,7 +273,7 @@ extension PipelineType {
       borrowing Input
     ) -> Output
   ) -> Self
-  where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
+  where Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
     self.init(selector: selector, additionalDropCondition: nil)
   }
   
@@ -287,7 +287,7 @@ extension PipelineType {
   public static func map<Input, Output>(
     _ selector: KeyPath<Input, Output> & Sendable
   ) -> Self
-  where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
+  where Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
     self.init(selector: { $0[keyPath: selector] }, additionalDropCondition: nil)
   }
   
@@ -300,7 +300,7 @@ extension PipelineType {
   public static func select<Input, Output>(
     _ selector: KeyPath<Input, Output> & Sendable
   ) -> Self
-  where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
+  where Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
     self.init(selector: { $0[keyPath: selector] }, additionalDropCondition: nil)
   }
 }

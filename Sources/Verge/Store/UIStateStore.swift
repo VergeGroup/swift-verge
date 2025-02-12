@@ -53,7 +53,7 @@ public struct UIState<State: Equatable>: Sendable {
     get { store.state.primitive }
     nonmutating set {
       store.commit {
-        $0.replace(with: newValue)
+        $0 = newValue
       }
     }
   }
@@ -79,7 +79,7 @@ public struct AtomicState<State: Equatable>: Sendable {
     get { store.state.primitive }
     nonmutating set {
       store.commit {
-        $0.replace(with: newValue)
+        $0 = newValue
       }
     }
   }

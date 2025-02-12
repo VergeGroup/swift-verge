@@ -49,7 +49,7 @@ extension StoreDriverType where Self : Sendable {
       return self.state.primitive
     }, set: { [weak self] value in
       self?.commit {
-        $0[keyPath: \.self] = value
+        $0 = value
       }
     })
   }
@@ -65,18 +65,22 @@ extension StoreDriverType where Self : Sendable {
   ///   - mutation: A closure to update the state.
   ///   If the closure is nil, state will be automatically updated.
   /// - Returns: The result of binding
-  public func binding<T>(_ keypath: WritableKeyPath<Scope, T> & Sendable, with mutation: (@Sendable (T) -> Void)? = nil) -> SwiftUI.Binding<T> {
-    .init(get: { [self /* source store lives until binding released */] in
-      return self.state.primitive[keyPath: keypath]
-    }, set: { [weak self] value in
-      if let mutation = mutation {
-        mutation(value)
-      } else {
-        self?.commit {
-          $0[keyPath: keypath] = value
+  public func binding<T>(_ keyPath: WritableKeyPath<Scope, T> & Sendable, with mutation: (@Sendable (T) -> Void)? = nil) -> SwiftUI.Binding<T> {
+    
+    .init(
+      get: { [self /* source store lives until binding released */] in
+        return self.state.primitive[keyPath: keyPath]
+      }, set: { [weak self] value in
+        if let mutation = mutation {
+          mutation(value)
+        } else {
+          self?.commit {
+            $0[keyPath: keyPath] = value
+          }
         }
       }
-    })
+    )
+    
   }
 }
 

@@ -33,7 +33,7 @@ public protocol AnyChangesType: AnyObject, Sendable {
 
 public protocol ChangesType<Value>: AnyChangesType {
   
-  associatedtype Value: Equatable
+  associatedtype Value
   
   var previousPrimitive: Value? { get }
   var primitive: Value { get }
@@ -87,7 +87,7 @@ public protocol ChangesType<Value>: AnyChangesType {
 /// - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
 /// This means Changes will return equals if different pointer but the value is the same.
 @dynamicMemberLookup
-public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
+public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
   public typealias ChangesKeyPath<T> = KeyPath<Value, T>
 
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {

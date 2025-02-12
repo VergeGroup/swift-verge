@@ -23,16 +23,16 @@ import Foundation
 
 public protocol StoreMiddlewareType<State>: Sendable {
 
-  associatedtype State: Equatable
+  associatedtype State
 
   @Sendable
   func modify(modifyingState: inout State, transaction: inout Transaction, current: Changes<State>)
 
 }
 
-public struct AnyStoreMiddleware<State: Equatable>: StoreMiddlewareType, Sendable {
+public struct AnyStoreMiddleware<State>: StoreMiddlewareType, Sendable {
 
-  private let closure: @Sendable (_ modifyingState: inout State, _ current: Changes<State>) -> Void
+  private let closure: @Sendable (_ modifyingState: inout State, _ transaction: inout Transaction, _ current: Changes<State>) -> Void
 
   init(
     modify: @escaping @Sendable (
@@ -46,7 +46,7 @@ public struct AnyStoreMiddleware<State: Equatable>: StoreMiddlewareType, Sendabl
   public func modify(
     modifyingState: inout State, transaction: inout Transaction, current: Changes<State>
   ) {
-    self.closure(&modifyingState, current)
+    self.closure(&modifyingState, &transaction, current)
   }
 
 }

@@ -31,7 +31,7 @@ public protocol DerivedType<State>: StoreType {
 
 public protocol DerivedMaking {
 
-  associatedtype State: Equatable
+  associatedtype State
 
   // TODO: Remove
   var state: Changes<State> { get }
@@ -286,8 +286,7 @@ extension Derived where Value == Never {
           buffer.modify { value in
             let newValue = value.makeNextChanges(
               with: value.primitive.next((s0, value.primitive.1)),
-              from: [],
-              modification: .indeterminate,
+              modification: nil,
               transaction: .init()
             )
             value = newValue
@@ -300,10 +299,10 @@ extension Derived where Value == Never {
 
             let newValue = value.makeNextChanges(
               with: value.primitive.next((value.primitive.0, s1)),
-              from: [],
-              modification: .indeterminate,
+              modification: nil,
               transaction: .init()
             )
+            
             value = newValue
             callback(newValue)
           }
@@ -350,8 +349,7 @@ extension Derived where Value == Never {
           buffer.modify { value in
             let newValue = value.makeNextChanges(
               with: value.primitive.next((s0, value.primitive.1, value.primitive.2)),
-              from: [],
-              modification: .indeterminate,
+              modification: nil,
               transaction: .init()
             )
             value = newValue
@@ -364,8 +362,7 @@ extension Derived where Value == Never {
             
             let newValue = value.makeNextChanges(
               with: value.primitive.next((value.primitive.0, s1, value.primitive.2)),
-              from: [],
-              modification: .indeterminate,
+              modification: nil,
               transaction: .init()
             )
             value = newValue
@@ -378,8 +375,7 @@ extension Derived where Value == Never {
             
             let newValue = value.makeNextChanges(
               with: value.primitive.next((value.primitive.0, value.primitive.1, s2)),
-              from: [],
-              modification: .indeterminate,
+              modification: nil,
               transaction: .init()
             )
             value = newValue
@@ -420,7 +416,7 @@ public final class BindingDerived<Value: Equatable>: Derived<Value>, @unchecked 
     get { state.primitive }
     set {
       commit {
-        $0.replace(with: newValue)
+        $0 = newValue
       }
     }
   }
