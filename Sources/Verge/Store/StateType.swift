@@ -25,7 +25,7 @@ import StateStruct
 /**
  An opt-in protocol that indicates it's used as a state of the State.
  */
-public protocol StateType: Equatable, TrackingObject {
+public protocol StateType: Equatable {
 
   /**
    A chance of modifying state alongside the commit.

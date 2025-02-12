@@ -465,7 +465,8 @@ extension StoreDriverType {
         return r
       }
 
-      return r
+      let workaround = { r }
+      return workaround()
     }
 
     await self.waitUntilAllEventConsumed()
@@ -501,7 +502,8 @@ extension StoreDriverType {
         return r
       }
       
-      return r
+      let workaround = { r }
+      return workaround()
     }
 
     await self.waitUntilAllEventConsumed()
@@ -535,7 +537,8 @@ extension StoreDriverType {
         return r
       }
 
-      return r
+      let workaround = { r }
+      return workaround()
     }
 
     await self.waitUntilAllEventConsumed()
@@ -570,7 +573,8 @@ extension StoreDriverType {
         return r
       }
 
-      return r
+      let workaround = { r }
+      return workaround()
     }
 
     await self.waitUntilAllEventConsumed()
