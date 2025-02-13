@@ -10,36 +10,22 @@ import Foundation
 
 import os.log
 
-public enum VergeOSLogs {
-  public static let debugLog = OSLog(subsystem: "Verge", category: "Debug")
-}
-
 enum Log {
+    
+  static let store = Logger(OSLog.makeOSLogInDebug { OSLog.init(subsystem: "Verge", category: "store") })
   
-  static func debug(
-    file: StaticString = #file,
-    line: UInt = #line,
-    _ log: OSLog,
-    _ object: @autoclosure () -> Any
-  ) {
-    os_log(.default, log: log, "%{public}@\n%{public}@:%{public}@", "\(object())", "\(file)", "\(line.description)")
-  }
+  static let storeCommit = Logger(OSLog.makeOSLogInDebug { OSLog.init(subsystem: "Verge", category: "store.commit") })
   
-  static func error(
-    file: StaticString = #file,
-    line: UInt = #line,
-    _ log: OSLog,
-    _ object: @autoclosure () -> Any
-  ) {
-    os_log(.error, log: log, "%{public}@\n%{public}@:%{public}@", "\(object())", "\(file)", "\(line.description)")
-  }
+  static let storeReader = Logger(OSLog.makeOSLogInDebug { OSLog.init(subsystem: "Verge", category: "storeReader") })
+  
+  static let writeGraph = Logger(OSLog.makeOSLogInDebug { OSLog.init(subsystem: "Verge", category: "writeGraph") })
   
 }
 
 extension OSLog {
   
   @inline(__always)
-  private static func makeOSLogInDebug(isEnabled: Bool = true, _ factory: () -> OSLog) -> OSLog {
+  fileprivate static func makeOSLogInDebug(isEnabled: Bool = true, _ factory: () -> OSLog) -> OSLog {
 #if DEBUG
     return factory()
 #else
@@ -47,7 +33,4 @@ extension OSLog {
 #endif
   }
   
-  static let storeReader: OSLog = makeOSLogInDebug { OSLog.init(subsystem: "org.VergeGroup", category: "StoreReader") }
-  
-  static let writeGraph: OSLog = makeOSLogInDebug { OSLog.init(subsystem: "org.VergeGroup", category: "WriteGraph") }
 }

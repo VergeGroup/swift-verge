@@ -40,7 +40,7 @@ public protocol ChangesType<Value>: AnyChangesType {
 
   var previous: Self? { get }
   
-  var modification: PropertyNode? { get }
+  var modification: InoutRef<Value>.Modification? { get }
 
   func asChanges() -> Changes<Value>
 }
@@ -130,12 +130,8 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
 
   public let traces: [MutationTrace]
   
-  public let modification: PropertyNode?
-  
-  public var writeGraph: PropertyNode? {
-    modification
-  }
-  
+  public let modification: InoutRef<Value>.Modification?
+    
   public let _transaction: Transaction
 
   // MARK: - Initializers
@@ -159,7 +155,7 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
     innerBox: InnerBox,
     version: UInt64,
     traces: [MutationTrace],
-    modification: consuming PropertyNode?,
+    modification: consuming InoutRef<Value>.Modification?,
     transaction: Transaction
   ) {
     self.previous = previous
@@ -272,7 +268,7 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
 
   public func makeNextChanges(
     with nextNewValue: Value,
-    modification: PropertyNode?,
+    modification: InoutRef<Value>.Modification?,
     transaction: Transaction
   ) -> Changes<Value> {
     let previous = cloneWithDropsPrevious()

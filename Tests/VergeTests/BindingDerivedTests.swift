@@ -38,7 +38,7 @@ final class BindingDerivedTests: XCTestCase {
     XCTAssertEqual(binding.state.primitive, 0)
 
     binding.commit {
-      $0 == 2
+      $0 = 2
     }
 
     XCTAssertEqual(binding.state.previous?.primitive, 0)

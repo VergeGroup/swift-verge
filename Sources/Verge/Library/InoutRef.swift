@@ -22,7 +22,12 @@
 import Foundation
 import StateStruct
 
-public struct InoutRef<Wrapped: TrackingObject> {
+public struct InoutRef<Wrapped> {
+  
+  public enum Modification {
+    case graph(PropertyNode)
+    case indeterminate
+  }
 
   // MARK: - Properties
 
@@ -38,14 +43,19 @@ public struct InoutRef<Wrapped: TrackingObject> {
       yield &pointer.pointee
     }
   }
-
-  private(set) var writeGraph: PropertyNode? = nil
+  
+  private(set) var modification: Modification?
 
   public var hasModified: Bool {
-    guard let writeGraph else {
+    guard let modification else {
       return false
     }    
-    return !writeGraph.isEmpty
+    switch modification {
+    case .graph(let graph):
+      return !graph.isEmpty
+    case .indeterminate:
+      return true
+    }      
   }
 
   // MARK: - Initializers
@@ -63,24 +73,42 @@ public struct InoutRef<Wrapped: TrackingObject> {
   // MARK: - Functions
 
   public mutating func modify<T>(_ perform: (inout Wrapped) throws -> T) rethrows -> T {
-
-    var result: T!
     
-    var modifyingResult = try pointer.pointee.tracking(using: writeGraph) {
-      result = try perform(&pointer.pointee)
+    if pointer.pointee is TrackingObject {
+      var result: T!
+      
+      var modifyingResult = try (pointer.pointee as! TrackingObject).tracking(using: {
+        switch modification {
+        case .graph(let graph):
+          return graph
+        default:
+          return nil
+        }
+      }()) {
+        result = try perform(&pointer.pointee)
+      }
+      
+      modifyingResult.graph.shakeAsWrite()
+      
+      let graph = modifyingResult.graph
+      
+      self.modification = .graph(graph)
+      
+#if DEBUG
+      Log.writeGraph.debug("Modified: \(graph.prettyPrint())")
+#endif
+      
+      return result
+    } else {
+      
+      let r = try perform(&pointer.pointee)
+      
+      modification = .indeterminate
+      
+      return r
     }
-
-    modifyingResult.graph.shakeAsWrite()
-    
-    self.writeGraph = modifyingResult.graph
-    
-    #if DEBUG
-    Log.debug(.writeGraph, "Modified: \(writeGraph!.prettyPrint())")
-    #endif
-    
-    return result
-
   }
+
 }
 
 /// Do not retain on anywhere.

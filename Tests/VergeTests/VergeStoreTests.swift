@@ -242,7 +242,7 @@ final class VergeStoreTests: XCTestCase {
     XCTAssertEqual(store.state.version, 1)
 
     store.commit {
-      $0.count = 101
+      $0.count = 100
     }
 
     // many times calling empty commits

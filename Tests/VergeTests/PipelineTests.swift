@@ -46,7 +46,7 @@ final class PipelineTests: XCTestCase {
             new: .init(name: "A", count: 2)
           )
         ),
-        .noUpdates
+        .new(2)
       )
       
       XCTAssertEqual(mapCounter.value , 2)
