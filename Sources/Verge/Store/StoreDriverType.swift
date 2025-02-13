@@ -582,7 +582,14 @@ extension StoreDriverType {
     return result
   }
 
-  public func detached<NewScope: Equatable>(
+  @available(*, deprecated, message: "A detached scope does not support TrackingObject.")
+  public func detached<NewScope>(
+    from newScope: WritableKeyPath<TargetStore.State, NewScope> & Sendable
+  ) -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
+    .init(store: store.asStore(), scope: newScope)
+  }
+  
+  public func detached<NewScope: TrackingObject>(
     from newScope: WritableKeyPath<TargetStore.State, NewScope> & Sendable
   ) -> DetachedDispatcher<TargetStore.State, TargetStore.Activity, NewScope> {
     .init(store: store.asStore(), scope: newScope)

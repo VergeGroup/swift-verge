@@ -56,7 +56,7 @@ extension StoreMiddlewareType {
   /**
    Creates an instance that commits mutations according to the original committing.
    */
-  public static func modify<State: Equatable>(
+  public static func modify<State>(
     modify: @escaping @Sendable (
       _ modifyingState: inout State, _ transaction: inout Transaction, _ current: Changes<State>
     )

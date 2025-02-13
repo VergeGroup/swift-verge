@@ -61,7 +61,7 @@ final class DerivedTests: XCTestCase {
     let wrapper = DemoStore()
 
     let slice = wrapper.derived(
-      .map { $0.count }.drop { $0.noChanges(\.self) },
+      .map { @Sendable in $0.count },
       queue: .passthrough
     )
 
@@ -99,8 +99,8 @@ final class DerivedTests: XCTestCase {
 
     let wrapper = DemoStore()
     
-    let s0 = wrapper.derived(.map { $0.count }, queue: .passthrough)
-    let s1 = wrapper.derived(.map { $0.name }, queue: .passthrough)
+    let s0 = wrapper.derived(.map { @Sendable in $0.count }, queue: .passthrough)
+    let s1 = wrapper.derived(.map { @Sendable in $0.name }, queue: .passthrough)
     
     let updateCount = expectation(description: "updatecount")
     updateCount.assertForOverFulfill = true

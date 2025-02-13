@@ -19,14 +19,17 @@ final class VergeStoreTests: XCTestCase {
   @Tracking
   struct _State {
 
+    @Tracking
     struct TreeA {
       
     }
     
+    @Tracking
     struct TreeB {
       
     }
     
+    @Tracking
     struct TreeC {
       
     }
@@ -145,7 +148,7 @@ final class VergeStoreTests: XCTestCase {
   final class TreeADispatcher: StoreDriverType {
 
     let store: _Store
-    let scope: WritableKeyPath<VergeStoreTests._State, Edge<_State.TreeA>> & Sendable = \.$treeA
+    let scope: WritableKeyPath<VergeStoreTests._State, _State.TreeA> & Sendable = \.treeA
 
     init(store: _Store) {
       self.store = store
@@ -153,17 +156,17 @@ final class VergeStoreTests: XCTestCase {
     
     func operation() {
       
-      let _: Changes<Edge<_State.TreeA>> = state
+      let _: Changes<_State.TreeA> = state
       
-      commit { (state: inout InoutRef<Edge<_State.TreeA>>) in
+      commit { (state: inout _State.TreeA) in
 
       }
       
-      let treeB = detached(from: \.$treeB)
+      let treeB = detached(from: \.treeB)
       
-      let _: Changes<Edge<_State.TreeB>> = treeB.state
+      let _: Changes<_State.TreeB> = treeB.state
                          
-      treeB.commit { (state: inout InoutRef<Edge<_State.TreeB>>) in
+      treeB.commit { (state: inout _State.TreeB) in
 
       }
          
@@ -239,8 +242,7 @@ final class VergeStoreTests: XCTestCase {
     XCTAssertEqual(store.state.version, 1)
 
     store.commit {
-      // explict marking
-      $0.markAsModified()
+      $0.count = 101
     }
 
     // many times calling empty commits
@@ -319,14 +321,14 @@ final class VergeStoreTests: XCTestCase {
     .store(in: &subscriptions)
         
     store.commit {
-      $0.markAsModified()
+      $0.count += 1
     }
     
     // stop subscribing
     subscriptions = .init()
 
     store.commit {
-      $0.markAsModified()
+      $0.count += 1
     }
     
     XCTAssertEqual(count.value, 2)

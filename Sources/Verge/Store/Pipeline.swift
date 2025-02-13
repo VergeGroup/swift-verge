@@ -138,7 +138,7 @@ public enum Pipelines {
   }
  
   /// Closure based pipeline, 
-  public struct ChangesMapPipeline<Source: Equatable, Intermediate, Output: Equatable>: PipelineType {
+  public struct ChangesMapPipeline<Source, Intermediate, Output: Equatable>: PipelineType {
     
     public typealias Input = Changes<Source>
     
@@ -167,34 +167,29 @@ public enum Pipelines {
       guard let previous = input.previous else {
         return .new(yield(input))
       }
-      
-      guard previous.primitive == input.primitive else {
-        
-        let previousIntermediate = intermediate(previous.primitive)
-        let newIntermediate = intermediate(input.primitive)
-        
-        guard previousIntermediate == newIntermediate else {
-          
-          let previousMapped = transform(previousIntermediate.value)
-          let newMapped = transform(newIntermediate.value)
-          
-          guard previousMapped == newMapped else {
-            
-            guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-              return .new(newMapped)
-            }
-            
-            return .noUpdates
-          }
                   
+      let previousIntermediate = intermediate(previous.primitive)
+      let newIntermediate = intermediate(input.primitive)
+      
+      guard previousIntermediate == newIntermediate else {
+        
+        let previousMapped = transform(previousIntermediate.value)
+        let newMapped = transform(newIntermediate.value)
+        
+        guard previousMapped == newMapped else {
+          
+          guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+            return .new(newMapped)
+          }
+          
           return .noUpdates
         }
-              
-        return .noUpdates
         
+        return .noUpdates
       }
       
       return .noUpdates
+            
     }
     
     public func yield(_ input: Input) -> Output {
@@ -214,7 +209,7 @@ public enum Pipelines {
     }
   }
   
-  public struct BasicMapPipeline<Input: Equatable, Output: Equatable>: PipelineType {
+  public struct BasicMapPipeline<Input, Output: Equatable>: PipelineType {
         
     // MARK: - Properties
     

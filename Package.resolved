@@ -1,5 +1,5 @@
 {
-  "originHash" : "84bc3739aebc8c716c461678b1b9134eda145b0cd319ebe2f4b3bfa5bdbc230e",
+  "originHash" : "ba70189bedf21fb5ab6369e7da98482c9e7a8c23d0114ffde1d58244e75bdf86",
   "pins" : [
     {
       "identity" : "normalization",
@@ -52,7 +52,7 @@
       "location" : "https://github.com/VergeGroup/swift-macro-state-struct",
       "state" : {
         "branch" : "main",
-        "revision" : "dc30b2a857a830fa2a9d785a45d3bbe334923b8d"
+        "revision" : "a0ba745c438f54c58fcc701a9d625e375a7c4fa7"
       }
     },
     {
