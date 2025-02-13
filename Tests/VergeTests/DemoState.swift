@@ -48,6 +48,8 @@ struct DemoState: Sendable {
   var nonEquatable: NonEquatable = .init()
 
   var onEquatable: OnEquatable = .init()
+  
+  var recursive: DemoState? = nil
 
   mutating func updateFromItself() {
     count += 1

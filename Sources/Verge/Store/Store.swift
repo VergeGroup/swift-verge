@@ -602,7 +602,7 @@ extension Store {
 
         var transaction = Transaction()
         var inoutRef = InoutRef<_>.init(stateMutablePointer)
-        
+                
         let result = try inoutRef.modify { modifying in          
           try mutation(&modifying, &transaction)
         }

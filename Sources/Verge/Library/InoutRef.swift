@@ -77,6 +77,10 @@ public struct InoutRef<Wrapped> {
     if pointer.pointee is TrackingObject {
       var result: T!
       
+      let identifier = Token()
+      
+      (pointer.pointee as! TrackingObject)._tracking_context.identifier = identifier
+      
       var modifyingResult = try (pointer.pointee as! TrackingObject).tracking(using: {
         switch modification {
         case .graph(let graph):
@@ -87,6 +91,11 @@ public struct InoutRef<Wrapped> {
       }()) {
         result = try perform(&pointer.pointee)
       }
+      
+      let resultIdentifier = (pointer.pointee as! TrackingObject)._tracking_context.identifier
+      (pointer.pointee as! TrackingObject)._tracking_context.identifier = nil
+            
+      assert(Optional(identifier) == resultIdentifier, "replacing instance itself is not supported. It's out of the scope of tracking.")
       
       modifyingResult.graph.shakeAsWrite()
       
@@ -109,6 +118,18 @@ public struct InoutRef<Wrapped> {
     }
   }
 
+}
+
+private final class Token: Hashable {
+  
+  static func == (lhs: Token, rhs: Token) -> Bool {
+    lhs === rhs
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    ObjectIdentifier(self).hash(into: &hasher)
+  }
+  
 }
 
 /// Do not retain on anywhere.

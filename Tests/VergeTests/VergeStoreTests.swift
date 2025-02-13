@@ -376,19 +376,19 @@ final class VergeStoreTests: XCTestCase {
     let store2 = DemoStore()
 
     let sub = store1
-      .assign(to: store2.assignee(\.self))
+      .assign(to: store2.assignee(\.recursive))
 
     store1.commit {
       $0.count += 1
     }
 
-    XCTAssertEqual(store1.state.primitive.count, store2.state.primitive.count)
+    XCTAssertEqual(store1.state.primitive.count, store2.state.primitive.recursive?.count)
 
     store1.commit {
       $0.count += 1
     }
 
-    XCTAssertEqual(store1.state.primitive.count, store2.state.primitive.count)
+    XCTAssertEqual(store1.state.primitive.count, store2.state.primitive.recursive?.count)
 
     withExtendedLifetime(sub, {})
 
