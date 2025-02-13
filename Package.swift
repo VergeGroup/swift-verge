@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
   name: "Verge",
   platforms: [
-    .macOS(.v11),
+    .macOS(.v13),
     .iOS(.v16),
     .tvOS(.v13),
     .watchOS(.v6),

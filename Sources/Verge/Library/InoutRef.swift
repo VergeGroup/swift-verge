@@ -45,7 +45,7 @@ public struct InoutRef<Wrapped: TrackingObject> {
     guard let writeGraph else {
       return false
     }    
-    return writeGraph.isEmpty
+    return !writeGraph.isEmpty
   }
 
   // MARK: - Initializers

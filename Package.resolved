@@ -1,5 +1,5 @@
 {
-  "originHash" : "ba70189bedf21fb5ab6369e7da98482c9e7a8c23d0114ffde1d58244e75bdf86",
+  "originHash" : "9b693930e3ff133fcfca9e921dbc6866b5c6a8822e86ab58d5c9fbacf689dc7e",
   "pins" : [
     {
       "identity" : "normalization",
@@ -96,8 +96,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/TypedIdentifier",
       "state" : {
-        "revision" : "297de87772cccec24f8f1a63376778d3227305d7",
-        "version" : "2.0.2"
+        "revision" : "284340409ba47858a1b3c353dcef9c21303953db",
+        "version" : "2.0.3"
       }
     },
     {
