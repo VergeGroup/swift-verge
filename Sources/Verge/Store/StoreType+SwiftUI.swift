@@ -43,16 +43,6 @@ extension BindingDerived {
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension StoreDriverType where Self : Sendable {
-
-  public func binding() -> SwiftUI.Binding<Scope> {
-    .init(get: { [self /* source store lives until binding released */] in
-      return self.state.primitive
-    }, set: { [weak self] value in
-      self?.commit {
-        $0 = value
-      }
-    })
-  }
   
   /// Generates a SwiftUI.Binding that gets and updates the StoreType.State.
   /// Usage:
@@ -65,23 +55,45 @@ extension StoreDriverType where Self : Sendable {
   ///   - mutation: A closure to update the state.
   ///   If the closure is nil, state will be automatically updated.
   /// - Returns: The result of binding
-  public func binding<T>(_ keyPath: WritableKeyPath<Scope, T> & Sendable, with mutation: (@Sendable (T) -> Void)? = nil) -> SwiftUI.Binding<T> {
-    
+  public func binding<T>(_ keyPath: WritableKeyPath<Scope, T> & Sendable) -> SwiftUI.Binding<T> {    
     .init(
       get: { [self /* source store lives until binding released */] in
         return self.state.primitive[keyPath: keyPath]
-      }, set: { [weak self] value in
-        if let mutation = mutation {
-          mutation(value)
-        } else {
-          self?.commit {
-            $0[keyPath: keyPath] = value
-          }
+      }, set: { [weak self] value in    
+        self?.commit {
+          $0[keyPath: keyPath] = value
         }
       }
-    )
-    
+    )    
   }
 }
+
+extension StoreDriverType {
+  
+  /// Generates a SwiftUI.Binding that gets and updates the StoreType.State.
+  /// Usage:
+  ///
+  ///     TextField("hoge", text: store.binding(\.inputingText))
+  ///
+  /// - Warning: Still in experimentals.
+  /// - Parameters:
+  ///   - keypath: A property of the state to be bound.
+  ///   - mutation: A closure to update the state.
+  ///   If the closure is nil, state will be automatically updated.
+  /// - Returns: The result of binding
+  public nonisolated func binding<T>(_ keyPath: WritableKeyPath<Scope, T>) -> SwiftUI.Binding<T> {    
+    .init(
+      get: { [self /* source store lives until binding released */] in
+        return self.state.primitive[keyPath: keyPath]
+      }, set: { [weak self, keyPath] value in    
+        self?.commit { [keyPath] in
+          $0[keyPath: keyPath] = value
+        }
+      }
+    )    
+  }
+  
+}
+
 
 #endif

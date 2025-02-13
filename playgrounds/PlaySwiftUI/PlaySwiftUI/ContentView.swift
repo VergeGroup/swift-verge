@@ -66,6 +66,9 @@ struct ContentView: View {
         Text(state.info.constant)
       }
       
+      @StoreBindable var storeBindable = store
+      TextField("Name", text: $storeBindable.info.name)
+      
     }
     .padding()
   }
