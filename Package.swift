@@ -25,7 +25,7 @@ let package = Package(
     .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
     .package(url: "https://github.com/VergeGroup/TypedIdentifier", from: "2.0.2"),
     .package(url: "https://github.com/VergeGroup/TypedComparator", from: "1.0.0"),
-    .package(url: "https://github.com/VergeGroup/Normalization", from: "1.0.0"),
+    .package(url: "https://github.com/VergeGroup/Normalization", from: "1.1.0"),
     .package(url: "https://github.com/VergeGroup/swift-macro-state-struct", branch: "main"),
 
     /// for testing
@@ -80,10 +80,6 @@ let package = Package(
         .product(name: "RxSwift", package: "RxSwift"),
         .product(name: "RxCocoa", package: "RxSwift"),
       ]
-    ),
-    .testTarget(
-      name: "VergeClassicTests",
-      dependencies: ["VergeClassic"]
     ),
     .testTarget(
       name: "VergeNormalizationDerivedTests",

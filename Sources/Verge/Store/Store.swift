@@ -1056,7 +1056,7 @@ extension Store {
   private final class StoreSubscriptionView: UIView {
 
     @Tracking
-    struct State: StateType {
+    struct State {
       var count: Int = 0
     }
 

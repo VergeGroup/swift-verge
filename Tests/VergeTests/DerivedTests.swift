@@ -25,7 +25,7 @@ final class DerivedTests: XCTestCase {
 
     let localStore = DemoStore()
                     
-    let slice = localStore.derived(.map({ $0.count }), queue: .passthrough)      
+    let slice = localStore.derived(.map({ @Sendable in $0.count }), queue: .passthrough)      
 
     XCTAssertEqual(slice.state.primitive, 0)
     XCTAssertEqual(slice.state.root, 0)

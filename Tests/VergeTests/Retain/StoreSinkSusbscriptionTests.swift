@@ -146,7 +146,7 @@ final class StoreSinkSubscriptionTests: XCTestCase {
   func testRelease() {
 
     let wrapper = DemoStore()
-    let ref = withReference(wrapper.derived(.map { $0.count }, queue: .passthrough))
+    let ref = withReference(wrapper.derived(.map { @Sendable in $0.count }, queue: .passthrough))
     ref.release()
     XCTAssertNil(ref.value)
 
@@ -156,7 +156,7 @@ final class StoreSinkSubscriptionTests: XCTestCase {
 
     let store = DemoStore()
 
-    let derivedRef = withReference(store.derived(.map { $0.count }, queue: .passthrough))
+    let derivedRef = withReference(store.derived(.map { @Sendable in $0.count }, queue: .passthrough))
 
     let expectation = XCTestExpectation(description: "receive changes")
     expectation.expectedFulfillmentCount = 1
@@ -189,11 +189,11 @@ final class StoreSinkSubscriptionTests: XCTestCase {
 
     let wrapper = DemoStore()
 
-    var baseSlice: Derived<Int>! = wrapper.derived(.map { $0.count }, queue: .passthrough)
+    var baseSlice: Derived<Int>! = wrapper.derived(.map { @Sendable in $0.count }, queue: .passthrough)
 
     weak var weakBaseSlice = baseSlice
 
-    var slice: Derived<Int>! = baseSlice.derived(.map { $0.self }, queue: .passthrough)
+    var slice: Derived<Int>! = baseSlice.derived(.map { @Sendable in $0.self }, queue: .passthrough)
 
     baseSlice = nil
 

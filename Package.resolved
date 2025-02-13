@@ -1,13 +1,13 @@
 {
-  "originHash" : "b62c61273fa98b8a3c527fdf4b07f317dd25c36253b66be6652e95344f0b4d7b",
+  "originHash" : "84bc3739aebc8c716c461678b1b9134eda145b0cd319ebe2f4b3bfa5bdbc230e",
   "pins" : [
     {
       "identity" : "normalization",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/Normalization",
       "state" : {
-        "revision" : "2cb57bc6ffce81e3ffa2b0781c82f13f00bf1e98",
-        "version" : "1.0.0"
+        "revision" : "6e7cb1ddeda4d0f1d2fbf8ca6d25ecd8ed6ba917",
+        "version" : "1.1.0"
       }
     },
     {
@@ -52,7 +52,7 @@
       "location" : "https://github.com/VergeGroup/swift-macro-state-struct",
       "state" : {
         "branch" : "main",
-        "revision" : "a13a037d83d869a0a7ab7bb46588ddd68d6d5304"
+        "revision" : "dc30b2a857a830fa2a9d785a45d3bbe334923b8d"
       }
     },
     {

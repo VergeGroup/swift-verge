@@ -129,7 +129,7 @@ final class PipelineTests: XCTestCase {
       }
       
       do {
-        let d = store.derived(.map { $0.count })
+        let d = store.derived(.map { @Sendable in $0.count })
         XCTAssert((d as Any) is Derived<Int>)
       }
     }

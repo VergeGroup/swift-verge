@@ -212,7 +212,7 @@ final class StoreReaderTests: XCTestCase {
     try await Task.sleep(nanoseconds: 1_000_000_000)
 
     store.commit {
-      $0.wrapped += 1
+      $0 += 1
     }
     
     try await Task.sleep(nanoseconds: 1_000_000_000)
@@ -220,7 +220,7 @@ final class StoreReaderTests: XCTestCase {
     XCTAssertEqual(count, 2)
 
     store.commit {
-      $0.wrapped += 1
+      $0 += 1
     }
     
     try await Task.sleep(nanoseconds: 1_000_000_000)
@@ -228,7 +228,7 @@ final class StoreReaderTests: XCTestCase {
     XCTAssertEqual(count, 3)
 
     store.commit {
-      $0.wrapped += 1
+      $0 += 1
     }
     
     try await Task.sleep(nanoseconds: 1_000_000_000)

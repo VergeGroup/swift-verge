@@ -1,6 +1,7 @@
 import VergeNormalizationDerived
 
-struct DemoState: StateType {
+@Tracking
+struct DemoState {
 
   var count: Int = 0
 

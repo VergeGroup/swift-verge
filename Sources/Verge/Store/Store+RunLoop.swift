@@ -95,7 +95,7 @@ import SwiftUI
 }
 
 @Tracking
-private struct StoreState: StateType {
+private struct StoreState {
   var count: Int = 0
 }
 

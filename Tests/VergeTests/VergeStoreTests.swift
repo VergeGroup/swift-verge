@@ -16,7 +16,8 @@ import Combine
 @available(iOS 13.0, *)
 final class VergeStoreTests: XCTestCase {
       
-  struct _State: Equatable, StateType {
+  @Tracking
+  struct _State {
 
     struct TreeA {
       
@@ -44,9 +45,9 @@ final class VergeStoreTests: XCTestCase {
     var optionalNested: OptionalNestedState?
     var nested: NestedState = .init()
     
-    @Edge var treeA = TreeA()
-    @Edge var treeB = TreeB()
-    @Edge var treeC = TreeC()
+    var treeA = TreeA()
+    var treeB = TreeB()
+    var treeC = TreeC()
     
   }
   
@@ -122,7 +123,7 @@ final class VergeStoreTests: XCTestCase {
       
       let _: Changes<TargetStore.State.NestedState> = _detached.state
 
-      _detached.commit { (state: inout InoutRef<TargetStore.State.NestedState>) in
+      _detached.commit { (state: inout TargetStore.State.NestedState) in
 
       }
         
@@ -130,7 +131,7 @@ final class VergeStoreTests: XCTestCase {
                   
       let _: Changes<TargetStore.State.OptionalNestedState?> = optionalNestedTarget.state
 
-      optionalNestedTarget.commit { (state: inout InoutRef<TargetStore.State.OptionalNestedState?>) in
+      optionalNestedTarget.commit { (state: inout TargetStore.State.OptionalNestedState?) in
 
       }
                       
