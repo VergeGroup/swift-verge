@@ -7,6 +7,7 @@ struct QueryPipeline<
 
   typealias Input = Changes<_StorageSelector.Source>
   typealias EntityStorage = _StorageSelector.Storage
+  typealias Storage = Void
 
   private let storageSelector: _StorageSelector
   private let query: @Sendable (EntityStorage) -> Output
@@ -23,7 +24,7 @@ struct QueryPipeline<
     ()
   }
 
-  func yield(_ input: consuming Input, storage: Void) -> Output {
+  func yield(_ input: consuming Input, storage: Storage) -> Output {
 
     let storage = storageSelector.select(source: input.primitive)
     let output = query(storage)
@@ -32,7 +33,7 @@ struct QueryPipeline<
 
   }
 
-  func yieldContinuously(_ input: Input, storage: Void) -> Verge.ContinuousResult<Output> {
+  func yieldContinuously(_ input: Input, storage: Storage) -> Verge.ContinuousResult<Output> {
 
     guard let previous = input.previous else {
       return .new(yield(input, storage: storage))
