@@ -8,6 +8,36 @@ import ViewInspector
 final class StoreReaderTests: XCTestCase {
   
   @MainActor
+  func test_replacing_itself() throws {
+    
+    let store = Store<State, Never>(initialState: .init())
+    
+    var count = 0
+    
+    let view = Content(store: store, onUpdate: {
+      count += 1
+    })
+    
+    let inspect = try view.inspect()
+    
+    XCTAssertEqual(count, 0)
+    
+    XCTAssertEqual(try inspect.find(viewWithId: "count_1").text().string(), "0")
+    
+    print(count)
+    
+    var anotherState = State()
+    anotherState.count_1 = 100
+    
+    store.commit {
+      $0 = anotherState
+    }
+    
+    XCTAssertEqual(try inspect.find(viewWithId: "count_1").text().string(), "100")
+    print(count)
+  }
+  
+  @MainActor
   func test_increment_counter() throws {
     
     let store = Store<State, Never>(initialState: .init())

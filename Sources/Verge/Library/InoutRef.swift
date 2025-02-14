@@ -94,9 +94,13 @@ public struct InoutRef<Wrapped> {
       
       let resultIdentifier = (pointer.pointee as! TrackingObject)._tracking_context.identifier
       (pointer.pointee as! TrackingObject)._tracking_context.identifier = nil
-            
-      assert(Optional(identifier) == resultIdentifier, "replacing instance itself is not supported. It's out of the scope of tracking.")
       
+      guard Optional(identifier) == resultIdentifier else {
+        // replacing instance itself happened.
+        modification = .indeterminate
+        return result
+      }
+                  
       modifyingResult.graph.shakeAsWrite()
       
       let graph = modifyingResult.graph

@@ -13,7 +13,7 @@ final class PropertyWrapperTests: XCTestCase {
     
     print(store)
     
-    let binding: SwiftUI.Binding<_> = $isOn.binding()
+    let binding: SwiftUI.Binding<_> = $isOn.binding(\.self)
     
     binding.wrappedValue = true
     
