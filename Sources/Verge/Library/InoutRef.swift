@@ -20,91 +20,16 @@
 // THE SOFTWARE.
 
 import Foundation
+import StateStruct
 
-/**
- A reference object that manages a reference of the value type instance in order to achieve the followings:
-   - Tracking the properties which are modified.
-   - Tracking where modifications have happened.
-   - Doing the above things without copying.
- 
- - Warning: Do not retain this object anywhere.
-
- TODO: We failed to introduce non-copyable
- https://github.com/VergeGroup/swift-verge/pull/448
- */
-@dynamicMemberLookup
 public struct InoutRef<Wrapped> {
-
-  // MARK: - Nested types
-
-  /**
-   A representation that how modified the properties of the wrapped value.
-   */
-  @dynamicMemberLookup
-  public enum Modification: Hashable, CustomDebugStringConvertible {
-    case determinate(
-      keyPaths: Set<PartialKeyPath<Wrapped>>
-    )
+  
+  public enum Modification {
+    case graph(PropertyNode)
     case indeterminate
-
-    public var debugDescription: String {
-      switch self {
-      case .indeterminate:
-        return "indeterminate"
-      case .determinate(let keyPaths):
-        return "Modified:\n" + keyPaths.map {
-          "  \($0)"
-        }
-        .joined(separator: "\n")
-      }
-    }
-    
-    public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T>) -> Bool {
-      switch self {
-      case .indeterminate:
-        return true
-      case .determinate(let keyPaths):
-        return keyPaths.contains(keyPath)
-      }
-    }
-    
-    public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T?>) -> Bool {
-      switch self {
-      case .indeterminate:
-        return true
-      case .determinate(let keyPaths):
-        return keyPaths.contains(keyPath)
-      }
-    }
-    
   }
 
   // MARK: - Properties
-  
-  /// - Attention: non-atomic property
-  public private(set) var traces: [MutationTrace] = []
-
-  public var modification: Modification? {
-
-    guard nonatomic_hasModified else {
-      return nil
-    }
-
-    guard !nonatomic_wasModifiedIndeterminate else {
-      return .indeterminate
-    }
-    
-    return .determinate(
-      keyPaths: nonatomic_modifiedKeyPaths
-    )
-    
-  }
-
-  private(set) var nonatomic_hasModified = false
-
-  nonisolated(unsafe) private var nonatomic_modifiedKeyPaths: Set<PartialKeyPath<Wrapped>> = .init()
-
-  private var nonatomic_wasModifiedIndeterminate = false
 
   nonisolated(unsafe) private let pointer: UnsafeMutablePointer<Wrapped>
 
@@ -115,11 +40,24 @@ public struct InoutRef<Wrapped> {
       yield pointer.pointee
     }
     _modify {
-      markAsModified()
       yield &pointer.pointee
     }
   }
   
+  private(set) var modification: Modification?
+
+  public var hasModified: Bool {
+    guard let modification else {
+      return false
+    }    
+    switch modification {
+    case .graph(let graph):
+      return !graph.isEmpty
+    case .indeterminate:
+      return true
+    }      
+  }
+
   // MARK: - Initializers
 
   /**
@@ -133,285 +71,67 @@ public struct InoutRef<Wrapped> {
   }
 
   // MARK: - Functions
-  
-  /**
-  Returns a Boolean value that indicates whether the property pointed by the specified KeyPath has been modified.
-  If the modification indicates indeterminate, returns always true.
- 
-  - Warning: Returns false even child properties modified if specified parent keypath.
-  */
-  public func hasModified<U>(_ keyPath: KeyPath<Wrapped, U>) -> Bool {
+
+  public mutating func modify<T>(_ perform: (inout Wrapped) throws -> T) rethrows -> T {
     
-    guard nonatomic_hasModified else {
-      return false
-    }
-    
-    if keyPath == \Wrapped.self {
-      return nonatomic_hasModified
+    if pointer.pointee is TrackingObject {
+      var result: T!
+      
+      let identifier = Token()
+      
+      (pointer.pointee as! TrackingObject)._tracking_context.identifier = identifier
+      
+      var modifyingResult = try (pointer.pointee as! TrackingObject).tracking(using: {
+        switch modification {
+        case .graph(let graph):
+          return graph
+        default:
+          return nil
+        }
+      }()) {
+        result = try perform(&pointer.pointee)
+      }
+      
+      let resultIdentifier = (pointer.pointee as! TrackingObject)._tracking_context.identifier
+      (pointer.pointee as! TrackingObject)._tracking_context.identifier = nil
+      
+      guard Optional(identifier) == resultIdentifier else {
+        // replacing instance itself happened.
+        modification = .indeterminate
+        return result
+      }
+                  
+      modifyingResult.graph.shakeAsWrite()
+      
+      let graph = modifyingResult.graph
+      
+      self.modification = .graph(graph)
+      
+#if DEBUG
+      Log.writeGraph.debug("Modified: \(graph.prettyPrint())")
+#endif
+      
+      return result
     } else {
       
-      guard let modification = modification else {
-        return false
-      }
+      let r = try perform(&pointer.pointee)
       
-      switch modification {
-      case .determinate(let keyPaths):
-        return keyPaths.contains(keyPath)
-      case .indeterminate:
-        return true
-      }
+      modification = .indeterminate
       
+      return r
     }
+  }
+
+}
+
+private final class Token: Hashable {
+  
+  static func == (lhs: Token, rhs: Token) -> Bool {
+    lhs === rhs
   }
   
-  mutating func append(trace: MutationTrace) {
-    traces.append(trace)
-  }
-  
-  mutating func append(traces otherTraces: [MutationTrace]) {
-    traces.append(contentsOf: otherTraces)
-  }
-
-  public subscript<T> (dynamicMember keyPath: WritableKeyPath<Wrapped, T>) -> T {
-    _read {
-      yield pointer.pointee[keyPath: keyPath]
-    }
-    _modify {
-      maskAsModified(on: keyPath)
-      yield &pointer.pointee[keyPath: keyPath]
-    }
-  }
-
-  public subscript<T> (dynamicMember keyPath: WritableKeyPath<Wrapped, T?>) -> T? {
-    _read {
-      yield pointer.pointee[keyPath: keyPath]
-    }
-    _modify {
-      maskAsModified(on: keyPath)
-      yield &pointer.pointee[keyPath: keyPath]
-    }
-  }
-
-  public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T>) -> T {
-    _read {
-      yield pointer.pointee[keyPath: keyPath]
-    }
-  }
-
-  public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T?>) -> T? {
-    _read {
-      yield pointer.pointee[keyPath: keyPath]
-    }
-  }
-
-  public subscript<T> (keyPath keyPath: WritableKeyPath<Wrapped, T>) -> T {
-    _read {
-      yield pointer.pointee[keyPath: keyPath]
-    }
-    _modify {
-      maskAsModified(on: keyPath)
-      yield &pointer.pointee[keyPath: keyPath]
-    }
-  }
-
-  public subscript<T> (keyPath keyPath: WritableKeyPath<Wrapped, T?>) -> T? {
-    _read {
-      yield pointer.pointee[keyPath: keyPath]
-    }
-    _modify {
-      maskAsModified(on: keyPath)
-      yield &pointer.pointee[keyPath: keyPath]
-    }
-  }
-
-  public subscript<T> (keyPath keyPath: KeyPath<Wrapped, T>) -> T {
-    _read {
-      yield pointer.pointee[keyPath: keyPath]
-    }
-  }
-
-  public subscript<T> (keyPath keyPath: KeyPath<Wrapped, T?>) -> T? {
-    _read {
-      yield pointer.pointee[keyPath: keyPath]
-    }
-  }
-
-  @inline(__always)
-  private mutating  func maskAsModified<U>(on keyPath: KeyPath<Wrapped, U>) {
-    nonatomic_modifiedKeyPaths.insert(keyPath)
-    nonatomic_hasModified = true
-  }
-  
-  @inline(__always)
-  private mutating func maskAsModified<U>(on keyPath: KeyPath<Wrapped, U?>) {
-    nonatomic_modifiedKeyPaths.insert(keyPath)
-    nonatomic_hasModified = true
-  }
-
-  /// Marks as modified
-  /// `modification` property becomes to `.indeterminate`.
-  public mutating func markAsModified() {
-    nonatomic_hasModified = true
-    nonatomic_wasModifiedIndeterminate = true
-  }
-
-  /**
-   Replace the wrapped value with a new value.
-
-   We can't overload `=` operator.
-   https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html
-   */
-  public mutating func replace(with newValue: Wrapped) {
-    markAsModified()
-    pointer.pointee = newValue
-  }
-
-  /// Modify the wrapped value with native accessing (without KeyPath + DynamicMemberLookup)
-  ///
-  /// Attention: Using this method makes modifition indeterminate.
-  @available(*, renamed: "modifyDirectly")
-  @discardableResult
-  public mutating func modify<Return>(_ perform: (inout Wrapped) throws -> Return) rethrows -> Return {
-    return try modifyDirectly(perform)
-  }
-
-  /// Modify the wrapped value with native accessing (without KeyPath + DynamicMemberLookup)
-  ///
-  /// Attention: Using this method makes modifition indeterminate.
-  @discardableResult
-  public mutating func modifyDirectly<Return>(_ perform: (inout Wrapped) throws -> Return) rethrows -> Return {
-    markAsModified()
-    return try perform(&pointer.pointee)
-  }
-    
-  /**
-   Runs given closure with its Type and itself.
-   It helps to run static functions to modify state.
-   
-   ```swift
-   struct State {
-     ...
-   
-     static func modifyForSomething(in ref: InoutRef<Self>, argments: ...) {
-       
-     }
-   }
-   ```
-   
-   ```swift
-   commit {
-     $0.withType { type, ref in
-       type.modifyForSomething(in: ref, arguments: ...)
-     }
-   }
-   ```
-   
-   The reason why it does not use a mutating function in the state is to keep InoutRef's modifications are determinate.
-   
-   - SeeAlso: InoutRef<Wrapped>.Modification
-   */
-  public mutating func withType<Return>(_ perform: (Wrapped.Type, inout InoutRef<Wrapped>) throws -> Return) rethrows -> Return {
-    try perform(Wrapped.self, &self)
-  }
-
-  /**
-   Returns a tantative InoutRef that projects the value specified by KeyPath.
-   That InoutRef must be used only in the given perform closure.
-   */
-  public mutating func map<U, Result>(
-    keyPath: WritableKeyPath<Wrapped, U>,
-    perform: (inout InoutRef<U>) throws -> Result
-  ) rethrows -> Result {
-    
-    try map_sending(keyPath: keyPath, perform: {
-      let r = try perform(&$0)
-      /// https://github.com/swiftlang/swift/issues/78135
-      let workaround = { r }
-      return workaround()
-    })
-    
-  }
-  
-  public mutating func map_sending<U, Result>(
-    keyPath: WritableKeyPath<Wrapped, U>,
-    perform: (inout InoutRef<U>) throws -> sending Result
-  ) rethrows -> sending Result {
-    
-    let result = try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]) { (pointer) in
-      
-      var ref = InoutRef<U>.init(pointer)
-      
-      defer {
-        self.nonatomic_hasModified = ref.nonatomic_hasModified
-        self.nonatomic_wasModifiedIndeterminate = ref.nonatomic_wasModifiedIndeterminate
-        
-        let appended = ref.nonatomic_modifiedKeyPaths.compactMap {
-          (keyPath as PartialKeyPath<Wrapped>).appending(path: $0)
-        }
-        
-        self.nonatomic_modifiedKeyPaths.formUnion(appended)
-        
-      }
-      
-      let result = try perform(&ref)
-      
-      return result
-    }
-    
-    let workaround = { result }
-    return workaround()
-    
-  }
-
-  public mutating func map<U, Result>(
-    keyPath: WritableKeyPath<Wrapped, U?>,
-    perform: (inout InoutRef<U>) throws -> Result
-  ) rethrows -> Result? {
-    
-    try map_sending(keyPath: keyPath, perform: {
-      let r = try perform(&$0)
-      /// https://github.com/swiftlang/swift/issues/78135
-      let workaround = { r }
-      return workaround()
-    })
-  }
-  
-  /**
-   Returns a tantative InoutRef that projects the value specified by KeyPath.
-   That InoutRef must be used only in the given perform closure.
-   */
-  public mutating func map_sending<U, Result>(
-    keyPath: WritableKeyPath<Wrapped, U?>,
-    perform: (inout InoutRef<U>) throws -> sending Result
-  ) rethrows -> sending Result? {
-
-    guard pointer.pointee[keyPath: keyPath] != nil else {
-      return nil
-    }
-
-    let result = try withUnsafeMutablePointer(to: &pointer.pointee[keyPath: keyPath]!) { (pointer) in
-            
-      var ref = InoutRef<U>.init(pointer)
-            
-      defer {
-        self.nonatomic_hasModified = ref.nonatomic_hasModified
-        self.nonatomic_wasModifiedIndeterminate = ref.nonatomic_wasModifiedIndeterminate
-
-        let appended = ref.nonatomic_modifiedKeyPaths.compactMap {
-          (keyPath as PartialKeyPath<Wrapped>).appending(path: $0)
-        }
-
-        self.nonatomic_modifiedKeyPaths.formUnion(appended)
-
-      }
-      
-      let result = try perform(&ref)
-            
-      return result
-    }
-
-    let workaround = { result }
-    return workaround()
+  func hash(into hasher: inout Hasher) {
+    ObjectIdentifier(self).hash(into: &hasher)
   }
   
 }
@@ -444,31 +164,33 @@ public final class ReadRef<Wrapped> {
 
   // MARK: - Functions
 
-  public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T>) -> T {
+  public subscript<T>(dynamicMember keyPath: KeyPath<Wrapped, T>) -> T {
     _read {
       yield pointer.pointee[keyPath: keyPath]
     }
   }
 
-  public subscript<T> (dynamicMember keyPath: KeyPath<Wrapped, T?>) -> T? {
+  public subscript<T>(dynamicMember keyPath: KeyPath<Wrapped, T?>) -> T? {
     _read {
       yield pointer.pointee[keyPath: keyPath]
     }
   }
 
-  public subscript<T> (keyPath keyPath: KeyPath<Wrapped, T>) -> T {
+  public subscript<T>(keyPath keyPath: KeyPath<Wrapped, T>) -> T {
     _read {
       yield pointer.pointee[keyPath: keyPath]
     }
   }
 
-  public subscript<T> (keyPath keyPath: KeyPath<Wrapped, T?>) -> T? {
+  public subscript<T>(keyPath keyPath: KeyPath<Wrapped, T?>) -> T? {
     _read {
       yield pointer.pointee[keyPath: keyPath]
     }
   }
 
-  func map<U, Result>(keyPath: KeyPath<Wrapped, U>, perform: (inout ReadRef<U>) throws -> Result) rethrows -> Result {
+  func map<U, Result>(keyPath: KeyPath<Wrapped, U>, perform: (inout ReadRef<U>) throws -> Result)
+    rethrows -> Result
+  {
 
     try withUnsafePointer(to: pointer.pointee[keyPath: keyPath]) { (pointer) in
       var ref = ReadRef<U>.init(pointer)
@@ -476,7 +198,9 @@ public final class ReadRef<Wrapped> {
     }
   }
 
-  func map<U, Result>(keyPath: KeyPath<Wrapped, U?>, perform: (inout ReadRef<U>?) throws -> Result) rethrows -> Result {
+  func map<U, Result>(keyPath: KeyPath<Wrapped, U?>, perform: (inout ReadRef<U>?) throws -> Result)
+    rethrows -> Result
+  {
 
     guard pointer.pointee[keyPath: keyPath] != nil else {
       var _nil: ReadRef<U>! = .none

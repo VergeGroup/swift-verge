@@ -1,3 +1,4 @@
+import Normalization
 
 struct QueryPipeline<
   _StorageSelector: StorageSelector,
@@ -38,10 +39,10 @@ struct QueryPipeline<
     }
 
     // check if the storage has been updated
-    if NormalizedStorageComparisons<EntityStorage>.StorageComparison()(storageSelector.select(source: input.primitive), storageSelector.select(source: previous.primitive)) {
+    if NormalizedStorageComparators<EntityStorage>.StorageComparator()(storageSelector.select(source: input.primitive), storageSelector.select(source: previous.primitive)) {
       return .noUpdates
     }
-
+       
     return .new(yield(input, storage: storage))
 
   }

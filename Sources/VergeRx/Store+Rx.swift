@@ -73,7 +73,7 @@ extension ObservableType where Element : Equatable {
       if pre == nil {
         pre = Changes<Element>.init(old: nil, new: element)
       } else {
-        pre = pre!.makeNextChanges(with: element, from: [trace], modification: .indeterminate, transaction: .init())
+        pre = pre!.makeNextChanges(with: element, modification: nil, transaction: .init())
       }
     })
     .map { $0! }
@@ -230,7 +230,7 @@ extension Reactive where Base : StoreDriverType {
 
   public func commitBinder<S>(
     scheduler: ImmediateSchedulerType = MainScheduler(),
-    mutate: @escaping (inout InoutRef<Base.TargetStore.State>, S) -> Void
+    mutate: @escaping (inout Base.TargetStore.State, S) -> Void
   ) -> Binder<S> {
 
     return Binder<S>(base, scheduler: scheduler) { t, e in
@@ -243,7 +243,7 @@ extension Reactive where Base : StoreDriverType {
 
   public func commitBinder<S>(
     scheduler: ImmediateSchedulerType = MainScheduler(),
-    mutate: @escaping (inout InoutRef<Base.TargetStore.State>, S?) -> Void
+    mutate: @escaping (inout Base.TargetStore.State, S?) -> Void
   ) -> Binder<S?> {
 
     return Binder<S?>(base, scheduler: scheduler) { t, e in

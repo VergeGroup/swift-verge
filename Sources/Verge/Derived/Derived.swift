@@ -31,7 +31,7 @@ public protocol DerivedType<State>: StoreType {
 
 public protocol DerivedMaking {
 
-  associatedtype State: Equatable
+  associatedtype State
 
   // TODO: Remove
   var state: Changes<State> { get }
@@ -57,7 +57,7 @@ public protocol DerivedMaking {
 
  Conforms to Equatable that compares pointer personality.
  */
-public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unchecked Sendable {
+public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendable {
 
   public override var keepsAliveForSubscribers: Bool {
     true    
@@ -125,8 +125,8 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
         // TODO: Take over state.modification & state.mutation
         indirectSelf._receive_sending {
           $1.isDerivedFromUpstream = true
-          $0.append(traces: value.traces)
-          $0.replace(with: newState)
+          $1.append(traces: value.traces)
+          $0 = newState
         }
 
       }
@@ -158,6 +158,7 @@ public class Derived<Value: Equatable>: Store<Value, Never>, DerivedType, @unche
   }
 
   public final override func stateDidUpdate(newState: Changes<Value>) {
+    super.stateDidUpdate(newState: newState)
     // projects this update into upstream state
     if let _set, newState._transaction.isDerivedFromUpstream == false {
       _set(newState.primitive)
@@ -287,8 +288,7 @@ extension Derived where Value == Never {
           buffer.modify { value in
             let newValue = value.makeNextChanges(
               with: value.primitive.next((s0, value.primitive.1)),
-              from: [],
-              modification: .indeterminate,
+              modification: nil,
               transaction: .init()
             )
             value = newValue
@@ -301,10 +301,10 @@ extension Derived where Value == Never {
 
             let newValue = value.makeNextChanges(
               with: value.primitive.next((value.primitive.0, s1)),
-              from: [],
-              modification: .indeterminate,
+              modification: nil,
               transaction: .init()
             )
+            
             value = newValue
             callback(newValue)
           }
@@ -351,8 +351,7 @@ extension Derived where Value == Never {
           buffer.modify { value in
             let newValue = value.makeNextChanges(
               with: value.primitive.next((s0, value.primitive.1, value.primitive.2)),
-              from: [],
-              modification: .indeterminate,
+              modification: nil,
               transaction: .init()
             )
             value = newValue
@@ -365,8 +364,7 @@ extension Derived where Value == Never {
             
             let newValue = value.makeNextChanges(
               with: value.primitive.next((value.primitive.0, s1, value.primitive.2)),
-              from: [],
-              modification: .indeterminate,
+              modification: nil,
               transaction: .init()
             )
             value = newValue
@@ -379,8 +377,7 @@ extension Derived where Value == Never {
             
             let newValue = value.makeNextChanges(
               with: value.primitive.next((value.primitive.0, value.primitive.1, s2)),
-              from: [],
-              modification: .indeterminate,
+              modification: nil,
               transaction: .init()
             )
             value = newValue
@@ -421,7 +418,7 @@ public final class BindingDerived<Value: Equatable>: Derived<Value>, @unchecked 
     get { state.primitive }
     set {
       commit {
-        $0.replace(with: newValue)
+        $0 = newValue
       }
     }
   }

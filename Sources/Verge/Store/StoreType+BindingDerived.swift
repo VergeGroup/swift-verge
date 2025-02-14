@@ -38,7 +38,7 @@ extension Transaction {
 
 }
 
-private struct BindingDerivedPipeline<Source: Equatable, Output: Equatable, BackingPipeline: PipelineType>: PipelineType where BackingPipeline.Input == Changes<Source>, BackingPipeline.Output == Output {
+private struct BindingDerivedPipeline<Source, Output: Equatable, BackingPipeline: PipelineType>: PipelineType where BackingPipeline.Input == Changes<Source>, BackingPipeline.Output == Output {
 
   typealias Input = Changes<Source>
 
@@ -82,7 +82,7 @@ extension StoreDriverType {
     _ function: StaticString = #function,
     _ line: UInt = #line,
     get pipeline: Pipeline,
-    set: sending @escaping @Sendable (inout InoutRef<TargetStore.State>, Pipeline.Output) -> Void,
+    set: sending @escaping @Sendable (inout TargetStore.State, Pipeline.Output) -> Void,
     queue: some TargetQueueType = .passthrough
   ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<TargetStore.State> {
 

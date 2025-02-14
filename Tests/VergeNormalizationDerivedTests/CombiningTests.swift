@@ -46,7 +46,7 @@ final class CombiningTests: XCTestCase {
       }
     }
 
-    wait(for: [exp])
+    wait(for: [exp], timeout: 10)
 
     XCTAssertEqual(derived.state.author?.name, "Hiroshi Kimura")
 

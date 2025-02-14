@@ -1,5 +1,4 @@
 
-// FIXME: should be noncopyable but it's not supported yet.
 public final class ReadonlyBox<Value> {
 
   public let value: Value

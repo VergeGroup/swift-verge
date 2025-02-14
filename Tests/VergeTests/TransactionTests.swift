@@ -14,7 +14,7 @@ final class TransactionTests: XCTestCase {
     let store = Store<DemoState, Never>(initialState: .init())
 
     await store.commit {
-      $0.markAsModified()
+      $0.count += 1
       $1[MyKey.self] = "first commit"
     }
 

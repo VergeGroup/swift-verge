@@ -114,6 +114,7 @@ enum Preview_StoreObject: PreviewProvider {
 
   final class ViewModel: StoreDriverType {
 
+    @Tracking
     struct State: Equatable {
       var count: Int = 0
       var count_dummy: Int = 0

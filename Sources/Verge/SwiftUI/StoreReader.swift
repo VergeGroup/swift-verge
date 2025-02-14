@@ -1,35 +1,55 @@
 import Combine
 import Foundation
+import StateStruct
 import SwiftUI
 
 /**
- For SwiftUI - A View that reads a ``Store`` including ``Derived``.
- It updates its content when reading properties have been updated.
+ A view that reads the state from Store and displays content according to the state.
+ The view subscribes to the state updates and updates the content when the state changes.
 
- Technically, it observes what properties used in making content closure as KeyPath.
- ``ReadTracker`` can get those using dynamicMemberLookup.
- Store emits events of updated state, StoreReader filters them with current using KeyPaths.
- Therefore functions of the state are not available in this situation.
+ The state requires `@Tracking` macro to be used.
+
+ ```swift
+ @Tracking
+ struct State {
+   var count: Int = 0
+ }
+ ```
+
+ If you have nested types, you can use `@Tracking` macro to the nested types.
+ Then the StoreReader can track through the nested types.
+
+ ```swift
+ @Tracking
+ struct Nested {
+   var count: Int = 0
+ }
+
+ @Tracking
+ struct State {
+   var nested: Nested = .init()
+ }
+ 
+ ## How to make Binding
+
+ Use ``StoreBindable`` to make binding.
+
+ ```swift
+ @StoreBindable var store = store
+ $store.count
+ ```
  */
 @available(iOS 14, watchOS 7.0, tvOS 14, *)
-public struct StoreReader<StateType: Equatable, Content: View>: View {
+public struct StoreReader<State: TrackingObject, Activity: Sendable, Content: View>: View {
 
-  private let backing: _StoreReader<StateType, Content>
-  private let identifier: ObjectIdentifier
+  private let store: Store<State, Activity>
 
-  private init(
-    identifier: ObjectIdentifier,
-    node: @escaping @MainActor () -> StoreReaderComponents<StateType>.Node,
-    content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
-  ) {
-    self.identifier = identifier
-    self.backing = _StoreReader(node: node, content: content)
-  }
+  @SwiftUI.State private var version: UInt64 = 0
 
-  public var body: some View {
-    backing
-      .id(identifier)
-  }
+  private let file: StaticString
+  private let line: UInt
+
+  private let content: @MainActor (State) -> Content
 
   /// Initialize from `Store`
   ///
@@ -37,331 +57,175 @@ public struct StoreReader<StateType: Equatable, Content: View>: View {
   ///   - store:
   ///   - content:
   public init<Driver: StoreDriverType>(
-    debug: Bool = false,
+    file: StaticString = #file,
+    line: UInt = #line,
     _ store: Driver,
-    @ViewBuilder content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
-  ) where StateType == Driver.TargetStore.State {
+    @ViewBuilder content: @escaping @MainActor (State) -> Content
+  ) where State == Driver.TargetStore.State, Activity == Driver.TargetStore.Activity {
 
     let store = store.store.asStore()
 
     self.init(
-      identifier: ObjectIdentifier(store),
-      node: {
-        return .init(
-          store: store,
-          retainValues: [],
-          debug: debug
-        )
-      },
+      file: file,
+      line: line,
+      store: store,
       content: content
     )
 
   }
 
-}
-
-@available(iOS 14, watchOS 7.0, tvOS 14, *)
-private struct _StoreReader<StateType: Equatable, Content: View>: View {
-
-  @StateObject private var node: StoreReaderComponents<StateType>.Node
-
-  private let content: @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
-  
-  init(
-    node: @escaping @MainActor () -> StoreReaderComponents<StateType>.Node,
-    content: @escaping @MainActor (inout StoreReaderComponents<StateType>.StateProxy) -> Content
+  private init(
+    file: StaticString,
+    line: UInt,
+    store: Store<State, Activity>,
+    content: @escaping @MainActor (State) -> Content
   ) {
-    self._node = .init(wrappedValue: node())
+    self.file = file
+    self.line = line
+    self.store = store
     self.content = content
   }
-  
+
   public var body: some View {
-    node.makeContent(content)
+
+    // trigger to subscribe
+    let _ = $version.wrappedValue
+
+    let _content = store.tracking(
+      content,
+      onChange: {
+        ImmediateMainActorTargetQueue.main.execute {
+          version &+= 1
+        }
+      })
+
+    _content
   }
 
 }
 
-public enum StoreReaderComponents<StateType: Equatable> {
+@propertyWrapper
+@dynamicMemberLookup
+public struct StoreBindable<StoreDriver: StoreDriverType & Sendable> {
 
-  // Proxy
-  @MainActor
-  @dynamicMemberLookup
-  public struct StateProxy {
-    
-    typealias Detectors = [PartialKeyPath<StateType> : (Changes<StateType>) -> Bool]
-    
-    private let wrapped: StateType
-    
-    /// wrapped value itself
-    public var primitive: StateType {
-      mutating get {
-        self[dynamicMember: \.self]
-      }
-    }
-    
-    private(set) var detectors: Detectors = [:]
-    private weak var source: (any StoreDriverType<StateType>)?
-    
-    init(wrapped: StateType, source: (any StoreDriverType<StateType>)?) {
-      self.wrapped = wrapped
-      self.source = source
-    }
-    
-    /**
-     ✅ Equatable version
-     */
-    public subscript<T>(dynamicMember keyPath: KeyPath<StateType, T>) -> T where T : Equatable {
-      mutating get {
-        
-        if detectors[keyPath as PartialKeyPath<StateType>] == nil {
-          
-          let maybeChanged: (Changes<StateType>) -> Bool = { changes in
-            
-            switch changes.modification {
-            case .determinate(let keyPaths):
-              
-              /// modified but maybe value not changed.
-              let mayHasChanges = keyPaths.contains(keyPath)
-              
-              if mayHasChanges {
-                return true
-              }
-              
-              return changes.hasChanges({ $0[keyPath: keyPath] })
-              
-            case .indeterminate:
-              return true
-            case nil:
-              return changes.hasChanges({ $0[keyPath: keyPath] })
-            }
-            
-          }
-          
-          detectors[keyPath] = maybeChanged
-        }
-        
-        return wrapped[keyPath: keyPath]
-      }
-    }
+  private let storeDriver: StoreDriver
 
-    /**
-     ⚠️ Not equatable version.
-     */
-    public subscript<T>(dynamicMember keyPath: KeyPath<StateType, T>) -> T {
-      mutating get {
-         
-        if detectors[keyPath as PartialKeyPath<StateType>] == nil {
-          
-          let maybeChanged: (Changes<StateType>) -> Bool = { changes in
-            
-            return true
-            
-          }
-          
-          detectors[keyPath] = maybeChanged
-        }
-        
-        return wrapped[keyPath: keyPath]
-      }
-            
-    }
-
-    /**
-     ✅ Equatable version
-     Make SwiftUI.Binding
-     */
-    public mutating func binding<T: Equatable>(_ keyPath: WritableKeyPath<StateType, T>) -> SwiftUI.Binding<T> {
-      return .init { [value = self[dynamicMember: keyPath]] in
-        return value
-      } set: { [weak source = self.source] newValue, _ in
-        source?.commit { state in
-          state[keyPath: keyPath] = newValue
-        }
-      }
-    }
-
-    /**
-     ⚠️ Not equatable version.
-     Make SwiftUI.Binding
-     */
-    public mutating func binding<T>(_ keyPath: WritableKeyPath<StateType, T>) -> SwiftUI.Binding<T> {
-      return .init { [value = self[dynamicMember: keyPath]] in
-        return value
-      } set: { [weak source = self.source] newValue, _ in
-        source?.commit { state in
-          state[keyPath: keyPath] = newValue
-        }
-      }
-    }
-
-  }
-  
-  public final class Node: ObservableObject {
-    
-    public let objectWillChange: ObservableObjectPublisher = .init()
-    
-    /// nil means not loaded first yet
-    private var detectors: StateProxy.Detectors?
-
-    private var cancellable: StoreStateSubscription?
-    private let retainValues: [AnyObject]
-    
-    private var currentValue: Changes<StateType>
-    
-    private let debug: Bool
-
-    private weak var source: (any StoreDriverType<StateType>)?
-
-    init(
-      store: some StoreDriverType<StateType>,
-      retainValues: [AnyObject],
-      debug: Bool = false
-    ) {
-
-      self.source = store
-      self.debug = debug
-      self.retainValues = retainValues
-      
-      self.currentValue = store.state
-      
-      let weakSelf = UnsafeSendableWeak(self)
-            
-      cancellable = store.sinkState(queue: .mainIsolated()) { state in
-        
-        guard let self = weakSelf.value else { return }
-        
-        /// retain the latest one
-        self.currentValue = state
-        
-        /// consider to trigger update
-        let shouldUpdate: Bool = {
-          
-          guard let detectors = self.detectors else {
-            // through this filter to make content as a first time.
-            return true
-          }
-          
-          let _shouldUpdate = detectors.contains {
-            $0.value(state)
-          }
-                    
-          return _shouldUpdate
-          
-        }()
-        
-        if shouldUpdate {
-          DispatchQueue.main.async {
-            // For: Publishing changes from within view updates is not allowed, this will cause undefined behavior.
-            self.objectWillChange.send()
-          }
-        }
-      }
-      
-#if DEBUG
-      if debug {
-        Log.debug(.storeReader, "[Node] init \(self)")
-      }
-#endif
-      
-    }
-    
-    deinit {
-      
-#if DEBUG
-      if debug {
-        Log.debug(.storeReader, "[Node] deinit \(self)")
-      }
-#endif
-    }
-    
-    @MainActor
-    func makeContent<Content: View>(@ViewBuilder _ make: @MainActor (inout StateProxy) -> Content)
-    -> Content
-    {
-
-      var tracker = StateProxy(wrapped: currentValue.primitive, source: source)
-      let content = make(&tracker)
-            
-      detectors = tracker.detectors
-      
-      return content
-    }
-    
-  }
-}
-
-#if DEBUG
-
-@available(iOS 14, watchOS 7.0, tvOS 14, *)
-enum Preview_StoreReader: PreviewProvider {
-
-  static var previews: some View {
-
-    Group {
-      Content()
-    }
-
+  public init(
+    wrappedValue: StoreDriver
+  ) {
+    self.storeDriver = wrappedValue
   }
 
-  struct Content: View {
+  public var wrappedValue: StoreDriver {
+    storeDriver
+  }
 
-    @StoreObject var viewModel_1: ViewModel = .init()
-    @StoreObject var viewModel_2: ViewModel = .init()
+  public var projectedValue: Self {
+    self
+  }
 
-    @State var flag = false
+  public subscript<T>(dynamicMember keyPath: WritableKeyPath<StoreDriver.Scope, T>) -> Binding<T> {
+    binding(keyPath)
+  }
 
-    var body: some View {
-
-      VStack {
-
-        let store = flag ? viewModel_1 : viewModel_2
-
-        StoreReader(store) { state in
-          Text(state.count.description)
-        }
-
-        Button("up") {
-          store.increment()
-        }
-
-        Button("swap") {
-          flag.toggle()
-        }
-
+  public func binding<T>(_ keyPath: WritableKeyPath<StoreDriver.Scope, T>) -> SwiftUI.Binding<T> {
+    let currentValue = storeDriver.state.primitive[keyPath: keyPath]
+    return .init {
+      return currentValue
+    } set: { [weak storeDriver] newValue, _ in
+      storeDriver?.commit { [keyPath] state in
+        state[keyPath: keyPath] = newValue
       }
     }
   }
 
-  final class ViewModel: StoreDriverType {
-
-    struct State: Equatable {
-      var count: Int = 0
-      var count_dummy: Int = 0
-    }
-
-    let store: Store<State, Never>
-
-    init() {
-      self.store = .init(initialState: .init())
-    }
-
-    func increment() {
-      commit {
-        $0.count += 1
+  public func binding<T: Sendable>(_ keyPath: WritableKeyPath<StoreDriver.Scope, T> & Sendable)
+    -> SwiftUI.Binding<T>
+  {        
+    return .init { [currentValue = storeDriver.state.primitive[keyPath: keyPath]] in
+      return currentValue
+    } set: { [weak storeDriver] newValue, _ in
+      storeDriver?.commit { [keyPath] state in
+        state[keyPath: keyPath] = newValue
       }
-    }
-
-    func incrementDummy() {
-      commit {
-        $0.count_dummy += 1
-      }
-    }
-
-    deinit {
-      print("deinit")
     }
   }
 
 }
+
+#if DEBUG
+
+  @available(iOS 14, watchOS 7.0, tvOS 14, *)
+  enum Preview_StoreReader: PreviewProvider {
+
+    static var previews: some View {
+
+      Group {
+        Content()
+      }
+
+    }
+
+    struct Content: View {
+
+      @StoreObject var viewModel_1: ViewModel = .init()
+      @StoreObject var viewModel_2: ViewModel = .init()
+
+      @State var flag = false
+
+      var body: some View {
+
+        VStack {
+
+          let store = flag ? viewModel_1 : viewModel_2
+
+          StoreReader(store) { state in
+            Text(state.count.description)
+          }
+
+          Button("up") {
+            store.increment()
+          }
+
+          Button("swap") {
+            flag.toggle()
+          }
+
+        }
+      }
+    }
+
+    final class ViewModel: StoreDriverType {
+
+      @Tracking
+      struct State: Equatable {
+        var count: Int = 0
+        var count_dummy: Int = 0
+      }
+
+      let store: Store<State, Never>
+
+      init() {
+        self.store = .init(initialState: .init())
+      }
+
+      func increment() {
+        commit {
+          $0.count += 1
+        }
+      }
+
+      func incrementDummy() {
+        commit {
+          $0.count_dummy += 1
+        }
+      }
+
+      deinit {
+        print("deinit")
+      }
+    }
+
+  }
 
 #endif

@@ -1,6 +1,5 @@
 import Foundation
-
-@_spi(NormalizedStorage) import Verge
+import Normalization
 @_spi(Internal) import Verge
 import Verge
 
@@ -357,11 +356,11 @@ where _StorageSelector.Storage == _TableSelector.Storage {
       return .new(yield(input, storage: storage))
     }
 
-    if NormalizedStorageComparisons<EntityStorage>.StorageComparison()(selector.storage(source: input.primitive), selector.storage(source: previous.primitive)) {
+    if NormalizedStorageComparators<EntityStorage>.StorageComparator()(selector.storage(source: input.primitive), selector.storage(source: previous.primitive)) {
       return .noUpdates
     }
-
-    if NormalizedStorageComparisons<EntityStorage>.TableComparison<_TableSelector.Table>()(selector.table(source: input.primitive), selector.table(source: previous.primitive)) {
+    
+    if NormalizedStorageComparators<EntityStorage>.TableComparator<_TableSelector.Table>()(selector.table(source: input.primitive), selector.table(source: previous.primitive)) {
       return .noUpdates
     }
 
@@ -418,19 +417,11 @@ where _StorageSelector.Storage == _TableSelector.Storage {
       return .new(yield(input, storage: storage))
     }
 
-<<<<<<< HEAD
-    if NormalizedStorageComparisons<EntityStorage>.StorageComparison()(selector.storage(source: input.primitive), selector.storage(source: previous.primitive)) {
+    if NormalizedStorageComparators<EntityStorage>.StorageComparator()(selector.storage(source: input.primitive), selector.storage(source: previous.primitive)) {
       return .noUpdates
     }
 
-    if NormalizedStorageComparisons<EntityStorage>.TableComparison<_TableSelector.Table>()(selector.table(source: input.primitive), selector.table(source: previous.primitive)) {
-=======
-    if NormalizedStorageComparators<Storage>.StorageComparator()(selector.storage(source: input.primitive), selector.storage(source: previous.primitive)) {
-      return .noUpdates
-    }
-
-    if NormalizedStorageComparators<Storage>.TableComparator<_TableSelector.Table>()(selector.table(source: input.primitive), selector.table(source: previous.primitive)) {
->>>>>>> origin/main
+    if NormalizedStorageComparators<EntityStorage>.TableComparator<_TableSelector.Table>()(selector.table(source: input.primitive), selector.table(source: previous.primitive)) {
       return .noUpdates
     }
 
