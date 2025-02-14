@@ -8,6 +8,36 @@ import ViewInspector
 final class StoreReaderTests: XCTestCase {
   
   @MainActor
+  func test_replacing_itself() throws {
+    
+    let store = Store<State, Never>(initialState: .init())
+    
+    var count = 0
+    
+    let view = Content(store: store, onUpdate: {
+      count += 1
+    })
+    
+    let inspect = try view.inspect()
+    
+    XCTAssertEqual(count, 0)
+    
+    XCTAssertEqual(try inspect.find(viewWithId: "count_1").text().string(), "0")
+    
+    print(count)
+    
+    var anotherState = State()
+    anotherState.count_1 = 100
+    
+    store.commit {
+      $0 = anotherState
+    }
+    
+    XCTAssertEqual(try inspect.find(viewWithId: "count_1").text().string(), "100")
+    print(count)
+  }
+  
+  @MainActor
   func test_increment_counter() throws {
     
     let store = Store<State, Never>(initialState: .init())
@@ -166,16 +196,21 @@ final class StoreReaderTests: XCTestCase {
 
   }
   
+  @Tracking
+  struct SingleValueState {
+    var count = 0
+  }
+  
   @MainActor
   func test_single_value() async throws {
-        
+    
     struct _Content: View {
       
-      let store: Store<Int, Never>
+      let store: Store<SingleValueState, Never>
       let onUpdate: @MainActor () -> Void
       
       init(
-        store: Store<Int, Never>,
+        store: Store<SingleValueState, Never>,
         onUpdate: @escaping @MainActor () -> Void
       ) {
         self.store = store
@@ -190,14 +225,14 @@ final class StoreReaderTests: XCTestCase {
               onUpdate()
             }()
             
-            Text(state[dynamicMember: \.self].description)
+            Text(String(describing: state))
           }
         }
       }
       
     }
     
-    let store = Store<Int, Never>(initialState: .init())
+    let store = Store<SingleValueState, Never>(initialState: .init())
     
     var count = 0
     
@@ -212,7 +247,7 @@ final class StoreReaderTests: XCTestCase {
     try await Task.sleep(nanoseconds: 1_000_000_000)
 
     store.commit {
-      $0.wrapped += 1
+      $0.count += 1
     }
     
     try await Task.sleep(nanoseconds: 1_000_000_000)
@@ -220,7 +255,7 @@ final class StoreReaderTests: XCTestCase {
     XCTAssertEqual(count, 2)
 
     store.commit {
-      $0.wrapped += 1
+      $0.count += 1
     }
     
     try await Task.sleep(nanoseconds: 1_000_000_000)
@@ -228,7 +263,7 @@ final class StoreReaderTests: XCTestCase {
     XCTAssertEqual(count, 3)
 
     store.commit {
-      $0.wrapped += 1
+      $0.count += 1
     }
     
     try await Task.sleep(nanoseconds: 1_000_000_000)
@@ -260,7 +295,7 @@ final class StoreReaderTests: XCTestCase {
               onUpdate()
             }()
             
-            Text(String(describing: state[dynamicMember: \.self]))
+            Text(String(describing: state))
           }
         }
       }
@@ -349,10 +384,12 @@ final class StoreReaderTests: XCTestCase {
 
   }
   
+  @Tracking
   private struct NonEquatableBox<Value> {
     let value: Value
   }
   
+  @Tracking
   private struct State: Equatable {
     var count_1 = 0
     var count_2 = 0

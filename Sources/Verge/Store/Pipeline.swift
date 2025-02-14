@@ -82,7 +82,7 @@ public enum Pipelines {
   }
 
   /// KeyPath based pipeline, light weight operation just take value from source.
-  public struct ChangesSelectPipeline<Source: Equatable, Output: Equatable>: PipelineType {
+  public struct ChangesSelectPipeline<Source, Output: Equatable>: PipelineType {
     
     public typealias Input = Changes<Source>
     
@@ -138,7 +138,7 @@ public enum Pipelines {
   }
  
   /// Closure based pipeline, 
-  public struct ChangesMapPipeline<Source: Equatable, Intermediate, Output: Equatable>: PipelineType {
+  public struct ChangesMapPipeline<Source, Intermediate, Output: Equatable>: PipelineType {
     
     public typealias Input = Changes<Source>
     
@@ -167,34 +167,29 @@ public enum Pipelines {
       guard let previous = input.previous else {
         return .new(yield(input))
       }
-      
-      guard previous.primitive == input.primitive else {
-        
-        let previousIntermediate = intermediate(previous.primitive)
-        let newIntermediate = intermediate(input.primitive)
-        
-        guard previousIntermediate == newIntermediate else {
-          
-          let previousMapped = transform(previousIntermediate.value)
-          let newMapped = transform(newIntermediate.value)
-          
-          guard previousMapped == newMapped else {
-            
-            guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
-              return .new(newMapped)
-            }
-            
-            return .noUpdates
-          }
                   
+      let previousIntermediate = intermediate(previous.primitive)
+      let newIntermediate = intermediate(input.primitive)
+      
+      guard previousIntermediate == newIntermediate else {
+        
+        let previousMapped = transform(previousIntermediate.value)
+        let newMapped = transform(newIntermediate.value)
+        
+        guard previousMapped == newMapped else {
+          
+          guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input) else {
+            return .new(newMapped)
+          }
+          
           return .noUpdates
         }
-              
-        return .noUpdates
         
+        return .noUpdates
       }
       
       return .noUpdates
+            
     }
     
     public func yield(_ input: Input) -> Output {
@@ -214,7 +209,7 @@ public enum Pipelines {
     }
   }
   
-  public struct BasicMapPipeline<Input: Equatable, Output: Equatable>: PipelineType {
+  public struct BasicMapPipeline<Input, Output: Equatable>: PipelineType {
         
     // MARK: - Properties
     
@@ -273,7 +268,7 @@ extension PipelineType {
       borrowing Input
     ) -> Output
   ) -> Self
-  where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
+  where Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
     self.init(selector: selector, additionalDropCondition: nil)
   }
   
@@ -287,7 +282,7 @@ extension PipelineType {
   public static func map<Input, Output>(
     _ selector: KeyPath<Input, Output> & Sendable
   ) -> Self
-  where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
+  where Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
     self.init(selector: { $0[keyPath: selector] }, additionalDropCondition: nil)
   }
   
@@ -300,7 +295,7 @@ extension PipelineType {
   public static func select<Input, Output>(
     _ selector: KeyPath<Input, Output> & Sendable
   ) -> Self
-  where Input: Equatable, Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
+  where Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
     self.init(selector: { $0[keyPath: selector] }, additionalDropCondition: nil)
   }
 }

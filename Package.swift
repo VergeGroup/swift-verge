@@ -5,8 +5,8 @@ import PackageDescription
 let package = Package(
   name: "Verge",
   platforms: [
-    .macOS(.v11),
-    .iOS(.v13),
+    .macOS(.v13),
+    .iOS(.v16),
     .tvOS(.v13),
     .watchOS(.v6),
   ],
@@ -25,7 +25,8 @@ let package = Package(
     .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
     .package(url: "https://github.com/VergeGroup/TypedIdentifier", from: "2.0.2"),
     .package(url: "https://github.com/VergeGroup/TypedComparator", from: "1.0.0"),
-    .package(url: "https://github.com/VergeGroup/Normalization", from: "1.0.0"),
+    .package(url: "https://github.com/VergeGroup/Normalization", from: "1.1.0"),
+    .package(url: "https://github.com/VergeGroup/swift-macro-state-struct", branch: "main"),
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.10.0"),
@@ -51,6 +52,7 @@ let package = Package(
       name: "Verge",
       dependencies: [
         "VergeMacros",
+        .product(name: "StateStruct", package: "swift-macro-state-struct"),
         .product(name: "TypedComparator", package: "TypedComparator"),
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "DequeModule", package: "swift-collections"),
@@ -78,10 +80,6 @@ let package = Package(
         .product(name: "RxSwift", package: "RxSwift"),
         .product(name: "RxCocoa", package: "RxSwift"),
       ]
-    ),
-    .testTarget(
-      name: "VergeClassicTests",
-      dependencies: ["VergeClassic"]
     ),
     .testTarget(
       name: "VergeNormalizationDerivedTests",

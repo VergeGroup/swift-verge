@@ -7,13 +7,13 @@ final class StoreMiddlewareTests: XCTestCase {
         
     let store = DemoStore()
         
-    store.add(middleware: .modify { @Sendable modifyingState, current in
+    store.add(middleware: .modify { @Sendable modifyingState, transaction, current in
       current.ifChanged(\.count).do { _ in
         modifyingState.count += 1
       }
     })
     
-    store.add(middleware: .modify { @Sendable modifyingState, current in
+    store.add(middleware: .modify { @Sendable modifyingState, transaction, current in
       current.ifChanged(\.name).do { _ in
         modifyingState.count = 100
       }

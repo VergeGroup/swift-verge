@@ -32,6 +32,17 @@ import Foundation
 public struct Transaction: Sendable {
   
   private var values: [ObjectIdentifier : Any & Sendable] = [:]
+  
+  /// - Attention: non-atomic property
+  public private(set) var traces: [MutationTrace] = []
+  
+  mutating func append(trace: MutationTrace) {
+    traces.append(trace)
+  }
+  
+  mutating func append(traces otherTraces: [MutationTrace]) {
+    traces.append(contentsOf: otherTraces)
+  }
 
   public subscript<K>(key: K.Type) -> K.Value where K : TransactionKey {
     get {

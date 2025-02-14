@@ -17,16 +17,6 @@ class VergeRxTests: XCTestCase {
     
     let store = DemoStore()
     
-    XCTContext.runActivity(named: "Premise") { (activity) in
-      
-      XCTAssertEqual(store.state.hasChanges(\.count), true)
-      
-      store.commit { $0.markAsModified() }
-      
-      XCTAssertEqual(store.state.hasChanges(\.count), false)
-      
-    }
-    
     XCTContext.runActivity(named: "") { (activity) in
       
       let exp1 = expectation(description: "")

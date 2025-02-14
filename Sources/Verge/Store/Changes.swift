@@ -21,9 +21,7 @@
 
 import Foundation
 @_spi(Internal) import TypedComparator
-
-#if !COCOAPODS
-#endif
+import StateStruct
 
 private let _shared_changesDeallocationQueue = BackgroundDeallocationQueue()
 
@@ -35,7 +33,7 @@ public protocol AnyChangesType: AnyObject, Sendable {
 
 public protocol ChangesType<Value>: AnyChangesType {
   
-  associatedtype Value: Equatable
+  associatedtype Value
   
   var previousPrimitive: Value? { get }
   var primitive: Value { get }
@@ -89,7 +87,7 @@ public protocol ChangesType<Value>: AnyChangesType {
 /// - Attention: Equalities calculates with pointer-personality basically, if the Value type compatibles `Equatable`, it does using also Value's equalities.
 /// This means Changes will return equals if different pointer but the value is the same.
 @dynamicMemberLookup
-public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
+public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
   public typealias ChangesKeyPath<T> = KeyPath<Value, T>
 
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
@@ -131,8 +129,9 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
   public var root: Value { _read { yield innerBox.value } }
 
   public let traces: [MutationTrace]
-  public let modification: InoutRef<Value>.Modification?
   
+  public let modification: InoutRef<Value>.Modification?
+    
   public let _transaction: Transaction
 
   // MARK: - Initializers
@@ -156,7 +155,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
     innerBox: InnerBox,
     version: UInt64,
     traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification?,
+    modification: consuming InoutRef<Value>.Modification?,
     transaction: Transaction
   ) {
     self.previous = previous
@@ -269,8 +268,7 @@ public final class Changes<Value: Equatable>: @unchecked Sendable, ChangesType, 
 
   public func makeNextChanges(
     with nextNewValue: Value,
-    from traces: [MutationTrace],
-    modification: InoutRef<Value>.Modification,
+    modification: InoutRef<Value>.Modification?,
     transaction: Transaction
   ) -> Changes<Value> {
     let previous = cloneWithDropsPrevious()

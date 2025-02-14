@@ -8,15 +8,15 @@ final class PipelineTests: XCTestCase {
         
     let mapCounter = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
     
-    let pipeline = Pipelines.ChangesMapPipeline<DemoState, _, _>(
+    let pipeline = Pipelines.ChangesMapPipeline<DemoState, _, Int>(
       intermediate: {
-        $0
+        $0.count
       },
       transform: {
         mapCounter.modify { 
           $0 += 1
         }
-        return $0.name.count
+        return $0
       },
       additionalDropCondition: nil
     )
@@ -46,7 +46,7 @@ final class PipelineTests: XCTestCase {
             new: .init(name: "A", count: 2)
           )
         ),
-        .noUpdates
+        .new(2)
       )
       
       XCTAssertEqual(mapCounter.value , 2)
@@ -108,15 +108,15 @@ final class PipelineTests: XCTestCase {
     
     do {
       let store = Verge.Store<DemoState, Never>(initialState: .init())
-      do {
-        let d = store.derived(.map(\.$onEquatable))
-        XCTAssert((d as Any) is Derived<Edge<OnEquatable>>)
-      }
-      
-      do {
-        let d = store.derived(.map(\.$nonEquatable))
-        XCTAssert((d as Any) is Derived<Edge<NonEquatable>>)
-      }
+//      do {
+//        let d = store.derived(.map(\.nonEquatable))
+//        XCTAssert((d as Any) is Derived<Edge<OnEquatable>>)
+//      }
+//      
+//      do {
+//        let d = store.derived(.map(\.nonEquatable))
+//        XCTAssert((d as Any) is Derived<Edge<NonEquatable>>)
+//      }
       
       do {
         let d = store.derived(.map(\.onEquatable))
@@ -129,7 +129,7 @@ final class PipelineTests: XCTestCase {
       }
       
       do {
-        let d = store.derived(.map { $0.count })
+        let d = store.derived(.map { @Sendable in $0.count })
         XCTAssert((d as Any) is Derived<Int>)
       }
     }

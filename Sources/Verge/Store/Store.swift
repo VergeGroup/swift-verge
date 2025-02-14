@@ -23,6 +23,7 @@ import Atomics
 import ConcurrencyTaskManager
 import Foundation
 import os.log
+import StateStruct
 
 #if canImport(Combine)
   import Combine
@@ -31,7 +32,7 @@ import os.log
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
 public protocol StoreType<State>: AnyObject, Sendable, ObservableObject
 where ObjectWillChangePublisher == ObservableObjectPublisher {
-  associatedtype State: Equatable
+  associatedtype State
   associatedtype Activity = Never
 
   func asStore() -> Store<State, Activity>
@@ -39,11 +40,11 @@ where ObjectWillChangePublisher == ObservableObjectPublisher {
   var state: Changes<State> { get }
 }
 
-public typealias NoActivityStoreBase<State: Equatable> = Store<State, Never>
+public typealias NoActivityStoreBase<State> = Store<State, Never>
 
 private let sanitizerQueue = DispatchQueue.init(label: "org.vergegroup.verge.sanitizer")
 
-public enum _StoreEvent<State: Equatable, Activity>: EventEmitterEventType {
+public enum _StoreEvent<State, Activity>: EventEmitterEventType {
 
   public enum StateEvent {
     case willUpdate
@@ -91,10 +92,10 @@ actor Writer {
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>,
+open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>,
   CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable
 {
-
+  
   public let scope: any WritableKeyPath<State, State> & Sendable = \State.self
 
   private let tracker = VergeConcurrency.SynchronizationTracker()
@@ -115,7 +116,7 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
 
   private var middlewares: [AnyStoreMiddleware<State>] = []
 
-  private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>) -> Void
+  private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>, inout Transaction) -> Void
 
   private var nonatomicValue: Changes<State>
 
@@ -174,7 +175,7 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
-    self.externalOperation = { @Sendable _, _ in }
+    self.externalOperation = { @Sendable _, _, _ in }
 
     super.init()
   }
@@ -193,8 +194,11 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
     var _initialState = initialState
 
     let reduced = withUnsafeMutablePointer(to: &_initialState) { pointer in
-      var inoutRef = InoutRef<State>.init(pointer)
-      State.reduce(modifying: &inoutRef, current: .init(old: nil, new: initialState))
+      var inoutRef = InoutRef<_>.init(pointer)
+      inoutRef.modify { state in
+        var transaction = Transaction()
+        State.reduce(modifying: &state, transaction: &transaction, current: .init(old: nil, new: initialState))
+      }
       return inoutRef.wrapped
     }
 
@@ -206,14 +210,20 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
-    self.externalOperation = { @Sendable inoutRef, state in
+    
+    self.externalOperation = { @Sendable inoutRef, state, transaction in
       let intermediate = state.makeNextChanges(
         with: inoutRef.wrapped,
-        from: inoutRef.traces,
-        modification: inoutRef.modification ?? .indeterminate,
-        transaction: state._transaction
+        modification: inoutRef.modification,
+        transaction: transaction
       )
-      State.reduce(modifying: &inoutRef, current: intermediate)
+      inoutRef.modify { state in
+        State.reduce(
+          modifying: &state,
+          transaction: &transaction,
+          current: intermediate
+        )
+      }
     }
 
     super.init()
@@ -284,6 +294,52 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
     }
   }
 
+  private struct TrackingRegistration {
+
+    let file: StaticString
+    let line: UInt
+    let readGraph: PropertyNode
+    let onChange: @Sendable () -> Void
+
+    init(
+      file: StaticString,
+      line: UInt,
+      readGraph: PropertyNode,
+      onChange: @escaping @Sendable () -> Void
+    ) {
+      self.file = file
+      self.line = line
+      self.readGraph = readGraph
+      self.onChange = onChange
+    }
+
+    func containsUpdates(state: Changes<State>) -> Bool {
+      
+      switch state.modification {
+      case .graph(let writeGraph):
+        
+        let hasChanges = PropertyNode.hasChanges(
+          writeGraph: consume writeGraph,
+          readGraph: readGraph
+        )
+        
+        return hasChanges
+        
+      case .indeterminate:
+        return true
+        
+      case nil:
+        return false
+      }
+      
+    }
+
+  }
+
+}
+
+extension Store where State : TrackingObject {
+  
   /**
    onChange closure will run if the tracking properties are changed.
    If how properties are changed is not determined, it will run always.   
@@ -292,61 +348,31 @@ open class Store<State: Equatable, Activity: Sendable>: EventEmitter<_StoreEvent
   public func tracking<T>(
     file: StaticString = #file,
     line: UInt = #line,
-    _ apply: (inout StoreReaderComponents<State>.StateProxy) -> T,
+    _ apply: (borrowing State) -> T,
     onChange: @escaping @Sendable () -> Void
   ) -> T {
-
+    
     let currentState = state.primitiveBox
-
-    var tracker = StoreReaderComponents<State>.StateProxy(wrapped: currentState, source: self)
-    let result = apply(&tracker)
-
+    
+    var result: T!
+    let readResult = currentState.value.tracking {
+      result = apply(currentState.value)    
+    }
+    
     registrations.modify {
       $0.0.append(
         .init(
           file: file,
           line: line,
-          detectors: tracker.detectors,
+          readGraph: readResult.graph,
           onChange: onChange
         )
       )
     }
     
     return result
-
+    
   }
-
-  private struct TrackingRegistration {
-
-    let file: StaticString
-    let line: UInt
-    let detectors: [PartialKeyPath<State>: (Changes<State>) -> Bool]
-    let onChange: @Sendable () -> Void
-
-    init(
-      file: StaticString,
-      line: UInt,
-      detectors: [PartialKeyPath<State>: (Changes<State>) -> Bool],
-      onChange: @escaping @Sendable () -> Void
-    ) {
-      self.file = file
-      self.line = line
-      self.detectors = detectors
-      self.onChange = onChange
-    }
-
-    func containsUpdates(state: Changes<State>) -> Bool {
-
-      let _shouldUpdate = detectors.contains {
-        $0.value(state)
-      }
-
-      return _shouldUpdate
-
-    }
-
-  }
-
 }
 
 // MARK: - Typealias
@@ -534,7 +560,7 @@ extension Store {
   ///   - mutation: (`inout` attributes to prevent escaping `Inout<State>` inside the closure.)
   @inline(__always)
   func _receive_sending<Result>(
-    mutation: (inout InoutRef<State>, inout Transaction) throws -> Result
+    mutation: (inout State, inout Transaction) throws -> Result
   ) rethrows -> Result {
 
     let signpost = VergeSignpostTransaction("Store.commit")
@@ -569,23 +595,27 @@ extension Store {
         elapsed = CFAbsoluteTimeGetCurrent() - startedTime
       }
 
-      var current = state.primitive
+      var modifying = state.primitive
 
-      let updateResult = try withUnsafeMutablePointer(to: &current) {
+      let updateResult = try withUnsafeMutablePointer(to: &modifying) {
         (stateMutablePointer) -> UpdateResult in
 
         var transaction = Transaction()
-        var inoutRef = InoutRef<State>.init(stateMutablePointer)
+        var inoutRef = InoutRef<_>.init(stateMutablePointer)
+                
+        let result = try inoutRef.modify { modifying in          
+          try mutation(&modifying, &transaction)
+        }
 
-        let result = try mutation(&inoutRef, &transaction)
         valueFromMutation = consume result
 
         /**
          Step-1:
          Checks if the state has been modified
          */
-        guard inoutRef.nonatomic_hasModified else {
+        guard inoutRef.hasModified else {          
           // No emits update event
+          Log.storeCommit.debug("\(type(of: self)) No updates")
           return .nothingUpdates
         }
 
@@ -594,7 +624,7 @@ extension Store {
          Reduce modifying state with externalOperation
          */
 
-        externalOperation(&inoutRef, state)
+        externalOperation(&inoutRef, state, &transaction)
 
         /**
          Step-3
@@ -604,14 +634,16 @@ extension Store {
 
           let intermediate = state.makeNextChanges(
             with: stateMutablePointer.pointee,
-            from: inoutRef.traces,
-            modification: inoutRef.modification ?? .indeterminate,
+            modification: inoutRef.modification,
             transaction: transaction
           )
-          middleware.modify(
-            modifyingState: &inoutRef,
-            current: intermediate
-          )
+          inoutRef.modify { modifying in          
+            middleware.modify(
+              modifyingState: &modifying,
+              transaction: &transaction,
+              current: intermediate
+            )
+          }
         }
 
         /**
@@ -619,33 +651,29 @@ extension Store {
          */
         state = state.makeNextChanges(
           with: stateMutablePointer.pointee,
-          from: inoutRef.traces,
-          modification: inoutRef.modification ?? .indeterminate,
+          modification: inoutRef.modification,
           transaction: transaction
         )
 
         if __sanitizer__.isRecursivelyCommitDetectionEnabled {
           if warnings.contains(.reentrancyAnomaly) {
-            os_log(
+            Log.store.warning(
               """
               ⚠️ [Verge Error] Detected another commit recursively from the commit.
               This breaks the order of the states that receiving in the sink.
-
+              
               You might be doing commit inside the sink at the same Store.
               In this case, Using dispatch solve this issue.
-
-              Mutation: (%@)
-              """,
-              log: VergeOSLogs.debugLog,
-              type: .error,
-              String(describing: inoutRef.traces)
+              
+              Mutation: (\(transaction.traces))
+              """
             )
             __sanitizer__.onDidFindRuntimeError(
-              .recursiveleyCommit(storeName: name, traces: inoutRef.traces))
+              .recursiveleyCommit(storeName: name, traces: transaction.traces))
           }
         }
 
-        commitLog = CommitLog(storeName: self.name, traces: inoutRef.traces, time: elapsed)
+        commitLog = CommitLog(storeName: self.name, traces: transaction.traces, time: elapsed)
 
         return .updated
       }
@@ -784,37 +812,30 @@ extension Store {
                     )
                   )
 
-                  os_log(
+                  Log.store.warning(
                     """
-                    ⚠️ [Verge Error] Received older version(%d) value rather than latest received version(%d).
-
+                    ⚠️ [Verge Error] Received older version(\(receivedState.version)) value rather than latest received version(\(latestState.version)).
+                    
                     The root cause might be from the following things:
                     - Committed concurrently from multiple threads.
-
+                    
                     To solve, make sure to commit in series, for example using DispatchQueue.
-
+                    
                     Verge can't use a lock to process serially because the dead-lock will happen in some of the cases.
                     RxSwift's BehaviorSubject takes the same deal.
-
+                    
                     Regarding: Extra commit was dispatched inside sink synchronously
                     This issue has been fixed by https://github.com/VergeGroup/Verge/pull/222
                     ---
-
-                    Received older version (%d): (%@)
-
-                    Latest Version (%d): (%@)
-
+                    
+                    Received older version (\(receivedState.version)): (\(String(describing: receivedState.traces)))
+                    
+                    Latest Version (\(latestState.version)): (\(String(describing: latestState.traces)))
+                    
                     ===
-                    """,
-                    log: VergeOSLogs.debugLog,
-                    type: .error,
-                    receivedState.version,
-                    latestState.version,
-                    receivedState.version,
-                    String(describing: receivedState.traces),
-                    latestState.version,
-                    String(describing: latestState.traces)
+                    """
                   )
+                  
                 }
               }
             }
@@ -1016,7 +1037,8 @@ extension Store {
   @available(iOS 15, *)
   private final class StoreSubscriptionView: UIView {
 
-    struct State: StateType {
+    @Tracking
+    struct State {
       var count: Int = 0
     }
 
