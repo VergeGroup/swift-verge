@@ -31,23 +31,26 @@ struct State {
   var nestedState: NestedState = NestedState()
 }
 
-// should not create store here in production code as a view is created every time to render.
-let store = Store<_, Never>(initialState: State())
+struct MyView: View {
 
-var body: some View {
-  StoreReader(store) { state in
-    VStack {
-      Text("Count: \(state.count)")
-      Button("Increment") {
-        store.commit {
-          $0.count += 1
+  // should not create store here in production code as a view is created every time to render.
+  let store = Store<_, Never>(initialState: State())
+  
+  var body: some View {
+    StoreReader(store) { state in
+      VStack {
+        Text("Count: \(state.count)")
+        Button("Increment") {
+          store.commit {
+            $0.count += 1
+          }
         }
-      }
-      Text("Is Active: \(state.nestedState.isActive)")
-      Text("Message: \(state.nestedState.message)")
-      Button("Toggle Active") {
-        store.commit {
-          $0.nestedState.isActive.toggle()
+        Text("Is Active: \(state.nestedState.isActive)")
+        Text("Message: \(state.nestedState.message)")
+        Button("Toggle Active") {
+          store.commit {
+            $0.nestedState.isActive.toggle()
+          }
         }
       }
     }
