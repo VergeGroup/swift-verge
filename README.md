@@ -4,13 +4,56 @@
     </a>
 </p>
 
-
 <h1 align="center">Verge.swift</h1>
 <p align="center">
   <b>📍An effective state management architecture for iOS - UIKit, SwiftUI📍</b><br/>
 <sub>_ An easier way to get unidirectional data flow _</sub><br/>
 <sub>_ Supports concurrent processing _</sub><br/>
 </p>
+
+## Using StoreReader in SwiftUI
+
+StoreReader is a SwiftUI view that reads state from a Store and displays content according to the state changes.
+
+First, define your state with `@Tracking` macro:
+
+```swift
+@Tracking
+struct State {
+  var count: Int = 0
+
+  @Tracking
+  struct NestedState {
+    var isActive: Bool = false
+    var message: String = "Hello, Verge!"
+  }
+
+  var nestedState: NestedState = NestedState()
+}
+
+// should not create store here in production code as a view is created every time to render.
+let store = Store<_, Never>(initialState: State())
+
+var body: some View {
+  StoreReader(store) { state in
+    VStack {
+      Text("Count: \(state.count)")
+      Button("Increment") {
+        store.commit {
+          $0.count += 1
+        }
+      }
+      Text("Is Active: \(state.nestedState.isActive)")
+      Text("Message: \(state.nestedState.message)")
+      Button("Toggle Active") {
+        store.commit {
+          $0.nestedState.isActive.toggle()
+        }
+      }
+    }
+  }
+}
+```
 
 - Dependencies
   - [TypedIdentifier](https://github.com/VergeGroup/TypedIdentifier)
@@ -45,26 +88,24 @@ Verge was designed with the following concepts in mind:
 - Provides an ORM for efficient management of a large number of entities.
 - Designed for use in business-focused applications.
 
-### Getting Started
-
 ## Getting Started
 
 To use Verge, follow these steps:
 
-1. Define a state struct that conforms to the `Equatable` protocol.
-2. Instantiate a `Store` with your initial state.
-3. Update the state using the `commit` method on the store instance.
-4. Subscribe to state updates using the `sinkState` method.
+1. Define a state struct with `@Tracking` macro
+2. Instantiate a `Store` with your initial state
+3. Update the state using the `commit` method on the store instance
+4. Subscribe to state updates using the `sinkState` method
+
 
 ## Defining Your State
 
-Create a state struct that represents the state of your application. Your state struct should conform to the `Equatable` protocol. This allows Verge to detect changes in your state and trigger updates as necessary.
-
-Example:
+Create a state struct that represents the state of your application. Use the `@Tracking` macro to make your state trackable by Verge. This allows Verge to detect changes in your state and trigger updates as necessary.
 
 ```swift
-struct MyState: StateType {
- var count: Int = 0 
+@Tracking
+struct MyState {
+  var count: Int = 0 
 }
 ```
 
@@ -73,9 +114,7 @@ struct MyState: StateType {
 Create a `Store` instance with the initial state of your application. The `Store` class takes two type parameters:
 
 - The first type parameter represents the state of your application.
-- The second type parameter represents any middleware you want to use with your store. If you don't need any middleware, use `Never`.
-
-Example:
+- The second type parameter represents any activity you want to use with your store. If you don't need any activity, use `Never`.
 
 ```swift
 let store = Store<_, Never>(initialState: MyState())
@@ -84,8 +123,6 @@ let store = Store<_, Never>(initialState: MyState())
 ## Updating the State
 
 To update your application state, use the `commit` method on your `Store` instance. The `commit` method takes a closure with a single parameter, which is a mutable reference to your state. Inside the closure, modify the state as needed.
-
-Example:
 
 ```swift
 store.commit {   
@@ -97,8 +134,6 @@ store.commit {
 
 To receive updates when the state changes, use the `sinkState` method on your `Store` instance. This method takes a closure that receives the updated state as its parameter. The closure will be called whenever the state changes.
 
-Example:
-
 ```swift
 store.sinkState { state in
   // Receives updates of the state
@@ -107,8 +142,6 @@ store.sinkState { state in
 ```
 
 The `storeWhileSourceActive()` call at the end is a method provided by Verge to automatically manage the lifetime of the subscription. It retains the subscription as long as the source (in this case, the `store` instance) is alive.
-
-That's it! You now know the basics of using Verge to manage the state in your Swift applications. For more advanced use cases and additional features, please refer to the official Verge documentation and GitHub repository.
 
 ## Using Activity of Store for Event-Driven Programming
 
@@ -146,7 +179,7 @@ struct ContentView: View {
 
   var body: some View {
     VStack {
-      StoreReader(viewModel.store) { state in
+      StoreReader(viewModel) { state in
         Text("Count: \(state.count)")
           .font(.largeTitle)
       }
@@ -161,7 +194,8 @@ struct ContentView: View {
 }
 
 final class CounterViewModel: StoreComponentType {
-  struct State: Equatable {
+  @Tracking
+  struct State {
     var count: Int = 0
   }
 
@@ -194,7 +228,8 @@ Here's a simple usage example of Verge with a UIViewController:
 ```swift
 class MyViewController: UIViewController {
   
-  private struct State: Equatable {
+  @Tracking
+  private struct State {
     var count: Int = 0
   }
   
@@ -356,12 +391,6 @@ It can be used in the same way as handling value types. Which means we can use i
 ## SwiftPM
 
 Verge supports SwiftPM.
-
-## Demo applications
-
-This repo has several demo applications in Demo directory.
-And we're looking for your demo applications to list it here!
-Please tell us from Issue!
 
 ## Thanks
 
