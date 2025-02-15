@@ -1,3 +1,4 @@
+import Normalization
 
 struct QueryPipeline<
   _StorageSelector: StorageSelector,
@@ -5,20 +6,25 @@ struct QueryPipeline<
 >: PipelineType, Sendable {
 
   typealias Input = Changes<_StorageSelector.Source>
-  typealias Storage = _StorageSelector.Storage
+  typealias EntityStorage = _StorageSelector.Storage
+  typealias Storage = Void
 
   private let storageSelector: _StorageSelector
-  private let query: @Sendable (Storage) -> Output
+  private let query: @Sendable (EntityStorage) -> Output
 
   init(
     storageSelector: consuming _StorageSelector,
-    query: @escaping @Sendable (Storage) -> Output
+    query: @escaping @Sendable (EntityStorage) -> Output
   ) {
     self.storageSelector = storageSelector
     self.query = query
   }
 
-  func yield(_ input: consuming Input) -> Output {
+  func makeStorage() -> Void {
+    ()
+  }
+
+  func yield(_ input: consuming Input, storage: Storage) -> Output {
 
     let storage = storageSelector.select(source: input.primitive)
     let output = query(storage)
@@ -27,18 +33,18 @@ struct QueryPipeline<
 
   }
 
-  func yieldContinuously(_ input: Input) -> Verge.ContinuousResult<Output> {
+  func yieldContinuously(_ input: Input, storage: Storage) -> Verge.ContinuousResult<Output> {
 
     guard let previous = input.previous else {
-      return .new(yield(input))
+      return .new(yield(input, storage: storage))
     }
 
     // check if the storage has been updated
-    if NormalizedStorageComparators<Storage>.StorageComparator()(storageSelector.select(source: input.primitive), storageSelector.select(source: previous.primitive)) {
+    if NormalizedStorageComparators<EntityStorage>.StorageComparator()(storageSelector.select(source: input.primitive), storageSelector.select(source: previous.primitive)) {
       return .noUpdates
     }
-
-    return .new(yield(input))
+       
+    return .new(yield(input, storage: storage))
 
   }
 

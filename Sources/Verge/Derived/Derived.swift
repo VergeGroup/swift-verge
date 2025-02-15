@@ -108,10 +108,12 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
     retainsUpstream: Any?
   ) where Pipeline.Input == UpstreamState, Value == Pipeline.Output {
 
-    nonisolated(unsafe) weak var indirectSelf: Derived<Value>?
+    let pipelineStorage: Pipeline.Storage = pipeline.makeStorage()
 
-    let s = subscribeUpstreamState { @Sendable value in
-      let update = pipeline.yieldContinuously(value)
+    nonisolated(unsafe)weak var indirectSelf: Derived<Value>?
+
+    let s = subscribeUpstreamState { value in
+      let update = pipeline.yieldContinuously(value, storage: pipelineStorage)
       switch update {
       case .noUpdates:
         break
@@ -135,7 +137,7 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
     self._set = set
     super.init(
       name: name,
-      initialState: pipeline.yield(initialUpstreamState),
+      initialState: pipeline.yield(initialUpstreamState, storage: pipelineStorage),
       logger: nil,
       sanitizer: nil
     )
