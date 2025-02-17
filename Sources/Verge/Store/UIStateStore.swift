@@ -22,7 +22,7 @@
 /// A store that optimized for only using in UI thread.
 /// No using locks.
 @MainActor
-public final class UIStateStore<State: Equatable, Activity: Sendable>: Store<State, Activity>, @unchecked Sendable {
+public final class UIStateStore<State, Activity: Sendable>: Store<State, Activity>, @unchecked Sendable {
 
   public nonisolated init(
     initialState: State,
@@ -39,7 +39,7 @@ public final class UIStateStore<State: Equatable, Activity: Sendable>: Store<Sta
 
 @propertyWrapper
 @MainActor
-public struct UIState<State: Equatable>: Sendable {
+public struct UIState<State>: Sendable {
 
   private let store: UIStateStore<State, Never>
 
@@ -65,7 +65,7 @@ public struct UIState<State: Equatable>: Sendable {
 }
 
 @propertyWrapper
-public struct AtomicState<State: Equatable>: Sendable {
+public struct AtomicState<State>: Sendable {
   
   private let store: Store<State, Never>
   
