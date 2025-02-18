@@ -8,7 +8,7 @@ final class BindingDerivedTests: XCTestCase {
     let source = DemoStore()
 
     let binding = source.bindingDerived(
-      get: .map { $0.count },
+      get: .select(\.count),
       set: { source, new in
         source.count = new
       })
@@ -29,7 +29,7 @@ final class BindingDerivedTests: XCTestCase {
     let source = DemoStore()
 
     let binding: some StoreDriverType<Int> = source.bindingDerived(
-      get: .map { $0.count },
+      get: .select(\.count),
       set: { source, new in
         source.count = new
       })
@@ -59,7 +59,7 @@ final class BindingDerivedTests: XCTestCase {
     let source = DemoStore()
 
     let binding = source.bindingDerived(
-      get: .map { $0.count },
+      get: .select(\.count),
       set: { source, new in
         source.count = new
       })
