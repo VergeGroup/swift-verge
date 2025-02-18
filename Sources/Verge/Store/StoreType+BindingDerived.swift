@@ -38,7 +38,7 @@ extension Transaction {
 
 }
 
-private struct BindingDerivedPipeline<Source, Output: Equatable, BackingPipeline: PipelineType>: PipelineType where BackingPipeline.Input == Changes<Source>, BackingPipeline.Output == Output {
+private struct BindingDerivedPipeline<Source, Output, BackingPipeline: PipelineType>: PipelineType where BackingPipeline.Input == Changes<Source>, BackingPipeline.Output == Output {
 
   typealias Input = Changes<Source>
 
@@ -122,6 +122,24 @@ extension StoreDriverType {
     queue: some TargetQueueType = .passthrough
   ) -> BindingDerived<Select> {
 
+    bindingDerived(
+      name, file, function, line,
+      get: .select(select),
+      set: { state, newValue in
+        state[keyPath: select] = newValue
+      }
+    )
+  }
+  
+  public func bindingDerived<Select: Equatable>(    
+    _ name: String = "",
+    _ file: StaticString = #file,
+    _ function: StaticString = #function,
+    _ line: UInt = #line,
+    select: WritableKeyPath<TargetStore.State, Select> & Sendable,
+    queue: some TargetQueueType = .passthrough
+  ) -> BindingDerived<Select> {
+    
     bindingDerived(
       name, file, function, line,
       get: .select(select),
