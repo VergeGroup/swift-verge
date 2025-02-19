@@ -25,7 +25,7 @@ import StateStruct
 /**
  An opt-in protocol that indicates it's used as a state of the State.
  */
-public protocol StateType: Equatable {
+public protocol StateType {
 
   /**
    A chance of modifying state alongside the commit.
