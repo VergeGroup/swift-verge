@@ -88,6 +88,7 @@ public protocol ChangesType<Value>: AnyChangesType {
 /// This means Changes will return equals if different pointer but the value is the same.
 @dynamicMemberLookup
 public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, HasTraces {
+  
   public typealias ChangesKeyPath<T> = KeyPath<Value, T>
 
   public static func == (lhs: Changes<Value>, rhs: Changes<Value>) -> Bool {
@@ -97,7 +98,9 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
   // MARK: - Stored Properties
 
   public let previous: Changes<Value>?
+  
   private let innerBox: InnerBox
+  
   public private(set) var version: UInt64
 
   // MARK: - Computed Properties
@@ -109,22 +112,16 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
   public var current: Value { primitive }
 
   /// Returns a previous value as primitive
-  /// We can't access `.computed` from this.
-  ///
   /// - Important: a returns value won't change against pointer-personality
   public var previousPrimitive: Value? { _read { yield previous?.primitive } }
 
   /// Returns a value as primitive
-  /// We can't access `.computed` from this.
-  ///
   /// - Important: a returns value won't change against pointer-personality
   public var primitive: Value { _read { yield innerBox.value } }
 
-  var primitiveBox: ReadonlyBox<Value> { innerBox }
+  public var primitiveBox: InnerBox { innerBox }
 
   /// Returns a value as primitive
-  /// We can't access `.computed` from this.
-  ///
   /// - Important: a returns value won't change against pointer-personality
   public var root: Value { _read { yield innerBox.value } }
 
@@ -142,7 +139,7 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
   ) {
     self.init(
       previous: old.map { .init(old: nil, new: $0) },
-      innerBox: .init(value: consume new),
+      innerBox: .init(consume new),
       version: 0,
       traces: [],
       modification: nil,
@@ -275,7 +272,7 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
     let nextVersion = previous.version &+ 1
     return Changes<Value>.init(
       previous: previous,
-      innerBox: .init(value: nextNewValue),
+      innerBox: .init(nextNewValue),
       version: nextVersion,
       traces: traces,
       modification: modification,
@@ -285,7 +282,7 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
 
   @discardableResult
   public func _read<Return>(perform: (borrowing Value) -> Return) -> Return {
-    innerBox._read(perform: perform)
+    perform(innerBox.value)
   }
 
 }
@@ -546,7 +543,7 @@ extension Changes: CustomReflectable {
 
 extension Changes {
 
-  private typealias InnerBox = ReadonlyBox<Value>
+  public typealias InnerBox = _BackingStorage<Value>
 
 }
 
@@ -566,9 +563,9 @@ public struct IfChangedBox<Source, T>: ~Copyable {
   public let value: T?
   
   @usableFromInline
-  let source: ReadonlyBox<Source>?
+  let source: Changes<Source>.InnerBox?
 
-  init(value: consuming T, source: ReadonlyBox<Source>) {
+  init(value: consuming T, source: Changes<Source>.InnerBox) {
     self.value = consume value
     self.source = source
   }
@@ -589,7 +586,7 @@ public struct IfChangedBox<Source, T>: ~Copyable {
   
   @discardableResult
   @inlinable
-  public consuming func doWithSource<Return>(_ perform: (consuming ReadonlyBox<Source>) throws -> Return) rethrows -> Return? {
+  public consuming func doWithSource<Return>(_ perform: (consuming Changes<Source>.InnerBox) throws -> Return) rethrows -> Return? {
     if let source {
       return try perform(source)
     }
