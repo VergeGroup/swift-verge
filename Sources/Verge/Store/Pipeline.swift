@@ -373,6 +373,21 @@ extension PipelineType {
 
   /**
    For Changes input
+   Produces output values using KeyPath-based projection.
+
+   exactly same with ``PipelineType/select(_:)``
+   */
+  public static func map<Input, Output>(
+    _ selector: @escaping @Sendable (
+      borrowing Input
+    ) -> Output
+  ) -> Self
+  where Self == Pipelines.ChangesSelectPassthroughPipeline<Input, Output> {
+    self.init(selector: selector)
+  }
+
+  /**
+   For Changes input
    Produces output values using closure based projection.
 
    exactly same with ``PipelineType/map(_:)-7xvom``
