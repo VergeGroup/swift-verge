@@ -11,6 +11,8 @@
 <sub>_ Supports concurrent processing _</sub><br/>
 </p>
 
+[My development note](https://www.notion.so/muukii/Verge-93813aec77d44bef802a2d92f565c7bb?pvs=4)
+
 ## Using StoreReader in SwiftUI
 
 StoreReader is a SwiftUI view that reads state from a Store and displays content according to the state changes.
