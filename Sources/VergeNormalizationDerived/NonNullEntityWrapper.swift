@@ -1,6 +1,7 @@
 import Normalization
+import StateStruct
 
-public protocol NonNullEntityWrapperType {
+public protocol NonNullEntityWrapperType: TrackingObject {
   associatedtype Entity: EntityType  
   
   var id: Entity.TypedID { get }
@@ -8,6 +9,7 @@ public protocol NonNullEntityWrapperType {
 
 /// A value that wraps an entity and results of fetching.
 @dynamicMemberLookup
+@Tracking
 public struct NonNullEntityWrapper<Entity: EntityType>: Sendable, NonNullEntityWrapperType {
 
   /// An entity value
