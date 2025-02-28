@@ -8,6 +8,33 @@ import ViewInspector
 final class StoreReaderTests: XCTestCase {
   
   @MainActor
+  func test_constant() throws {
+    
+    let store = Store<ConstantState, Never>(initialState: .init(value: 0))
+    
+    var count = 0
+    
+    let view = ConstantContent(store: store, onUpdate: {
+      count += 1
+    })
+    
+    let inspect = try view.inspect()
+    
+    XCTAssertEqual(count, 0)
+    
+    XCTAssertEqual(try inspect.find(viewWithId: "value").text().string(), "0")
+    
+    print(count)
+    
+    store.commit {
+      $0 = .init(value: 100)
+    }
+    
+    XCTAssertEqual(try inspect.find(viewWithId: "value").text().string(), "100")
+    
+  }
+    
+  @MainActor
   func test_replacing_itself() throws {
     
     let store = Store<State, Never>(initialState: .init())
@@ -401,6 +428,47 @@ final class StoreReaderTests: XCTestCase {
     var computed_count: NonEquatableBox<Int> {
       .init(value: count_1 + count_2)
     }
+  }
+  
+  @Tracking
+  private struct ConstantState {
+    let value: Int
+    
+    init(value: Int) {
+      self.value = value
+    }
+  }
+  
+  private struct ConstantContent: View {
+    
+    let store: Store<ConstantState, Never>
+    let onUpdate: @MainActor () -> Void
+    
+    init(
+      store: Store<ConstantState, Never>,
+      onUpdate: @escaping @MainActor () -> Void
+    ) {
+      self.store = store
+      self.onUpdate = onUpdate
+    }
+    
+    var body: some View {
+      VStack {
+        Text("Hello")
+        
+        StoreReader(store) { state in
+          
+          let _: Void = {
+            onUpdate()
+          }()
+          
+          Text("\(state.value)")
+            .id("value")
+        }
+        .id("StoreReader")
+      }
+    }
+    
   }
   
   private struct Content: View {
