@@ -26,22 +26,6 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-extension BindingDerived {
-
-  /**
-   Still in experimentals.  
-   Converts SwiftUI.Binding from BindingDerived.
-   */
-  public func _swiftUIBinding() -> SwiftUI.Binding<Value> {
-    return .init(get: {
-      self.wrappedValue
-    }, set: { newValue in
-      self.wrappedValue = newValue
-    })
-  }
-}
-
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension StoreDriverType where Self : Sendable {
   
   /// Generates a SwiftUI.Binding that gets and updates the StoreType.State.
