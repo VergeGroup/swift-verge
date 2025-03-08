@@ -91,7 +91,7 @@ extension StoreDriverType {
 
 public protocol AccumulationSink<Source> {
   associatedtype Source
-  consuming func receive(source: ReadonlyBox<Source>) -> Self
+  consuming func receive(source: _BackingStorage<Source>) -> Self
   consuming func receive(previous: consuming Self) -> Self
   consuming func consume() -> Self
 }
@@ -122,7 +122,7 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
 
   private var latestValue: Target?
   private var previousValue: Target?
-  private var source: ReadonlyBox<Source>?
+  private var source: _BackingStorage<Source>?
 
   private var counter: UInt64 = 0
   private var countToEmit: UInt64 = 0
@@ -154,7 +154,7 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
     return self
   }
 
-  public consuming func receive(source: ReadonlyBox<Source>) -> Self {
+  public consuming func receive(source: _BackingStorage<Source>) -> Self {
 
     self.latestValue = selector(source.value)
     self.source = source
@@ -191,13 +191,13 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
 public struct _AccumulationSinkGroup<Source, Component>: AccumulationSink {
 
   private var component: Component
-  private var _receiveSource: (ReadonlyBox<Source>, Component) -> Component
+  private var _receiveSource: (_BackingStorage<Source>, Component) -> Component
   private var _receiveOther: (Component, Component) -> Component
   private var _consume: (Component) -> Component
 
   init(
     component: Component,
-    receiveSource: @escaping (ReadonlyBox<Source>, Component) -> Component,
+    receiveSource: @escaping (_BackingStorage<Source>, Component) -> Component,
     receiveOther: @escaping (Component, Component) -> Component,
     consume: @escaping (Component) -> Component
   ) {
@@ -214,7 +214,7 @@ public struct _AccumulationSinkGroup<Source, Component>: AccumulationSink {
     self._consume = { component in component }
   }
 
-  public consuming func receive(source: ReadonlyBox<Source>) -> Self {
+  public consuming func receive(source: _BackingStorage<Source>) -> Self {
     component = _receiveSource(source, component)
     return self
   }
@@ -244,7 +244,7 @@ public struct _AccumulationSinkCondition<Source, TrueComponent: AccumulationSink
     self.falseComponent = falseComponent
   }
 
-  public consuming func receive(source: ReadonlyBox<Source>) -> Self {
+  public consuming func receive(source: _BackingStorage<Source>) -> Self {
     if let trueComponent = trueComponent {
       self.trueComponent = trueComponent.receive(source: source)
     } else if let falseComponent = falseComponent {
@@ -283,7 +283,7 @@ struct _AccumulationSinkOptional<Source, Component: AccumulationSink>: Accumulat
     self.component = component
   }
 
-  consuming func receive(source: ReadonlyBox<Source>) -> Self {
+  consuming func receive(source: _BackingStorage<Source>) -> Self {
     if let component = component {
       self.component = component.receive(source: source)
     }
@@ -346,7 +346,7 @@ public struct AccumulationSinkComponentBuilder<Source> {
       receiveSource: { source, component in
         // Waiting https://www.swift.org/blog/pack-iteration/
         func iterate<T: AccumulationSink>(_ left: T) -> T {
-          return left.receive(source: source as! ReadonlyBox<T.Source>)
+          return left.receive(source: source as! _BackingStorage<T.Source>)
         }
 
         let modified = (repeat iterate(each component))

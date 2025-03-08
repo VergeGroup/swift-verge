@@ -61,8 +61,7 @@ extension PipelineType where Storage == Void {
 public enum Pipelines {
 
   /// KeyPath based pipeline, light weight operation just take value from source.
-  public struct ChangesSelectPassthroughPipeline<Source: Equatable, Output: Equatable>: PipelineType
-  {
+  public struct ChangesSelectPassthroughPipeline<Source, Output>: PipelineType {
 
     public typealias Storage = Void
 
@@ -146,7 +145,7 @@ public enum Pipelines {
     }
 
   }
-
+  
   /// Closure based pipeline,
   public struct ChangesMapPipeline<Source, Intermediate, Output: Equatable>: PipelineType {
 
@@ -374,6 +373,21 @@ extension PipelineType {
 
   /**
    For Changes input
+   Produces output values using KeyPath-based projection.
+
+   exactly same with ``PipelineType/select(_:)``
+   */
+  public static func map<Input, Output>(
+    _ selector: @escaping @Sendable (
+      borrowing Input
+    ) -> Output
+  ) -> Self
+  where Self == Pipelines.ChangesSelectPassthroughPipeline<Input, Output> {
+    self.init(selector: selector)
+  }
+
+  /**
+   For Changes input
    Produces output values using closure based projection.
 
    exactly same with ``PipelineType/map(_:)-7xvom``
@@ -392,12 +406,26 @@ extension PipelineType {
 
    exactly same with ``PipelineType/map(_:)-7xvom``
    */
-  public static func select<Input, Output>(
+  public static func select<Input, Output: Equatable>(
     _ selector: KeyPath<Input, Output> & Sendable
   ) -> Self
   where Output: Equatable, Self == Pipelines.ChangesSelectPipeline<Input, Output> {
     self.init(selector: { $0[keyPath: selector] }, additionalDropCondition: nil)
   }
+  
+  /**
+   For Changes input
+   Produces output values using closure based projection.
+   
+   exactly same with ``PipelineType/map(_:)-7xvom``
+   */
+  public static func select<Input, Output>(
+    _ selector: KeyPath<Input, Output> & Sendable
+  ) -> Self
+  where Self == Pipelines.ChangesSelectPassthroughPipeline<Input, Output> {
+    self.init(selector: { $0[keyPath: selector] })
+  }
+  
 }
 
 extension PipelineType {

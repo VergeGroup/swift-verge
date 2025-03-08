@@ -406,7 +406,7 @@ extension Derived where Value == Never {
  In most cases, `Store` will be running underlying.
  */
 @propertyWrapper
-public final class BindingDerived<Value: Equatable>: Derived<Value>, @unchecked Sendable {
+public final class BindingDerived<Value>: Derived<Value>, @unchecked Sendable {
   
   /**
    Returns a derived value that created by get-pipeline.
