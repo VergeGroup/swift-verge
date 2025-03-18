@@ -225,7 +225,7 @@ final class StoreReaderTests: XCTestCase {
   
   @Tracking
   struct SingleValueState {
-    var count = 0
+    var count: Int = 0
   }
   
   @MainActor
@@ -418,8 +418,8 @@ final class StoreReaderTests: XCTestCase {
   
   @Tracking
   private struct State: Equatable {
-    var count_1 = 0
-    var count_2 = 0
+    var count_1: Int = 0
+    var count_2: Int = 0
     
     var computed_count_equatable: Int {
       count_1 + count_2

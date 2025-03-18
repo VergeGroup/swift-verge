@@ -1,5 +1,5 @@
 {
-  "originHash" : "3429db17a7ae508f13218b0afdb96d5bdafe537d683f8a0b756ae0389b5608d4",
+  "originHash" : "a78fb37e646dbc3a1ac1db35de6c344a471d3099a4a004c1b4608e122969dd36",
   "pins" : [
     {
       "identity" : "normalization",
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/swift-macro-state-struct",
       "state" : {
-        "revision" : "d85791b883049a62c86a37cac3b4a3599be67b3a",
-        "version" : "1.0.3"
+        "revision" : "09173d473128e05ffdbacce1e1b65a336d765b1e",
+        "version" : "1.0.6"
       }
     },
     {
