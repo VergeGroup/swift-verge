@@ -48,9 +48,9 @@ final class VergeStoreTests: XCTestCase {
     var optionalNested: OptionalNestedState?
     var nested: NestedState = .init()
     
-    var treeA = TreeA()
-    var treeB = TreeB()
-    var treeC = TreeC()
+    var treeA: TreeA = TreeA()
+    var treeB: TreeB = TreeB()
+    var treeC: TreeC = TreeC()
     
   }
   
