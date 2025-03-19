@@ -33,7 +33,7 @@ import StateStruct
 public protocol StoreType<State>: AnyObject, Sendable, ObservableObject
 where ObjectWillChangePublisher == ObservableObjectPublisher {
   associatedtype State
-  associatedtype Activity = Never
+  associatedtype Activity: Sendable = Never
 
   func asStore() -> Store<State, Activity>
 
@@ -136,6 +136,10 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
 
   private let registrations: VergeConcurrency.UnfairLockAtomic<([TrackingRegistration], [TrackingRegistration])> = .init(
   ([], [])
+  )
+  
+  private let registrations2: VergeConcurrency.UnfairLockAtomic<[Namespace.ID : TrackingRegistration2]> = .init(
+    [:]
   )
   
   // MARK: - Deinit
@@ -253,6 +257,26 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
   }
 
   open func stateDidUpdate(newState: Changes<State>) {
+            
+    do {
+      var closures: [@MainActor () -> Void] = []
+      registrations2.modify { registrations in
+        for (key, registration) in registrations {      
+          if registration.containsUpdates(state: newState) {
+            closures.append(registration.onChange)
+            registrations.removeValue(forKey: key)
+          }    
+        }
+      }
+      
+      if closures.isEmpty == false {      
+        Task { @MainActor in 
+          for closure in closures {
+            closure()
+          }
+        }
+      }
+    }
     
     registrations.modify { registrations in
       
@@ -293,6 +317,49 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
       _valueSubject.send(completion: .finished)
       await taskManager.cancelAll()
     }
+  }
+  
+  private struct TrackingRegistration2 {
+    
+    let state: State
+    let onChange: @MainActor () -> Void
+    private let trackingResult: @Sendable (State) -> TrackingResult?
+    
+    init(
+      state: State,
+      trackingResult: @escaping @Sendable (State) -> TrackingResult?,
+      onChange: @escaping @MainActor () -> Void
+    ) {
+      self.state = state
+      self.trackingResult = trackingResult
+      self.onChange = onChange
+    }
+    
+    func containsUpdates(state: Changes<State>) -> Bool {
+      
+      switch state.modification {
+      case .graph(let writeGraph):
+        
+        guard let readGraph = self.trackingResult(self.state)?.graph else {
+          return false
+        }
+        
+        let hasChanges = PropertyNode.hasChanges(
+          writeGraph: consume writeGraph,
+          readGraph: readGraph
+        )
+        
+        return hasChanges
+        
+      case .indeterminate:
+        return true
+        
+      case nil:
+        return false
+      }
+      
+    }
+    
   }
 
   private struct TrackingRegistration {
@@ -340,6 +407,26 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
 }
 
 extension Store where State : TrackingObject {
+  
+  public func resetTracking(
+    for id: Namespace.ID,
+    onChange: @escaping @MainActor () -> Void
+  ) {    
+    let registration = TrackingRegistration2(
+      state: state.primitive.tracked(),
+      trackingResult: { $0.trackingResult },
+      onChange: onChange
+    )
+    registrations2.modify {
+      $0[id] = registration
+    }
+  }
+  
+  public func trackingState(for id: Namespace.ID) -> State? {    
+    registrations2.withValue {
+      $0[id]?.state
+    }
+  }
   
   /**
    onChange closure will run if the tracking properties are changed.
