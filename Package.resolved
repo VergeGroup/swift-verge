@@ -1,5 +1,5 @@
 {
-  "originHash" : "a78fb37e646dbc3a1ac1db35de6c344a471d3099a4a004c1b4608e122969dd36",
+  "originHash" : "0cc74a5cb94ed9ce6e31c8660dab81267f3d621fe1d30431f1b4b0ba39359610",
   "pins" : [
     {
       "identity" : "normalization",
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/swift-macro-state-struct",
       "state" : {
-        "revision" : "09173d473128e05ffdbacce1e1b65a336d765b1e",
-        "version" : "1.0.6"
+        "branch" : "muukii/escaping-tracking",
+        "revision" : "c596c15424d54f857f76077688a26fbba946f5c4"
       }
     },
     {

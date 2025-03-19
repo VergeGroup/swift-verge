@@ -353,13 +353,16 @@ extension Store where State : TrackingObject {
     onChange: @escaping @Sendable () -> Void
   ) -> T {
     
-    let currentState = state.primitiveBox
+    var currentState = state.primitiveBox.value
+        
+    currentState.startNewTracking()
     
-    var result: T!
-    let readResult = currentState.value.tracking {
-      result = apply(currentState.value)    
-    }
+    let result = apply(currentState)
     
+    let readResult = currentState.trackingResult!
+    
+    currentState.endTracking()
+        
     registrations.modify {
       $0.0.append(
         .init(
@@ -597,6 +600,12 @@ extension Store {
       }
 
       var modifying = state.primitive
+      
+      // TODO: better performant way
+      if var trackingObject = modifying as? TrackingObject {
+        trackingObject.startNewTracking()
+        modifying = trackingObject as! State
+      }
 
       let updateResult = try withUnsafeMutablePointer(to: &modifying) {
         (stateMutablePointer) -> UpdateResult in
