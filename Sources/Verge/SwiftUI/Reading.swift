@@ -33,13 +33,11 @@ where Store.State: TrackingObject {
   public func update() {
     // trigger to subscribe
     _ = $version.wrappedValue
-    
+
     wrappedValue.asStore().resetTracking(
       for: id,
       onChange: { [v = $version] in
-        Task { @MainActor in
-          v.wrappedValue += 1
-        }
+        v.wrappedValue += 1
       })
   }
 }
@@ -102,49 +100,72 @@ where Store.State: TrackingObject {
   }
 
   private struct ReadingSolution: View {
-
-    @State private var items: [ItemKind] = [
-      .first,
-      .second,
-      .third,
-    ]
-
-    @Reading var store: Store<MyState, Never> = .init(initialState: .init())
+    
+    @State var id: Int = 0
 
     init() {
       print("init")
     }
 
     var body: some View {
-      Text("Value: \($store.value)")
-      ItemDetail(items: items) { item in
-        switch item {
-        case .first:
-          Text("A : \($store.a)")
-            .onTapGesture {
-              print("Tapped \(store.state.a)")
-              store.commit {
-                $0.a += 1
+      VStack {        
+        Solution()
+          .id(id)
+
+        Button("New") {
+          id += 1
+        }
+      }
+    }
+
+    private struct Solution: View {
+
+      @State private var items: [ItemKind] = [
+        .first,
+        .second,
+        .third,
+      ]
+
+      @Reading var store: Store<MyState, Never> = .init(initialState: .init())
+
+      init() {
+        print("init")
+      }
+
+      var body: some View {
+
+        Text("Value: \($store.value)")
+        ItemDetail(items: items) { item in
+          switch item {
+          case .first:
+            Text("A : \($store.a)")
+              .onTapGesture {
+                print("Tapped \(store.state.a)")
+                store.commit {
+                  $0.a += 1
+                }
               }
-            }
-        case .second:
-          Text("B : \($store.b)")
-            .onTapGesture {
-              store.commit {
-                $0.b += 1
+          case .second:
+            Text("B : \($store.b)")
+              .onTapGesture {
+                store.commit {
+                  $0.b += 1
+                }
               }
-            }
-        case .third:
-          Text("C : \($store.c)")
-            .onTapGesture {
-              store.commit {
-                $0.c += 1
+          case .third:
+            Text("C : \($store.c)")
+              .onTapGesture {
+                store.commit {
+                  $0.c += 1
+                }
               }
-            }
+          }
+
         }
 
       }
     }
+
   }
 
   private struct StoreReaderProblem: View {
