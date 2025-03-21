@@ -408,7 +408,13 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
 
 extension Store where State : TrackingObject {
   
-  public func resetTracking(
+  public func removeTracking(for id: Namespace.ID) {
+    registrations2.modify {
+      $0.removeValue(forKey: id)
+    }    
+  }
+  
+  public func startTracking(
     for id: Namespace.ID,
     onChange: @escaping @MainActor () -> Void
   ) {    

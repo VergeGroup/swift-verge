@@ -2,11 +2,19 @@ import StateStruct
 import SwiftUI
 
 @propertyWrapper
-public struct Reading<Store: StoreType>: DynamicProperty
+public struct Reading<Store: StoreType>: @preconcurrency DynamicProperty
 where Store.State: TrackingObject {
+  
+  private let backing: StateObject<Wrapper>
 
-  public var wrappedValue: Store
+  @MainActor
+  @preconcurrency
+  public var wrappedValue: Store {    
+    self.backing.wrappedValue.object
+  }
 
+  @MainActor
+  @preconcurrency
   public var projectedValue: Store.State {
     guard let value = wrappedValue.asStore().trackingState(for: id) else {
       fatalError("State is not being tracked")
@@ -14,31 +22,66 @@ where Store.State: TrackingObject {
     return value
   }
 
+  /// A trigger to update owning view
   @State var version: Int64 = 0
 
+  /// Recreated each time the view identity updates.
   @Namespace private var id
+  
+  private var token: _Token?
 
-  public init<Driver: StoreDriverType>(wrappedValue: Driver)
+  public nonisolated init<Driver: StoreDriverType>(wrappedValue: @autoclosure @escaping () -> Driver)
   where
     Store == Driver.TargetStore,
     Driver.Scope == Driver.TargetStore.State
   {
-    self.wrappedValue = wrappedValue.store
+    self.backing = .init(wrappedValue: .init(object: wrappedValue().store))
   }
 
-  public init(wrappedValue: Store) {
-    self.wrappedValue = wrappedValue
+  public nonisolated init(wrappedValue: @autoclosure @escaping () -> Store) {
+    self.backing = .init(wrappedValue: .init(object: wrappedValue()))
   }
 
-  public func update() {
+  @MainActor
+  @preconcurrency
+  public mutating func update() {
     // trigger to subscribe
     _ = $version.wrappedValue
+    
+    let id = self.id
+    
+    self.token = .init { [weak store = wrappedValue.asStore(), id] in
+      // remove tracking
+      store?.removeTracking(for: id)
+    }
 
-    wrappedValue.asStore().resetTracking(
+    wrappedValue.asStore().startTracking(
       for: id,
       onChange: { [v = $version] in
         v.wrappedValue += 1
       })
+  }
+  
+  /// A wrapper for the `Store` that serves as a bridge to `ObservableObject`.
+  private final class Wrapper: ObservableObject {
+    let object: Store
+    
+    init(object: Store) {
+      self.object = object
+    }
+  }
+}
+
+private final class _Token {
+  
+  private let onDeinit: @Sendable () -> Void
+  
+  init(onDeinit: @Sendable @escaping () -> Void) {
+    self.onDeinit = onDeinit
+  }
+  
+  deinit {
+    onDeinit()
   }
 }
 
