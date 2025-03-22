@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/swift-macro-state-struct",
       "state" : {
-        "branch" : "muukii/escaping-tracking",
-        "revision" : "14977e7146e952a1679b3a34f85742b73b314bbb"
+        "revision" : "b6ade33024ae04699fa6a4885be70c0299eb3cec",
+        "version" : "2.0.0"
       }
     },
     {

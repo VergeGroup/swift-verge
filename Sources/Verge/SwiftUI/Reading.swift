@@ -5,12 +5,20 @@ import SwiftUI
 public struct Reading<Store: StoreType>: @preconcurrency DynamicProperty
 where Store.State: TrackingObject {
   
-  private let backing: StateObject<Wrapper>
+  private let stateObject: StateObject<Wrapper>
+  private let instantiated: Store?
 
   @MainActor
   @preconcurrency
   public var wrappedValue: Store {    
-    self.backing.wrappedValue.object
+
+    if let passed = instantiated {
+      return passed
+    }
+
+    return stateObject.wrappedValue.object!
+        
+    fatalError()
   }
 
   @MainActor
@@ -30,16 +38,32 @@ where Store.State: TrackingObject {
   
   private var token: _Token?
 
-  public nonisolated init<Driver: StoreDriverType>(wrappedValue: @autoclosure @escaping () -> Driver)
+  public nonisolated init<Driver: StoreDriverType>(wrappedValue: @escaping () -> Driver)
   where
     Store == Driver.TargetStore,
     Driver.Scope == Driver.TargetStore.State
   {
-    self.backing = .init(wrappedValue: .init(object: wrappedValue().store))
+    self.stateObject = .init(wrappedValue: .init(object: wrappedValue().store))
+    self.instantiated = nil
   }
 
-  public nonisolated init(wrappedValue: @autoclosure @escaping () -> Store) {
-    self.backing = .init(wrappedValue: .init(object: wrappedValue()))
+  public nonisolated init(wrappedValue: @escaping () -> Store) {
+    self.stateObject = .init(wrappedValue: .init(object: wrappedValue()))
+    self.instantiated = nil
+  }
+  
+  public nonisolated init<Driver: StoreDriverType>(wrappedValue: Driver)
+  where
+  Store == Driver.TargetStore,
+  Driver.Scope == Driver.TargetStore.State
+  {
+    self.stateObject = .init(wrappedValue: .init(object: nil))
+    self.instantiated = wrappedValue.store
+  }
+  
+  public nonisolated init(wrappedValue: Store) {
+    self.stateObject = .init(wrappedValue: .init(object: nil))
+    self.instantiated = wrappedValue
   }
 
   @MainActor
@@ -49,11 +73,6 @@ where Store.State: TrackingObject {
     _ = $version.wrappedValue
     
     let id = self.id
-    
-//    self.token = .init { [weak store = wrappedValue.asStore(), id] in
-//      // remove tracking
-//      store?.removeTracking(for: id)
-//    }
 
     wrappedValue.asStore().startTracking(
       for: id,
@@ -64,9 +83,10 @@ where Store.State: TrackingObject {
   
   /// A wrapper for the `Store` that serves as a bridge to `ObservableObject`.
   private final class Wrapper: ObservableObject {
-    let object: Store
     
-    init(object: Store) {
+    let object: Store?
+    
+    init(object: Store?) {
       self.object = object
     }
   }
