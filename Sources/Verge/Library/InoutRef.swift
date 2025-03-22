@@ -22,13 +22,13 @@
 import Foundation
 import StateStruct
 
-public struct InoutRef<Wrapped>: ~Copyable {
+public struct InoutRef<Wrapped> {
   
   public enum Modification {
     case graph(PropertyNode)
     case indeterminate
   }
-  
+
   // MARK: - Properties
 
   nonisolated(unsafe) private let pointer: UnsafeMutablePointer<Wrapped>
@@ -66,28 +66,33 @@ public struct InoutRef<Wrapped>: ~Copyable {
    You should take care of using the pointer of value.
    Using always `withUnsafeMutablePointer` to pass it, otherwise Swift might crash with Memory error.
    */
-  init(_ pointer: UnsafeMutablePointer<Wrapped>) {
+  public init(_ pointer: UnsafeMutablePointer<Wrapped>) {
     self.pointer = pointer
-  }
-  
-  deinit {
-    (pointer.pointee as? TrackingObject)?.endTracking()
   }
 
   // MARK: - Functions
-  
+
   public mutating func modify<T>(_ perform: (inout Wrapped) throws -> T) rethrows -> T {
     
     if pointer.pointee is TrackingObject {
+      var result: T!
       
       let identifier = Token()
       
       (pointer.pointee as! TrackingObject)._tracking_context.identifier = identifier
       
-      let result = try perform(&pointer.pointee)
-                  
-      let resultIdentifier = (pointer.pointee as! TrackingObject)._tracking_context.identifier
+      var modifyingResult = try (pointer.pointee as! TrackingObject).tracking(using: {
+        switch modification {
+        case .graph(let graph):
+          return graph
+        default:
+          return nil
+        }
+      }()) {
+        result = try perform(&pointer.pointee)
+      }
       
+      let resultIdentifier = (pointer.pointee as! TrackingObject)._tracking_context.identifier
       (pointer.pointee as! TrackingObject)._tracking_context.identifier = nil
       
       guard Optional(identifier) == resultIdentifier else {
@@ -95,36 +100,29 @@ public struct InoutRef<Wrapped>: ~Copyable {
         modification = .indeterminate
         return result
       }
+                  
+      modifyingResult.graph.shakeAsWrite()
       
-      if var modifyingResult = (pointer.pointee as! TrackingObject).trackingResult {
-        
-        modifyingResult.graph.shakeAsWrite()
-        
-        let graph = modifyingResult.graph
-        
-        self.modification = .graph(graph)
+      let graph = modifyingResult.graph
+      
+      self.modification = .graph(graph)
+      
 #if DEBUG
-        Log.writeGraph.debug("Modified: \(graph.prettyPrint())")
+      Log.writeGraph.debug("Modified: \(graph.prettyPrint())")
 #endif
-      } else {
-        modification = .indeterminate
-      }
-      
       
       return result
-      
     } else {
+      
       let r = try perform(&pointer.pointee)
       
       modification = .indeterminate
       
-      return r 
+      return r
     }
-   
   }
 
 }
-
 
 private final class Token: Hashable {
   

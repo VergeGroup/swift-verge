@@ -40,36 +40,66 @@ import SwiftUI
  ```
  */
 @available(iOS 14, watchOS 7.0, tvOS 14, *)
-public struct StoreReader<Driver: StoreDriverType, Content: View>: View where Driver.TargetStore.State : TrackingObject {
-  
-  let storeReading: Reading<Driver>
+public struct StoreReader<State: TrackingObject, Activity: Sendable, Content: View>: View {
+
+  private let store: Store<State, Activity>
+
+  @SwiftUI.State private var version: UInt64 = 0
 
   private let file: StaticString
   private let line: UInt
 
-  /// Needs to use Reading directly to provide the latest state when it's accessed. from escaping closure.
-  private let content: @MainActor (Reading<Driver>) -> Content
+  private let content: @MainActor (State) -> Content
 
   /// Initialize from `Store`
   ///
   /// - Parameters:
   ///   - store:
   ///   - content:
-  public init(
+  public init<Driver: StoreDriverType>(
     file: StaticString = #file,
     line: UInt = #line,
-    _ driver: Driver,
-    @ViewBuilder content: @escaping @MainActor (Reading<Driver>) -> Content
-  ) {
-    self.file = file
-    self.line = line
-    self.storeReading = .init(driver)
-    self.content = content
+    _ store: Driver,
+    @ViewBuilder content: @escaping @MainActor (State) -> Content
+  ) where State == Driver.TargetStore.State, Activity == Driver.TargetStore.Activity {
+
+    let store = store.store.asStore()
+
+    self.init(
+      file: file,
+      line: line,
+      store: store,
+      content: content
+    )
 
   }
 
-  public var body: some View {    
-    content(storeReading)
+  private init(
+    file: StaticString,
+    line: UInt,
+    store: Store<State, Activity>,
+    content: @escaping @MainActor (State) -> Content
+  ) {
+    self.file = file
+    self.line = line
+    self.store = store
+    self.content = content
+  }
+
+  public var body: some View {
+
+    // trigger to subscribe
+    let _ = $version.wrappedValue
+
+    let _content = store.tracking(
+      content,
+      onChange: {
+        ImmediateMainActorTargetQueue.main.execute {
+          version &+= 1
+        }
+      })
+
+    _content
   }
 
 }
@@ -122,3 +152,80 @@ public struct StoreBindable<StoreDriver: StoreDriverType & Sendable> {
   }
 
 }
+
+#if DEBUG
+
+  @available(iOS 14, watchOS 7.0, tvOS 14, *)
+  enum Preview_StoreReader: PreviewProvider {
+
+    static var previews: some View {
+
+      Group {
+        Content()
+      }
+
+    }
+
+    struct Content: View {
+
+      @StoreObject var viewModel_1: ViewModel = .init()
+      @StoreObject var viewModel_2: ViewModel = .init()
+
+      @State var flag = false
+
+      var body: some View {
+
+        VStack {
+
+          let store = flag ? viewModel_1 : viewModel_2
+
+          StoreReader(store) { state in
+            Text(state.count.description)
+          }
+
+          Button("up") {
+            store.increment()
+          }
+
+          Button("swap") {
+            flag.toggle()
+          }
+
+        }
+      }
+    }
+
+    final class ViewModel: StoreDriverType {
+
+      @Tracking
+      struct State: Equatable {
+        var count: Int = 0
+        var count_dummy: Int = 0
+      }
+
+      let store: Store<State, Never>
+
+      init() {
+        self.store = .init(initialState: .init())
+      }
+
+      func increment() {
+        commit {
+          $0.count += 1
+        }
+      }
+
+      func incrementDummy() {
+        commit {
+          $0.count_dummy += 1
+        }
+      }
+
+      deinit {
+        print("deinit")
+      }
+    }
+
+  }
+
+#endif
