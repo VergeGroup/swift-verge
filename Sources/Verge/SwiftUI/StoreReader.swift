@@ -40,48 +40,31 @@ import SwiftUI
  ```
  */
 @available(iOS 14, watchOS 7.0, tvOS 14, *)
-public struct StoreReader<Store: ReadingStoreType, Content: View>: View where Store.State : TrackingObject {
+public struct StoreReader<Driver: StoreDriverType, Content: View>: View where Driver.TargetStore.State : TrackingObject {
   
-  let storeReading: Reading<Store.State>
+  let storeReading: Reading<Driver>
 
   private let file: StaticString
   private let line: UInt
 
-  private let content: @MainActor (Reading<Store.State>) -> Content
+  private let content: @MainActor (Reading<Driver>) -> Content
 
   /// Initialize from `Store`
   ///
   /// - Parameters:
   ///   - store:
   ///   - content:
-  public init<Driver: StoreDriverType>(
+  public init(
     file: StaticString = #file,
     line: UInt = #line,
     _ driver: Driver,
-    @ViewBuilder content: @escaping @MainActor (Reading<Driver.TargetStore.State>) -> Content
-  ) where Store == Driver.TargetStore, Driver.TargetStore.State : TrackingObject {
-
-    let store = driver.store
-
-    self.init(
-      file: file,
-      line: line,
-      store: store,
-      content: content
-    )
-
-  }
-
-  private init(
-    file: StaticString,
-    line: UInt,
-    store: Store,
-    content: @escaping @MainActor (Reading<Store.State>) -> Content
+    @ViewBuilder content: @escaping @MainActor (Reading<Driver>) -> Content
   ) {
     self.file = file
     self.line = line
-    self.storeReading = .init(wrappedValue: store)
+    self.storeReading = .init(wrappedValue: driver)
     self.content = content
+
   }
 
   public var body: some View {    
