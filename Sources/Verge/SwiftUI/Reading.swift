@@ -2,17 +2,31 @@ import StateStruct
 import SwiftUI
 
 @propertyWrapper
-public struct Reading<Store: StoreType>: @preconcurrency DynamicProperty
-where Store.State: TrackingObject {
+public struct Reading<Driver: StoreDriverType>: @preconcurrency DynamicProperty
+where Driver.TargetStore.State: TrackingObject {
+    
+  public enum ReferencingType {
+    case strong
+    case weak
+  }
   
   private let stateObject: StateObject<Wrapper>
-  private let instantiated: Store?
+  private let instantiated: RetainBox?
 
   @MainActor
   @preconcurrency
-  public var wrappedValue: Store {    
+  public var wrappedValue: Driver.TargetStore.State {
+    guard let value = projectedValue.store.asStore().trackingState(for: id) else {
+      fatalError("State is not being tracked")
+    }
+    return value
+  }
 
-    if let passed = instantiated {
+  @MainActor
+  @preconcurrency
+  public var projectedValue: Driver {    
+
+    if let passed = instantiated?.value {
       return passed
     }
 
@@ -21,49 +35,42 @@ where Store.State: TrackingObject {
     fatalError()
   }
 
-  @MainActor
-  @preconcurrency
-  public var projectedValue: Store.State {
-    guard let value = wrappedValue.asStore().trackingState(for: id) else {
-      fatalError("State is not being tracked")
-    }
-    return value
-  }
-
   /// A trigger to update owning view
-  @State var version: Int64 = 0
+  @State private var version: Int64 = 0
 
   /// Recreated each time the view identity updates.
   @Namespace private var id
   
-  private var token: _Token?
-
-  public nonisolated init<Driver: StoreDriverType>(wrappedValue: @escaping () -> Driver)
-  where
-    Store == Driver.TargetStore,
-    Driver.Scope == Driver.TargetStore.State
-  {
-    self.stateObject = .init(wrappedValue: .init(object: wrappedValue().store))
+  private let label: StaticString?
+    
+  /**
+   Creates a new instance of the model object only once during the
+   lifetime of the container that declares
+   */
+  public nonisolated init(
+    label: StaticString? = nil,
+    _ driver: @escaping () -> Driver   
+  ) {
+    self.stateObject = .init(wrappedValue: .init(object: driver()))
     self.instantiated = nil
-  }
-
-  public nonisolated init(wrappedValue: @escaping () -> Store) {
-    self.stateObject = .init(wrappedValue: .init(object: wrappedValue()))
-    self.instantiated = nil
+    self.label = label
   }
   
-  public nonisolated init<Driver: StoreDriverType>(wrappedValue: Driver)
-  where
-  Store == Driver.TargetStore,
-  Driver.Scope == Driver.TargetStore.State
-  {
+  /**
+   Passing already owned by someone else and uses it.
+   */
+  public nonisolated init(
+    label: StaticString? = nil,
+    mode: ReferencingType = .strong,
+    _ driver: Driver
+  ) {
     self.stateObject = .init(wrappedValue: .init(object: nil))
-    self.instantiated = wrappedValue.store
+    self.instantiated = .init(mode: mode, object: driver)
+    self.label = label
   }
-  
-  public nonisolated init(wrappedValue: Store) {
-    self.stateObject = .init(wrappedValue: .init(object: nil))
-    self.instantiated = wrappedValue
+     
+  public init(projectedValue: Reading<Driver>) {
+    self = projectedValue
   }
 
   @MainActor
@@ -74,33 +81,51 @@ where Store.State: TrackingObject {
     
     let id = self.id
 
-    wrappedValue.asStore().startTracking(
-      for: id,
-      onChange: { [v = $version] in
-        v.wrappedValue += 1
-      })
+    projectedValue.store.asStore()
+      .startTracking(
+        for: id,
+        label: label,
+        onChange: { [v = $version] in
+          v.wrappedValue += 1
+        }
+      )
   }
   
   /// A wrapper for the `Store` that serves as a bridge to `ObservableObject`.
   private final class Wrapper: ObservableObject {
     
-    let object: Store?
+    let object: Driver?
     
-    init(object: Store?) {
+    init(object: Driver?) {
       self.object = object
     }
   }
+  
+  private final class RetainBox {
+    
+    weak var value: Driver?
+    let mode: ReferencingType
+    
+    init(mode: ReferencingType, object: Driver) {
+      switch mode {
+      case .strong:
+        Unmanaged.passUnretained(object).retain()
+      case .weak:
+        break
+      }
+      self.value = object
+      self.mode = mode
+    }
+    
+    deinit {
+      switch mode {
+      case .strong:
+        Unmanaged.passUnretained(value!).release()
+      case .weak:
+        break
+      }
+    }
+  }
+
 }
 
-private final class _Token {
-  
-  private let onDeinit: @Sendable () -> Void
-  
-  init(onDeinit: @Sendable @escaping () -> Void) {
-    self.onDeinit = onDeinit
-  }
-  
-  deinit {
-    onDeinit()
-  }
-}

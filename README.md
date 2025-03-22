@@ -13,9 +13,9 @@
 
 [My development note](https://www.notion.so/muukii/Verge-93813aec77d44bef802a2d92f565c7bb?pvs=4)
 
-## Using StoreReader in SwiftUI
+## Using StoreReader or @Reading in SwiftUI
 
-StoreReader is a SwiftUI view that reads state from a Store and displays content according to the state changes.
+In SwiftUI, there are two ways to observe a Store: using the `StoreReader` view or the `@Reading` property wrapper. Both efficiently track state changes and only re-render the view when tracked values change.
 
 First, define your state with `@Tracking` macro:
 
@@ -32,11 +32,13 @@ struct State {
 
   var nestedState: NestedState = NestedState()
 }
+```
 
+### StoreReader Example
+
+```swift
 struct MyView: View {
-
-  // should not create store here in production code as a view is created every time to render.
-  let store = Store<_, Never>(initialState: State())
+  let store = Store<State, Never>(initialState: .init())
   
   var body: some View {
     StoreReader(store) { state in
@@ -59,6 +61,41 @@ struct MyView: View {
   }
 }
 ```
+
+### @Reading Example
+
+```swift
+struct MyView: View {
+  @Reading<Store<State, Never>> var state: State
+  
+  init() {
+    self._state = .init(
+      label: "MyView",
+      { Store<State, Never>(initialState: .init()) }
+    )
+  }
+  
+  var body: some View {
+    VStack {
+      Text("Count: \(state.count)")
+      Button("Increment") {
+        $state.commit {
+          $0.count += 1
+        }
+      }
+      Text("Is Active: \(state.nestedState.isActive)")
+      Text("Message: \(state.nestedState.message)")
+      Button("Toggle Active") {
+        $state.commit {
+          $0.nestedState.isActive.toggle()
+        }
+      }
+    }
+  }
+}
+```
+
+---
 
 - Dependencies
   - [TypedIdentifier](https://github.com/VergeGroup/TypedIdentifier)
