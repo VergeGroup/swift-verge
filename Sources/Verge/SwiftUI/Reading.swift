@@ -4,9 +4,14 @@ import SwiftUI
 @propertyWrapper
 public struct Reading<Driver: StoreDriverType>: @preconcurrency DynamicProperty
 where Driver.TargetStore.State: TrackingObject {
+    
+  public enum ReferencingType {
+    case strong
+    case weak
+  }
   
   private let stateObject: StateObject<Wrapper>
-  private let instantiated: Driver?
+  private let instantiated: RetainBox?
 
   @MainActor
   @preconcurrency
@@ -21,7 +26,7 @@ where Driver.TargetStore.State: TrackingObject {
   @preconcurrency
   public var projectedValue: Driver {    
 
-    if let passed = instantiated {
+    if let passed = instantiated?.value {
       return passed
     }
 
@@ -38,15 +43,29 @@ where Driver.TargetStore.State: TrackingObject {
   
   private let label: StaticString?
     
-  public nonisolated init(_ driver: @escaping () -> Driver, label: StaticString? = nil) {
+  /**
+   Creates a new instance of the model object only once during the
+   lifetime of the container that declares
+   */
+  public nonisolated init(
+    label: StaticString? = nil,
+    _ driver: @escaping () -> Driver   
+  ) {
     self.stateObject = .init(wrappedValue: .init(object: driver()))
     self.instantiated = nil
     self.label = label
   }
   
-  public nonisolated init(_ driver: Driver, label: StaticString? = nil) {
+  /**
+   Passing already owned by someone else and uses it.
+   */
+  public nonisolated init(
+    label: StaticString? = nil,
+    mode: ReferencingType = .strong,
+    _ driver: Driver
+  ) {
     self.stateObject = .init(wrappedValue: .init(object: nil))
-    self.instantiated = driver
+    self.instantiated = .init(mode: mode, object: driver)
     self.label = label
   }
      
@@ -81,4 +100,32 @@ where Driver.TargetStore.State: TrackingObject {
       self.object = object
     }
   }
+  
+  private final class RetainBox {
+    
+    weak var value: Driver?
+    let mode: ReferencingType
+    
+    init(mode: ReferencingType, object: Driver) {
+      switch mode {
+      case .strong:
+        Unmanaged.passUnretained(object).retain()
+      case .weak:
+        break
+      }
+      self.value = object
+      self.mode = mode
+    }
+    
+    deinit {
+      switch mode {
+      case .strong:
+        Unmanaged.passUnretained(value!).release()
+      case .weak:
+        break
+      }
+    }
+  }
+
 }
+

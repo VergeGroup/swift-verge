@@ -133,10 +133,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
   open var keepsAliveForSubscribers: Bool { false }
 
   private let wasInvalidated = Atomics.ManagedAtomic(false)
-
-  private let registrations: VergeConcurrency.UnfairLockAtomic<([TrackingRegistration], [TrackingRegistration])> = .init(
-  ([], [])
-  )
   
   private var registrationsForReading: [Namespace.ID : TrackingRegistration2] = [:] {
     didSet {
@@ -290,22 +286,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
         }
               
       }
-    }
-    
-    registrations.modify { registrations in
-      
-      swap(&registrations.0, &registrations.1)
-
-      for registration in registrations.1 {
-
-        if registration.containsUpdates(state: newState) {
-          registration.onChange()          
-        } else {
-          registrations.0.append(registration)
-        }    
-      }
-      
-      registrations.1.removeAll(keepingCapacity: true)
     }
     
   }
@@ -512,43 +492,7 @@ extension Store: ReadingStoreType where State : TrackingObject {
     }
                          
   }
-  
-  /**
-   onChange closure will run if the tracking properties are changed.
-   If how properties are changed is not determined, it will run always.   
-   The tracking properties will be determined from apply closure reading properties over dynamicMemberLookup.
-   */
-  public func tracking<T>(
-    file: StaticString = #file,
-    line: UInt = #line,
-    _ apply: (borrowing State) -> T,
-    onChange: @escaping @Sendable () -> Void
-  ) -> T {
-    
-    var currentState = state.primitiveBox.value
-        
-    currentState.startNewTracking()
-    
-    let result = apply(currentState)
-    
-    let readResult = currentState.trackingResult!
-    
-    currentState.endTracking()
-        
-    registrations.modify {
-      $0.0.append(
-        .init(
-          file: file,
-          line: line,
-          readGraph: readResult.graph,
-          onChange: onChange
-        )
-      )
-    }
-    
-    return result
-    
-  }
+
 }
 
 // MARK: - Typealias

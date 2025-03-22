@@ -10,7 +10,7 @@ struct BookReading: View {
 }
 
 @Tracking
-private struct MyState {
+struct MyState {
   
   var value: Int = 0
   
@@ -107,9 +107,11 @@ private struct ReadingSolution: View {
     private let outerValue: Int
     
     init(outerValue: Int) {
-      self._state = .init({ 
-        Store<_, Never>.init(initialState: MyState())
-      }, label: "A")
+      self._state = .init(
+        label: "A", { 
+          Store<_, Never>.init(initialState: MyState())
+        }
+      )
       self.outerValue = outerValue
     }
     
@@ -168,7 +170,7 @@ private struct ReadingSolution: View {
     init(
       store: Store<MyState, Never>
     ) {
-      self._state = .init(store, label: "B")
+      self._state = .init(label: "B", store)
     }
     
     var body: some View {
