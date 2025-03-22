@@ -10,7 +10,16 @@ where Driver.TargetStore.State: TrackingObject {
 
   @MainActor
   @preconcurrency
-  public var wrappedValue: Driver {    
+  public var wrappedValue: Driver.TargetStore.State {
+    guard let value = projectedValue.store.asStore().trackingState(for: id) else {
+      fatalError("State is not being tracked")
+    }
+    return value
+  }
+
+  @MainActor
+  @preconcurrency
+  public var projectedValue: Driver {    
 
     if let passed = instantiated {
       return passed
@@ -21,34 +30,29 @@ where Driver.TargetStore.State: TrackingObject {
     fatalError()
   }
 
-  @MainActor
-  @preconcurrency
-  public var projectedValue: Driver.TargetStore.State {
-    guard let value = wrappedValue.store.asStore().trackingState(for: id) else {
-      fatalError("State is not being tracked")
-    }
-    return value
-  }
-
   /// A trigger to update owning view
   @State private var version: Int64 = 0
 
   /// Recreated each time the view identity updates.
   @Namespace private var id
   
-  public nonisolated init(wrappedValue: @escaping () -> Driver) {
-    self.stateObject = .init(wrappedValue: .init(object: wrappedValue()))
+  private let label: StaticString?
+    
+  public nonisolated init(_ driver: @escaping () -> Driver, label: StaticString? = nil) {
+    self.stateObject = .init(wrappedValue: .init(object: driver()))
     self.instantiated = nil
+    self.label = label
   }
   
-  public nonisolated init(wrappedValue: Driver) {
+  public nonisolated init(_ driver: Driver, label: StaticString? = nil) {
     self.stateObject = .init(wrappedValue: .init(object: nil))
-    self.instantiated = wrappedValue
+    self.instantiated = driver
+    self.label = label
   }
      
-//  public init(projectedValue: Reading<Driver>) {
-//    self = projectedValue
-//  }
+  public init(projectedValue: Reading<Driver>) {
+    self = projectedValue
+  }
 
   @MainActor
   @preconcurrency
@@ -58,11 +62,14 @@ where Driver.TargetStore.State: TrackingObject {
     
     let id = self.id
 
-    wrappedValue.store.asStore().startTracking(
-      for: id,
-      onChange: { [v = $version] in
-        v.wrappedValue += 1
-      })
+    projectedValue.store.asStore()
+      .startTracking(
+        for: id,
+        label: label,
+        onChange: { [v = $version] in
+          v.wrappedValue += 1
+        }
+      )
   }
   
   /// A wrapper for the `Store` that serves as a bridge to `ObservableObject`.

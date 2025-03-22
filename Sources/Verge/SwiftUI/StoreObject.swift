@@ -99,10 +99,8 @@ enum Preview_StoreObject: PreviewProvider {
       VStack {
         Text("here is child")
         StoreReader(store) { $state in
-
-//          Text($sta)
-//          Text(state.projectedValue.count.description)
-//          Text($state.count.description)
+          Text("count: \(state.count)")
+          Text(state.count.description)
         }
         Button("up") {
           store.increment()

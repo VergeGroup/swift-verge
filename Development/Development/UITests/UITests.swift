@@ -45,6 +45,12 @@ final class UITests: XCTestCase {
     app.buttons["B.1"].tap()
 
     XCTAssertTrue(app.buttons["B.1.a: 1"].exists)
+    
+    app.buttons["B.1.a: 1"].tap()
+    
+    XCTAssertTrue(app.buttons["A.1.a: 2"].exists)
+    XCTAssertTrue(app.buttons["B.1.a: 2"].exists)
+
 
   }
 }

@@ -273,12 +273,22 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
       }
       unlock()
            
-      if closures.isEmpty == false {      
-        ImmediateMainActorTargetQueue.shared.execute {
-          for closure in closures {
-            closure()
+      if closures.isEmpty == false {  
+        
+        if Thread.isMainThread {
+          MainActor.assumeIsolated {
+            for closure in closures {
+              closure()
+            }
+          }
+        } else {
+          DispatchQueue.main.async {
+            for closure in closures {
+              closure()
+            }
           }
         }
+              
       }
     }
     
@@ -325,17 +335,20 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
   
   private struct TrackingRegistration2 {
     
+    let label: StaticString?
     var state: State
     var stateVersion: UInt64
     let onChange: @MainActor () -> Void
     private let trackingResult: @Sendable (State) -> TrackingResult?
     
     init(
+      label: StaticString?,
       state: State,
       stateVersion: UInt64,
       trackingResult: @escaping @Sendable (State) -> TrackingResult?,
       onChange: @escaping @MainActor () -> Void
     ) {
+      self.label = label
       self.state = state
       self.stateVersion = stateVersion
       self.trackingResult = trackingResult
@@ -343,14 +356,14 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
     }
     
     func containsUpdates(state: Changes<State>) -> Bool {
-      
+            
       switch state.modification {
       case .graph(let writeGraph):
         
         guard let readGraph = self.trackingResult(self.state)?.graph else {
           return false
         }
-        
+                
         let hasChanges = PropertyNode.hasChanges(
           writeGraph: consume writeGraph,
           readGraph: readGraph
@@ -423,6 +436,7 @@ public protocol ReadingStoreType<State>: AnyObject {
   
   func startTracking(
     for id: Namespace.ID,
+    label: StaticString?,
     onChange: @escaping @MainActor () -> Void
   )
   
@@ -442,6 +456,7 @@ extension Store: ReadingStoreType where State : TrackingObject {
   
   public func startTracking(
     for id: Namespace.ID,
+    label: StaticString?,
     onChange: @escaping @MainActor () -> Void
   ) {    
     
@@ -454,6 +469,7 @@ extension Store: ReadingStoreType where State : TrackingObject {
     
     if registrationsForReading[id] == nil {
       let registration = TrackingRegistration2(
+        label: label,
         state: primitiveState.tracked(),
         stateVersion: nonatomicValue.version,
         trackingResult: { $0.trackingResult },
@@ -475,25 +491,20 @@ extension Store: ReadingStoreType where State : TrackingObject {
     guard var registration = registrationsForReading[id] else {
       return nil
     }
-    
-    if registration.stateVersion != nonatomicValue.version {
-      var latestState = self.nonatomicValue.primitive    
+        
+    let version = nonatomicValue.version
+    if registration.stateVersion != version {
       
-      guard 
-        let usingState = registrationsForReading[id]?.state
-      else {
+      guard let ref = registration.state._tracking_context.trackingResultRef else {
         return nil
       }
       
-      guard let ref = usingState._tracking_context.trackingResultRef else {
-        return nil
-      }
+      let latestState = self.nonatomicValue.primitive.tracked(using: ref.result.graph)
+                     
+      registration.state = latestState
+      registration.stateVersion = version
       
-      latestState._tracking_context = .init(
-        trackingResultRef: ref
-      )
-      
-      registrationsForReading[id]?.state = latestState
+      registrationsForReading[id] = registration      
       
       return latestState
     } else {

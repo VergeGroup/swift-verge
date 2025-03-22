@@ -62,7 +62,7 @@ public struct StoreReader<Driver: StoreDriverType, Content: View>: View where Dr
   ) {
     self.file = file
     self.line = line
-    self.storeReading = .init(wrappedValue: driver)
+    self.storeReading = .init(driver)
     self.content = content
 
   }
