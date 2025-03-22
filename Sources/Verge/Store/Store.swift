@@ -417,14 +417,18 @@ extension Store where State : TrackingObject {
   public func startTracking(
     for id: Namespace.ID,
     onChange: @escaping @MainActor () -> Void
-  ) {    
-    let registration = TrackingRegistration2(
-      state: state.primitive.tracked(),
-      trackingResult: { $0.trackingResult },
-      onChange: onChange
-    )
+  ) {        
     registrations2.modify {
-      $0[id] = registration
+      if $0[id] == nil {
+        let registration = TrackingRegistration2(
+          state: state.primitive.tracked(),
+          trackingResult: { $0.trackingResult },
+          onChange: onChange
+        )
+        $0[id] = registration
+      } else {
+        // print("Already started tracking for \(id)")
+      }
     }
   }
   

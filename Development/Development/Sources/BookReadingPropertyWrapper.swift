@@ -25,9 +25,9 @@ enum ItemKind: Identifiable {
   case third
   var id: String {
     switch self {
-    case .first: return "first"
-    case .second: return "second"
-    case .third: return "third"
+    case .first: return "1"
+    case .second: return "2"
+    case .third: return "3"
     }
   }
 }
@@ -38,23 +38,30 @@ struct ItemDetail<Item: Identifiable, Content: View>: View {
   let content: (Item) -> Content
   
   @State var selectedItem: Item?
+  private let name: String
   
-  init(items: [Item], @ViewBuilder content: @escaping (Item) -> Content) {
+  init(
+    name: String,
+    items: [Item],
+    @ViewBuilder content: @escaping (Item) -> Content
+  ) {
+    self.name = name
     self.items = items
-    self.content = content
-    
+    self.content = content    
   }
   
   var body: some View {
     VStack {
       ForEach(items) { item in
-        Button(String(describing: item)) {
+        Button("\(name).\(item.id)") {
           selectedItem = item
         }          
       }
-      
+            
       if let item = selectedItem {
         content(item)
+          .padding()
+          .background(Color.orange)
       }
     }
   }
@@ -87,7 +94,7 @@ private struct ReadingSolution: View {
     }
   }
   
-  private struct Solution: View {
+  struct Solution: View {
     
     let items: [ItemKind] = [
       .first,
@@ -110,29 +117,29 @@ private struct ReadingSolution: View {
       HStack {
         VStack {
           Text("Using Store holding")
-          Button("Up") {
+          Button("A Up") {
             store.commit {
               $0.value += 1
             }
           }
-          Text("Value: \($store.value)")
+          Text("A Value: \($store.value)")
           Text("Outer: \(outerValue)")
-          ItemDetail(items: items) { item in
+          ItemDetail(name: "A", items: items) { item in
             switch item {
             case .first:
-              Button.init("A : \($store.a)") {             
+              Button.init("A.1.a: \($store.a)") {             
                 store.commit {
                   $0.a += 1
                 }
               }
             case .second:
-              Button.init("B : \($store.b)") {             
+              Button.init("A.1.b: \($store.b)") {             
                 store.commit {
                   $0.b += 1
                 }
               }        
             case .third:
-              Button.init("C : \($store.c)") {             
+              Button.init("A.1.c: \($store.c)") {             
                 store.commit {
                   $0.c += 1
                 }
@@ -148,7 +155,7 @@ private struct ReadingSolution: View {
     }
   }
   
-  private struct Passed: View {
+  struct Passed: View {
     
     let items: [ItemKind] = [
       .first,
@@ -158,35 +165,36 @@ private struct ReadingSolution: View {
     
     @Reading var store: Store<MyState, Never>
     
-    init(store: Store<MyState, Never>) {
+    init(
+      store: Store<MyState, Never>) {
       self._store = .init(wrappedValue: store)
     }
     
     var body: some View {
       VStack {
         Text("Using Store passed")
-        Button("Up") {
+        Button("B Up") {
           store.commit {
             $0.value += 1
           }
         }
-        Text("Value: \($store.value)")
-        ItemDetail(items: items) { item in
+        Text("B Value: \($store.value)")
+        ItemDetail(name: "B",items: items) { item in
           switch item {
           case .first:
-            Button.init("A : \($store.a)") {             
+            Button.init("B.1.a: \($store.a)") {             
               store.commit {
                 $0.a += 1
               }
             }
           case .second:
-            Button.init("B : \($store.b)") {             
+            Button.init("B.1.b: \($store.b)") {             
               store.commit {
                 $0.b += 1
               }
             }        
           case .third:
-            Button.init("C : \($store.c)") {             
+            Button.init("B.1.c: \($store.c)") {             
               store.commit {
                 $0.c += 1
               }
@@ -202,49 +210,17 @@ private struct ReadingSolution: View {
   }
 }
 
-private struct StoreReaderProblem: View {
+struct PassedContainer: View {
   
-  @State private var items: [ItemKind] = [
-    .first,
-    .second,
-    .third,
-  ]
-  
-  let store = Store<MyState, Never>(initialState: .init())
-  
-  init() {
-    print("init")
-  }
+  private let store: Store<MyState, Never> = .init(initialState: MyState())
+  @State var count: Int = 0
   
   var body: some View {
-    StoreReader(store) { state in
-      Text("Value: \(state.value)")     
-      ItemDetail(items: items) { item in
-        switch item {
-        case .first:
-          Text("A : \(state.a)")
-            .onTapGesture {
-              print("Tapped \(store.state.a)")
-              store.commit {
-                $0.a += 1
-              }
-            }
-        case .second:
-          Text("B : \(state.b)")
-            .onTapGesture {
-              store.commit {
-                $0.b += 1
-              }
-            }
-        case .third:
-          Text("C : \(state.c)")
-            .onTapGesture {
-              store.commit {
-                $0.c += 1
-              }
-            }
-        }
+    VStack {
+      Button("Outer Up \(count)") {
+        count += 1
       }
+      ReadingSolution.Passed(store: store)
     }
   }
   
@@ -254,8 +230,6 @@ private struct StoreReaderProblem: View {
   ReadingSolution()
 }
 
-#Preview("StoreReaderProblem") {
-  
-  StoreReaderProblem()
-  
+#Preview("Passed solution") {
+  PassedContainer()
 }

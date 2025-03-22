@@ -5,18 +5,22 @@ public struct ContentView: View {
 
   public var body: some View {
     NavigationStack {
-      
+
       List {
-        
-        NavigationLink { 
-          BookReading() 
-        } label: { 
+
+        NavigationLink {
+          BookReading()
+        } label: {
           Text("@Reading")
         }
 
-        
+        NavigationLink {
+          PassedContainer()
+        } label: {
+          Text("@Reading - passed")
+        }
       }
-      
+
     }
   }
 }
