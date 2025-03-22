@@ -94,8 +94,18 @@ actor Writer {
 ///
 
 open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>,
-  CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable
+                                             CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable, Hashable
 {
+  
+  // MARK: Equatable
+  public static func == (lhs: Store<State, Activity>, rhs: Store<State, Activity>) -> Bool {
+    lhs === rhs
+  }
+
+  // MARK: Hashable 
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self))
+  }
   
   public let scope: any WritableKeyPath<State, State> & Sendable = \State.self
 
