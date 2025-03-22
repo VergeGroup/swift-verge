@@ -19,6 +19,12 @@ public struct ContentView: View {
         } label: {
           Text("@Reading - passed")
         }
+        
+        NavigationLink {
+          StoreReaderSolution()
+        } label: {
+          Text("StoreReader")
+        }
       }
 
     }

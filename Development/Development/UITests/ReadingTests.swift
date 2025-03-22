@@ -1,6 +1,6 @@
 import XCTest
 
-final class UITests: XCTestCase {
+final class ReadingTests: XCTestCase {
 
   var app: XCUIApplication!
 
