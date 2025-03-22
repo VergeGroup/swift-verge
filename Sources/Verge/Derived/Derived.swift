@@ -207,18 +207,6 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
   
 }
 
-extension Derived : Equatable {
-  public static func == (lhs: Derived<Value>, rhs: Derived<Value>) -> Bool {
-    lhs === rhs
-  }
-}
-
-extension Derived : Hashable {
-  public func hash(into hasher: inout Hasher) {
-    ObjectIdentifier(self).hash(into: &hasher)
-  }
-}
-
 extension Derived where Value : Equatable {
   
   /// Subscribe the state changes
