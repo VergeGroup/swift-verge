@@ -23,16 +23,6 @@ let project = Project(
       ]
     ),
     .target(
-      name: "DevelopmentUITests",
-      destinations: .iOS,
-      product: .uiTests,
-      bundleId: "io.tuist.DevelopmentUITests",
-      infoPlist: .default,
-      sources: ["Development/UITests/**"],
-      resources: [],
-      dependencies: [.target(name: "Development")]
-    ),
-    .target(
       name: "DevelopmentTests",
       destinations: .iOS,
       product: .unitTests,

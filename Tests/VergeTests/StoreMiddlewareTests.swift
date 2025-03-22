@@ -4,7 +4,7 @@ import Testing
 struct StoreMiddlewareTests {
 
   @Test("Commit Hook")
-  func testCommitHook() {
+  func testCommitHook() async throws {
     let store = DemoStore()
 
     store.add(
@@ -38,8 +38,8 @@ struct StoreMiddlewareTests {
       #expect(
         graph.prettyPrint() == """
           VergeTests.DemoState {
-            name-(1)+(1)
-            count-(1)+(1)
+            name-(2)+(1)
+            count+(1)
           }
           """)
     }

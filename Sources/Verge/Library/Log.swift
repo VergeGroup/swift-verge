@@ -18,8 +18,6 @@ enum Log {
   
   static let storeReader = Logger(OSLog.makeOSLogInDebug { OSLog.init(subsystem: "Verge", category: "storeReader") })
   
-  static let reading = Logger(OSLog.makeOSLogInDebug { OSLog.init(subsystem: "Verge", category: "reading") })
-  
   static let writeGraph = Logger(OSLog.makeOSLogInDebug { OSLog.init(subsystem: "Verge", category: "writeGraph") })
   
 }
