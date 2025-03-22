@@ -2,36 +2,42 @@ import StateStruct
 import SwiftUI
 
 @propertyWrapper
-public struct Reading<Store: StoreType>: @preconcurrency DynamicProperty
-where Store.State: TrackingObject {
+public struct Reading<State: TrackingObject>: @preconcurrency DynamicProperty {
   
-  private let stateObject: StateObject<Wrapper>
-  private let instantiated: Store?
-
-  @MainActor
-  @preconcurrency
-  public var wrappedValue: Store {    
-
-    if let passed = instantiated {
-      return passed
-    }
-
-    return stateObject.wrappedValue.object!
-        
-    fatalError()
+  private enum Mode {
+    case instantiated(any ReadingStoreType<State>)
+    case constant(State)
   }
+  
+  private let stateObject: StateObject<Wrapper>    
+  private let mode: Mode?
 
   @MainActor
   @preconcurrency
-  public var projectedValue: Store.State {
-    guard let value = wrappedValue.asStore().trackingState(for: id) else {
-      fatalError("State is not being tracked")
+  public var wrappedValue: State { 
+    
+    if let mode {
+      switch mode {
+      case .instantiated(let store):
+        return store.trackingState(for: id)!
+      case .constant(let value):
+        return value
+      }
+    } else {
+      stateObject.wrappedValue.object!.trackingState(for: id)!
     }
-    return value
+    
+    fatalError()
+  } 
+
+  @MainActor
+  @preconcurrency
+  public var projectedValue: Reading<State> {
+    self
   }
 
   /// A trigger to update owning view
-  @State var version: Int64 = 0
+  @SwiftUI.State private var version: Int64 = 0
 
   /// Recreated each time the view identity updates.
   @Namespace private var id
@@ -39,31 +45,39 @@ where Store.State: TrackingObject {
   private var token: _Token?
 
   public nonisolated init<Driver: StoreDriverType>(wrappedValue: @escaping () -> Driver)
-  where
-    Store == Driver.TargetStore,
-    Driver.Scope == Driver.TargetStore.State
+  where State == Driver.TargetStore.State,
+    Driver.Scope == Driver.TargetStore.State  ,
+  Driver.TargetStore: ReadingStoreType
+  
   {
     self.stateObject = .init(wrappedValue: .init(object: wrappedValue().store))
-    self.instantiated = nil
+    self.mode = nil
   }
 
-  public nonisolated init(wrappedValue: @escaping () -> Store) {
+  public nonisolated init<Store: ReadingStoreType>(wrappedValue: @escaping () -> Store) where Store.State == State {
     self.stateObject = .init(wrappedValue: .init(object: wrappedValue()))
-    self.instantiated = nil
+    self.mode = nil
   }
   
   public nonisolated init<Driver: StoreDriverType>(wrappedValue: Driver)
   where
-  Store == Driver.TargetStore,
-  Driver.Scope == Driver.TargetStore.State
+  State == Driver.TargetStore.State,
+  Driver.Scope == Driver.TargetStore.State  ,
+  Driver.TargetStore: ReadingStoreType
   {
     self.stateObject = .init(wrappedValue: .init(object: nil))
-    self.instantiated = wrappedValue.store
+    self.mode = .instantiated(wrappedValue.store)
   }
   
-  public nonisolated init(wrappedValue: Store) {
+  public nonisolated init<Store: ReadingStoreType>(wrappedValue: Store) where Store.State == State {
+
     self.stateObject = .init(wrappedValue: .init(object: nil))
-    self.instantiated = wrappedValue
+    self.mode = .instantiated(wrappedValue)        
+  }
+  
+  public nonisolated init(constant: State) {
+    self.stateObject = .init(wrappedValue: .init(object: nil))
+    self.mode = .constant(constant)    
   }
 
   @MainActor
@@ -73,20 +87,34 @@ where Store.State: TrackingObject {
     _ = $version.wrappedValue
     
     let id = self.id
-
-    wrappedValue.asStore().startTracking(
-      for: id,
-      onChange: { [v = $version] in
-        v.wrappedValue += 1
-      })
+    
+    if let mode {
+      switch mode {
+      case .instantiated(let store):
+        return store.startTracking(
+          for: id,
+          onChange: { [v = $version] in
+            v.wrappedValue += 1
+          })
+      case .constant(let value):
+        break
+      }
+    } else {
+      stateObject.wrappedValue.object!.startTracking(
+        for: id,
+        onChange: { [v = $version] in
+          v.wrappedValue += 1
+        })
+    }
+ 
   }
   
   /// A wrapper for the `Store` that serves as a bridge to `ObservableObject`.
   private final class Wrapper: ObservableObject {
     
-    let object: Store?
+    let object: (any ReadingStoreType<State>)?
     
-    init(object: Store?) {
+    init(object: (any ReadingStoreType<State>)?) {
       self.object = object
     }
   }

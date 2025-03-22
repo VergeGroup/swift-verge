@@ -98,8 +98,9 @@ enum Preview_StoreObject: PreviewProvider {
       let _ = print("render")
       VStack {
         Text("here is child")
-        StoreReader(store) { proxy in
-          Text(proxy.count.description)
+        StoreReader(store) { $state in
+//          Text(state.projectedValue.count.description)
+//          Text($state.count.description)
         }
         Button("up") {
           store.increment()

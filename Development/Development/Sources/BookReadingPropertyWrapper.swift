@@ -102,12 +102,12 @@ private struct ReadingSolution: View {
       .third,
     ]
     
-    @Reading var store: Store<MyState, Never>
+    @Reading var state: MyState
     
     private let outerValue: Int
     
     init(outerValue: Int) {
-      self._store = .init(wrappedValue: { 
+      self._state = .init(wrappedValue: { 
         Store<_, Never>.init(initialState: MyState())
       })
       self.outerValue = outerValue
