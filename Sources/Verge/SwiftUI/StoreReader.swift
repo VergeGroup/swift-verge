@@ -48,7 +48,7 @@ public struct StoreReader<Driver: StoreDriverType, Content: View>: View where Dr
   private let line: UInt
 
   /// Needs to use Reading directly to provide the latest state when it's accessed. from escaping closure.
-  private let content: @MainActor (Reading<Driver>) -> Content
+  private let content: (Reading<Driver>) -> Content
 
   /// Initialize from `Store`
   ///
@@ -59,7 +59,7 @@ public struct StoreReader<Driver: StoreDriverType, Content: View>: View where Dr
     file: StaticString = #file,
     line: UInt = #line,
     _ driver: Driver,
-    @ViewBuilder content: @escaping @MainActor (Reading<Driver>) -> Content
+    @ViewBuilder content: @escaping (Reading<Driver>) -> Content
   ) {
     self.file = file
     self.line = line
