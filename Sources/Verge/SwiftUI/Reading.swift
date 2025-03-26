@@ -111,6 +111,7 @@ where Driver.TargetStore.State: TrackingObject {
     }
      */
 
+    @MainActor
     func startTracking(using driver: Driver) {
       
       setTargetDriver(driver)
@@ -129,6 +130,7 @@ where Driver.TargetStore.State: TrackingObject {
       self._currentStateVersion = version
     }
 
+    @MainActor
     private func setTargetDriver(_ driver: Driver) {
 
       subscription?.cancel()
@@ -139,18 +141,34 @@ where Driver.TargetStore.State: TrackingObject {
 //      subscription = driver.store.asStore().pollMainLoop { [weak self] state in
 //        self?.onUpdateState(state)
 //      }
-      subscription = driver.store.asStore().sinkState { [weak self] state in
-        self?.onUpdateState(state)
+      
+      let _publisher = publisher()
+      
+      subscription = driver.store.asStore()
+        .sinkState { [weak self] state in
+          guard let self else {
+            return
+          }
+          Self.onUpdateState(
+            readGraph: self._currentState?.trackingResult?.graph,
+            modification: state.modification,
+            publisher: _publisher
+          )
       }
 
     }
+    
+    @MainActor
+    private static func onUpdateState(
+      readGraph: PropertyNode?,
+      modification: InoutRef<Driver.TargetStore.State>.Modification?,
+      publisher: sending ObjectWillChangePublisher
+    ) {
 
-    private func onUpdateState(_ state: Changes<Driver.TargetStore.State>) {
-
-      switch state.modification {
+      switch modification {
       case .graph(let writeGraph):
 
-        guard let readGraph = self._currentState?.trackingResult?.graph else {
+        guard let readGraph else {
           return
         }
         
@@ -172,18 +190,17 @@ where Driver.TargetStore.State: TrackingObject {
       }
 
       // do
-     
-      let _publisher = publisher()
-      
-      if Thread.isMainThread {
-        MainActor.assumeIsolated {
-          _publisher.send()          
-        }
-      } else {
-        DispatchQueue.main.async {
-          _publisher.send()
-        }
-      }
+                
+      publisher.send()
+//      if Thread.isMainThread {
+//        MainActor.assumeIsolated {
+//          publisher.send()          
+//        }
+//      } else {
+//        DispatchQueue.main.async {
+//          publisher.send()
+//        }
+//      }
       
     }
     
