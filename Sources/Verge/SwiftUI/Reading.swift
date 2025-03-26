@@ -84,8 +84,7 @@ where Driver.TargetStore.State: TrackingObject {
   @preconcurrency
   public mutating func update() {
 
-    coordinator.setTargetDriver(projectedValue)
-    coordinator.startTracking()
+    coordinator.startTracking(using: projectedValue)
   }
 
   public final class Coordinator: ObservableObject {
@@ -96,11 +95,11 @@ where Driver.TargetStore.State: TrackingObject {
     private var subscription: StoreStateSubscription?
 
     init() {
-      Log.reading.debug("Init Coordinator")
+//      Log.reading.debug("Init Coordinator")
     }
     
     deinit {
-      Log.reading.debug("Deinit Coordinator")
+//      Log.reading.debug("Deinit Coordinator")
     }
     
     /*
@@ -112,11 +111,9 @@ where Driver.TargetStore.State: TrackingObject {
     }
      */
 
-    func startTracking() {
-
-      guard let driver else {
-        return
-      }
+    func startTracking(using driver: Driver) {
+      
+      setTargetDriver(driver)
 
       let store = driver.store.asStore()
 
@@ -132,8 +129,7 @@ where Driver.TargetStore.State: TrackingObject {
       self._currentStateVersion = version
     }
 
-    @MainActor
-    func setTargetDriver(_ driver: Driver) {
+    private func setTargetDriver(_ driver: Driver) {
 
       subscription?.cancel()
 
