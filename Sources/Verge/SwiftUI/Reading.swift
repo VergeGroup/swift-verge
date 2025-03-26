@@ -4,62 +4,67 @@ import SwiftUI
 @propertyWrapper
 public struct Reading<Driver: StoreDriverType>: @preconcurrency DynamicProperty
 where Driver.TargetStore.State: TrackingObject {
-    
+
   public enum ReferencingType {
     case strong
     case weak
   }
-  
+
   private let stateObject: StateObject<Wrapper>
   private let instantiated: RetainBox?
+
+  @StateObject private var coordinator = Coordinator()
 
   @MainActor
   @preconcurrency
   public var wrappedValue: Driver.TargetStore.State {
-    guard let value = projectedValue.store.asStore().trackingState(for: id) else {
+
+    guard let state = coordinator.currentState() else {
       fatalError("State is not being tracked")
     }
-    return value
+    return state
   }
 
   @MainActor
   @preconcurrency
-  public var projectedValue: Driver {    
+  public var projectedValue: Driver {
 
     if let passed = instantiated?.value {
       return passed
     }
 
     return stateObject.wrappedValue.object!
-        
+
     fatalError()
   }
 
-  /// A trigger to update owning view
-  @State private var version: Int64 = 0
-
-  /// Recreated each time the view identity updates.
-  @Namespace private var id
-  
+  private let file: StaticString
+  private let line: UInt
   private let label: StaticString?
-    
+
   /**
    Creates a new instance of the model object only once during the
    lifetime of the container that declares
    */
   public nonisolated init(
+    file: StaticString = #file,
+    line: UInt = #line,
     label: StaticString? = nil,
-    _ driver: @escaping () -> Driver   
+    _ driver: @escaping () -> Driver
   ) {
     self.stateObject = .init(wrappedValue: .init(object: driver()))
     self.instantiated = nil
     self.label = label
+    self.file = file
+    self.line = line
   }
-  
+
   /**
    Passing already owned by someone else and uses it.
    */
   public nonisolated init(
+    file: StaticString = #file,
+    line: UInt = #line,
     label: StaticString? = nil,
     mode: ReferencingType = .strong,
     _ driver: Driver
@@ -67,8 +72,10 @@ where Driver.TargetStore.State: TrackingObject {
     self.stateObject = .init(wrappedValue: .init(object: nil))
     self.instantiated = .init(mode: mode, object: driver)
     self.label = label
+    self.file = file
+    self.line = line
   }
-     
+
   public init(projectedValue: Reading<Driver>) {
     self = projectedValue
   }
@@ -76,36 +83,173 @@ where Driver.TargetStore.State: TrackingObject {
   @MainActor
   @preconcurrency
   public mutating func update() {
-    // trigger to subscribe
-    _ = $version.wrappedValue
-    
-    let id = self.id
 
-    projectedValue.store.asStore()
-      .startTracking(
-        for: id,
-        label: label,
-        onChange: { [v = $version] in
-          v.wrappedValue += 1
-        }
-      )
+    coordinator.setTargetDriver(projectedValue)
+    coordinator.startTracking()
   }
-  
+
+  public final class Coordinator: ObservableObject {
+
+    private weak var driver: Driver?
+    private var _currentState: Driver.TargetStore.State?
+    private var _currentStateVersion: UInt64?
+    private var subscription: StoreStateSubscription?
+
+    init() {
+      Log.reading.debug("Init Coordinator")
+    }
+    
+    deinit {
+      Log.reading.debug("Deinit Coordinator")
+    }
+    
+    /*
+    func cleanup() {
+      subscription?.cancel()
+      _currentState = nil
+      _currentStateVersion = nil
+      driver = nil      
+    }
+     */
+
+    func startTracking() {
+
+      guard let driver else {
+        return
+      }
+
+      let store = driver.store.asStore()
+
+      store.lock()
+      defer {
+        store.unlock()
+      }
+
+      let trackingState = store.nonatomicValue.primitive.tracked()
+      let version = store.nonatomicValue.version
+
+      self._currentState = trackingState
+      self._currentStateVersion = version
+    }
+
+    @MainActor
+    func setTargetDriver(_ driver: Driver) {
+
+      subscription?.cancel()
+
+      self.driver = driver
+
+      // pollMainLoop drops modification
+//      subscription = driver.store.asStore().pollMainLoop { [weak self] state in
+//        self?.onUpdateState(state)
+//      }
+      subscription = driver.store.asStore().sinkState { [weak self] state in
+        self?.onUpdateState(state)
+      }
+
+    }
+
+    private func onUpdateState(_ state: Changes<Driver.TargetStore.State>) {
+
+      switch state.modification {
+      case .graph(let writeGraph):
+
+        guard let readGraph = self._currentState?.trackingResult?.graph else {
+          return
+        }
+        
+        Log.reading.debug("Reading: \(readGraph.prettyPrint())")
+
+        let hasChanges = PropertyNode.hasChanges(
+          writeGraph: consume writeGraph,
+          readGraph: readGraph
+        )
+
+        guard hasChanges else {
+          return
+        }
+
+      case .indeterminate:
+        break
+      case nil:
+        return
+      }
+
+      // do
+     
+      let _publisher = publisher()
+      
+      if Thread.isMainThread {
+        MainActor.assumeIsolated {
+          _publisher.send()          
+        }
+      } else {
+        DispatchQueue.main.async {
+          _publisher.send()
+        }
+      }
+      
+    }
+    
+    nonisolated func publisher() -> sending ObjectWillChangePublisher {
+      let workaround = { self.objectWillChange }
+      let object = workaround()
+      return object
+    }
+ 
+    func currentState() -> Driver.TargetStore.State? {
+
+      guard let driver else {
+        return nil
+      }
+
+      let store = driver.store.asStore()
+
+      store.lock()
+      defer {
+        store.unlock()
+      }
+
+      guard var _currentState, let _currentStateVersion else {
+        return nil
+      }
+
+      let version = store.nonatomicValue.version
+      if _currentStateVersion != version {
+
+        guard let ref = _currentState._tracking_context.trackingResultRef else {
+          return nil
+        }
+
+        let latestState = store.nonatomicValue.primitive.tracked(using: ref.result.graph)
+
+        self._currentState = latestState
+        self._currentStateVersion = version
+
+        return latestState
+      } else {
+        return _currentState
+      }
+
+    }
+
+  }
+
   /// A wrapper for the `Store` that serves as a bridge to `ObservableObject`.
   private final class Wrapper: ObservableObject {
-    
+
     let object: Driver?
-    
+
     init(object: Driver?) {
       self.object = object
     }
   }
-  
+
   private final class RetainBox {
-    
+
     weak var value: Driver?
     let mode: ReferencingType
-    
+
     init(mode: ReferencingType, object: Driver) {
       switch mode {
       case .strong:
@@ -116,7 +260,7 @@ where Driver.TargetStore.State: TrackingObject {
       self.value = object
       self.mode = mode
     }
-    
+
     deinit {
       switch mode {
       case .strong:
@@ -128,4 +272,3 @@ where Driver.TargetStore.State: TrackingObject {
   }
 
 }
-

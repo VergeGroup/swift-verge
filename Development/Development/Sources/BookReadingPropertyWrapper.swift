@@ -19,6 +19,21 @@ struct MyState {
   var c: Int = 0
 }
 
+extension Store where State == MyState {
+  
+  func backgroundUpdate() {
+    Task {
+      await self.backgroundCommit { 
+        $0.value += 1
+        $0.a += 1
+        $0.b += 1
+        $0.c += 1      
+      }
+    }
+  }
+  
+}
+
 enum ItemKind: Identifiable {
   case first
   case second
@@ -119,6 +134,9 @@ private struct ReadingSolution: View {
       HStack {
         VStack {
           Text("Using Store holding")
+          Button("async up") {
+            $state.backgroundUpdate()
+          }
           Button("A Up") {
             $state.commit {
               $0.value += 1

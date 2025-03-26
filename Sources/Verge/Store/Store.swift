@@ -38,6 +38,9 @@ where ObjectWillChangePublisher == ObservableObjectPublisher {
   func asStore() -> Store<State, Activity>
 
   var state: Changes<State> { get }
+  
+  func lock()
+  func unlock()
 }
 
 public typealias NoActivityStoreBase<State> = Store<State, Never>
@@ -129,7 +132,7 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
 
   private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>, inout Transaction) -> Void
 
-  private var nonatomicValue: Changes<State>
+  private(set) var nonatomicValue: Changes<State>
 
   private let _lock: StoreOperation
 
@@ -143,13 +146,7 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
   open var keepsAliveForSubscribers: Bool { false }
 
   private let wasInvalidated = Atomics.ManagedAtomic(false)
-  
-  private var registrationsForReading: [Namespace.ID : TrackingRegistration2] = [:] {
-    didSet {
-      Log.reading.debug("RegistartionCount: \(self.registrationsForReading.count)")
-    }
-  }
-  
+    
   // MARK: - Deinit
 
   deinit {
@@ -265,38 +262,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
   }
 
   open func stateDidUpdate(newState: Changes<State>) {
-            
-    do {
-      var closures: [@MainActor () -> Void] = []      
-      
-      lock()
-      
-      for (key, registration) in registrationsForReading {      
-        if registration.containsUpdates(state: newState) {
-          closures.append(registration.onChange)
-          registrationsForReading.removeValue(forKey: key)
-        }    
-      }
-      unlock()
-           
-      if closures.isEmpty == false {  
-        
-        if Thread.isMainThread {
-          MainActor.assumeIsolated {
-            for closure in closures {
-              closure()
-            }
-          }
-        } else {
-          DispatchQueue.main.async {
-            for closure in closures {
-              closure()
-            }
-          }
-        }
-              
-      }
-    }
     
   }
 
@@ -321,186 +286,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
       _valueSubject.send(completion: .finished)
       await taskManager.cancelAll()
     }
-  }
-  
-  private struct TrackingRegistration2 {
-    
-    let label: StaticString?
-    var state: State
-    var stateVersion: UInt64
-    let onChange: @MainActor () -> Void
-    private let trackingResult: @Sendable (State) -> TrackingResult?
-    
-    init(
-      label: StaticString?,
-      state: State,
-      stateVersion: UInt64,
-      trackingResult: @escaping @Sendable (State) -> TrackingResult?,
-      onChange: @escaping @MainActor () -> Void
-    ) {
-      self.label = label
-      self.state = state
-      self.stateVersion = stateVersion
-      self.trackingResult = trackingResult
-      self.onChange = onChange
-    }
-    
-    func containsUpdates(state: Changes<State>) -> Bool {
-            
-      switch state.modification {
-      case .graph(let writeGraph):
-        
-        guard let readGraph = self.trackingResult(self.state)?.graph else {
-          return false
-        }
-                
-        let hasChanges = PropertyNode.hasChanges(
-          writeGraph: consume writeGraph,
-          readGraph: readGraph
-        )
-        
-        return hasChanges
-        
-      case .indeterminate:
-        return true
-        
-      case nil:
-        return false
-      }
-      
-    }
-    
-  }
-
-  private struct TrackingRegistration {
-
-    let file: StaticString
-    let line: UInt
-    let readGraph: PropertyNode
-    let onChange: @Sendable () -> Void
-
-    init(
-      file: StaticString,
-      line: UInt,
-      readGraph: PropertyNode,
-      onChange: @escaping @Sendable () -> Void
-    ) {
-      self.file = file
-      self.line = line
-      self.readGraph = readGraph
-      self.onChange = onChange
-    }
-
-    func containsUpdates(state: Changes<State>) -> Bool {
-      
-      switch state.modification {
-      case .graph(let writeGraph):
-        
-        let hasChanges = PropertyNode.hasChanges(
-          writeGraph: consume writeGraph,
-          readGraph: readGraph
-        )
-        
-        return hasChanges
-        
-      case .indeterminate:
-        return true
-        
-      case nil:
-        return false
-      }
-      
-    }
-
-  }
-
-}
-
-public protocol ReadingStoreType<State>: AnyObject {
-  
-  associatedtype State
-  
-  var state: Changes<State> { get }
-  
-  func removeTracking(for id: Namespace.ID)
-  
-  func startTracking(
-    for id: Namespace.ID,
-    label: StaticString?,
-    onChange: @escaping @MainActor () -> Void
-  )
-  
-  func trackingState(for id: Namespace.ID) -> State?
-  
-}
-
-extension Store: ReadingStoreType where State : TrackingObject {
-  
-  public func removeTracking(for id: Namespace.ID) {
-    lock()
-    defer {
-      unlock()
-    }
-    registrationsForReading.removeValue(forKey: id)      
-  }
-  
-  public func startTracking(
-    for id: Namespace.ID,
-    label: StaticString?,
-    onChange: @escaping @MainActor () -> Void
-  ) {    
-    
-    lock()
-    defer {
-      unlock()
-    }
-    
-    let primitiveState = nonatomicValue.primitive
-    
-    if registrationsForReading[id] == nil {
-      let registration = TrackingRegistration2(
-        label: label,
-        state: primitiveState.tracked(),
-        stateVersion: nonatomicValue.version,
-        trackingResult: { $0.trackingResult },
-        onChange: onChange
-      )
-      registrationsForReading[id] = registration
-    } else {
-      // print("Already started tracking for \(id)")
-    }
-
-  }
-  
-  public func trackingState(for id: Namespace.ID) -> State? {    
-    lock()
-    defer {
-      unlock()
-    }
-    
-    guard var registration = registrationsForReading[id] else {
-      return nil
-    }
-        
-    let version = nonatomicValue.version
-    if registration.stateVersion != version {
-      
-      guard let ref = registration.state._tracking_context.trackingResultRef else {
-        return nil
-      }
-      
-      let latestState = self.nonatomicValue.primitive.tracked(using: ref.result.graph)
-                     
-      registration.state = latestState
-      registration.stateVersion = version
-      
-      registrationsForReading[id] = registration      
-      
-      return latestState
-    } else {
-      return registration.state
-    }
-                         
   }
 
 }

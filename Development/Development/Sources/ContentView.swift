@@ -25,6 +25,12 @@ public struct ContentView: View {
         } label: {
           Text("StoreReader")
         }
+        
+        NavigationLink {
+          BookLongList()
+        } label: {
+          Text("Long List")
+        }
       }
 
     }

@@ -58,12 +58,18 @@ public struct StoreReader<Driver: StoreDriverType, Content: View>: View where Dr
   public init(
     file: StaticString = #file,
     line: UInt = #line,
+    label: StaticString? = nil,
     _ driver: Driver,
     @ViewBuilder content: @escaping (Reading<Driver>) -> Content
   ) {
     self.file = file
     self.line = line
-    self.storeReading = .init(driver)
+    self.storeReading = .init(
+      file: file,
+      line: line,
+      label: label,
+      driver
+    )
     self.content = content
 
   }
