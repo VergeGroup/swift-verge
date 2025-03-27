@@ -27,14 +27,20 @@ where Driver.TargetStore.State: TrackingObject {
 
   @MainActor
   @preconcurrency
-  public var projectedValue: Driver {
-
+  public var projectedValue: Self {
+    return self
+  }
+  
+  @MainActor
+  @preconcurrency
+  public var driver: Driver {
+    
     if let passed = instantiated?.value {
       return passed
     }
-
+    
     return stateObject.wrappedValue.object!
-
+    
     fatalError()
   }
 
@@ -84,7 +90,7 @@ where Driver.TargetStore.State: TrackingObject {
   @preconcurrency
   public mutating func update() {
 
-    coordinator.startTracking(using: projectedValue)
+    coordinator.startTracking(using: driver)
   }
 
   public final class Coordinator: ObservableObject {
