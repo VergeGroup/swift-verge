@@ -51,6 +51,25 @@ final class ReadingTests: XCTestCase {
     XCTAssertTrue(app.buttons["A.1.a: 2"].exists)
     XCTAssertTrue(app.buttons["B.1.a: 2"].exists)
 
-
+  }
+  
+  func test_binding_reading() {
+        
+    let app = XCUIApplication()
+    app.collectionViews/*@START_MENU_TOKEN@*/.buttons["Binding @Reading"]/*[[".cells.buttons[\"Binding @Reading\"]",".buttons[\"Binding @Reading\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+    app.buttons["Increment"].tap()
+    
+    XCTAssertTrue(app.staticTexts["1"].exists)
+    
+  }
+  
+  func test_binding_storeReader() {
+    
+    let app = XCUIApplication()
+    app.collectionViews.buttons["Binding StoreReader"].tap()
+    app.buttons["Increment"].tap()
+    
+    XCTAssertTrue(app.staticTexts["1"].exists)
+    
   }
 }

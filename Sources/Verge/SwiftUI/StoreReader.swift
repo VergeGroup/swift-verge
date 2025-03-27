@@ -48,7 +48,7 @@ public struct StoreReader<Driver: StoreDriverType, Content: View>: View where Dr
   private let line: UInt
 
   /// Needs to use Reading directly to provide the latest state when it's accessed. from escaping closure.
-  private let content: (Reading<Driver>) -> Content
+  private let content: (BindableReading<Driver>) -> Content
 
   /// Initialize from `Store`
   ///
@@ -60,7 +60,7 @@ public struct StoreReader<Driver: StoreDriverType, Content: View>: View where Dr
     line: UInt = #line,
     label: StaticString? = nil,
     _ driver: Driver,
-    @ViewBuilder content: @escaping (Reading<Driver>) -> Content
+    @ViewBuilder content: @escaping (BindableReading<Driver>) -> Content
   ) {
     self.file = file
     self.line = line
@@ -75,56 +75,7 @@ public struct StoreReader<Driver: StoreDriverType, Content: View>: View where Dr
   }
 
   public var body: some View {    
-    content(storeReading)
-  }
-
-}
-
-@propertyWrapper
-@dynamicMemberLookup
-public struct StoreBindable<StoreDriver: StoreDriverType & Sendable> {
-
-  private let storeDriver: StoreDriver
-
-  public init(
-    wrappedValue: StoreDriver
-  ) {
-    self.storeDriver = wrappedValue
-  }
-
-  public var wrappedValue: StoreDriver {
-    storeDriver
-  }
-
-  public var projectedValue: Self {
-    self
-  }
-
-  public subscript<T>(dynamicMember keyPath: WritableKeyPath<StoreDriver.Scope, T>) -> Binding<T> {
-    binding(keyPath)
-  }
-
-  public func binding<T>(_ keyPath: WritableKeyPath<StoreDriver.Scope, T>) -> SwiftUI.Binding<T> {
-    let currentValue = storeDriver.state.primitive[keyPath: keyPath]
-    return .init {
-      return currentValue
-    } set: { [weak storeDriver] newValue, _ in
-      storeDriver?.commit { [keyPath] state in
-        state[keyPath: keyPath] = newValue
-      }
-    }
-  }
-
-  public func binding<T: Sendable>(_ keyPath: WritableKeyPath<StoreDriver.Scope, T> & Sendable)
-    -> SwiftUI.Binding<T>
-  {        
-    return .init { [currentValue = storeDriver.state.primitive[keyPath: keyPath]] in
-      return currentValue
-    } set: { [weak storeDriver] newValue, _ in
-      storeDriver?.commit { [keyPath] state in
-        state[keyPath: keyPath] = newValue
-      }
-    }
+    content(storeReading.projectedValue)
   }
 
 }
