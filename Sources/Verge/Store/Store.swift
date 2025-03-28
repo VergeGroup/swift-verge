@@ -30,14 +30,17 @@ import StateStruct
 #endif
 
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
-public protocol StoreType<State>: AnyObject, Sendable, ObservableObject
+public protocol StoreType<State>: Sendable, ObservableObject
 where ObjectWillChangePublisher == ObservableObjectPublisher {
   associatedtype State
-  associatedtype Activity = Never
+  associatedtype Activity: Sendable = Never
 
   func asStore() -> Store<State, Activity>
 
   var state: Changes<State> { get }
+  
+  func lock()
+  func unlock()
 }
 
 public typealias NoActivityStoreBase<State> = Store<State, Never>
@@ -94,8 +97,18 @@ actor Writer {
 ///
 
 open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>,
-  CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable
+                                             CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable, Hashable
 {
+  
+  // MARK: Equatable
+  public static func == (lhs: Store<State, Activity>, rhs: Store<State, Activity>) -> Bool {
+    lhs === rhs
+  }
+
+  // MARK: Hashable 
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self))
+  }
   
   public let scope: any WritableKeyPath<State, State> & Sendable = \State.self
 
@@ -119,7 +132,7 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
 
   private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>, inout Transaction) -> Void
 
-  private var nonatomicValue: Changes<State>
+  private(set) var nonatomicValue: Changes<State>
 
   private let _lock: StoreOperation
 
@@ -133,11 +146,7 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
   open var keepsAliveForSubscribers: Bool { false }
 
   private let wasInvalidated = Atomics.ManagedAtomic(false)
-
-  private let registrations: VergeConcurrency.UnfairLockAtomic<([TrackingRegistration], [TrackingRegistration])> = .init(
-  ([], [])
-  )
-  
+    
   // MARK: - Deinit
 
   deinit {
@@ -254,22 +263,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
 
   open func stateDidUpdate(newState: Changes<State>) {
     
-    registrations.modify { registrations in
-      
-      swap(&registrations.0, &registrations.1)
-
-      for registration in registrations.1 {
-
-        if registration.containsUpdates(state: newState) {
-          registration.onChange()          
-        } else {
-          registrations.0.append(registration)
-        }    
-      }
-      
-      registrations.1.removeAll(keepingCapacity: true)
-    }
-    
   }
 
   final func invalidate() {
@@ -295,85 +288,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
     }
   }
 
-  private struct TrackingRegistration {
-
-    let file: StaticString
-    let line: UInt
-    let readGraph: PropertyNode
-    let onChange: @Sendable () -> Void
-
-    init(
-      file: StaticString,
-      line: UInt,
-      readGraph: PropertyNode,
-      onChange: @escaping @Sendable () -> Void
-    ) {
-      self.file = file
-      self.line = line
-      self.readGraph = readGraph
-      self.onChange = onChange
-    }
-
-    func containsUpdates(state: Changes<State>) -> Bool {
-      
-      switch state.modification {
-      case .graph(let writeGraph):
-        
-        let hasChanges = PropertyNode.hasChanges(
-          writeGraph: consume writeGraph,
-          readGraph: readGraph
-        )
-        
-        return hasChanges
-        
-      case .indeterminate:
-        return true
-        
-      case nil:
-        return false
-      }
-      
-    }
-
-  }
-
-}
-
-extension Store where State : TrackingObject {
-  
-  /**
-   onChange closure will run if the tracking properties are changed.
-   If how properties are changed is not determined, it will run always.   
-   The tracking properties will be determined from apply closure reading properties over dynamicMemberLookup.
-   */
-  public func tracking<T>(
-    file: StaticString = #file,
-    line: UInt = #line,
-    _ apply: (borrowing State) -> T,
-    onChange: @escaping @Sendable () -> Void
-  ) -> T {
-    
-    let currentState = state.primitiveBox
-    
-    var result: T!
-    let readResult = currentState.value.tracking {
-      result = apply(currentState.value)    
-    }
-    
-    registrations.modify {
-      $0.0.append(
-        .init(
-          file: file,
-          line: line,
-          readGraph: readResult.graph,
-          onChange: onChange
-        )
-      )
-    }
-    
-    return result
-    
-  }
 }
 
 // MARK: - Typealias
@@ -597,6 +511,12 @@ extension Store {
       }
 
       var modifying = state.primitive
+      
+      // TODO: better performant way
+      if var trackingObject = modifying as? TrackingObject {
+        trackingObject.startNewTracking()
+        modifying = trackingObject as! State
+      }
 
       let updateResult = try withUnsafeMutablePointer(to: &modifying) {
         (stateMutablePointer) -> UpdateResult in
