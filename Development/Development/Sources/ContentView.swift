@@ -31,6 +31,18 @@ public struct ContentView: View {
         } label: {
           Text("Long List")
         }
+        
+        NavigationLink {
+          BookBindingUsingReading()
+        } label: {
+          Text("Binding @Reading")
+        }
+        
+        NavigationLink {
+          BookBindingUsingStoreReader()
+        } label: {
+          Text("Binding StoreReader")
+        }
       }
 
     }

@@ -27,14 +27,20 @@ where Driver.TargetStore.State: TrackingObject {
 
   @MainActor
   @preconcurrency
-  public var projectedValue: Driver {
-
+  public var projectedValue: BindableReading<Driver> {
+    return .init(reading: self)
+  }
+  
+  @MainActor
+  @preconcurrency
+  public var driver: Driver {
+    
     if let passed = instantiated?.value {
       return passed
     }
-
+    
     return stateObject.wrappedValue.object!
-
+    
     fatalError()
   }
 
@@ -84,7 +90,7 @@ where Driver.TargetStore.State: TrackingObject {
   @preconcurrency
   public mutating func update() {
 
-    coordinator.startTracking(using: projectedValue)
+    coordinator.startTracking(using: driver)
   }
 
   public final class Coordinator: ObservableObject {
@@ -284,4 +290,68 @@ where Driver.TargetStore.State: TrackingObject {
     }
   }
 
+}
+
+@propertyWrapper
+@dynamicMemberLookup
+public struct BindableReading<Driver: StoreDriverType> where Driver.TargetStore.State: TrackingObject {
+  
+  public let reading: Reading<Driver>
+  
+  @MainActor
+  @preconcurrency
+  public var wrappedValue: Driver.TargetStore.State {
+    reading.wrappedValue
+  }
+  
+  public init(reading: Reading<Driver>) {
+    self.reading = reading
+  }
+  
+  public var projectedValue: BindableReading<Driver> {
+    self
+  }
+  
+  public init(projectedValue: BindableReading<Driver>) {
+    self = projectedValue
+  }
+  
+  @MainActor
+  @preconcurrency
+  public var driver: Driver {
+    reading.driver
+  }
+  
+  @MainActor
+  @preconcurrency
+  public subscript<T>(dynamicMember keyPath: WritableKeyPath<Driver.Scope, T>) -> Binding<T> {
+    binding(keyPath)
+  }
+  
+  @MainActor
+  @preconcurrency
+  public func binding<T>(_ keyPath: WritableKeyPath<Driver.Scope, T>) -> SwiftUI.Binding<T> {
+    return .init { [currentValue = reading.wrappedValue[keyPath: reading.driver.scope.appending(path: keyPath)]] in
+      return currentValue
+    } set: { [weak driver = reading.driver] newValue, _ in
+      driver?.commit { [keyPath] state in
+        state[keyPath: keyPath] = newValue
+      }
+    }
+  }
+  
+  @MainActor
+  public func binding<T: Sendable>(_ keyPath: WritableKeyPath<Driver.Scope, T> & Sendable)
+  -> SwiftUI.Binding<T>
+  {        
+    return .init { [currentValue = reading.wrappedValue[keyPath: reading.driver.scope.appending(path: keyPath)]] in
+      return currentValue
+    } set: { [weak driver = reading.driver] newValue, _ in
+      driver?.commit { [keyPath] state in
+        state[keyPath: keyPath] = newValue
+      }
+    }
+  }
+
+  
 }

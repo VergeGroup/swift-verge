@@ -135,10 +135,10 @@ private struct ReadingSolution: View {
         VStack {
           Text("Using Store holding")
           Button("async up") {
-            $state.backgroundUpdate()
+            $state.driver.backgroundUpdate()
           }
           Button("A Up") {
-            $state.commit {
+            $state.driver.commit {
               $0.value += 1
             }
           }
@@ -148,19 +148,19 @@ private struct ReadingSolution: View {
             switch item {
             case .first:
               Button.init("A.1.a: \(state.a)") {             
-                $state.commit {
+                $state.driver.commit {
                   $0.a += 1
                 }
               }
             case .second:
               Button.init("A.1.b: \(state.b)") {             
-                $state.commit {
+                $state.driver.commit {
                   $0.b += 1
                 }
               }        
             case .third:
               Button.init("A.1.c: \(state.c)") {             
-                $state.commit {
+                $state.driver.commit {
                   $0.c += 1
                 }
               }              
@@ -170,7 +170,7 @@ private struct ReadingSolution: View {
           .padding()
           .background(Color.yellow)
         }
-        Passed(store: $state)
+        Passed(store: $state.driver)
       }
     }
   }
@@ -195,7 +195,7 @@ private struct ReadingSolution: View {
       VStack {
         Text("Using Store passed")
         Button("B Up") {
-          $state.commit {
+          $state.driver.commit {
             $0.value += 1
           }
         }
@@ -204,19 +204,19 @@ private struct ReadingSolution: View {
           switch item {
           case .first:
             Button.init("B.1.a: \(state.a)") {             
-              $state.commit {
+              $state.driver.commit {
                 $0.a += 1
               }
             }
           case .second:
             Button.init("B.1.b: \(state.b)") {             
-              $state.commit {
+              $state.driver.commit {
                 $0.b += 1
               }
             }        
           case .third:
             Button.init("B.1.c: \(state.c)") {             
-              $state.commit {
+              $state.driver.commit {
                 $0.c += 1
               }
             }              
