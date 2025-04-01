@@ -331,8 +331,8 @@ public struct BindableReading<Driver: StoreDriverType> where Driver.TargetStore.
   @MainActor
   @preconcurrency
   public func binding<T>(_ keyPath: WritableKeyPath<Driver.Scope, T>) -> SwiftUI.Binding<T> {
-    return .init { [currentValue = reading.wrappedValue[keyPath: reading.driver.scope.appending(path: keyPath)]] in
-      return currentValue
+    return .init { [keyPath = reading.driver.scope.appending(path: keyPath)] in
+      return reading.wrappedValue[keyPath: keyPath]
     } set: { [weak driver = reading.driver] newValue, _ in
       driver?.commit { [keyPath] state in
         state[keyPath: keyPath] = newValue
@@ -344,8 +344,8 @@ public struct BindableReading<Driver: StoreDriverType> where Driver.TargetStore.
   public func binding<T: Sendable>(_ keyPath: WritableKeyPath<Driver.Scope, T> & Sendable)
   -> SwiftUI.Binding<T>
   {        
-    return .init { [currentValue = reading.wrappedValue[keyPath: reading.driver.scope.appending(path: keyPath)]] in
-      return currentValue
+    return .init { [keyPath = reading.driver.scope.appending(path: keyPath)] in
+      return reading.wrappedValue[keyPath: keyPath]
     } set: { [weak driver = reading.driver] newValue, _ in
       driver?.commit { [keyPath] state in
         state[keyPath: keyPath] = newValue
@@ -353,5 +353,4 @@ public struct BindableReading<Driver: StoreDriverType> where Driver.TargetStore.
     }
   }
 
-  
 }
