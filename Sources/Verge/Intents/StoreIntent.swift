@@ -1,5 +1,22 @@
 
-public protocol StoreIntent {
+extension StoreDriverType {
+  
+  public func run<Intent: AsyncStoreIntent>(
+    _ intent: Intent
+  ) where Intent.State == Self.TargetStore.State {    
+    Task {
+      try await intent.perform()
+    }
+  }
+  
+  public func run<Intent: StoreIntent>(
+    _ intent: Intent
+  ) throws where Intent.State == Self.TargetStore.State {
+    try intent.perform()
+  }
+}
+
+public protocol AsyncStoreIntent {
   
   associatedtype State
   
@@ -8,12 +25,22 @@ public protocol StoreIntent {
   typealias Target = StoreIntentTarget<State>
 }
 
-struct StateModification: StoreIntent {    
+public protocol StoreIntent {
   
-  @Target var state: MyState
+  associatedtype State
   
-  func perform() async throws {
-    
+  func perform() throws    
+  
+  typealias Target = StoreIntentTarget<State>
+}
+
+struct StateModification: AsyncStoreIntent {    
+  typealias State = MyState
+  
+//  @Target var state: MyState
+  
+  func perform(@Target state: @Target<MyState>) async throws {
+
   }
 
 }
@@ -29,7 +56,7 @@ public struct StoreIntentTarget<State> {
     get {
       
     }
-    set {
+    nonmutating set {
       
     }
   }
