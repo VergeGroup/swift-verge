@@ -20,15 +20,18 @@ extension StoreDriverType {
       })
 
       var group = buildSubscription(consume builder)
-
-      // sets the latest value
-      group = group.receive(source: state.primitiveBox)
-
+      
       // sets the previous value
       if let previous = previousBox.wrappedValue {
         group = group.receive(previous: previous)
       }
-
+      
+      // sets the latest value
+      group = group.receive(
+        source: state.primitiveBox,
+        modification: state.modification ?? .indeterminate
+      )
+   
       // runs sink
       group = group.consume()
 
@@ -69,14 +72,17 @@ extension StoreDriverType {
 
         var group = buildSubscription(consume builder)
 
-        // sets the latest value
-        group = group.receive(source: state.primitiveBox)
-
         // sets the previous value
         if let previous = previousBox.value.wrappedValue {
           group = group.receive(previous: previous)
         }
-
+        
+        // sets the latest value
+        group = group.receive(
+          source: state.primitiveBox,
+          modification: state.modification ?? .indeterminate
+        )
+      
         // runs sink
         group = group.consume()
 
@@ -91,7 +97,7 @@ extension StoreDriverType {
 
 public protocol AccumulationSink<Source> {
   associatedtype Source
-  consuming func receive(source: _BackingStorage<Source>) -> Self
+  consuming func receive(source: _BackingStorage<Source>, modification: Modification) -> Self
   consuming func receive(previous: consuming Self) -> Self
   consuming func consume() -> Self
 }
@@ -116,12 +122,13 @@ public struct AccumulationBuilder<Source>: ~Copyable {
   
 }
 
-public struct AccumulationSinkIfChanged<Source, Target: Equatable>: AccumulationSink {
+public struct AccumulationSinkIfChanged<Source: TrackingObject, Target: Equatable>: AccumulationSink {
 
   private let selector: (borrowing Source) -> Target
 
   private var latestValue: Target?
   private var previousValue: Target?
+  private var readingGraph: PropertyNode?
   private var source: _BackingStorage<Source>?
 
   private var counter: UInt64 = 0
@@ -154,17 +161,50 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
     return self
   }
 
-  public consuming func receive(source: _BackingStorage<Source>) -> Self {
-
-    self.latestValue = selector(source.value)
+  public consuming func receive(
+    source: _BackingStorage<Source>,
+    modification: Modification
+  ) -> Self {
+        
     self.source = source
-
+    
+    switch modification {
+    case .graph(let propertyNode):
+      
+      guard let readingGraph, 
+          PropertyNode.hasChanges(
+            writeGraph: propertyNode,
+            readGraph: readingGraph
+          ) else {
+            // no changes
+        
+        self.latestValue = self.previousValue 
+        
+        return self
+      }
+      
+      break
+    case .indeterminate:
+      
+      break
+      
+    }
+    
+    let tracked = source.value.tracked()
+    
+    self.latestValue = selector(tracked)
+    
+    self.readingGraph = tracked.trackingResult?.graph
+    tracked.endTracking()
+    
     return self
+          
   }
 
   public consuming func receive(previous: consuming Self) -> Self {
 
     self.previousValue = previous.latestValue
+    self.readingGraph = previous.readingGraph
     self.counter = previous.counter
 
     return self
@@ -191,13 +231,17 @@ public struct AccumulationSinkIfChanged<Source, Target: Equatable>: Accumulation
 public struct _AccumulationSinkGroup<Source, Component>: AccumulationSink {
 
   private var component: Component
-  private var _receiveSource: (_BackingStorage<Source>, Component) -> Component
+  private var _receiveSource: (
+    _BackingStorage<Source>,
+    Modification,
+    Component
+  ) -> Component
   private var _receiveOther: (Component, Component) -> Component
   private var _consume: (Component) -> Component
 
   init(
     component: Component,
-    receiveSource: @escaping (_BackingStorage<Source>, Component) -> Component,
+    receiveSource: @escaping (_BackingStorage<Source>, Modification, Component) -> Component,
     receiveOther: @escaping (Component, Component) -> Component,
     consume: @escaping (Component) -> Component
   ) {
@@ -209,13 +253,13 @@ public struct _AccumulationSinkGroup<Source, Component>: AccumulationSink {
 
   init() where Component == Void {
     self.component = ()
-    self._receiveSource = { _, component in component }
+    self._receiveSource = { _, _, component in component }
     self._receiveOther = { _, component in component }
     self._consume = { component in component }
   }
 
-  public consuming func receive(source: _BackingStorage<Source>) -> Self {
-    component = _receiveSource(source, component)
+  public consuming func receive(source: _BackingStorage<Source>, modification: Modification) -> Self {
+    component = _receiveSource(source, modification, component)
     return self
   }
 
@@ -244,11 +288,11 @@ public struct _AccumulationSinkCondition<Source, TrueComponent: AccumulationSink
     self.falseComponent = falseComponent
   }
 
-  public consuming func receive(source: _BackingStorage<Source>) -> Self {
+  public consuming func receive(source: _BackingStorage<Source>, modification: Modification) -> Self {
     if let trueComponent = trueComponent {
-      self.trueComponent = trueComponent.receive(source: source)
+      self.trueComponent = trueComponent.receive(source: source, modification: modification)
     } else if let falseComponent = falseComponent {
-      self.falseComponent = falseComponent.receive(source: source)
+      self.falseComponent = falseComponent.receive(source: source, modification: modification)
     }
     return self
   }
@@ -283,9 +327,9 @@ struct _AccumulationSinkOptional<Source, Component: AccumulationSink>: Accumulat
     self.component = component
   }
 
-  consuming func receive(source: _BackingStorage<Source>) -> Self {
+  consuming func receive(source: _BackingStorage<Source>, modification: Modification) -> Self {
     if let component = component {
-      self.component = component.receive(source: source)
+      self.component = component.receive(source: source, modification: modification)
     }
     return self
   }
@@ -343,10 +387,13 @@ public struct AccumulationSinkComponentBuilder<Source> {
 
     return _AccumulationSinkGroup<Source, (repeat each S)>(
       component: (repeat each sinks),
-      receiveSource: { source, component in
+      receiveSource: { source, modification, component in
         // Waiting https://www.swift.org/blog/pack-iteration/
         func iterate<T: AccumulationSink>(_ left: T) -> T {
-          return left.receive(source: source as! _BackingStorage<T.Source>)
+          return left.receive(
+            source: source as! _BackingStorage<T.Source>,
+            modification: modification
+          )
         }
 
         let modified = (repeat iterate(each component))

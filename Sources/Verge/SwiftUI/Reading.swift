@@ -167,7 +167,7 @@ where Driver.TargetStore.State: TrackingObject {
     @MainActor
     private static func onUpdateState(
       readGraph: PropertyNode?,
-      modification: InoutRef<Driver.TargetStore.State>.Modification?,
+      modification: Modification?,
       publisher: sending ObjectWillChangePublisher
     ) {
 

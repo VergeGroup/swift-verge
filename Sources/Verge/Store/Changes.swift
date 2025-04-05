@@ -40,7 +40,7 @@ public protocol ChangesType<Value>: AnyChangesType {
 
   var previous: Self? { get }
   
-  var modification: InoutRef<Value>.Modification? { get }
+  var modification: Modification? { get }
 
   func asChanges() -> Changes<Value>
 }
@@ -127,7 +127,7 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
 
   public let traces: [MutationTrace]
   
-  public let modification: InoutRef<Value>.Modification?
+  public let modification: Modification?
     
   public let _transaction: Transaction
 
@@ -152,7 +152,7 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
     innerBox: InnerBox,
     version: UInt64,
     traces: [MutationTrace],
-    modification: consuming InoutRef<Value>.Modification?,
+    modification: consuming Modification?,
     transaction: Transaction
   ) {
     self.previous = previous
@@ -230,7 +230,7 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
       innerBox: try innerBox.map(transform),
       version: version,
       traces: traces,
-      modification: nil,
+      modification: modification,
       transaction: _transaction
     )
   }
@@ -265,7 +265,7 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
 
   public func makeNextChanges(
     with nextNewValue: Value,
-    modification: InoutRef<Value>.Modification?,
+    modification: Modification?,
     transaction: Transaction
   ) -> Changes<Value> {
     let previous = cloneWithDropsPrevious()

@@ -22,13 +22,13 @@
 import Foundation
 import StateStruct
 
+public enum Modification {
+  case graph(PropertyNode)
+  case indeterminate
+}
+
 public struct InoutRef<Wrapped>: ~Copyable {
-  
-  public enum Modification {
-    case graph(PropertyNode)
-    case indeterminate
-  }
-  
+    
   // MARK: - Properties
 
   nonisolated(unsafe) private let pointer: UnsafeMutablePointer<Wrapped>
