@@ -117,7 +117,7 @@ private struct ReadingSolution: View {
       .third,
     ]
     
-    @Reading<Store<MyState, Never>> var state: MyState
+    @ReadingObject<Store<MyState, Never>> var state: MyState
     
     private let outerValue: Int
     

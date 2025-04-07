@@ -4,7 +4,7 @@ import Verge
 
 struct BookBindingUsingReading: View {
   
-  @Reading<Store<BookBindingState, Never>> var state: BookBindingState
+  @ReadingObject<Store<BookBindingState, Never>> var state: BookBindingState
   
   init() {
     self._state = .init({
