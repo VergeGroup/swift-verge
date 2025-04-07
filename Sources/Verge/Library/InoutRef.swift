@@ -103,9 +103,9 @@ public struct InoutRef<Wrapped>: ~Copyable {
         let graph = modifyingResult.graph
         
         self.modification = .graph(graph)
-#if DEBUG
-        Log.writeGraph.debug("Modified: \(graph.prettyPrint())")
-#endif
+//#if DEBUG
+//        Log.writeGraph.debug("Modified: \(graph.prettyPrint())")
+//#endif
       } else {
         modification = .indeterminate
       }

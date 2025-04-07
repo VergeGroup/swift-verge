@@ -178,7 +178,7 @@ where Driver.TargetStore.State: TrackingObject {
           return
         }
         
-        Log.reading.debug("Reading: \(readGraph.prettyPrint())")
+//        Log.reading.debug("Reading: \(readGraph.prettyPrint())")
 
         let hasChanges = PropertyNode.hasChanges(
           writeGraph: consume writeGraph,
