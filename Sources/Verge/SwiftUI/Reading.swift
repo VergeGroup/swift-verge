@@ -93,7 +93,11 @@ where Driver.TargetStore.State: TrackingObject {
     coordinator.startTracking(using: driver)
   }
 
-  public final class Coordinator: ObservableObject {
+  public final class Coordinator: ObservableObject, Equatable {
+    
+    public static func == (lhs: Coordinator, rhs: Coordinator) -> Bool {
+      return lhs === rhs
+    }
 
     private weak var driver: Driver?
     private var _currentState: Driver.TargetStore.State?
@@ -255,7 +259,11 @@ where Driver.TargetStore.State: TrackingObject {
   }
 
   /// A wrapper for the `Store` that serves as a bridge to `ObservableObject`.
-  private final class Wrapper: ObservableObject {
+  private final class Wrapper: ObservableObject, Equatable {
+    
+    static func == (lhs: Wrapper, rhs: Wrapper) -> Bool {
+      return lhs === rhs
+    }
 
     let object: Driver?
 
@@ -264,7 +272,11 @@ where Driver.TargetStore.State: TrackingObject {
     }
   }
 
-  private final class RetainBox {
+  private final class RetainBox: Equatable {
+    
+    static func == (lhs: RetainBox, rhs: RetainBox) -> Bool {
+      return lhs === rhs
+    }
 
     weak var value: Driver?
     let mode: ReferencingType
