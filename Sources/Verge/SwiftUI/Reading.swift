@@ -14,6 +14,10 @@ public protocol ReadingType: DynamicProperty {
   var driver: Driver { get }
 }
 
+/**
+  A property wrapper that provides a state from a given store.
+  It tracks which properties are accessed and updates the view when those properties change.
+ */
 @propertyWrapper
 public struct Reading<Driver: StoreDriverType>: ReadingType, @preconcurrency DynamicProperty
 where Driver.TargetStore.State: TrackingObject {
@@ -110,6 +114,88 @@ where Driver.TargetStore.State: TrackingObject {
     }
   }
 
+}
+
+/**
+ A property wrapper that provides a state from a given store.
+ It tracks which properties are accessed and updates the view when those properties change.
+ Compared to ``Reading``, this property wrapper instantiates a store via a closure and retains it alongside the view.
+ */
+@propertyWrapper
+public struct ReadingObject<Driver: StoreDriverType>: ReadingType, @preconcurrency DynamicProperty
+where Driver.TargetStore.State: TrackingObject {
+
+  private let stateObject: StateObject<Wrapper>
+  
+  @StateObject private var coordinator = Coordinator<Driver>()
+  
+  @MainActor
+  @preconcurrency
+  public var wrappedValue: Driver.TargetStore.State {
+    
+    guard let state = coordinator.currentState() else {
+      fatalError("State is not being tracked")
+    }
+    return state
+  }
+  
+  @MainActor
+  @preconcurrency
+  public var projectedValue: BindableReading<Self> {
+    return .init(reading: self)
+  }
+  
+  @MainActor
+  @preconcurrency
+  public var driver: Driver {        
+    return stateObject.wrappedValue.object!        
+  }
+  
+  private let file: StaticString
+  private let line: UInt
+  private let label: StaticString?
+  
+  /**
+   Creates a new instance of the model object only once during the
+   lifetime of the container that declares
+   */
+  public nonisolated init(
+    file: StaticString = #file,
+    line: UInt = #line,
+    label: StaticString? = nil,
+    _ driver: @escaping () -> Driver
+  ) {
+    self.stateObject = .init(wrappedValue: .init(object: driver()))
+    self.label = label
+    self.file = file
+    self.line = line
+  }
+     
+  public init(projectedValue: ReadingObject<Driver>) {
+    self = projectedValue
+  }
+  
+  @MainActor
+  @preconcurrency
+  public mutating func update() {
+    
+    coordinator.startTracking(using: driver)
+  }
+  
+  /// A wrapper for the `Store` that serves as a bridge to `ObservableObject`.
+  private final class Wrapper: ObservableObject, Equatable {
+    
+    static func == (lhs: Wrapper, rhs: Wrapper) -> Bool {
+      return lhs === rhs
+    }
+    
+    let object: Driver?
+    
+    init(object: Driver?) {
+      self.object = object
+    }
+  }
+  
 }
 
 private final class Coordinator<Driver: StoreDriverType>: ObservableObject, Equatable where Driver.TargetStore.State: TrackingObject {
@@ -273,84 +359,6 @@ private final class Coordinator<Driver: StoreDriverType>: ObservableObject, Equa
       return _currentState
     }
     
-  }
-  
-}
-
-
-@propertyWrapper
-public struct ReadingObject<Driver: StoreDriverType>: ReadingType, @preconcurrency DynamicProperty
-where Driver.TargetStore.State: TrackingObject {
-
-  private let stateObject: StateObject<Wrapper>
-  
-  @StateObject private var coordinator = Coordinator<Driver>()
-  
-  @MainActor
-  @preconcurrency
-  public var wrappedValue: Driver.TargetStore.State {
-    
-    guard let state = coordinator.currentState() else {
-      fatalError("State is not being tracked")
-    }
-    return state
-  }
-  
-  @MainActor
-  @preconcurrency
-  public var projectedValue: BindableReading<Self> {
-    return .init(reading: self)
-  }
-  
-  @MainActor
-  @preconcurrency
-  public var driver: Driver {        
-    return stateObject.wrappedValue.object!        
-  }
-  
-  private let file: StaticString
-  private let line: UInt
-  private let label: StaticString?
-  
-  /**
-   Creates a new instance of the model object only once during the
-   lifetime of the container that declares
-   */
-  public nonisolated init(
-    file: StaticString = #file,
-    line: UInt = #line,
-    label: StaticString? = nil,
-    _ driver: @escaping () -> Driver
-  ) {
-    self.stateObject = .init(wrappedValue: .init(object: driver()))
-    self.label = label
-    self.file = file
-    self.line = line
-  }
-     
-  public init(projectedValue: ReadingObject<Driver>) {
-    self = projectedValue
-  }
-  
-  @MainActor
-  @preconcurrency
-  public mutating func update() {
-    
-    coordinator.startTracking(using: driver)
-  }
-  
-  /// A wrapper for the `Store` that serves as a bridge to `ObservableObject`.
-  private final class Wrapper: ObservableObject, Equatable {
-    
-    static func == (lhs: Wrapper, rhs: Wrapper) -> Bool {
-      return lhs === rhs
-    }
-    
-    let object: Driver?
-    
-    init(object: Driver?) {
-      self.object = object
-    }
   }
   
 }
