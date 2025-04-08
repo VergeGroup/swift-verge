@@ -43,7 +43,7 @@ struct MyView: View {
   let store = Store<State, Never>(initialState: .init())
   
   var body: some View {
-    StoreReader(store) { state in
+    StoreReader(store) { $state in
       VStack {
         Text("Count: \(state.count)")
         Button("Increment") {
@@ -81,14 +81,14 @@ struct MyView: View {
     VStack {
       Text("Count: \(state.count)")
       Button("Increment") {
-        $state.commit {
+        $state.driver.commit {
           $0.count += 1
         }
       }
       Text("Is Active: \(state.nestedState.isActive)")
       Text("Message: \(state.nestedState.message)")
       Button("Toggle Active") {
-        $state.commit {
+        $state.driver.commit {
           $0.nestedState.isActive.toggle()
         }
       }
