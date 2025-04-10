@@ -71,7 +71,7 @@ struct BookLongList: View {
     GridItem(.flexible()),
   ]
 
-  @Reading<Store<BookState, Never>>({
+  @ReadingObject<Store<BookState, Never>>({
     .init(initialState: .init(items: (0..<500).map { index in
       BookItem(
         cellStore: Store<BookCellState, Never>(
