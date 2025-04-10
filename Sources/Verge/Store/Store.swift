@@ -536,7 +536,7 @@ extension Store {
          */
         guard inoutRef.hasModified else {          
           // No emits update event
-          Log.storeCommit.debug("\(type(of: self)) No updates")
+//          Log.storeCommit.debug("\(type(of: self)) No updates")
           return .nothingUpdates
         }
 
