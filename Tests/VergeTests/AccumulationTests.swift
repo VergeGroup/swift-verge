@@ -2,6 +2,59 @@ import Verge
 import XCTest
 
 final class AccumulationTests: XCTestCase {
+  
+  @MainActor
+  func test_tracking() {
+        
+    let store = DemoStore()
+    
+    let expForSelect = expectation(description: "select")
+    expForSelect.assertForOverFulfill = true
+    expForSelect.expectedFulfillmentCount = 4
+    
+    let expForDo = expectation(description: "do")
+    expForDo.expectedFulfillmentCount = 3
+    
+    let sub = store.accumulate(queue: .mainIsolated()) { 
+      $0.ifChanged {        
+        expForSelect.fulfill()
+        return "\($0.count) \($0.name)"
+      }
+      .do { (value: String) in
+        expForDo.fulfill()
+        print(value)
+      }
+    }
+    
+    store.commit {
+      $0.items.append(1)
+    }
+    
+    store.commit {
+      $0.items.append(1)
+    }
+    
+    store.commit {
+      $0.items.append(1)
+    }
+        
+    store.commit {
+      $0.count += 1
+    }
+    
+    store.commit {
+      $0.name = "name"
+    }  
+    
+    store.commit {
+      $0.name = "name"
+    }  
+    
+    wait(for: [expForSelect, expForDo])
+    
+    let _ = sub
+    
+  }
 
   func test_main() {
 
