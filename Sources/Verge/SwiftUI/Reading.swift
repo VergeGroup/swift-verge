@@ -276,7 +276,7 @@ private final class Coordinator<Driver: StoreDriverType>: ObservableObject, Equa
   @MainActor
   private static func onUpdateState(
     readGraph: PropertyNode?,
-    modification: InoutRef<Driver.TargetStore.State>.Modification?,
+    modification: Modification?,
     publisher: sending ObjectWillChangePublisher
   ) {
     
