@@ -1,13 +1,13 @@
 {
-  "originHash" : "f728e07d2d2761a3e2e56bdc864cc312593ce1e79fc523ffa759bff89b5b9abc",
+  "originHash" : "9f8e843cd1c11e6c07be9e7133cadb9924be44d1fbb7947b3417a8d14f9745e6",
   "pins" : [
     {
       "identity" : "normalization",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/Normalization",
       "state" : {
-        "revision" : "6e7cb1ddeda4d0f1d2fbf8ca6d25ecd8ed6ba917",
-        "version" : "1.1.0"
+        "revision" : "6b5ebbe680da5359ae2a3fc3e53a144069bd6845",
+        "version" : "1.2.0"
       }
     },
     {

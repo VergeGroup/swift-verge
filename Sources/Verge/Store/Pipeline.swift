@@ -36,15 +36,15 @@ public protocol PipelineType<Input, Output>: Sendable {
 
   associatedtype Input
   associatedtype Output
-  associatedtype Storage: Sendable = Void
+  associatedtype Storage = Void
 
   func makeStorage() -> Storage
 
   /// Yields the output from the input.
-  func yield(_ input: Input, storage: Storage) -> Output
+  func yield(_ input: Input, storage: inout Storage) -> Output
 
   /// Yields the output from the input if it's needed
-  func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output>
+  func yieldContinuously(_ input: Input, storage: inout Storage) -> ContinuousResult<Output>
 
 }
 
@@ -75,7 +75,7 @@ public enum Pipelines {
       self.selector = selector
     }
 
-    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
+    public func yieldContinuously(_ input: Input, storage: inout Storage) -> ContinuousResult<Output> {
 
       let target = input._read(perform: selector)
 
@@ -83,7 +83,7 @@ public enum Pipelines {
 
     }
 
-    public func yield(_ input: Input, storage: Storage) -> Output {
+    public func yield(_ input: Input, storage: inout Storage) -> Output {
       input._read(perform: selector)
     }
 
@@ -105,7 +105,7 @@ public enum Pipelines {
       self.additionalDropCondition = additionalDropCondition
     }
 
-    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
+    public func yieldContinuously(_ input: Input, storage: inout Storage) -> ContinuousResult<Output> {
 
       guard let previous = input.previous else {
         return .new(input._read(perform: selector))
@@ -129,7 +129,7 @@ public enum Pipelines {
 
     }
 
-    public func yield(_ input: Input, storage: Storage) -> Output {
+    public func yield(_ input: Input, storage: inout Storage) -> Output {
       input._read(perform: selector)
     }
 
@@ -173,10 +173,10 @@ public enum Pipelines {
 
     // MARK: - Functions
 
-    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
+    public func yieldContinuously(_ input: Input, storage: inout Storage) -> ContinuousResult<Output> {
 
       guard let previous = input.previous else {
-        return .new(yield(input, storage: storage))
+        return .new(yield(input, storage: &storage))
       }
 
       let previousIntermediate = intermediate(previous.primitive)
@@ -205,7 +205,7 @@ public enum Pipelines {
 
     }
 
-    public func yield(_ input: Input, storage: Storage) -> Output {
+    public func yield(_ input: Input, storage: inout Storage) -> Output {
       transform(intermediate(input.primitive).value)
     }
 
@@ -237,13 +237,13 @@ public enum Pipelines {
       .init(nil)
     }
 
-    public func yield(_ input: Input, storage: Storage) -> Output {
+    public func yield(_ input: Input, storage: inout Storage) -> Output {
       let result = map.perform(input)
       storage.swap(result)
       return result
     }
 
-    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
+    public func yieldContinuously(_ input: Input, storage: inout Storage) -> ContinuousResult<Output> {
 
       // not to check if input has changed because storing the input may cause performance issue by copying.
 
@@ -279,13 +279,13 @@ public enum Pipelines {
       .init(nil)
     }
 
-    public func yield(_ input: Input, storage: Storage) -> Output {
+    public func yield(_ input: Input, storage: inout Storage) -> Output {
       let result = map.perform(input)
       storage.swap(result)
       return result
     }
 
-    public func yieldContinuously(_ input: Input, storage: Storage) -> ContinuousResult<Output> {
+    public func yieldContinuously(_ input: Input, storage: inout Storage) -> ContinuousResult<Output> {
 
       // not to check if input has changed because storing the input may cause performance issue by copying.
 

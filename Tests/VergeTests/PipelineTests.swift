@@ -1,4 +1,3 @@
-
 import XCTest
 import Verge
 
@@ -21,16 +20,18 @@ final class PipelineTests: XCTestCase {
       additionalDropCondition: nil
     )
     
+    var storage: Void = ()
+    
     do {
       let s = DemoState()
-      
+            
       XCTAssertEqual(
         pipeline.yieldContinuously(
           Changes<DemoState>.init(
             old: s,
             new: s
           ),
-          storage: ()
+          storage: &storage
         ),
         .noUpdates
       )
@@ -46,7 +47,7 @@ final class PipelineTests: XCTestCase {
             old: .init(name: "A", count: 1),
             new: .init(name: "A", count: 2)
           ),
-          storage: ()
+          storage: &storage
         ),
         .new(2)
       )
@@ -72,6 +73,8 @@ final class PipelineTests: XCTestCase {
       additionalDropCondition: nil
     )
     
+    var storage: Void = ()
+    
     do {
       let s = DemoState()
       
@@ -81,7 +84,7 @@ final class PipelineTests: XCTestCase {
             old: s,
             new: s
           ),
-          storage: ()
+          storage: &storage
         ),
         .noUpdates
       )
@@ -97,7 +100,7 @@ final class PipelineTests: XCTestCase {
             old: .init(name: "A", count: 1),
             new: .init(name: "A", count: 2)
           ),
-          storage: ()
+          storage: &storage
         ),
         .noUpdates
       )

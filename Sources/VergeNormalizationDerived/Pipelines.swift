@@ -7,8 +7,13 @@ struct SingleEntityPipeline<
 >: PipelineType
 where _StorageSelector.Storage == _TableSelector.Storage {
   
+  struct Storage {
+    var tableVersion: UInt64
+    var entity: Entity?
+  }
+  
   typealias Entity = _TableSelector.Table.Entity
-  typealias Input = Changes<_StorageSelector.Source>
+  typealias Input = _StorageSelector.Source
   typealias EntityStorage = _StorageSelector.Storage
   typealias Output = EntityWrapper<Entity>
   
@@ -23,30 +28,41 @@ where _StorageSelector.Storage == _TableSelector.Storage {
     self.selector = selector
   }
   
-  func yield(_ input: consuming Input, storage: Void) -> Output {
+  func makeStorage() -> Storage {
+    return .init(tableVersion: 0)
+  }
+  
+  func yield(_ input: consuming Input, storage: inout Storage) -> Output {
     
-    let result = selector.table(source: input.primitive)
-      .find(by: entityID)
+    let table = selector.table(source: input)
+    storage.tableVersion = table.updatedMarker.value
+    
+    let result = table.find(by: entityID)
+    storage.entity = result
     
     return .init(id: entityID, entity: consume result)
     
   }
   
-  func yieldContinuously(_ input: Input, storage: Void) -> Verge.ContinuousResult<Output> {
+  func yieldContinuously(_ input: Input, storage: inout Storage) -> Verge.ContinuousResult<Output> {
     
-    guard let previous = input.previous else {
-      return .new(yield(input, storage: storage))
-    }
+    let table = selector.table(source: input)
     
-    if NormalizedStorageComparators<EntityStorage>.StorageComparator()(selector.storage(source: input.primitive), selector.storage(source: previous.primitive)) {
+    guard storage.tableVersion != table.updatedMarker.value else {
       return .noUpdates
     }
     
-    if NormalizedStorageComparators<EntityStorage>.TableComparator<_TableSelector.Table>()(selector.table(source: input.primitive), selector.table(source: previous.primitive)) {
+    storage.tableVersion = table.updatedMarker.value
+    
+    let result = table.find(by: entityID)
+    
+    guard storage.entity != result else {
       return .noUpdates
     }
     
-    return .new(yield(input, storage: storage))
+    storage.entity = result
+    
+    return .new(.init(id: entityID, entity: consume result))
     
   }
   
@@ -58,8 +74,13 @@ struct NonNullSingleEntityPipeline<
 >: PipelineType
 where _StorageSelector.Storage == _TableSelector.Storage {
   
+  struct Storage {
+    var tableVersion: UInt64
+    var entity: Entity?
+  }
+  
   typealias Entity = _TableSelector.Table.Entity
-  typealias Input = Changes<_StorageSelector.Source>
+  typealias Input = _StorageSelector.Source
   typealias EntityStorage = _StorageSelector.Storage
   typealias Output = NonNullEntityWrapper<Entity>
   
@@ -79,10 +100,19 @@ where _StorageSelector.Storage == _TableSelector.Storage {
     
   }
   
-  func yield(_ input: consuming Input, storage: Void) -> Output {
+  func makeStorage() -> Storage {
+    return .init(tableVersion: 0)
+  }
+  
+  func yield(_ input: consuming Input, storage: inout Storage) -> Output {
     
-    let result = selector.table(source: input.primitive)
+    let table = selector.table(source: input)
+    storage.tableVersion = table.updatedMarker.value
+    
+    let result = table
       .find(by: entityID)
+    
+    storage.entity = result
     
     if let result {
       return .init(entity: result, isFallBack: false)
@@ -92,21 +122,30 @@ where _StorageSelector.Storage == _TableSelector.Storage {
     
   }
   
-  func yieldContinuously(_ input: Input, storage: Void) -> Verge.ContinuousResult<Output> {
+  func yieldContinuously(_ input: Input, storage: inout Storage) -> Verge.ContinuousResult<Output> {
     
-    guard let previous = input.previous else {
-      return .new(yield(input, storage: storage))
-    }
+    let table = selector.table(source: input)
     
-    if NormalizedStorageComparators<EntityStorage>.StorageComparator()(selector.storage(source: input.primitive), selector.storage(source: previous.primitive)) {
+    guard storage.tableVersion != table.updatedMarker.value else {
       return .noUpdates
     }
     
-    if NormalizedStorageComparators<EntityStorage>.TableComparator<_TableSelector.Table>()(selector.table(source: input.primitive), selector.table(source: previous.primitive)) {
+    storage.tableVersion = table.updatedMarker.value
+    
+    let result = table
+      .find(by: entityID)
+    
+    guard storage.entity != result else {
       return .noUpdates
     }
     
-    return .new(yield(input, storage: storage))
+    storage.entity = result
+
+    if let result {
+      return .new(.init(entity: result, isFallBack: false))
+    } else {
+      return .new(.init(entity: latestValue, isFallBack: true))
+    }
     
   }
   
@@ -117,10 +156,13 @@ struct QueryPipeline<
   Output
 >: PipelineType, Sendable {
   
-  typealias Input = Changes<_StorageSelector.Source>
-  typealias EntityStorage = _StorageSelector.Storage
-  typealias Storage = Void
+  struct Storage {
+    var storageVersion: UInt64
+  }
   
+  typealias Input = _StorageSelector.Source
+  typealias EntityStorage = _StorageSelector.Storage
+    
   private let storageSelector: _StorageSelector
   private let query: @Sendable (EntityStorage) -> Output
   
@@ -132,31 +174,35 @@ struct QueryPipeline<
     self.query = query
   }
   
-  func makeStorage() -> Void {
-    ()
+  func makeStorage() -> Storage {
+    .init(storageVersion: 0)
   }
   
-  func yield(_ input: consuming Input, storage: Storage) -> Output {
+  func yield(_ input: consuming Input, storage: inout Storage) -> Output {
     
-    let storage = storageSelector.select(source: input.primitive)
-    let output = query(storage)
+    let entityStorage = storageSelector.select(source: input)
+    
+    storage.storageVersion = entityStorage.version
+      
+    let output = query(entityStorage)
     
     return output
     
   }
   
-  func yieldContinuously(_ input: Input, storage: Storage) -> Verge.ContinuousResult<Output> {
+  func yieldContinuously(_ input: Input, storage: inout Storage) -> Verge.ContinuousResult<Output> {
     
-    guard let previous = input.previous else {
-      return .new(yield(input, storage: storage))
-    }
+    let entityStorage = storageSelector.select(source: input)
     
-    // check if the storage has been updated
-    if NormalizedStorageComparators<EntityStorage>.StorageComparator()(storageSelector.select(source: input.primitive), storageSelector.select(source: previous.primitive)) {
+    guard entityStorage.version != storage.storageVersion else {
       return .noUpdates
     }
     
-    return .new(yield(input, storage: storage))
+    storage.storageVersion = entityStorage.version
+    
+    let output = query(entityStorage)
+    
+    return .new(output)
     
   }
   
