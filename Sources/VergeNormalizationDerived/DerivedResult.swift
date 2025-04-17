@@ -1,11 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Muukii on 2023/09/11.
-//
-
-import Foundation
 import Verge
 
 /// A result instance that contains created Derived object
