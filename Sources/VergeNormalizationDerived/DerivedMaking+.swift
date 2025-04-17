@@ -3,7 +3,7 @@ import Normalization
 @_spi(Internal) import Verge
 import Verge
 
-extension DerivedMaking {
+extension StoreDriverType {
 
   fileprivate func derivedEntity<
     _StorageSelector: StorageSelector,
@@ -14,10 +14,10 @@ extension DerivedMaking {
   ) -> Derived<EntityWrapper<_TableSelector.Table.Entity>>
   where
     _StorageSelector.Storage == _TableSelector.Storage,
-    _StorageSelector.Source == Self.State
+    _StorageSelector.Source == Self.TargetStore.State
   {
 
-    return derived(
+    return _derived(
       SingleEntityPipeline(
         targetIdentifier: entityID,
         selector: selector
@@ -36,10 +36,10 @@ extension DerivedMaking {
   ) -> Derived<NonNullEntityWrapper<_TableSelector.Table.Entity>>
   where
   _StorageSelector.Storage == _TableSelector.Storage,
-  _StorageSelector.Source == Self.State
+  _StorageSelector.Source == Self.TargetStore.State
   {
 
-    return derived(
+    return _derived(
       NonNullSingleEntityPipeline(
         initialEntity: entity,
         selector: selector
@@ -102,7 +102,7 @@ public struct NormalizedStoragePath<
    There is not filters for entity tables so that Derived possibly makes a new object if not related entity has updated.
    */
   public func derived<Composed: Equatable>(query: @escaping @Sendable (Self.Storage) -> Composed) -> Derived<Composed> {
-    return store.derived(QueryPipeline(storageSelector: storageSelector, query: query), queue: .passthrough)
+    return store._derived(QueryPipeline(storageSelector: storageSelector, query: query), queue: .passthrough)
   }
 }
 
@@ -110,10 +110,10 @@ public struct NormalizedStoragePath<
  The entrypoint to make Derived object from the specific table.
  */
 public struct NormalizedStorageTablePath<
-  Store: DerivedMaking & AnyObject,
+  Store: StoreDriverType,
   _StorageSelector: StorageSelector,
   _TableSelector: TableSelector
->: ~Copyable where _StorageSelector.Storage == _TableSelector.Storage, Store.State == _StorageSelector.Source {
+>: ~Copyable where _StorageSelector.Storage == _TableSelector.Storage, Store.TargetStore.State == _StorageSelector.Source {
   
   public typealias Entity = _TableSelector.Table.Entity
   
@@ -194,7 +194,7 @@ public struct NormalizedStorageTablePath<
     
     let _initialValue = storageSelector
       .appending(tableSelector)
-      .table(source: store.state.primitive)
+      .table(source: store.store.state.primitive)
       .find(by: entityID)
     
     guard let initalValue = _initialValue else {

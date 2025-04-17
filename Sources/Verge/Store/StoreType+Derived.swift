@@ -76,5 +76,40 @@ extension StoreDriverType {
     return derived
   }
 
-
+  public func _derived<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: some MainActorTargetQueueType
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == TargetStore.State {
+    self._derived(pipeline, queue: Queues.MainActor(queue))
+  }
+  
+  public func _derived<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: some TargetQueueType = .passthrough
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == TargetStore.State {
+    
+    vergeSignpostEvent("Store.derived.new", label: "\(type(of: TargetStore.State.self)) -> \(type(of: Pipeline.Output.self))")
+    
+    let derived = Derived<Pipeline.Output>(
+      get: pipeline,
+      set: { _ in /* no operation as read only */},
+      initialUpstreamState: store.state.primitive,
+      subscribeUpstreamState: { callback in
+        store.asStore()._primitive_sinkState(
+          dropsFirst: true,
+          queue: queue,
+          receive: { state in
+            callback(state.primitive)
+          }
+        )
+      },
+      retainsUpstream: nil
+    )
+    
+    store.asStore().onDeinit { [weak derived] in
+      derived?.invalidate()
+    }
+    
+    return derived
+  }
 }

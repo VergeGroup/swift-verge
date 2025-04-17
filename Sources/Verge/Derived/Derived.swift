@@ -41,6 +41,11 @@ public protocol DerivedMaking {
     queue: some TargetQueueType
   ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State>
 
+  func _derived<Pipeline: PipelineType>(
+    _ pipeline: Pipeline,
+    queue: some TargetQueueType
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == State
+
 }
 
 /**
@@ -99,7 +104,7 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
   ///   - initialUpstreamState: Initial value of the `UpstreamState`
   ///   - subscribeUpstreamState: Starts subscribe updates of the `UpstreamState`
   ///   - retainsUpstream: Any instances to retain in this instance.
-  public init<UpstreamState: HasTraces, Pipeline: PipelineType>(
+  public init<UpstreamState, Pipeline: PipelineType>(
     name: String? = nil,
     get pipeline: Pipeline,
     set: ((Value) -> Void)?,
@@ -108,12 +113,14 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
     retainsUpstream: Any?
   ) where Pipeline.Input == UpstreamState, Value == Pipeline.Output {
 
-    let pipelineStorage: Pipeline.Storage = pipeline.makeStorage()
+    let pipelineStorage: VergeConcurrency.UnfairLockAtomic<Pipeline.Storage> = .init(pipeline.makeStorage())
 
     nonisolated(unsafe)weak var indirectSelf: Derived<Value>?
 
     let s = subscribeUpstreamState { value in
-      let update = pipeline.yieldContinuously(value, storage: pipelineStorage)
+      let update = pipelineStorage.modify { storage in        
+        pipeline.yieldContinuously(value, storage: &storage)
+      }
       switch update {
       case .noUpdates:
         break
@@ -125,7 +132,6 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
         // TODO: Take over state.modification & state.mutation
         indirectSelf._receive_sending {
           $1.isDerivedFromUpstream = true
-          $1.append(traces: value.traces)
           $0 = newState
         }
 
@@ -137,7 +143,12 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
     self._set = set
     super.init(
       name: name,
-      initialState: pipeline.yield(initialUpstreamState, storage: pipelineStorage),
+      initialState: pipelineStorage.modify { storage in        
+        pipeline.yield(
+          initialUpstreamState,
+          storage: &storage
+        )
+      },
       logger: nil,
       sanitizer: nil
     )

@@ -52,15 +52,15 @@ private struct BindingDerivedPipeline<Source, Output, BackingPipeline: PipelineT
     backingPipeline.makeStorage()
   }
 
-  func yield(_ input: Changes<Source>, storage: Storage) -> Output {
-    backingPipeline.yield(input, storage: storage)
+  func yield(_ input: Changes<Source>, storage: inout Storage) -> Output {
+    backingPipeline.yield(input, storage: &storage)
   }
 
-  func yieldContinuously(_ input: Changes<Source>, storage: Storage) -> ContinuousResult<Output> {
+  func yieldContinuously(_ input: Changes<Source>, storage: inout Storage) -> ContinuousResult<Output> {
     if input._transaction.isFromBindingDerived {
       return .noUpdates
     }
-    return backingPipeline.yieldContinuously(input, storage: storage)
+    return backingPipeline.yieldContinuously(input, storage: &storage)
   }
 
 }
