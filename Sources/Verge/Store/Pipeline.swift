@@ -93,126 +93,49 @@ public enum Pipelines {
   public struct ChangesSelectPipeline<Source: Sendable, Output: Equatable>: PipelineType {
 
     public typealias Input = StateWrapper<Source>
+    public typealias Storage = Output?
 
     public let selector: @Sendable (borrowing Input.State) -> Output
-    public let additionalDropCondition: (@Sendable (Input) -> Bool)?
+    public let additionalDropCondition: (@Sendable (Input.State) -> Bool)?
 
     public init(
       selector: @escaping @Sendable (borrowing Input.State) -> Output,
-      additionalDropCondition: (@Sendable (Input) -> Bool)?
+      additionalDropCondition: (@Sendable (Input.State) -> Bool)?
     ) {
       self.selector = selector
       self.additionalDropCondition = additionalDropCondition
     }
 
+    public func makeStorage() -> Storage {
+      nil
+    }
+
     public func yieldContinuously(_ input: Input, storage: inout Storage) -> ContinuousResult<Output> {
 
-      guard let previous = input.previous else {
-        return .new(input._read(perform: selector))
-      }
-
-      let target = input._read(perform: selector)
-
-      guard
-        previous._read(perform: selector) == target
-      else {
-
-        guard let additionalDropCondition = additionalDropCondition, additionalDropCondition(input)
-        else {
-          return .new(consume target)
-        }
-
+      if let additionalDropCondition = additionalDropCondition, additionalDropCondition(input.state) {
         return .noUpdates
       }
-
-      return .noUpdates
-
+      
+      let target = selector(input.state)
+      
+      if let previousValue = storage, previousValue == target {
+        return .noUpdates
+      }
+      
+      storage = target
+      
+      return .new(consume target)
     }
 
     public func yield(_ input: Input, storage: inout Storage) -> Output {
-      input._read(perform: selector)
+      let output = selector(input.state)
+      storage = output
+      return output
     }
 
-    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
+    public func drop(while predicate: @escaping @Sendable (Input.State) -> Bool) -> Self {
       return .init(
         selector: selector,
-        additionalDropCondition: additionalDropCondition.map { currentCondition in
-          { input in
-            currentCondition(input) || predicate(input)
-          }
-        } ?? predicate
-      )
-    }
-
-  }
-  
-  /// Closure based pipeline,
-  public struct ChangesMapPipeline<Source: Sendable, Intermediate, Output: Equatable>: PipelineType {
-
-    public typealias Storage = Void
-
-    public typealias Input = StateWrapper<Source>
-
-    // MARK: - Properties
-
-    public let intermediate: @Sendable (Input.State) -> PipelineIntermediate<Intermediate>
-    public let transform: @Sendable (Intermediate) -> Output
-    public let additionalDropCondition: (@Sendable (Input) -> Bool)?
-
-    public init(
-      @PipelineIntermediateBuilder intermediate: @escaping @Sendable (
-        Input.Value
-      ) -> PipelineIntermediate<Intermediate>,
-      transform: @escaping @Sendable (Intermediate) -> Output,
-      additionalDropCondition: (@Sendable (Input) -> Bool)?
-    ) {
-      self.intermediate = intermediate
-      self.transform = transform
-      self.additionalDropCondition = additionalDropCondition
-    }
-
-    // MARK: - Functions
-
-    public func yieldContinuously(_ input: Input, storage: inout Storage) -> ContinuousResult<Output> {
-
-      guard let previous = input.previous else {
-        return .new(yield(input, storage: &storage))
-      }
-
-      let previousIntermediate = intermediate(previous.primitive)
-      let newIntermediate = intermediate(input.primitive)
-
-      guard previousIntermediate == newIntermediate else {
-
-        let previousMapped = transform(previousIntermediate.value)
-        let newMapped = transform(newIntermediate.value)
-
-        guard previousMapped == newMapped else {
-
-          guard let additionalDropCondition = additionalDropCondition,
-            additionalDropCondition(input)
-          else {
-            return .new(newMapped)
-          }
-
-          return .noUpdates
-        }
-
-        return .noUpdates
-      }
-
-      return .noUpdates
-
-    }
-
-    public func yield(_ input: Input, storage: inout Storage) -> Output {
-      transform(intermediate(input.primitive).value)
-    }
-
-    public func drop(while predicate: @escaping @Sendable (Input) -> Bool) -> Self {
-      return .init(
-        intermediate: intermediate,
-        transform: transform,
         additionalDropCondition: additionalDropCondition.map { currentCondition in
           { input in
             currentCondition(input) || predicate(input)
@@ -426,158 +349,4 @@ extension PipelineType {
     self.init(selector: { $0[keyPath: selector] })
   }
   
-}
-
-extension PipelineType {
-
-  /**
-   For Changes input
-   Produces output values using closure-based projection.
-   `map` closure takes the value projected from `using` closure which is intermediate value.
-   If the intermediate value is not changed, map closure won't perform.
-
-   - Parameters:
-     - using: Specifies values for transforming. This function is annotated ``PipelineIntermediateBuilder``
-     - transform: Transforms the given value from `using` function
-
-   ```swift
-   `.map(using: { $0.a; $0.b;}, transform: { a, b in ... }`
-   ```
-
-   */
-  public static func map<Input, Intermediate, Output>(
-    @PipelineIntermediateBuilder using intermediate: @escaping @Sendable (
-      Input
-    ) -> PipelineIntermediate<Intermediate>,
-    transform: @escaping @Sendable (Intermediate) -> Output
-  ) -> Self
-  where
-    Input: Equatable, Output: Equatable,
-    Self == Pipelines.ChangesMapPipeline<Input, Intermediate, Output>
-  {
-
-    self.init(
-      intermediate: intermediate,
-      transform: transform,
-      additionalDropCondition: nil
-    )
-  }
-
-  /**
-   For Changes input
-   Produces output values using closure-based projection.
-   Using Edge as intermediate, output value will be unwrapped value from the Edge.
-   */
-  public static func map<Input, EdgeIntermediate>(
-    @PipelineIntermediateBuilder using intermediate: @escaping @Sendable (Input) ->
-      PipelineIntermediate<Edge<EdgeIntermediate>>
-  ) -> Self
-  where
-    Input: Equatable, Output: Equatable,
-    Self == Pipelines.ChangesMapPipeline<Input, Edge<EdgeIntermediate>, EdgeIntermediate>
-  {
-
-    self.init(
-      intermediate: intermediate,
-      transform: { $0.wrappedValue },
-      additionalDropCondition: nil
-    )
-  }
-
-}
-
-public struct PipelineIntermediate<T>: Equatable {
-
-  public static func == (lhs: Self, rhs: Self) -> Bool {
-    lhs.comparer(lhs.value, rhs.value)
-  }
-
-  public var value: T
-  public let comparer: ((T, T) -> Bool)
-
-  @inlinable
-  public init(value: T, comparer: @escaping (T, T) -> Bool) {
-    self.value = value
-    self.comparer = comparer
-  }
-
-  @inlinable
-  public init(value: T) where T: Equatable {
-    self.value = value
-    self.comparer = (==)  // this won't be called
-  }
-
-}
-
-extension PipelineIntermediate where T: Equatable {
-
-  public static func == (lhs: Self, rhs: Self) -> Bool {
-    lhs.value == rhs.value
-  }
-
-}
-
-/// A result-builder that builds ``PipelineIntermediate``.
-/// It converts tuple into ``PipelineIntermediate`` implementing Equatable.
-///
-/// projects:
-/// ```
-/// {
-///   $0.a
-///   $0.b
-/// }
-///
-/// // alternative syntax.
-/// { $0.a; $0.b; }
-/// ```
-///
-/// into:
-/// ```
-/// PipelineIntermediate<(A, B)>
-/// ```
-@resultBuilder
-public enum PipelineIntermediateBuilder {
-
-  public static func buildBlock<IntermediateValue>(_ i: PipelineIntermediate<IntermediateValue>)
-    -> PipelineIntermediate<IntermediateValue>
-  {
-    return i
-  }
-
-  public static func buildBlock<S1: Equatable>(_ s1: S1) -> PipelineIntermediate<S1> {
-    .init(value: s1)
-  }
-
-  public static func buildBlock<S1: Equatable, S2: Equatable>(_ s1: S1, _ s2: S2)
-    -> PipelineIntermediate<(S1, S2)>
-  {
-    .init(value: (s1, s2), comparer: ==)
-  }
-
-  public static func buildBlock<S1: Equatable, S2: Equatable, S3: Equatable>(
-    _ s1: S1, _ s2: S2, _ s3: S3
-  ) -> PipelineIntermediate<(S1, S2, S3)> {
-    .init(value: (s1, s2, s3), comparer: ==)
-  }
-
-  public static func buildBlock<S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable>(
-    _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4
-  ) -> PipelineIntermediate<(S1, S2, S3, S4)> {
-    .init(value: (s1, s2, s3, s4), comparer: ==)
-  }
-
-  public static func buildBlock<
-    S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable, S5: Equatable
-  >(_ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5) -> PipelineIntermediate<(S1, S2, S3, S4, S5)>
-  {
-    .init(value: (s1, s2, s3, s4, s5), comparer: ==)
-  }
-
-  public static func buildBlock<
-    S1: Equatable, S2: Equatable, S3: Equatable, S4: Equatable, S5: Equatable, S6: Equatable
-  >(_ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5, _ s6: S6) -> PipelineIntermediate<
-    (S1, S2, S3, S4, S5, S6)
-  > {
-    .init(value: (s1, s2, s3, s4, s5, s6), comparer: ==)
-  }
 }
