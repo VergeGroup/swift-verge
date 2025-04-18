@@ -217,6 +217,74 @@ extension Derived where Value: Equatable {
 
 // `Value == Never` eliminates specializing requirements.
 extension Derived where Value == Never {
+  
+  public static func combined<each S>(
+    _ deriveds: repeat Derived<each S>
+  ) {
+
+    let initialState = (repeat (each deriveds).state)
+    
+    let initial = Changes<Edge<(repeat each S)>>.init(
+      old: nil,
+      new: Edge(wrappedValue: initialState)
+    )
+    
+    let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
+        
+    Derived<(repeat each S)>(
+      get: .select(\.self),
+      set: { _ in },
+      initialUpstreamState: initial,
+      subscribeUpstreamState: { callback in
+        
+        (each deriveds)._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
+          buffer.modify { value in
+            let newValue = value.makeNextChanges(
+              with: value.primitive.next((s0, value.primitive.1)),
+              modification: nil,
+              transaction: .init()
+            )
+            value = newValue
+            callback(newValue)
+          }
+        }
+        
+        let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
+          buffer.modify { value in
+            let newValue = value.makeNextChanges(
+              with: value.primitive.next((s0, value.primitive.1)),
+              modification: nil,
+              transaction: .init()
+            )
+            value = newValue
+            callback(newValue)
+          }
+        }
+        
+        let _s1 = s1._combined_sinkValue(dropsFirst: true, queue: queue) { (s1) in
+          buffer.modify { value in
+            
+            let newValue = value.makeNextChanges(
+              with: value.primitive.next((value.primitive.0, s1)),
+              modification: nil,
+              transaction: .init()
+            )
+            
+            value = newValue
+            callback(newValue)
+          }
+        }
+        
+        return VergeAnyCancellable(onDeinit: {
+          _s0.cancel()
+          _s1.cancel()
+        })
+        
+      },
+      retainsUpstream: [s0, s1]
+    )
+    
+  }
 
   /// Make Derived that projects combined value from specified source Derived objects.
   ///
