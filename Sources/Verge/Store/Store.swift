@@ -19,6 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import Synchronization
 import Atomics
 import ConcurrencyTaskManager
 import Foundation
@@ -29,15 +30,31 @@ import StateStruct
   import Combine
 #endif
 
+public struct StateWrapper<State: Sendable> : Sendable {
+  
+  public typealias State = State
+  
+  public internal(set) var version: UInt64 = 0
+  public internal(set) var modification: Modification?  
+  public internal(set) var transaction: Transaction = .init()
+  public internal(set) var state: State
+  
+  init(state: State) {
+    self.state = state
+  }
+       
+}
+
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
 public protocol StoreType<State>: Sendable, ObservableObject
 where ObjectWillChangePublisher == ObservableObjectPublisher {
-  associatedtype State
+  associatedtype State: Sendable
   associatedtype Activity: Sendable = Never
 
   func asStore() -> Store<State, Activity>
 
-  var state: Changes<State> { get }
+  var state: State { get }
+  var stateWrapper: StateWrapper<State> { get }
   
   func lock()
   func unlock()
@@ -51,7 +68,7 @@ public enum _StoreEvent<State, Activity>: EventEmitterEventType {
 
   public enum StateEvent {
     case willUpdate
-    case didUpdate(Changes<State>)
+    case didUpdate(StateWrapper<State>)
   }
 
   case state(StateEvent)
@@ -96,8 +113,11 @@ actor Writer {
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
 
-open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>,
-                                             CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable, Hashable
+open class Store<State: Sendable, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>,
+                                             StoreType,
+                                             StoreDriverType, 
+                                             Hashable,
+                                             @unchecked Sendable
 {
   
   // MARK: Equatable
@@ -124,19 +144,19 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
   /// A Publisher to compatible SwiftUI
   public let objectWillChange: ObservableObjectPublisher = .init()
 
-  public var valuePublisher: some Combine.Publisher<Changes<State>, Never> {
+  public var valuePublisher: some Combine.Publisher<State, Never> {
     return _valueSubject
   }
 
   private var middlewares: [AnyStoreMiddleware<State>] = []
 
-  private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>, inout Transaction) -> Void
+  private let externalOperation: @Sendable (inout InoutRef<State>, inout Transaction) -> Void
 
-  private(set) var nonatomicValue: Changes<State>
+  private(set) var nonatomicValue: StateWrapper<State>
 
   private let _lock: StoreOperation
 
-  private let _valueSubject: CurrentValueSubject<Changes<State>, Never>
+  private let _valueSubject: CurrentValueSubject<State, Never>
 
   /**
    Holds subscriptions for sink State and Activity to finish them with its store life-cycle.
@@ -176,23 +196,23 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
     _ line: UInt = #line
   ) {
 
-    self.nonatomicValue = .init(old: nil, new: initialState)
+    self.nonatomicValue = .init(state: initialState)
     self._lock = storeOperation
 
     // TODO: copying value
-    self._valueSubject = .init(nonatomicValue)
+    self._valueSubject = .init(initialState)
 
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
-    self.externalOperation = { @Sendable _, _, _ in }
+    self.externalOperation = { @Sendable _, _ in }
 
     super.init()
   }
 
   public nonisolated init(
     name: String? = nil,
-    initialState: State,
+    initialState: consuming State,
     storeOperation: StoreOperation = .atomic,
     logger: StoreLogger? = nil,
     sanitizer: RuntimeSanitizer? = nil,
@@ -207,31 +227,28 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
       var inoutRef = InoutRef<_>.init(pointer)
       inoutRef.modify { state in
         var transaction = Transaction()
-        State.reduce(modifying: &state, transaction: &transaction, current: .init(old: nil, new: initialState))
+        State.reduce(
+          modifying: &state,
+          transaction: &transaction
+        )
       }
       return inoutRef.wrapped
     }
 
-    self.nonatomicValue = .init(old: nil, new: reduced)
+    self.nonatomicValue = .init(state: reduced)
     self._lock = storeOperation
     // TODO: copying value
-    self._valueSubject = .init(nonatomicValue)
+    self._valueSubject = .init(reduced)
 
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
     
-    self.externalOperation = { @Sendable inoutRef, state, transaction in
-      let intermediate = state.makeNextChanges(
-        with: inoutRef.wrapped,
-        modification: inoutRef.modification,
-        transaction: transaction
-      )
+    self.externalOperation = { @Sendable inoutRef, transaction in
       inoutRef.modify { state in
         State.reduce(
           modifying: &state,
-          transaction: &transaction,
-          current: intermediate
+          transaction: &transaction
         )
       }
     }
@@ -250,9 +267,9 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
           // For: `Publishing changes from within view updates is not allowed, this will cause undefined behavior.`
           self?.objectWillChange.send()
         }
-      case .didUpdate(let state):
-        _valueSubject.send(state)
-        stateDidUpdate(newState: state)
+      case .didUpdate(let stateWrapper):
+        _valueSubject.send(stateWrapper.state)
+        stateDidUpdate(newState: stateWrapper)
       }
     case .activity:
       break
@@ -261,7 +278,7 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
     }
   }
 
-  open func stateDidUpdate(newState: Changes<State>) {
+  open func stateDidUpdate(newState: StateWrapper<State>) {
     
   }
 
@@ -302,7 +319,7 @@ extension Store {
 
   public var store: Store<State, Activity> { self }
 
-  public var objectDidChange: AnyPublisher<Changes<State>, Never> {
+  public var objectDidChange: AnyPublisher<State, Never> {
     valuePublisher.dropFirst().eraseToAnyPublisher()
   }
 
@@ -310,18 +327,20 @@ extension Store {
   ///
   /// It causes locking and unlocking with a bit cost.
   /// It may cause blocking if any other is doing mutation or reading.
-  public var state: Changes<State> {
+  public var state: State {
+    _lock.lock()
+    defer {
+      _lock.unlock()
+    }
+    return nonatomicValue.state
+  }
+  
+  public var stateWrapper: StateWrapper<State> {
     _lock.lock()
     defer {
       _lock.unlock()
     }
     return nonatomicValue
-  }
-
-  /// A current changes state.
-  @available(*, deprecated, renamed: "state")
-  public var changes: Changes<State> {
-    state
   }
 
 }
@@ -389,19 +408,7 @@ extension Store {
 }
 
 extension Store {
-
-  // MARK: - CustomReflectable
-  public var customMirror: Mirror {
-    return Mirror(
-      self,
-      children: KeyValuePairs.init(
-        dictionaryLiteral: ("stateVersion", state.version),
-        ("middlewares", middlewares)
-      ),
-      displayStyle: .class
-    )
-  }
-
+  
   @inline(__always)
   public func asStore() -> Store<State, Activity> {
     self
@@ -503,16 +510,17 @@ extension Store {
     let __sanitizer__ = sanitizer
 
     /** a ciritical session */
-    try _update { (state) -> UpdateResult in
+    try _update { (stateWrapper) -> UpdateResult in
 
       let startedTime = CFAbsoluteTimeGetCurrent()
       defer {
         elapsed = CFAbsoluteTimeGetCurrent() - startedTime
       }
 
-      var modifying = state.primitive
+      var modifying = stateWrapper.state
       
       // TODO: better performant way
+      // causing copy
       if var trackingObject = modifying as? TrackingObject {
         trackingObject.startNewTracking()
         modifying = trackingObject as! State
@@ -545,24 +553,17 @@ extension Store {
          Reduce modifying state with externalOperation
          */
 
-        externalOperation(&inoutRef, state, &transaction)
+        externalOperation(&inoutRef, &transaction)
 
         /**
          Step-3
          Applying by middlewares
          */
         self.middlewares.forEach { middleware in
-
-          let intermediate = state.makeNextChanges(
-            with: stateMutablePointer.pointee,
-            modification: inoutRef.modification,
-            transaction: transaction
-          )
           inoutRef.modify { modifying in          
             middleware.modify(
               modifyingState: &modifying,
-              transaction: &transaction,
-              current: intermediate
+              transaction: &transaction
             )
           }
         }
@@ -570,12 +571,10 @@ extension Store {
         /**
          Make a new state
          */
-        state = state.makeNextChanges(
-          with: stateMutablePointer.pointee,
-          modification: inoutRef.modification,
-          transaction: transaction
-        )
-
+        stateWrapper.state = stateMutablePointer.pointee        
+        stateWrapper.version &+= 1
+        stateWrapper.modification = inoutRef.modification
+              
         if __sanitizer__.isRecursivelyCommitDetectionEnabled {
           if warnings.contains(.reentrancyAnomaly) {
             Log.store.warning(
@@ -645,8 +644,11 @@ extension Store {
     receive: @escaping @Sendable (Changes<State>) -> Void
   ) -> StoreStateSubscription {
 
-    let cancellable = _base_primitive_sinkState(
-      dropsFirst: dropsFirst, queue: queue, receive: receive)
+    let cancellable = _base_primitive_changes_sinkState(
+      dropsFirst: dropsFirst,
+      queue: queue,
+      receive: receive
+    )
 
     let onAction: (StoreStateSubscription, StoreStateSubscription.Action) -> Void = {
       [weak self] object, action in
@@ -659,7 +661,7 @@ extension Store {
       case .suspend:
         object.cancelSubscription()
       case .resume:
-        let newCancellable = _base_primitive_sinkState(
+        let newCancellable = _base_primitive_changes_sinkState(
           dropsFirst: false,  // emits current value from beginning.
           queue: queue,
           receive: receive
@@ -669,28 +671,61 @@ extension Store {
     }
 
     if keepsAliveForSubscribers {
-      return .init(cancellable, storeCancellable: storeLifeCycleCancellable, onAction: onAction)
+      return .init(
+        cancellable,
+        storeCancellable: storeLifeCycleCancellable,
+        onAction: onAction
+      )
         .associate(store: self)  // while subscribing its Store will be alive
     } else {
-      return .init(cancellable, storeCancellable: storeLifeCycleCancellable, onAction: onAction)
+      return .init(
+        cancellable,
+        storeCancellable: storeLifeCycleCancellable,
+        onAction: onAction
+      )
     }
 
   }
-
-  private func _base_primitive_sinkState(
+  
+  /**
+   🟣
+   */
+  private func _base_primitive_changes_sinkState(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
     receive: @escaping @Sendable (Changes<State>) -> Void
   ) -> EventEmitterCancellable {
+      
+    let previousState: VergeConcurrency.UnfairLockAtomic<StateWrapper<State>?> = .init(nil)
+    
+    return _base_primitive_sinkState(queue: queue) { (stateWrapper: StateWrapper<State>) in
+            
+      let changes = Changes<State>.init(
+        previous: previousState.value.map { .init(old: nil, new: $0.state) },
+        innerBox: .init(stateWrapper.state),
+        version: stateWrapper.version,
+        traces: [],
+        modification: stateWrapper.modification,
+        transaction: stateWrapper.transaction
+      )
+
+      previousState.swap(stateWrapper)
+      
+      receive(changes)
+    }
+    
+  }
+
+  /**
+   🟣
+   */
+  func _base_primitive_sinkState(
+    dropsFirst: Bool = false,
+    queue: some TargetQueueType,
+    receive: @escaping @Sendable (StateWrapper<State>) -> Void
+  ) -> EventEmitterCancellable {
 
     let executor = queue.execute
-
-    nonisolated(unsafe)
-      var latestStateWrapper: Changes<State>? = nil
-
-    let __sanitizer__ = sanitizer
-
-    let lock = VergeConcurrency.UnfairLock()
 
     /// Firstly, it registers a closure to make sure that it receives all of the updates, even updates inside the first call.
     /// To get recursive updates that comes from first call receive closure.
@@ -698,89 +733,18 @@ extension Store {
       switch event {
       case .willUpdate:
         break
-      case .didUpdate(let receivedState):
-
-        executor {
-
-          lock.lock()
-
-          var resolvedReceivedState = receivedState
-
-          // To escaping from critical issue
-          if let latestState = latestStateWrapper {
-            if latestState.version <= receivedState.version {
-              /*
-               No issues case:
-               It has received newer version than previous version
-               */
-              latestStateWrapper = receivedState
-            } else {
-
-              /*
-               Serious problem case:
-               Received an older version than the state received before.
-               To recover this case, send latest version state with dropping previous value in order to make `ifChanged` returns always true.
-               */
-              resolvedReceivedState = latestState.droppedPrevious()
-
-              if __sanitizer__.isSanitizerStateReceivingByCorrectOrder {
-
-                sanitizerQueue.async {
-                  __sanitizer__.onDidFindRuntimeError(
-                    .recoveredStateFromReceivingOlderVersion(
-                      latestState: latestState,
-                      receivedState: receivedState
-                    )
-                  )
-
-                  Log.store.warning(
-                    """
-                    ⚠️ [Verge Error] Received older version(\(receivedState.version)) value rather than latest received version(\(latestState.version)).
-                    
-                    The root cause might be from the following things:
-                    - Committed concurrently from multiple threads.
-                    
-                    To solve, make sure to commit in series, for example using DispatchQueue.
-                    
-                    Verge can't use a lock to process serially because the dead-lock will happen in some of the cases.
-                    RxSwift's BehaviorSubject takes the same deal.
-                    
-                    Regarding: Extra commit was dispatched inside sink synchronously
-                    This issue has been fixed by https://github.com/VergeGroup/Verge/pull/222
-                    ---
-                    
-                    Received older version (\(receivedState.version)): (\(String(describing: receivedState.traces)))
-                    
-                    Latest Version (\(latestState.version)): (\(String(describing: latestState.traces)))
-                    
-                    ===
-                    """
-                  )
-                  
-                }
-              }
-            }
-
-          } else {
-            // first item
-            latestStateWrapper = receivedState
-          }
-
-          lock.unlock()
-
-          receive(resolvedReceivedState)
+      case .didUpdate(let receivedStateWrapper):
+        executor {          
+          receive(receivedStateWrapper)     
         }
       }
     }
 
     if !dropsFirst {
 
-      let value = state.droppedPrevious()
+      let value = stateWrapper
 
       executor {
-        lock.lock()
-        latestStateWrapper = value
-        lock.unlock()
         // this closure might contains some mutations.
         // It depends outside usages.
         receive(value)
@@ -887,7 +851,7 @@ extension Store {
   }
 
   @inline(__always)
-  final func _update(_ update: (inout Changes<State>) throws -> UpdateResult) rethrows {
+  final func _update(_ update: (inout StateWrapper<State>) throws -> UpdateResult) rethrows {
 
     let signpost = VergeSignpostTransaction("Storage.update")
     defer {

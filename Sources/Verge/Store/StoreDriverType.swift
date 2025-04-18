@@ -49,12 +49,12 @@ public protocol StoreDriverType<Scope>: ObservableObject where Activity == Targe
 
   associatedtype TargetStore: StoreType
 
-  associatedtype Scope = TargetStore.State
+  associatedtype Scope: Sendable = TargetStore.State
 
   var store: TargetStore { get }
   var scope: WritableKeyPath<TargetStore.State, Scope> & Sendable { get }
 
-  var state: Changes<Scope> { get }
+  var state: Scope { get }
 
   // WORKAROUND: for activityPublisher()
   associatedtype Activity: Sendable = TargetStore.Activity
@@ -76,11 +76,11 @@ extension StoreDriverType {
   }
 
   /// A state that cut out from root-state with the scope key path.
-  public nonisolated var state: Changes<Scope> {
-    store.state.map { $0[keyPath: scope] }
+  public nonisolated var state: Scope {
+    store.state[keyPath: scope]
   }
 
-  public nonisolated var rootState: Changes<TargetStore.State> {
+  public nonisolated var rootState: TargetStore.State {
     return store.state
   }
 }

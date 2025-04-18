@@ -61,44 +61,44 @@ extension PipelineType where Storage == Void {
 public enum Pipelines {
 
   /// KeyPath based pipeline, light weight operation just take value from source.
-  public struct ChangesSelectPassthroughPipeline<Source, Output>: PipelineType {
+  public struct ChangesSelectPassthroughPipeline<Source: Sendable, Output>: PipelineType {
 
     public typealias Storage = Void
 
-    public typealias Input = Changes<Source>
+    public typealias Input = StateWrapper<Source>
 
-    public let selector: @Sendable (borrowing Input.Value) -> Output
+    public let selector: @Sendable (borrowing Input.State) -> Output
 
     public init(
-      selector: @escaping @Sendable (borrowing Input.Value) -> Output
+      selector: @escaping @Sendable (borrowing Input.State) -> Output
     ) {
       self.selector = selector
     }
 
     public func yieldContinuously(_ input: Input, storage: inout Storage) -> ContinuousResult<Output> {
 
-      let target = input._read(perform: selector)
+      let target = selector(input.state)
 
       return .new(consume target)
 
     }
 
     public func yield(_ input: Input, storage: inout Storage) -> Output {
-      input._read(perform: selector)
+      selector(input.state)
     }
 
   }
 
   /// KeyPath based pipeline, light weight operation just take value from source.
-  public struct ChangesSelectPipeline<Source, Output: Equatable>: PipelineType {
+  public struct ChangesSelectPipeline<Source: Sendable, Output: Equatable>: PipelineType {
 
-    public typealias Input = Changes<Source>
+    public typealias Input = StateWrapper<Source>
 
-    public let selector: @Sendable (borrowing Input.Value) -> Output
+    public let selector: @Sendable (borrowing Input.State) -> Output
     public let additionalDropCondition: (@Sendable (Input) -> Bool)?
 
     public init(
-      selector: @escaping @Sendable (borrowing Input.Value) -> Output,
+      selector: @escaping @Sendable (borrowing Input.State) -> Output,
       additionalDropCondition: (@Sendable (Input) -> Bool)?
     ) {
       self.selector = selector
@@ -147,15 +147,15 @@ public enum Pipelines {
   }
   
   /// Closure based pipeline,
-  public struct ChangesMapPipeline<Source, Intermediate, Output: Equatable>: PipelineType {
+  public struct ChangesMapPipeline<Source: Sendable, Intermediate, Output: Equatable>: PipelineType {
 
     public typealias Storage = Void
 
-    public typealias Input = Changes<Source>
+    public typealias Input = StateWrapper<Source>
 
     // MARK: - Properties
 
-    public let intermediate: @Sendable (Input.Value) -> PipelineIntermediate<Intermediate>
+    public let intermediate: @Sendable (Input.State) -> PipelineIntermediate<Intermediate>
     public let transform: @Sendable (Intermediate) -> Output
     public let additionalDropCondition: (@Sendable (Input) -> Bool)?
 

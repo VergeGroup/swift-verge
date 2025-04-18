@@ -22,7 +22,7 @@
 /// A store that optimized for only using in UI thread.
 /// No using locks.
 @MainActor
-public final class UIStateStore<State, Activity: Sendable>: Store<State, Activity>, @unchecked Sendable {
+public final class UIStateStore<State: Sendable, Activity: Sendable>: Store<State, Activity>, @unchecked Sendable {
 
   public nonisolated init(
     initialState: State,
@@ -39,7 +39,7 @@ public final class UIStateStore<State, Activity: Sendable>: Store<State, Activit
 
 @propertyWrapper
 @MainActor
-public struct UIState<State>: Sendable {
+public struct UIState<State: Sendable>: Sendable {
 
   private let store: UIStateStore<State, Never>
 
@@ -50,7 +50,7 @@ public struct UIState<State>: Sendable {
   // MARK: - PropertyWrapper
 
   public var wrappedValue: State {
-    get { store.state.primitive }
+    get { store.state }
     nonmutating set {
       store.commit {
         $0 = newValue
@@ -65,7 +65,7 @@ public struct UIState<State>: Sendable {
 }
 
 @propertyWrapper
-public struct AtomicState<State>: Sendable {
+public struct AtomicState<State: Sendable>: Sendable {
   
   private let store: Store<State, Never>
   
@@ -76,7 +76,7 @@ public struct AtomicState<State>: Sendable {
   // MARK: - PropertyWrapper
   
   public var wrappedValue: State {
-    get { store.state.primitive }
+    get { store.state }
     nonmutating set {
       store.commit {
         $0 = newValue

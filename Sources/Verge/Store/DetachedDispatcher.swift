@@ -19,7 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-public final class DetachedDispatcher<State, Activity: Sendable, Scope>: StoreDriverType
+public final class DetachedDispatcher<State: Sendable, Activity: Sendable, Scope: Sendable>: StoreDriverType
 {
 
   public let store: Store<State, Activity>

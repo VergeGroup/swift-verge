@@ -58,9 +58,9 @@ public enum NormalizedStorageError: Swift.Error {
  The entrypoint to make Derived object from the storage
  */
 public struct NormalizedStoragePath<
-  Store: DerivedMaking & AnyObject,
+  Store: StoreDriverType,
   _StorageSelector: StorageSelector
->: ~Copyable where Store.State == _StorageSelector.Source {
+>: ~Copyable where Store.TargetStore.State == _StorageSelector.Source {
   
   public typealias Storage = _StorageSelector.Storage
   unowned let store: Store

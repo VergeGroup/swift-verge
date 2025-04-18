@@ -35,7 +35,6 @@ public protocol StateType {
   @Sendable
   static func reduce(
     modifying: inout Self,
-    transaction: inout Transaction,
-    current: Changes<Self>
+    transaction: inout Transaction
   )
 }

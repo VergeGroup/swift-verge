@@ -25,9 +25,9 @@ extension StoreDriverType {
 
   /**
    Creates a derived state object from a given pipeline.
-
+   
    This function can be used to create a Derived object that contains only a selected part of the state. The selected part is determined by a pipeline that is passed in as an argument.
-
+   
    - Parameters:
    - pipeline: The pipeline object that selects a part of the state to be passed to other components.
    - queue: The target queue for dispatching events.
@@ -35,71 +35,36 @@ extension StoreDriverType {
   public func derived<Pipeline: PipelineType>(
     _ pipeline: Pipeline,
     queue: some MainActorTargetQueueType
-  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<TargetStore.State> {
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == StateWrapper<TargetStore.State>, Pipeline.Input : Sendable {
     self.derived(pipeline, queue: Queues.MainActor(queue))
   }
-
+  
   /**
    Creates a derived state object from a given pipeline.
-
+   
    This function can be used to create a Derived object that contains only a selected part of the state. The selected part is determined by a pipeline that is passed in as an argument.
-
+   
    - Parameters:
-     - pipeline: The pipeline object that selects a part of the state to be passed to other components.
-     - queue: The target queue for dispatching events.
+   - pipeline: The pipeline object that selects a part of the state to be passed to other components.
+   - queue: The target queue for dispatching events.
    */
   public func derived<Pipeline: PipelineType>(
     _ pipeline: Pipeline,
     queue: some TargetQueueType = .passthrough
-  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<TargetStore.State> {
-
-    vergeSignpostEvent("Store.derived.new", label: "\(type(of: TargetStore.State.self)) -> \(type(of: Pipeline.Output.self))")
-
-    let derived = Derived<Pipeline.Output>(
-      get: pipeline,
-      set: { _ in /* no operation as read only */},
-      initialUpstreamState: store.state,
-      subscribeUpstreamState: { callback in
-        store.asStore()._primitive_sinkState(
-          dropsFirst: true,
-          queue: queue,
-          receive: callback
-        )
-      },
-      retainsUpstream: nil
-    )
-
-    store.asStore().onDeinit { [weak derived] in
-      derived?.invalidate()
-    }
-
-    return derived
-  }
-
-  public func _derived<Pipeline: PipelineType>(
-    _ pipeline: Pipeline,
-    queue: some MainActorTargetQueueType
-  ) -> Derived<Pipeline.Output> where Pipeline.Input == TargetStore.State {
-    self._derived(pipeline, queue: Queues.MainActor(queue))
-  }
-  
-  public func _derived<Pipeline: PipelineType>(
-    _ pipeline: Pipeline,
-    queue: some TargetQueueType = .passthrough
-  ) -> Derived<Pipeline.Output> where Pipeline.Input == TargetStore.State {
+  ) -> Derived<Pipeline.Output> where Pipeline.Input == StateWrapper<TargetStore.State>, Pipeline.Input : Sendable {
     
     vergeSignpostEvent("Store.derived.new", label: "\(type(of: TargetStore.State.self)) -> \(type(of: Pipeline.Output.self))")
     
     let derived = Derived<Pipeline.Output>(
       get: pipeline,
       set: { _ in /* no operation as read only */},
-      initialUpstreamState: store.state.primitive,
+      initialUpstreamState: store.stateWrapper,
       subscribeUpstreamState: { callback in
-        store.asStore()._primitive_sinkState(
+        store.asStore()._base_primitive_sinkState(
           dropsFirst: true,
           queue: queue,
           receive: { state in
-            callback(state.primitive)
+            callback(state)
           }
         )
       },

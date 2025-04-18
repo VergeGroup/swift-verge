@@ -38,9 +38,9 @@ extension Transaction {
 
 }
 
-private struct BindingDerivedPipeline<Source, Output, BackingPipeline: PipelineType>: PipelineType where BackingPipeline.Input == Changes<Source>, BackingPipeline.Output == Output {
+private struct BindingDerivedPipeline<Source, Output, BackingPipeline: PipelineType>: PipelineType where BackingPipeline.Input == StateWrapper<Source>, BackingPipeline.Output == Output {
 
-  typealias Input = Changes<Source>
+  typealias Input = StateWrapper<Source>
 
   private let backingPipeline: BackingPipeline
 
@@ -52,17 +52,40 @@ private struct BindingDerivedPipeline<Source, Output, BackingPipeline: PipelineT
     backingPipeline.makeStorage()
   }
 
-  func yield(_ input: Changes<Source>, storage: inout Storage) -> Output {
+  func yield(_ input: Input, storage: inout Storage) -> Output {
     backingPipeline.yield(input, storage: &storage)
   }
 
-  func yieldContinuously(_ input: Changes<Source>, storage: inout Storage) -> ContinuousResult<Output> {
-    if input._transaction.isFromBindingDerived {
+  func yieldContinuously(_ input: Input, storage: inout Storage) -> ContinuousResult<Output> {
+    if input.transaction.isFromBindingDerived {
       return .noUpdates
     }
     return backingPipeline.yieldContinuously(input, storage: &storage)
   }
 
+}
+
+/// An adapter pipeline to bridge StateWrapper to Changes for select pipelines
+private struct StateWrapperToChangesSelectPipeline<Source, Select: Equatable>: PipelineType {
+  typealias Input = StateWrapper<Source>
+  typealias Output = Select
+  
+  private let selector: KeyPath<Source, Select> & Sendable
+  
+  init(selector: KeyPath<Source, Select> & Sendable) {
+    self.selector = selector
+  }
+  
+  func makeStorage() -> Void { () }
+  
+  func yield(_ input: Input, storage: inout Void) -> Output {
+    input.state[keyPath: selector]
+  }
+  
+  func yieldContinuously(_ input: Input, storage: inout Void) -> ContinuousResult<Output> {
+    // 簡単な実装として、常に新しい値を返します
+    return .new(input.state[keyPath: selector])
+  }
 }
 
 extension StoreDriverType {
@@ -84,7 +107,7 @@ extension StoreDriverType {
     get pipeline: Pipeline,
     set: sending @escaping @Sendable (inout TargetStore.State, Pipeline.Output) -> Void,
     queue: some TargetQueueType = .passthrough
-  ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == Changes<TargetStore.State> {
+  ) -> BindingDerived<Pipeline.Output> where Pipeline.Input == StateWrapper<TargetStore.State> {
 
     let derived = BindingDerived<Pipeline.Output>.init(
       get: BindingDerivedPipeline(backingPipeline: pipeline),
@@ -95,9 +118,9 @@ extension StoreDriverType {
             set(&inoutRef, state)
           }
       },
-      initialUpstreamState: store.asStore().state,
+      initialUpstreamState: store.asStore().stateWrapper,
       subscribeUpstreamState: { callback in
-        store.asStore()._primitive_sinkState(
+        store.asStore()._base_primitive_sinkState(
           dropsFirst: true,
           queue: queue,
           receive: callback
@@ -124,10 +147,11 @@ extension StoreDriverType {
 
     bindingDerived(
       name, file, function, line,
-      get: .select(select),
+      get: StateWrapperToChangesSelectPipeline(selector: select),
       set: { state, newValue in
         state[keyPath: select] = newValue
-      }
+      },
+      queue: queue
     )
   }
   
@@ -142,10 +166,11 @@ extension StoreDriverType {
     
     bindingDerived(
       name, file, function, line,
-      get: .select(select),
+      get: StateWrapperToChangesSelectPipeline(selector: select),
       set: { state, newValue in
         state[keyPath: select] = newValue
-      }
+      },
+      queue: queue
     )
   }
 

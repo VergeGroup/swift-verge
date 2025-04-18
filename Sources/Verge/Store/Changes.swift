@@ -147,7 +147,7 @@ public final class Changes<Value>: @unchecked Sendable, ChangesType, Equatable, 
     )
   }
 
-  private init(
+  init(
     previous: Changes<Value>?,
     innerBox: InnerBox,
     version: UInt64,

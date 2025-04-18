@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 
 #if canImport(Combine)
-import Combine
+  import Combine
 #endif
 
 public protocol DerivedType<State>: StoreType {
@@ -29,43 +29,22 @@ public protocol DerivedType<State>: StoreType {
   func asDerived() -> Derived<Value>
 }
 
-public protocol DerivedMaking {
-
-  associatedtype State
-
-  // TODO: Remove
-  var state: Changes<State> { get }
-
-  func derived<Pipeline: PipelineType>(
-    _ pipeline: Pipeline,
-    queue: some TargetQueueType
-  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<State>
-
-  func _derived<Pipeline: PipelineType>(
-    _ pipeline: Pipeline,
-    queue: some TargetQueueType
-  ) -> Derived<Pipeline.Output> where Pipeline.Input == State
-
-}
-
-/**
- A container object that provides the current value and changes from the source Store.
-
- This object does not know what the value managed by.
- In most cases, `Store` will be running underlying.
-
- Derived's functions are:
- - Computes the derived data from the state tree
- - Emit the updated data with updating Store
- - Supports subscribe the data
- - Supports Memoization
-
- Conforms to Equatable that compares pointer personality.
- */
-public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendable {
+/// A container object that provides the current value and changes from the source Store.
+///
+/// This object does not know what the value managed by.
+/// In most cases, `Store` will be running underlying.
+///
+/// Derived's functions are:
+/// - Computes the derived data from the state tree
+/// - Emit the updated data with updating Store
+/// - Supports subscribe the data
+/// - Supports Memoization
+///
+/// Conforms to Equatable that compares pointer personality.
+public class Derived<Value: Sendable>: Store<Value, Never>, DerivedType, @unchecked Sendable {
 
   public override var keepsAliveForSubscribers: Bool {
-    true    
+    true
   }
 
   /// Returns Derived object that provides constant value.
@@ -77,7 +56,7 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
   }
 
   fileprivate var _set: ((Value) -> Void)?
-  
+
   private let upstreamSubscription: (any Cancellable)?
   private let retainsUpstream: Any?
   private var associatedObjects: ContiguousArray<AnyObject> = .init()
@@ -113,12 +92,13 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
     retainsUpstream: Any?
   ) where Pipeline.Input == UpstreamState, Value == Pipeline.Output {
 
-    let pipelineStorage: VergeConcurrency.UnfairLockAtomic<Pipeline.Storage> = .init(pipeline.makeStorage())
+    let pipelineStorage: VergeConcurrency.UnfairLockAtomic<Pipeline.Storage> = .init(
+      pipeline.makeStorage())
 
-    nonisolated(unsafe)weak var indirectSelf: Derived<Value>?
+    nonisolated(unsafe) weak var indirectSelf: Derived<Value>?
 
     let s = subscribeUpstreamState { value in
-      let update = pipelineStorage.modify { storage in        
+      let update = pipelineStorage.modify { storage in
         pipeline.yieldContinuously(value, storage: &storage)
       }
       switch update {
@@ -137,13 +117,13 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
 
       }
     }
-        
+
     self.retainsUpstream = retainsUpstream
     self.upstreamSubscription = s
     self._set = set
     super.init(
       name: name,
-      initialState: pipelineStorage.modify { storage in        
+      initialState: pipelineStorage.modify { storage in
         pipeline.yield(
           initialUpstreamState,
           storage: &storage
@@ -158,9 +138,9 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
   }
 
   deinit {
-    
+
   }
-  
+
   // MARK: - Functions
 
   override func performInvalidation() {
@@ -168,22 +148,22 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
     self.upstreamSubscription?.cancel()
   }
 
-  public final override func stateDidUpdate(newState: Changes<Value>) {
+  public final override func stateDidUpdate(newState: StateWrapper<Value>) {
     super.stateDidUpdate(newState: newState)
     // projects this update into upstream state
-    if let _set, newState._transaction.isDerivedFromUpstream == false {
-      _set(newState.primitive)
+    if let _set, newState.transaction.isDerivedFromUpstream == false {
+      _set(newState.state)
     }
   }
-  
+
   public func asDerived() -> Derived<Value> {
     self
   }
-  
+
   public func associate(_ object: AnyObject) {
     self.associatedObjects.append(object)
   }
-  
+
   private func _combined_sinkValue(
     dropsFirst: Bool = false,
     queue: some TargetQueueType,
@@ -195,31 +175,10 @@ public class Derived<Value>: Store<Value, Never>, DerivedType, @unchecked Sendab
       receive: receive
     )
   }
-     
-  /// Make a new Derived object that projects the specified shape of the object from the object itself projects.
-  ///
-  /// Drops output value if no changes with Equatable
-  ///
-  /// - Parameters:
-  ///   - queue: a queue to receive object
-  ///   - pipeline:
-  /// - Returns: Derived object that cached depends on the specified parameters
-  /// - Attention:
-  ///     As possible use the same pipeline instance and queue in order to enable caching.
-  ///     Returns the Derived that previously created with that combination.
-  @available(*, deprecated, renamed: "derived")
-  public func chain<Pipeline: PipelineType>(
-    _ pipeline: Pipeline,
-    queue: some TargetQueueType = .passthrough
-  ) -> Derived<Pipeline.Output> where Pipeline.Input == Changes<Value> {
-    
-    return derived(pipeline, queue: queue)
-  }
-  
 }
 
-extension Derived where Value : Equatable {
-  
+extension Derived where Value: Equatable {
+
   /// Subscribe the state changes
   ///
   /// Receives a value only changed
@@ -253,12 +212,12 @@ extension Derived where Value : Equatable {
       }
     }
   }
-  
+
 }
 
 // `Value == Never` eliminates specializing requirements.
 extension Derived where Value == Never {
-    
+
   /// Make Derived that projects combined value from specified source Derived objects.
   ///
   /// It retains specified Derived objects as data source until itself deallocated
@@ -272,17 +231,17 @@ extension Derived where Value == Never {
     _ s1: Derived<S1>,
     queue: some TargetQueueType = .passthrough
   ) -> Derived<Edge<(Changes<S0>, Changes<S1>)>> {
-        
+
     let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.state, s1.state)))
-    
+
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
-        
+
     return Derived<Edge<(Changes<S0>, Changes<S1>)>>(
       get: .select(\.self),
       set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
-                
+
         let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             let newValue = value.makeNextChanges(
@@ -303,7 +262,7 @@ extension Derived where Value == Never {
               modification: nil,
               transaction: .init()
             )
-            
+
             value = newValue
             callback(newValue)
           }
@@ -313,13 +272,13 @@ extension Derived where Value == Never {
           _s0.cancel()
           _s1.cancel()
         })
-        
-    },
+
+      },
       retainsUpstream: [s0, s1]
     )
-    
+
   }
-    
+
   /// Make Derived that projects combined value from specified source Derived objects.
   ///
   /// It retains specified Derived objects as data source until itself deallocated
@@ -335,17 +294,17 @@ extension Derived where Value == Never {
     _ s2: Derived<S2>,
     queue: some TargetQueueType = .passthrough
   ) -> Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>> {
-        
+
     let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.state, s1.state, s2.state)))
-    
+
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
-    
+
     return Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>>(
       get: .select(\.self),
       set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
-        
+
         let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
           buffer.modify { value in
             let newValue = value.makeNextChanges(
@@ -357,10 +316,10 @@ extension Derived where Value == Never {
             callback(newValue)
           }
         }
-        
+
         let _s1 = s1._combined_sinkValue(dropsFirst: true, queue: queue) { (s1) in
           buffer.modify { value in
-            
+
             let newValue = value.makeNextChanges(
               with: value.primitive.next((value.primitive.0, s1, value.primitive.2)),
               modification: nil,
@@ -370,10 +329,10 @@ extension Derived where Value == Never {
             callback(newValue)
           }
         }
-        
+
         let _s2 = s2._combined_sinkValue(dropsFirst: true, queue: queue) { (s2) in
           buffer.modify { value in
-            
+
             let newValue = value.makeNextChanges(
               with: value.primitive.next((value.primitive.0, value.primitive.1, s2)),
               modification: nil,
@@ -383,38 +342,36 @@ extension Derived where Value == Never {
             callback(newValue)
           }
         }
-        
+
         return VergeAnyCancellable(onDeinit: {
           _s0.cancel()
           _s1.cancel()
           _s2.cancel()
         })
-        
+
       },
       retainsUpstream: [s0, s1, s2]
     )
-    
+
   }
-  
+
 }
 
-/**
- A Derived object that can set a value.
- By setting value, it forwards that value underlying the state store that providing value.
- This object does not know what the value managed by.
- In most cases, `Store` will be running underlying.
- */
+/// A Derived object that can set a value.
+/// By setting value, it forwards that value underlying the state store that providing value.
+/// This object does not know what the value managed by.
+/// In most cases, `Store` will be running underlying.
 @propertyWrapper
-public final class BindingDerived<Value>: Derived<Value>, @unchecked Sendable {
-  
+public final class BindingDerived<Value: Sendable>: Derived<Value>, @unchecked Sendable {
+
   /**
    Returns a derived value that created by get-pipeline.
    And can modify the value.
-   
+
    - Warning: It does not always return the latest value after set a new value. It depends the specified target-queue.
    */
   public var wrappedValue: Value {
-    get { state.primitive }
+    get { state }
     set {
       commit {
         $0 = newValue
@@ -428,15 +385,15 @@ public final class BindingDerived<Value>: Derived<Value>, @unchecked Sendable {
 
 }
 
-fileprivate enum DerivedFromUpstream: TransactionKey {
+private enum DerivedFromUpstream: TransactionKey {
   static var defaultValue: Bool { false }
 }
 
 extension Transaction {
 
-    var isDerivedFromUpstream: Bool {
-      get { self[DerivedFromUpstream.self] }
-      set { self[DerivedFromUpstream.self] = newValue }
-    }
+  var isDerivedFromUpstream: Bool {
+    get { self[DerivedFromUpstream.self] }
+    set { self[DerivedFromUpstream.self] = newValue }
+  }
 
 }

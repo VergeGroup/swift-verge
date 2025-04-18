@@ -42,7 +42,7 @@ extension StoreDriverType where Self : Sendable {
   public func binding<T>(_ keyPath: WritableKeyPath<Scope, T> & Sendable) -> SwiftUI.Binding<T> {    
     .init(
       get: { [self /* source store lives until binding released */] in
-        return self.state.primitive[keyPath: keyPath]
+        return self.state[keyPath: keyPath]
       }, set: { [weak self] value in    
         self?.commit {
           $0[keyPath: keyPath] = value
@@ -68,7 +68,7 @@ extension StoreDriverType {
   public nonisolated func binding<T>(_ keyPath: WritableKeyPath<Scope, T>) -> SwiftUI.Binding<T> {    
     .init(
       get: { [self /* source store lives until binding released */] in
-        return self.state.primitive[keyPath: keyPath]
+        return self.state[keyPath: keyPath]
       }, set: { [weak self, keyPath] value in    
         self?.commit { [keyPath] in
           $0[keyPath: keyPath] = value

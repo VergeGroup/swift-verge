@@ -26,17 +26,24 @@ public protocol StoreMiddlewareType<State>: Sendable {
   associatedtype State
 
   @Sendable
-  func modify(modifyingState: inout State, transaction: inout Transaction, current: Changes<State>)
+  func modify(
+    modifyingState: inout State,
+    transaction: inout Transaction
+  )
 
 }
 
 public struct AnyStoreMiddleware<State>: StoreMiddlewareType, Sendable {
 
-  private let closure: @Sendable (_ modifyingState: inout State, _ transaction: inout Transaction, _ current: Changes<State>) -> Void
+  private let closure: @Sendable (
+    _ modifyingState: inout State,
+    _ transaction: inout Transaction
+  ) -> Void
 
   init(
     modify: @escaping @Sendable (
-      _ modifyingState: inout State, _ transaction: inout Transaction, _ current: Changes<State>
+      _ modifyingState: inout State,
+      _ transaction: inout Transaction
     )
       -> Void
   ) {
@@ -44,9 +51,13 @@ public struct AnyStoreMiddleware<State>: StoreMiddlewareType, Sendable {
   }
 
   public func modify(
-    modifyingState: inout State, transaction: inout Transaction, current: Changes<State>
+    modifyingState: inout State,
+    transaction: inout Transaction
   ) {
-    self.closure(&modifyingState, &transaction, current)
+    self.closure(
+      &modifyingState,
+      &transaction
+    )
   }
 
 }
@@ -58,7 +69,8 @@ extension StoreMiddlewareType {
    */
   public static func modify<State>(
     modify: @escaping @Sendable (
-      _ modifyingState: inout State, _ transaction: inout Transaction, _ current: Changes<State>
+      _ modifyingState: inout State,
+      _ transaction: inout Transaction
     )
       -> Void
   ) -> Self where Self == AnyStoreMiddleware<State> {

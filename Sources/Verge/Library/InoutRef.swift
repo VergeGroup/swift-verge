@@ -22,7 +22,7 @@
 import Foundation
 import StateStruct
 
-public enum Modification {
+public enum Modification: Sendable {
   case graph(PropertyNode)
   case indeterminate
 }
