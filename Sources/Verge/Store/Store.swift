@@ -30,8 +30,7 @@ import StateStruct
 #endif
 
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
-public protocol StoreType<State>: Sendable, ObservableObject
-where ObjectWillChangePublisher == ObservableObjectPublisher {
+public protocol StoreType<State>: AnyObject, Sendable {
   associatedtype State
   associatedtype Activity: Sendable = Never
 
@@ -121,8 +120,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
   public let logger: StoreLogger?
 
   public let sanitizer: RuntimeSanitizer
-  /// A Publisher to compatible SwiftUI
-  public let objectWillChange: ObservableObjectPublisher = .init()
 
   public var valuePublisher: some Combine.Publisher<Changes<State>, Never> {
     return _valueSubject
@@ -246,10 +243,7 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
     case .state(let stateEvent):
       switch stateEvent {
       case .willUpdate:
-        DispatchQueue.main.async { [weak self] in
-          // For: `Publishing changes from within view updates is not allowed, this will cause undefined behavior.`
-          self?.objectWillChange.send()
-        }
+        break
       case .didUpdate(let state):
         _valueSubject.send(state)
         stateDidUpdate(newState: state)
@@ -302,10 +296,6 @@ extension Store {
 
   public var store: Store<State, Activity> { self }
 
-  public var objectDidChange: AnyPublisher<Changes<State>, Never> {
-    valuePublisher.dropFirst().eraseToAnyPublisher()
-  }
-
   /// Returns a current state with thread-safety.
   ///
   /// It causes locking and unlocking with a bit cost.
@@ -316,12 +306,6 @@ extension Store {
       _lock.unlock()
     }
     return nonatomicValue
-  }
-
-  /// A current changes state.
-  @available(*, deprecated, renamed: "state")
-  public var changes: Changes<State> {
-    state
   }
 
 }

@@ -47,7 +47,6 @@ enum Preview_StoreObject: PreviewProvider {
 
     Group {
       Container()
-      Observe()
     }
 
   }
@@ -68,26 +67,6 @@ enum Preview_StoreObject: PreviewProvider {
 
     }
 
-  }
-
-  struct Observe: View {
-
-    @StateObject var store: ViewModel = .init()
-
-    var body: some View {
-      let _ = print("render")
-
-      VStack {
-        Text("here is child")
-        Text(store.state.count.description)
-        Button("up") {
-          store.increment()
-        }
-        Button("up dummy") {
-          store.incrementDummy()
-        }
-      }
-    }
   }
 
   struct Child: View {
