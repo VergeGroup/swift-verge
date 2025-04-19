@@ -33,7 +33,7 @@ struct StoreMiddlewareTests {
       $0.name = "A"
     }
 
-    if case .graph(let graph) = store.state.modification {
+    if case .graph(let graph) = store.stateWrapper.modification {
       graph.prettyPrint()
       #expect(
         graph.prettyPrint() == """

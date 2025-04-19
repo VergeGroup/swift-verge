@@ -199,30 +199,26 @@ final class StoreSinkSubscriptionTests: XCTestCase {
 
     weak var weakSlice = slice
 
-    XCTAssertEqual(slice.state.primitive, 0)
-    XCTAssertEqual(slice.state.version, 0)
-    XCTAssertEqual(slice.state.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state, 0)
+    XCTAssertEqual(slice.stateWrapper.version, 0)
     XCTAssertNotNil(weakBaseSlice)
 
     wrapper.increment()
 
-    XCTAssertEqual(slice.state.primitive, 1)
-    XCTAssertEqual(slice.state.version, 1)
-    XCTAssertEqual(slice.state.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state, 1)
+    XCTAssertEqual(slice.stateWrapper.version, 1)
     XCTAssertNotNil(weakBaseSlice)
 
     wrapper.empty()
 
-    XCTAssertEqual(slice.state.primitive, 1)
-    XCTAssertEqual(slice.state.version, 1) // with memoized, version not changed
-    XCTAssertEqual(slice.state.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state, 1)
+    XCTAssertEqual(slice.stateWrapper.version, 1) // with memoized, version not changed
     XCTAssertNotNil(weakBaseSlice)
 
     wrapper.increment()
 
-    XCTAssertEqual(slice.state.primitive, 2)
-    XCTAssertEqual(slice.state.version, 2)
-    XCTAssertEqual(slice.state.hasChanges(\.self), true)
+    XCTAssertEqual(slice.state, 2)
+    XCTAssertEqual(slice.stateWrapper.version, 2)
     XCTAssertNotNil(weakBaseSlice)
 
     slice = nil

@@ -1,116 +1,46 @@
 import XCTest
-import Verge
+@testable import Verge
 
 final class PipelineTests: XCTestCase {
   
   func test_MapPipeline() {
-        
-    let mapCounter = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
-    
-    let pipeline = Pipelines.ChangesMapPipeline<DemoState, _, Int>(
-      intermediate: {
-        $0.count
-      },
-      transform: {
-        mapCounter.modify { 
-          $0 += 1
-        }
-        return $0
-      },
-      additionalDropCondition: nil
-    )
-    
-    var storage: Void = ()
+            
+    let pipeline = Pipelines.ChangesSelectPipeline<DemoState, Int>.init(selector: \.count, additionalDropCondition: nil)   
+            
+    var storage: Int? = nil
     
     do {
-      let s = DemoState()
+      _ = pipeline.yield(StateWrapper<DemoState>.init(state: .init()), storage: &storage)
+    }
+    
+    XCTAssert(storage == 0)
+    
+    do {
             
       XCTAssertEqual(
         pipeline.yieldContinuously(
-          Changes<DemoState>.init(
-            old: s,
-            new: s
-          ),
+          StateWrapper<DemoState>.init(state: .init()),          
           storage: &storage
         ),
         .noUpdates
       )
       
-      XCTAssertEqual(mapCounter.value, 0)
     }
     
     do {
       
       XCTAssertEqual(
         pipeline.yieldContinuously(
-          Changes<DemoState>.init(
-            old: .init(name: "A", count: 1),
-            new: .init(name: "A", count: 2)
-          ),
+          StateWrapper<DemoState>.init(state: .init(name: "", count: 2)),          
           storage: &storage
         ),
         .new(2)
       )
-      
-      XCTAssertEqual(mapCounter.value , 2)
-      
+            
     }
     
   }
- 
-  func test_MapPipeline_Intermediate() {
-    
-    let mapCounter = VergeConcurrency.UnfairLockAtomic<Int>.init(0)
-    
-    let pipeline = Pipelines.ChangesMapPipeline<DemoState, _, _>(
-      intermediate: {
-        $0.name
-      },
-      transform: {
-        mapCounter.modify { $0 += 1 }
-        return $0.count
-      },
-      additionalDropCondition: nil
-    )
-    
-    var storage: Void = ()
-    
-    do {
-      let s = DemoState()
-      
-      XCTAssertEqual(
-        pipeline.yieldContinuously(
-          Changes<DemoState>.init(
-            old: s,
-            new: s
-          ),
-          storage: &storage
-        ),
-        .noUpdates
-      )
-      
-      XCTAssertEqual(mapCounter.value, 0)
-    }
-    
-    do {
-      
-      XCTAssertEqual(
-        pipeline.yieldContinuously(
-          Changes<DemoState>.init(
-            old: .init(name: "A", count: 1),
-            new: .init(name: "A", count: 2)
-          ),
-          storage: &storage
-        ),
-        .noUpdates
-      )
-      
-      XCTAssertEqual(mapCounter.value, 0)
-      
-    }
-        
-  }
-  
+   
   func testSelect() {
     
     do {

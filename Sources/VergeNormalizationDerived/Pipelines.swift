@@ -5,7 +5,7 @@ struct SingleEntityPipeline<
   _StorageSelector: StorageSelector,
   _TableSelector: TableSelector
 >: PipelineType
-where _StorageSelector.Storage == _TableSelector.Storage {
+where _StorageSelector.Storage == _TableSelector.Storage, _StorageSelector.Source : Sendable {
   
   struct Storage {
     var tableVersion: UInt64
@@ -13,7 +13,7 @@ where _StorageSelector.Storage == _TableSelector.Storage {
   }
   
   typealias Entity = _TableSelector.Table.Entity
-  typealias Input = _StorageSelector.Source
+  typealias Input = StateWrapper<_StorageSelector.Source>
   typealias EntityStorage = _StorageSelector.Storage
   typealias Output = EntityWrapper<Entity>
   
@@ -34,7 +34,7 @@ where _StorageSelector.Storage == _TableSelector.Storage {
   
   func yield(_ input: consuming Input, storage: inout Storage) -> Output {
     
-    let table = selector.table(source: input)
+    let table = selector.table(source: input.state)
     storage.tableVersion = table.updatedMarker.value
     
     let result = table.find(by: entityID)
@@ -46,7 +46,7 @@ where _StorageSelector.Storage == _TableSelector.Storage {
   
   func yieldContinuously(_ input: Input, storage: inout Storage) -> Verge.ContinuousResult<Output> {
     
-    let table = selector.table(source: input)
+    let table = selector.table(source: input.state)
     
     guard storage.tableVersion != table.updatedMarker.value else {
       return .noUpdates
@@ -72,7 +72,7 @@ struct NonNullSingleEntityPipeline<
   _StorageSelector: StorageSelector,
   _TableSelector: TableSelector
 >: PipelineType
-where _StorageSelector.Storage == _TableSelector.Storage {
+where _StorageSelector.Storage == _TableSelector.Storage, _StorageSelector.Source : Sendable {
   
   struct Storage {
     var tableVersion: UInt64
@@ -80,7 +80,7 @@ where _StorageSelector.Storage == _TableSelector.Storage {
   }
   
   typealias Entity = _TableSelector.Table.Entity
-  typealias Input = _StorageSelector.Source
+  typealias Input = StateWrapper<_StorageSelector.Source>
   typealias EntityStorage = _StorageSelector.Storage
   typealias Output = NonNullEntityWrapper<Entity>
   
@@ -106,7 +106,7 @@ where _StorageSelector.Storage == _TableSelector.Storage {
   
   func yield(_ input: consuming Input, storage: inout Storage) -> Output {
     
-    let table = selector.table(source: input)
+    let table = selector.table(source: input.state)
     storage.tableVersion = table.updatedMarker.value
     
     let result = table
@@ -124,7 +124,7 @@ where _StorageSelector.Storage == _TableSelector.Storage {
   
   func yieldContinuously(_ input: Input, storage: inout Storage) -> Verge.ContinuousResult<Output> {
     
-    let table = selector.table(source: input)
+    let table = selector.table(source: input.state)
     
     guard storage.tableVersion != table.updatedMarker.value else {
       return .noUpdates
@@ -154,13 +154,13 @@ where _StorageSelector.Storage == _TableSelector.Storage {
 struct QueryPipeline<
   _StorageSelector: StorageSelector,
   Output
->: PipelineType, Sendable {
+>: PipelineType, Sendable where _StorageSelector.Source : Sendable {
   
   struct Storage {
     var storageVersion: UInt64
   }
   
-  typealias Input = _StorageSelector.Source
+  typealias Input = StateWrapper<_StorageSelector.Source>
   typealias EntityStorage = _StorageSelector.Storage
     
   private let storageSelector: _StorageSelector
@@ -180,7 +180,7 @@ struct QueryPipeline<
   
   func yield(_ input: consuming Input, storage: inout Storage) -> Output {
     
-    let entityStorage = storageSelector.select(source: input)
+    let entityStorage = storageSelector.select(source: input.state)
     
     storage.storageVersion = entityStorage.version
       
@@ -192,7 +192,7 @@ struct QueryPipeline<
   
   func yieldContinuously(_ input: Input, storage: inout Storage) -> Verge.ContinuousResult<Output> {
     
-    let entityStorage = storageSelector.select(source: input)
+    let entityStorage = storageSelector.select(source: input.state)
     
     guard entityStorage.version != storage.storageVersion else {
       return .noUpdates

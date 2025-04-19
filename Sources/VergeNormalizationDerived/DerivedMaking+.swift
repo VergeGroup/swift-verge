@@ -14,7 +14,7 @@ extension StoreDriverType {
   ) -> Derived<EntityWrapper<_TableSelector.Table.Entity>>
   where
     _StorageSelector.Storage == _TableSelector.Storage,
-    _StorageSelector.Source == StateWrapper<Self.TargetStore.State>
+    _StorageSelector.Source == Self.TargetStore.State
   {
 
     return derived(
@@ -36,7 +36,7 @@ extension StoreDriverType {
   ) -> Derived<NonNullEntityWrapper<_TableSelector.Table.Entity>>
   where
   _StorageSelector.Storage == _TableSelector.Storage,
-  _StorageSelector.Source == StateWrapper<Self.TargetStore.State>
+  _StorageSelector.Source == Self.TargetStore.State
   {
 
     return derived(
@@ -60,7 +60,7 @@ public enum NormalizedStorageError: Swift.Error {
 public struct NormalizedStoragePath<
   Store: StoreDriverType,
   _StorageSelector: StorageSelector
->: ~Copyable where _StorageSelector.Source == StateWrapper<Store.TargetStore.State> {
+>: ~Copyable where _StorageSelector.Source == Store.TargetStore.State {
   
   public typealias Storage = _StorageSelector.Storage
   unowned let store: Store
@@ -119,7 +119,7 @@ public struct NormalizedStorageTablePath<
   Store: StoreDriverType,
   _StorageSelector: StorageSelector,
   _TableSelector: TableSelector
->: ~Copyable where _StorageSelector.Storage == _TableSelector.Storage, _StorageSelector.Source == StateWrapper<Store.TargetStore.State> {
+>: ~Copyable where _StorageSelector.Storage == _TableSelector.Storage, _StorageSelector.Source == Store.TargetStore.State {
   
   public typealias Entity = _TableSelector.Table.Entity
   
@@ -200,7 +200,7 @@ public struct NormalizedStorageTablePath<
     
     let _initialValue = storageSelector
       .appending(tableSelector)
-      .table(source: store.store.stateWrapper)
+      .table(source: store.store.state)
       .find(by: entityID)
     
     guard let initalValue = _initialValue else {

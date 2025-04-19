@@ -18,7 +18,7 @@ final class PropertyWrapperTests: XCTestCase {
     binding.wrappedValue = true
     
     XCTAssertEqual(isOn, true)
-    XCTAssertEqual(store.state.primitive, true)
+    XCTAssertEqual(store.state, true)
     
   }
   

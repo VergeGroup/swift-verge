@@ -24,7 +24,6 @@ class VergeRxTests: XCTestCase {
       _ = store.rx.stateObservable()
         .subscribe(onNext: { changes in
           exp1.fulfill()
-          XCTAssertEqual(changes.hasChanges(\.count), true)
         })
       
       XCTAssertEqual(exp1.expectedFulfillmentCount, 1)

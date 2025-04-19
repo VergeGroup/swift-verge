@@ -13,14 +13,12 @@ final class BindingDerivedTests: XCTestCase {
         source.count = new
       })
 
-    XCTAssertEqual(binding.state.previous?.primitive, nil)
-    XCTAssertEqual(binding.state.primitive, 0)
+    XCTAssertEqual(binding.state, 0)
     
     binding.wrappedValue = 2
 
-    XCTAssertEqual(binding.state.previous?.primitive, 0)
-    XCTAssertEqual(binding.state.primitive, 2)
-    XCTAssertEqual(source.state.primitive.count, 2)
+    XCTAssertEqual(binding.state, 2)
+    XCTAssertEqual(source.state.count, 2)
 
   }
 
@@ -34,24 +32,20 @@ final class BindingDerivedTests: XCTestCase {
         source.count = new
       })
 
-    XCTAssertEqual(binding.state.previous?.primitive, nil)
-    XCTAssertEqual(binding.state.primitive, 0)
+    XCTAssertEqual(binding.state, 0)
 
     binding.commit {
       $0 = 2
     }
 
-    XCTAssertEqual(binding.state.previous?.primitive, 0)
-    XCTAssertEqual(binding.state.primitive, 2)
-
-    XCTAssertEqual(source.state.primitive.count, 2)
+    XCTAssertEqual(binding.state, 2)
+    XCTAssertEqual(source.state.count, 2)
 
     source.commit {
       $0.count += 1
     }
 
-    XCTAssertEqual(binding.state.previous?.primitive, 2)
-    XCTAssertEqual(binding.state.primitive, 3)
+    XCTAssertEqual(binding.state, 3)
 
   }
 
@@ -69,10 +63,8 @@ final class BindingDerivedTests: XCTestCase {
     }
 
     XCTAssertEqual(source.state.count, 1)
-    XCTAssertEqual(source.state.previous?.count, 0)
 
-    XCTAssertEqual(binding.state.previous?.primitive, 0)
-    XCTAssertEqual(binding.state.primitive, 1)
+    XCTAssertEqual(binding.state, 1)
 
 
   }
