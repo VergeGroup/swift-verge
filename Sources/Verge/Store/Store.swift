@@ -94,9 +94,13 @@ actor Writer {
 /// ```
 /// You may use also `StoreWrapperType` to define State and Activity as inner types.
 ///
-
 open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Activity>>,
-                                             CustomReflectable, StoreType, StoreDriverType, DerivedMaking, @unchecked Sendable, Hashable
+                                             CustomReflectable,
+                                             StoreType,
+                                             StoreDriverType,
+                                             DerivedMaking,
+                                             @unchecked Sendable,
+                                             Hashable
 {
   
   // MARK: Equatable
