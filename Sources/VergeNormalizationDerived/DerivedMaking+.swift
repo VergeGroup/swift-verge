@@ -14,10 +14,10 @@ extension StoreDriverType {
   ) -> Derived<EntityWrapper<_TableSelector.Table.Entity>>
   where
     _StorageSelector.Storage == _TableSelector.Storage,
-    _StorageSelector.Source == Self.TargetStore.State
+    _StorageSelector.Source == StateWrapper<Self.TargetStore.State>
   {
 
-    return _derived(
+    return derived(
       SingleEntityPipeline(
         targetIdentifier: entityID,
         selector: selector
@@ -36,10 +36,10 @@ extension StoreDriverType {
   ) -> Derived<NonNullEntityWrapper<_TableSelector.Table.Entity>>
   where
   _StorageSelector.Storage == _TableSelector.Storage,
-  _StorageSelector.Source == Self.TargetStore.State
+  _StorageSelector.Source == StateWrapper<Self.TargetStore.State>
   {
 
-    return _derived(
+    return derived(
       NonNullSingleEntityPipeline(
         initialEntity: entity,
         selector: selector
@@ -60,7 +60,7 @@ public enum NormalizedStorageError: Swift.Error {
 public struct NormalizedStoragePath<
   Store: StoreDriverType,
   _StorageSelector: StorageSelector
->: ~Copyable where Store.TargetStore.State == _StorageSelector.Source {
+>: ~Copyable where _StorageSelector.Source == StateWrapper<Store.TargetStore.State> {
   
   public typealias Storage = _StorageSelector.Storage
   unowned let store: Store
@@ -102,7 +102,13 @@ public struct NormalizedStoragePath<
    There is not filters for entity tables so that Derived possibly makes a new object if not related entity has updated.
    */
   public func derived<Composed: Equatable>(query: @escaping @Sendable (Self.Storage) -> Composed) -> Derived<Composed> {
-    return store._derived(QueryPipeline(storageSelector: storageSelector, query: query), queue: .passthrough)
+    return store.derived(
+      QueryPipeline(
+        storageSelector: storageSelector,
+        query: query
+      ),
+      queue: .passthrough
+    )
   }
 }
 
@@ -113,7 +119,7 @@ public struct NormalizedStorageTablePath<
   Store: StoreDriverType,
   _StorageSelector: StorageSelector,
   _TableSelector: TableSelector
->: ~Copyable where _StorageSelector.Storage == _TableSelector.Storage, Store.TargetStore.State == _StorageSelector.Source {
+>: ~Copyable where _StorageSelector.Storage == _TableSelector.Storage, _StorageSelector.Source == StateWrapper<Store.TargetStore.State> {
   
   public typealias Entity = _TableSelector.Table.Entity
   
@@ -194,7 +200,7 @@ public struct NormalizedStorageTablePath<
     
     let _initialValue = storageSelector
       .appending(tableSelector)
-      .table(source: store.store.state.primitive)
+      .table(source: store.store.stateWrapper)
       .find(by: entityID)
     
     guard let initalValue = _initialValue else {

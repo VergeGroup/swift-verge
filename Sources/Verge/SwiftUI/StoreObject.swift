@@ -5,7 +5,7 @@ import SwiftUI
 
  This property wrapper is designed to manage a `Store` object for the view lifecycle without making the view reactive to `Store` changes, which is the behavior of `@StateObject` with `ObservableObject`. This is because `Store` updates can be handled through `StoreReader`, and it's often undesirable to have the entire view refreshed whenever the `Store` updates.
 
- - Note: The `Store` is a type that conforms to `DispatcherType`.
+ - Note: The `Store` is a type that conforms to `StoreDriverType`.
 
  - Warning: This property wrapper should only be used for store objects that are expected to have a lifetime matching the lifetime of the view.
  */
@@ -47,7 +47,6 @@ enum Preview_StoreObject: PreviewProvider {
 
     Group {
       Container()
-      Observe()
     }
 
   }
@@ -68,26 +67,6 @@ enum Preview_StoreObject: PreviewProvider {
 
     }
 
-  }
-
-  struct Observe: View {
-
-    @StateObject var store: ViewModel = .init()
-
-    var body: some View {
-      let _ = print("render")
-
-      VStack {
-        Text("here is child")
-        Text(store.state.count.description)
-        Button("up") {
-          store.increment()
-        }
-        Button("up dummy") {
-          store.incrementDummy()
-        }
-      }
-    }
   }
 
   struct Child: View {

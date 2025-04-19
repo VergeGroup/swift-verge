@@ -96,7 +96,7 @@ where Driver.TargetStore.State: TrackingObject {
     init(mode: ReferencingType, object: Driver) {
       switch mode {
       case .strong:
-        Unmanaged.passUnretained(object).retain()
+        _ = Unmanaged.passUnretained(object).retain()
       case .unowned:
         break
       }
@@ -238,7 +238,7 @@ private final class Coordinator<Driver: StoreDriverType>: ObservableObject, Equa
       store.unlock()
     }
     
-    let trackingState = store.nonatomicValue.primitive.tracked()
+    let trackingState = store.nonatomicValue.state.tracked()
     let version = store.nonatomicValue.version
     
     self._currentState = trackingState
@@ -349,7 +349,7 @@ private final class Coordinator<Driver: StoreDriverType>: ObservableObject, Equa
         return nil
       }
       
-      let latestState = store.nonatomicValue.primitive.tracked(using: ref.result.graph)
+      let latestState = store.nonatomicValue.state.tracked(using: ref.result.graph)
       
       self._currentState = latestState
       self._currentStateVersion = version

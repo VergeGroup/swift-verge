@@ -46,8 +46,7 @@ public struct StateWrapper<State: Sendable> : Sendable {
 }
 
 /// A protocol that indicates itself is a reference-type and can convert to concrete Store type.
-public protocol StoreType<State>: Sendable, ObservableObject
-where ObjectWillChangePublisher == ObservableObjectPublisher {
+public protocol StoreType<State>: AnyObject, Sendable {
   associatedtype State: Sendable
   associatedtype Activity: Sendable = Never
 
@@ -141,12 +140,6 @@ open class Store<State: Sendable, Activity: Sendable>: EventEmitter<_StoreEvent<
   public let logger: StoreLogger?
 
   public let sanitizer: RuntimeSanitizer
-  /// A Publisher to compatible SwiftUI
-  public let objectWillChange: ObservableObjectPublisher = .init()
-
-  public var valuePublisher: some Combine.Publisher<State, Never> {
-    return _valueSubject
-  }
 
   private var middlewares: [AnyStoreMiddleware<State>] = []
 
@@ -155,8 +148,6 @@ open class Store<State: Sendable, Activity: Sendable>: EventEmitter<_StoreEvent<
   private(set) var nonatomicValue: StateWrapper<State>
 
   private let _lock: StoreOperation
-
-  private let _valueSubject: CurrentValueSubject<State, Never>
 
   /**
    Holds subscriptions for sink State and Activity to finish them with its store life-cycle.
@@ -199,9 +190,6 @@ open class Store<State: Sendable, Activity: Sendable>: EventEmitter<_StoreEvent<
     self.nonatomicValue = .init(state: initialState)
     self._lock = storeOperation
 
-    // TODO: copying value
-    self._valueSubject = .init(initialState)
-
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
@@ -237,8 +225,6 @@ open class Store<State: Sendable, Activity: Sendable>: EventEmitter<_StoreEvent<
 
     self.nonatomicValue = .init(state: reduced)
     self._lock = storeOperation
-    // TODO: copying value
-    self._valueSubject = .init(reduced)
 
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
@@ -263,12 +249,8 @@ open class Store<State: Sendable, Activity: Sendable>: EventEmitter<_StoreEvent<
     case .state(let stateEvent):
       switch stateEvent {
       case .willUpdate:
-        DispatchQueue.main.async { [weak self] in
-          // For: `Publishing changes from within view updates is not allowed, this will cause undefined behavior.`
-          self?.objectWillChange.send()
-        }
+        break
       case .didUpdate(let stateWrapper):
-        _valueSubject.send(stateWrapper.state)
         stateDidUpdate(newState: stateWrapper)
       }
     case .activity:
@@ -296,11 +278,7 @@ open class Store<State: Sendable, Activity: Sendable>: EventEmitter<_StoreEvent<
 
     storeLifeCycleCancellable.cancel()
 
-    Task { [taskManager, _valueSubject] in
-      // send completion in hop as Combine is using unfair lock (non-recursive). Avoid crash.
-      // It happens if the stream ratains this store, canceled that stream triggers this deinit operation.
-      // that deinit operation will be inside of locking session.
-      _valueSubject.send(completion: .finished)
+    Task { [taskManager] in
       await taskManager.cancelAll()
     }
   }
@@ -318,10 +296,6 @@ extension Store {
 extension Store {
 
   public var store: Store<State, Activity> { self }
-
-  public var objectDidChange: AnyPublisher<State, Never> {
-    valuePublisher.dropFirst().eraseToAnyPublisher()
-  }
 
   /// Returns a current state with thread-safety.
   ///

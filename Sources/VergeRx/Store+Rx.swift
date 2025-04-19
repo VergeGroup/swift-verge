@@ -20,19 +20,8 @@ extension Reactive where Base : StoreDriverType {
   ///
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
-  public func stateObservable() -> Observable<Changes<Base.TargetStore.State>> {
+  public func stateObservable() -> Observable<Base.TargetStore.State> {
     base.store.asStore()._statePublisher().asObservable()
-  }
-  
-  /// An observable that repeatedly emits the changes when state updated
-  ///
-  /// Guarantees to emit the first event on started subscribing.
-  ///
-  /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
-  /// - Returns:
-  public func stateInfallible(startsFromInitial: Bool = true) -> Infallible<Changes<Base.TargetStore.State>> {
-    stateObservable()
-      .asInfallible(onErrorRecover: { _ in fatalError() })
   }
 
   public func activitySignal() -> Signal<Base.TargetStore.Activity> {
@@ -61,13 +50,6 @@ extension ObservableType where Element : Equatable {
     _ function: StaticString = #function,
     _ line: UInt = #line
   ) -> Observable<Changes<Element>> {
-
-    let trace = MutationTrace(
-      name: name,
-      file: file,
-      function: function,
-      line: line
-    )
     
     return scan(into: initial, accumulator: { (pre, element) in
       if pre == nil {

@@ -165,15 +165,10 @@ public class Derived<Value: Sendable>: Store<Value, Never>, DerivedType, @unchec
   }
 
   private func _combined_sinkValue(
-    dropsFirst: Bool = false,
     queue: some TargetQueueType,
-    receive: @escaping @Sendable (Changes<Value>) -> Void
-  ) -> StoreStateSubscription {
-    _primitive_sinkState(
-      dropsFirst: dropsFirst,
-      queue: queue,
-      receive: receive
-    )
+    receive: @escaping @Sendable (StateWrapper<Value>) -> Void
+  ) -> EventEmitterCancellable {
+    _base_primitive_sinkState(dropsFirst: true, queue: queue, receive: receive)
   }
 }
 
@@ -218,74 +213,6 @@ extension Derived where Value: Equatable {
 // `Value == Never` eliminates specializing requirements.
 extension Derived where Value == Never {
   
-  public static func combined<each S>(
-    _ deriveds: repeat Derived<each S>
-  ) {
-
-    let initialState = (repeat (each deriveds).state)
-    
-    let initial = Changes<Edge<(repeat each S)>>.init(
-      old: nil,
-      new: Edge(wrappedValue: initialState)
-    )
-    
-    let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
-        
-    Derived<(repeat each S)>(
-      get: .select(\.self),
-      set: { _ in },
-      initialUpstreamState: initial,
-      subscribeUpstreamState: { callback in
-        
-        (each deriveds)._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
-          buffer.modify { value in
-            let newValue = value.makeNextChanges(
-              with: value.primitive.next((s0, value.primitive.1)),
-              modification: nil,
-              transaction: .init()
-            )
-            value = newValue
-            callback(newValue)
-          }
-        }
-        
-        let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
-          buffer.modify { value in
-            let newValue = value.makeNextChanges(
-              with: value.primitive.next((s0, value.primitive.1)),
-              modification: nil,
-              transaction: .init()
-            )
-            value = newValue
-            callback(newValue)
-          }
-        }
-        
-        let _s1 = s1._combined_sinkValue(dropsFirst: true, queue: queue) { (s1) in
-          buffer.modify { value in
-            
-            let newValue = value.makeNextChanges(
-              with: value.primitive.next((value.primitive.0, s1)),
-              modification: nil,
-              transaction: .init()
-            )
-            
-            value = newValue
-            callback(newValue)
-          }
-        }
-        
-        return VergeAnyCancellable(onDeinit: {
-          _s0.cancel()
-          _s1.cancel()
-        })
-        
-      },
-      retainsUpstream: [s0, s1]
-    )
-    
-  }
-
   /// Make Derived that projects combined value from specified source Derived objects.
   ///
   /// It retains specified Derived objects as data source until itself deallocated
@@ -298,44 +225,34 @@ extension Derived where Value == Never {
     _ s0: Derived<S0>,
     _ s1: Derived<S1>,
     queue: some TargetQueueType = .passthrough
-  ) -> Derived<Edge<(Changes<S0>, Changes<S1>)>> {
+  ) -> Derived<(S0, S1)> {
 
-    let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.state, s1.state)))
+    let initial = (s0.state, s1.state)
 
     let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
 
-    return Derived<Edge<(Changes<S0>, Changes<S1>)>>(
-      get: .select(\.self),
+    return Derived<(S0, S1)>(
+      get: DerivedCombinedPipeline(),
       set: { _ in },
       initialUpstreamState: initial,
       subscribeUpstreamState: { callback in
 
-        let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
+        let _s0 = s0._combined_sinkValue(queue: queue) { (s0) in
           buffer.modify { value in
-            let newValue = value.makeNextChanges(
-              with: value.primitive.next((s0, value.primitive.1)),
-              modification: nil,
-              transaction: .init()
-            )
+            let newValue = (s0.state, value.1)
             value = newValue
             callback(newValue)
           }
         }
-
-        let _s1 = s1._combined_sinkValue(dropsFirst: true, queue: queue) { (s1) in
+                
+        let _s1 = s1._combined_sinkValue(queue: queue) { (s1) in
           buffer.modify { value in
-
-            let newValue = value.makeNextChanges(
-              with: value.primitive.next((value.primitive.0, s1)),
-              modification: nil,
-              transaction: .init()
-            )
-
+            let newValue = (value.0, s1.state)
             value = newValue
             callback(newValue)
           }
         }
-
+      
         return VergeAnyCancellable(onDeinit: {
           _s0.cancel()
           _s1.cancel()
@@ -347,82 +264,24 @@ extension Derived where Value == Never {
 
   }
 
-  /// Make Derived that projects combined value from specified source Derived objects.
-  ///
-  /// It retains specified Derived objects as data source until itself deallocated
-  ///
-  /// - Parameters:
-  ///   - s0:
-  ///   - s1:
-  ///   - s2:
-  /// - Returns:
-  public static func combined<S0, S1, S2>(
-    _ s0: Derived<S0>,
-    _ s1: Derived<S1>,
-    _ s2: Derived<S2>,
-    queue: some TargetQueueType = .passthrough
-  ) -> Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>> {
+}
 
-    let initial = Changes.init(old: nil, new: Edge(wrappedValue: (s0.state, s1.state, s2.state)))
-
-    let buffer = VergeConcurrency.RecursiveLockAtomic.init(initial)
-
-    return Derived<Edge<(Changes<S0>, Changes<S1>, Changes<S2>)>>(
-      get: .select(\.self),
-      set: { _ in },
-      initialUpstreamState: initial,
-      subscribeUpstreamState: { callback in
-
-        let _s0 = s0._combined_sinkValue(dropsFirst: true, queue: queue) { (s0) in
-          buffer.modify { value in
-            let newValue = value.makeNextChanges(
-              with: value.primitive.next((s0, value.primitive.1, value.primitive.2)),
-              modification: nil,
-              transaction: .init()
-            )
-            value = newValue
-            callback(newValue)
-          }
-        }
-
-        let _s1 = s1._combined_sinkValue(dropsFirst: true, queue: queue) { (s1) in
-          buffer.modify { value in
-
-            let newValue = value.makeNextChanges(
-              with: value.primitive.next((value.primitive.0, s1, value.primitive.2)),
-              modification: nil,
-              transaction: .init()
-            )
-            value = newValue
-            callback(newValue)
-          }
-        }
-
-        let _s2 = s2._combined_sinkValue(dropsFirst: true, queue: queue) { (s2) in
-          buffer.modify { value in
-
-            let newValue = value.makeNextChanges(
-              with: value.primitive.next((value.primitive.0, value.primitive.1, s2)),
-              modification: nil,
-              transaction: .init()
-            )
-            value = newValue
-            callback(newValue)
-          }
-        }
-
-        return VergeAnyCancellable(onDeinit: {
-          _s0.cancel()
-          _s1.cancel()
-          _s2.cancel()
-        })
-
-      },
-      retainsUpstream: [s0, s1, s2]
-    )
-
+/// KeyPath based pipeline, light weight operation just take value from source.
+private struct DerivedCombinedPipeline<Input: Sendable>: PipelineType {
+  
+  public typealias Storage = Void
+  public typealias Output = Input
+    
+  public init() {
   }
-
+   
+  public func yield(_ input: Input, storage: inout Storage) -> Output {
+    return input
+  }
+ 
+  public func yieldContinuously(_ input: Input, storage: inout Storage) -> ContinuousResult<Output> {       
+    return .new(input)
+  }
 }
 
 /// A Derived object that can set a value.

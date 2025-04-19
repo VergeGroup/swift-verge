@@ -13,37 +13,35 @@ extension Store {
   @MainActor
   public func pollMainLoop(receive: @escaping @MainActor (Changes<State>) -> Void) -> VergeAnyCancellable {
 
-    var latestState: Changes<State>? = nil
+    var latestStateWrapper: StateWrapper<State>? = nil
 
     let subscription = RunLoopActivityObserver.addObserver(acitivity: .beforeWaiting, in: .main) {
 
       MainActor.assumeIsolated {
-        let newState = self.state
+        let newState = self.stateWrapper
 
-        guard (latestState?.version ?? 0) < newState.version else {
+        guard (latestStateWrapper?.version ?? 0) < newState.version else {
           return
         }
 
         let state: Changes<State>
 
-        if let latestState {
-          state = newState.replacePrevious(latestState)
+        if let latestStateWrapper {
+          state = .init(old: latestStateWrapper.state, new: newState.state)
         } else {
-          state = newState.droppedPrevious()
+          state = .init(old: nil, new: newState.state)
         }
 
-        latestState = newState
+        latestStateWrapper = newState
 
         receive(state)
       }
 
     }
 
-    let firstState = state.droppedPrevious()
+    latestStateWrapper = stateWrapper
 
-    latestState = firstState
-
-    receive(firstState)
+    receive(.init(old: nil, new: stateWrapper.state))
 
     return .init {
       RunLoopActivityObserver.remove(subscription)

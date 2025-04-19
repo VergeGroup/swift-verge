@@ -65,29 +65,6 @@ private struct BindingDerivedPipeline<Source, Output, BackingPipeline: PipelineT
 
 }
 
-/// An adapter pipeline to bridge StateWrapper to Changes for select pipelines
-private struct StateWrapperToChangesSelectPipeline<Source, Select: Equatable>: PipelineType {
-  typealias Input = StateWrapper<Source>
-  typealias Output = Select
-  
-  private let selector: KeyPath<Source, Select> & Sendable
-  
-  init(selector: KeyPath<Source, Select> & Sendable) {
-    self.selector = selector
-  }
-  
-  func makeStorage() -> Void { () }
-  
-  func yield(_ input: Input, storage: inout Void) -> Output {
-    input.state[keyPath: selector]
-  }
-  
-  func yieldContinuously(_ input: Input, storage: inout Void) -> ContinuousResult<Output> {
-    // 簡単な実装として、常に新しい値を返します
-    return .new(input.state[keyPath: selector])
-  }
-}
-
 extension StoreDriverType {
 
   /// Returns Binding Derived object
@@ -147,7 +124,7 @@ extension StoreDriverType {
 
     bindingDerived(
       name, file, function, line,
-      get: StateWrapperToChangesSelectPipeline(selector: select),
+      get: .select(select),
       set: { state, newValue in
         state[keyPath: select] = newValue
       },
@@ -166,7 +143,7 @@ extension StoreDriverType {
     
     bindingDerived(
       name, file, function, line,
-      get: StateWrapperToChangesSelectPipeline(selector: select),
+      get: .select(select),
       set: { state, newValue in
         state[keyPath: select] = newValue
       },

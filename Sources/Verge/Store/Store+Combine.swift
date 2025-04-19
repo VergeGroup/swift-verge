@@ -33,12 +33,22 @@ extension Store {
   /// - Parameter startsFromInitial: Make the first changes object's hasChanges always return true.
   /// - Returns:
   @_spi(Package)
-  public func _statePublisher() -> some Combine.Publisher<Changes<Value>, Never> {
+  public func _statePublisher() -> some Combine.Publisher<Value, Never> {
 
-    return valuePublisher
-      .dropFirst()
+//    return valuePublisher
+//      .dropFirst()
+//      .associate(resource: self, retains: keepsAliveForSubscribers)
+//      .merge(with: Just(state))
+    
+    return publisher
       .associate(resource: self, retains: keepsAliveForSubscribers)
-      .merge(with: Just(state.droppedPrevious()))
+      .flatMap { event in
+        guard case .state(.didUpdate(let stateWrapper)) = event else {
+          return Empty<State, Never>().eraseToAnyPublisher()
+        }
+        return Just(stateWrapper.state).eraseToAnyPublisher()
+      }
+      .merge(with: Just(state))
   }
 
 //  @_spi(Package)
