@@ -38,11 +38,9 @@ extension StoreDriverType {
    ```
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value> & Sendable,
-    dropsOutput: @escaping @Sendable (Changes<Value>) -> Bool = { _ in false }
+    _ keyPath: WritableKeyPath<TargetStore.State, Value> & Sendable
   ) -> Assignee<Changes<Value>> {
     return { [weak store] value in
-      guard !dropsOutput(value) else { return }
       store?.asStore().commit {
         $0[keyPath: keyPath] = value.primitive
       }
@@ -62,11 +60,9 @@ extension StoreDriverType {
    ```
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable,
-    dropsOutput: @escaping @Sendable (Changes<Value?>) -> Bool = { _ in false }
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable
   ) -> Assignee<Changes<Value?>> {
     return { [weak store] value in
-      guard !dropsOutput(value) else { return }
       store?.asStore().commit {
         $0[keyPath: keyPath] = value.primitive
       }
@@ -86,12 +82,10 @@ extension StoreDriverType {
    ```
    */
   public func assignee<Value>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable,
-    dropsOutput: @escaping @Sendable (Changes<Value?>) -> Bool = { _ in false }
+    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable
   ) -> Assignee<Changes<Value>> {
     return { [weak store] value in
       let changes = value.map { Optional.some($0) }
-      guard !dropsOutput(changes) else { return }
       store?.asStore().commit {
         $0[keyPath: keyPath] = .some(value.primitive)
       }
@@ -135,60 +129,6 @@ extension StoreDriverType {
         $0[keyPath: keyPath] = .some(value)
       }
     }
-  }
-
-  /**
-   Returns an asignee function to asign
-
-   ```
-   let store1 = Store()
-   let store2 = Store()
-
-   store1
-   .derived(.map(\.count))
-   .assign(to: store2.assignee(\.count))
-   ```
-   */
-  public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value> & Sendable
-  ) -> Assignee<Changes<Value>> {
-    assignee(keyPath, dropsOutput: { !$0.hasChanges })
-  }
-
-  /**
-   Returns an asignee function to asign
-
-   ```
-   let store1 = Store()
-   let store2 = Store()
-
-   store1
-   .derived(.map(\.count))
-   .assign(to: store2.assignee(\.count))
-   ```
-   */
-  public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable
-  ) -> Assignee<Changes<Value?>> {
-    assignee(keyPath, dropsOutput: { !$0.hasChanges })
-  }
-
-  /**
-   Returns an asignee function to asign
-
-   ```
-   let store1 = Store()
-   let store2 = Store()
-
-   store1
-   .derived(.map(\.count))
-   .assign(to: store2.assignee(\.count))
-   ```
-   */
-  public func assignee<Value: Equatable>(
-    _ keyPath: WritableKeyPath<TargetStore.State, Value?> & Sendable
-  ) -> Assignee<Changes<Value>> {
-    assignee(keyPath, dropsOutput: { !$0.hasChanges })
   }
 
 }
