@@ -45,7 +45,7 @@ public typealias DispatcherType<Scope> = StoreDriverType<Scope>
 ///
 /// }
 /// ```
-public protocol StoreDriverType<Scope>: ObservableObject where Activity == TargetStore.Activity {
+public protocol StoreDriverType<Scope>: AnyObject where Activity == TargetStore.Activity {
 
   associatedtype TargetStore: StoreType
 
@@ -69,10 +69,6 @@ extension StoreDriverType {
 
   public func activityPublisher() -> some Combine.Publisher<Activity, Never> {
     store.asStore()._activityPublisher()
-  }
-
-  public var objectWillChange: TargetStore.ObjectWillChangePublisher {
-    store.objectWillChange
   }
 
   /// A state that cut out from root-state with the scope key path.
