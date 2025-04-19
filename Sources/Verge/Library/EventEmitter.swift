@@ -206,15 +206,8 @@ extension EventEmitter {
       self.subscriber = subscriber
       self.eventEmitter = eventEmitter
 
-      eventEmitter?.onDeinit {
-        let compilerWorkaround = { subscriber }
-        let subscriber = compilerWorkaround()
-        Task {
-          // send completion in hop as Combine is using unfair lock (non-recursive). Avoid crash.
-          // It happens if the stream ratains this store, canceled that stream triggers this deinit operation.
-          // that deinit operation will be inside of locking session.
-          subscriber.receive(completion: .finished)        
-        }
+      eventEmitter?.onDeinit {        
+        subscriber.receive(completion: .finished)        
       }
           
       self.eventEmitterSubscription = eventEmitter?
