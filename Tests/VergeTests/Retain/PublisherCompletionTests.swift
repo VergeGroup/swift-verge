@@ -176,12 +176,16 @@ final class SubjectCompletionTests: XCTestCase {
 
     await Task.yield()
     
-    XCTAssertNil(derivedRef.value)
+    // still not nil as the subscription is still on going.
+    XCTAssertNotNil(derivedRef.value)
 
     XCTAssertNil(storeRef.value)
     
     withExtendedLifetime(c, {})
-//    c?.cancel()
+    
+    c?.cancel()
+    
+    XCTAssertNil(derivedRef.value)
 
   }
 
