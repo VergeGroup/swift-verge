@@ -162,8 +162,12 @@ final class StoreSinkSubscriptionTests: XCTestCase {
     expectation.expectedFulfillmentCount = 1
     expectation.assertForOverFulfill = true
 
-    let subscription = derivedRef.value!
-      .sinkState(dropsFirst: true, queue: .passthrough) { (changes) in
+    let subscription = derivedRef
+      .value!
+      .sinkState(
+        dropsFirst: true,
+        queue: .passthrough
+      ) { (changes) in
         expectation.fulfill()
       }
 
