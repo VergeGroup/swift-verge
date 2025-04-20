@@ -125,10 +125,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
 
   public let sanitizer: RuntimeSanitizer
 
-  public var valuePublisher: some Combine.Publisher<Changes<State>, Never> {
-    return _valueSubject
-  }
-
   private var middlewares: [AnyStoreMiddleware<State>] = []
 
   private let externalOperation: @Sendable (inout InoutRef<State>, Changes<State>, inout Transaction) -> Void
@@ -136,8 +132,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
   private(set) var nonatomicValue: Changes<State>
 
   private let _lock: StoreOperation
-
-  private let _valueSubject: CurrentValueSubject<Changes<State>, Never>
 
   /**
    Holds subscriptions for sink State and Activity to finish them with its store life-cycle.
@@ -180,9 +174,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
     self.nonatomicValue = .init(old: nil, new: initialState)
     self._lock = storeOperation
 
-    // TODO: copying value
-    self._valueSubject = .init(nonatomicValue)
-
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
     self.name = name ?? "\(file):\(line)"
@@ -215,8 +206,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
 
     self.nonatomicValue = .init(old: nil, new: reduced)
     self._lock = storeOperation
-    // TODO: copying value
-    self._valueSubject = .init(nonatomicValue)
 
     self.logger = logger
     self.sanitizer = sanitizer ?? RuntimeSanitizer.global
@@ -249,7 +238,6 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
       case .willUpdate:
         break
       case .didUpdate(let state):
-        _valueSubject.send(state)
         stateDidUpdate(newState: state)
       }
     case .activity:
@@ -277,11 +265,7 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
 
     storeLifeCycleCancellable.cancel()
 
-    Task { [taskManager, _valueSubject] in
-      // send completion in hop as Combine is using unfair lock (non-recursive). Avoid crash.
-      // It happens if the stream ratains this store, canceled that stream triggers this deinit operation.
-      // that deinit operation will be inside of locking session.
-      _valueSubject.send(completion: .finished)
+    Task { [taskManager] in
       await taskManager.cancelAll()
     }
   }
