@@ -19,8 +19,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if canImport(Combine)
-
 import Combine
 
 @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
@@ -35,16 +33,25 @@ extension Store {
   @_spi(Package)
   public func _statePublisher() -> some Combine.Publisher<Changes<Value>, Never> {
 
-    return valuePublisher
-      .dropFirst()
+    return
+      publisher
       .associate(resource: self, retains: keepsAliveForSubscribers)
+      .flatMap { event in
+        guard case .state(.didUpdate(let state)) = event else {
+          return Empty<Changes<Value>, Never>().eraseToAnyPublisher()
+        }
+        return Just<Changes<Value>>(state)
+          .eraseToAnyPublisher()
+      }
       .merge(with: Just(state.droppedPrevious()))
+
   }
 
-//  @_spi(Package)
+  //  @_spi(Package)
   public func _activityPublisher() -> some Combine.Publisher<Activity, Never> {
 
-    return publisher
+    return
+      publisher
       .associate(resource: self, retains: keepsAliveForSubscribers)
       .flatMap { event in
         guard case .activity(let a) = event else {
@@ -70,7 +77,7 @@ extension Publisher {
 
 }
 
-fileprivate final class ResourceBox {
+private final class ResourceBox {
 
   private let object: AnyObject?
 
@@ -82,5 +89,3 @@ fileprivate final class ResourceBox {
     }
   }
 }
-
-#endif

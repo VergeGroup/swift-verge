@@ -21,9 +21,9 @@
 
 import Atomics
 import Combine
+import DequeModule
 import Foundation
 import os
-import DequeModule
 
 public final class EventEmitterCancellable: Hashable, Cancellable, @unchecked Sendable {
 
@@ -57,11 +57,12 @@ public protocol EventEmitterEventType {
 /// Instead of Combine
 open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchecked Sendable {
 
-  public var publisher: some Publisher<Event, Never> {
-    self
+  public var publisher: Publisher {
+    return .init(eventEmitter: self)
   }
 
-  private var subscribers: VergeConcurrency.UnfairLockAtomic<[EventEmitterCancellable : (Event) -> Void]> = .init([:])
+  private var subscribers:
+    VergeConcurrency.UnfairLockAtomic<[EventEmitterCancellable: (Event) -> Void]> = .init([:])
 
   private let queue: VergeConcurrency.UnfairLockAtomic<Deque<Event>> = .init(.init())
 
@@ -70,7 +71,6 @@ open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchec
   private var deinitHandlers: VergeConcurrency.UnfairLockAtomic<[() -> Void]> = .init([])
 
   public init() {
-
   }
 
   deinit {
@@ -106,10 +106,10 @@ open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchec
           return nil
         }
       }) {
-        
+
         // Emits
         receiveEvent(event)
-        
+
         for subscriber in capturedSubscribers {
           vergeSignpostEvent("EventEmitter.emitForSubscriber")
           subscriber.1(event)
@@ -128,14 +128,15 @@ open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchec
     }
 
   }
-  
+
   open func receiveEvent(_ event: consuming Event) {
 
   }
 
   @_spi(EventEmitter)
   @discardableResult
-  public func addEventHandler(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterCancellable {
+  public func addEventHandler(_ eventReceiver: @escaping (Event) -> Void) -> EventEmitterCancellable
+  {
     let token = EventEmitterCancellable(owner: self)
     subscribers.modify {
       $0[token] = eventReceiver
@@ -157,7 +158,7 @@ open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchec
     // then unfair-lock raises runtime error.
     withExtendedLifetime(itemToRemove, {})
   }
-  
+
   public func onDeinit(_ onDeinit: @escaping () -> Void) {
     deinitHandlers.modify {
       $0.append(onDeinit)
@@ -166,28 +167,29 @@ open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchec
 
 }
 
-extension EventEmitter: Publisher {
-  
-  public typealias Output = Event
-
-  public typealias Failure = Never
-
-  public func receive<S>(
-    subscriber: S
-  )
-  where S: Subscriber, Failure == S.Failure, Output == S.Input {
-
-    let subscription = Subscription<S>(
-      subscriber: subscriber,
-      eventEmitter: self
-    )
-    
-    subscriber.receive(subscription: subscription)
-  }
-  
-}
-
 extension EventEmitter {
+
+  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
+  public struct Publisher: Combine.Publisher {
+
+    public typealias Output = Event
+
+    public typealias Failure = Never
+
+    private weak var eventEmitter: EventEmitter<Event>?
+
+    public init(eventEmitter: EventEmitter<Event>) {
+      self.eventEmitter = eventEmitter
+    }
+
+    public func receive<S>(subscriber: S)
+    where S: Subscriber, Failure == S.Failure, Output == S.Input {
+
+      let subscription = Subscription<S>(subscriber: subscriber, eventEmitter: eventEmitter)
+      subscriber.receive(subscription: subscription)
+    }
+
+  }
 
   @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
   public struct Subscription<S: Subscriber>: Combine.Subscription where S.Input == Event {
@@ -198,22 +200,15 @@ extension EventEmitter {
     private let eventEmitterSubscription: EventEmitterCancellable?
     private weak var eventEmitter: EventEmitter<Event>?
 
-    init(
-      subscriber: S,
-      eventEmitter: EventEmitter<Event>?
-    ) {
+    init(subscriber: S, eventEmitter: EventEmitter<Event>?) {
 
       self.subscriber = subscriber
       self.eventEmitter = eventEmitter
-
-      eventEmitter?.onDeinit {        
-        subscriber.receive(completion: .finished)        
-      }
-          
+      
       self.eventEmitterSubscription = eventEmitter?
         .addEventHandler { (event) in
           _ = subscriber.receive(event)
-      }
+        }
     }
 
     public func request(_ demand: Subscribers.Demand) {

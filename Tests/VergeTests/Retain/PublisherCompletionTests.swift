@@ -13,12 +13,10 @@ final class SubjectCompletionTests: XCTestCase {
     var store: DemoStore? = DemoStore()
     weak var weakStore: DemoStore? = store
 
-    let exp = expectation(description: "completion")
-
     store?.statePublisher()
       .sink(
         receiveCompletion: { _ in
-          exp.fulfill()
+          XCTFail()
         },
         receiveValue: { _ in }
       )
@@ -30,7 +28,6 @@ final class SubjectCompletionTests: XCTestCase {
 
     XCTAssertNil(weakStore)
 
-    wait(for: [exp], timeout: 10)
   }
 
   func testActivityPublisherCompletion1() {
@@ -40,13 +37,11 @@ final class SubjectCompletionTests: XCTestCase {
     var store: DemoStore? = DemoStore()
     weak var weakStore: DemoStore? = store
 
-    let exp = expectation(description: "completion")
-
     store?
       .activityPublisher()
       .sink(
         receiveCompletion: { _ in
-          exp.fulfill()
+          XCTFail()
         },
         receiveValue: { _ in
           
@@ -62,7 +57,6 @@ final class SubjectCompletionTests: XCTestCase {
     bag.forEach { $0.cancel() }
     XCTAssertNil(weakStore)
 
-    wait(for: [exp], timeout: 10)
   }
 
   func testActivityPublisherCompletion2() {
@@ -103,13 +97,10 @@ final class SubjectCompletionTests: XCTestCase {
     var strongRef: Ref? = Ref()
     weak var weakRef = strongRef
 
-    let e = expectation(description: "completion")
-
     store!.activityPublisher()
       .sink(
         receiveCompletion: { _ in
-          print("")
-          e.fulfill()
+          XCTFail()
         },
         receiveValue: { _ in
           print("")
@@ -125,7 +116,6 @@ final class SubjectCompletionTests: XCTestCase {
 
     XCTAssertNil(weakRef)
 
-    wait(for: [e], timeout: 10)
   }
 
   func testDerived_publisher_retains_derived() {
@@ -172,16 +162,13 @@ final class SubjectCompletionTests: XCTestCase {
 
     XCTAssertNil(storeRef.value)
 
-    let onComplete = expectation(description: "onComplete")
-
     c = derivedRef.value!
       .statePublisher()
       .sink(
         receiveCompletion: { _ in
-          onComplete.fulfill()
+          XCTFail()
         },
         receiveValue: { _ in
-
         }
       )
 
@@ -189,13 +176,16 @@ final class SubjectCompletionTests: XCTestCase {
 
     await Task.yield()
     
-    XCTAssertNil(derivedRef.value)
+    // still not nil as the subscription is still on going.
+    XCTAssertNotNil(derivedRef.value)
 
     XCTAssertNil(storeRef.value)
     
-    await fulfillment(of: [onComplete], timeout: 10)
     withExtendedLifetime(c, {})
-//    c?.cancel()
+    
+    c?.cancel()
+    
+    XCTAssertNil(derivedRef.value)
 
   }
 
