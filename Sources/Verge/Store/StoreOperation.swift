@@ -1,6 +1,6 @@
 import class Foundation.NSRecursiveLock
 
-public enum StoreOperation {
+public enum StoreOperation: Sendable {
   case nonAtomic
   case atomic(NSRecursiveLock)
 

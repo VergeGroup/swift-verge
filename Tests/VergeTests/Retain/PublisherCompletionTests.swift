@@ -42,12 +42,15 @@ final class SubjectCompletionTests: XCTestCase {
 
     let exp = expectation(description: "completion")
 
-    store?.activityPublisher()
+    store?
+      .activityPublisher()
       .sink(
         receiveCompletion: { _ in
           exp.fulfill()
         },
-        receiveValue: { _ in }
+        receiveValue: { _ in
+          
+        }
       )
       .store(in: &bag)
 

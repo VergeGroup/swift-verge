@@ -57,8 +57,8 @@ public protocol EventEmitterEventType {
 /// Instead of Combine
 open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchecked Sendable {
 
-  public var publisher: Publisher {
-    return .init(eventEmitter: self)
+  public var publisher: some Publisher<Event, Never> {
+    self
   }
 
   private var subscribers: VergeConcurrency.UnfairLockAtomic<[EventEmitterCancellable : (Event) -> Void]> = .init([:])
@@ -70,6 +70,7 @@ open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchec
   private var deinitHandlers: VergeConcurrency.UnfairLockAtomic<[() -> Void]> = .init([])
 
   public init() {
+
   }
 
   deinit {
@@ -165,29 +166,28 @@ open class EventEmitter<Event: EventEmitterEventType>: EventEmitterType, @unchec
 
 }
 
-extension EventEmitter {
+extension EventEmitter: Publisher {
+  
+  public typealias Output = Event
 
-  @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
-  public struct Publisher: Combine.Publisher {
+  public typealias Failure = Never
 
-    public typealias Output = Event
+  public func receive<S>(
+    subscriber: S
+  )
+  where S: Subscriber, Failure == S.Failure, Output == S.Input {
 
-    public typealias Failure = Never
-
-    private weak var eventEmitter: EventEmitter<Event>?
-
-    public init(eventEmitter: EventEmitter<Event>) {
-      self.eventEmitter = eventEmitter
-    }
-
-    public func receive<S>(subscriber: S)
-    where S: Subscriber, Failure == S.Failure, Output == S.Input {
-
-      let subscription = Subscription<S>(subscriber: subscriber, eventEmitter: eventEmitter)
-      subscriber.receive(subscription: subscription)
-    }
-
+    let subscription = Subscription<S>(
+      subscriber: subscriber,
+      eventEmitter: self
+    )
+    
+    subscriber.receive(subscription: subscription)
   }
+  
+}
+
+extension EventEmitter {
 
   @available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
   public struct Subscription<S: Subscriber>: Combine.Subscription where S.Input == Event {
@@ -198,13 +198,16 @@ extension EventEmitter {
     private let eventEmitterSubscription: EventEmitterCancellable?
     private weak var eventEmitter: EventEmitter<Event>?
 
-    init(subscriber: S, eventEmitter: EventEmitter<Event>?) {
+    init(
+      subscriber: S,
+      eventEmitter: EventEmitter<Event>?
+    ) {
 
       self.subscriber = subscriber
       self.eventEmitter = eventEmitter
 
-      eventEmitter?.onDeinit {
-        subscriber.receive(completion: .finished)
+      eventEmitter?.onDeinit {        
+        subscriber.receive(completion: .finished)        
       }
           
       self.eventEmitterSubscription = eventEmitter?
