@@ -24,11 +24,15 @@ public typealias VergeAnyCancellables = Set<AnyCancellable>
 ///
 /// }
 /// ```
-public final class VergeAnyCancellable: Hashable, Cancellable, @unchecked Sendable {
+public final class VergeAnyCancellable: Hashable, Cancellable, Sendable {
 
-  private let lock = VergeConcurrency.UnfairLock()
-
-  private var wasCancelled = false
+  private struct State {
+    var wasCancelled: Bool = false
+    var actions: ContiguousArray<() -> Void>? = .init()
+    var retainObjects: [AnyObject] = []
+  }
+  
+  private let state: VergeConcurrency.ManagedCriticalState<State> = .init(State())
 
   public static func == (lhs: VergeAnyCancellable, rhs: VergeAnyCancellable) -> Bool {
     lhs === rhs
@@ -38,15 +42,12 @@ public final class VergeAnyCancellable: Hashable, Cancellable, @unchecked Sendab
     ObjectIdentifier(self).hash(into: &hasher)
   }
 
-  private var actions: ContiguousArray<() -> Void>? = .init()
-  private var retainObjects: Set<Reference> = .init()
-
   public init() {
   }
 
   public convenience init(onDeinit: @escaping () -> Void) {
     self.init()
-    self.actions = [onDeinit]
+    state.withCriticalRegion { $0.actions = [onDeinit] }
   }
 
   public convenience init<C>(_ cancellable: C) where C : Cancellable {
@@ -57,58 +58,48 @@ public final class VergeAnyCancellable: Hashable, Cancellable, @unchecked Sendab
 
   @discardableResult
   public func associate(_ object: AnyObject) -> VergeAnyCancellable {
-
-    lock.lock()
-    defer {
-      lock.unlock()
+    state.withCriticalRegion { state in
+      assert(!state.wasCancelled)
+      state.retainObjects.append(object)
     }
-
-    assert(!wasCancelled)
-
-    retainObjects.insert(.init(value: object))
-
     return self
   }
 
   public func dissociate(_ object: AnyObject) {
-
-    lock.lock()
-
-    let target = retainObjects.remove(.init(value: object))
-
-    lock.unlock()
-
-    guard let target else {
+    let targets = state.withCriticalRegion { state -> [AnyObject] in
+      var targets: [AnyObject] = .init()
+      targets.reserveCapacity(state.retainObjects.count)
+      state.retainObjects.removeAll {
+        let remove = $0 === object
+        if remove {
+          targets.append($0)
+        }
+        return remove          
+      }
+      return targets
+    }
+    
+    guard targets.isEmpty == false else {
       return
     }
 
-    withExtendedLifetime(target, {})
-
+    withExtendedLifetime(targets, {})
   }
 
   public func insert(_ cancellable: Cancellable) {
-
-    lock.lock()
-    defer {
-      lock.unlock()
-    }
-
-    assert(!wasCancelled)
-
-    actions?.append {
-      cancellable.cancel()
+    state.withCriticalRegion { state in
+      assert(!state.wasCancelled)
+      state.actions?.append {
+        cancellable.cancel()
+      }
     }
   }
 
   public func insert(onDeinit: @escaping () -> Void) {
-
-    lock.lock()
-    defer {
-      lock.unlock()
+    state.withCriticalRegion { state in
+      assert(!state.wasCancelled)
+      state.actions?.append(onDeinit)
     }
-
-    assert(!wasCancelled)
-    actions?.append(onDeinit)
   }
 
   deinit {
@@ -116,72 +107,34 @@ public final class VergeAnyCancellable: Hashable, Cancellable, @unchecked Sendab
   }
 
   public func cancel() {
-
-    lock.lock()
-
-    guard !wasCancelled else {
-      lock.unlock()
+    let result = state.withCriticalRegion { state -> (
+      retainObjects: [AnyObject],
+      actions: ContiguousArray<() -> Void>?
+    )? in
+      guard !state.wasCancelled else {
+        return nil
+      }
+      
+      state.wasCancelled = true
+      
+      let retainObjects = state.retainObjects
+      state.retainObjects.removeAll()
+      
+      let actions = state.actions
+      state.actions = nil
+      
+      return (retainObjects, actions)
+    }
+    
+    guard let result else {
       return
     }
-
-    wasCancelled = true
-
-    let _retainObjects = self.retainObjects
-    retainObjects.removeAll()
-
-    let _actions = self.actions
-    self.actions = nil
-
-    lock.unlock()
-
-    withExtendedLifetime(_retainObjects, {})
-
-    _actions?.forEach {
+    
+    withExtendedLifetime(result.retainObjects, {})
+    
+    result.actions?.forEach {
       $0()
     }
-
   }
-
 }
 
-/// An object to cancel subscription
-///
-/// To cancel depending owner, can be written following
-///
-/// ```
-/// class ViewController {
-///
-///   var subscriptions = VergeAnyCancellables()
-///
-///   func something() {
-///
-///   let derived = store.derived(...)
-///
-///   derived
-///     .subscribeStateChanges { ... }
-///     .store(in: &subscriptions)
-///   }
-///
-/// }
-/// ```
-///
-@available(*, deprecated, renamed: "Cancellable", message: "Integrated with Combine")
-public typealias CancellableType = Cancellable
-
-private final class Reference: Equatable, Hashable {
-
-  static func == (lhs: Reference, rhs: Reference) -> Bool {
-    lhs === rhs
-  }
-
-  func hash(into hasher: inout Hasher) {
-    ObjectIdentifier(value).hash(into: &hasher)
-  }
-
-  let value: AnyObject
-
-  init(value: AnyObject) {
-    self.value = value
-  }
-
-}

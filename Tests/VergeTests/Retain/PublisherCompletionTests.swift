@@ -192,7 +192,7 @@ final class SubjectCompletionTests: XCTestCase {
   class Ref {}
 }
 
-final class Reference<T: AnyObject>: @unchecked Sendable {
+final class Reference<T: AnyObject>: @unchecked Sendable, CustomDebugStringConvertible {
 
   weak var value: T?
   private var strong: T?
@@ -204,6 +204,10 @@ final class Reference<T: AnyObject>: @unchecked Sendable {
 
   func release() {
     strong = nil
+  }
+  
+  var debugDescription: String {
+    "\(value)"
   }
 
 }

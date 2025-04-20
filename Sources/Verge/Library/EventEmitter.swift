@@ -31,10 +31,15 @@ public final class EventEmitterCancellable: Hashable, Cancellable, @unchecked Se
     lhs === rhs
   }
 
-  private weak var owner: EventEmitterType?
+  private struct State {
+    weak var owner: EventEmitterType?
+    var wasCancelled: Bool = false
+  }
+
+  private let state: VergeConcurrency.ManagedCriticalState<State>
 
   fileprivate init(owner: EventEmitterType) {
-    self.owner = owner
+    self.state = VergeConcurrency.ManagedCriticalState(State(owner: owner))
   }
 
   public func hash(into hasher: inout Hasher) {
@@ -42,7 +47,16 @@ public final class EventEmitterCancellable: Hashable, Cancellable, @unchecked Se
   }
 
   public func cancel() {
-    owner?.removeEventHandler(self)
+    
+    let continues: EventEmitterType? = state.withCriticalRegion { 
+      guard $0.wasCancelled == false else {
+        return nil
+      }
+      $0.wasCancelled = true
+      return $0.owner
+    }      
+    
+    continues?.removeEventHandler(self)
   }
 }
 
@@ -204,7 +218,7 @@ extension EventEmitter {
 
       self.subscriber = subscriber
       self.eventEmitter = eventEmitter
-      
+
       self.eventEmitterSubscription = eventEmitter?
         .addEventHandler { (event) in
           _ = subscriber.receive(event)

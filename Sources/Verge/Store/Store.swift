@@ -618,33 +618,16 @@ extension Store {
   ) -> StoreStateSubscription {
 
     let cancellable = _base_primitive_sinkState(
-      dropsFirst: dropsFirst, queue: queue, receive: receive)
-
-    let onAction: (StoreStateSubscription, StoreStateSubscription.Action) -> Void = {
-      [weak self] object, action in
-
-      guard let self else {
-        return
-      }
-
-      switch action {
-      case .suspend:
-        object.cancelSubscription()
-      case .resume:
-        let newCancellable = _base_primitive_sinkState(
-          dropsFirst: false,  // emits current value from beginning.
-          queue: queue,
-          receive: receive
-        )
-        object.replace(cancellable: consume newCancellable)
-      }
-    }
+      dropsFirst: dropsFirst,
+      queue: queue,
+      receive: receive
+    )
 
     if keepsAliveForSubscribers {
-      return .init(cancellable, storeCancellable: storeLifeCycleCancellable, onAction: onAction)
+      return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
         .associate(store: self)  // while subscribing its Store will be alive
     } else {
-      return .init(cancellable, storeCancellable: storeLifeCycleCancellable, onAction: onAction)
+      return .init(cancellable, storeCancellable: storeLifeCycleCancellable)
     }
 
   }
@@ -916,99 +899,3 @@ extension Store {
   }
 
 }
-
-#if DEBUG && canImport(SwiftUI) && canImport(UIKit)
-
-  import SwiftUI
-  import UIKit
-
-  @available(iOS 17, *)
-  #Preview {
-    StoreSubscriptionView(frame: .zero)
-  }
-
-  @available(iOS 15, *)
-  private final class StoreSubscriptionView: UIView {
-
-    @Tracking
-    struct State {
-      var count: Int = 0
-    }
-
-    let store: Store<State, Never> = .init(initialState: .init())
-
-    private let label = UILabel()
-    private var subscription: StoreStateSubscription?
-
-    override init(frame: CGRect) {
-      super.init(frame: frame)
-
-      backgroundColor = .systemBackground
-
-      let upButton = UIButton.init(configuration: .bordered())
-      upButton.setTitle("Up", for: .normal)
-      upButton.addAction(
-        .init(handler: { [weak self] action in
-
-          self?.store.commit {
-            $0.count += 1
-          }
-
-        }), for: .touchUpInside)
-
-      let suspendButton = UIButton.init(configuration: .bordered())
-      suspendButton.setTitle("Suspend", for: .normal)
-      suspendButton.addAction(
-        .init(handler: { [weak self] action in
-
-          self?.subscription?.suspend()
-
-        }), for: .touchUpInside)
-
-      let resumeButton = UIButton.init(configuration: .bordered())
-      resumeButton.setTitle("Resume", for: .normal)
-      resumeButton.addAction(
-        .init(handler: { [weak self] action in
-
-          self?.subscription?.resume()
-
-        }), for: .touchUpInside)
-
-      let stack = UIStackView()
-
-      stack.addArrangedSubview(label)
-      stack.addArrangedSubview(upButton)
-      stack.addArrangedSubview(suspendButton)
-      stack.addArrangedSubview(resumeButton)
-
-      stack.axis = .vertical
-      stack.distribution = .equalCentering
-
-      addSubview(stack)
-      stack.translatesAutoresizingMaskIntoConstraints = false
-      NSLayoutConstraint.activate(
-        [
-          stack.topAnchor.constraint(equalTo: topAnchor),
-          stack.leadingAnchor.constraint(equalTo: leadingAnchor),
-          stack.trailingAnchor.constraint(equalTo: trailingAnchor),
-          stack.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ]
-      )
-
-      subscription = store.sinkState { [weak self] state in
-        guard let self else { return }
-
-        state.ifChanged(\.count).do { value in
-          self.label.text = value.description
-        }
-
-      }
-
-    }
-
-    required init?(coder: NSCoder) {
-      fatalError("init(coder:) has not been implemented")
-    }
-  }
-
-#endif
