@@ -243,7 +243,7 @@ private final class Coordinator<Driver: StoreDriverType>: ObservableObject, Equa
     
     self.driver = driver
     
-    let _publisher = publisher()
+    let _publisher = objectWillChange
     
     subscription = driver.store.asStore()
       .sinkState { [weak self] state in
@@ -263,7 +263,7 @@ private final class Coordinator<Driver: StoreDriverType>: ObservableObject, Equa
   private static func onUpdateState(
     readGraph: PropertyNode?,
     modification: Modification?,
-    publisher: sending ObjectWillChangePublisher
+    publisher: ObjectWillChangePublisher
   ) {
     
     switch modification {
@@ -292,7 +292,7 @@ private final class Coordinator<Driver: StoreDriverType>: ObservableObject, Equa
     
     // do
     Task { @MainActor in
-      objectWillChange.send()
+      publisher.send()
     }
        
   }
