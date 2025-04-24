@@ -216,16 +216,7 @@ private final class Coordinator<Driver: StoreDriverType>: ObservableObject, Equa
   deinit {
     //      Log.reading.debug("Deinit Coordinator")
   }
-  
-  /*
-   func cleanup() {
-   subscription?.cancel()
-   _currentState = nil
-   _currentStateVersion = nil
-   driver = nil      
-   }
-   */
-  
+    
   @MainActor
   func startTracking(using driver: Driver) {
     
@@ -251,11 +242,6 @@ private final class Coordinator<Driver: StoreDriverType>: ObservableObject, Equa
     subscription?.cancel()
     
     self.driver = driver
-    
-    // pollMainLoop drops modification
-    //      subscription = driver.store.asStore().pollMainLoop { [weak self] state in
-    //        self?.onUpdateState(state)
-    //      }
     
     let _publisher = publisher()
     
@@ -305,26 +291,12 @@ private final class Coordinator<Driver: StoreDriverType>: ObservableObject, Equa
     }
     
     // do
-    
-    publisher.send()
-    //      if Thread.isMainThread {
-    //        MainActor.assumeIsolated {
-    //          publisher.send()          
-    //        }
-    //      } else {
-    //        DispatchQueue.main.async {
-    //          publisher.send()
-    //        }
-    //      }
-    
+    Task { @MainActor in
+      objectWillChange.send()
+    }
+       
   }
-  
-  nonisolated func publisher() -> sending ObjectWillChangePublisher {
-    let workaround = { self.objectWillChange }
-    let object = workaround()
-    return object
-  }
-  
+     
   func currentState() -> Driver.TargetStore.State? {
     
     guard let driver else {
