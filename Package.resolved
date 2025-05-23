@@ -1,13 +1,13 @@
 {
-  "originHash" : "9f8e843cd1c11e6c07be9e7133cadb9924be44d1fbb7947b3417a8d14f9745e6",
+  "originHash" : "eeca4d503705e41fa1778c018b59e9873cbf526358a8e427a251be7c14ecc453",
   "pins" : [
     {
       "identity" : "normalization",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/Normalization",
       "state" : {
-        "revision" : "6b5ebbe680da5359ae2a3fc3e53a144069bd6845",
-        "version" : "1.2.0"
+        "revision" : "a13a65cb2c86e4c3f891b3799f05b12300a9e78b",
+        "version" : "1.2.1"
       }
     },
     {
@@ -83,21 +83,21 @@
       }
     },
     {
+      "identity" : "swift-typed-identifier",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/VergeGroup/swift-typed-identifier",
+      "state" : {
+        "revision" : "ea7afa2ce943c6bf3ef87d385c8a6e9f67fea4f3",
+        "version" : "2.0.4"
+      }
+    },
+    {
       "identity" : "typedcomparator",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/TypedComparator",
       "state" : {
         "revision" : "337ce0e573e7637ddd29392cb88c3b852f042c8e",
         "version" : "1.0.0"
-      }
-    },
-    {
-      "identity" : "typedidentifier",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/VergeGroup/TypedIdentifier",
-      "state" : {
-        "revision" : "284340409ba47858a1b3c353dcef9c21303953db",
-        "version" : "2.0.3"
       }
     },
     {
