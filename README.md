@@ -1,5 +1,10 @@
-> [!NOTE]
+> [!WARNING]
 > Verge is stabilizing and transitioning to [swift-state-graph](https://github.com/VergeGroup/swift-state-graph) as its next-generation foundation.
+> Please check this out
+
+
+
+
 
 <p align="center">
   <a href="https://vergegroup.org">
