@@ -74,4 +74,6 @@ Derived
 
 Workspace.xcworkspace/
 
+settings.local.json
+
 # End of https://www.gitignore.io/api/swift
