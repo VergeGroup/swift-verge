@@ -22,7 +22,7 @@ let package = Package(
     .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.0.0"),
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
     .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
-    .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
+    .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "3.0.0"),
     .package(url: "https://github.com/VergeGroup/TypedComparator", from: "1.0.0"),
     .package(url: "https://github.com/VergeGroup/Normalization", from: "1.2.1"),
     .package(url: "https://github.com/VergeGroup/swift-macro-state-struct", from: "2.3.1"),

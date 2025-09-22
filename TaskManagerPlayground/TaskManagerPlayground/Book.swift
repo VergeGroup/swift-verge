@@ -1,6 +1,5 @@
 import SwiftUI
 import Verge
-import VergeTaskManager
 
 struct BookVergeTaskManager: View, PreviewProvider {
   var body: some View {

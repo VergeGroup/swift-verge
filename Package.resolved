@@ -1,5 +1,5 @@
 {
-  "originHash" : "ecfec498a908db010e660e48b75d5a1ce19567910fa80593c45de88a399e36fc",
+  "originHash" : "13fc51ff40aecb23a504ec8e5bc0f6411e825c108e5411ce031b310a4ae4e516",
   "pins" : [
     {
       "identity" : "normalization",
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/swift-concurrency-task-manager",
       "state" : {
-        "revision" : "340cf14e0282977deeeb436605d1810ce4f4fbc9",
-        "version" : "1.4.0"
+        "revision" : "87605b623fa1a02c657534251ae238a56bc0d15c",
+        "version" : "3.0.0"
       }
     },
     {
