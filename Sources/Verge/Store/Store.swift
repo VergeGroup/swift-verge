@@ -150,7 +150,7 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
 
   // MARK: - Task
 
-  public let taskManager: TaskManagerActor = .init()
+  public let taskManager: TaskManager = .init()
 
   let writer: Writer = .init()
 
@@ -265,9 +265,7 @@ open class Store<State, Activity: Sendable>: EventEmitter<_StoreEvent<State, Act
 
     storeLifeCycleCancellable.cancel()
 
-    Task { [taskManager] in
-      await taskManager.cancelAll()
-    }
+    taskManager.cancelAll()
   }
 
 }
@@ -397,16 +395,11 @@ extension Store {
   @discardableResult
   public func task<Return>(
     key: ConcurrencyTaskManager.TaskKey = .distinct(),
-    mode: ConcurrencyTaskManager.TaskManagerActor.Mode = .dropCurrent,
+    mode: ConcurrencyTaskManager.TaskManager.Mode = .dropCurrent,
     priority: TaskPriority = .userInitiated,
     @_inheritActorContext _ action: @Sendable @escaping () async throws -> Return
   ) -> Task<Return, Error> {
-
-    Task {
-      try await taskManager.task(key: key, mode: mode, priority: priority, action)
-        .value
-    }
-
+    return taskManager.task(key: key, mode: mode, priority: priority, action)
   }
 
   /**
@@ -427,16 +420,11 @@ extension Store {
   @discardableResult
   public func taskDetached<Return>(
     key: ConcurrencyTaskManager.TaskKey = .distinct(),
-    mode: ConcurrencyTaskManager.TaskManagerActor.Mode = .dropCurrent,
+    mode: ConcurrencyTaskManager.TaskManager.Mode = .dropCurrent,
     priority: TaskPriority = .userInitiated,
     _ action: @Sendable @escaping () async throws -> Return
   ) -> Task<Return, Error> {
-
-    Task {
-      try await taskManager.taskDetached(key: key, mode: mode, priority: priority, action)
-        .value
-    }
-
+    return taskManager.taskDetached(key: key, mode: mode, priority: priority, action)        
   }
 
   // MARK: - Internal

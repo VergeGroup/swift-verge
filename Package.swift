@@ -22,14 +22,14 @@ let package = Package(
     .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.0.0"),
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.2"),
     .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
-    .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "1.1.0"),
+    .package(url: "https://github.com/VergeGroup/swift-concurrency-task-manager", from: "3.0.0"),
     .package(url: "https://github.com/VergeGroup/TypedComparator", from: "1.0.0"),
-    .package(url: "https://github.com/VergeGroup/Normalization", from: "1.2.1"),
-    .package(url: "https://github.com/VergeGroup/swift-macro-state-struct", from: "2.3.1"),
+    .package(url: "https://github.com/VergeGroup/Normalization", from: "2.0.0"),
+    .package(url: "https://github.com/VergeGroup/swift-macro-state-struct", from: "3.0.0"),
 
     /// for testing
     .package(url: "https://github.com/nalexn/ViewInspector.git", from: "0.10.0"),
-    .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0"),
+    .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "602.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-macro-testing.git", from: "0.2.1")
   ],
   targets: [

@@ -1,13 +1,13 @@
 {
-  "originHash" : "ecfec498a908db010e660e48b75d5a1ce19567910fa80593c45de88a399e36fc",
+  "originHash" : "e0239f7d7b3b817d553cd88ff38b3bf2eaf6a4d2aa61a19fb57aed0c303e01eb",
   "pins" : [
     {
       "identity" : "normalization",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/Normalization",
       "state" : {
-        "revision" : "a13a65cb2c86e4c3f891b3799f05b12300a9e78b",
-        "version" : "1.2.1"
+        "revision" : "0d6adaadd3dcf2aa4c65db8edcf1ea94c73d4a10",
+        "version" : "2.0.0"
       }
     },
     {
@@ -42,8 +42,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/swift-concurrency-task-manager",
       "state" : {
-        "revision" : "340cf14e0282977deeeb436605d1810ce4f4fbc9",
-        "version" : "1.4.0"
+        "revision" : "87605b623fa1a02c657534251ae238a56bc0d15c",
+        "version" : "3.0.0"
+      }
+    },
+    {
+      "identity" : "swift-custom-dump",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-custom-dump",
+      "state" : {
+        "revision" : "82645ec760917961cfa08c9c0c7104a57a0fa4b1",
+        "version" : "1.3.3"
       }
     },
     {
@@ -51,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/VergeGroup/swift-macro-state-struct",
       "state" : {
-        "revision" : "d6d38b060968c25977b4333e35480e32f035d1fb",
-        "version" : "2.3.1"
+        "revision" : "aabd53cd8be48f71bb33e5fe66e38accc0438660",
+        "version" : "3.0.0"
       }
     },
     {
@@ -60,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-macro-testing.git",
       "state" : {
-        "revision" : "20c1a8f3b624fb5d1503eadcaa84743050c350f4",
-        "version" : "0.5.2"
+        "revision" : "9ab11325daa51c7c5c10fcf16c92bac906717c7e",
+        "version" : "0.6.4"
       }
     },
     {
@@ -69,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
       "state" : {
-        "revision" : "7b0bbbae90c41f848f90ac7b4df6c4f50068256d",
-        "version" : "1.17.5"
+        "revision" : "a8b7c5e0ed33d8ab8887d1654d9b59f2cbad529b",
+        "version" : "1.18.7"
       }
     },
     {
@@ -78,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "0687f71944021d616d34d922343dcef086855920",
-        "version" : "600.0.1"
+        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
+        "version" : "602.0.0"
       }
     },
     {
@@ -107,6 +116,15 @@
       "state" : {
         "revision" : "5acfa0a3c095ac9ad050abe51c60d1831e8321da",
         "version" : "0.10.0"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "b2ed9eabefe56202ee4939dd9fc46b6241c88317",
+        "version" : "1.6.1"
       }
     }
   ],

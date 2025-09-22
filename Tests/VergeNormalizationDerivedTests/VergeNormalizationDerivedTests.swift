@@ -1,5 +1,6 @@
 import VergeNormalizationDerived
 import XCTest
+import os.lock
 
 extension Store where State == DemoState {
 
@@ -24,10 +25,12 @@ final class VergeNormalizationDerivedTests: XCTestCase {
       .table(.keyPath(\.book))
       .derived(from: Book.TypedID.init("1"))
 
-    var received: [Book?] = []
+    let received: OSAllocatedUnfairLock<[Book?]> = .init(initialState: [])
 
     derived.sinkState { value in
-      received.append(value.primitive.wrapped)
+      received.withLock {
+        $0.append(value.primitive.wrapped)
+      }
       if value.primitive.wrapped != nil {
         exp.fulfill()
       }
@@ -42,7 +45,7 @@ final class VergeNormalizationDerivedTests: XCTestCase {
 
     wait(for: [exp])
 
-    XCTAssertEqual(received, [nil, .init(rawID: "1", authorID: .init("muukii"))])
+    XCTAssertEqual(received.withLock { $0 }, [nil, .init(rawID: "1", authorID: .init("muukii"))])
 
     withExtendedLifetime(derived, {})
   }
