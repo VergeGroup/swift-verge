@@ -15,7 +15,7 @@ jobs:
           xcode-version: "26"
       - uses: actions/checkout@v2
       - name: Run Test
-        run: set -o pipefail && xcodebuild -scheme Verge-Package test -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26' -skipMacroValidation -skipPackagePluginValidation | xcbeautify
+        run: set -o pipefail && xcodebuild -scheme Verge-Package test -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.0' -skipMacroValidation -skipPackagePluginValidation | xcbeautify
 
   ui-test:
     runs-on: macos-15
