@@ -1,5 +1,6 @@
 
 import XCTest
+import os.lock
 
 @MainActor
 fileprivate func isInMain() {}
@@ -42,17 +43,19 @@ final class IsolatedContextTests: XCTestCase {
         
     let store = DemoStore()
     
-    var receivedState: DemoStore.State?
+    let receivedState: OSAllocatedUnfairLock<DemoStore.State?> = .init(initialState: nil)
     
     let sub = store.sinkState { changes in
-      receivedState = changes.primitive
+      receivedState.withLock {
+        $0 = changes.primitive
+      }
     }
     
     store.commit {
       $0.count = 100
     }
     
-    XCTAssertEqual(receivedState?.count, 100)
+    XCTAssertEqual(receivedState.withLock { $0?.count }, 100)
     
     withExtendedLifetime(sub, {})
   }
