@@ -393,7 +393,24 @@ final class VergeStoreTests: XCTestCase {
     withExtendedLifetime(sub, {})
 
   }
+  
+  enum MyError: Error {
+    case something
+  }
 
+  func testThrowing() {
+    
+    let store = DemoStore()
+    
+    do {
+      try store.commit { _ in
+        throw MyError.something
+      }
+    } catch {
+      print(error)
+    }
+    
+  }
 
   func testAsigneeFromDerived() {
     
